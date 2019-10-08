@@ -18,6 +18,9 @@ import {Message} from "../../../../shared/message";
 import {BaseContainer} from "../../../../shared/base";
 import {SystemTagsService} from "../../../../shared/services/system-tags.service";
 import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/store";
+import * as tagsStore from "../../../../shared/components/plt/plt-tag-manager/store";
+import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
+import {Actions as tableActions} from "../../../../shared/components/plt/plt-main-table/store";
 
 @Component({
   selector: 'app-add-remove-pop-up',
@@ -26,7 +29,9 @@ import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/
 })
 export class AddRemovePopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
+  tagsInputs: tagsStore.Input;
+  tableInputs: tableStore.Input;
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -40,7 +45,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
 
   @Input() isVisible;
   @Input('selectionStep') selectionStep: string;
-  @Input('userTags') userTags: string;
+  @Input('userTags') userTags;
   @Input('projects') projects: string;
   @Input() multiSteps: boolean;
   workspaceId: any;
@@ -61,61 +66,6 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   contracts = [];
   loading;
   browesing: boolean;
-  Inputs: {
-    contextMenuItems: any,
-    filterInput: string;
-    pltColumns: any[];
-    listOfPltsData: [];
-    listOfDeletedPltsData: [];
-    listOfPltsCache: [];
-    listOfDeletedPltsCache: [];
-    listOfPlts: [];
-    listOfDeletedPlts: [];
-    selectedListOfPlts: any;
-    selectedListOfDeletedPlts: any;
-    selectAll: boolean;
-    someItemsAreSelected: boolean;
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: any,
-      userTag: []
-    };
-    sortData: any;
-    _tagModalVisible: boolean;
-    _modalSelect: [];
-    tagForMenu: any;
-    _editingTag: boolean;
-    wsId: string;
-    uwYear: string;
-    projects: any[];
-    addTagModalIndex: number;
-    fromPlts: boolean;
-    deletedPltsLength: number;
-    userTags: any[];
-    systemTagsCount: any;
-    wsHeaderSelected: boolean;
-    pathTab: boolean;
-    selectedItemForMenu: any;
-  };
-  tableInputs = ['filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'listOfPlts', 'listOfDeletedPlts', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'someItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems'];
-  menuInputs = ['_tagModalVisible', '_modalSelect', 'tagForMenu', '_editingTag', 'wsId', 'uwYear', 'projects', 'showDeleted', 'filterData', 'filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
-  systemTagsMapping = {
-    grouped: {
-      peril: 'Peril',
-      regionDesc: 'Region',
-      currency: 'Currency',
-      sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Modelling System',
-      targetRapCode: 'Target RAP',
-      userOccurrenceBasis: 'User Occurence Basis',
-      xActAvailable: 'Published To Pricing',
-      xActUsed: 'Priced',
-      accumulated: 'Accumulated',
-      financial: 'Financial Perspectives'
-    },
-    nonGrouped: {}
-  };
   private pltTableSubscription: Subscription;
   private pltProjectSubscription: Subscription;
   private pltUserTagsSubscription: Subscription;
@@ -134,97 +84,166 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     private systemTagService: SystemTagsService,
   ) {
     super(router, cdRef, store$);
-    this.Inputs = {
-      contextMenuItems: [
-        {
-          label: 'View Detail', command: (event) => {
-            this.openPltInDrawer(this.selectedPlt)
-          }
-        },
-      ],
-      filterInput: '',
+    this.unSubscribe$ = new Subject<void>();
+    this.keywordFormGroup = new FormGroup({
+      keyword: new FormControl(null)
+    });
+    this.browesing = false;
+    this.tableInputs = {
+      scrollConfig: {
+        containerHeight: null,
+        containerGap: '49px',
+      },
+      dataKey: "pltId",
+      openedPlt: "",
+      contextMenuItems: null,
+      filterData: {},
+      filters: {
+        userTag: [],
+        systemTag: {}
+      },
+      sortData: {},
+      selectAll: false,
+      selectAllDeletedPlts: false,
+      someItemsAreSelected: false,
+      someDeletedItemsAreSelected: false,
+      showDeleted: false,
       pltColumns: [
         {
-          width: '60',
-          filtred: false,
-          icon: null,
-          type: 'checkbox', active: true
-        },
-        {
+          sortDir: 1,
           fields: '',
-          header: 'User Tags',
-          width: '60',
+          header: '',
           sorted: false,
           filtred: false,
+          resizable: false,
+          width: '40',
+          unit: 'px',
+          icon: null,
+          type: 'checkbox',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          sorted: false,
+          filtred: false,
+          resizable: true,
+          width: '66',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
         },
         {
+          sortDir: 1,
           fields: 'pltId',
           header: 'PLT ID',
-          width: '80',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
+          width: '28',
+          unit: '%',
           type: 'id',
           active: true
         },
         {
+          sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
-          width: '160',
-          sorted: false,
+          sorted: true,
           filtred: true,
-          icon: null,
-          type: 'field', active: true
-        },
-        {
-          fields: 'peril',
-          header: 'Peril',
-          width: '40',
-          sorted: false,
-          filtred: true,
+          resizable: true,
+          width: '80',
+          unit: '%',
           icon: null,
           type: 'field',
-          textAlign: 'center', active: true
+          active: true
         },
         {
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          sorted: true,
+          filtred: true,
+          resizable: false,
+          width: '53',
+          unit: 'px',
+          icon: null,
+          type: 'field',
+          textAlign: 'center',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '70',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
+          width: '35',
+          unit: '%',
           icon: null,
-          type: 'field', active: true
+          type: 'field',
+          active: true
         },
         {
+          sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
-          width: '160',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
+          width: '60',
+          unit: '%',
           icon: null,
-          type: 'field', active: true
+          type: 'field',
+          active: true
         },
         {
           sortDir: 1,
           fields: 'grain',
           header: 'Grain',
-          width: '90',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
+          width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
         },
         {
           sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
+        },
+        {
+          sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
-          width: '90',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
+          width: '25%',
           icon: null,
           type: 'field', active: true
         },
@@ -232,52 +251,76 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           sortDir: 1,
           fields: 'rap',
           header: 'RAP',
-          width: '52',
-          sorted: false,
+          sorted: true,
           filtred: true,
+          resizable: true,
+          width: '25',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
-        }
+        },{
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-note',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Published for Pricing",
+          highlight: 'Published'
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Priced",
+          highlight: 'Priced'
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-focus-add',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Published for Accumulation",
+          highlight: 'Accumulated'
+        },
       ],
-      listOfPltsData: [],
+      filterInput: '',
+      listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
-      listOfDeletedPltsCache: [],
-      listOfPlts: [],
-      listOfDeletedPlts: [],
-      selectedListOfPlts: [],
+      listOfPltsData: [],
       selectedListOfDeletedPlts: [],
-      selectAll: false,
-      someItemsAreSelected: false,
-      showDeleted: false,
-      filterData: {},
-      filters: {
-        systemTag: {},
-        userTag: []
-      },
-      sortData: {},
-      _tagModalVisible: false,
-      _modalSelect: [],
-      tagForMenu: {},
-      _editingTag: false,
-      wsId: '',
-      uwYear: '',
-      projects: [],
-      addTagModalIndex: 0,
-      fromPlts: false,
-      deletedPltsLength: 0,
-      userTags: [],
-      systemTagsCount: {},
-      wsHeaderSelected: true,
-      pathTab: true,
-      selectedItemForMenu: null
+      selectedListOfPlts: [],
+      status: {
+        Published: {
+          selected: false
+        },
+        Priced: {
+          selected: false
+        },
+        Accumulated: {
+          selected: false
+        },
+      }
     };
-    this.unSubscribe$ = new Subject<void>();
-    this.keywordFormGroup = new FormGroup({
-      keyword: new FormControl(null)
-    });
-    this.browesing = false;
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
@@ -289,29 +332,34 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       visible: false,
       mode: "pop-up"
     };
-    this.tagsInput = {
+    this.leftMenuInputs= {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
-      showDeleted: this.tableInputs['showDeleted'],
-      filterData: this.tableInputs['filterData'],
-      filters: this.tableInputs['filters'],
+      showDeleted: false,
+      filterData: this.filterData,
+      filters: {
+        systemTag: [],
+        userTag: []
+      },
       deletedPltsLength: 0,
       userTags: [],
-      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      selectedListOfPlts: [],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
-      pathTab: true,
+      pathTab: true
+    };
+    this.tagsInputs= {
+      _tagModalVisible: false,
+      toRemove: [],
+      toAssign: [],
       assignedTags: [],
       assignedTagsCache: [],
-      toAssign: [],
-      toRemove: [],
-      usedInWs: [],
+      operation: null,
+      selectedTags: [],
       allTags: [],
       suggested: [],
-      selectedTags: {},
-      operation: null
+      usedInWs: []
     };
     this.setRightMenuSelectedTab('basket');
   }
@@ -332,30 +380,49 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   }
 
   ngOnInit() {
-    this.setInputs('userTags', this.userTags);
-    // this.setInputs('projects',this.projects);
+    this.updateTable('userTags', this.userTags);
+    // this.updateTable('projects',this.projects);
   }
 
   getPlts() {
     return this.select(WorkspaceState.getPltsForCalibration(this.workspaceId + '-' + this.uwy));
   }
+
+  getProjects() {
+    return this.select(WorkspaceState.getProjectsPlt(this.workspaceId + '-' + this.uwy));
+  }
+
+  getUserTags() {
+    return this.select(WorkspaceState.getUserTagsPlt(this.workspaceId + '-' + this.uwy));
+  }
   getBrowesingItemsDirectly() {
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
-      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
-      this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
-      this.setInputs('listOfPltsData', [...this.Inputs.listOfPltsCache]);
+      this.updateTable('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+      this.updateTable('listOfPltsData', [...this.tableInputs.listOfPltsCache]);
       this.initThreadsData();
       this.updateMenuKey('basket', _.filter(this.listOfPltsThread, row => row.calibrate));
       this.detectChanges();
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.setInputs('selectAll', this.Inputs.selectedListOfPlts.length > 0 || (this.Inputs.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0);
+      this.updateTable('selectAll', this.tableInputs.selectedListOfPlts.length > 0 || (this.tableInputs.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0);
 
-      this.setInputs('someItemsAreSelected', this.Inputs.selectedListOfPlts.length < this.listOfPltsThread.length && this.Inputs.selectedListOfPlts.length > 0);
+      this.updateTable('someItemsAreSelected', this.tableInputs.selectedListOfPlts.length < this.listOfPltsThread.length && this.tableInputs.selectedListOfPlts.length > 0);
       this.detectChanges();
     });
+
+    this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
+      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
+      this.updateLeftMenuInputs('userTags', userTags);
+      this.detectChanges();
+    });
+
     const pltToCalibrate = [];
     _.forEach(this.listOfPltsThread, row => {
       pltToCalibrate[row.pltId] = {calibrate: row.toCalibrate};
@@ -381,9 +448,9 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     }))
   }
   initThreadsData() {
-    if (this.Inputs.listOfPltsData) {
-      this.listOfPltsThread = Array.prototype.concat.apply([], this.Inputs.listOfPltsData.map((row: any) => row.threads));
-      this.setInputs('selectedListOfPlts', _.filter(this.listOfPltsThread, (v, k) => v.calibrate).map(e => e.pltId));
+    if (this.tableInputs.listOfPltsData) {
+      this.listOfPltsThread = Array.prototype.concat.apply([], this.tableInputs.listOfPltsData.map((row: any) => row.threads));
+      this.updateTable('selectedListOfPlts', _.filter(this.listOfPltsThread, (v, k) => v.calibrate).map(e => e.pltId));
     }
   }
   ngOnDestroy(): void {
@@ -416,8 +483,9 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     this._filter = {};
     this.browesing = false;
     this.onVisibleChange.emit(false);
-    this.Inputs = {
-      ...this.Inputs,
+    this.tableInputs = {
+      
+      ...this.tableInputs,
       filterInput: '',
       pltColumns: [
         {
@@ -520,8 +588,6 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
       listOfDeletedPltsCache: [],
-      listOfPlts: [],
-      listOfDeletedPlts: [],
       selectedListOfPlts: [],
       selectedListOfDeletedPlts: [],
       selectAll: false,
@@ -529,25 +595,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       showDeleted: false,
       filterData: {},
       filters: {
-        systemTag: {},
+        systemTag: [],
         userTag: []
       },
-      sortData: {},
-      _tagModalVisible: false,
-      _modalSelect: [],
-      tagForMenu: {},
-      _editingTag: false,
-      wsId: '',
-      uwYear: '',
-      projects: [],
-      addTagModalIndex: 0,
-      fromPlts: false,
-      deletedPltsLength: 0,
-      userTags: [],
-      systemTagsCount: {},
-      wsHeaderSelected: true,
-      pathTab: true,
-      selectedItemForMenu: null
+      sortData: {}
     };
   }
 
@@ -565,7 +616,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     _.forEach(this.listOfPltsThread, (plt: any) => {
       result[plt.pltId] = {toCalibrate: false};
     })
-    _.forEach(this.Inputs.selectedListOfPlts, pltId => {
+    _.forEach(this.tableInputs.selectedListOfPlts, pltId => {
       result[pltId].toCalibrate = true;
     })
     console.log(result);
@@ -580,15 +631,15 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     console.log(event);
     this.selectedWorkspace = event;
     this.onSelectWorkspace.emit(event);
-    this.setInputs('wsId', event.workSpaceId)
+    this.updateTable('wsId', event.workSpaceId)
   }
 
 
   onShow() {
 
     if (this.stepConfig.uwYear && this.stepConfig.wsId) {
-      this.setInputs('wsId', this.stepConfig.wsId);
-      this.setInputs('uwYear', this.stepConfig.uwYear);
+      this.updateTableAndLeftMenuInputs('wsId', this.stepConfig.wsId);
+      this.updateTableAndLeftMenuInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
     } else {
       this._loadData();
@@ -619,14 +670,14 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   checkAll($event) {
     this.calibrateSelectPlts(
       _.zipObject(
-        _.map(!$event ? this.getInputs('listOfPlts') : this.getInputs('listOfDeletedPlts'), plt => plt),
-        _.range(!$event ? this.getInputs('listOfPlts').length : this.getInputs('listOfDeletedPlts').length).map(el => ({type: !this.getInputs('selectAll') && !this.getInputs('someItemsAreSelected')}))
+        _.map(!$event ? this.getTableInputKey('listOfPlts') : this.getTableInputKey('listOfDeletedPlts'), plt => plt),
+        _.range(!$event ? this.getTableInputKey('listOfPlts').length : this.getTableInputKey('listOfDeletedPlts').length).map(el => ({type: !this.getTableInputKey('selectAll') && !this.getTableInputKey('someItemsAreSelected')}))
       )
     );
   }
 
   calibrateSelectPlts(plts: any) {
-    console.log('selected   ************************==> ', this.Inputs.selectedListOfPlts);
+    console.log('selected   ************************==> ', this.tableInputs.selectedListOfPlts);
     this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({
       plts: plts,
       ws: this.workspaceId + "-" + this.uwy
@@ -639,51 +690,43 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
 
   filterPlts(filterData) {
     console.log(filterData);
-    this.setInputs('filterData', filterData);
-  }
-
-  getInputs(key) {
-    return this.Inputs[key];
-  }
-
-  setInputs(key, value) {
-    this.Inputs = {...this.Inputs, [key]: value};
+    this.updateTable('filterData', filterData);
   }
 
   setFilters($event) {
     console.log($event);
-    this.setInputs('filters', $event)
+    this.updateTable('filters', $event)
   }
 
   setUserTags($event) {
     console.log($event)
-    this.setInputs('userTags', $event)
+    this.updateTable('userTags', $event)
   }
 
   emitFilters(filters: any) {
     console.log(filters);
     this.store$.dispatch(new fromWorkspaceStore.setUserTagsFiltersFromCalibration({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      wsIdentifier: this.getTableInputKey('wsId') + '-' + this.getTableInputKey('uwYear'),
       filters: filters
     }))
   }
 
   setWsHeaderSelect($event: any) {
-    this.setInputs('wsHeaderSelected', $event);
+    this.updateTable('wsHeaderSelected', $event);
   }
 
   unCheckAll() {
     console.log('uncheck');
     this.calibrateSelectPlts(
       _.zipObject(
-        _.map([...this.getInputs('listOfPlts'), ...this.getInputs('listOfDeletedPlts')], plt => plt),
-        _.range(this.getInputs('listOfPlts').length + this.getInputs('listOfDeletedPlts').length).map(el => ({type: false}))
+        _.map([...this.getTableInputKey('listOfPlts'), ...this.getTableInputKey('listOfDeletedPlts')], plt => plt),
+        _.range(this.getTableInputKey('listOfPlts').length + this.getTableInputKey('listOfDeletedPlts').length).map(el => ({type: false}))
       )
     );
   }
 
   setSelectedProjects($event) {
-    this.setInputs('projects', $event);
+    this.updateTable('projects', $event);
   }
 
   detectChanges() {
@@ -697,7 +740,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
 
   closePltInDrawer(pltId) {
     this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      wsIdentifier: this.getTableInputKey('wsId') + '-' + this.getTableInputKey('uwYear'),
       pltId
     }));
   }
@@ -707,10 +750,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
     }
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      wsIdentifier: this.getTableInputKey('wsId') + '-' + this.getTableInputKey('uwYear'),
       pltId: plt
     }));
-    this.updateMenuKey('pltDetail', _.find(this.getInputs('listOfPltsData'), e => e.pltId == plt))
+    this.updateMenuKey('pltDetail', _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == plt))
     this.updateMenuKey('visible', true);
   }
 
@@ -751,6 +794,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
   }
 
+  getTableInputKey(key) {
+    return _.get(this.tableInputs, key);
+  }
+
   setSelectedPlt($event: any) {
     this.selectedPlt = $event;
   }
@@ -779,7 +826,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.Inputs.showDeleted ? this.Inputs.selectedListOfPlts : this.Inputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
+    const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -787,8 +834,8 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       this.lastSelectedId = i;
       this.calibrateSelectPlts(
         _.zipObject(
-          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => plt),
-          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt),
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -810,8 +857,8 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
         const min = _.min([i, this.lastSelectedId]);
         this.calibrateSelectPlts(
           _.zipObject(
-            _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => plt),
-            _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, (plt, i) => ({type: i <= max && i >= min})),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
           )
         )
       } else {
@@ -835,92 +882,59 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       case leftMenuStore.setFilters:
         this.setFilters(action.payload);
         break;
-      /* case leftMenuStore.resetPath:
-         this.resetPath();
-         break;*/
       case leftMenuStore.headerSelection:
         this.setWsHeaderSelect(action.payload);
         break;
-      /*case leftMenuStore.filterByProject:
-        this.filter(action.payload);
-        break;*/
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
-      /*case leftMenuStore.setTagModalVisibility:
-        this.setTagModal(action.payload);
-        break;*/
-      /*case leftMenuStore.toggleDeletedPlts:
-        this.toggleDeletePlts(action.payload);
-        break;*/
-      /*case leftMenuStore.onSelectSysTagCount:
-        this.selectSystemTag(action.payload);
-        break;*/
       case leftMenuStore.onSetSelectedUserTags:
         this.setUserTags(action.payload);
-        break;
-
-      //Tag Manager
-
-      case leftMenuStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case leftMenuStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case leftMenuStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case leftMenuStore.clearSelection:
-        this.clearSelection();
-        break;
-      case leftMenuStore.save:
-        this.save();
         break;
     }
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput = {...this.tagsInput, [key]: value};
+    this.tagsInputs = {...this.tagsInputs, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
     this.updateTagsInput(key, value);
-    /*this.updateTable(key,value);*/
+    this.updateTable(key,value);
   }
 
   addNewTag(tag) {
-    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
-    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    /*this.updateTagsInput('toAssign', _.concat(this.leftMenuInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.leftMenuInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInputs.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInputs.toAssign, tag));
   }
 
   toggleTag({i, operation, source}) {
-    if (operation == this.tagsInput['operation']) {
-      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+    if (operation == this.tagsInputs['operation']) {
+      if (!_.find(this.tagsInputs.selectedTags, tag => tag.tagId == this.tagsInputs[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInputs.selectedTags, {[this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]}}));
       } else {
-        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInputs.selectedTags, this.tagsInputs[source][i].tagId));
       }
     } else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]}}));
     }
 
-    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if (!_.keys(this.tagsInputs.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
-    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if (this.tagsInput.operation == 'assign') {
-      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
-      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    const tags = _.map(this.tagsInputs.selectedTags, t => ({...t, type: 'full'}));
+    if (this.tagsInputs.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInputs.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tags), 'tagId'))
     }
 
-    if (this.tagsInput.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    if (this.tagsInputs.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInputs.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInputs.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
     }
 
     this.clearSelection();
@@ -944,13 +958,12 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       userId: 1,
       wsId: this.workspaceId,
       uwYear: this.uwy,
-      selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+      selectedTags: this.tagsInputs.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, this.tagsInputs.assignedTags, 'tagId')
     }));
-    this.tagsInput = {
-      ...this.tagsInput,
+    this.tagsInputs = {
+      ...this.tagsInputs,
       _tagModalVisible: false,
-      wsHeaderSelected: true,
       assignedTags: [],
       assignedTagsCache: [],
       usedInWs: [],
@@ -959,6 +972,19 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       selectedTags: {},
       operation: null
     };
+  }
+
+  updateLeftMenuInputs(key, value) {
+    this.leftMenuInputs= {...this.leftMenuInputs, [key]: value};
+  }
+
+  updateTable(key: string, value: any) {
+    this.tableInputs = tableActions.updateKey.handler(this.tableInputs, key, value);
+  }
+
+  updateTableAndLeftMenuInputs(key, value) {
+    this.updateLeftMenuInputs(key, value);
+    this.updateTable(key,value);
   }
 
 }

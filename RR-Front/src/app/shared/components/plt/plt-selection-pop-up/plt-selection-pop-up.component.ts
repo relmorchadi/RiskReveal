@@ -1,4 +1,13 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewEncapsulation
+} from '@angular/core';
 import {BaseContainer} from "../../../base";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
@@ -18,6 +27,8 @@ import * as tableStore from "../plt-main-table/store";
 import {Actions as tableActions} from "../plt-main-table/store";
 import {Message} from "../../../message";
 import * as leftMenuStore from "../plt-left-menu/store";
+import * as tagsStore from "../plt-tag-manager/store";
+import {ResizedEvent} from "angular-resize-event";
 
 @Component({
   selector: 'app-plt-selection-pop-up',
@@ -26,7 +37,11 @@ import * as leftMenuStore from "../plt-left-menu/store";
 })
 export class PltSelectionPopUpComponent extends BaseContainer implements OnInit {
 
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
+  collapsedTags: boolean= true;
+  tagsInputs: tagsStore.Input;
+  tableInputs: tableStore.Input;
+  @ViewChild('leftMenu') leftMenu: any;
 
   @Input() isVisible;
   @Input() stepConfig: {
@@ -107,52 +122,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     }
   ];
 
-
   d: any;
-
-  Inputs: {
-    scrollHeight: string | number,
-    contextMenuItems: any,
-    filterInput: string;
-    pltColumns: any[];
-    listOfPltsData: [];
-    listOfDeletedPltsData: [];
-    listOfPltsCache: [];
-    listOfDeletedPltsCache: [];
-    listOfPlts: [];
-    listOfDeletedPlts: [];
-    selectedListOfPlts: any;
-    selectedListOfDeletedPlts: any;
-    selectAll: boolean;
-    someItemsAreSelected: boolean;
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: any,
-      userTag: []
-    };
-    sortData: any;
-    _tagModalVisible: boolean;
-    _modalSelect: [];
-    tagForMenu: any;
-    _editingTag: boolean;
-    wsId: string;
-    uwYear: string;
-    projects: any[];
-    addTagModalIndex: number;
-    fromPlts: boolean;
-    deletedPltsLength: number;
-    userTags: any[];
-    systemTagsCount: any;
-    wsHeaderSelected: boolean;
-    pathTab: boolean;
-    selectedItemForMenu: any;
-    status: any;
-  };
-
-  tableInputs = ['status', 'scrollHeight','dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
-
-  menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
   rightMenuInputs: rightMenuStore.Input;
 
@@ -160,9 +130,25 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
               private systemTagService: SystemTagsService,
               private searchService: SearchService,
               private actions$: Actions,
-              ) {
+  ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    this.Inputs= {
+    this.rightMenuInputs = {
+      basket: [],
+      pltDetail: null,
+      selectedTab: {
+        index: 0,
+        title: 'basket',
+      },
+      tabs: {'basket': true,'pltDetail': true},
+      visible: false,
+      mode: "pop-up"
+    };
+    this.tableInputs= {
+      dataKey: 'pltId',
+      scrollConfig: {
+        containerHeight: null,
+        containerGap: '62px'
+      },
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -170,29 +156,29 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           }
         },
       ],
-      scrollHeight: 'calc(100vh - 375px)',
       filterInput: '',
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '40',
-          icon: null,
-          type: 'checkbox',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '40',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
           header: 'User Tags',
           sorted: false,
           filtred: false,
-          resizable: false,
-          width: '24%',
+          resizable: true,
+          width: '66',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -205,7 +191,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '28',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -216,7 +203,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '100%',
+          width: '80',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -228,7 +216,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '53',
+          unit: 'px',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -241,7 +230,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '35',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -253,7 +243,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '60',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -265,7 +256,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -310,12 +302,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '25%',
+          width: '25',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
-        },
-        {
+        },{
           sortDir: 1,
           fields: '',
           header: '',
@@ -323,7 +315,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-note',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Pricing",
           highlight: 'Published'
@@ -336,7 +329,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-dollar-alt',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Priced",
           highlight: 'Priced'
@@ -349,22 +343,22 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-focus-add',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Accumulation",
           highlight: 'Accumulated'
-        },
-      ],
+        }],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
       listOfDeletedPltsCache: [],
-      listOfPlts: [],
-      listOfDeletedPlts: [],
       selectedListOfPlts: [],
       selectedListOfDeletedPlts: [],
       selectAll: false,
+      selectAllDeletedPlts: false,
       someItemsAreSelected: false,
+      someDeletedItemsAreSelected: false,
       showDeleted: false,
       filterData: {},
       filters: {
@@ -372,21 +366,6 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         userTag: []
       },
       sortData: {},
-      _tagModalVisible: false,
-      _modalSelect: [],
-      tagForMenu: {},
-      _editingTag: false,
-      wsId: '',
-      uwYear: '',
-      projects: [],
-      addTagModalIndex: 0,
-      fromPlts: false,
-      deletedPltsLength: 0,
-      userTags: [],
-      systemTagsCount: {},
-      wsHeaderSelected: true,
-      pathTab: true,
-      selectedItemForMenu: null,
       status: {
         Published: {
           selected: false
@@ -397,18 +376,22 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         Accumulated: {
           selected: false
         },
-      }
-    };
-    this.rightMenuInputs = {
-      basket: [],
-      pltDetail: null,
-      selectedTab: {
-        index: 0,
-        title: 'basket',
       },
-      tabs: {'basket': true,'pltDetail': true},
-      visible: false,
-      mode: "pop-up"
+      openedPlt: "",
+    };
+    this.leftMenuInputs= {
+      wsId: '',
+      uwYear: 0,
+      projects: [],
+      showDeleted: this.tableInputs['showDeleted'],
+      filterData: this.tableInputs['filterData'],
+      filters: this.tableInputs['filters'],
+      deletedPltsLength: 0,
+      userTags: [],
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      systemTagsCount: {},
+      wsHeaderSelected: true,
+      pathTab: true,
     };
   }
 
@@ -436,13 +419,17 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     this.keywordFormGroup = new FormGroup({
       keyword: new FormControl(null)
     });
-
   }
 
   onHide() {
     this.onVisibleChange.emit(false);
     this.destroy();
-    this.Inputs= {
+    this.tableInputs= {
+      dataKey: 'pltId',
+      scrollConfig: {
+        containerHeight: null,
+        containerGap: '106px'
+      },
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -450,7 +437,6 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           }
         },
       ],
-      scrollHeight: 'calc(100vh - 375px)',
       filterInput: '',
       pltColumns: [
         {
@@ -639,12 +625,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
       listOfDeletedPltsCache: [],
-      listOfPlts: [],
-      listOfDeletedPlts: [],
       selectedListOfPlts: [],
       selectedListOfDeletedPlts: [],
       selectAll: false,
+      selectAllDeletedPlts: false,
       someItemsAreSelected: false,
+      someDeletedItemsAreSelected: false,
       showDeleted: false,
       filterData: {},
       filters: {
@@ -652,21 +638,6 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         userTag: []
       },
       sortData: {},
-      _tagModalVisible: false,
-      _modalSelect: [],
-      tagForMenu: {},
-      _editingTag: false,
-      wsId: '',
-      uwYear: '',
-      projects: [],
-      addTagModalIndex: 0,
-      fromPlts: false,
-      deletedPltsLength: 0,
-      userTags: [],
-      systemTagsCount: {},
-      wsHeaderSelected: true,
-      pathTab: true,
-      selectedItemForMenu: null,
       status: {
         Published: {
           selected: false
@@ -677,7 +648,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         Accumulated: {
           selected: false
         },
-      }
+      },
+      openedPlt: "",
     };
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
@@ -695,7 +667,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       mode: "pop-up"
     };
 
-    this.tagsInput= {
+    this.leftMenuInputs= {
       wsId: '',
       uwYear: 0,
       projects: [],
@@ -706,22 +678,248 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
       pathTab: true,
-      assignedTags: [],
-      assignedTagsCache: [],
-      toAssign: [],
-      toRemove: [],
-      usedInWs: [],
-      allTags: [],
-      suggested: [],
-      selectedTags: {},
-      operation: null
     };
   }
 
   onShow() {
+    this.tableInputs= {
+      dataKey: 'pltId',
+      scrollConfig: {
+        containerHeight: null,
+        containerGap: null
+      },
+      contextMenuItems: [
+        {
+          label: 'View Detail', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt);
+          }
+        },
+      ],
+      filterInput: '',
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '40',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox',
+        active: true
+      },
+        {
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          sorted: false,
+          filtred: false,
+          resizable: true,
+          width: '66',
+          unit: 'px',
+          icon: null,
+          type: 'tags',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltId',
+          header: 'PLT ID',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          width: '28',
+          unit: '%',
+          type: 'id',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltName',
+          header: 'PLT Name',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '80',
+          unit: '%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          sorted: true,
+          filtred: true,
+          resizable: false,
+          width: '53',
+          unit: 'px',
+          icon: null,
+          type: 'field',
+          textAlign: 'center',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'regionPerilCode',
+          header: 'Region Peril Code',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '35',
+          unit: '%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'regionPerilName',
+          header: 'Region Peril Name',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '60',
+          unit: '%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'grain',
+          header: 'Grain',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70',
+          unit: '%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'vendorSystem',
+          header: 'Vendor System',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '25%',
+          icon: null,
+          type: 'field', active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'rap',
+          header: 'RAP',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '25',
+          unit: '%',
+          icon: null,
+          type: 'field',
+          active: true
+        },{
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-note',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Published for Pricing",
+          highlight: 'Published'
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Priced",
+          highlight: 'Priced'
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-focus-add',
+          type: 'icon',
+          width: '50',
+          unit: 'px',
+          active: true,
+          tooltip: "Published for Accumulation",
+          highlight: 'Accumulated'
+        }],
+      listOfPltsData: [],
+      listOfDeletedPltsData: [],
+      listOfPltsCache: [],
+      listOfDeletedPltsCache: [],
+      selectedListOfPlts: [],
+      selectedListOfDeletedPlts: [],
+      selectAll: false,
+      selectAllDeletedPlts: false,
+      someItemsAreSelected: false,
+      someDeletedItemsAreSelected: false,
+      showDeleted: false,
+      filterData: {},
+      filters: {
+        systemTag: {},
+        userTag: []
+      },
+      sortData: {},
+      status: {
+        Published: {
+          selected: false
+        },
+        Priced: {
+          selected: false
+        },
+        Accumulated: {
+          selected: false
+        },
+      },
+      openedPlt: "",
+    };
     this.browesing=false;
     this.keywordFormGroup.get('keyword')
       .valueChanges
@@ -733,8 +931,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       });
 
     if (this.stepConfig.uwYear && this.stepConfig.wsId) {
-      this.setInputs('wsId', this.stepConfig.wsId);
-      this.setInputs('uwYear', this.stepConfig.uwYear);
+      this.updateTableAndLefMenuInputs('wsId', this.stepConfig.wsId);
+      this.updateTableAndLefMenuInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
     }
 
@@ -751,7 +949,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     }));
 
     this.getPlts().subscribe((data) => {
-      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateTableAndLefMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -803,7 +1001,6 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     this.d = this.actions$.pipe(
       ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
       mergeMap( () => {
-        console.log(this.stepConfig, this.getInputs('listOfPltsData'));
         this.toggleSelectPlts(_.zipObject(
           _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
           _.map(this.stepConfig.plts, plt =>   ({type: true }))
@@ -813,12 +1010,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     ).subscribe( () => this.d.unsubscribe());
 
     this.getProjects().subscribe((projects: any) => {
-      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateTableAndLefMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
     this.getUserTags().subscribe(userTags => {
-      this.setInputs('userTags', userTags || {});
+      this.updateTableAndLefMenuInputs('userTags', userTags || {});
       this.detectChanges();
     })
   }
@@ -885,8 +1082,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
 
   onRowSelect(event) {
     this.selectedWorkspace = event;
-    this.setInputs('wsId', event.workSpaceId);
-    this.setInputs('uwYear', event.uwYear);
+    this.updateTableAndLefMenuInputs('wsId', event.workSpaceId);
+    this.updateTableAndLefMenuInputs('uwYear', event.uwYear);
   }
 
   onRowUnselect(event) {
@@ -894,99 +1091,94 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   getBrowesingItems(workspace) {
-    console.log(workspace);
-    console.log(this.Inputs);
-    console.log(this.getInputs('wsId'),this.getInputs('uwYear'))
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
 
-      if(this.multiSteps) {
-        this.browesing = true;
+    if(this.multiSteps) {
+      this.browesing = true;
 
-        console.log(this.getInputs('wsId') + '-' +this.getInputs('uwYear'))
+      this.dispatch(new fromWorkspaceStore.loadWorkSpaceAndPlts({
+        params: {
+          workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
+        },
+        wsIdentifier: this.getInputs('wsId') + '-' +this.getInputs('uwYear')
+      }));
 
-        this.dispatch(new fromWorkspaceStore.loadWorkSpaceAndPlts({
-          params: {
-            workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
-          },
-          wsIdentifier: this.getInputs('wsId') + '-' +this.getInputs('uwYear')
-        }));
+      this.getPlts().subscribe((data) => {
+        this.updateTableAndLefMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
-        this.getPlts().subscribe((data) => {
-          this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+        this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+        this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
+        this.updateMenuKey('basket', []);
+        this.setInputs('selectedListOfPlts', []);
 
-          this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
-          this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
-          this.updateMenuKey('basket', []);
-          this.setInputs('selectedListOfPlts', []);
-
-          _.forEach(data, (v, k) => {
-            if (v.selected) {
-              this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), v.pltId));
-              this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
-                pltId: v.pltId,
-                ...v
-              }));
-            }
-          })
-
-          this.detectChanges();
-        });
-
-        this.getDeletedPlts()
-          .subscribe((deletedData) => {
-            this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
-            this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
-            this.setInputs('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
-
-            this.detectChanges();
-          });
-
-        this.getPlts().subscribe(data => {
-          this.setInputs('selectAll',
-            (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
-            &&
-            this.getTableInputKey('listOfPltsData').length > 0);
-
-          this.setInputs("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
-          this.detectChanges();
-        });
-
-        this.getDeletedPlts().subscribe(deletedPlts => {
-          this.setInputs('selectAllDeletedPlts',
-            (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
-            &&
-            this.getTableInputKey('listOfDeletedPltsData').length > 0);
-
-          this.setInputs("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
-          this.detectChanges();
-        });
-
-        this.getProjects().subscribe((projects: any) => {
-          this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
-          this.detectChanges();
-        });
-
-        this.getUserTags().subscribe(userTags => {
-          this.setInputs('userTags', userTags || {});
-          this.detectChanges();
+        _.forEach(data, (v, k) => {
+          if (v.selected) {
+            this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), v.pltId));
+            this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+              pltId: v.pltId,
+              ...v
+            }));
+          }
         })
 
-        this.getOpenedPlt().subscribe(openedPlt => {
-          this.setInputs('pltDetail', openedPlt);
-          this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
-          this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
+        this.detectChanges();
+      });
+
+      this.getDeletedPlts()
+        .subscribe((deletedData) => {
+          this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
+          this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
+          this.setInputs('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
+
           this.detectChanges();
         });
-      } else {
-        this.onVisibleChange.emit(false);
-      }
+
+      this.getPlts().subscribe(data => {
+        this.setInputs('selectAll',
+          (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
+          &&
+          this.getTableInputKey('listOfPltsData').length > 0);
+
+        this.setInputs("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
+        this.detectChanges();
+      });
+
+      this.getDeletedPlts().subscribe(deletedPlts => {
+        this.setInputs('selectAllDeletedPlts',
+          (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
+          &&
+          this.getTableInputKey('listOfDeletedPltsData').length > 0);
+
+        this.setInputs("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
+        this.detectChanges();
+      });
+
+      this.getProjects().subscribe((projects: any) => {
+        this.updateTableAndLefMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+        this.detectChanges();
+      });
+
+      this.getUserTags().subscribe(userTags => {
+        this.updateTableAndLefMenuInputs('userTags', userTags || {});
+        this.detectChanges();
+      })
+
+      this.getOpenedPlt().subscribe(openedPlt => {
+        this.setInputs('pltDetail', openedPlt);
+        this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
+        this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
+        this.detectChanges();
+      });
+    } else {
+      this.onVisibleChange.emit(false);
+    }
   }
 
   setBrowesingItems() {
-      this.onSelectWorkspace.emit(this.selectedWorkspace);
-      this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
-      this.onVisibleChange.emit(false);
+    this.onSelectWorkspace.emit(this.selectedWorkspace);
+    this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
+    this.onVisibleChange.emit(false);
   }
 
   toggleSelectPlts(plts: any) {
@@ -1019,11 +1211,11 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   setFilters($event) {
-    this.setInputs('filters', $event)
+    this.updateTableAndLefMenuInputs('filters', $event)
   }
 
   setUserTags($event) {
-    this.setInputs('userTags', $event)
+    this.updateTableAndLefMenuInputs('userTags', $event)
   }
 
   emitFilters(filters: any) {
@@ -1034,7 +1226,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   setWsHeaderSelect($event: any) {
-    this.setInputs('wsHeaderSelected', $event);
+    this.updateTableAndLefMenuInputs('wsHeaderSelected', $event);
   }
 
   unCheckAll() {
@@ -1047,19 +1239,19 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   setSelectedProjects($event) {
-    this.setInputs('projects', $event);
+    this.updateTableAndLefMenuInputs('projects', $event);
   }
 
   filterPlts(filterData) {
-    this.setInputs('filterData', filterData);
+    this.updateTableAndLefMenuInputs('filterData', filterData);
   }
 
   getInputs(key){
-    return this.Inputs[key];
+    return this.tableInputs[key];
   }
 
   setInputs(key, value) {
-    this.Inputs= {...this.Inputs, [key]: value };
+    this.tableInputs= {...this.tableInputs, [key]: value };
   }
 
   setRightMenuSelectedTab(tab) {
@@ -1075,11 +1267,11 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   updateTable(key: string, value: any) {
-    this.Inputs = tableActions.updateKey.handler(this.Inputs, key, value);
+    this.tableInputs = tableActions.updateKey.handler(this.tableInputs, key, value);
   }
 
   getTableInputKey(key) {
-    return _.get(this.Inputs, key);
+    return _.get(this.tableInputs, key);
   }
 
   rightMenuActionDispatcher(action: Message) {
@@ -1148,16 +1340,15 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
   }
 
   filterD(filterData) {
-    this.updateTableAndTagsInputs('filterData', filterData);
+    this.updateTableAndLefMenuInputs('filterData', filterData);
   }
   resetPath() {
-    this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
-    this.updateTableAndTagsInputs('showDeleted', false);
+    this.updateTableAndLefMenuInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
+    this.updateLeftMenuInput('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
+    this.updateTableAndLefMenuInputs('showDeleted', false);
   }
 
   leftMenuActionDispatcher(action: Message) {
-    console.log(action);
 
     switch (action.type) {
 
@@ -1185,34 +1376,37 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       case leftMenuStore.onSetSelectedUserTags:
         this.setUserTags(action.payload);
         break;
-
-      //Tag Manager
-
-      /*case leftMenuStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case leftMenuStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case leftMenuStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case leftMenuStore.clearSelection:
-        this.clearSelection();
-        break;
-      case leftMenuStore.save:
-        this.save();
-        break;*/
     }
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+    this.tagsInputs= {...this.tagsInputs, [key]: value};
   }
 
-  updateTableAndTagsInputs(key, value) {
-    this.updateTagsInput(key, value);
+  updateLeftMenuInput(key, value) {
+    this.leftMenuInputs= {...this.leftMenuInputs, [key]: value};
+  }
+
+  updateTableAndLefMenuInputs(key, value) {
+    this.updateLeftMenuInput(key, value);
     this.updateTable(key,value);
+  }
+
+  resizing() {
+    this.detectChanges();
+  }
+
+  collapseLeftMenu() {
+    this.collapsedTags= !this.collapsedTags;
+    this.detectChanges();
+  }
+
+  onTableContainerResize($event: ResizedEvent) {
+    console.log($event)
+    this.updateTable('scrollConfig', {
+      containerHeight: $event.newHeight,
+      containerGap: '62px',
+    })
   }
 
 }

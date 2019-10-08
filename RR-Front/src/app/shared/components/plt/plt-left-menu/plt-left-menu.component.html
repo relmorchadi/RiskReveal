@@ -1,19 +1,17 @@
-<nz-tabset class="tabset-left tabs-standard-top">
-  <nz-tab *ngIf="tagsInput?.pathTab" [nzTitle]="path" class="path-content">
+<nz-tabset (nzSelectedIndexChange)="detectParentChanges()" class="tabset-left tabs-standard-top">
+  <nz-tab *ngIf="leftMenuInputs?.pathTab" [nzTitle]="path" class="path-content">
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
-        <span
-          [ngStyle]="{'background-color': tagsInput.wsHeaderSelected && !tagsInput.showDeleted ?  '#FDFBDF' : 'white'}"
-          class="wsHeader"
-          (click)="resetPath()">
+        <span class="wsHeader" [ngStyle]="{'background-color': leftMenuInputs.wsHeaderSelected && !leftMenuInputs.showDeleted ?  '#FDFBDF' : 'white'}"
+              (click)="resetPath()">
           <i class="icon-window-section"></i>
-          <span class="body-info">{{tagsInput?.wsId}} - {{tagsInput?.uwYear}}</span>
+          <span class="body-info">{{leftMenuInputs?.wsId}} - {{leftMenuInputs?.uwYear}}</span>
       </span>
       <ul class="title-list">
         <!--
-        <ng-container *ngFor="let project of tagsInput.projects;let i = index;">
+        <ng-container *ngFor="let project of leftMenuInputs.projects;let i = index;">
           <li *ngIf="i < 10" (click)="filter('project',null,project.projectId)"
               style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
               [ngClass]="{'active-path': project.selected}">
@@ -23,7 +21,7 @@
           </li>
         </ng-container>
         -->
-        <li (click)="filter('project',null,project.projectId)" *ngFor="let project of tagsInput.projects"
+        <li *ngFor="let project of leftMenuInputs.projects" (click)="filter('project',null,project.projectId)"
             class="clickable-item"
             [ngClass]="{'active-path': project.selected}">
           <i class="icon-assignment_24px"></i>
@@ -31,14 +29,12 @@
                 [nz-tooltip]="project.name + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')">{{( project.name + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
         <li>
-          <div
-            [ngStyle]="{'display': tagsInput.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': tagsInput.showDeleted ? 'rgb(253, 251, 223)' : 'white'}"
-            class="plt-trash" style="font-size: 0.7em;">
+          <div class="plt-trash" [ngStyle]="{'display': leftMenuInputs.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': leftMenuInputs.showDeleted ? 'rgb(253, 251, 223)' : 'white'}" style="font-size: 0.7em;">
             <div class="cnt" (click)="toggleDeletedPlts()">
               <i class="icon-trash-alt"></i>
               <span> Deleted PLTs </span>
             </div>
-            <span class="deleted-counter">{{tagsInput.deletedPltsLength}}</span>
+            <span class="deleted-counter">{{leftMenuInputs.deletedPltsLength}}</span>
           </div>
         </li>
 
@@ -61,16 +57,16 @@
           </button>
         </div>
         <div class="rest">
-          <div *ngFor="let key of tagsInput?.userTags | keys" class="ml-3 mt-1" nz-row>
+          <div *ngFor="let key of leftMenuInputs?.userTags | keys" nz-row class="ml-3 mt-1">
             <span
               #tagMenu
-              (click)="setFilter('userTag', tagsInput.userTags[key],null)"
+              [ngClass]="{'active-tag': leftMenuInputs.userTags[key]?.selected}"
               class="a-chips-input-mini"
-              [ngClass]="{'active-tag': tagsInput.userTags[key]?.selected}"
-              [ngStyle]="{'background-color': tagsInput.userTags[key]?.tagColor}">
-                      <span class="chips-content">{{tagsInput.userTags[key]?.tagName}}</span>
+              [ngStyle]="{'background-color': leftMenuInputs.userTags[key]?.tagColor}"
+              (click)="setFilter('userTag', leftMenuInputs.userTags[key],null)">
+                      <span class="chips-content">{{leftMenuInputs.userTags[key]?.tagName}}</span>
                       <span class="chips-counter">
-                        {{tagsInput.userTags[key]?.count}}
+                        {{leftMenuInputs.userTags[key]?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
             </span>
@@ -86,29 +82,28 @@
         <nz-collapse
           [nzAccordion]="false"
         >
-          <ng-container *ngFor="let section of (tagsInput?.systemTagsCount | keys)">
+          <ng-container *ngFor="let section of (leftMenuInputs?.systemTagsCount | keys)">
             <ng-container >
               <nz-collapse-panel
                 [nzHeader]="section"
               >
-                <div *ngFor="let tag of ( tagsInput?.systemTagsCount[section] | keys)"
+                <div *ngFor="let tag of ( leftMenuInputs?.systemTagsCount[section] | keys)"
                      style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
                      class="ml-3 my-1"
                 >
                     <span
-                      [ngClass]="{'active-tag': tagsInput?.systemTagsCount[section][tag].selected }"
+                      [ngClass]="{'active-tag': leftMenuInputs?.systemTagsCount[section][tag].selected }"
                       class="a-chips-input-filled-textonly"
                       [ngStyle]="{
-                      'background-color': tagsInput?.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
-                      'cursor': tagsInput?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      'background-color': leftMenuInputs?.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
+                      'cursor': leftMenuInputs?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }"
                       (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)">
                       <span [ngStyle]="{
-                      'cursor': tagsInput?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      'cursor': leftMenuInputs?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }" class="chips-content">{{tag}}</span>
                       <span class="chips-counter">
-                        {{tagsInput?.systemTagsCount[section][tag].count}}
-                        /{{tagsInput?.systemTagsCount[section][tag].max}}
+                        {{leftMenuInputs?.systemTagsCount[section][tag].count}}/{{leftMenuInputs?.systemTagsCount[section][tag].max}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>
@@ -121,164 +116,3 @@
     </div>
   </nz-tab>
 </nz-tabset>
-
-<p-dialog
-  [visible]="tagsInput?._tagModalVisible"
-  [closable]="false"
-  styleClass="m-dialog-modal-tags tag-manager-pop-up"
-  [modal]="true"
-  [responsive]="true"
-  [baseZIndex]="1"
-  [autoZIndex]="false"
-  (onHide)="reset()"
->
-  <p-header>
-    <div class="header">
-      <h6>Tag Manager</h6>
-      <i (click)="tagModal(false)" class="icon-close_24px" style="cursor: pointer"></i>
-    </div>
-  </p-header>
-  <div class="content" style="position: relative;">
-    <div class="content-wrapper">
-      <div class="assigned-tags">
-        <div class="section">
-          <h6>Assigned Tags</h6>
-          <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
-            <span
-              *ngFor="let tag of tagsInput?.assignedTags;let i=index;"
-              [ngClass]="{'active-tag': tagsInput?.selectedTags[tag?.tagId]}"
-              class="a-chips-input-mini"
-              [ngStyle]="{'background-color': tag?.tagColor}"
-              (click)="toggleTag(i, 'de-assign', 'assignedTags')"
-            >
-              <span class="chips-icon">
-                <i *ngIf="tag?.type == 'half'" class="icon-adjust-half"></i>
-                <div *ngIf="tag?.type == 'full'" class="full"></div>
-              </span>
-              <span class="chips-content">{{tag?.tagName}}</span>
-              <span class="chips-counter">
-                        {{tag?.count}}
-                <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
-              </span>
-            </span>
-          </div>
-        </div>
-
-      </div>
-      <div class="unassigned-tags">
-        <nz-collapse>
-          <nz-collapse-panel
-            [nzHeader]="unassigned"
-            [nzActive]="false"
-            [nzShowArrow]="true"
-          >
-            <ng-template #unassigned>
-              <h6>Unassigned Tags</h6>
-            </ng-template>
-            <div class="unassigned-lists">
-              <div class="section" *ngIf="tagsInput?.usedInWs.length">
-                <div class="body-3">Used in Workspace</div>
-                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
-                <span
-                  *ngFor="let tag of tagsInput?.usedInWs; let i=index;"
-                  (click)="toggleTag(i, 'assign', 'usedInWs')"
-                  [ngClass]="{'active-tag':tagsInput?.selectedTags[tag?.tagId]}"
-                  class="a-chips-input-mini"
-                  style="cursor: default"
-                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
-                  <span class="chips-content">{{tag?.tagName}}</span>
-                  <span *ngIf="tag?.count" class="chips-counter">
-                        {{tag?.count}}
-                    <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
-                  </span>
-                </span>
-                </div>
-              </div>
-              <div class="section" *ngIf="tagsInput?.suggested.length">
-                <div class="body-3">Suggested</div>
-                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
-                <span
-                  *ngFor="let tag of tagsInput?.suggested; let i=index;"
-                  (click)="toggleTag(i, 'assign', 'suggested')"
-                  [ngClass]="{'active-tag':tagsInput?.selectedTags[tag?.tagId]}"
-                  class="a-chips-input-mini"
-                  style="cursor: default"
-                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': '1px 10px 0 10px'}">
-                  <span class="chips-content">{{tag?.tagName}}</span>
-              </span>
-                </div>
-              </div>
-              <div class="section" *ngIf="tagsInput?.allTags.length">
-                <div class="body-3">All Tags</div>
-                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
-                <span
-                  *ngFor="let tag of tagsInput?.allTags; let i=index;"
-                  (click)="toggleTag(i, 'assign', 'allTags')"
-                  [ngClass]="{'active-tag':tagsInput?.selectedTags[tag?.tagId]}"
-                  class="a-chips-input-mini"
-                  style="cursor: default"
-                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': '1px 10px 0 10px'}">
-                  <span class="chips-content">{{tag?.tagName}}</span>
-              </span>
-                </div>
-              </div>
-            </div>
-          </nz-collapse-panel>
-        </nz-collapse>
-        <ng-template #extraTpl>
-          <i class=""></i>
-        </ng-template>
-      </div>
-    </div>
-
-  </div>
-  <p-footer>
-    <div class="footer">
-      <form *ngIf="!tagsInput?.operation" [formGroup]="tagForm" class="tag-container footer-left">
-        <div class="a-form-control" style="flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: end;">
-          <div class="color-container">
-            <div class="color" [ngStyle]="{'background-color': color.value}"
-                 (click)="toggleColorPicker()">
-            </div>
-            <color-sketch
-              (clickOutside)="closeColorPicker()"
-              (onChange)="color.setValue($event.color.hex)"
-              [presetColors]="presetColors"
-              *ngIf="visible.value"
-            >
-            </color-sketch>
-          </div>
-          <div class="a-form-input-wrapper">
-            <label class="label-input">Tag title</label>
-            <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)"
-                   formControlName="tagName" placeholder="Title">
-
-            <div class="msg-err" *ngIf="title.errors?.required && title.touched">
-              Title is required *
-            </div>
-
-          </div>
-          <button class="a-buttons-contained" (click)="addNewTag()" style="margin: 0.5em 0.5em 0 16px;">
-            ADD
-          </button>
-        </div>
-      </form>
-      <div *ngIf="tagsInput?.operation">
-        <span>{{ tagsInput?.operation == 'assign' ? (tagsInput?.selectedTags | keys).length : (tagsInput?.selectedTags | keys).length}} {{ tagsInput.operation == 'assign' ? 'Assigned' : 'Unassigned'}}
-          Tags Selected</span>
-        <button (click)="clearSelection()" class="a-button-text-cancel">clear</button>
-        <button class="a-buttons-contained"
-                (click)="confirmSelection()"> {{ tagsInput?.operation == 'assign' ? 'Assign' : 'Remove' }}</button>
-      </div>
-      <div class="footer-right">
-        <button (click)="handlePopUpCancel()" class="a-button-text-cancel">cancel</button>
-        <button class="a-buttons-contained" (click)="save()">Save</button>
-      </div>
-    </div>
-  </p-footer>
-</p-dialog>
-
-

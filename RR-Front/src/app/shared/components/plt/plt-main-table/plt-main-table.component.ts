@@ -35,7 +35,6 @@ export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: tableStore.Input;
   @Input() containerPlts: any;
-  @Input() tableHeight = 'calc(100vh - 430px)';
 
   selectedDropDown: any;
   selectedDropDownTs: any;
@@ -317,10 +316,6 @@ export class PltMainTableComponent implements OnInit {
     return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
   }
 
-  tmp(param: any) {
-    console.log(param);
-  }
-
   filterByStatus(statue: string) {
     this.actionDispatcher.emit({
       type: tableStore.filterByStatus,
@@ -333,10 +328,8 @@ export class PltMainTableComponent implements OnInit {
       innerText,
       scrollWidth
     } = event.element;
-    console.log(event)
 
     if (innerText == "User Tags") {
-      console.log(_.floor(scrollWidth / 18));
       this.userTagsLength = _.floor(scrollWidth / 18);
       this.detectChanges();
     }
@@ -371,5 +364,10 @@ export class PltMainTableComponent implements OnInit {
       }
       return;
     }
+  }
+
+  getElHeight() {
+    const els = document.getElementsByClassName('ui-table-scrollable-header');
+    return els.length ?  document.getElementsByClassName('ui-table-scrollable-header')[0].clientHeight + 'px' : 0;
   }
 }
