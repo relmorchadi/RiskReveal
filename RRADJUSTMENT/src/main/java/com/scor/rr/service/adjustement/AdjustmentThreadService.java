@@ -2,7 +2,8 @@ package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.ScorPltHeaderEntity;
-import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentThreadRepository;
@@ -50,18 +51,18 @@ public class AdjustmentThreadService {
     //Refactor need to be done (methods name does not refer to what they are doing)
     //Done
 
-    public AdjustmentThreadEntity createNewAdjustmentThread(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
+    public AdjustmentThreadEntity createNewAdjustmentThread(AdjustmentThreadCreationRequest adjustmentThreadCreationRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
-        adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
+        adjustmentThreadEntity.setThreadType(adjustmentThreadCreationRequest.getThreadType());
         adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
-        adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
-        adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
-        if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
-            ScorPltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get();
+        adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
+        adjustmentThreadEntity.setLocked(false);
+        if(scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
+            ScorPltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
-                adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
+                adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
                 adjustmentThreadEntity = adjustmentthreadRepository.save(adjustmentThreadEntity);
-                if (adjustmentThreadRequest.isGenerateDefaultThread()) {
+                if (adjustmentThreadCreationRequest.isGenerateDefaultThread()) {
                     adjustmentThreadEntity = defaultAdjustmentService.createDefaultThread(adjustmentThreadEntity);
                 }
                 return adjustmentThreadEntity;
@@ -77,11 +78,11 @@ public class AdjustmentThreadService {
         return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(scorPltHeaderId);
     }
 
-    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
-        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadRequest.getAdjustmentThreadId());
+    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest adjustmentThreadCreationRequest) throws RRException {
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadCreationRequest.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
-            adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
+            adjustmentThreadEntity.setThreadType(adjustmentThreadCreationRequest.getThreadType());
+            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadCreationRequest.getPltFinalId()));
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);

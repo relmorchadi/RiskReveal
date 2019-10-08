@@ -5,7 +5,7 @@ import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentNodeOrderEntity;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
-import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
@@ -23,9 +23,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Timestamp;
-import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {RiskRevealApplication.class})
@@ -64,11 +61,8 @@ public class NodeTest {
 
     @Before
     public void setUp() throws RRException {
-        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadRequest("",
-                true,
-                983,0,
-                "",
-                "",
+        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest("",
+                983,
                 "",
                 false));
 
@@ -76,10 +70,8 @@ public class NodeTest {
                 1,
                 4,1,threadTest.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
-        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadRequest("",true,
-                983,0,
-                "",
-                "",
+        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest("",
+                983,
                 "",
                 false));
 
