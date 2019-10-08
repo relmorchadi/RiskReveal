@@ -124,7 +124,7 @@ public class DefaultAdjustmentService {
     }
 
     public AdjustmentThreadEntity createDefaultThread(AdjustmentThreadEntity adjustmentThreadEntity) throws RRException {
-        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPltHeaderId());
+        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getFinalPLT().getPltHeaderId());
         for (DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
             adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
         }
@@ -137,7 +137,7 @@ public class DefaultAdjustmentService {
 //        if (!defaultAdjustmentNodeEntities.isEmpty()) {
 //            List<AdjustmentNodeEntity> adjustmentNodeEntities = new ArrayList<>();
 //            AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
-//            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(purePlt);
+//            adjustmentThreadEntity.setFinalPLT(purePlt);
 //            adjustmentThreadEntity.setLocked(true);
 //            adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
 //            adjustmentThreadEntity.setCreatedBy("HAMZA");
@@ -152,7 +152,7 @@ public class DefaultAdjustmentService {
 //                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId(),periodBendings ));
 //                purePlt = adjustmentNodeProcessingEntity.getScorPltHeaderByFkAdjustedPlt();
 //            }
-//            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(purePlt);
+//            adjustmentThreadEntity.setInitialPLT(purePlt);
 //            adjustmentThreadRepository.save(adjustmentThreadEntity);
 //            return adjustmentNodeEntities;
 //        } else {

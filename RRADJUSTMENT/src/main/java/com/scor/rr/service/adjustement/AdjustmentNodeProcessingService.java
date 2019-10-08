@@ -298,14 +298,14 @@ public class AdjustmentNodeProcessingService {
 
     public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) throws RRException {
         if(nodeClones != null) {
-            PltHeaderEntity inputPlt = threadCloned.getScorPltHeaderByFkScorPltHeaderThreadPureId();
+            PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();
             for (AdjustmentNodeEntity nodeCloned : nodeClones) {
                 AdjustmentNodeProcessingEntity processingEntitypure = adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntitiesByAdjustmentNodeByFkAdjustmentNode(nodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning());
                 AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
                 processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
                 processingEntityCloned.setScorPltHeaderByFkInputPlt(inputPlt);
-                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPltHeaderId() == threadInitial.getScorPltHeaderByFkScorPltHeaderThreadId().getPltHeaderId() ? threadCloned.getScorPltHeaderByFkScorPltHeaderThreadId() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPltHeaderId()));
+                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPltHeaderId() == threadInitial.getInitialPLT().getPltHeaderId() ? threadCloned.getInitialPLT() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPltHeaderId()));
                 inputPlt = processingEntityCloned.getScorPltHeaderByFkAdjustedPlt();
                 processingEntities.add(processingEntityCloned);
             }

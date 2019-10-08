@@ -16,8 +16,8 @@ public class AdjustmentThreadEntity {
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
     private int adjustmentThreadId;
-    private PltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadId;
-    private PltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadPureId;
+    private PltHeaderEntity initialPLT;
+    private PltHeaderEntity finalPLT;
 
     @Basic
     @Column(name = "ThreadType", length = 255)
@@ -132,23 +132,23 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "ScorPltHeaderThreadId", referencedColumnName = "ScorPltHeaderId")
-    public PltHeaderEntity getScorPltHeaderByFkScorPltHeaderThreadId() {
-        return scorPltHeaderByFkScorPltHeaderThreadId;
+    @JoinColumn(name = "FinalPLTId", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getInitialPLT() {
+        return initialPLT;
     }
 
-    public void setScorPltHeaderByFkScorPltHeaderThreadId(PltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadId) {
-        this.scorPltHeaderByFkScorPltHeaderThreadId = scorPltHeaderByFkScorPltHeaderThreadId;
+    public void setInitialPLT(PltHeaderEntity initialPLT) {
+        this.initialPLT = initialPLT;
     }
 
     @ManyToOne
-    @JoinColumn(name = "ScorPltHeaderThreadPureId", referencedColumnName = "ScorPltHeaderId")
-    public PltHeaderEntity getScorPltHeaderByFkScorPltHeaderThreadPureId() {
-        return scorPltHeaderByFkScorPltHeaderThreadPureId;
+    @JoinColumn(name = "InitialPLTId", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getFinalPLT() {
+        return finalPLT;
     }
 
-    public void setScorPltHeaderByFkScorPltHeaderThreadPureId(PltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadPureId) {
-        this.scorPltHeaderByFkScorPltHeaderThreadPureId = scorPltHeaderByFkScorPltHeaderThreadPureId;
+    public void setFinalPLT(PltHeaderEntity finalPLT) {
+        this.finalPLT = finalPLT;
     }
 
     @Override
