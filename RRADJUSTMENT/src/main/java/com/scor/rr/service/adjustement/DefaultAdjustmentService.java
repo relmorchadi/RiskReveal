@@ -129,22 +129,10 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    private AdjustmentNodeEntity createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
-                                                                                    DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity) {
-        AdjustmentNodeEntity adjustmentNodeEntityDefaultRef = new AdjustmentNodeEntity(defaultAdjustmentNodeEntity.getSequence(),
-                defaultAdjustmentNodeEntity.getCappedMaxExposure(),
-                adjustmentThreadEntity,
-                defaultAdjustmentNodeEntity.getAdjustmentBasis(),
-                defaultAdjustmentNodeEntity.getAdjustmentType(),
-                adjustmentStateRepository.getAdjustmentStateEntityByCodeInvalid());
-        adjustmentNodeEntityDefaultRef = adjustmentnodeRepository.save(adjustmentNodeEntityDefaultRef);
-        return adjustmentNodeEntityDefaultRef;
-    }
-
     public AdjustmentThreadEntity createDefaultThread(AdjustmentThreadEntity adjustmentThreadEntity) throws RRException {
         List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId());
         for (DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
-            createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
+            adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
         }
         return adjustmentThreadEntity;
     }
