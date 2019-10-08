@@ -8,7 +8,7 @@ import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.BinfileRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.WorkspaceRepository;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
@@ -29,7 +29,7 @@ import java.util.List;
 public class CloningScorPltHeader {
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     @Autowired
     BinfileRepository binfileRepository;
@@ -53,7 +53,7 @@ public class CloningScorPltHeader {
     WorkspaceRepository workspaceRepository;
 
     public PltHeaderEntity cloneScorPltHeader(int scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
-        PltHeaderEntity pltHeaderEntityInitial = scorpltheaderRepository.findByPkScorPltHeaderId(scorPltHeaderEntityInitialId);
+        PltHeaderEntity pltHeaderEntityInitial = pltHeaderRepository.findByPltHeaderId(scorPltHeaderEntityInitialId);
         if (pltHeaderEntityInitial != null) {
             PltHeaderEntity pltHeaderEntityClone = new PltHeaderEntity(pltHeaderEntityInitial);
             pltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
@@ -61,7 +61,7 @@ public class CloningScorPltHeader {
             pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
 //            pltHeaderEntityClone.setWorkspaceEntity(pltHeaderEntityInitial.getWorkspaceEntity());
             pltHeaderEntityClone.setCloningSource(pltHeaderEntityInitial);
-            return scorpltheaderRepository.save(pltHeaderEntityClone);
+            return pltHeaderRepository.save(pltHeaderEntityClone);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND, 1);
         }

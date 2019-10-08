@@ -33,7 +33,7 @@ public class DefaultAdjustmentService {
     DefaultAdjustmentNodeRepository defaultAdjustmentNodeRepository;
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     @Autowired
     AdjustmentnodeRepository adjustmentnodeRepository;
@@ -111,8 +111,8 @@ public class DefaultAdjustmentService {
 
     public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
         List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = new ArrayList<>();
-        if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
-            PltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
+        if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
+            PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
             return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                     pltHeaderEntity.getTargetRap().getTargetRapId(),
                     pltHeaderEntity.getRegionPeril().getRegionPerilId(),

@@ -9,7 +9,7 @@ import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ScorPltHeaderService {
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     private static final String PATH = "RRADJUSTMENT\\src\\main\\resources\\file\\";
 
@@ -96,7 +96,7 @@ public class ScorPltHeaderService {
     }
 
     public PltHeaderEntity findOne(int scorPltHeader) {
-        return scorpltheaderRepository.findByPkScorPltHeaderId(scorPltHeader);
+        return pltHeaderRepository.findByPltHeaderId(scorPltHeader);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
