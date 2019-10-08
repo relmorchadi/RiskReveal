@@ -67,6 +67,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    console.log('INIT PROJECTS')
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -80,20 +81,20 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess))
       .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
       .subscribe(() => {
-        this.newProject = false;
-        this.detectChanges();
-        this.notificationService.createNotification('Project added successfully', '',
-          'success', 'topRight', 4000);
-        // this.detectChanges()
-      }
-    );
+          this.newProject = false;
+          this.detectChanges();
+          this.notificationService.createNotification('Project added successfully', '',
+            'success', 'topRight', 4000);
+          // this.detectChanges()
+        }
+      );
     this.status$.subscribe(value => this.status = value);
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
     });
     this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(fromWs.DeleteProjectSuccess)).subscribe(() => {
-      this.notificationService.createNotification('Project deleted successfully', '',
+        this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
       }
     );

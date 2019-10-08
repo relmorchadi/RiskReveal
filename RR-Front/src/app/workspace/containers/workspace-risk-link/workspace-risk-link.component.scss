@@ -12,6 +12,10 @@
     justify-content: center;
   }
 
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
   .ant-tooltip-arrow {
     border-bottom-color: #fff !important;
   }

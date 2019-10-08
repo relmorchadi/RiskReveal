@@ -9,13 +9,14 @@ import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primen
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
+import {ColorGithubModule} from 'ngx-color/github';
 import {DragDropModule, DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {AngularDraggableModule} from "angular2-draggable";
 import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
 import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
-
+import {AngularResizedEventModule} from "angular-resize-event";
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES ],
@@ -32,7 +33,9 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     MultiSelectModule,
     SidebarModule,
     DragDropModuleAngular,
-    AngularDraggableModule
+    AngularDraggableModule,
+    ColorGithubModule,
+    AngularResizedEventModule
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -48,6 +51,8 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     DragDropModuleAngular,
     AngularDraggableModule,
     SidebarModule,
+    ColorGithubModule,
+    AngularResizedEventModule,
     ...COMPONENTS,
     ...PIPES
   ]

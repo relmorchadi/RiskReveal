@@ -13,7 +13,7 @@ import {WorkspaceState} from "../../../workspace/store/states";
 })
 export class SubmissionPageComponent implements OnInit {
   uwAnalysis = 'Submission Data';
-  contractId = 'FA0062789_01';
+  contractId = 'FA0051168';
   uwYear = '2019';
   insured = 'Global Partners';
   contractLabel = '';
