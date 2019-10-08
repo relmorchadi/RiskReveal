@@ -84,7 +84,7 @@
     <mapping class="com.scor.rr.domain.RrAnalysisEntity"/>
     <mapping class="com.scor.rr.domain.RrAnalysisOldEntity"/>
     <mapping class="com.scor.rr.domain.RrAnalysisIncludedTargetRapsEntity"/>
-    <mapping class="com.scor.rr.domain.RrAnalysisNewEntity"/>
+    <mapping class="com.scor.rr.domain.RrAnalysisEntity"/>
     <mapping class="com.scor.rr.domain.RrepCurveHeaderEntity"/>
     <mapping class="com.scor.rr.domain.RrEdmRdmEntity"/>
     <mapping class="com.scor.rr.domain.RrEdmRdmOldEntity"/>
@@ -103,7 +103,7 @@
     <mapping class="com.scor.rr.domain.SubjectpremiumbasisEntity"/>
     <mapping class="com.scor.rr.domain.SubsidiaryEntity"/>
     <mapping class="com.scor.rr.domain.SubsidiaryledgerEntity"/>
-    <mapping class="com.scor.rr.domain.ScorPltHeaderEntity"/>
+    <mapping class="com.scor.rr.domain.PltHeaderEntity"/>
     <mapping class="com.scor.rr.domain.ScorPltHeaderTagsEntity"/>
     <mapping class="com.scor.rr.domain.StepEntity"/>
     <mapping class="com.scor.rr.domain.TermsandconditionsEntity"/>
@@ -118,9 +118,9 @@
       <mapping class="com.scor.rr.domain.AdjustmentNodeEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentTypeEntity"/>
       <mapping class="com.scor.rr.domain.BinFileEntity"/>
-      <mapping class="com.scor.rr.domain.ScorPltHeaderEntity"/>
+      <mapping class="com.scor.rr.domain.PltHeaderEntity"/>
       <mapping class="com.scor.rr.domain.ProjectEntity"/>
-      <mapping class="com.scor.rr.domain.RrAnalysisNewEntity"/>
+      <mapping class="com.scor.rr.domain.RrAnalysisEntity"/>
       <mapping class="com.scor.rr.domain.RegionPerilEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentCategoryEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentStateEntity"/>

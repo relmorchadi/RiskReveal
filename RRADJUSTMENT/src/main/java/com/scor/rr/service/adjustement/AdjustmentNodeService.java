@@ -124,7 +124,7 @@ public class AdjustmentNodeService {
                 lmf,
                 rpmf,
                 peatData,
-                adjustmentThreadEntity.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId(),
+                adjustmentThreadEntity.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPltHeaderId(),
                 adjustmentReturnPeriodBendings);
         return save(adjustmentNodeRequest);
     }

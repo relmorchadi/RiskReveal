@@ -1,7 +1,7 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -58,7 +58,7 @@ public class AdjustmentThreadService {
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(false);
         if(scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
-            ScorPltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
+            PltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
                 adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
                 adjustmentThreadEntity = adjustmentthreadRepository.save(adjustmentThreadEntity);
@@ -89,14 +89,14 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity cloneThread(Integer initialPlt,ScorPltHeaderEntity clonedPlt) throws RRException {
+    public AdjustmentThreadEntity cloneThread(Integer initialPlt,PltHeaderEntity clonedPlt) throws RRException {
        AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
            threadClone.setThreadType(thread.getThreadType());
            threadClone.setLocked(thread.getLocked());
            threadClone.setScorPltHeaderByFkScorPltHeaderThreadId(clonedPlt);
-           threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId()));
+           threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPltHeaderId()));
            return adjustmentthreadRepository.save(threadClone);
 
        } else {
