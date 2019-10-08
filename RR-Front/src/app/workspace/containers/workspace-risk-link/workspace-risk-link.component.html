@@ -346,29 +346,26 @@
                     </ng-template>
                     <ng-template pTemplate="header" let-columns>
                       <tr>
-                        <th *ngFor="let col of columns" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
-                          <ng-container *ngIf="col.header === 'selected'">
+                        <ng-container *ngFor="let col of columns">
+                          <th [ngClass]="{'select-header': col.header === 'selected'}" *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
-                                   nz-checkbox [ngModel]="getCheckedData()"
+                                   nz-checkbox [ngModel]="allCheckedAnalysis"
                                    (ngModelChange)="updateAllChecked('analysis')"
-                                   [nzIndeterminate]="getIndeterminate()"></label>
+                                   [nzIndeterminate]="indeterminateAnalysis"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'edm'"
-                                   nz-checkbox [ngModel]="getCheckedData()"
+                                   nz-checkbox [ngModel]="allCheckedPortolfios"
                                    (ngModelChange)="updateAllChecked('portfolio')"
-                                   [nzIndeterminate]="getIndeterminate()"></label>
-                            <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
-                          </ng-container>
-                          <div *ngIf="col.header !== 'selected'">
-                            {{col.header}}
-<!--                            <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
-                              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-                              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-                              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-                            </ng-container>-->
-                            <p-sortIcon style="position: absolute; float: right;"
-                                        [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                          </div>
-                        </th>
+                                   [nzIndeterminate]="indeterminatePortfolio"></label>
+                          </th>
+                          <th *ngIf="col.header !== 'selected'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
+                            <div>
+                              {{col.header}}
+                              <p-sortIcon style="position: absolute; float: right;"
+                                          [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                                          ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                            </div>
+                          </th>
+                        </ng-container>
                       </tr>
                       <tr>
                         <th *ngFor="let col of columns" pResizableColumn>

@@ -202,28 +202,17 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data[item.dataSourceId].selected = value;
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate =
-            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === portfolios.length - 1 && value === true);
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
-            (numSelectedItems === portfolios.length - 1 && value === true);
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
-    } else if (action === 'chunk') {
+    } else if (action === 'chunk' || action === 'unSelectChunk') {
       let selectedItems = {};
       data.forEach(items => {
-        selectedItems = _.merge({}, selectedItems, {[items.dataSourceId]: {...items, selected: true}});
+        selectedItems = _.merge({}, selectedItems, {[items.dataSourceId]: {...items, selected: action === 'chunk'}});
       });
-      console.log(selectedItems);
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data =
             _.merge({}, draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data, selectedItems);
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate =
-            data.length !== 0 && portfolios.length !== data.length;
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
-            data.length === 0 || portfolios.length === data.length;
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -238,11 +227,9 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data = newData;
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate = false;
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked = selected;
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     }
+    ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
   }
 
   toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
@@ -258,27 +245,17 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data[item.analysisId].selected = value;
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate =
-            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === analysis.length - 1 && value === true);
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
-            (numSelectedItems === analysis.length - 1 && value === true);
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
-    } else if (action === 'chunk') {
+    } else if (action === 'chunk' || action === 'unSelectChunk') {
       let selectedItems = {};
       data.forEach(items => {
-        selectedItems = _.merge({}, selectedItems, {[items.analysisId]: {...items, selected: true}});
+        selectedItems = _.merge({}, selectedItems, {[items.analysisId]: {...items, selected: action === 'chunk'}});
       });
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data =
             _.merge({}, draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data, selectedItems);
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate =
-            data.length !== 0 && analysis.length !== data.length;
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
-            data.length === 0 || analysis.length === data.length;
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -293,11 +270,9 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data = newData;
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate = false;
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked = selected;
         }));
-      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     }
+    ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
   }
 
   toggleRiskLinkResult(ctx: StateContext<WorkspaceModel>, payload) {
@@ -672,7 +647,7 @@ export class RiskLinkStateService {
             financialPerspective: ['RL'],
             occurrenceBasis: 'PerEvent',
             regionPeril: 'EUET',
-            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
+            division: this._getDivision(dt.analysisName),
             ty: true,
             peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
               {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
@@ -694,7 +669,7 @@ export class RiskLinkStateService {
             id: dt.dataSourceId + '-' + dt.dataSourceName,
             selected: false,
             scanned: true,
-            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
+            division: this._getDivision(dt.dataSourceName),
             status: 100,
             unitMultiplier: 1,
             proportion: 100,
@@ -1901,6 +1876,17 @@ export class RiskLinkStateService {
   private _getTypeData(item) {
     const lastIndex = item.slice(-2);
     return lastIndex === '_R';
+  }
+
+  private _getDivision(input) {
+    const lastIndex = input.slice(-3);
+    if (lastIndex === '_03') {
+      return 'Division N°3';
+    } else if (lastIndex === '_02') {
+      return 'Division N°2';
+    } else {
+      return 'Division N°1';
+    }
   }
 }
 
