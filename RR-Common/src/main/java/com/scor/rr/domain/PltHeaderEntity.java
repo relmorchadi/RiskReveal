@@ -570,7 +570,7 @@ public class PltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "CloningSourceId", referencedColumnName = "ScorPltHeaderId",insertable = false,updatable = false)
+    @JoinColumn(name = "CloningSourceId", referencedColumnName = "PltHeaderId",insertable = false,updatable = false)
     public PltHeaderEntity getCloningSource() {
         return cloningSource;
     }
