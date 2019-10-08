@@ -21,7 +21,7 @@ import {
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
-import {AddInputNode, AddJoinNode, EditInputNode} from "../../../store/actions";
+import {AddInputNode, AddJoinNode, AddNoteNode, EditInputNode} from "../../../store/actions";
 import * as fromInuring from "../../../store/actions/inuring.actions"
 
 @Component({
@@ -245,6 +245,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   toolkit;
   afterViewInit = false;
+  surfaceMode = 'pan';
 
   constructor(private $jsplumb: jsPlumbService, private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store, private _actions: Actions) {
     super(_router, _cdRef, _store);
@@ -253,7 +254,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngOnInit(): void {
     this._actions.pipe(
       this.unsubscribeOnDestroy,
-      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode)
+      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode, AddNoteNode)
     ).subscribe(action => {
       console.log('Actions here')
       if (action instanceof AddInputNode){
@@ -269,9 +270,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       else if (action instanceof EditInputNode) {
         let data = action.payload.data;
         return this.toolkit.updateNode(this.editableNode, data);
-
+      } else if (action instanceof AddNoteNode) {
+        this.toolkit.addNode({type: 'noteNode', name: action.payload.name});
       }
-
 
     })
   }
@@ -279,7 +280,6 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngAfterViewInit(): void {
     this.surface = window['surface'] = this.surfaceComponent.surface;
     this.toolkit = window['toolkit'] = this.$jsplumb.getToolkit(this.toolkitId);
-    console.log('toolkit ===> ', this.toolkit.getNodes());
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
@@ -321,14 +321,14 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   }
 
   addNoteNode(){
-    this.toolkit.addNode({type: 'noteNode', content: 'Heey !!', name: 'New Note'});
+    this.toolkit.addNode({type: 'noteNode', content: 'Heey !!', name: 'New Note', color: '#ffed78'});
   }
 
   ngOnDestroy(): void {
     this.destroy();
   }
 
-  private dblclick(params) {
+  dblclick(params) {
     if (params.node.data.type == 'inputNode') {
       console.log('CLicked inputNode 2 times', params);
       this.editableNode = {...params.node};
@@ -341,8 +341,19 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   }
 
-  private edgeLabelClick(params: any) {
+  edgeLabelClick(params: any) {
     console.log('labelOverlay ======> ', params);
     this.editEdgeEmitter.emit({popup: true, params: params})
+  }
+
+  panMode() {
+    this.surface.setMode('select');
+    this.surface.setMode('pan');
+    this.surfaceMode = 'pan';
+  }
+
+  selectMode() {
+    this.surface.setMode('select');
+    this.surfaceMode = 'select';
   }
 }
