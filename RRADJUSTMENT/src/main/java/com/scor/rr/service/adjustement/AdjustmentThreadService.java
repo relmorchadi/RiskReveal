@@ -74,8 +74,8 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity getByScorPltHeader(int scorPltHeaderId){
-        return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(scorPltHeaderId);
+    public AdjustmentThreadEntity getByPltHeader(int pltHeaderId){
+        return adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
     public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest adjustmentThreadCreationRequest) throws RRException {
@@ -90,7 +90,7 @@ public class AdjustmentThreadService {
     }
 
     public AdjustmentThreadEntity cloneThread(Integer initialPlt,PltHeaderEntity clonedPlt) throws RRException {
-       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(initialPlt);
+       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
            threadClone.setThreadType(thread.getThreadType());

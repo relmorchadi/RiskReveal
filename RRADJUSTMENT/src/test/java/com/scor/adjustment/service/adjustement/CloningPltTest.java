@@ -62,8 +62,8 @@ public class CloningPltTest {
         Assert.assertEquals(scorPltHeaderCloned.getEngineType(),scorPltHeaderCloned.getCloningSource().getEngineType());
         Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getPath(),null);
         Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getFqn(),null);
-        AdjustmentThreadEntity threadInitial = threadService.getByScorPltHeader(435);
-        AdjustmentThreadEntity threadCloned = threadService.getByScorPltHeader(scorPltHeaderCloned.getPltHeaderId());
+        AdjustmentThreadEntity threadInitial = threadService.getByPltHeader(435);
+        AdjustmentThreadEntity threadCloned = threadService.getByPltHeader(scorPltHeaderCloned.getPltHeaderId());
 //        if(threadInitial != null) {
 //            List<AdjustmentNodeEntity> nodeEntitiesInitial = nodeService.findByThread(threadInitial.getAdjustmentThreadId());
 //            List<AdjustmentNodeEntity> nodeEntitiesCloned = nodeService.findByThread(threadCloned.getAdjustmentThreadId());
