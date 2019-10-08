@@ -48,26 +48,10 @@ public class RrAnalysisEntity {
     private String lossAmplification;
     private String model;
     private String tags;
-    private String useres;
+    private String userNotes;
     private String overrideReasonText;
     private String resultName;
     private String sourceLossModellingBasis;
-    private String sourceLossTableType;
-    private String eventSet;
-    private String modelModule;
-    private String sourceResultsReference;
-    private String subPeril;
-    private String region;
-    private String profileName;
-    private String occurrenceBasisOverrideReason;
-    private String occurenceBasisOverridenBy;
-    private String metadata;
-    private String sourceEntitylingSystem;
-    private String sourceEntitylingSystemInstance;
-    private String sourceEntitylingSystemVersion;
-    private String sourceEntitylingVendor;
-    private String sourceLossEntitylingBasis;
-    private ProjectImportRunEntity projectImportRunByProjectImportRunId;
 
     @Id
     @Column(name = "rrAnalysisId", nullable = false)
@@ -470,13 +454,13 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "useres", length = 255)
-    public String getUseres() {
-        return useres;
+    @Column(name = "userNotes", length = 255)
+    public String getUserNotes() {
+        return userNotes;
     }
 
-    public void setUseres(String useres) {
-        this.useres = useres;
+    public void setUserNotes(String userNotes) {
+        this.userNotes = userNotes;
     }
 
     @Basic
@@ -507,156 +491,6 @@ public class RrAnalysisEntity {
 
     public void setSourceLossModellingBasis(String sourceLossModellingBasis) {
         this.sourceLossModellingBasis = sourceLossModellingBasis;
-    }
-
-    @Basic
-    @Column(name = "sourceLossTableType", length = 255)
-    public String getSourceLossTableType() {
-        return sourceLossTableType;
-    }
-
-    public void setSourceLossTableType(String sourceLossTableType) {
-        this.sourceLossTableType = sourceLossTableType;
-    }
-
-    @Basic
-    @Column(name = "eventSet", length = 255)
-    public String getEventSet() {
-        return eventSet;
-    }
-
-    public void setEventSet(String eventSet) {
-        this.eventSet = eventSet;
-    }
-
-    @Basic
-    @Column(name = "modelModule", length = 255)
-    public String getModelModule() {
-        return modelModule;
-    }
-
-    public void setModelModule(String modelModule) {
-        this.modelModule = modelModule;
-    }
-
-    @Basic
-    @Column(name = "sourceResultsReference", length = 255)
-    public String getSourceResultsReference() {
-        return sourceResultsReference;
-    }
-
-    public void setSourceResultsReference(String sourceResultsReference) {
-        this.sourceResultsReference = sourceResultsReference;
-    }
-
-    @Basic
-    @Column(name = "subPeril", length = 255)
-    public String getSubPeril() {
-        return subPeril;
-    }
-
-    public void setSubPeril(String subPeril) {
-        this.subPeril = subPeril;
-    }
-
-    @Basic
-    @Column(name = "region", length = 255)
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
-    @Basic
-    @Column(name = "profileName", length = 255)
-    public String getProfileName() {
-        return profileName;
-    }
-
-    public void setProfileName(String profileName) {
-        this.profileName = profileName;
-    }
-
-    @Basic
-    @Column(name = "occurrenceBasisOverrideReason", length = 255)
-    public String getOccurrenceBasisOverrideReason() {
-        return occurrenceBasisOverrideReason;
-    }
-
-    public void setOccurrenceBasisOverrideReason(String occurrenceBasisOverrideReason) {
-        this.occurrenceBasisOverrideReason = occurrenceBasisOverrideReason;
-    }
-
-    @Basic
-    @Column(name = "occurenceBasisOverridenBy", length = 255)
-    public String getOccurenceBasisOverridenBy() {
-        return occurenceBasisOverridenBy;
-    }
-
-    public void setOccurenceBasisOverridenBy(String occurenceBasisOverridenBy) {
-        this.occurenceBasisOverridenBy = occurenceBasisOverridenBy;
-    }
-
-    @Basic
-    @Column(name = "metadata", length = -1)
-    public String getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(String metadata) {
-        this.metadata = metadata;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingSystem", length = 255)
-    public String getSourceEntitylingSystem() {
-        return sourceEntitylingSystem;
-    }
-
-    public void setSourceEntitylingSystem(String sourceEntitylingSystem) {
-        this.sourceEntitylingSystem = sourceEntitylingSystem;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingSystemInstance", length = 255)
-    public String getSourceEntitylingSystemInstance() {
-        return sourceEntitylingSystemInstance;
-    }
-
-    public void setSourceEntitylingSystemInstance(String sourceEntitylingSystemInstance) {
-        this.sourceEntitylingSystemInstance = sourceEntitylingSystemInstance;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingSystemVersion", length = 255)
-    public String getSourceEntitylingSystemVersion() {
-        return sourceEntitylingSystemVersion;
-    }
-
-    public void setSourceEntitylingSystemVersion(String sourceEntitylingSystemVersion) {
-        this.sourceEntitylingSystemVersion = sourceEntitylingSystemVersion;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingVendor", length = 255)
-    public String getSourceEntitylingVendor() {
-        return sourceEntitylingVendor;
-    }
-
-    public void setSourceEntitylingVendor(String sourceEntitylingVendor) {
-        this.sourceEntitylingVendor = sourceEntitylingVendor;
-    }
-
-    @Basic
-    @Column(name = "sourceLossEntitylingBasis", length = 255)
-    public String getSourceLossEntitylingBasis() {
-        return sourceLossEntitylingBasis;
-    }
-
-    public void setSourceLossEntitylingBasis(String sourceLossEntitylingBasis) {
-        this.sourceLossEntitylingBasis = sourceLossEntitylingBasis;
     }
 
     @Override
@@ -704,39 +538,14 @@ public class RrAnalysisEntity {
                 Objects.equals(lossAmplification, that.lossAmplification) &&
                 Objects.equals(model, that.model) &&
                 Objects.equals(tags, that.tags) &&
-                Objects.equals(useres, that.useres) &&
+                Objects.equals(userNotes, that.userNotes) &&
                 Objects.equals(overrideReasonText, that.overrideReasonText) &&
                 Objects.equals(resultName, that.resultName) &&
-                Objects.equals(sourceLossModellingBasis, that.sourceLossModellingBasis) &&
-                Objects.equals(sourceLossTableType, that.sourceLossTableType) &&
-                Objects.equals(eventSet, that.eventSet) &&
-                Objects.equals(modelModule, that.modelModule) &&
-                Objects.equals(sourceResultsReference, that.sourceResultsReference) &&
-                Objects.equals(subPeril, that.subPeril) &&
-                Objects.equals(region, that.region) &&
-                Objects.equals(profileName, that.profileName) &&
-                Objects.equals(occurrenceBasisOverrideReason, that.occurrenceBasisOverrideReason) &&
-                Objects.equals(occurenceBasisOverridenBy, that.occurenceBasisOverridenBy) &&
-                Objects.equals(metadata, that.metadata) &&
-                Objects.equals(sourceEntitylingSystem, that.sourceEntitylingSystem) &&
-                Objects.equals(sourceEntitylingSystemInstance, that.sourceEntitylingSystemInstance) &&
-                Objects.equals(sourceEntitylingSystemVersion, that.sourceEntitylingSystemVersion) &&
-                Objects.equals(sourceEntitylingVendor, that.sourceEntitylingVendor) &&
-                Objects.equals(sourceLossEntitylingBasis, that.sourceLossEntitylingBasis);
+                Objects.equals(sourceLossModellingBasis, that.sourceLossModellingBasis);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rrAnalysisId, projectId, importedDate, creationDate, runDate, importStatus, sourceModellingSystemInstance, sourceModellingVendor, sourceModellingSystem, sourceModellingSystemVersion, dataSourceId, dataSourceName, fileName, analysisId, analysisName, grain, financialPerspective, treatyLabel, treatyTag, peril, geoCode, regionPeril, sourceCurrency, targetCurrency, targetCurrencyBasis, exchangeRate, defaultOccurrenceBasis, userOccurrenceBasis, proportion, proxyScalingBasis, proxyScalingNarrative, unitMultiplier, multiplierBasis, multiplierNarrative, profileKey, description, analysisLevel, lossAmplification, model, tags, useres, overrideReasonText, resultName, sourceLossModellingBasis, sourceLossTableType, eventSet, modelModule, sourceResultsReference, subPeril, region, profileName, occurrenceBasisOverrideReason, occurenceBasisOverridenBy, metadata, sourceEntitylingSystem, sourceEntitylingSystemInstance, sourceEntitylingSystemVersion, sourceEntitylingVendor, sourceLossEntitylingBasis);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "projectImportRunId", referencedColumnName = "ProjectImportRunId")
-    public ProjectImportRunEntity getProjectImportRunByProjectImportRunId() {
-        return projectImportRunByProjectImportRunId;
-    }
-
-    public void setProjectImportRunByProjectImportRunId(ProjectImportRunEntity projectImportRunByProjectImportRunId) {
-        this.projectImportRunByProjectImportRunId = projectImportRunByProjectImportRunId;
+        return Objects.hash(rrAnalysisId, projectId, importedDate, creationDate, runDate, importStatus, sourceModellingSystemInstance, sourceModellingVendor, sourceModellingSystem, sourceModellingSystemVersion, dataSourceId, dataSourceName, fileName, analysisId, analysisName, grain, financialPerspective, treatyLabel, treatyTag, peril, geoCode, regionPeril, sourceCurrency, targetCurrency, targetCurrencyBasis, exchangeRate, defaultOccurrenceBasis, userOccurrenceBasis, proportion, proxyScalingBasis, proxyScalingNarrative, unitMultiplier, multiplierBasis, multiplierNarrative, profileKey, description, analysisLevel, lossAmplification, model, tags, userNotes, overrideReasonText, resultName, sourceLossModellingBasis);
     }
 }
