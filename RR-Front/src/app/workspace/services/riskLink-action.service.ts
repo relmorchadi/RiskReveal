@@ -1144,7 +1144,7 @@ export class RiskLinkStateService {
                         groupType: analysis.grouptypeName,
                         typeWs: 'fac',
                         ...analysis,
-                        selected: false
+                        selected: this._getSelectionValue(ctx, analysis.analysisName)
                       }
                     }
                   ))),
@@ -1238,7 +1238,7 @@ export class RiskLinkStateService {
                         peril: portfolio.peril,
                         portfolioId: portfolio.id,
                         type: portfolio.portType,
-                        selected: false
+                        selected: this._getSelectionValue(ctx, portfolio.portName)
                       }}
                   ))),
                 allChecked: false,
@@ -1348,85 +1348,6 @@ export class RiskLinkStateService {
       })
     );
   }
-
-/*
-  loadPortfolioForLinking(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const {id, name} = payload;
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    return this.riskApi.searchRiskLinkPortfolio(id, name).pipe(
-      mergeMap(dt => {
-        const dataTable = {
-          data: Object.assign({},
-            ...dt.content.map(portfolio => ({
-                [portfolio.dataSourceId]: {
-                  ...portfolio,
-                  selected: false
-                }
-              }
-            ))),
-          allChecked: false,
-          indeterminate: false,
-          totalNumberElement: dt.totalElements,
-          numberOfElement: dt.size,
-          filter: {}
-        };
-        return of(ctx.patchState(
-          produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.linking = {
-              ...draft.content[wsIdentifier].riskLink.linking,
-              portfolio: dataTable
-            };
-          })
-        ));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search Analysis Count');
-        return of();
-      })
-    );
-  }
-
-  loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    return this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
-      mergeMap(dt => {
-        const dataTable = {
-          [payload.id]: {
-            data: Object.assign({},
-              ...dt.content.map(analysis => ({
-                  [analysis.analysisId]: {
-                    ...analysis,
-                    selected: false
-                  }
-                }
-              ))),
-            allChecked: false,
-            indeterminate: false,
-            totalNumberElement: dt.totalElements,
-            numberOfElement: dt.size,
-            filter: {}
-          }
-        };
-        return of(ctx.patchState(
-          produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.linking.rdm.selected = payload;
-            draft.content[wsIdentifier].riskLink.linking = {
-              ...draft.content[wsIdentifier].riskLink.linking,
-              analysis: dataTable
-            };
-          })
-        ));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search contracts Count');
-        return of();
-      })
-    );
-  }*/
 
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
@@ -1876,6 +1797,14 @@ export class RiskLinkStateService {
   private _getTypeData(item) {
     const lastIndex = item.slice(-2);
     return lastIndex === '_R';
+  }
+
+  private _getSelectionValue(ctx, value) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const applyFilters =  value === state.content[wsIdentifier].wsId + '_01' ||
+      value === state.content[wsIdentifier].wsId + '_02' || value === state.content[wsIdentifier].wsId + '_03';
+    return applyFilters;
   }
 
   private _getDivision(input) {

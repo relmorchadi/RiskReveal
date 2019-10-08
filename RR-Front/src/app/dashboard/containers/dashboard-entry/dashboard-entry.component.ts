@@ -68,17 +68,17 @@ export class DashboardEntryComponent implements OnInit {
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs',
           componentName: 'facWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
           componentName: 'facWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
           componentName: 'facWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'Archived CARs',
@@ -137,17 +137,17 @@ export class DashboardEntryComponent implements OnInit {
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs',
           componentName: 'facWidgetComponent', selected: true,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
           componentName: 'facWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
           componentName: 'facWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status',
@@ -197,17 +197,17 @@ export class DashboardEntryComponent implements OnInit {
       {
         id: 99, icon: 'icon-camera-focus', title: 'New CARs',
         componentName: 'facWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
         id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs',
         componentName: 'facWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
         id: 101, icon: 'icon-camera-focus', title: 'Archived CARs',
         componentName: 'facWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status',
