@@ -16,8 +16,8 @@
       <i class="icon-menu_24px"></i>
     </a>
     <ul nz-menu style="font-size: 12px">
-      <li (click)="selectMode()" nz-menu-item>Select Mode</li>
-      <li (click)="panMode()" nz-menu-item>Pan Mode</li>
+      <li (click)="selectMode()" *ngIf="surfaceMode == 'pan'" nz-menu-item>Select Mode</li>
+      <li (click)="panMode()" *ngIf="surfaceMode == 'select'" nz-menu-item>Pan Mode</li>
       <li (click)="refreshToolkit()" nz-menu-item>Clear Canvas</li>
       <li nz-menu-item>Inuring Report</li>
       <li nz-menu-item>Structure Snapshot</li>

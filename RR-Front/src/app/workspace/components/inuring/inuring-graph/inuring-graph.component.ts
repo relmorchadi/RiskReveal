@@ -347,6 +347,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   }
 
   panMode() {
+    this.surface.setMode('select');
     this.surface.setMode('pan');
     this.surfaceMode = 'pan';
   }
