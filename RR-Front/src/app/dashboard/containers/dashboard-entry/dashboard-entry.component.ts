@@ -141,12 +141,12 @@ export class DashboardEntryComponent implements OnInit {
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {

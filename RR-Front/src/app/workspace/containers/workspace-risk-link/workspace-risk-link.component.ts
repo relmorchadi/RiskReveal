@@ -6,7 +6,7 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
-import {LoadFacDataAction, PatchRiskLinkDisplayAction, UpdateWsRouting} from '../../store/actions';
+import {PatchRiskLinkDisplayAction, UpdateWsRouting} from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
@@ -143,7 +143,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.hyperLinksConfig = {wsId, uwYear: year};
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
         if (this.tabStatus === 'fac') {
-          this.dispatch(new LoadFacDataAction());
+          this.dispatch([new fromWs.LoadFacDataAction()]);
         }
         this.detectChanges();
       })
@@ -249,7 +249,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   toggleItemsListRDM(RDM) {
-    this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
+    this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction(RDM), new fromWs.PatchAddToBasketStateAction()]);
     this.getCheckedData();
     this.getIndeterminate();
     this.detectChanges();
