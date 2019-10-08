@@ -8,6 +8,9 @@ public class AdjustmentThreadCreationRequest {
     private String createdBy;
     private boolean generateDefaultThread;
 
+    public AdjustmentThreadCreationRequest() {
+    }
+
     public AdjustmentThreadCreationRequest(String threadType, Integer pltPureId, String createdBy, boolean generateDefaultThread) {
         this.threadType = threadType;
         this.pltPureId = pltPureId;

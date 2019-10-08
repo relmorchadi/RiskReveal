@@ -9,6 +9,9 @@ public class AdjustmentThreadUpdateRequest {
     private int pltFinalId;
     private String lastModifiedBy;
 
+    public AdjustmentThreadUpdateRequest() {
+    }
+
     public AdjustmentThreadUpdateRequest(String threadType, int adjustmentThreadId, int pltFinalId, String lastModifiedBy) {
         this.threadType = threadType;
         this.adjustmentThreadId = adjustmentThreadId;
