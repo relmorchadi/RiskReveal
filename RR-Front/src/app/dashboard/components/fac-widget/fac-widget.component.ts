@@ -179,7 +179,7 @@ export class FacWidgetComponent implements OnInit {
   }*/
 
   applyFilters(data) {
-    let filteredData = [...data];
+    let filteredData = [...(data || [])];
     if (this.filterCurrent) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
     } else if (this.filterNew) {
