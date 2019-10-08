@@ -15,13 +15,13 @@ public class AdjustmentThreadRest {
     AdjustmentThreadService adjustmentThreadService;
 
 
-    @PostMapping("pure")
-    public AdjustmentThreadEntity savePurePlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
+    @PostMapping("create")
+    public AdjustmentThreadEntity createNewAdjustmentThread(@RequestBody AdjustmentThreadRequest request) throws RRException {
         return adjustmentThreadService.createNewAdjustmentThread(request);
     }
 
-    @PostMapping("adjusted")
-    public AdjustmentThreadEntity saveAdjustedPlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
+    @PostMapping("update")
+    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(@RequestBody AdjustmentThreadRequest request) throws RRException {
         return adjustmentThreadService.updateAdjustmentThreadFinalPLT(request);
     }
 
