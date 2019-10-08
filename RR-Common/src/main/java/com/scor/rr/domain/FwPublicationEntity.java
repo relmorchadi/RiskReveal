@@ -7,10 +7,10 @@ import java.util.Objects;
 @Table(name = "FWPublication", schema = "dbo", catalog = "RiskReveal")
 public class FwPublicationEntity {
     private int fwPublicationId;
-    private Integer scorPltHeaderId;
+    private Integer pltHeaderId;
 
     @Id
-    @Column(name = "fwPublicationId", nullable = false)
+    @Column(name = "FWPublicationId", nullable = false)
     public int getFwPublicationId() {
         return fwPublicationId;
     }
@@ -20,13 +20,13 @@ public class FwPublicationEntity {
     }
 
     @Basic
-    @Column(name = "ScorPLTHeaderId")
-    public Integer getScorPltHeaderId() {
-        return scorPltHeaderId;
+    @Column(name = "PLTHeaderId")
+    public Integer getPltHeaderId() {
+        return pltHeaderId;
     }
 
-    public void setScorPltHeaderId(Integer scorPltHeaderId) {
-        this.scorPltHeaderId = scorPltHeaderId;
+    public void setPltHeaderId(Integer pltHeaderId) {
+        this.pltHeaderId = pltHeaderId;
     }
 
     @Override
@@ -35,11 +35,11 @@ public class FwPublicationEntity {
         if (o == null || getClass() != o.getClass()) return false;
         FwPublicationEntity that = (FwPublicationEntity) o;
         return fwPublicationId == that.fwPublicationId &&
-                Objects.equals(scorPltHeaderId, that.scorPltHeaderId);
+                Objects.equals(pltHeaderId, that.pltHeaderId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fwPublicationId, scorPltHeaderId);
+        return Objects.hash(fwPublicationId, pltHeaderId);
     }
 }

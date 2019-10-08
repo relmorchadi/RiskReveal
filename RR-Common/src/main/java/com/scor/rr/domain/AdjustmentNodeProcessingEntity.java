@@ -8,8 +8,8 @@ import java.util.Objects;
 public class AdjustmentNodeProcessingEntity {
     private int adjustmentNodeProcessingId;
     private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode;
-    private PltHeaderEntity scorPltHeaderByFkAdjustedPlt;
-    private PltHeaderEntity scorPltHeaderByFkInputPlt;
+    private PltHeaderEntity adjustedPlt;
+    private PltHeaderEntity inputPlt;
 
     @Id
     @Column(name = "AdjustmentNodeProcessingId", nullable = false)
@@ -46,22 +46,22 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustedPlt", referencedColumnName = "ScorPltHeaderId")
-    public PltHeaderEntity getScorPltHeaderByFkAdjustedPlt() {
-        return scorPltHeaderByFkAdjustedPlt;
+    @JoinColumn(name = "AdjustedPlt", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getAdjustedPlt() {
+        return adjustedPlt;
     }
 
-    public void setScorPltHeaderByFkAdjustedPlt(PltHeaderEntity scorPltHeaderByFkAdjustedPlt) {
-        this.scorPltHeaderByFkAdjustedPlt = scorPltHeaderByFkAdjustedPlt;
+    public void setAdjustedPlt(PltHeaderEntity adjustedPlt) {
+        this.adjustedPlt = adjustedPlt;
     }
 
     @ManyToOne
-    @JoinColumn(name = "InputPlt", referencedColumnName = "ScorPltHeaderId")
-    public PltHeaderEntity getScorPltHeaderByFkInputPlt() {
-        return scorPltHeaderByFkInputPlt;
+    @JoinColumn(name = "InputPlt", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getInputPlt() {
+        return inputPlt;
     }
 
-    public void setScorPltHeaderByFkInputPlt(PltHeaderEntity scorPltHeaderByFkInputPlt) {
-        this.scorPltHeaderByFkInputPlt = scorPltHeaderByFkInputPlt;
+    public void setInputPlt(PltHeaderEntity inputPlt) {
+        this.inputPlt = inputPlt;
     }
 }

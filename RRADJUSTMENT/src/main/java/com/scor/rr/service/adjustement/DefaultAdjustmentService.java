@@ -150,7 +150,7 @@ public class DefaultAdjustmentService {
 //                DefaultRetPerBandingParamsEntity paramsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
 //                List<AdjustmentReturnPeriodBending> periodBendings = UtilsMethode.getReturnPeriodBendings(paramsEntity.getAdjustmentReturnPeriodPath());
 //                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId(),periodBendings ));
-//                purePlt = adjustmentNodeProcessingEntity.getScorPltHeaderByFkAdjustedPlt();
+//                purePlt = adjustmentNodeProcessingEntity.getAdjustedPlt();
 //            }
 //            adjustmentThreadEntity.setInitialPLT(purePlt);
 //            adjustmentThreadRepository.save(adjustmentThreadEntity);
