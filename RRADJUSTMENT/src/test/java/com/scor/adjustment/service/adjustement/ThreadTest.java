@@ -50,8 +50,7 @@ public class ThreadTest {
 
     @Test
     public void createPurePltThread() throws RRException {
-        AdjustmentThreadEntity threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest("",
-                983,
+        AdjustmentThreadEntity threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
                 "",
                 false));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));

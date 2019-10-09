@@ -17,6 +17,17 @@ public class AdjustmentNodeEntity {
     private String userNarrative;
     private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning;
 
+
+    @ManyToOne
+    @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    public EntityEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
+    }
+
     public AdjustmentNodeEntity(Boolean cappedMaxExposure,
                                 AdjustmentThreadEntity adjustmentThreadEntity,
                                 AdjustmentBasisEntity adjustmentBasis,
@@ -131,7 +142,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentCategory", referencedColumnName = "AdjustmentCategoryId")
+    @JoinColumn(name = "AdjustmentCategoryId", referencedColumnName = "AdjustmentCategoryId")
     public AdjustmentCategoryEntity getAdjustmentCategory() {
         return adjustmentCategory;
     }

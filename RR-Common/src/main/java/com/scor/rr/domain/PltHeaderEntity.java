@@ -37,7 +37,7 @@ public class PltHeaderEntity {
     private Timestamp deletedOn;
     private String deletedDue;
     private String deletedBy;
-    private String engineType;
+//    private String engineType;
 //    private String createdBy;
 //    private Timestamp createdOn;
 //    private String lastModifiedBy;
@@ -73,7 +73,7 @@ public class PltHeaderEntity {
         this.sourceLossModelingBasis = other.sourceLossModelingBasis;
 //        this.basisChanged = other.basisChanged;
         this.inuringPackageId = other.inuringPackageId;
-        this.engineType = other.engineType;
+//        this.engineType = other.engineType;
         this.rrAnalysisEntity = other.rrAnalysisEntity;
         this.targetRap = other.targetRap;
         this.regionPeril = other.regionPeril;
@@ -421,15 +421,15 @@ public class PltHeaderEntity {
 //        this.pltLossDataFilePath = pltLossDataFilePath;
 //    }
 
-    @Basic
-    @Column(name = "EngineType", length = 255)
-    public String getEngineType() {
-        return engineType;
-    }
-
-    public void setEngineType(String engineType) {
-        this.engineType = engineType;
-    }
+//    @Basic
+//    @Column(name = "EngineType", length = 255)
+//    public String getEngineType() {
+//        return engineType;
+//    }
+//
+//    public void setEngineType(String engineType) {
+//        this.engineType = engineType;
+//    }
 
     @Id
     @Column(name = "PltHeaderId", nullable = false)
@@ -478,15 +478,15 @@ public class PltHeaderEntity {
 //                Objects.equals(previousNarrative, that.previousNarrative) &&
 //                Objects.equals(currentNarrative, that.currentNarrative) &&
                 Objects.equals(createdDate, that.createdDate) &&
-                Objects.equals(inuringPackageId, that.inuringPackageId) &&
+                Objects.equals(inuringPackageId, that.inuringPackageId);
 //                Objects.equals(pltLossDataFileName, that.pltLossDataFileName) &&
 //                Objects.equals(pltLossDataFilePath, that.pltLossDataFilePath) &&
-                Objects.equals(engineType, that.engineType);
+//                Objects.equals(engineType, that.engineType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pltType, locked, pltSimulationPeriods, generatedFromDefaultAdjustment, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, createdDate, inuringPackageId, engineType, pltHeaderId);
+        return Objects.hash(pltType, locked, pltSimulationPeriods, generatedFromDefaultAdjustment, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, createdDate, inuringPackageId, pltHeaderId);
     }
 
     @ManyToOne

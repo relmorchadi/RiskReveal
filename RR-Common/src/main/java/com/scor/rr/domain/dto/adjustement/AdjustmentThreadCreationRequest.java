@@ -3,7 +3,6 @@ package com.scor.rr.domain.dto.adjustement;
 import java.sql.Timestamp;
 
 public class AdjustmentThreadCreationRequest {
-    private String threadType;
     private Integer pltPureId;
     private String createdBy;
     private boolean generateDefaultThread;
@@ -11,19 +10,10 @@ public class AdjustmentThreadCreationRequest {
     public AdjustmentThreadCreationRequest() {
     }
 
-    public AdjustmentThreadCreationRequest(String threadType, Integer pltPureId, String createdBy, boolean generateDefaultThread) {
-        this.threadType = threadType;
+    public AdjustmentThreadCreationRequest(Integer pltPureId, String createdBy, boolean generateDefaultThread) {
         this.pltPureId = pltPureId;
         this.createdBy = createdBy;
         this.generateDefaultThread = generateDefaultThread;
-    }
-
-    public String getThreadType() {
-        return threadType;
-    }
-
-    public void setThreadType(String threadType) {
-        this.threadType = threadType;
     }
 
     public Integer getPltPureId() {

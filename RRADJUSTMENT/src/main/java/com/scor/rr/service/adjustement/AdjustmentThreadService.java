@@ -1,6 +1,7 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.EntityEntity;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
@@ -53,8 +54,8 @@ public class AdjustmentThreadService {
 
     public AdjustmentThreadEntity createNewAdjustmentThread(AdjustmentThreadCreationRequest adjustmentThreadCreationRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
-        adjustmentThreadEntity.setThreadType(adjustmentThreadCreationRequest.getThreadType());
         adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
+        adjustmentThreadEntity.setLastModifiedOn(adjustmentThreadEntity.getCreatedOn());
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(false);
         if(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
@@ -78,11 +79,11 @@ public class AdjustmentThreadService {
         return adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
-    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest adjustmentThreadCreationRequest) throws RRException {
-        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadCreationRequest.getAdjustmentThreadId());
+    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest request) throws RRException {
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(request.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
-            adjustmentThreadEntity.setThreadType(adjustmentThreadCreationRequest.getThreadType());
-            adjustmentThreadEntity.setInitialPLT(pltHeaderRepository.getOne(adjustmentThreadCreationRequest.getPltFinalId()));
+            adjustmentThreadEntity.setFinalPLT(pltHeaderRepository.getOne(request.getPltFinalId()));
+            adjustmentThreadEntity.setLocked(request.isLocked());
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
@@ -93,7 +94,6 @@ public class AdjustmentThreadService {
        AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
-           threadClone.setThreadType(thread.getThreadType());
            threadClone.setLocked(thread.getLocked());
            threadClone.setInitialPLT(clonedPlt);
            threadClone.setFinalPLT(cloningScorPltHeader.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));

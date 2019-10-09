@@ -115,10 +115,10 @@ public class DefaultAdjustmentService {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
             return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                     pltHeaderEntity.getTargetRap().getTargetRapId(),
-                    pltHeaderEntity.getRegionPeril().getRegionPerilId(),
-                    pltHeaderEntity.getMarketChannel().getMarketChannelId(),
-                    pltHeaderEntity.getEngineType(),
-                    pltHeaderEntity.getEntity().getEntityId());
+                    pltHeaderEntity.getRegionPeril() != null ? pltHeaderEntity.getRegionPeril().getRegionPerilId() : 1,
+                    pltHeaderEntity.getMarketChannel() != null ? pltHeaderEntity.getMarketChannel().getMarketChannelId() : 1,
+                    pltHeaderEntity.getRrAnalysisEntity().getModel(),
+                    pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity().getEntityId() : 1);
         }
         return defaultAdjustmentNodeEntities;
     }

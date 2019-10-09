@@ -7,7 +7,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentThreadEntity {
-    private String threadType;
     private Boolean locked;
     private String createdBy;
     private Timestamp createdOn;
@@ -18,15 +17,28 @@ public class AdjustmentThreadEntity {
     private int adjustmentThreadId;
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
+    private int threadIndex;
+    private EntityEntity entity;
 
-    @Basic
-    @Column(name = "ThreadType", length = 255)
-    public String getThreadType() {
-        return threadType;
+
+    @ManyToOne
+    @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    public EntityEntity getEntity() {
+        return entity;
     }
 
-    public void setThreadType(String threadType) {
-        this.threadType = threadType;
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
+    }
+
+    @Basic
+    @Column(name = "ThreadIndex")
+    public int getThreadIndex() {
+        return threadIndex;
+    }
+
+    public void setThreadIndex(int threadIndex) {
+        this.threadIndex = threadIndex;
     }
 
     @Basic
@@ -116,7 +128,6 @@ public class AdjustmentThreadEntity {
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentThreadEntity that = (AdjustmentThreadEntity) o;
         return adjustmentThreadId == that.adjustmentThreadId &&
-                Objects.equals(threadType, that.threadType) &&
                 Objects.equals(locked, that.locked) &&
                 Objects.equals(createdBy, that.createdBy) &&
                 Objects.equals(createdOn, that.createdOn) &&
@@ -128,7 +139,7 @@ public class AdjustmentThreadEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(threadType, locked, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGeneratedOn, generatedOn, adjustmentThreadId);
+        return Objects.hash(locked, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGeneratedOn, generatedOn, adjustmentThreadId);
     }
 
     @ManyToOne
