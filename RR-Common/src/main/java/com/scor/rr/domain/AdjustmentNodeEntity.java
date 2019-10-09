@@ -111,7 +111,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentStateId", referencedColumnName = "AdjustmentStateId")
+    @JoinColumn(name = "AdjustmentNodeState", referencedColumnName = "AdjustmentStateId")
     public AdjustmentStateEntity getAdjustmentState() {
         return adjustmentState;
     }
@@ -131,7 +131,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentStateId", referencedColumnName = "AdjustmentStateId")
+    @JoinColumn(name = "AdjustmentCategory", referencedColumnName = "AdjustmentCategoryId")
     public AdjustmentCategoryEntity getAdjustmentCategory() {
         return adjustmentCategory;
     }
