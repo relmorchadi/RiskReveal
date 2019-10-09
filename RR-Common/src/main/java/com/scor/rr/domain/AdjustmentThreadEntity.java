@@ -132,7 +132,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FinalPLTId", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "FinalPLT", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getInitialPLT() {
         return initialPLT;
     }
@@ -142,7 +142,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "InitialPLTId", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "InitialPLT", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getFinalPLT() {
         return finalPLT;
     }
