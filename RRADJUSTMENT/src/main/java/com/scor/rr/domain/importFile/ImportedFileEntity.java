@@ -1,4 +1,4 @@
-package com.scor.rr.domain;
+package com.scor.rr.domain.importFile;
 
 import javax.persistence.*;
 import java.util.Objects;

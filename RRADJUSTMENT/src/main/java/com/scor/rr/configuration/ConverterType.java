@@ -1,6 +1,6 @@
 package com.scor.rr.configuration;
 
-import com.scor.rr.domain.MetadataHeaderSectionEntity;
+import com.scor.rr.domain.importFile.MetadataHeaderSectionEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,11 +2,11 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.configuration.utils.LossDataFileUtils;
-import com.scor.rr.domain.MetadataHeaderSectionEntity;
-import com.scor.rr.domain.MetadataHeaderSegmentEntity;
+import com.scor.rr.domain.importFile.MetadataHeaderSectionEntity;
+import com.scor.rr.domain.importFile.FileBasedImportProducer;
 import com.scor.rr.repository.ImportedFileRepository;
 import com.scor.rr.repository.MetadataHeaderSectionRepository;
-import com.scor.rr.repository.MetadataHeaderSegmentRepository;
+import com.scor.rr.repository.FileBasedImportProducerRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,13 +32,13 @@ public class MetadataHeaderSystem {
     MetadataHeaderSectionRepository metadataHeader;
 
     @Autowired
-    MetadataHeaderSegmentRepository headerSegment;
+    FileBasedImportProducerRepository headerSegment;
 
     @Autowired
     ImportedFileRepository importedFileRepository;
 
     List<MetadataHeaderSectionEntity> metadataHeaders;
-    List<MetadataHeaderSegmentEntity> metadataSemgments;
+    List<FileBasedImportProducer> metadataSemgments;
 
 
     @Before

@@ -1,4 +1,4 @@
-package com.scor.rr.domain;
+package com.scor.rr.domain.importFile;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -6,7 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "MetadataHeaderSection", schema = "dbo", catalog = "RiskReveal")
 public class MetadataHeaderSectionEntity {
-    private int metadataHeaderSection;
+    private int id;
     private String metadataAttribute;
     private String description;
     private String dataType;
@@ -16,13 +16,13 @@ public class MetadataHeaderSectionEntity {
     private String defaultValue;
 
     @Id
-    @Column(name = "MetadataHeaderSection", nullable = false)
-    public int getMetadataHeaderSection() {
-        return metadataHeaderSection;
+    @Column(name = "id", nullable = false)
+    public int getId() {
+        return id;
     }
 
-    public void setMetadataHeaderSection(int metadataHeaderSection) {
-        this.metadataHeaderSection = metadataHeaderSection;
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Basic
@@ -100,7 +100,7 @@ public class MetadataHeaderSectionEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MetadataHeaderSectionEntity that = (MetadataHeaderSectionEntity) o;
-        return metadataHeaderSection == that.metadataHeaderSection &&
+        return id == that.id &&
                 Objects.equals(metadataAttribute, that.metadataAttribute) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(dataType, that.dataType);
@@ -108,6 +108,6 @@ public class MetadataHeaderSectionEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(metadataHeaderSection, metadataAttribute, description, dataType);
+        return Objects.hash(id, metadataAttribute, description, dataType);
     }
 }
