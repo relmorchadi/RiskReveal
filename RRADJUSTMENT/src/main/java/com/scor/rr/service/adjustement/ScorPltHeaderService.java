@@ -2,14 +2,14 @@ package com.scor.rr.service.adjustement;
 
 import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
@@ -31,7 +31,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ScorPltHeaderService {
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     private static final String PATH = "RRADJUSTMENT\\src\\main\\resources\\file\\";
 
@@ -95,8 +95,8 @@ public class ScorPltHeaderService {
         return new MultiExtentionReadPltFile().read(new File(path));
     }
 
-    public ScorPltHeaderEntity findOne(int scorPltHeader) {
-        return scorpltheaderRepository.findByPkScorPltHeaderId(scorPltHeader);
+    public PltHeaderEntity findOne(int scorPltHeader) {
+        return pltHeaderRepository.findByPltHeaderId(scorPltHeader);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

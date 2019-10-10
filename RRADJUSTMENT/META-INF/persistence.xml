@@ -11,7 +11,7 @@
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.BinFileEntity</class>
-        <class>com.scor.rr.domain.ScorPltHeaderEntity</class>
+        <class>com.scor.rr.domain.PltHeaderEntity</class>
         <class>com.scor.rr.domain.ContractEntity</class>
         <class>com.scor.rr.domain.Country</class>
         <class>com.scor.rr.domain.ProjectEntity</class>
@@ -78,7 +78,7 @@
         <class>com.scor.rr.domain.RrProjectOldEntity</class>
         <class>com.scor.rr.domain.RrAnalysisOldEntity</class>
         <class>com.scor.rr.domain.RrAnalysisIncludedTargetRapsEntity</class>
-        <class>com.scor.rr.domain.RrAnalysisNewEntity</class>
+        <class>com.scor.rr.domain.RrAnalysisEntity</class>
         <class>com.scor.rr.domain.RrepCurveHeaderEntity</class>
         <class>com.scor.rr.domain.RrEdmRdmEntity</class>
         <class>com.scor.rr.domain.RrEdmRdmOldEntity</class>

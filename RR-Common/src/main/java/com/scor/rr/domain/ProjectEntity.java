@@ -30,7 +30,7 @@ public class ProjectEntity {
     private WorkspaceEntity workspaceByFkWorkspaceId;
 
     @Id
-    @Column(name = "projectId", nullable = false)
+    @Column(name = "ProjectId", nullable = false)
     public int getProjectId() {
         return projectId;
     }
@@ -40,7 +40,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "name", length = 255)
+    @Column(name = "ProjectName", length = 255)
     public String getName() {
         return name;
     }
@@ -50,7 +50,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 255)
+    @Column(name = "ProjectDescription", length = 255)
     public String getDescription() {
         return description;
     }
@@ -60,7 +60,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag")
+    @Column(name = "MasterFlag")
     public Boolean getMasterFlag() {
         return masterFlag;
     }
@@ -70,7 +70,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag")
+    @Column(name = "LinkFlag")
     public Boolean getLinkFlag() {
         return linkFlag;
     }
@@ -80,7 +80,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag")
+    @Column(name = "PublishFlag")
     public Boolean getPublishFlag() {
         return publishFlag;
     }
@@ -90,7 +90,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "clonedFlag")
+    @Column(name = "ClonedFlag")
     public Boolean getClonedFlag() {
         return clonedFlag;
     }
@@ -100,7 +100,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "postInuredFlag")
+    @Column(name = "PostInuredFlag")
     public Boolean getPostInuredFlag() {
         return postInuredFlag;
     }
@@ -110,7 +110,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "mgaFlag")
+    @Column(name = "MgaFlag")
     public Boolean getMgaFlag() {
         return mgaFlag;
     }
@@ -120,7 +120,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", length = 255)
+    @Column(name = "AssignedTo", length = 255)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -130,7 +130,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "creationDate")
+    @Column(name = "CreationDate")
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -140,7 +140,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "receptionDate")
+    @Column(name = "ReceptionDate")
     public Timestamp getReceptionDate() {
         return receptionDate;
     }
@@ -150,7 +150,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "dueDate")
+    @Column(name = "DueDate")
     public Timestamp getDueDate() {
         return dueDate;
     }
@@ -160,7 +160,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", length = 255)
+    @Column(name = "CreatedBy", length = 255)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -180,7 +180,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deleted")
+    @Column(name = "Deleted")
     public Boolean getDeleted() {
         return deleted;
     }
@@ -190,7 +190,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedOn")
+    @Column(name = "DeletedOn")
     public Timestamp getDeletedOn() {
         return deletedOn;
     }
@@ -200,7 +200,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedDue", length = 255)
+    @Column(name = "DeletedDue", length = 255)
     public String getDeletedDue() {
         return deletedDue;
     }
@@ -210,7 +210,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedBy", length = 255)
+    @Column(name = "DeletedBy", length = 255)
     public String getDeletedBy() {
         return deletedBy;
     }

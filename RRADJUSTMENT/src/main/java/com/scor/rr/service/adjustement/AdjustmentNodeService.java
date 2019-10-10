@@ -124,7 +124,7 @@ public class AdjustmentNodeService {
                 lmf,
                 rpmf,
                 peatData,
-                adjustmentThreadEntity.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId(),
+                adjustmentThreadEntity.getFinalPLT().getPltHeaderId(),
                 adjustmentReturnPeriodBendings);
         return save(adjustmentNodeRequest);
     }
@@ -145,7 +145,6 @@ public class AdjustmentNodeService {
                     if(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
                         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
                         log.info("Thread getting successfull : {}",adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-                        adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
                         if(adjustmentNodeRequest.getAdjustmentNodeId() != 0) {
                             adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
                             deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());

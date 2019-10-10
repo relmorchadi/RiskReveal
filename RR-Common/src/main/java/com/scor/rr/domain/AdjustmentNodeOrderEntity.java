@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ADJUSTMENTNODEORDER", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "AdjustmentOrder", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeOrderEntity {
     private int adjustmentNodeOrderId;
     private Integer orderNode;
@@ -23,7 +23,7 @@ public class AdjustmentNodeOrderEntity {
     }
 
     @Basic
-    @Column(name = "orderNode")
+    @Column(name = "AdjustmentOrder")
     public Integer getOrderNode() {
         return orderNode;
     }

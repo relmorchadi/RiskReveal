@@ -1,8 +1,8 @@
 package com.scor.rr.domain.dto.cloning;
 
 import com.scor.rr.domain.InuringPackageEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.ProjectEntity;
-import com.scor.rr.domain.ScorPltHeaderEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class CloningRequest {
     private WorkspaceEntity workspace;
     private List<ProjectEntity> projects;
     private List<InuringPackageEntity> inuringPackages;
-    private List<ScorPltHeaderEntity> scorPltHeaders;
+    private List<PltHeaderEntity> scorPltHeaders;
 
     public WorkspaceEntity getWorkspace() {
         return workspace;
@@ -37,11 +37,11 @@ public class CloningRequest {
         this.inuringPackages = inuringPackages;
     }
 
-    public List<ScorPltHeaderEntity> getScorPltHeaders() {
+    public List<PltHeaderEntity> getScorPltHeaders() {
         return scorPltHeaders;
     }
 
-    public void setScorPltHeaders(List<ScorPltHeaderEntity> scorPltHeaders) {
+    public void setScorPltHeaders(List<PltHeaderEntity> scorPltHeaders) {
         this.scorPltHeaders = scorPltHeaders;
     }
 }

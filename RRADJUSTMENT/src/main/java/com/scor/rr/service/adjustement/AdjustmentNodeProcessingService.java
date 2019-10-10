@@ -14,7 +14,7 @@ import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentnodeRepository;
 import com.scor.rr.repository.AdjustmentnodeprocessingRepository;
 import com.scor.rr.repository.BinfileRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.apache.commons.io.FilenameUtils;
@@ -25,9 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -44,7 +42,7 @@ public class AdjustmentNodeProcessingService {
     AdjustmentnodeprocessingRepository adjustmentnodeprocessingRepository;
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     @Autowired
     BinfileRepository binfileRepository;
@@ -87,9 +85,9 @@ public class AdjustmentNodeProcessingService {
     public AdjustmentNodeProcessingEntity saveByInputPlt(AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
         log.info("------ input PLT processing ------");
         log.info(" getting the input PLT");
-        if (scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).isPresent()) {
+        if (pltHeaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).isPresent()) {
             log.info("success getting the input PLT");
-            ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).get();
+            PltHeaderEntity scorPltHeader = pltHeaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).get();
             log.info(" getting Node");
             if (adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).isPresent()) {
                 log.info("success getting Node");
@@ -101,7 +99,7 @@ public class AdjustmentNodeProcessingService {
                 } else {
                     log.info("Creating node processing");
                 }
-                nodeProcessing.setScorPltHeaderByFkInputPlt(scorPltHeader);
+                nodeProcessing.setInputPlt(scorPltHeader);
                 nodeProcessing.setAdjustmentNodeByFkAdjustmentNode(adjustmentNode);
                 log.info("------End saving input PLT processing ------");
                 return adjustmentnodeprocessingRepository.save(nodeProcessing);
@@ -123,9 +121,9 @@ public class AdjustmentNodeProcessingService {
     public AdjustmentNodeProcessingEntity saveByAdjustedPlt(AdjustmentParameterRequest parameterRequest) throws RRException {
         log.info("------Begin adjusted PLT processing ------");
         log.info(" getting the input PLT");
-        if (scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).isPresent()) {
+        if (pltHeaderRepository.findById(parameterRequest.getPltHeaderInput()).isPresent()) {
             log.info("success getting the input PLT");
-            ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).get();
+            PltHeaderEntity scorPltHeader = pltHeaderRepository.findById(parameterRequest.getPltHeaderInput()).get();
             log.info(" getting Node");
             if (adjustmentnodeRepository.findById(parameterRequest.getNodeId()).isPresent()) {
                 log.info("success getting Node");
@@ -144,14 +142,14 @@ public class AdjustmentNodeProcessingService {
                     if (binFileEntity != null) {
                         log.info("success saving file LOSS for adjusted PLT");
                         log.info("saving PLT");
-                        ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity(scorPltHeader);
+                        PltHeaderEntity scorPltHeaderAdjusted = new PltHeaderEntity(scorPltHeader);
                         scorPltHeaderAdjusted.setBinFileEntity(binFileEntity);
-                        scorPltHeaderAdjusted.setCreatedOn(new Timestamp(new Date().getTime()));
-                        scorPltHeaderAdjusted.setCreatedBy("HAMZA");
+                        scorPltHeaderAdjusted.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
+//                        scorPltHeaderAdjusted.setCreatedBy("HAMZA");
                         scorPltHeaderAdjusted.setPltType("interm");
-                        scorPltHeaderAdjusted = scorpltheaderRepository.save(scorPltHeaderAdjusted);
+                        scorPltHeaderAdjusted = pltHeaderRepository.save(scorPltHeaderAdjusted);
                         log.info("success saving PLT");
-                        nodeProcessing.setScorPltHeaderByFkAdjustedPlt(scorPltHeaderAdjusted);
+                        nodeProcessing.setAdjustedPlt(scorPltHeaderAdjusted);
                         nodeProcessing.setAdjustmentNodeByFkAdjustmentNode(adjustmentNode);
                         log.info("------END adjusted PLT processing ------");
                         return adjustmentnodeprocessingRepository.save(nodeProcessing);
@@ -210,10 +208,10 @@ public class AdjustmentNodeProcessingService {
     }
 
 
-    private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) throws RRException {
-        if(scorPltHeaderEntity != null) {
-            if(scorPltHeaderEntity.getBinFileEntity() != null) {
-                File file = new File(scorPltHeaderEntity.getBinFileEntity().getPath());
+    private List<PLTLossData> getLossFromPltInputAdjustment(PltHeaderEntity pltHeaderEntity) throws RRException {
+        if(pltHeaderEntity != null) {
+            if(pltHeaderEntity.getBinFileEntity() != null) {
+                File file = new File(pltHeaderEntity.getBinFileEntity().getPath());
                 if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {
@@ -300,15 +298,15 @@ public class AdjustmentNodeProcessingService {
 
     public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) throws RRException {
         if(nodeClones != null) {
-            ScorPltHeaderEntity inputPlt = threadCloned.getScorPltHeaderByFkScorPltHeaderThreadPureId();
+            PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();
             for (AdjustmentNodeEntity nodeCloned : nodeClones) {
                 AdjustmentNodeProcessingEntity processingEntitypure = adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntitiesByAdjustmentNodeByFkAdjustmentNode(nodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning());
                 AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
                 processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
-                processingEntityCloned.setScorPltHeaderByFkInputPlt(inputPlt);
-                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId() == threadInitial.getScorPltHeaderByFkScorPltHeaderThreadId().getPkScorPltHeaderId() ? threadCloned.getScorPltHeaderByFkScorPltHeaderThreadId() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId()));
-                inputPlt = processingEntityCloned.getScorPltHeaderByFkAdjustedPlt();
+                processingEntityCloned.setInputPlt(inputPlt);
+                processingEntityCloned.setAdjustedPlt(processingEntitypure.getAdjustedPlt().getPltHeaderId() == threadInitial.getInitialPLT().getPltHeaderId() ? threadCloned.getInitialPLT() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getAdjustedPlt().getPltHeaderId()));
+                inputPlt = processingEntityCloned.getAdjustedPlt();
                 processingEntities.add(processingEntityCloned);
             }
             return processingEntities;
