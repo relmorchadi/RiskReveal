@@ -61,6 +61,7 @@ public class ImportFileService {
     private static final Logger log = LoggerFactory.getLogger(LossDataFileUtils.class);
 
     private static final String START_MARKER = "LOSSFILE\t";
+    private static final String SEGMENT_END_MARKER = "#[SEGMENT_HEADER-END]";
     private static final String END_MARKER = "#[HEADER-END]";
     private static final String PLT_DATA_EVENT_DATE = "MM-DD(N)";
     private static final String PLT_DATA_YEAR = "YEAR";
@@ -174,7 +175,6 @@ public class ImportFileService {
         log.info("start verifyFile : metadataHeaders size {}, headerSegments size {}, path {}", metadataHeaders.size(), headerSegments.size(), path );
         File file = new File(path);
         ArrayList<String> key = new ArrayList<>();
-        ArrayList<String> keyHeader = new ArrayList<>();
         TypeToConvert type = new TypeToConvert();
         List<Field> fs = Arrays.asList(type.getClass().getFields());
         Supplier<Stream<String>> stream = () -> {
@@ -189,15 +189,16 @@ public class ImportFileService {
 
         // TODO validate metadata header segment
         for (FileBasedImportProducer headerSegment : headerSegments) {
+            ArrayList<String> keySegmentHeaders = new ArrayList<>();
             boolean testEndMarker = false;
             boolean testStartMarker = false;
             boolean found = false;
             for (String s : stream.get().collect(Collectors.toList())) {
-                if (s.equals(END_MARKER)) {
+                if (s.equals(SEGMENT_END_MARKER)) {
                     testEndMarker = true;
                     if (!found) {
-                        importedFileRepository.save(new ImportedFileEntity(file.getName(),file.getPath(), Status.FAILED.name(),"Header not exist in file " + headerSegment.getMetadataAttribute()));
-                        log.info("element not found in file {}", headerSegment.getMetadataAttribute());
+                        importedFileRepository.save(new ImportedFileEntity(file.getName(),file.getPath(), Status.FAILED.name(),"Header segment not exist in file "));
+                        log.info("element not found in file");
                         return false;
                     }
                     testHeaderExists = true;
@@ -205,14 +206,46 @@ public class ImportFileService {
                 if (!testEndMarker && testStartMarker) {
                     String[] pltline = s.split("\t");
                     if (pltline.length <= 2) {
-                        if (!keyHeader.contains(pltline[0]) && pltline[0].equals(headerSegment.getMetadataAttribute())) {
-                            keyHeader.add(headerSegment.getMetadataAttribute());
+                        if (!keySegmentHeaders.contains(pltline[0]) && pltline[0].equals(headerSegment.getLossTableHeaderProducer())) {
+                            keySegmentHeaders.add(headerSegment.getLossTableHeaderProducer());
+                            found = true;
+                        }
+                        if (!keySegmentHeaders.contains(pltline[0]) && pltline[0].equals(headerSegment.getLossTableHeaderFormat())) {
+                            keySegmentHeaders.add(headerSegment.getLossTableHeaderFormat());
+                            found = true;
+                        }
+                        if (!keySegmentHeaders.contains(pltline[0]) && pltline[0].equals(headerSegment.getFileFormatVersion())) {
+                            keySegmentHeaders.add(headerSegment.getFileFormatVersion());
                             found = true;
                         }
                     }
                 }
                 if (s.equals(START_MARKER)) {
                     testStartMarker = true;
+                }
+            }
+
+            if (found) { // size of keySegmentHeaders > 0
+                if (!keySegmentHeaders.get(0).equals(headerSegment.getLossTableHeaderProducer())) {
+                    importedFileRepository.save(new ImportedFileEntity(file.getName(),file.getPath(), Status.FAILED.name(),"Header segment is invalid, LossTableHeaderProducer is wrong"));
+                    log.info("Header segment is invalid, LossTableHeaderProducer is wrong");
+                    return false;
+                }
+
+                if (keySegmentHeaders.get(1) == null || (keySegmentHeaders.get(1) != null && !keySegmentHeaders.get(1).equals(headerSegment.getLossTableHeaderFormat()))) {
+                    if (!keySegmentHeaders.get(1).equals(headerSegment.getLossTableHeaderFormat())) {
+                        importedFileRepository.save(new ImportedFileEntity(file.getName(),file.getPath(), Status.FAILED.name(),"Header segment is invalid, LossTableHeaderFormat is wrong"));
+                        log.info("Header segment is invalid, LossTableHeaderFormat is wrong");
+                        return false;
+                    }
+                }
+
+                if (keySegmentHeaders.get(2)  == null || (keySegmentHeaders.get(2) != null && !keySegmentHeaders.get(2).equals(headerSegment.getFileFormatVersion()))) {
+                    if (!keySegmentHeaders.get(1).equals(headerSegment.getFileFormatVersion())) {
+                        importedFileRepository.save(new ImportedFileEntity(file.getName(),file.getPath(), Status.FAILED.name(),"Header segment is invalid, FileFormatVersion is wrong"));
+                        log.info("Header segment is invalid, FileFormatVersion is wrong");
+                        return false;
+                    }
                 }
             }
         }
