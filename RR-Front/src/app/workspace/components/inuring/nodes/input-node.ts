@@ -76,7 +76,7 @@ import {Store} from "@ngxs/store";
 })
 export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
-  index;
+  nodeId;
   plts = [];
 
   constructor(private store: Store) {
@@ -85,11 +85,11 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
   ngOnInit() {
     this.plts= this.getNode().data.plts;
-    this.index= this.getNode().data.index;
+    this.nodeId = this.getNode().data.nodeId;
     console.log(this.plts);
 
     window['toolkit'].bind('nodeUpdated', (data) => {
-      if (data.node.data.type === 'inputNode' && data.node.data.index == this.index) {
+      if (data.node.data.type === 'inputNode' && data.node.data.nodeId == this.nodeId) {
         this.plts = data.node.data.plts;
       }
     })

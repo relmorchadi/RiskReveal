@@ -16,7 +16,8 @@ export const defaultInuringState = {
       status: 'Done',
       creationDate: Date.now(),
       lastModified: Date.now(),
-      by: 'Risk Reveal'
+      by: 'Risk Reveal',
+      nodes: []
     },
     {
       selected: false,
@@ -27,7 +28,8 @@ export const defaultInuringState = {
       status: 'Done',
       creationDate: Date.now(),
       lastModified: Date.now(),
-      by: 'Risk Reveal'
+      by: 'Risk Reveal',
+      nodes: []
     },
     {
       selected: false,
@@ -38,7 +40,8 @@ export const defaultInuringState = {
       status: 'Done',
       creationDate: Date.now(),
       lastModified: Date.now(),
-      by: 'Risk Reveal'
+      by: 'Risk Reveal',
+      nodes: []
     }
   ],
   content: {},
@@ -90,7 +93,8 @@ export class InuringService {
           creationDate: new Date(),
           lastModified: new Date(),
           statsExchangeRate: '',
-          by: 'Risk Reveal'
+          by: 'Risk Reveal',
+          nodes: [],
         }
       );
     }));
