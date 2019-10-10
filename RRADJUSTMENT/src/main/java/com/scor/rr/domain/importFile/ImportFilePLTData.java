@@ -1,4 +1,4 @@
-package com.scor.rr.domain.dto;
+package com.scor.rr.domain.importFile;
 
 public class ImportFilePLTData {
 

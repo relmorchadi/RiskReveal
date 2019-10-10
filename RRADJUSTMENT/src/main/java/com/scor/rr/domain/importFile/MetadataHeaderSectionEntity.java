@@ -16,7 +16,7 @@ public class MetadataHeaderSectionEntity {
     private String defaultValue;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "MetadataHeaderSectionId", nullable = false)
     public int getId() {
         return id;
     }
@@ -66,7 +66,7 @@ public class MetadataHeaderSectionEntity {
     }
 
     @Basic
-    @Column(name = "format")
+    @Column(name = "Format")
     public String getFormat() {
         return format;
     }
@@ -76,7 +76,7 @@ public class MetadataHeaderSectionEntity {
     }
 
     @Basic
-    @Column(name = "assertValue")
+    @Column(name = "AssertValue")
     public String getAssertValue() {
         return assertValue;
     }
@@ -86,7 +86,7 @@ public class MetadataHeaderSectionEntity {
     }
 
     @Basic
-    @Column(name = "defaultValue")
+    @Column(name = "DefaultValue")
     public String getDefaultValue() {
         return defaultValue;
     }

@@ -3,10 +3,9 @@ package com.scor.rr.service.importprocess;
 import com.scor.rr.configuration.ConverterType;
 import com.scor.rr.configuration.TypeToConvert;
 import com.scor.rr.configuration.file.CopyFile;
-import com.scor.rr.configuration.utils.LossDataFileUtils;
 import com.scor.rr.configuration.utils.Status;
 import com.scor.rr.domain.importFile.*;
-import com.scor.rr.domain.dto.ImportFilePLTData;
+import com.scor.rr.domain.importFile.ImportFilePLTData;
 import com.scor.rr.repository.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
@@ -58,7 +57,7 @@ public class ImportFileService {
         return verifyFile(metadataHeaders, headerSegments, path, peqtPath);
     }
 
-    private static final Logger log = LoggerFactory.getLogger(LossDataFileUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ImportFileService.class);
 
     private static final String START_MARKER = "LOSSFILE\t";
     private static final String SEGMENT_END_MARKER = "#[SEGMENT_HEADER-END]";
@@ -72,9 +71,10 @@ public class ImportFileService {
     static Pattern pattern = Pattern.compile("(\\d+)-(\\d+)\\((\\d+)\\)");
 
     @Autowired
-    private static PEQTFileTypeRepository peqtFileTypeRepository;
+    PEQTFileTypeRepository peqtFileTypeRepository;
+
     @Autowired
-    private static PEQTFileSchemaRepository peqtFileSchemaRepository;
+    PEQTFileSchemaRepository peqtFileSchemaRepository;
 
     public List<ImportFilePLTData> getPltFromLossDataFile(String path) { // lay data : 1 list data cua 1 plt
         List<ImportFilePLTData> pltDataList = null;

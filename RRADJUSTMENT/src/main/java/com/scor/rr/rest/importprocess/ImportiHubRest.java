@@ -1,6 +1,6 @@
 package com.scor.rr.rest.importprocess;
 
-import com.scor.rr.domain.dto.ImportFilePLTData;
+import com.scor.rr.domain.importFile.ImportFilePLTData;
 import com.scor.rr.service.importprocess.ImportFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
