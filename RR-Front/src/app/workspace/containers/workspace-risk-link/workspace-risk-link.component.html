@@ -112,7 +112,7 @@
           <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
               <hr>
-              <div>Select EDM & RDM</div>
+              <span>Select EDM & RDM</span>
             </div>
             <div class="body-wrapper-header-middle">
               <div *ngIf="state?.collapse?.collapseHead" class="body-wrapper-search" clickOutside
@@ -237,8 +237,13 @@
           <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
-                <div class="body-wrapper-header-left">
+                <div class="body-wrap-menu-header">
                   <span>Selected EDMs & RDMs</span>
+                  <div class="action-icon-wrapper">
+                    <i nz-tooltip nzTitle="Save" (click)="saveEDMAndRDMSelection()" style="font-size: 23px" class="icon-save_24px"></i>
+                    <i nz-tooltip nzTitle="Synchronize" (click)="synchronizeEDMAndRDMSelection()" class="icon-sync_24px"></i>
+                    <i nz-tooltip nzTitle="Remove" (click)="removeEDMAndRDMSelection()" class="icon-close_24px"></i>
+                  </div>
                 </div>
               </div>
               <div class="list-items"
@@ -336,7 +341,7 @@
                            [rows]="20" [totalRecords]="getTableRecords()"-->
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" (selectionChange)="getSelection($event)"
-                           [value]="getDivision(getTableData())" selectionMode="multiple" [(selection)]="selectedRows"
+                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]" selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
@@ -372,8 +377,10 @@
                           <div class="search-bar-table"
                                *ngIf="col.header !== 'selected' && col.header !== 'id'">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input pInputText type="text" #filters
-                                   (input)="kt.filter($event.target.value, col.field, col.filterMatchMode)">
+                            <input *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                                   pInputText type="text" #filters [(ngModel)]="filterAnalysis[col.field]">
+                            <input *ngIf="state.selectedEDMOrRDM === 'edm'"
+                                   pInputText type="text" #filters [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
                       </tr>

@@ -34,7 +34,7 @@
           </nz-dropdown>
         </div>
         <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
-                 [resizableColumns]="true" columnResizeMode="expand"
+                 [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
                  [scrollable]="true" [value]="resultsSummary" frozenWidth="485px">
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
@@ -265,7 +265,7 @@
           </nz-dropdown>
         </div>
         <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
-                 [value]="analysisResults"
+                 [value]="analysisResults" [scrollHeight]="'175px'"
                  [resizableColumns]="true" columnResizeMode="expand"
                  [(contextMenuSelection)]="contextSelectedItem"
                  [contextMenu]="cmR"

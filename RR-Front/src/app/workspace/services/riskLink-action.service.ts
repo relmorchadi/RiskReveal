@@ -647,7 +647,7 @@ export class RiskLinkStateService {
             financialPerspective: ['RL'],
             occurrenceBasis: 'PerEvent',
             regionPeril: 'EUET',
-            division: this._getDivision(dt.analysisName),
+            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
             ty: true,
             peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
               {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
@@ -669,7 +669,7 @@ export class RiskLinkStateService {
             id: dt.dataSourceId + '-' + dt.dataSourceName,
             selected: false,
             scanned: true,
-            division: this._getDivision(dt.dataSourceName),
+            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
             status: 100,
             unitMultiplier: 1,
             proportion: 100,
@@ -900,6 +900,36 @@ export class RiskLinkStateService {
     ));
   }
 
+  saveEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.savedData.riskLink = {
+        ...draft.savedData.riskLink,
+        edmrdmSelection: _.merge({}, draft.savedData.riskLink.edmrdmSelection,
+          {[wsIdentifier]: draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM
+          })
+      };
+    }));
+  }
+
+  synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    console.log('dispatched action', wsIdentifier);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = false;
+      draft.content[wsIdentifier].riskLink.display.displayTable = false;
+      draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM = _.get(draft.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, {edm: {}, rdm: {}});
+    }));
+    const mergedEDM = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.edm`, null);
+    const mergedRDM = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.rdm`, null);
+    const filteredFacEDMRDM = _.filter([..._.toArray(mergedEDM), ..._.toArray(mergedRDM)], item => item.typeWs === 'fac');
+    ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.filter(_.toArray(mergedRDM), item => item.typeWs === 'treaty')));
+    ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.filter(_.toArray(mergedEDM), item => item.typeWs === 'treaty')));
+    ctx.dispatch(new fromWs.SelectFacRiskLinkEDMAndRDMAction(filteredFacEDMRDM));
+  }
+
   createLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -952,6 +982,22 @@ export class RiskLinkStateService {
         };
       })
     );
+  }
+
+  removeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.savedData.riskLink.edmrdmSelection = _.omit(draft.savedData.riskLink.edmrdmSelection, wsIdentifier);
+      draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM = {
+        edm: {}, rdm: {}
+      };
+      draft.content[wsIdentifier].riskLink.display = {
+        displayTable: false,
+        displayImport: false,
+        displayListRDMEDM: false
+      };
+    }));
   }
 
   deleteFromBasket(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1689,8 +1735,8 @@ export class RiskLinkStateService {
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     return this.riskApi.searchRiskLinkData().pipe(
       mergeMap(
-        (ds: any) =>
-          of(ctx.patchState(
+        (ds: any) => {
+          return of(ctx.patchState(
             produce(
               ctx.getState(), draft => {
                 draft.content[wsIdentifier].riskLink = {
@@ -1706,7 +1752,6 @@ export class RiskLinkStateService {
                           }
                         }
                       ))),
-                    selectedListEDMAndRDM: {edm: null, rdm: null},
                     searchValue: '',
                     totalNumberElement: ds.totalElements,
                     numberOfElement: ds.size
@@ -1767,8 +1812,10 @@ export class RiskLinkStateService {
                 };
               }
             )
-          ))
-      )
+          ));
+        }
+      ),
+      mergeMap(dt => of(ctx.dispatch(new fromWs.SynchronizeEDMAndRDMSelectionAction())))
     );
   }
 

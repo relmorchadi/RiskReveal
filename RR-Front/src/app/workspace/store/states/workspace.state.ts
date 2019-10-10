@@ -25,6 +25,11 @@ const initialState: WorkspaceModel = {
     data: Data.facWs,
     sequence: 137
   },
+  savedData: {
+    riskLink: {
+      edmrdmSelection: {}
+    }
+  },
   favorite: [],
   pinned: [],
   routing: '',
@@ -883,6 +888,16 @@ export class WorkspaceState {
     this.riskLinkFacade.saveEditPeqt(ctx, payload);
   }
 
+  @Action(fromWS.SaveEDMAndRDMSelectionAction)
+  saveEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.saveEDMAndRDMSelection(ctx);
+  }
+
+  @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
+  synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
+    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx, payload);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);
@@ -896,6 +911,11 @@ export class WorkspaceState {
   @Action(fromWS.RemoveFinancialPerspectiveAction)
   removeFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFinancialPerspectiveAction) {
     this.riskLinkFacade.removeFinancialPerspective(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveEDMAndRDMSelectionAction)
+  removeEDMAndRDMSeletion(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.removeEDMAndRDMSelection(ctx);
   }
 
   @Action(fromWS.DeleteFromBasketAction)

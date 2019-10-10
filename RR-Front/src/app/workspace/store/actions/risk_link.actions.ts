@@ -158,6 +158,11 @@ export class RemoveFinancialPerspectiveAction {
   constructor(public payload: any) {}
 }
 
+export class RemoveEDMAndRDMSelectionAction {
+  static readonly type = '[Risk Link] Remove EDM And RDM Selection';
+  constructor(public payload?: any) {}
+}
+
 export class SaveFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Save Financial Perspective Data';
   constructor() {}
@@ -171,6 +176,16 @@ export class SaveEditAnalysisAction {
 export class SaveEditPEQTAction {
   static readonly type = '[Risk Link] Save PEQT Changes';
   constructor(public payload: any) {}
+}
+
+export class SaveEDMAndRDMSelectionAction {
+  static readonly type = '[Risk Link] Save EDM And RDM Selection';
+  constructor(public payload?: any) {}
+}
+
+export class SynchronizeEDMAndRDMSelectionAction {
+  static readonly type = '[Risk Link] Synchronize EDM And RDM Selection';
+  constructor(public payload?: any) {}
 }
 
 export class CreateLinkingAction {

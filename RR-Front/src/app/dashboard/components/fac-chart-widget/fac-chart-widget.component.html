@@ -45,39 +45,39 @@
         </ul>
       </nz-dropdown>
 
-<!--      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
-        <div class="icon-wrapper">
-          <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
-            <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
-            <span class="tag-number">{{getValueNumber('New')}}</span>
-          </span>
-          <span (click)="filterData('In Progress')" [ngClass]="{'selected-Filter': filterCurrent}">
-            <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
-            <span class="tag-number">{{getValueNumber('In Progress')}}</span>
-          </span>
-          <span (click)="filterData('Archive')" [ngClass]="{'selected-Filter': filterArchive}">
-            <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
-            <span class="tag-number">{{getCombinedNumber(data)}}</span>
-          </span>
-        </div>
-      </div>
+      <!--      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
+              <div class="icon-wrapper">
+                <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
+                  <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
+                  <span class="tag-number">{{getValueNumber('New')}}</span>
+                </span>
+                <span (click)="filterData('In Progress')" [ngClass]="{'selected-Filter': filterCurrent}">
+                  <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
+                  <span class="tag-number">{{getValueNumber('In Progress')}}</span>
+                </span>
+                <span (click)="filterData('Archive')" [ngClass]="{'selected-Filter': filterArchive}">
+                  <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
+                  <span class="tag-number">{{getCombinedNumber(data)}}</span>
+                </span>
+              </div>
+            </div>
 
-      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 1">
-        <div class="icon-wrapper">
-          <span (click)="filterAssignedData('New')" [ngClass]="{'selected-Filter': filterAssignedNew}">
-            <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
-            <span class="tag-number">{{getAssignedValueNumber('New')}}</span>
-          </span>
-          <span (click)="filterAssignedData('In Progress')" [ngClass]="{'selected-Filter': filterAssignedCurrent}">
-            <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
-            <span class="tag-number">{{getAssignedValueNumber('In Progress')}}</span>
-          </span>
-          <span (click)="filterAssignedData('Archive')" [ngClass]="{'selected-Filter': filterAssignedArchive}">
-            <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
-            <span class="tag-number">{{getCombinedNumber(filterAssign())}}</span>
-          </span>
-        </div>
-      </div>-->
+            <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 1">
+              <div class="icon-wrapper">
+                <span (click)="filterAssignedData('New')" [ngClass]="{'selected-Filter': filterAssignedNew}">
+                  <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
+                  <span class="tag-number">{{getAssignedValueNumber('New')}}</span>
+                </span>
+                <span (click)="filterAssignedData('In Progress')" [ngClass]="{'selected-Filter': filterAssignedCurrent}">
+                  <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
+                  <span class="tag-number">{{getAssignedValueNumber('In Progress')}}</span>
+                </span>
+                <span (click)="filterAssignedData('Archive')" [ngClass]="{'selected-Filter': filterAssignedArchive}">
+                  <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
+                  <span class="tag-number">{{getCombinedNumber(filterAssign())}}</span>
+                </span>
+              </div>
+            </div>-->
 
       <div style="position: absolute;top: 10px; right: 25px" >
         <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
@@ -105,7 +105,7 @@
       <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}"
             nz-tooltip [nzTitle]="'My Assigned'"
             class="tab-index">
-        <i class="icon-user"></i>
+        <i class="icon-tag-alt"></i>
       </span>
     </div>
   </div>
