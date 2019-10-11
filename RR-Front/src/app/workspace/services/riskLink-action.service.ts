@@ -903,12 +903,16 @@ export class RiskLinkStateService {
   saveEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const edm = _.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm);
+    const rdm = _.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm);
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.savedData.riskLink = {
         ...draft.savedData.riskLink,
         edmrdmSelection: _.merge({}, draft.savedData.riskLink.edmrdmSelection,
-          {[wsIdentifier]: draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM
-          })
+          {[wsIdentifier]: {
+            edm: Object.assign({}, ...edm.map(item => ({[item.id]: {...item, selected: false}}))),
+            rdm: Object.assign({}, ...rdm.map(item => ({[item.id]: {...item, selected: false}})))
+          }})
       };
     }));
   }
@@ -916,11 +920,13 @@ export class RiskLinkStateService {
   synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    console.log('dispatched action', wsIdentifier);
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = false;
+      const edm = _.toArray(_.get(draft.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.edm`, {}));
+      const rdm = _.toArray(_.get(draft.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.rdm`, {}));
+      draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = [...edm, ...rdm].length > 0;
       draft.content[wsIdentifier].riskLink.display.displayTable = false;
-      draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM = _.get(draft.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, {edm: {}, rdm: {}});
+      draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM =
+        _.get(draft.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, {edm: {}, rdm: {}});
     }));
     const mergedEDM = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.edm`, null);
     const mergedRDM = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}.rdm`, null);
@@ -1137,7 +1143,7 @@ export class RiskLinkStateService {
             typeWs: 'fac',
             source: ''};
           });
-          const selectedData = {
+          let selectedData = {
             rdm: Object.assign({},
               ..._.filter(dataModel, item => item.type === 'rdm' && item.selected).map((ds: any) =>
                 ({[ds.id]: {...ds, selected: false, scanned: true}}))),
@@ -1145,7 +1151,9 @@ export class RiskLinkStateService {
               ..._.filter(dataModel, item => item.type === 'edm' && item.selected).map((ds: any) =>
                 ({[ds.id]: {...ds, selected: false, scanned: true}})))
           };
-          console.log(_.toArray(selectedData.rdm), _.toArray(selectedData.edm));
+          if (!state.content[wsIdentifier].riskLink.synchronize) {
+            selectedData = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, selectedData);
+          }
           ctx.dispatch([new LoadBasicAnalysisFacAction(_.toArray(selectedData.rdm)),
             new LoadPortfolioFacAction(_.toArray(selectedData.edm)),
             new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true})
@@ -1163,6 +1171,7 @@ export class RiskLinkStateService {
                 totalNumberElement: draft.content[wsIdentifier].riskLink.listEdmRdm.totalNumberElement + dataModel.length,
                 numberOfElement: draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement + dataModel.length
               };
+              draft.content[wsIdentifier].riskLink.synchronize = false;
             }))
           );
         }
@@ -1787,28 +1796,13 @@ export class RiskLinkStateService {
                     displayTable: false,
                     displayImport: false,
                   },
-                  collapse: {
-                    collapseHead: true,
-                    collapseAnalysis: true,
-                    collapseResult: true,
-                  },
-                  checked: {
-                    checkedARC: false,
-                    checkedPricing: false,
-                  },
-                  financialPerspective: {
-                    rdm: {data: null, selected: null},
-                    analysis: null,
-                    treaty: null,
-                    standard: null,
-                    target: 'currentSelection'
-                  },
                   analysis: null,
                   portfolios: null,
                   results: null,
                   summaries: null,
                   selectedEDMOrRDM: null,
-                  activeAddBasket: false
+                  activeAddBasket: false,
+                  synchronize: false
                 };
               }
             )
@@ -1854,16 +1848,4 @@ export class RiskLinkStateService {
     return applyFilters;
   }
 
-  private _getDivision(input) {
-    const lastIndex = input.slice(-3);
-    if (lastIndex === '_03') {
-      return 'Division N°3';
-    } else if (lastIndex === '_02') {
-      return 'Division N°2';
-    } else {
-      return 'Division N°1';
-    }
-  }
 }
-
-

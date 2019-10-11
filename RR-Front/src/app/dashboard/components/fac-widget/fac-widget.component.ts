@@ -199,7 +199,7 @@ export class FacWidgetComponent implements OnInit {
   }
 
   filterAssign() {
-    return _.filter(this.data, item => item.assignedAnalyst === 'Amina Cheref');
+    return _.filter(this.data, item => item.assignedAnalyst === 'Nathalie Dulac');
   }
 
   valueFavChange(event) {

@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
-import {WorkspaceModel} from "../model";
-import * as fromWS from "../store/actions";
-import {catchError, map, mergeMap} from "rxjs/operators";
-import {WsApi} from "./workspace.api";
-import * as fromHeader from "../../core/store/actions/header.action";
-import produce from "immer";
-import * as _ from "lodash";
-import {Navigate} from "@ngxs/router-plugin";
+import {WorkspaceModel} from '../model';
+import * as fromWS from '../store/actions';
+import {catchError, map, mergeMap} from 'rxjs/operators';
+import {WsApi} from './workspace.api';
+import * as fromHeader from '../../core/store/actions/header.action';
+import produce from 'immer';
+import * as _ from 'lodash';
+import {Navigate} from '@ngxs/router-plugin';
 import {HeaderState} from "../../core/store/states/header.state";
-import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
-import {EMPTY} from "rxjs";
-import {WsProjectService} from "./ws-project.service";
-import {defaultInuringState} from "./inuring.service";
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
+import {EMPTY} from 'rxjs';
+import {WsProjectService} from './ws-project.service';
+import {defaultInuringState} from './inuring.service';
 
 @Injectable({
   providedIn: 'root'
@@ -209,6 +209,7 @@ export class WorkspaceService {
     ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].projects = projects.map(item => {
           return {
+            ...item,
             workspaceId: item.uwanalysisContractFacNumber,
             uwy: item.uwanalysisContractYear,
             projectId: item.id,

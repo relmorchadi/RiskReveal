@@ -895,7 +895,7 @@ export class WorkspaceState {
 
   @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
   synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
-    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx, payload);
+    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
   }
 
   @Action(fromWS.CreateLinkingAction)

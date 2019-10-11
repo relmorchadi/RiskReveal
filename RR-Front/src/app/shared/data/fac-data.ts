@@ -24,7 +24,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'ENNMG1800030 /ex ENEUR2800034',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'Canceled'
+    carStatus: 'Canceled',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01579',
@@ -43,7 +67,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '2 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'B0801116998G16',
     uwanalysisContractFacNumber: 'FA0061072',
@@ -51,7 +75,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0061072',
     contractName: 'ENNMG1800031 /ex ENEUR2800035',
     uwanalysisContractInsured: '200024070 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01584',
@@ -70,7 +118,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '10 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: null,
     uwanalysisContractFacNumber: 'FA0062910',
@@ -78,7 +126,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0062910',
     contractName: 'NB17',
     uwanalysisContractInsured: '1000491285 @ Insureds',
-    carStatus: 'In Progress'
+    carStatus: 'In Progress',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01585',
@@ -105,7 +177,31 @@ const facWs = [
     uwanalysisContractContractId: '10F131564',
     contractName: 'NB18',
     uwanalysisContractInsured: '1000217722 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-00043',
@@ -132,7 +228,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0025896',
     contractName: 'Mountain View, CA Apartment buildings',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01525',
@@ -159,7 +279,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0050322',
     contractName: 'Mountain View',
     uwanalysisContractInsured: '1000476619 @ Insureds',
-    carStatus: 'Completed'
+    carStatus: 'Completed',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-00037',
@@ -178,7 +322,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '10 @ Subsidiaries',
     uwanalysisContractYear: 2015,
     uwAnalysisContractDate: '2015-01',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
@@ -186,7 +330,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'Completed'
+    carStatus: 'Completed',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01527',
@@ -205,7 +373,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '1 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: null,
     uwanalysisContractFacNumber: 'FA0051168',
@@ -213,7 +381,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'NB14-KB',
     uwanalysisContractInsured: '100059061 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-01533',
@@ -232,7 +424,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '10 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-02',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: null,
     uwanalysisContractFacNumber: 'FA0050322',
@@ -240,7 +432,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0050322',
     contractName: 'Data invalid',
     uwanalysisContractInsured: '1000418967 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-00117',
@@ -267,7 +483,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'ENNMG1800033 /ex ENEUR2800037',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'SuperSeeded'
+    carStatus: 'SuperSeeded',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-00135',
@@ -286,7 +526,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '2 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Zineb El hilali',
+    assignedAnalyst: 'Nathalie Dulac',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'EL1400204',
     uwanalysisContractFacNumber: 'FA0020562',
@@ -294,7 +534,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0020562',
     contractName: 'Domestic Locations Only',
     uwanalysisContractInsured: '200033218 @ Insureds',
-    carStatus: 'In Progress'
+    carStatus: 'In Progress',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   },
   {
     id: 'CAR-00136',
@@ -321,7 +585,31 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New'
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
   }
 ];
 

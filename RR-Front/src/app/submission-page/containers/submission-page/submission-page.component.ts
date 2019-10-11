@@ -154,8 +154,10 @@ export class SubmissionPageComponent implements OnInit {
       contractName: 'ENNMG1800030 /ex ENEUR2800034',
       uwAnalysisProjectId: 'P-000' + Math.floor(Math.random() * 100000),
       uwAnalysisContractDate: this.uwYear + '-01',
-      assignedAnalyst: 'Amina Cheref',
-      carStatus: 'New'
+      assignedAnalyst: 'Nathalie Dulac',
+      carStatus: 'New',
+      divisions: this.dataCoverage,
+      regionPeril: this.metaData
     };
 /*    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));*/
     this.store.dispatch(new fromWs.CreateNewFac(data));
