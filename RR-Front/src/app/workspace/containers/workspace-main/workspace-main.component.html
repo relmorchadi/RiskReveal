@@ -48,7 +48,7 @@
                       </ng-template>
                     </h3>
                     <h4 class="workspace-title"> {{data[wsIdentifier]?.workspaceName}} | {{data[wsIdentifier]?.uwYear}}
-                      | {{data[wsIdentifier]?.wsId}} | </h4>
+                      | {{data[wsIdentifier]?.wsId}} <ng-container *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">|</ng-container> </h4>
                   </div>
                 </div>
                 <div [ngClass]="{'collapse':!data[wsIdentifier]?.collapseWorkspaceDetail}" class="header-tab-right">

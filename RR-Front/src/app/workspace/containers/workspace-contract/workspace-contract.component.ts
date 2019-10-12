@@ -5,7 +5,7 @@ import {Select, Store} from '@ngxs/store';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
-import {UpdateWsRouting} from '../../store/actions';
+import {LoadContractAction, UpdateWsRouting} from '../../store/actions';
 import {Navigate} from "@ngxs/router-plugin";
 import {WorkspaceState} from "../../store/states";
 import * as _ from 'lodash';
@@ -14,8 +14,7 @@ import {ContractData} from './contract.data';
 @Component({
   selector: 'app-workspace-contract',
   templateUrl: './workspace-contract.component.html',
-  styleUrls: ['./workspace-contract.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./workspace-contract.component.scss']
 })
 export class WorkspaceContractComponent extends BaseContainer implements OnInit, StateSubscriber {
   collapseHead = false;
@@ -48,7 +47,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
 
   reinstatementData;
 
-  listStandardContent;
+  listStandardContent: any;
 
   listSecondaryContent;
 
@@ -57,26 +56,39 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getWorkspaces) ws$;
   ws: any;
 
-  @Select(WorkspaceState.getCurrentTab) currentTab$;
+  @Select(WorkspaceState.getContract) currentContract$;
+  facDataInfo: any;
+  treatyDataInfo: any;
   tabStatus: any;
   facData: any;
+
+  contracts: any[];
+  selectedContract: any;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
+    this.dispatch(new LoadContractAction());
     this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.ws = _.merge({}, value);
       this.detectChanges();
+    });
+    this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.tabStatus = _.get(value, 'typeWs', null);
+        this.treatyDataInfo = _.get(value, 'treaty', null);
+        this.facDataInfo = _.get(value, 'fac', []);
+        this.contracts = this.facDataInfo.map(item => { return {id: item.id}; });
+        this.selectedContract = this.contracts[0].id;
+        this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
+        this.detectChanges();
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig = {
         wsId,
         uwYear: year
       };
-      this.tabStatus = this.ws[wsId + '-' + year].workspaceType;
-      this.facData = _.filter(_.get(this.ws, `${wsId + '-' + year}.projects`, []), item => item.selected)[0];
     });
     this.scrollableColsTreaty = ContractData.scrollableColsTreaty;
     this.frozenColsTreaty = ContractData.frozenColsTreaty;
@@ -127,6 +139,10 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     );
   }
 
+  selectContract(value) {
+    this.selectedContract = value;
+    this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
+  }
 
   ngOnDestroy(): void {
     this.destroy();

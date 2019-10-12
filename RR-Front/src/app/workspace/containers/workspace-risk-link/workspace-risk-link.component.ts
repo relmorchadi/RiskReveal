@@ -12,10 +12,10 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
-import {LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent} from "primeng/api";
 import * as moment from 'moment';
-import {combineLatest} from "rxjs";
-import {of} from "rxjs/internal/observable/of";
+import {combineLatest} from 'rxjs';
+import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from "../../../shared/pipes/table-sort-and-filter.pipe";
 import {NotificationService} from "../../../shared/services";
 
@@ -23,6 +23,7 @@ import {NotificationService} from "../../../shared/services";
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
   styleUrls: ['./workspace-risk-link.component.scss'],
+  providers: [ConfirmationService]
 })
 export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit, StateSubscriber {
 
@@ -127,6 +128,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     private _helper: HelperService,
     private route: ActivatedRoute,
     private tableFilter: TableSortAndFilterPipe,
+    private confirmationService: ConfirmationService,
     private notification: NotificationService,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
@@ -359,6 +361,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   displayImported() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketAction());
+    if (this.tabStatus === 'fac') {
+      this.confirmationService.confirm({
+        message: 'The added Analysis has different Regions Peril please change to make it consistent',
+        rejectVisible: false,
+        header: 'Warning',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+        }
+      });
+    }
   }
 
   getScrollableCols() {

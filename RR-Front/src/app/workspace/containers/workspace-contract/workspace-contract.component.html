@@ -21,6 +21,23 @@
           <div *ngIf="tabStatus === 'treaty'">treaty Sections</div>
           <div *ngIf="tabStatus === 'fac'">Fac Divisions</div>
         </div>
+        <div *ngIf="tabStatus === 'fac'" class="body-wrapper-header-center">
+          <nz-dropdown [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">FAC Instance</span>
+                <span class="dropdown-item-selected">{{selectedContract}}</span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="selectContract(item.id)"
+                  *ngFor="let item of contracts">{{item.id}}</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
           <i *ngIf="collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_up_24px"></i>
@@ -106,10 +123,9 @@
         </p-table>
       </div>
 
-      <div class="body-wrap-border">
+      <div class="body-wrap-border" *ngIf="tabStatus === 'treaty'">
         <div class="body-1">
-          <span *ngIf="tabStatus === 'treaty'" style="font-weight: bold;">Treaty Section Summary</span>
-          <span *ngIf="tabStatus === 'fac'" style="font-weight: bold;">Fac Division Summary</span>
+          <span style="font-weight: bold;">Treaty Section Summary</span>
         </div>
         <div class="body-wrap-border-body">
           <div class="body-wrap-border-left">
@@ -149,6 +165,82 @@
               <li *ngFor="let item of listStandardContent?.secondary">
                 <span class="span-left">{{item.title}}</span>
                 <span class="span-right">{{item.value}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="body-wrap-border" *ngIf="tabStatus === 'fac'">
+        <div class="body-1">
+          <span style="font-weight: bold;">Fac Division Summary</span>
+        </div>
+        <div class="body-wrap-border-body">
+          <div class="body-wrap-border-left">
+
+            <div class="body-w-b-l-list-item border-bottom-custom">
+              <div class="body-w-b-l-item">
+                <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
+                <span class="body-1">Treaty 02T019976 1 XS DAB EVTS NATURELS</span>
+              </div>
+              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData.carStatus}}</span></div>
+            </div>
+
+<!--            <div class="body-w-b-l-list-item">
+              <div class="body-w-b-l-item">
+                <span class="indicator-container"></span>
+                <span class="body-1">Section: 1.1 XS DAB EVTS NATURELS</span>
+              </div>
+              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value">Renewed</span></div>
+            </div>-->
+
+          </div>
+          <div class="body-wrap-border-standard">
+            <ul>
+<!--              <li>
+                <span class="span-left">{{item.title}}</span>
+                <span class="span-right">
+                  <nz-progress [nzPercent]="item.value"
+                               [ngClass]="{'hidden-text': item.value < 100 }"
+                               [nzWidth]="20" nzType="circle"></nz-progress>
+                  {{item.value | number: '1.2-2'}}%
+                </span>
+              </li>-->
+              <li>
+                <span class="span-left">UW Analysis</span>
+                <span class="span-right">{{facData}}</span>
+              </li>
+              <li>
+                <span class="span-left">UW Year</span>
+                <span class="span-right">{{facData.uwanalysisContractYear}}</span>
+              </li>
+              <li>
+                <span class="span-left">Contract Label</span>
+                <span class="span-right">{{facData.uwanalysisContractLabel}}</span>
+              </li>
+              <li>
+                <span class="span-left">Business Type</span>
+                <span class="span-right">{{facData.uwanalysisContractBusinessType}}</span>
+              </li>
+            </ul>
+          </div>
+          <div class="body-wrap-border-standard">
+            <ul>
+              <li>
+                <span class="span-left">Sector</span>
+                <span class="span-right">{{facData.uwanalysisContractSector}}</span>
+              </li>
+              <li>
+                <span class="span-left">Contract ID</span>
+                <span class="span-right">{{facData.uwanalysisContractContractId}}</span>
+              </li>
+              <li>
+                <span class="span-left">Insured</span>
+                <span class="span-right">{{facData.uwanalysisContractInsured}}</span>
+              </li>
+              <li>
+                <span class="span-left">Subsidiary</span>
+                <span class="span-right">{{facData.uwanalysisContractSubsidiary}}</span>
               </li>
             </ul>
           </div>

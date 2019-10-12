@@ -123,6 +123,11 @@ export class UpdateStatusLinkAction {
   constructor(public payload: any) {}
 }
 
+export class UpdateAnalysisAndPortfolioData {
+  static readonly type = '[Risk Link] Change Data Analysis And Portfolio Per Division';
+  constructor(public payload: any) {}
+}
+
 export class SelectRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Select Risk Link EDM And RDM';
   constructor() {}
@@ -208,9 +213,14 @@ export class LoadBasicAnalysisFacAction {
   constructor(public payload: any) {}
 }
 
+export class LoadBasicAnalysisFacPerDivisionAction {
+  static readonly type = '[Risk Link] Load Basic Analysis For Per Division Fac Ws';
+  constructor(public payload?: any) {}
+}
+
 export class LoadDetailAnalysisFacAction {
   static readonly type = '[Risk Link] Load Detail Analysis For Fac Ws';
-  constructor(public payload: any) {}
+  constructor(public payload?: any) {}
 }
 
 export class LoadPortfolioFacAction {
@@ -218,15 +228,10 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
-/*export class LoadAnalysisForLinkingAction {
-  static readonly type = '[Risk Link] Load Analysis For Linking';
-  constructor(public payload: any) {}
+export class LoadPortfolioFacPerDivisionAction {
+  static readonly type = '[Risk Link] Load Portfolio For Fac Per Division Ws';
+  constructor(public payload?: any) {}
 }
-
-export class LoadPortfolioForLinkingAction {
-  static readonly type = '[Risk Link] Load Portfolio For Linking';
-  constructor(public payload: any) {}
-}*/
 
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';

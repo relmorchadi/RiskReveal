@@ -1,9 +1,9 @@
 import {StateContext} from '@ngxs/store';
 import * as fromWs from '../store/actions';
 import {
-  LoadBasicAnalysisFacAction,
-  LoadPortfolioFacAction,
-  PatchRiskLinkDisplayAction
+  LoadBasicAnalysisFacAction, LoadBasicAnalysisFacPerDivisionAction,
+  LoadPortfolioFacAction, LoadPortfolioFacPerDivisionAction,
+  PatchRiskLinkDisplayAction, UpdateAnalysisAndPortfolioData
 } from '../store/actions';
 import * as _ from 'lodash';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
@@ -45,6 +45,9 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const newValue = _.merge({}, state.content[wsIdentifier].riskLink.display, {[payload.key]: payload.value});
+    if (payload.key === 'displayTable' && !state.content[wsIdentifier].riskLink.display.displayTable) {
+      ctx.dispatch([new LoadBasicAnalysisFacPerDivisionAction(), new LoadPortfolioFacPerDivisionAction()]);
+    }
     ctx.patchState(
       produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].riskLink.display = newValue;
@@ -60,10 +63,24 @@ export class RiskLinkStateService {
         selected: payload.value
       }
     });
+    if (payload.key === 'division') {
+      const oldValue = state.content[wsIdentifier].riskLink.financialValidator.division.selected;
+      const analysis = state.content[wsIdentifier].riskLink.analysisFac;
+      if (analysis !== null) {
+        ctx.dispatch([
+          new LoadBasicAnalysisFacPerDivisionAction({key: oldValue}),
+          new LoadPortfolioFacPerDivisionAction({key: oldValue})]);
+      } else {
+        ctx.dispatch([new LoadBasicAnalysisFacPerDivisionAction(), new LoadPortfolioFacPerDivisionAction()]);
+      }
+    }
     ctx.patchState(
       produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].riskLink.financialValidator = newValue;
       }));
+    if (payload.key === 'division') {
+      ctx.dispatch(new UpdateAnalysisAndPortfolioData(payload.value));
+    }
   }
 
   patchAddToBasketState(ctx: StateContext<WorkspaceModel>) {
@@ -970,6 +987,17 @@ export class RiskLinkStateService {
     ));
   }
 
+  updateAnalysisAndPortfolioData(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].riskLink.analysis =
+        _.get(draft.content[wsIdentifier].riskLink.analysisFac, `${payload}`, draft.content[wsIdentifier].riskLink.analysis);
+      draft.content[wsIdentifier].riskLink.portfolios =
+        _.get(draft.content[wsIdentifier].riskLink.portfolioFac, `${payload}`, draft.content[wsIdentifier].riskLink.portfolios);
+    }));
+  }
+
   removeFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -1225,6 +1253,28 @@ export class RiskLinkStateService {
     );
   }
 
+  loadBasicAnalysisFacPerDivision(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const key = _.get(payload, 'key', null);
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const divisions = state.content[wsIdentifier].riskLink.financialValidator.division.data;
+    const analysis = state.content[wsIdentifier].riskLink.analysis;
+    const dataTable = Object.assign({}, ...divisions.map(item => {
+        return {[item]: analysis};
+      }));
+    if (key !== null) {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.analysisFac[key] = analysis;
+        }));
+    } else {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.analysisFac = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.analysisFac);
+        }));
+    }
+  }
+
   loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -1316,6 +1366,30 @@ export class RiskLinkStateService {
         return of();
       })
     );
+  }
+
+  loadBasicPortfolioFacPerDivision(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const key = _.get(payload, 'key', null);
+    const divisions = state.content[wsIdentifier].riskLink.financialValidator.division.data;
+    const portfolio = state.content[wsIdentifier].riskLink.portfolios;
+    const dataTable = Object.assign({},
+      ...divisions.map(item => {
+        return {[item]: portfolio};
+      })
+    );
+    if (key !== null) {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.portfolioFac[key] = portfolio;
+        }));
+    } else {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.portfolioFac = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.portfolioFac);
+        }));
+    }
   }
 
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1798,6 +1872,8 @@ export class RiskLinkStateService {
                   },
                   analysis: null,
                   portfolios: null,
+                  analysisFac: null,
+                  portfolioFac: null,
                   results: null,
                   summaries: null,
                   selectedEDMOrRDM: null,

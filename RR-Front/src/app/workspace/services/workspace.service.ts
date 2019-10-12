@@ -101,6 +101,12 @@ export class WorkspaceService {
             cloneConfig: {},
             loading: false
           },
+          contract: {
+            treaty: {},
+            fac: {},
+            loading: false,
+            typeWs: null,
+          },
           calibration: {
             data: {},
             loading: false,
@@ -174,7 +180,9 @@ export class WorkspaceService {
               target: 'currentSelection'
             },
             analysis: null,
+            analysisFac: null,
             portfolios: null,
+            portfolioFac: null,
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,

@@ -56,6 +56,12 @@
         }
       }
 
+      .body-wrapper-header-center {
+        margin-top: 15px;
+        padding-left: 20px;
+        padding-bottom: 15px;
+      }
+
       .body-wrapper-header-right {
         display: flex;
         justify-content: flex-end;
@@ -143,6 +149,10 @@
       margin-top: 12px;
 
       ::ng-deep {
+        .ui-table-scrollable-wrapper {
+          display: flex;
+        }
+
         .ui-table-scrollable-view.ui-table-frozen-view {
           border-right: 6px solid rgba(0, 0, 0, 0.09);
         }
