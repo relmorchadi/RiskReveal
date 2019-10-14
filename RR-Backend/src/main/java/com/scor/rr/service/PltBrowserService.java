@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,11 @@ public class PltBrowserService {
 
         PltTagResponse pltTagResponse = new PltTagResponse();
         List<PltManagerView> plts = pltManagerViewRepository.findAll(pltTableSpecification.getFilter(pltFilter)).stream().distinct().collect(Collectors.toList());
-        List<UserTag> userTags = userTagRepository.findByWorkspace(
-                workspaceRepository.findWorkspaceByWorkspaceId(
-                        new Workspace.WorkspaceId(pltFilter.getWorkspaceId(), pltFilter.getUwy())
-                ));
+        List<UserTag> userTags = new ArrayList<>();
+//                userTagRepository.findByWorkspace(
+//                workspaceRepository.findWorkspaceByWorkspaceId(
+//                        new Workspace.WorkspaceId(pltFilter.getWorkspaceId(), pltFilter.getUwy())
+//                ));
         pltTagResponse.setPlts(plts);
         pltTagResponse.setUserTags(userTags);
         return pltTagResponse;
@@ -82,18 +84,18 @@ public class PltBrowserService {
 
     @Transactional
     public List<UserTag> assignUpdateUserTag(AssignUpdatePltsRequest request) {
-        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
         List<PltHeader> pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
         request.selectedTags.forEach(userTagId -> {
             UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
             //userTag.getPltHeaders().addAll(new HashSet<>(pltHeaders));
-            userTag.setWorkspace(workspace);
+//            userTag.setWorkspace(workspace);
             userTagRepository.save(userTag);
         });
         request.unselectedTags.forEach(userTagId -> {
             UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
             //userTag.setPltHeaders(new HashSet<>(userTag.getPltHeaders().stream().filter(p->!request.plts.contains(p.getId())).collect(Collectors.toList())));
-            userTag.setWorkspace(workspace);
+//            userTag.setWorkspace(workspace);
             userTagRepository.save(userTag);
         });
         //return userTagRepository.findByTagIdIn(Stream.concat(request.selectedTags.stream(), request.unselectedTags.stream()).collect(Collectors.toList()));

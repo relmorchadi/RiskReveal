@@ -1,7 +1,6 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.Project;
-import com.scor.rr.domain.dto.AddProjectRequest;
 import com.scor.rr.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +14,13 @@ public class ProjectResource {
     ProjectService projectService;
 
     @PostMapping()
-    public Project addNewProject(@RequestBody AddProjectRequest request) {
-        return projectService.addNewProject(request);
+    public Project addNewProject(@RequestParam String wsId, @RequestParam Integer uwy, @RequestBody Project project) {
+        return projectService.addNewProject(wsId, uwy, project);
     }
 
-    @PostMapping("delete")
-    public Project deleteProject(@RequestBody AddProjectRequest request) {
-        return projectService.deleteProject(request);
+    @DeleteMapping("delete")
+    public void deleteProject(@RequestParam("id") Long projectId) {
+        projectService.deleteProject(projectId);
     }
 
 }
