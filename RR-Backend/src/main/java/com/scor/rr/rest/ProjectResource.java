@@ -18,6 +18,11 @@ public class ProjectResource {
         return projectService.addNewProject(wsId, uwy, project);
     }
 
+    @PutMapping()
+    public Project updateProject(@RequestParam Long projectId, @RequestBody Project project) {
+        return projectService.updateProject(projectId, project);
+    }
+
     @DeleteMapping("delete")
     public void deleteProject(@RequestParam("id") Long projectId) {
         projectService.deleteProject(projectId);
