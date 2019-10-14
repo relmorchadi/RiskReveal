@@ -363,7 +363,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.dispatch(new fromWs.AddToBasketAction());
     if (this.tabStatus === 'fac') {
       this.confirmationService.confirm({
-        message: 'The added Analysis has different Regions Peril please change to make it consistent',
+        message: 'You are attempting to import multiple analysis for the following region peril/division',
         rejectVisible: false,
         header: 'Warning',
         icon: 'pi pi-exclamation-triangle',

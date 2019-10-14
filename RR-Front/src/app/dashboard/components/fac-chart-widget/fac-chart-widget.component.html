@@ -1,34 +1,8 @@
-<i style="position: absolute;right: 0px;top:5px; cursor: grab;  z-index: 9999999;color: black;font-size: 1.5em;"
+<i style="position: absolute; right: 0; top:5px; cursor: grab;  z-index: 9999999;color: black; font-size: 1.5em;"
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
-<nz-tabset
-  [(nzSelectedIndex)]="tabIndex"
-  class="tabs-standard-top">
-  <nz-tab>
-    <div class="renewal-contract-table">
-      <app-table [sortable]="true"
-                 [tableColumn]="cols"
-                 [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
-                 [virtualScroll]="false"
-                 (dbClickItem)="openFacItem($event)"
-                 (updateFavStatus)="valueFavChange($event)"
-                 [totalRecords]="data?.length">
-      </app-table>
-    </div>
-  </nz-tab>
-  <nz-tab>
-    <div class="renewal-contract-table">
-      <app-table [sortable]="true"
-                 [tableColumn]="cols"
-                 [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
-                 [virtualScroll]="false"
-                 (dbClickItem)="openFacItem($event)"
-                 (updateFavStatus)="valueFavChange($event)"
-                 [totalRecords]="data?.length">
-      </app-table>
-    </div>
-  </nz-tab>
-</nz-tabset>
+
+  <div echarts [options]="chartOption" class="demo-chart"></div>
 
 <ng-template #title>
   <div style="display: flex">
@@ -44,40 +18,6 @@
           <li (click)="deleteItem(identifier)" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
         </ul>
       </nz-dropdown>
-
-      <!--      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
-              <div class="icon-wrapper">
-                <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
-                  <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
-                  <span class="tag-number">{{getValueNumber('New')}}</span>
-                </span>
-                <span (click)="filterData('In Progress')" [ngClass]="{'selected-Filter': filterCurrent}">
-                  <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
-                  <span class="tag-number">{{getValueNumber('In Progress')}}</span>
-                </span>
-                <span (click)="filterData('Archive')" [ngClass]="{'selected-Filter': filterArchive}">
-                  <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
-                  <span class="tag-number">{{getCombinedNumber(data)}}</span>
-                </span>
-              </div>
-            </div>
-
-            <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 1">
-              <div class="icon-wrapper">
-                <span (click)="filterAssignedData('New')" [ngClass]="{'selected-Filter': filterAssignedNew}">
-                  <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
-                  <span class="tag-number">{{getAssignedValueNumber('New')}}</span>
-                </span>
-                <span (click)="filterAssignedData('In Progress')" [ngClass]="{'selected-Filter': filterAssignedCurrent}">
-                  <i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i>
-                  <span class="tag-number">{{getAssignedValueNumber('In Progress')}}</span>
-                </span>
-                <span (click)="filterAssignedData('Archive')" [ngClass]="{'selected-Filter': filterAssignedArchive}">
-                  <i class="icon-move_to_inbox_24px" nz-tooltip [nzTitle]="'Archived'"></i>
-                  <span class="tag-number">{{getCombinedNumber(filterAssign())}}</span>
-                </span>
-              </div>
-            </div>-->
 
       <div style="position: absolute;top: 10px; right: 25px" >
         <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
@@ -95,18 +35,6 @@
           </ul>
         </nz-dropdown>
       </div>
-    </div>
-    <div style="display: flex; align-items: center">
-      <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}"
-            nz-tooltip [nzTitle]="'ALL'"
-            class="tab-index">
-        <i class="icon-all_inclusive_24px"></i>
-      </span>
-      <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}"
-            nz-tooltip [nzTitle]="'My Assigned'"
-            class="tab-index">
-        <i class="icon-tag-alt"></i>
-      </span>
     </div>
   </div>
 </ng-template>

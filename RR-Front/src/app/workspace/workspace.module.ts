@@ -33,6 +33,7 @@ import {INURING_NODES} from './components/inuring/nodes';
 import {EditContractPopUpComponent} from './components/inuring/edit-contract-pop-up/edit-contract-pop-up.component';
 import {EditEdgePopUpComponent} from './components/inuring/edit-edge-pop-up/edit-edge-pop-up.component';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {NgxEchartsModule} from 'ngx-echarts';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -41,6 +42,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent
   ],
   imports: [
+    NgxEchartsModule,
     GridsterModule,
     SharedModule,
     FormsModule,

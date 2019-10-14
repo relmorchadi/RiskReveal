@@ -1,9 +1,29 @@
 <div class="a-app-wrapper">
   <div class="a-app-header">
-    <div style="display: flex;flex-flow: column;">
+    <div style="display: flex; flex-flow: column;">
       <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Contract'" [links]="hyperLinks"
                        [routes]="hyperLinksRoutes"></app-hyper-links>
-      <h4>Contract</h4>
+      <div style="display: flex">
+        <h4>Contract</h4>
+        <div *ngIf="tabStatus === 'fac'" style="margin-left: 35px">
+          <nz-dropdown [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">CAR ID</span>
+                <span class="dropdown-item-selected">{{selectedContract}}</span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="selectContract(item.id)"
+                  *ngFor="let item of contracts">{{item.id}}</li>
+            </ul>
+          </nz-dropdown>
+        </div>
+      </div>
+
     </div>
     <app-pin
       (pinWs)="pinWorkspace()"
@@ -19,24 +39,7 @@
         <div class="body-wrapper-header-left">
           <hr>
           <div *ngIf="tabStatus === 'treaty'">treaty Sections</div>
-          <div *ngIf="tabStatus === 'fac'">Fac Divisions</div>
-        </div>
-        <div *ngIf="tabStatus === 'fac'" class="body-wrapper-header-center">
-          <nz-dropdown [nzTrigger]="'click'">
-            <div class="dropdown-wrap" nz-dropdown>
-              <div class="dropdown-wrap-title">
-                <span class="dropdown-title">FAC Instance</span>
-                <span class="dropdown-item-selected">{{selectedContract}}</span>
-              </div>
-              <div class="dropdown-icon">
-                <i nz-icon type="down"></i>
-              </div>
-            </div>
-            <ul nz-menu>
-              <li nz-menu-item (click)="selectContract(item.id)"
-                  *ngFor="let item of contracts">{{item.id}}</li>
-            </ul>
-          </nz-dropdown>
+          <div *ngIf="tabStatus === 'fac'">Divisions</div>
         </div>
         <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
@@ -55,9 +58,9 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <th *ngFor="let col of columns">
-                <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator"
-                                                                            class="indicator-frame"
-                                                                            [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                <div class="table-header-wrapper" *ngIf="col.display">
+                  <span *ngIf="col.indicator" class="indicator-frame"
+                        [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
                 </div>
                 <div class="search-bar-table" *ngIf="col.filtered">
                   <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -173,7 +176,7 @@
 
       <div class="body-wrap-border" *ngIf="tabStatus === 'fac'">
         <div class="body-1">
-          <span style="font-weight: bold;">Fac Division Summary</span>
+          <span style="font-weight: bold;">Division Summary</span>
         </div>
         <div class="body-wrap-border-body">
           <div class="body-wrap-border-left">
@@ -181,7 +184,7 @@
             <div class="body-w-b-l-list-item border-bottom-custom">
               <div class="body-w-b-l-item">
                 <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
-                <span class="body-1">Treaty 02T019976 1 XS DAB EVTS NATURELS</span>
+                <span class="body-1">{{facData}}</span>
               </div>
               <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData.carStatus}}</span></div>
             </div>
@@ -361,4 +364,72 @@
     </div>
   </div>
 
+  <div class="contract-body-wrapper" *ngIf="tabStatus === 'fac'">
+    <div class="body-wrap-body margin-reset">
+        <div class="body-wrapper" style="height: 250px;">
+          <div class="body-wrapper-header">
+            <div class="body-wrapper-header-left">
+              <hr>
+              <div>Region Peril</div>
+            </div>
+            <div class="body-wrapper-header-right">
+              <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+              <i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>
+              <i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>
+            </div>
+          </div>
+          <div class="show-table">
+            <p-table #dt [columns]="colsRegionPeril" [value]="facData.regionPeril"
+                     [scrollable]="true" scrollHeight="120px">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div class="table-header-wrapper" *ngIf="col.display">
+                      <span *ngIf="col.indicator" class="indicator-frame"
+                            [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                    </div>
+                    <div class="search-bar-table" *ngIf="col.filtered">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input pInputText type="text"
+                             (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns"
+                      [ngClass]="{'selected-item': rowData?.selected}"
+                      [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                    <div style=" display: flex;" *ngIf="col.type === 'select'">
+                      <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                             [ngModel]="rowData.selected"></label>
+                    </div>
+                    <div class="text-data" (click)="selectRows(rowData, i)"
+                         *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                    <div class="text-data" (click)="selectRows(rowData, i)"
+                         *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                    <div *ngIf="col.type === 'status'">
+                      <nz-progress [nzPercent]="rowData[col.field]"
+                                   [ngClass]="{'hidden-text': rowData[col.field] < 100 }"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                      {{rowData[col.field] | number: '1.2-2'}}%
+                    </div>
+                    <div class="text-data" *ngIf="col.type === 'icon'">
+                      <i class="icon-block_24px"></i>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+        </div>
+      </div>
+  </div>
 </div>

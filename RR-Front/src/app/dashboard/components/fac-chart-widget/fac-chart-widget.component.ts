@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 import * as moment from 'moment';
 import {GeneralConfigState} from '../../../core/store/states';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
+import { EChartOption } from 'echarts';
 
 @Component({
   selector: 'app-fac-chart-widget',
@@ -16,6 +17,7 @@ import * as workspaceActions from '../../../workspace/store/actions/workspace.ac
   styleUrls: ['./fac-chart-widget.component.scss']
 })
 export class FacChartWidgetComponent implements OnInit {
+
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -28,9 +30,15 @@ export class FacChartWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
+  xAxisData = [];
+  data1 = [];
+  data2 = [];
+
   /*  filterAssignedNew = false;
     filterAssignedCurrent = false;
     filterAssignedArchive = false;*/
+
+  chartOption: EChartOption = {};
 
   @Input()
   itemName = 'Car Widget';
@@ -103,6 +111,48 @@ export class FacChartWidgetComponent implements OnInit {
       this.detectChanges();
     });
     this.setFilters();
+
+    for (let i = 0; i < 100; i++) {
+      this.xAxisData.push('category' + i);
+      this.data1.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5);
+      this.data2.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
+    }
+
+    this.chartOption = {
+      legend: {
+        data: ['bar', 'bar2'],
+        align: 'left'
+      },
+      tooltip: {},
+      xAxis: {
+        data: this.xAxisData,
+        silent: false,
+        splitLine: {
+          show: false
+        }
+      },
+      yAxis: {
+      },
+      series: [{
+        name: 'bar',
+        type: 'bar',
+        data: this.data1,
+        animationDelay: (idx) => {
+          return idx * 10;
+        }
+      }, {
+        name: 'bar2',
+        type: 'bar',
+        data: this.data2,
+        animationDelay: (idx) => {
+          return idx * 10 + 100;
+        }
+      }],
+      animationEasing: 'elasticOut',
+      animationDelayUpdate: (idx) => {
+        return idx * 5;
+      }
+    };
   }
 
   setFilters() {

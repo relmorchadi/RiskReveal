@@ -82,7 +82,7 @@ export class DashboardEntryComponent implements OnInit {
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'Archived CARs',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -151,7 +151,7 @@ export class DashboardEntryComponent implements OnInit {
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -211,7 +211,7 @@ export class DashboardEntryComponent implements OnInit {
       },
       {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status',
-        componentName: 'facWidgetComponent', selected: true,
+        componentName: 'facChartWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }
     ]

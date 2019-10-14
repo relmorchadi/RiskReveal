@@ -343,7 +343,7 @@
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" (selectionChange)="getSelection($event)"
                            [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]" selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
-                           [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
+                           [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -362,7 +362,10 @@
                                    (ngModelChange)="updateAllChecked('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
-                          <th *ngIf="col.header !== 'selected'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
+                          <th [ngClass]="{'select-header': col.header === 'selected'}" *ngIf="col.header === 'Imported'">
+
+                          </th>
+                          <th *ngIf="col.header !== 'selected' && col.header !== 'Imported'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                             <div>
                               {{col.header}}
                               <p-sortIcon style="position: absolute; float: right;"
@@ -374,8 +377,7 @@
                       </tr>
                       <tr>
                         <th *ngFor="let col of columns" pResizableColumn>
-                          <div class="search-bar-table"
-                               *ngIf="col.header !== 'selected' && col.header !== 'id'">
+                          <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                             <input *ngIf="state.selectedEDMOrRDM === 'rdm'"
                                    pInputText type="text" #filters [(ngModel)]="filterAnalysis[col.field]">
@@ -397,6 +399,10 @@
                                *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                           <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                                *ngIf="col.type === 'date'"><span>{{getDateValue(rowData[col.field])}}</span></div>
+                          <div *ngIf="col.type === 'icon'">
+                            <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                               class="icon-upload_24px"></i>
+                          </div>
                         </td>
                       </tr>
                     </ng-template>

@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
 import {WsApi} from '../../../workspace/services/workspace.api';
 import {Router} from '@angular/router';
+import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWs from '../../../workspace/store/actions';
 import {WorkspaceState} from '../../../workspace/store/states';
@@ -156,8 +157,8 @@ export class SubmissionPageComponent implements OnInit {
       uwAnalysisContractDate: this.uwYear + '-01',
       assignedAnalyst: 'Nathalie Dulac',
       carStatus: 'New',
-      divisions: this.dataCoverage,
-      regionPeril: this.metaData
+      division: this.dataCoverage,
+      regionPeril: _.filter(Regions.regionPeril, item => _.includes(this.metaData, item.regionPerilCode))
     };
 /*    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));*/
     this.store.dispatch(new fromWs.CreateNewFac(data));

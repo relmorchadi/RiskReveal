@@ -713,6 +713,10 @@ export class RiskLinkStateService {
           allChecked: false,
           indeterminate: _.get(draft.content[wsIdentifier].riskLink.results, 'indeterminate', false)
         };
+        draft.content[wsIdentifier].riskLink.analysis = _.forEach(draft.content[wsIdentifier].riskLink.analysis,
+            item => {_.forEach(item.data ,dt => {if (dt.selected) {dt.imported = true} })});
+        draft.content[wsIdentifier].riskLink.portfolios = _.forEach(draft.content[wsIdentifier].riskLink.portfolios,
+          item => {_.forEach(item.data ,dt => {if (dt.selected) {dt.imported = true} })});
       })
     );
 
@@ -1409,6 +1413,7 @@ export class RiskLinkStateService {
                       [analysis.analysisId]: {
                         ...analysis,
                         typeWs: 'treaty',
+                        imported: false,
                         selected: false
                       }
                     }
@@ -1452,6 +1457,7 @@ export class RiskLinkStateService {
                   ...dt.content.map(portfolio => ({
                       [portfolio.dataSourceId]: {
                         ...portfolio,
+                        imported: false,
                         selected: false
                       }
                     }
