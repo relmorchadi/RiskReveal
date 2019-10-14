@@ -1,24 +1,23 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.TargetBuild.*;
-import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
-import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
-import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
-import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
-import com.scor.rr.repository.TargetBuild.*;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.*;
+import com.scor.rr.repository.*;
 import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Component
 public class PltBrowserService {
 
-    /*@Autowired
-    PltManagerViewRepository pltManagerViewRepository;*/
+    @Autowired
+    PltManagerViewRepository pltManagerViewRepository;
     @Autowired
     PltTableSpecification pltTableSpecification;
     @Autowired
@@ -26,100 +25,96 @@ public class PltBrowserService {
     @Autowired
     WorkspaceRepository workspaceRepository;
     @Autowired
-    PLTHeaderRepository pltHeaderRepository;
+    PltHeaderRepository pltHeaderRepository;
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    PLTManagerViewRepository pltManagerViewRepository;
-    @Autowired
-    WorkspaceRepository nworkspaceRepository;
-    @Autowired
-    PLTManagerViewRepository pltManagerView2Repository;
-    @Autowired
-    TagRepository tagRepository;
-    @Autowired
-    PLTHeaderTagRepository pltHeaderTagRepository;
+    public PltTagResponse searchPltTable(PltFilter pltFilter) {
 
-    PLTManagerViewHelperResponse appendTagsToPLTs(Set<PLTManagerView> plts, Workspace ws) {
-        HashMap<Integer, Tag> pltHeaderTagCount = new HashMap<>();
-        plts.forEach( pltView -> {
-                    pltView.setTags(
-                            pltHeaderTagRepository.findByPltHeaderId(pltView.getPltId())
-                                    .stream()
-                                    .map( pltHeaderTag -> {
-                                        Optional<Tag> tmpTagOpt = tagRepository.findById(pltHeaderTag.getTagId());
-                                        Tag tmpTag = new Tag();
-                                        if(tmpTagOpt.isPresent()) {
-                                            tmpTag = tmpTagOpt.get();
-
-                                            if(pltHeaderTagCount.containsKey(tmpTag.getTagId())) {
-                                                tmpTag.setCount(pltHeaderTagCount.get(tmpTag.getTagId()).getCount());
-
-                                            } else {
-                                                tmpTag.setCount(pltHeaderTagRepository.findByWorkspaceId(ws.getWorkspaceId()).size());
-
-                                            }
-                                        }
-                                        pltHeaderTagCount.put(tmpTag.getTagId(), tmpTag);
-                                        return tmpTag;
-                                    }).collect(Collectors.toSet())
-                    );
-                });
-        return new PLTManagerViewHelperResponse(plts, new HashSet<>(pltHeaderTagCount.values()));
+        PltTagResponse pltTagResponse = new PltTagResponse();
+        List<PltManagerView> plts = pltManagerViewRepository.findAll(pltTableSpecification.getFilter(pltFilter)).stream().distinct().collect(Collectors.toList());
+        List<UserTag> userTags = new ArrayList<>();
+//                userTagRepository.findByWorkspace(
+//                workspaceRepository.findWorkspaceByWorkspaceId(
+//                        new Workspace.WorkspaceId(pltFilter.getWorkspaceId(), pltFilter.getUwy())
+//                ));
+        pltTagResponse.setPlts(plts);
+        pltTagResponse.setUserTags(userTags);
+        return pltTagResponse;
     }
 
-    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
-        Workspace ws = nworkspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
-        Set<PLTManagerView> plts = pltManagerView2Repository.findPLTs(request.getWsId(), request.getUwYear());
-        Set<PLTManagerView> deletedPlts = pltManagerView2Repository.findDeletedPLTs(request.getWsId(), request.getUwYear());
+    public UserTag assignUserTag(AssignPltsRequest request) {
+        /*UserTag userTag;
+        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
+        List<PltHeader> pltHeaders;
+        if (Objects.isNull(request.tag.getTagId())) {
+            userTag = userTagRepository.findByTagName(request.tag.getTagName()).orElse(new UserTag(request.tag.getTagName(), request.tag.getTagColor()));
+        } else
+            userTag = userTagRepository.findById(request.tag.getTagId()).orElse(new UserTag(request.tag.getTagName(), request.tag.getTagColor()));
 
-        PLTManagerViewHelperResponse pltManagerViewHelperResponse = appendTagsToPLTs(plts, ws);
-
-        return new PLTManagerViewResponse(pltManagerViewHelperResponse.getPlts(), deletedPlts, pltManagerViewHelperResponse.getTags());
-    }
-
-    public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
-        request.getPltHeaderIds().forEach( pltHeaderId -> {
-            Optional<PLTHeader> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
-            PLTHeader pltHeader;
-
-            if(pltHeaderOpt.isPresent()) {
-                pltHeader = pltHeaderOpt.get();
-
-                if(pltHeader.getDeletedBy() == null && pltHeader.getDeletedOn() == null && pltHeader.getDeletedDue() == null) {
-
-                    pltHeader.setDeletedBy(request.getDeletedBy());
-                    pltHeader.setDeletedDue(request.getDeletedDue());
-                    pltHeader.setDeletedOn(request.getDeletedOn());
-
-                    pltHeaderRepository.save(pltHeader);
-                }
-
+        if (Objects.nonNull(userTag.getPltHeaders())) {
+            if (userTag.getPltHeaders().size() != 0) {
+                pltHeaders = pltHeaderRepository.findPltHeadersByIdInAndIdNotIn(request.plts, userTag.getPltHeaders().stream().map(PltHeader::getId).collect(Collectors.toList()));
             }
-        });
-        return true;
+            else pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
+        } else
+            pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
+        userTag.setTagName(request.tag.getTagName());
+        if (Objects.isNull(userTag.getPltHeaders())) userTag.setPltHeaders(new HashSet<>());
+        //userTag.setPltHeaders(new HashSet<>(pltHeaders));
+        userTag.setWorkspace(workspace);
+        userTagRepository.save(userTag);*/
+        return null;
     }
 
-    public Boolean restorePLTHeader(List<Integer> pltHeaderIds) {
-        pltHeaderIds.forEach((pltHeaderId) -> {
-            Optional<PLTHeader> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
-            PLTHeader pltHeader;
+    public void deleteUserTag(Integer id) {
+        //TO-DO
+    }
 
-            if(pltHeaderOpt.isPresent()) {
-                pltHeader = pltHeaderOpt.get();
+    public UserTag updateUserTag(UserTag userTag) {
+        /*return userTagRepository.findById(userTag.getTagId())
+                .map(tag -> {
+                    tag.setTagName(userTag.getTagName());
+                    tag.setTagColor(userTag.getTagColor());
+                    return tag;
+                }).map(userTagRepository::save)
+                .orElseThrow(() -> new RuntimeException("Tag not found"));*/
+        return null;
+    }
 
-                if(pltHeader.getDeletedBy() != null && pltHeader.getDeletedOn() != null && pltHeader.getDeletedDue() != null) {
-
-                    pltHeader.setDeletedBy(null);
-                    pltHeader.setDeletedDue(null);
-                    pltHeader.setDeletedOn(null);
-
-                    pltHeaderRepository.save(pltHeader);
-                }
-
-            }
+    @Transactional
+    public List<UserTag> assignUpdateUserTag(AssignUpdatePltsRequest request) {
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
+        List<PltHeader> pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
+        request.selectedTags.forEach(userTagId -> {
+            UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
+            //userTag.getPltHeaders().addAll(new HashSet<>(pltHeaders));
+//            userTag.setWorkspace(workspace);
+            userTagRepository.save(userTag);
         });
-        return true;
+        request.unselectedTags.forEach(userTagId -> {
+            UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
+            //userTag.setPltHeaders(new HashSet<>(userTag.getPltHeaders().stream().filter(p->!request.plts.contains(p.getId())).collect(Collectors.toList())));
+//            userTag.setWorkspace(workspace);
+            userTagRepository.save(userTag);
+        });
+        //return userTagRepository.findByTagIdIn(Stream.concat(request.selectedTags.stream(), request.unselectedTags.stream()).collect(Collectors.toList()));
+        return null;
+    }
+
+    public UserTag createUserTag(UserTagRequest request) {
+        try {
+            UserTag userTag= new UserTag();
+
+            User user= userRepository.findById(request.userId).orElseThrow( () -> new RuntimeException("User Not Found"));
+
+            userTag.setUser(user);
+            userTag.setTagName(request.tagName);
+            userTag.setTagColor(request.tagColor);
+
+            return userTagRepository.save(userTag);
+        } catch(Exception exp) {
+            throw new RuntimeException("Tag Name Should Be Unique");
+        }
     }
 }

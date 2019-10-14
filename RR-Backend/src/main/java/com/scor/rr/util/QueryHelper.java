@@ -1,7 +1,6 @@
 package com.scor.rr.util;
 
 import com.scor.rr.domain.dto.ExpertModeFilter;
-import com.scor.rr.domain.dto.ExpertModeSort;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import com.scor.rr.domain.enums.Operator;
 import org.springframework.stereotype.Component;
@@ -30,7 +29,7 @@ public class QueryHelper {
 
         List<String> fieldsSearchClauses = generateSearchClause(filter).stream().filter(Objects::nonNull).collect(Collectors.toList());
         List<String> globalSearchClauses = new ArrayList<>(generateGlobalSearchClause(filter));
-        return getQuery(fieldsSearchClauses, globalSearchClauses, new ArrayList<ExpertModeSort>());
+        return getQuery(fieldsSearchClauses, globalSearchClauses);
     }
 
     private Collection<? extends String> generateGlobalSearchClause(NewWorkspaceFilter filter) {
@@ -40,7 +39,7 @@ public class QueryHelper {
         return gsc;
     }
     private String generateLikeClause(String columnName, String keyword){
-        return " lower(c." + columnName + ") like '" + escape(keyword.toLowerCase()) + "' " ;
+        return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
     }
     private String generateYearEqualClause(String columnName, String keyword){
         Integer year;
@@ -57,10 +56,6 @@ public class QueryHelper {
 
     private String generateSelectClause(){
         return Arrays.stream(groupByColumns).map(s-> "c."+s+" as " +s).collect(Collectors.joining(","));
-    }
-
-    private String generateOrderClause(List<ExpertModeSort> sort){
-        return sort.stream().map(col -> col.getColumnName() + " " + col.getOrder().getOrderValue()).collect(Collectors.joining(","));
     }
 
     private Collection<? extends String> generateSearchClause(NewWorkspaceFilter filter) {
@@ -110,18 +105,18 @@ public class QueryHelper {
 
     public String generateCountQuery(List<ExpertModeFilter> filter,String keyword){
 
-        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter, new ArrayList<>(),keyword);
+        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter,keyword);
         return "select count(*) from ( " +sqlWithoutOffset + " ) as i";
     }
 
-    private String generateSqlQueryWithoutOffset(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword) {
+    private String generateSqlQueryWithoutOffset(List<ExpertModeFilter> filter, String keyword) {
 
         List<String> fieldsSearchClauses = generateSearchClause(filter).stream().filter(Objects::nonNull).collect(Collectors.toList());
         List<String> globalSearchClauses = new ArrayList<>(generateGlobalSearchClause(keyword));
-        return getQuery(fieldsSearchClauses, globalSearchClauses, sort);
+        return getQuery(fieldsSearchClauses, globalSearchClauses);
     }
 
-    private String getQuery(List<String> fieldsSearchClauses, List<String> globalSearchClauses, List<ExpertModeSort> sort) {
+    private String getQuery(List<String> fieldsSearchClauses, List<String> globalSearchClauses) {
         String globalSearchCondition = String.join(" or ", globalSearchClauses);
         String fieldsSearchCondition = String.join(" and ", fieldsSearchClauses);
         String whereCondition = "";
@@ -131,20 +126,13 @@ public class QueryHelper {
         else if (!fieldsSearchCondition.trim().equals("")) whereCondition = " where " + fieldsSearchCondition;
         String groupByClause = generateGroupByClause();
         String selectClause = generateSelectClause();
-        String query = "select " + selectClause + " from [poc].[ContractSearchResult] c " + whereCondition + " group by " + groupByClause;
-
-        return query;
+        return "select " + selectClause + " from [poc].[CATContract] c " + whereCondition + " group by " + groupByClause;
     }
 
-    public String generateSqlQuery(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword, int offset, int size){
-        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter, sort,keyword);
-        String orderByClause = generateOrderClause(sort);
-        String sqlWithoutOffsetQuery = sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc ";
-        String offsetQuery = " OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
+    public String generateSqlQuery(List<ExpertModeFilter> filter,String keyword, int offset, int size){
+        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter,keyword);
+        return sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
 
-        String query= orderByClause.isEmpty() ? sqlWithoutOffsetQuery : sqlWithoutOffset + " order by " + orderByClause;
-
-        return query.concat(offsetQuery);
     }
 
     private String generateClause(String columnName, String keyword, Operator operator){
@@ -154,7 +142,7 @@ public class QueryHelper {
                 return " c." + columnName + " = '" + escape(keyword) + "' ";
             case LIKE:
             default:
-                return " lower(c." + columnName + ") like '" + escape(keyword.toLowerCase()) + "' ";
+                return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
         }
     }
 

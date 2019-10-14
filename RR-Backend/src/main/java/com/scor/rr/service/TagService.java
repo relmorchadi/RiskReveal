@@ -1,123 +1,171 @@
 package com.scor.rr.service;
 
 
-import com.scor.rr.domain.TargetBuild.*;
-import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
-import com.scor.rr.domain.dto.TargetBuild.SaveOrUpdateTagRequest;
-import com.scor.rr.repository.TargetBuild.*;
-import com.scor.rr.repository.TargetBuild.UserRepository;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.AssignTagPltRequest;
+import com.scor.rr.domain.dto.TagManagerRequest;
+import com.scor.rr.domain.dto.TagManagerResponse;
+import com.scor.rr.domain.dto.UserTagRequest;
+import com.scor.rr.repository.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class TagService {
 
     @Autowired
-    TagRepository tagRepository;
-
-    @Autowired
     UserTagRepository userTagRepository;
 
     @Autowired
-    PLTHeaderTagRepository pltHeaderTagRepository;
+    PltUserTagRepository pltUserTagRepository;
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    WorkspaceRepository workspaceRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    PLTHeaderRepository pltHeaderRepository;
+    WorkspaceRepository workspaceRepository;
 
-    public Boolean assignTagToPlts(AssignTagToPltsRequest request) {
-        Workspace workspace = workspaceRepository.findById(request.wsId).orElse(null);
+    public TagManagerResponse getTagsByPltSelection(TagManagerRequest request) {
+        User user = userRepository.findById(request.userId).orElse(null);
+//        Workspace.WorkspaceId workspaceId = new Workspace.WorkspaceId(request.wsId, request.uwYear);
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(workspaceId);
+
+
+        List<UserTag> assignedInWs= pltUserTagRepository.findByWorkSpaceIdAndUwYear(request.wsId, request.uwYear).stream().map(UserTagPlt::getTag).distinct().collect(Collectors.toList());
+
+        //1
+//        List<UserTag> usedInWs = userTagRepository.findByWorkspace(workspaceRepository.findWorkspaceByWorkspaceId(workspaceId))
+//                .stream()
+//                .filter( tag -> !request.selectedTags.contains(tag))
+//                .collect(Collectors.toList());
+        //2
+        List<UserTag> suggested = Stream
+                .concat(
+                        pltUserTagRepository.findTop10ByAssignerOrderByAssignedAtDesc(user).stream(),
+                        pltUserTagRepository.findUserTagPltsByAssigner(user).stream()
+                )
+                .distinct()
+                .map(UserTagPlt::getTag)
+                .collect(Collectors.toList());
+        //3
+//        List<UserTag> allAssignment= userTagRepository.findAllByWorkspaceNot(workspace);
+
+        //return new TagManagerResponse(usedInWs.stream().map(UserTagPlt::getTag).collect(Collectors.toList()), Stream.concat(favorite.stream(), recent.stream()).distinct().map(UserTagPlt::getTag).collect(Collectors.toList()), allAssignment);
+//        return new TagManagerResponse(usedInWs, suggested, allAssignment);
+        return null;
+    }
+    /*
+    public TagManagerResponse getTagsByPltSelection(TagManagerRequest request) {
         User user = userRepository.findById(request.userId).orElse(null);
 
-        //TODO: replace orElse By Exceptions
+        List<UserTagPlt> usedInWs= pltUserTagRepository.findByAssignerAndWorkSpaceIdAndUwYear(user, request.wsId, request.uwYear);
+        List<UserTagPlt> favorite= pltUserTagRepository.findTop10ByAssignerOrderByAssignedAtDesc(user);
+        List<UserTagPlt> recent= pltUserTagRepository.findUserTagPltsByAssigner(user);
+        List<UserTag> allAssignment= userTagRepository.findAllUserTags();
 
-        Set<PLTHeader> pltHeaders = new HashSet<>(pltHeaderRepository.findAllById(request.plts));
+        return new TagManagerResponse(usedInWs.stream().map(UserTagPlt::getTag).collect(Collectors.toList()), Stream.concat(favorite.stream(), recent.stream()).distinct().map(UserTagPlt::getTag).collect(Collectors.toList()), allAssignment);
+    }
+    */
+    public UserTag createUserTag(UserTagRequest request) {
+        UserTag userTag= new UserTag();
+        User user= this.userRepository.findById(request.userId).orElse(null);
 
+        userTag.setUser(user);
+        userTag.setTagColor(request.tagColor);
+        userTag.setTagName(request.tagName);
+
+        this.userTagRepository.save(userTag);
+
+        request.selectedPlts.forEach( pltId -> {
+            PltHeader pltHeader = this.pltHeaderRepository.findById(pltId).orElseThrow(()-> new RuntimeException("Plt Not Found"));
+            UserTagPlt assignment = new UserTagPlt();
+
+            assignment.setAssigner(user);
+            assignment.setPlt(pltHeader);
+            assignment.setTag(userTag);
+            assignment.setAssignedAt(new Date());
+            assignment.setWorkSpaceId(request.wsId);
+            assignment.setUwYear(request.uwYear);
+
+            this.pltUserTagRepository.save(assignment);
+        });
+
+        return userTag;
+    }
+
+
+    public List<UserTag> assignTagPlt(AssignTagPltRequest request) {
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
+        List<PltHeader> pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
         request.selectedTags.forEach(tag -> {
-
-            Tag newTag;
-            com.scor.rr.domain.TargetBuild.UserTag userTag;
-
-            //Check if Tag exist else create it
-            if(tag.getTagId() != null && !tagRepository.existsById(tag.getTagId())) {
-
-                newTag = tagRepository.findById(tag.getTagId()).get();
-
-            } else {
-
-                newTag = new Tag();
-
-                newTag.setEntity(1);
+            /*UserTag userTag = userTagRepository.findById(tag.getTagId()).orElseGet( () -> {
+                UserTag newTag = new UserTag();
+                newTag.setTagColor(tag.getTagColor());
                 newTag.setTagName(tag.getTagName());
-                newTag.setDefaultColor(tag.getDefaultColor());
-                newTag.setCreatedBy(tag.getCreatedBy());
-                tagRepository.save(newTag);
+                newTag.setUser(userRepository.findById(request.userId).orElse(null));
+                return userTagRepository.save(newTag);
+            });*/
 
-            }
-
-            //Update UserTag preference if changed
-            Optional<com.scor.rr.domain.TargetBuild.UserTag> userTagOpt = userTagRepository.findByTagIdAndUser(newTag.getTagId(), user.getUserId());
-
-            if(userTagOpt.isPresent()) {
-                userTag = userTagOpt.get();
-
-                if(!userTag.getUserOverrideColour().equalsIgnoreCase(tag.getDefaultColor())) {
-
-                    userTag.setUserOverrideColour(tag.getDefaultColor());
-                    userTagRepository.save(userTag);
-                }
-
+            UserTag userTag;
+            /*if(Optional.ofNullable(tag.getTagName()).isPresent()) {
+                userTag= userTagRepository.findByTagName(tag.getTagName()).get();
             } else {
+                userTag= new UserTag();
+                userTag.setTagColor(tag.getTagColor());
+                userTag.setTagName(tag.getTagName());
+                userTag.setWorkspace(workspace);
+                userTag.setUser(userRepository.findById(request.userId).orElse(null));
+                userTagRepository.save(userTag);
+            }*/
 
-                userTag = new UserTag();
-
-                userTag.setUserOverrideColour(tag.getDefaultColor());
-                userTag.setUser(user.getUserId());
-                userTag.setTagId(newTag.getTagId());
-
-            }
-
-            //Set Assignment
-            pltHeaders.forEach( pltHeader -> {
-
-                PLTHeaderTag pltHeaderTag = new PLTHeaderTag(pltHeader.getPltHeaderId(), newTag.getTagId());
-                pltHeaderTag.setWorkspaceId(workspace.getWorkspaceId());
-                pltHeaderTag.setCreatedBy(user.getUserId());
-                pltHeaderTagRepository.save(pltHeaderTag);
-
+            userTag = userTagRepository.findByTagName(tag.getTagName()).orElseGet(()-> {
+                UserTag ut = new UserTag();
+                ut.setTagColor(tag.getTagColor());
+                ut.setTagName(tag.getTagName());
+//                ut.setWorkspace(workspace);
+                ut.setUser(userRepository.findById(request.userId).orElse(null));
+                userTagRepository.save(ut);
+                return ut;
             });
 
+
+            pltHeaders.forEach( pltHeader -> {
+                UserTagPlt assignment = new UserTagPlt(userTag, pltHeader);
+                assignment.setAssignedAt(new Date());
+                assignment.setAssigner(userRepository.findById(request.userId).orElse(null));
+                assignment.setUwYear(request.uwYear);
+                assignment.setWorkSpaceId(request.wsId);
+                pltUserTagRepository.save(assignment);
+            });
         });
         request.unselectedTags.forEach(tag -> {
 
-            if(tagRepository.existsById(tag.getTagId())) {
-                Optional<Tag> tmpTagOpt = tagRepository.findById(tag.getTagId());
+            System.out.println("test :" + tag);
 
-                if(tmpTagOpt.isPresent()) {
-                    Tag tmpTag = tmpTagOpt.get();
-
-                    pltHeaders.forEach(pltHeader -> pltHeaderTagRepository.findByPltHeaderIdAndTagId(tmpTag.getTagId(), pltHeader.getPltHeaderId()).ifPresent(pltHeaderTagRepository::delete));
+            UserTag userTag = userTagRepository.findById(tag.getTagId()).get();
+            pltHeaders.forEach(pltHeader -> {
+                UserTagPlt assignment = pltUserTagRepository.findByTagAndPlt(userTag, pltHeader).orElse(null);
+                if(assignment != null) {
+                    pltUserTagRepository.delete(assignment);
                 }
-            }
-
+            });
         });
-        return true;
-    }
 
-    public Boolean saveOrUpdateTag(SaveOrUpdateTagRequest request) {
+        /*request.unselectedTags.forEach(tag -> {
+            UserTag userTag = userTagRepository.findById(tag.getTagId()).orElseThrow(()-> new RuntimeException("userTag ID not found"));
+            userTag.setAssignment(new HashSet<>(tag.getAssignment().stream().filter( assignment -> !request.plts.contains(assignment.getPltHeader().getId())).collect(Collectors.toList())));
+            userTagRepository.save(userTag);
+        });*/
 
-        //Check if tag already exists
-        //if exist then assign plts to it either globaly or partially from a workspace
-        //if it doesn't exist then create new one
-
-        return false;
+        return userTagRepository.findByTagIdIn(Stream.concat(request.selectedTags.stream().map(UserTag::getTagId), request.unselectedTags.stream().map(UserTag::getTagId)).collect(Collectors.toList()));
     }
 
 
