@@ -34,17 +34,17 @@ public class TagService {
 
     public TagManagerResponse getTagsByPltSelection(TagManagerRequest request) {
         User user = userRepository.findById(request.userId).orElse(null);
-        Workspace.WorkspaceId workspaceId = new Workspace.WorkspaceId(request.wsId, request.uwYear);
-        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(workspaceId);
+//        Workspace.WorkspaceId workspaceId = new Workspace.WorkspaceId(request.wsId, request.uwYear);
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(workspaceId);
 
 
         List<UserTag> assignedInWs= pltUserTagRepository.findByWorkSpaceIdAndUwYear(request.wsId, request.uwYear).stream().map(UserTagPlt::getTag).distinct().collect(Collectors.toList());
 
         //1
-        List<UserTag> usedInWs = userTagRepository.findByWorkspace(workspaceRepository.findWorkspaceByWorkspaceId(workspaceId))
-                .stream()
-                .filter( tag -> !request.selectedTags.contains(tag))
-                .collect(Collectors.toList());
+//        List<UserTag> usedInWs = userTagRepository.findByWorkspace(workspaceRepository.findWorkspaceByWorkspaceId(workspaceId))
+//                .stream()
+//                .filter( tag -> !request.selectedTags.contains(tag))
+//                .collect(Collectors.toList());
         //2
         List<UserTag> suggested = Stream
                 .concat(
@@ -55,10 +55,11 @@ public class TagService {
                 .map(UserTagPlt::getTag)
                 .collect(Collectors.toList());
         //3
-        List<UserTag> allAssignment= userTagRepository.findAllByWorkspaceNot(workspace);
+//        List<UserTag> allAssignment= userTagRepository.findAllByWorkspaceNot(workspace);
 
         //return new TagManagerResponse(usedInWs.stream().map(UserTagPlt::getTag).collect(Collectors.toList()), Stream.concat(favorite.stream(), recent.stream()).distinct().map(UserTagPlt::getTag).collect(Collectors.toList()), allAssignment);
-        return new TagManagerResponse(usedInWs, suggested, allAssignment);
+//        return new TagManagerResponse(usedInWs, suggested, allAssignment);
+        return null;
     }
     /*
     public TagManagerResponse getTagsByPltSelection(TagManagerRequest request) {
@@ -101,7 +102,7 @@ public class TagService {
 
 
     public List<UserTag> assignTagPlt(AssignTagPltRequest request) {
-        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
+//        Workspace workspace = workspaceRepository.findWorkspaceByWorkspaceId(new Workspace.WorkspaceId(request.wsId, request.uwYear));
         List<PltHeader> pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
         request.selectedTags.forEach(tag -> {
             /*UserTag userTag = userTagRepository.findById(tag.getTagId()).orElseGet( () -> {
@@ -128,7 +129,7 @@ public class TagService {
                 UserTag ut = new UserTag();
                 ut.setTagColor(tag.getTagColor());
                 ut.setTagName(tag.getTagName());
-                ut.setWorkspace(workspace);
+//                ut.setWorkspace(workspace);
                 ut.setUser(userRepository.findById(request.userId).orElse(null));
                 userTagRepository.save(ut);
                 return ut;

@@ -22,11 +22,9 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.reducing;
 
 
 @Service
@@ -68,8 +66,11 @@ public class SearchService {
     @Autowired
     WorkspaceNameCountViewRepository workspaceNameCountViewRepository;
 
+//    @Autowired
+//    ProjectViewRepository projectViewRepository;
+
     @Autowired
-    ProjectViewRepository projectViewRepository;
+    WorkspaceRepository workspaceRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -112,16 +113,6 @@ public class SearchService {
         return workspaceYearsRepository.findByLabelLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
-
-//    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-//        return new PageImpl<WorkspaceProjection>(
-//                contractSearchResultRepository.getContracts(filter, offset, size),
-//                PageRequest.of(offset / size, size),
-//                contractSearchResultRepository.countContracts(filter)
-//        );
-//
-//    }
-
     public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
         String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
         String countQueryString = queryHelper.generateCountQuery(filter);
@@ -139,16 +130,15 @@ public class SearchService {
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
 
-    public Optional<WorkspaceDetailsDTO> getWorkspaceDetails(String worspaceId, String uwy) {
-        List<ContractSearchResult> items = contractSearchResultRepository.findByTreatyidAndUwYear(worspaceId, uwy);
-        if (items == null || items.isEmpty())
-            return Optional.empty();
-        List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
-        final List<ProjectView> projects = projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
-        List<ProjectView> filtredProjects = projectViewRepository.findFirstByWorkspaceIdAndUwyAndPostInuredFlagIsTrue(worspaceId, Integer.valueOf(uwy))
-                .map(postInuredProject -> Stream.concat(asList(postInuredProject).stream(), projects.stream()).collect(toList()))
-                .orElse(projects);
-        return Optional.of(new WorkspaceDetailsDTO(items, years, filtredProjects));
+    public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
+        return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy))
+                .map(ws -> {
+                    List<Integer> years= workspaceRepository.findDistinctYearsByWorkspaceId(workspaceId);
+                    WorkspaceDetailsDTO result= new WorkspaceDetailsDTO(ws, years);
+                    return result;
+                })
+                .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
+
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
