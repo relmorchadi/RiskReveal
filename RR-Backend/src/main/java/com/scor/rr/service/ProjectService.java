@@ -35,6 +35,12 @@ public class ProjectService {
                 );
     }
 
+    public Project updateProject(Long projectId, Project project) {
+        if (!projectRepository.existsById(projectId))
+            throw new RuntimeException("No available Project with ID : " + projectId);
+        project.setProjectId(projectId);
+        return projectRepository.save(project);
+    }
 
     public void deleteProject(Long projectId) {
         if (projectRepository.existsById(projectId))
@@ -42,4 +48,5 @@ public class ProjectService {
         else
             throw new RuntimeException("No available Project with ID : " + projectId);
     }
+
 }
