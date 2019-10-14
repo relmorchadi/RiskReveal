@@ -41,13 +41,13 @@ public class SearchResource {
     }
 
     @GetMapping("workspace")
-//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+//    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
     Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
         return searchService.globalSearchWorkspaces(filter, offset, size);
     }
 
 //    @PostMapping("workspace")
-//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+//    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
 //    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int offset, int size){
 //        return searchService.getWorkspaces(filter, offset,size);
 //    }
@@ -58,10 +58,8 @@ public class SearchResource {
     }
 
     @GetMapping("worspace/{workspaceId}/{uwy}")
-    ResponseEntity<WorkspaceDetailsDTO> getWorkspaceDetails(@PathVariable("workspaceId") String worspaceId, @PathVariable("uwy") String uwy){
-        return  searchService.getWorkspaceDetails(worspaceId, uwy)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+    ResponseEntity<WorkspaceDetailsDTO> getWorkspaceDetails(@PathVariable("workspaceId") String workspaceId, @PathVariable("uwy") String uwy){
+        return  ResponseEntity.ok(searchService.getWorkspaceDetails(workspaceId, uwy));
     }
 
     @GetMapping("fac-treaties")

@@ -29,10 +29,7 @@ public interface ContractSearchResultRepository extends JpaRepository<ContractSe
             " GROUP BY  c.workSpaceId,c.workspaceName, c.uwYear, c.cedantCode, c.cedantName, c.countryName")
     Page<WorkspaceProjection> globalSearch(@Param("kw") String keyword,Pageable pageable);
 
-//    @Query(value = "EXEC filterContracts :offset,:size, :#{#f.workspaceId}, :#{#f.innerWorkspaceId}, :#{#f.workspaceName}, :#{#f.innerWorkspaceName}, :#{#f.year}, :#{#f.innerYear}, :#{#f.cedantCode}, :#{#f.innerCedantCode}, :#{#f.cedantName}, :#{#f.innerCedantName}, :#{#f.countryName}, :#{#f.innerCountryName}", nativeQuery = true)
-//    List<WorkspaceProjection> getContracts(@Param("f") NewWorkspaceFilter f, @Param("offset") int offset, @Param("size") int size);
-//
-//    @Query(value = "EXEC countFilterContracts :#{#f.workspaceId},:#{#f.innerWorkspaceId},:#{#f.workspaceName}, :#{#f.innerWorkspaceName},:#{#f.year},:#{#f.innerYear}, :#{#f.cedantCode},:#{#f.innerCedantCode}, :#{#f.cedantName},:#{#f.innerCedantName}, :#{#f.countryName}, :#{#f.innerCountryName}", nativeQuery = true)
-//    long countContracts(@Param("f") NewWorkspaceFilter f);
+    /* @ TODO Implement the Count Search logic Queries */
+
 
 }
