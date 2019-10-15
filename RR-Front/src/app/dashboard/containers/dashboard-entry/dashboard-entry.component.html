@@ -34,7 +34,7 @@
             <gridster  [options]="options" style="background-color: transparent" >
               <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
-                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent'"
+                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
                                           (changeName)="changeName(dashboard.id, $event)"
@@ -42,11 +42,17 @@
                                           class="no-drag">
                   </renewal-contract-scope>
                   <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
-                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                    (delete)="deleteItemFac(dashboard.id, $event)"
-                    (changeName)="changeNameFac(dashboard.id, $event)"
-                    (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
+                                  [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                  (delete)="deleteItemFac(dashboard.id, $event)"
+                                  (changeName)="changeNameFac(dashboard.id, $event)"
+                                  (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
+                  <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
+                                        [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                        (delete)="deleteItemFac(dashboard.id, $event)"
+                                        (changeName)="changeNameFac(dashboard.id, $event)"
+                                        (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
+                  </app-fac-chart-widget>
                 </gridster-item>
               </ng-container>
             </gridster>

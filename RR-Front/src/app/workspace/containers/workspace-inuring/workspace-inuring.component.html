@@ -85,7 +85,8 @@
         <label>ID :</label>
       </div>
       <div class="ui-g-9">
-        <input class="a-textfield-mini" *ngIf="!inuringPackageFG.get('edit').value; else packageId" formControlName="id"
+        <input class="a-textfield-mini" *ngIf="!inuringPackageFG.get('edit').value; else packageId"
+               [(ngModel)]="newPackageId" formControlName="id"
                placeholder="Package ID">
         <ng-template #packageId>
           <div>

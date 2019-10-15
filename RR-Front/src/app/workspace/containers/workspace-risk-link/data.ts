@@ -1,50 +1,52 @@
 const scrollableColsAnalysis = [
-  {field: '', header: '', width: '0px', type: ''},
-  {field: 'description', header: 'Description', width: '150px', type: 'text'},
-  {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
-  {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
-  {field: 'cedant', header: 'Cedant', width: '110px', type: 'text'},
-  {field: 'lobName', header: 'LOB', width: '110px', type: 'text'},
-  {field: 'engineType', header: 'Engine Type', width: '110px', type: 'text'},
-  {field: 'runDate', header: 'Run Date', width: '110px', type: 'text'},
-  {field: 'typeName', header: 'Type', width: '110px', type: 'text'},
-  {field: 'peril', header: 'Peril', width: '110px', type: 'text'},
-  {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text'},
-  {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text'},
-  {field: 'region', header: 'Region', width: '110px', type: 'text'},
-  {field: 'modeName', header: 'Mode', width: '110px', type: 'text'},
-  {field: 'user1', header: 'User 1', width: '110px', type: 'text'},
-  {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
-  {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
-  {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '110px', type: 'text'},
-  {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
-  {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
-  {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
+  {field: '', header: '', width: '0px', type: '', filtered: true},
+  {field: 'description', header: 'Description', width: '150px', type: 'text', filtered: true},
+  {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text', filtered: true},
+  {field: 'groupType', header: 'Group Type', width: '110px', type: 'text', filtered: true},
+  {field: 'cedant', header: 'Cedant', width: '110px', type: 'text', filtered: true},
+  {field: 'lobName', header: 'LOB', width: '110px', type: 'text', filtered: true},
+  {field: 'engineType', header: 'Engine Type', width: '110px', type: 'text', filtered: true},
+  {field: 'runDate', header: 'Run Date', width: '110px', type: 'text', filtered: true},
+  {field: 'typeName', header: 'Type', width: '110px', type: 'text', filtered: true},
+  {field: 'peril', header: 'Peril', width: '110px', type: 'text', filtered: true},
+  {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text', filtered: true},
+  {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text', filtered: true},
+  {field: 'region', header: 'Region', width: '110px', type: 'text', filtered: true},
+  {field: 'modeName', header: 'Mode', width: '110px', type: 'text', filtered: true},
+  {field: 'user1', header: 'User 1', width: '110px', type: 'text', filtered: true},
+  {field: 'user2', header: 'User 2', width: '110px', type: 'text', filtered: true},
+  {field: 'user3', header: 'User 3', width: '110px', type: 'text', filtered: true},
+  {field: 'user4', header: 'User 4', width: '110px', type: 'text', filtered: true},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '110px', type: 'text', filtered: true},
+  {field: 'regionName', header: 'Region Name', width: '110px', type: 'text', filtered: true},
+  {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text', filtered: true},
+  {field: 'grouping', header: 'Grouping', width: '110px', type: 'text', filtered: true},
 ];
 
 const frozenColsAnalysis = [
-  {field: 'selected', header: 'selected', width: '20px', type: 'select'},
-  {field: 'analysisId', header: 'id', width: '30px', type: 'text'},
-  {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
+  {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
+  {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
+  {field: 'analysisId', header: 'id', width: '30px', type: 'text', filtered: true},
+  {field: 'analysisName', header: 'name', width: '190px', type: 'text', filtered: true}
 ];
 
 const scrollableColsPortfolio = [
-  {field: '', header: '', width: '0px', type: ''},
-  {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
-  {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
-  {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
-  {field: 'type', header: 'Type', width: '180px', type: 'text'},
-  {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text'},
-  {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text'},
-  {field: 'agSource', header: 'Source', width: '120px', type: 'text'},
-  {field: 'peril', header: 'Peril', width: '120px', type: 'text'},
+  {field: '', header: '', width: '0px', type: '', filtered: true},
+  {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text', filtered: true},
+  {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date', filtered: true},
+  {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text', filtered: true},
+  {field: 'type', header: 'Type', width: '180px', type: 'text', filtered: true},
+  {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text', filtered: true},
+  {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text', filtered: true},
+  {field: 'agSource', header: 'Source', width: '120px', type: 'text', filtered: true},
+  {field: 'peril', header: 'Peril', width: '120px', type: 'text', filtered: true},
 ];
 
 const frozenColsPortfolio = [
-  {field: 'selected', header: 'selected', width: '20px', type: 'select'},
-  {field: 'dataSourceId', header: 'id', width: '30px', type: 'text'},
-  {field: 'number', header: 'Number', width: '190px', type: 'text'}
+  {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
+  {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
+  {field: 'dataSourceId', header: 'id', width: '30px', type: 'text', filtered: true},
+  {field: 'number', header: 'Number', width: '190px', type: 'text', filtered: true}
 ];
 
 const scrollableColsSummary = [

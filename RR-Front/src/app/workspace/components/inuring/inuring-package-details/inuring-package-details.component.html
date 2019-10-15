@@ -1,6 +1,8 @@
 <div class="content">
+  <div style="margin: 5px 5px 14px 5px;">
+    <h6>{{data.details.name}}</h6>
+  </div>
   <div style="display: flex">
-
     <div *ngIf="!collapsedCanvas" style="background-color: #fff;">
       <inuring-canvas-tab
         [wsConfig]="{wsId: data?.wsId,year: data?.year}"
@@ -23,6 +25,7 @@
           [wsIdentifier]="stepConfig.wsId+'-'+stepConfig.uwYear"
           (editNode)="editNode($event)"
           (editEdge)="editEdge($event)"
+          (appendNode)="appendNode($event)"
         >
 
         </inuring-graph>

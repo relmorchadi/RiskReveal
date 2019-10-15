@@ -29,10 +29,11 @@ import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
-import {INURING_NODES} from "./components/inuring/nodes";
+import {INURING_NODES} from './components/inuring/nodes';
 import {EditContractPopUpComponent} from './components/inuring/edit-contract-pop-up/edit-contract-pop-up.component';
 import {EditEdgePopUpComponent} from './components/inuring/edit-edge-pop-up/edit-edge-pop-up.component';
-
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {NgxEchartsModule} from 'ngx-echarts';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -41,11 +42,13 @@ import {EditEdgePopUpComponent} from './components/inuring/edit-edge-pop-up/edit
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent
   ],
   imports: [
+    NgxEchartsModule,
     GridsterModule,
     SharedModule,
     FormsModule,
     TreeModule,
     CalendarModule,
+    ConfirmDialogModule,
     VirtualScrollerModule,
     ReactiveFormsModule,
     NgMasonryGridModule,
