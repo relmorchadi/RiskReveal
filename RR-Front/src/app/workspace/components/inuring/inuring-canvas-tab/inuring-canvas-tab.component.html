@@ -11,8 +11,8 @@
         </div>
         <div class="simple-panel">
           <h6>Nodes</h6>
-          <div *ngFor="let node of appendedNodes; let i=index" class="menu-item node-item" [nz-tooltip]="node.join(', ')">
-            Node {{i+1}}
+          <div *ngFor="let node of appendedNodes; let i=index" class="menu-item node-item">
+            {{node.name}}
             <i class="icon-arrow_forward_ios_24px"></i>
           </div>
         </div>
