@@ -26,13 +26,19 @@ public class ProjectService {
 
     public Project addNewProject(String wsId, Integer uwy, Project p) {
         return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
-                .map(ws -> projectRepository.save(p.builder().workspaceId(ws.getWorkspaceId()).projectId(null).build()))
+                .map(ws -> projectRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() ->
                         contractSearchResultRepository.findByWorkspaceIdAndUwYear(wsId, uwy)
                                 .map(targetContract -> workspaceRepository.save(new Workspace(targetContract)))
-                                .map(newWs -> projectRepository.save(p.builder().projectId(null).workspaceId(newWs.getWorkspaceId()).build()))
+                                .map(newWs -> projectRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
                 );
+    }
+
+    private Project prePersistProject(Project p, Long wsId) {
+        p.setProjectId(null);
+        p.setWorkspaceId(wsId);
+        return p;
     }
 
     public Project updateProject(Long projectId, Project project) {

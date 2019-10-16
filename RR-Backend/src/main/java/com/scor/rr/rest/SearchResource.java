@@ -58,8 +58,8 @@ public class SearchResource {
     }
 
     @GetMapping("worspace/{workspaceId}/{uwy}")
-    ResponseEntity<WorkspaceDetailsDTO> getWorkspaceDetails(@PathVariable("workspaceId") String workspaceId, @PathVariable("uwy") String uwy){
-        return  ResponseEntity.ok(searchService.getWorkspaceDetails(workspaceId, uwy));
+    WorkspaceDetailsDTO getWorkspaceDetails(@PathVariable("workspaceId") String workspaceId, @PathVariable("uwy") String uwy){
+        return  searchService.getWorkspaceDetails(workspaceId, uwy);
     }
 
     @GetMapping("fac-treaties")
