@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URI: 'http://192.168.1.8:8081/api/',
+  API_URI: 'http://192.168.1.8:8080/api/',
   hmr: false
 
 };
