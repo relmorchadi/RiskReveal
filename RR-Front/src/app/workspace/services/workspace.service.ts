@@ -455,16 +455,16 @@ export class WorkspaceService {
   }
 
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
-    const {project, wsId, uwYear, id} = payload;
+    const {projectId, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.deleteProject(project, wsId, uwYear)
+    return this.wsProjectService.deleteProject(projectId)
       .pipe(catchError(err => {
         ctx.dispatch(new fromWS.DeleteProjectFails({}));
         return EMPTY;
       }))
       .subscribe((p) => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          p ? draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== p.projectId) : null
+          draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId)
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });

@@ -107,9 +107,9 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.wsIdentifier}));
   }
 
-  delete(project) {
+  delete(projectId) {
     this.dispatch(new fromWs.DeleteProject({
-      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, project,
+      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,
     }));
   }
 
