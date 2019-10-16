@@ -14,11 +14,11 @@ export class WsProjectService {
   }
 
   addNewProject(project: any, wsId, uwYear, id): Observable<any> {
-      return this.http.post(`${this.api}`, {wsId, uwYear, id, project});
+      return this.http.post(`${this.api}?wsId=${wsId}&uwy=${uwYear}`, project);
   }
 
-  deleteProject(project: any, wsId, uwYear): Observable<any> {
-     return this.http.post(`${this.api}delete`, {wsId, uwYear, project});
+  deleteProject(projectId: number): Observable<any> {
+     return this.http.delete(`${this.api}delete/?id=${projectId}` );
   }
 
 }

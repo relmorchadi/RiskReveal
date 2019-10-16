@@ -18,7 +18,7 @@
           <i *ngIf="project.postInuredFlag" class="fa fa-code-fork"></i>
         </div>
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-          <span>{{project?.name}}</span>
+          <span>{{project?.projectName}}</span>
           <span>{{project?.projectId}}</span>
         </div>
         <div class="icon-card-wrapper">
@@ -29,7 +29,7 @@
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
               <li nz-menu-item class="contextMenu border-bottom"
-                  (click)="delete({projectId: project?.projectId ,projectIndex: i})"><i
+                  (click)="delete(project?.projectId)"><i
                 class="icon-trash-alt"></i>Delete
               </li>
               <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
@@ -106,10 +106,10 @@
         <div class="project-kpi-details-title flex-align-Ws">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
-          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</a>
+          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.linkedSourceProjectId}}]</a>
         </div>
         <p class="project-kpi-details-title">
-          {{project?.description}}
+          {{project?.projectDescription}}
         </p>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
