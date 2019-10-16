@@ -131,12 +131,12 @@ public class SearchService {
     }
 
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
-        return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy))
-                .map(ws -> {
-                    List<Integer> years= workspaceRepository.findDistinctYearsByWorkspaceId(workspaceId);
-                    WorkspaceDetailsDTO result= new WorkspaceDetailsDTO(ws, years);
-                    return result;
-                })
+        List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+        List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
+        List<Project> projects = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy)).map(Workspace::getProjects)
+                .orElse(new ArrayList<>());
+        return ofNullable(contracts.get(0))
+                .map(firstWs -> new WorkspaceDetailsDTO(firstWs, contracts, years, projects))
                 .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
 
     }
