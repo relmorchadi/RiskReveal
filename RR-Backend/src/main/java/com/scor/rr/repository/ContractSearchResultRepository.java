@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 
 public interface ContractSearchResultRepository extends JpaRepository<ContractSearchResult, String>, JpaSpecificationExecutor<ContractSearchResult> {
 
-    Stream<ContractSearchResult> findDistinctByWorkSpaceId(String uwy);
+
+    @Query("select distinct c.uwYear from ContractSearchResult c where c.workSpaceId= :wsId order by c.uwYear asc")
+    List<Integer> findDistinctYearsByWorkSpaceId(@Param("wsId") String wsId);
 
     @Query("select c from ContractSearchResult c where c.workSpaceId= :wkspId and concat(c.uwYear,'')= :uwy order by c.workSpaceId asc, c.uwYear asc")
     List<ContractSearchResult> findByTreatyidAndUwYear(@Param("wkspId") String workspaceId,String uwy);
