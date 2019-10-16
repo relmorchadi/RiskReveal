@@ -56,7 +56,7 @@ export class DashboardEntryComponent implements OnInit {
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 4,
+          id: 5,
           name: 'Renewal Tracker',
           icon: 'icon-history-alt',
           selected: false,
@@ -125,7 +125,7 @@ export class DashboardEntryComponent implements OnInit {
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 4,
+          id: 5,
           name: 'Renewal Tracker',
           icon: 'icon-history-alt',
           selected: false,

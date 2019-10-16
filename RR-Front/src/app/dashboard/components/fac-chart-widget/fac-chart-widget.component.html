@@ -2,7 +2,24 @@
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
-  <div echarts [options]="chartOption" class="demo-chart"></div>
+<div echarts [options]="chartOption" class="demo-chart" #chart></div>
+
+<div class="widget-footer">
+  <div class="filter-div">
+    <span class="filter-label">User</span>
+    <nz-select class="a-dropdown-small" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
+      <nz-option *ngFor="let item of analystList" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </div>
+  <div class="filter-div">
+    <span class="filter-label">From</span>
+    <p-calendar [(ngModel)]="dateFrom" [showIcon]="true"></p-calendar>
+  </div>
+  <div class="filter-div">
+    <span class="filter-label">To</span>
+    <p-calendar [(ngModel)]="dateTo" [showIcon]="true"></p-calendar>
+  </div>
+</div>
 
 <ng-template #title>
   <div style="display: flex">
