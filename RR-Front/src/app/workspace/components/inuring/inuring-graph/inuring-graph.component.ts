@@ -239,6 +239,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     },
     consumeRightClick: false,
     elementsDroppable: true,
+    clampToBackground: true,
     dragOptions: {
       start: (params) => {
         console.log('drag Start', params);
@@ -312,8 +313,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     console.log('============>', this.toolkit.getNodes().map(row => row.data));
   }
 
-  drop(param) {
-    this.toolkit.addNode({type: 'contractNode'});
+  drop(event) {
+    console.log('==============>', event)
+    this.toolkit.addNode({type: 'contractNode', top: event.y - 220, left: event.x - 595});
   }
 
   addNode(type, name, plts = null, top = 0, left = 0) {
