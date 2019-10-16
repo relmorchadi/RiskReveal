@@ -13,18 +13,21 @@
   <p-header>
     <div class="header">
       <ng-container *ngIf="browesing">
-          <div class="previous-container">
-            <button class="a-buttons-contained override">
-              <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
-            </button>
-            <h6>
-              {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
-            </h6>
-          </div>
+        <div class="previous-container">
+          <button class="a-buttons-contained override">
+            <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
+          </button>
+          <h6>
+            {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
+          </h6>
+        </div>
       </ng-container>
 
       <ng-container *ngIf="!browesing">
-        <h6>Select Workspace</h6>
+        <h4 >
+          Select Workspace
+        </h4>
+
         <div [formGroup]="keywordFormGroup">
 
           <nz-input-group style="z-index: 1001"
@@ -74,38 +77,38 @@
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">
-      <div class="content">
-        <div class="left">
-          <app-plt-left-menu
-            [tagsInput]="tagsInput"
-            (actionDispatcher)="leftMenuActionDispatcher($event)"
-          >
-          </app-plt-left-menu>
-        </div>
-        <div
-          [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
-          class="center">
-          <div class="title-as-tab">
+    <div class="content">
+      <div class="left">
+        <app-plt-left-menu
+          [leftMenuInputs]="leftMenuInputs"
+          (actionDispatcher)="leftMenuActionDispatcher($event)"
+        >
+        </app-plt-left-menu>
+      </div>
+      <div
+        [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+        class="center">
+        <div class="title-as-tab">
           <span>
             PLTs
           </span>
-          </div>
-          <div class="PLTs-content">
-            <app-plt-main-table
-              [tableInputs]="Inputs | pickKeys : tableInputs"
-              (actionDispatcher)="tableActionDispatcher($event)"
-            ></app-plt-main-table>
-          </div>
         </div>
-        <!--
-        <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
-          <app-plt-right-menu
-            (actionDispatcher)="rightMenuActionDispatcher($event)"
-            [Inputs]="rightMenuInputs"
-          ></app-plt-right-menu>
+        <div class="PLTs-content">
+          <app-plt-main-table
+            [tableInputs]="Inputs | pickKeys : tableInputs"
+            (actionDispatcher)="tableActionDispatcher($event)"
+          ></app-plt-main-table>
         </div>
-        -->
       </div>
+      <!--
+      <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
+        <app-plt-right-menu
+          (actionDispatcher)="rightMenuActionDispatcher($event)"
+          [Inputs]="rightMenuInputs"
+        ></app-plt-right-menu>
+      </div>
+      -->
+    </div>
   </ng-container>
 
   <p-footer>

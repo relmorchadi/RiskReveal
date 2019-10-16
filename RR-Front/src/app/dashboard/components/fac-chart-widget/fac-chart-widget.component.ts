@@ -1,22 +1,23 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
-import {GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import * as _ from 'lodash';
-import {Select, Store} from '@ngxs/store';
 import {Data} from '../../../core/model/data';
-import * as moment from 'moment';
-import {dashData} from '../../../shared/data/dashboard-data';
-import {OpenWS} from '../../../workspace/store/actions';
-import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {WsApi} from '../../../workspace/services/workspace.api';
+import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../../workspace/store/states';
+import {WsApi} from '../../../workspace/services/workspace.api';
+import {dashData} from '../../../shared/data/dashboard-data';
+import * as _ from 'lodash';
+import * as moment from 'moment';
+import {GeneralConfigState} from '../../../core/store/states';
+import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
+import { EChartOption } from 'echarts';
 
 @Component({
-  selector: 'app-fac-widget',
-  templateUrl: './fac-widget.component.html',
-  styleUrls: ['./fac-widget.component.scss']
+  selector: 'app-fac-chart-widget',
+  templateUrl: './fac-chart-widget.component.html',
+  styleUrls: ['./fac-chart-widget.component.scss']
 })
-export class FacWidgetComponent implements OnInit {
+export class FacChartWidgetComponent implements OnInit {
+
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -29,9 +30,15 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-/*  filterAssignedNew = false;
-  filterAssignedCurrent = false;
-  filterAssignedArchive = false;*/
+  xAxisData = [];
+  data1 = [];
+  data2 = [];
+
+  /*  filterAssignedNew = false;
+    filterAssignedCurrent = false;
+    filterAssignedArchive = false;*/
+
+  chartOption: EChartOption = {};
 
   @Input()
   itemName = 'Car Widget';
@@ -104,6 +111,48 @@ export class FacWidgetComponent implements OnInit {
       this.detectChanges();
     });
     this.setFilters();
+
+    for (let i = 0; i < 100; i++) {
+      this.xAxisData.push('category' + i);
+      this.data1.push((Math.sin(i / 5) * (i / 5 - 10) + i / 6) * 5);
+      this.data2.push((Math.cos(i / 5) * (i / 5 - 10) + i / 6) * 5);
+    }
+
+    this.chartOption = {
+      legend: {
+        data: ['bar', 'bar2'],
+        align: 'left'
+      },
+      tooltip: {},
+      xAxis: {
+        data: this.xAxisData,
+        silent: false,
+        splitLine: {
+          show: false
+        }
+      },
+      yAxis: {
+      },
+      series: [{
+        name: 'bar',
+        type: 'bar',
+        data: this.data1,
+        animationDelay: (idx) => {
+          return idx * 10;
+        }
+      }, {
+        name: 'bar2',
+        type: 'bar',
+        data: this.data2,
+        animationDelay: (idx) => {
+          return idx * 10 + 100;
+        }
+      }],
+      animationEasing: 'elasticOut',
+      animationDelayUpdate: (idx) => {
+        return idx * 5;
+      }
+    };
   }
 
   setFilters() {
@@ -116,67 +165,9 @@ export class FacWidgetComponent implements OnInit {
     }
   }
 
-  getValueNumber(scope) {
-    return _.filter(this.data, item => item.carStatus === scope).length;
-  }
-
-  getAssignedValueNumber(scope) {
-    return _.filter(this.filterAssign(), item => item.carStatus === scope).length;
-  }
-
-  getCombinedNumber(data) {
-    return _.filter(data,
-        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'SuperSeeded').length;
-  }
-
   selectTab(index) {
     this.tabIndex = index;
   }
-
-/*  filterData(filter) {
-    if (filter === 'New') {
-      this.filterNew = true;
-      this.filterCurrent = false;
-      this.filterArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterNew = false;
-      this.filterCurrent = true;
-      this.filterArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterNew = false;
-      this.filterCurrent = false;
-      this.filterArchive = true;
-    }
-  }
-
-  filterAssignedData(filter) {
-    if (filter === 'New') {
-      this.filterAssignedNew = true;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = true;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = true;
-    }
-  }
-
-
-  applyFiltersAssigned(data) {
-    let filteredData = [...data];
-    if (this.filterAssignedCurrent) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
-    } else if (this.filterAssignedNew) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
-    } else if (this.filterAssignedArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
-    }
-    return filteredData;
-  }*/
 
   applyFilters(data) {
     let filteredData = [...(data || [])];
@@ -199,7 +190,7 @@ export class FacWidgetComponent implements OnInit {
   }
 
   filterAssign() {
-    return _.filter(this.data, item => item.assignedAnalyst === 'Nathalie Dulac');
+    return _.filter(this.data, item => item.assignedAnalyst === 'Amina Cheref');
   }
 
   valueFavChange(event) {

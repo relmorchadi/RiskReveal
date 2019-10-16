@@ -230,8 +230,7 @@
   <div class="form-controller new-wrap"><span class="subtitle-2">Region Peril</span>
     <div class="input-form-wrap" style="width: 75%">
       <nz-select style="width: 100%" [(ngModel)]="metaData" nzShowSearch
-                 nzMode="multiple"
-                 class="a-dropdown-small"
+                 nzMode="multiple" class="a-dropdown-small"
                  nzPlaceHolder="Region Peril Selection">
         <nz-option *ngFor="let item of data" [nzLabel]="item?.regionPerilDesc + ' [' + item?.regionPerilCode + ']'"
                    [nzValue]="item?.regionPerilCode"></nz-option>

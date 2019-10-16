@@ -12,6 +12,10 @@
     justify-content: center;
   }
 
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
   .ant-tooltip-arrow {
     border-bottom-color: #fff !important;
   }
@@ -211,6 +215,35 @@
             height: 4px;
             background-color: #0700CF;
             margin: 0;
+          }
+        }
+
+        .body-wrap-menu-header {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+
+          span {
+            display: flex;
+            color: rgba(0, 0, 0, 0.87);
+            font-size: 16.26px;
+            letter-spacing: 0.5px;
+            line-height: 20px;
+            padding: 15px 20px;
+            font-weight: 500;
+          }
+
+          .action-icon-wrapper {
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+
+            i {
+              cursor: pointer;
+              font-size: 20px;
+              margin-right: 6px;
+              color: rgba(0,0,0,0.7);
+            }
           }
         }
 

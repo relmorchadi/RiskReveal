@@ -34,7 +34,7 @@
           </nz-dropdown>
         </div>
         <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
-                 [resizableColumns]="true" columnResizeMode="expand"
+                 [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
                  [scrollable]="true" [value]="resultsSummary" frozenWidth="485px">
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
@@ -231,18 +231,15 @@
           <div class="header-title">Analysis Results</div>
         </div>
         <div class="body-wrapper-header-right-summary">
-          <button class="a-buttons-outlined-mini"
-                  style="margin: 0 10px 0 0"
-                  *ngIf="state.collapse.collapseAnalysis"> ADD TO CALIBRATION
-          </button>
-          <button class="a-buttons-outlined-mini" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
-          </button>
+          <ng-container *ngIf="wsStatus === 'treaty'">
+            <button class="a-buttons-outlined-mini" style="margin: 0 10px 0 0" *ngIf="state.collapse.collapseAnalysis"> ADD TO CALIBRATION
+            </button>
+            <button class="a-buttons-outlined-mini" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
+            </button>
+          </ng-container>
           <div class="body-wrapper-header-right">
-            <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-            <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
-               class="icon-keyboard_arrow_up_24px"></i>
-            <i *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
-               class="icon-keyboard_arrow_down_24px"></i>
+            <i (click)="changeCollapse('collapseAnalysis')"
+               [ngClass]="{'icon-keyboard_arrow_down_24px': !state.collapse.collapseAnalysis, 'icon-keyboard_arrow_up_24px':  state.collapse.collapseAnalysis}"></i>
           </div>
         </div>
       </div>
@@ -265,7 +262,7 @@
           </nz-dropdown>
         </div>
         <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
-                 [value]="analysisResults"
+                 [value]="analysisResults" [scrollHeight]="'175px'"
                  [resizableColumns]="true" columnResizeMode="expand"
                  [(contextMenuSelection)]="contextSelectedItem"
                  [contextMenu]="cmR"

@@ -8,7 +8,7 @@
         <div style="padding:unset;width: 80%;">
           <app-plt-left-menu
             (actionDispatcher)="leftMenuActionDispatcher($event)"
-            [tagsInput]="tagsInput"
+            [leftMenuInputs]="leftMenuInputs"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
@@ -20,6 +20,11 @@
              style="font-size: 20px; cursor: pointer"></i>
         </div>
       </div>
+      <plt-tag-manager
+        [tagsInputs]="tagsInputs"
+        (actionDispatcher)="tagsActionDispatcher($event)"
+      >
+      </plt-tag-manager>
       <div class="tabset-right" style="flex: 1;background-color: #ffffff;">
         <div>
           <div class="PLTs-content">

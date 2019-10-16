@@ -16,7 +16,7 @@ import {SidebarModule} from 'primeng/sidebar';
 import {AngularDraggableModule} from "angular2-draggable";
 import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
 import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
-
+import {AngularResizedEventModule} from "angular-resize-event";
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES ],
@@ -34,7 +34,8 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     SidebarModule,
     DragDropModuleAngular,
     AngularDraggableModule,
-    ColorGithubModule
+    ColorGithubModule,
+    AngularResizedEventModule
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -51,6 +52,7 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     AngularDraggableModule,
     SidebarModule,
     ColorGithubModule,
+    AngularResizedEventModule,
     ...COMPONENTS,
     ...PIPES
   ]

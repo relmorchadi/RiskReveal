@@ -14,6 +14,7 @@ import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
+import {ContractService} from "../../services/contract.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -24,6 +25,11 @@ const initialState: WorkspaceModel = {
   facWs: {
     data: Data.facWs,
     sequence: 137
+  },
+  savedData: {
+    riskLink: {
+      edmrdmSelection: {}
+    }
   },
   favorite: [],
   pinned: [],
@@ -38,6 +44,7 @@ const initialState: WorkspaceModel = {
 export class WorkspaceState {
 
   constructor(private wsService: WorkspaceService,
+              private contractService: ContractService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
               private riskLinkFacade: RiskLinkStateService,
@@ -56,6 +63,12 @@ export class WorkspaceState {
   @Selector()
   static getWorkspaces(state: WorkspaceModel) {
     return state.content;
+  }
+
+  @Selector()
+  static getCurrentWorkspaces(state: WorkspaceModel) {
+    const wsId = state.currentTab.wsIdentifier;
+    return state.content[wsId];
   }
 
   @Selector()
@@ -128,6 +141,18 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * Contract Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getContract(state: WorkspaceModel) {
+    const wsIdentifier =  state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].contract;
+  }
+
+  /***********************************
+   *
    * Plt Selectors
    *
    ***********************************/
@@ -172,12 +197,6 @@ export class WorkspaceState {
   static getUserTagManager(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager);
   }
-
-  /***********************************
-   *
-   * Dashboard Selectors
-   *
-   ***********************************/
 
   /***********************************
    *
@@ -346,8 +365,6 @@ export class WorkspaceState {
       _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
   }
 
-
-
   /***********************************
    *
    * Workspace Actions
@@ -460,6 +477,16 @@ export class WorkspaceState {
     return this.wsService.deleteProject(ctx, payload);
   }
 
+  /***********************************
+   *
+   * Contract Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadContractAction)
+  loadContractData(ctx: StateContext<WorkspaceModel>) {
+    this.contractService.loadContractData(ctx);
+  }
 
   /***********************************
    *
@@ -877,6 +904,16 @@ export class WorkspaceState {
     this.riskLinkFacade.saveEditPeqt(ctx, payload);
   }
 
+  @Action(fromWS.SaveEDMAndRDMSelectionAction)
+  saveEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.saveEDMAndRDMSelection(ctx);
+  }
+
+  @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
+  synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
+    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);
@@ -887,9 +924,19 @@ export class WorkspaceState {
     this.riskLinkFacade.updateStatusLink(ctx, payload);
   }
 
+  @Action(fromWS.UpdateAnalysisAndPortfolioData)
+  updateAnalysisAndPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.UpdateAnalysisAndPortfolioData) {
+    this.riskLinkFacade.updateAnalysisAndPortfolioData(ctx, payload);
+  }
+
   @Action(fromWS.RemoveFinancialPerspectiveAction)
   removeFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFinancialPerspectiveAction) {
     this.riskLinkFacade.removeFinancialPerspective(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveEDMAndRDMSelectionAction)
+  removeEDMAndRDMSeletion(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.removeEDMAndRDMSelection(ctx);
   }
 
   @Action(fromWS.DeleteFromBasketAction)
@@ -927,6 +974,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadBasicAnalysisFac(ctx, payload);
   }
 
+  @Action(fromWS.LoadBasicAnalysisFacPerDivisionAction)
+  loadBasicAnalysisPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacPerDivisionAction) {
+    this.riskLinkFacade.loadBasicAnalysisFacPerDivision(ctx, payload);
+  }
+
   @Action(fromWS.LoadDetailAnalysisFacAction)
   loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDetailAnalysisFacAction) {
     return this.riskLinkFacade.loadDetailAnalysisFac(ctx, payload);
@@ -935,6 +987,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadPortfolioFacAction)
   loadPortfolioFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacAction) {
     return this.riskLinkFacade.loadBasicPortfolioFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadPortfolioFacPerDivisionAction)
+  loadPortfolioFacPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacPerDivisionAction) {
+    this.riskLinkFacade.loadBasicPortfolioFacPerDivision(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
@@ -946,16 +1003,6 @@ export class WorkspaceState {
   loadRiskLinkPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkPortfolioDataAction) {
     return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
-
-/*  @Action(fromWS.LoadPortfolioForLinkingAction)
-  loadPortfolioForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioForLinkingAction) {
-    return this.riskLinkFacade.loadPortfolioForLinking(ctx, payload);
-  }
-
-  @Action(fromWS.LoadAnalysisForLinkingAction)
-  loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAnalysisForLinkingAction) {
-    return this.riskLinkFacade.loadAnalysisForLinking(ctx, payload);
-  }*/
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
