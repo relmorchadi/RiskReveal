@@ -116,19 +116,6 @@ export class FacWidgetComponent implements OnInit {
     }
   }
 
-  getValueNumber(scope) {
-    return _.filter(this.data, item => item.carStatus === scope).length;
-  }
-
-  getAssignedValueNumber(scope) {
-    return _.filter(this.filterAssign(), item => item.carStatus === scope).length;
-  }
-
-  getCombinedNumber(data) {
-    return _.filter(data,
-        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'SuperSeeded').length;
-  }
-
   selectTab(index) {
     this.tabIndex = index;
   }
@@ -185,7 +172,7 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+      filteredData = _.filter(filteredData, item => item.carStatus === 'Superseded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
     }
     return filteredData;
   }
@@ -223,18 +210,9 @@ export class FacWidgetComponent implements OnInit {
   }
 
   validateName(keyboardMap, id) {
-
     if (keyboardMap.key === 'Enter') {
       this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
       this.editName = false;
-      /*  const newItem = this.newDashboard.items.filter(ds => ds.id === id);
-        const copy = Object.assign({}, newItem[0], {
-          name: this.itemName,
-          id: this.newDashboard.items.length + 1
-        });
-        this.newDashboard.items.push(copy);
-        newItem[0].selected = false;
-        this.editName = false;*/
     }
   }
 

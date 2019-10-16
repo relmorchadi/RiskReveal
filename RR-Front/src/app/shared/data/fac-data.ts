@@ -102,7 +102,306 @@ const facWs = [
     regionPeril: []
   },
   {
-    id: 'CAR-01584',
+    id: 'CAR-00067',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640',
+    uwanalysisContractSubsidiary: '10',
+    uwanalysisContractYear: 2016,
+    uwAnalysisContractDate: '2016-01',
+    assignedAnalyst: 'Richard DEEM',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0051168',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0051168',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00083',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02 @ LOBs',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640 @ Sectors',
+    uwanalysisContractSubsidiary: '10 @ Subsidiaries',
+    uwanalysisContractYear: 2015,
+    uwAnalysisContractDate: '2015-01',
+    assignedAnalyst: 'Richard DEEM',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0024677',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0024677',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'Completed',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00099',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02 @ LOBs',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640 @ Sectors',
+    uwanalysisContractSubsidiary: '10 @ Subsidiaries',
+    uwanalysisContractYear: 2015,
+    uwAnalysisContractDate: '2015-01',
+    assignedAnalyst: 'Richard DEEM',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0024677',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0024677',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'Superseded',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00111',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02 @ LOBs',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640 @ Sectors',
+    uwanalysisContractSubsidiary: '10 @ Subsidiaries',
+    uwanalysisContractYear: 2015,
+    uwAnalysisContractDate: '2015-01',
+    assignedAnalyst: 'Richard DEEM',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0024677',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0024677',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00021',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02 @ LOBs',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640 @ Sectors',
+    uwanalysisContractSubsidiary: '10 @ Subsidiaries',
+    uwanalysisContractYear: 2019,
+    uwAnalysisContractDate: '2019-01',
+    assignedAnalyst: 'Richard DEEM',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0024677',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0024677',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'In Progress',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00047',
+    favorite: false,
+    lastUpdateDate: '2015-12-15T10:19:35.110Z',
+    lastUpdatedBy: 'DAMA @ Users',
+    requestedByFirstName: 'Maelle',
+    requestedByLastName: 'DANIEL',
+    requestedByFullName: 'Maelle DANIEL',
+    requestCreationDate: '2015-12-15T09:56:24.237Z',
+    cedantName: 'EFL Development Company, LP',
+    uwanalysisContractLob: '02 @ LOBs',
+    uwanalysisContractBusinessType: 'New Business',
+    uwanalysisContractEndorsementNumber: 0,
+    uwanalysisContractSector: '640 @ Sectors',
+    uwanalysisContractSubsidiary: '10 @ Subsidiaries',
+    uwanalysisContractYear: 2015,
+    uwAnalysisContractDate: '2015-01',
+    assignedAnalyst: 'Amina Cheref',
+    uwanalysisContractOrderNumber: 1,
+    uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
+    uwanalysisContractFacNumber: 'FA0024677',
+    uwAnalysisProjectId: 'P-00012786',
+    uwanalysisContractContractId: 'FA0024677',
+    contractName: 'Domestic Locations',
+    uwanalysisContractInsured: '1000490650 @ Insureds',
+    carStatus: 'New',
+    division: [
+      {
+        divisionNo: 1,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 2,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        divisionNo: 3,
+        principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      }
+    ],
+    regionPeril: []
+  },
+  {
+    id: 'CAR-00584',
     favorite: false,
     lastUpdateDate: '2016-12-19T11:15:10.948Z',
     lastUpdatedBy: 'USYS @ Users',
@@ -452,7 +751,7 @@ const facWs = [
         divisionNo: 3,
         principal: true,
         lob: 'Property',
-        coverage: 'PD, BI',
+        coverage: 'ZBI, BI',
         currency: 'USD'
       }
     ],
@@ -483,7 +782,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'ENNMG1800033 /ex ENEUR2800037',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'SuperSeeded',
+    carStatus: 'Superseded',
     division: [
       {
         divisionNo: 1,
