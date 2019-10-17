@@ -139,5 +139,12 @@ export class CloseSearchPopIns{
   constructor(){}
 }
 
+export class saveSearch {
+  static readonly type = '[Search Nav Bar] Save Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
 
 

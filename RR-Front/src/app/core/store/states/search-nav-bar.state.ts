@@ -3,7 +3,8 @@ import {
   ClearSearchValuesAction,
   CloseAllTagsAction,
   CloseBadgeByIndexAction,
-  CloseGlobalSearchAction, CloseSearchPopIns,
+  CloseGlobalSearchAction,
+  CloseSearchPopIns,
   CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
@@ -12,6 +13,7 @@ import {
   ExpertModeSearchAction,
   LoadRecentSearchAction,
   PatchSearchStateAction,
+  saveSearch,
   SearchAction,
   SearchContractsCountAction,
   SearchInputFocusAction,
@@ -113,6 +115,16 @@ export class SearchNavBarState implements NgxsOnInit {
   @Selector()
   static getSearchContent(state: SearchNavBar) {
     return state.searchContent;
+  }
+
+  @Selector()
+  static getSavedSearch(state: SearchNavBar) {
+    return state.savedSearch;
+  }
+
+  @Selector()
+  static getBadges(state: SearchNavBar) {
+    return state.badges;
   }
 
   @Selector()
@@ -306,6 +318,14 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.visible = false;
       draft.visibleSearch = false;
+    }));
+  }
+
+  @Action(saveSearch)
+  saveSearchList(ctx: StateContext<SearchNavBar>, {payload}: saveSearch) {
+    const search = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.savedSearch = [...draft.savedSearch, search];
     }));
   }
 

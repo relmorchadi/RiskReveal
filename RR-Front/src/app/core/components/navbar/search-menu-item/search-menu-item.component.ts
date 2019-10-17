@@ -40,6 +40,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   private unSubscribe$: Subject<void>;
   searchMode: string = 'Treaty';
   searchConfigPopInVisible: boolean = false;
+  inputDisabled: boolean = true;
 
 
   @Input('state')
@@ -227,4 +228,15 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 
+  onChangeTagValue(badge) {
+    let index = _.findIndex(this.state.badges, row => row.key == badge.key);
+    this.state.badges[index] = badge;
+    this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
+  }
+
+  toggleInput(event: boolean, item) {
+    console.log(event);
+    this.inputDisabled = event;
+    this.contractFilterFormGroup.patchValue({globalKeyword: item.key + ':' + item.value})
+  }
 }
