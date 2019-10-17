@@ -7,7 +7,6 @@ import com.scor.rr.domain.dto.TagManagerRequest;
 import com.scor.rr.domain.dto.TagManagerResponse;
 import com.scor.rr.domain.dto.UserTagRequest;
 import com.scor.rr.repository.*;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,5 @@
 package com.scor.rr.repository.specification;
 
-import com.scor.rr.domain.ContractSearchResult_;
 import com.scor.rr.domain.WorkspaceView;
 import com.scor.rr.domain.WorkspaceView_;
 import com.scor.rr.domain.dto.WorkspaceFilter;

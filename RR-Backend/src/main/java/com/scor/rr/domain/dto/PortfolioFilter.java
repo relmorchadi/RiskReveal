@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Column;
 import java.sql.Timestamp;
 
 @Data

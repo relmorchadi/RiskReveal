@@ -1,9 +1,5 @@
 package com.scor.rr;
 
-import com.scor.rr.domain.PltHeader;
-import com.scor.rr.domain.User;
-import com.scor.rr.domain.UserTag;
-import com.scor.rr.domain.UserTagPlt;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.PltUserTagRepository;
 import com.scor.rr.repository.UserRepository;
@@ -13,8 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-
-import java.util.Date;
 
 @SpringBootApplication
 public class RiskRevealApplication extends SpringBootServletInitializer implements CommandLineRunner {

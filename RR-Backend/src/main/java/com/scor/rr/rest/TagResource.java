@@ -1,7 +1,6 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.UserTag;
-import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
