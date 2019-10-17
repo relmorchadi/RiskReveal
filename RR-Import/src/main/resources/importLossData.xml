@@ -1,0 +1,2037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xmlns:drools="http://drools.org/schema/drools-spring"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/batch
+       http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+       http://drools.org/schema/drools-spring
+       http://drools.org/schema/drools-spring.xsd
+       http://www.springframework.org/schema/task
+       http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!-- config buiness rules -->
+    <!-- KNOWLEDGE BASE FOR A GIVEN TYPE -->
+    <drools:kbase id="eventsKBase">
+        <drools:resources>
+            <drools:resource type="DRL" source="classpath:rules/truncationThresholds.drl"/>
+            <drools:resource type="DRL" source="classpath:rules/activeChecks.drl"/>
+            <drools:resource type="DRL" source="classpath:rules/transformationLibrary.drl"/>
+            <drools:resource type="DRL" source="classpath:rules/fileNamingConventions.drl"/>
+            <drools:resource type="DRL" source="classpath:rules/adjustmentLibrary.drl"/>
+            <!-- exemple for config drules server -->
+            <!--              <drools:resource    -->
+            <!--             source='http://localhost:8083/guvnor-drools/org.drools.guvnor.Guvnor/package/rulesActitek/LATEST/'  -->
+            <!--    			type='PKG' basic-authentication='enabled' username='' password='' />  -->
+
+        </drools:resources>
+    </drools:kbase>
+
+    <drools:ksession id="eventsKSession" name="eventsKSession" type="stateless" kbase="eventsKBase"/>
+
+    <task:executor id="convertExecutor" pool-size="${convert.executor.pool.size}"/>
+
+    <task:executor id="jobLauncherTaskExecutor" pool-size="${batch.job.executor.pool.size}" rejection-policy="ABORT"/>
+
+    <batch:job id="importLossData" job-repository="myJobRepository" incrementer="idIncrementer">
+        <batch:step id="init">
+            <batch:flow parent="initFlow"/>
+<!--            <batch:next on="*" to="mainFlow"/>-->
+            <batch:next on="RUNNING" to="running"/>
+            <batch:next on="WRONG_STATUS" to="error"/>
+        </batch:step>
+
+        <batch:flow id="main" parent="mainFlow">
+            <batch:next on="*" to="success"/>
+            <batch:next on="FAILED" to="error"/>
+        </batch:flow>
+        <batch:step id="success">
+            <batch:flow parent="successFlow"/>
+        </batch:step>
+        <batch:step id="running">
+            <batch:flow parent="runningFlow"/>
+            <batch:fail on="*"/>
+        </batch:step>
+        <batch:step id="error">
+            <batch:flow parent="errorFlow"/>
+            <batch:fail on="*"/>
+        </batch:step>
+    </batch:job>
+
+    <batch:flow id="mainFlow">
+        <batch:step id="checkConsistency">
+            <batch:tasklet ref="rmsConsistencyCheck"/>
+            <batch:fail on="FAILED"/>
+            <batch:next on="*" to="loadRegionPerils"/>
+        </batch:step>
+        <batch:step id="loadRegionPerils" next="extractEPCurveStats">
+            <batch:tasklet ref="eltRegionPerilExtractor"/>
+            <!--step 1-->
+        </batch:step>
+        <batch:step id="extractEPCurveStats" next="extractRmsExchangeRates">
+            <batch:tasklet ref="epCurveStatsExtractor"/>
+            <!--step 2-->
+        </batch:step>
+        <batch:step id="extractRmsExchangeRates" next="extractELT">
+            <batch:tasklet ref="exchangeRatesExtractor"/>
+            <!--step 3-->
+        </batch:step>
+        <batch:step id="extractELT" next="truncateELT">
+            <batch:tasklet ref="eltExtractor"/>
+            <!--step 4-->
+        </batch:step>
+        <batch:step id="truncateELT" next="conformELT">
+            <batch:tasklet ref="eltTruncator"/>
+            <!--step 5-->
+        </batch:step>
+        <batch:step id="conformELT" next="extractConformedEPCurveStats">
+            <batch:tasklet ref="eltConformer"/>
+            <!--step 6-->
+        </batch:step>
+        <batch:step id="extractConformedEPCurveStats" next="extractModelingOptions">
+            <batch:tasklet ref="conformedEPCurveStatsExtractor"/>
+            <!--step 7-->
+        </batch:step>
+        <batch:step id="extractModelingOptions" next="writeELTBinary">
+            <batch:tasklet ref="rmsModelingOptionsExtractor"/>
+            <!--step 8-->
+        </batch:step>
+
+        <batch:step id="writeELTBinary">
+            <batch:tasklet ref="eltWriter"/>
+            <batch:next on="*" to="writeELTHeaderr"/>
+            <batch:fail on="FAILED"/>
+            <!--step 9 always return true-->
+        </batch:step>
+
+        <batch:step id="writeELTHeaderr">
+            <batch:tasklet ref="eltHeaderWriter"/>
+            <batch:next on="*" to="closeBarrier"/>
+            <batch:fail on="FAILED"/>
+            <!--step 10 always return true must ask Viet-->
+        </batch:step>
+
+        <batch:step id="closeBarrier" next="convertELTtoPLT">
+            <batch:tasklet ref="eltToPLTEnterBarrier"/>
+            <!--step 11 return true/false ?????????????????????????? must ask Viet-->
+        </batch:step>
+
+        <batch:step id="convertELTtoPLT">
+            <batch:tasklet ref="eltConverter"/>
+            <batch:next on="*" to="openBarrier"/>
+            <batch:next on="FAILED" to="errorInBarrier"/>
+            <!--step 12 now-->
+        </batch:step>
+
+        <batch:step id="openBarrier" next="writePLTHeaderFile">
+            <batch:tasklet ref="eltToPLTExitBarrier"/>
+            <!--step 13 must ask Viet-->
+        </batch:step>
+
+        <batch:step id="errorInBarrier">
+            <batch:tasklet ref="eltToPLTExitBarrier"/>
+            <batch:fail on="*"/>
+            <!--step 13' must ask Viet same tasklet : eltToPLTExitBarrier -->
+        </batch:step>
+        <!--<batch:step id="truncatePLT" next="writePLTLossFile">-->
+        <!--<batch:tasklet ref="pltTruncator"/>-->
+        <!--</batch:step>-->
+        <!--<batch:step id="writePLTLossFile">-->
+        <!--<batch:tasklet ref="pltPureWriter"/>-->
+        <!--<batch:next on="*" to="writePLTHeaderFile"/>-->
+        <!--<batch:fail on="FAILED"/>-->
+        <!--</batch:step>-->
+        <batch:step id="writePLTHeaderFile">
+            <batch:tasklet ref="pltHeaderWriter"/>
+            <batch:next on="*" to="calculateEPCurve"/>
+            <batch:fail on="FAILED"/>
+            <!--step 14-->
+        </batch:step>
+
+        <batch:step id="calculateEPCurve" next="adjustDefault">
+            <batch:tasklet ref="epCurveCalculator"/>
+            <!--step 15 -->
+        </batch:step>
+
+        <!--<batch:step id="adjustDefault">-->
+        <!--<batch:tasklet ref="defaultAdjustment"/>-->
+        <!--</batch:step>-->
+
+        <batch:step id="adjustDefault" next="handleAnalysisImport">
+<!--            <batch:tasklet ref="defaultAdjustment"/>-->
+            <!--step 16 -->
+        </batch:step>
+
+        <batch:step id="handleAnalysisImport" next="importExposureSummaryStep">
+            <batch:tasklet>
+                <bean class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+                    <property name="targetObject">
+                        <bean id="flowHandler" class="com.scor.rr.importBatch.processing.workflow.BasicFlowHandler"
+                              parent="baseBatchBean" scope="step">
+                            <property name="rmspicId" value="#{jobParameters['rmspicId']}"/>
+                        </bean>
+                    </property>
+                    <property name="targetMethod" value="handleAnalysisImportCompletion"/>
+                </bean>
+            </batch:tasklet>
+            <!--step 16 -->
+        </batch:step>
+
+        <batch:step id="importExposureSummaryStep">
+            <batch:tasklet>
+                <bean class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+                    <property name="targetObject" ref="exposureSummaryTaskletWrapper"/>
+                    <property name="targetMethod" value="importExposureSummary"/>
+                </bean>
+            </batch:tasklet>
+            <batch:end on="*"/>
+            <batch:fail on="FAILED"/>
+            <!--step 1 for portfolio, next to step 16 for analysis -->
+        </batch:step>
+        <!--<batch:flow>-->
+        <!--<batch:step id="writeAdjustedPLT">-->
+        <!--<batch:tasklet ref="pltAdjWriter"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:split id="splitExtract" task-executor="myTaskExecutor">-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractSummaryStatistics">-->
+        <!--<batch:tasklet ref="summaryStatisticsExtractor"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractExposureSummary">-->
+        <!--<batch:tasklet ref="exposureSummaryExtractor"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractTIV">-->
+        <!--<batch:tasklet ref="tivExtractor"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractDLMProfile">-->
+        <!--<batch:tasklet ref="dlmProfileExtractor"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="fwCheck">-->
+        <!--<batch:tasklet>-->
+        <!--<bean class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">-->
+        <!--<property name="targetObject">-->
+        <!--<bean class="com.scor.rr.importBatch.processing.workflow.FwExtractCheckStep" parent="baseBatchBean" scope="step"/>-->
+        <!--</property>-->
+        <!--<property name="targetMethod" value="runChecks" />-->
+        <!--</bean>-->
+        <!--</batch:tasklet>-->
+        <!--<batch:next on="*" to="successExtract" />-->
+        <!--<batch:next on="FW" to="fw" />-->
+        <!--<batch:next on="FAILED" to="failExtract" />-->
+        <!--</batch:step>-->
+        <!--<batch:split id="fw" next="copyAccLocFiles" >-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractRMSAcc">-->
+        <!--<batch:tasklet>-->
+        <!--<batch:chunk reader="rmsAccReader" processor="accItemProcessor" writer="accItemWriter" commit-interval="1000"/>-->
+        <!--</batch:tasklet>-->
+        <!--<batch:listeners>-->
+        <!--<batch:listener ref="accExtractListener"-->
+        <!--on-read-error-method="onReadError"-->
+        <!--on-process-error-method="onProcessError"-->
+        <!--on-write-error-method="onWriteError"-->
+        <!--after-step-method="afterStep"/>-->
+        <!--</batch:listeners>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractRMSLoc">-->
+        <!--&lt;!&ndash;<batch:tasklet throttle-limit="10" task-executor="locExecutor">&ndash;&gt;-->
+        <!--<batch:tasklet>-->
+        <!--<batch:chunk reader="rmsLocReader" processor="locItemProcessor" writer="locItemWriter" commit-interval="50000" />-->
+        <!--</batch:tasklet>-->
+        <!--<batch:listeners>-->
+        <!--<batch:listener ref="locExtractListener"-->
+        <!--on-read-error-method="onReadError"-->
+        <!--on-process-error-method="onProcessError"-->
+        <!--on-write-error-method="onWriteError"-->
+        <!--after-step-method="afterStep"/>-->
+        <!--</batch:listeners>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--<batch:flow>-->
+        <!--<batch:step id="extractRMSLocFW">-->
+        <!--&lt;!&ndash;<batch:tasklet throttle-limit="10" task-executor="locExecutor">&ndash;&gt;-->
+        <!--<batch:tasklet>-->
+        <!--<batch:chunk reader="rmsLocReader" processor="locItemProcessor" writer="locItemWriterFW" commit-interval="50000" />-->
+        <!--</batch:tasklet>-->
+        <!--<batch:listeners>-->
+        <!--<batch:listener ref="locExtractListenerFW"-->
+        <!--on-read-error-method="onReadError"-->
+        <!--on-process-error-method="onProcessError"-->
+        <!--on-write-error-method="onWriteError"-->
+        <!--after-step-method="afterStep"/>-->
+        <!--</batch:listeners>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--</batch:split>-->
+        <!--<batch:step id="copyAccLocFiles" next="successExtract" >-->
+        <!--<batch:tasklet ref="ihubCopyFilesHandler"/>-->
+        <!--</batch:step>-->
+        <!--<batch:step id="successExtract">-->
+        <!--<batch:tasklet>-->
+        <!--<bean class="com.scor.rr.importBatch.processing.batch.DummyTasklet"/>-->
+        <!--</batch:tasklet>-->
+        <!--</batch:step>-->
+        <!--<batch:step id="failExtract">-->
+        <!--<batch:tasklet>-->
+        <!--<bean class="com.scor.rr.importBatch.processing.batch.DummyTasklet"/>-->
+        <!--</batch:tasklet>-->
+        <!--<batch:fail on="*"/>-->
+        <!--</batch:step>-->
+        <!--</batch:flow>-->
+        <!--</batch:split>-->
+    </batch:flow>
+
+    <batch:flow id="initFlow">
+        <batch:step id="updateCDMWithStatusStarted">
+            <batch:tasklet ref="initHandler"/>
+        </batch:step>
+    </batch:flow>
+
+    <batch:flow id="successFlow">
+        <!--<batch:step id="copyFilesToDestination" next="updateCDMWithStatusOK">-->
+        <!--<batch:tasklet ref="completedHandler"/>-->
+        <!--</batch:step>-->
+        <!--must ask Viet-->
+        <batch:step id="postImport" next="updateCDMWithStatusOK">
+            <!--            <batch:tasklet ref="updateContractSectionExpectedScopeStep"/>-->
+        </batch:step>
+        <batch:step id="updateCDMWithStatusOK">
+            <batch:tasklet ref="completedHandler"/>
+        </batch:step>
+    </batch:flow>
+
+    <batch:flow id="runningFlow">
+        <!--<batch:step id="removeTempFiles" next="updateCDMWithError">-->
+        <!--<batch:tasklet ref="errorHandler"/>-->
+        <!--</batch:step>-->
+        <batch:step id="handleRunningError">
+            <batch:tasklet ref="runningHandler"/>
+        </batch:step>
+    </batch:flow>
+
+    <batch:flow id="errorFlow">
+        <!--<batch:step id="removeTempFiles" next="updateCDMWithError">-->
+        <!--<batch:tasklet ref="errorHandler"/>-->
+        <!--</batch:step>-->
+        <batch:step id="updateCDMWithError">
+            <batch:tasklet ref="errorHandler"/>
+        </batch:step>
+    </batch:flow>
+
+    <bean abstract="true" name="baseBatchBean" class="com.scor.rr.importBatch.processing.batch.BaseBatchBeanImpl">
+        <property name="catReqId" value="#{jobParameters['rmspicId']}"/>
+        <property name="portfolio" value="#{jobParameters['portfolio']}"/>
+        <property name="fpELT" value="#{jobParameters['fpELT']}"/>
+        <property name="fpStats" value="#{jobParameters['fpStats']}"/>
+        <property name="version" value="#{jobParameters['version']}"/>
+        <property name="correlationId" value="#{jobParameters['correlationId']}"/>
+
+        <property name="cache" ref="requestCache"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
+        <property name="messages" ref="messageData"/>
+        <property name="messageService" ref="messageService"/>
+        <property name="businessKpiService" ref="businessKpiService"/>
+        <property name="businessRulesService" ref="businessRulesService"/>
+        <property name="jobType" value="ACCOUNT"/>
+
+        <property name="instanceId" value="#{jobParameters['instanceId']}"/>
+        <property name="reinsuranceType" value="#{jobParameters['reinsuranceType']}"/>
+        <property name="prefix" value="#{jobParameters['prefix']}"/>
+        <property name="clientName" value="#{jobParameters['clientName']}"/>
+        <property name="clientId" value="#{jobParameters['clientId']}"/>
+        <property name="contractId" value="#{jobParameters['contractId']}"/>
+        <property name="division" value="#{jobParameters['division']}"/>
+        <property name="uwYear" value="#{jobParameters['uwYear']}"/>
+        <property name="sourceVendor" value="#{jobParameters['sourceVendor']}"/>
+        <property name="modelSystemVersion" value="#{jobParameters['modelSystemVersion']}"/>
+        <property name="periodBasis" value="#{jobParameters['periodBasis']}"/>
+        <!--old code ri-->
+        <!--<property name="pdaId" value="#{jobParameters['pdaId']}" />-->
+        <!--new code ri-->
+        <property name="rmspicId" value="#{jobParameters['rmspicId']}"/>
+        <property name="importSequence" value="#{jobParameters['importSequence']}"/>
+        <property name="userId" value="#{jobParameters['userId']}"/>
+        <property name="projectId" value="#{jobParameters['projectId']}"/>
+        <property name="sourceResultIds" value="#{jobParameters['sourceResultIds']}"/>
+        <property name="portfolioIds" value="#{jobParameters['portfolioIds']}"/>
+        <property name="runDate" value="#{jobParameters['runDate']}"/>
+        <property name="fileExtension" value=".bin"/>
+    </bean>
+
+<!--    <bean id="myJobRepository"-->
+<!--          class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">-->
+<!--        <property name="transactionManager" ref="myTransactionManager"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myJobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>-->
+
+<!--    <bean id="myJobService" class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">-->
+<!--        <property name="jobRepository" ref="myJobRepository"/>-->
+<!--        <property name="jobLauncher" ref="myJobLauncher"/>-->
+<!--        <property name="jobLocator" ref="myJobRegistry"/>-->
+<!--        <property name="dataSource" ref="myDataSource"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myJobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">-->
+<!--        <property name="jobRepository" ref="jobRepository"/>-->
+<!--        <property name="taskExecutor" ref="jobLauncherTaskExecutor"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myDataSource"-->
+<!--          class="org.apache.commons.dbcp2.BasicDataSource">-->
+<!--        <property name="driverClassName" value="${batch.jdbc.driver}" />-->
+<!--        <property name="url" value="${batch.jdbc.url}" />-->
+<!--        <property name="username" value="${batch.jdbc.user}" />-->
+<!--        <property name="password" value="${batch.jdbc.password}" />-->
+<!--        <property name="testWhileIdle" value="${batch.jdbc.testWhileIdle}"/>-->
+<!--        <property name="validationQuery" value="${batch.jdbc.validationQuery}"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myDataSource" destroy-method="close" class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+<!--        <property name="driverClass" value="${batch.jdbc.driver}"/>-->
+<!--        <property name="jdbcUrl"     value="${batch.jdbc.url}"/>-->
+<!--        <property name="user"        value="${batch.jdbc.user}"/>-->
+<!--        <property name="password"    value="${batch.jdbc.password}"/>-->
+<!--        <property name="initialPoolSize" value="10"/>-->
+<!--        <property name="maxPoolSize" value="50"/>-->
+<!--        <property name="maxStatements" value="100"/>-->
+<!--    </bean>-->
+
+<!--    <bean id="myTransactionManager"-->
+<!--          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+<!--        <property name="dataSource" ref="dataSource"/>-->
+<!--    </bean>-->
+
+    <bean id="idIncrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer"/>
+
+    <bean abstract="true" name="baseRMSBean" class="com.scor.rr.importBatch.processing.batch.rms.BaseRMSBeanImpl"
+          parent="baseBatchBean" init-method="init">
+        <property name="dsCache" ref="dsCache"/>
+        <property name="rmsDataProvider" ref="rmsDataProvider"/>
+        <property name="userId" value="#{jobParameters['userId']}"/>
+        <property name="projectId" value="#{jobParameters['projectId']}"/>
+        <property name="sourceResultIds" value="#{jobParameters['sourceResultIds']}"/>
+        <property name="portfolioIds" value="#{jobParameters['portfolioIds']}"/>
+        <!--old batch, replace with ramy's import batch-->
+        <!--<property name="edm" value="#{jobParameters['edm']}" />-->
+        <!--<property name="rdm" value="#{jobParameters['rdm']}" />-->
+        <!--<property name="edmId" value="#{jobParameters['edmId']}" />-->
+        <!--<property name="rdmId" value="#{jobParameters['rdmId']}" />-->
+    </bean>
+
+    <bean id="rmsDataProvider" class="com.scor.rr.service.RmsDataProviderService">
+        <property name="dsCache" ref="dsCache"/>
+
+        <property name="dmSQLQuery" value="execute ${rms.ds.dbname}.dbo.RR_RL_ListAvailableDataSources"/>
+        <property name="portfolioSQLQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_ListEdmPortfolio @edm_id=:edm_id, @edm_name=:edm_name"/>
+        <property name="analysisSQLQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_ListRdmAnalysis @rdm_id=:rdm_id, @rdm_name=:rdm_name"/>
+        <property name="getAllAnalysisEpCurvesSQLQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetRdmAllAnalysisEpCurves @rdm_id=:rdm_id, @rdm_name=:rdm_name, @ep_points=:ep_points, @fin_persp_list=:fin_persp_list"/>
+        <property name="getAnalysisEpCurvesSqlQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetAnalysisEpCurves @rdm_id=:rdm_id, @rdm_name=:rdm_name, @analysis_id=:analysis_id, @fin_persp_code=:fin_persp_code, @treaty_label_id=:treaty_label_id"/>
+        <property name="getAllAnalysisSummaryStatsSqlQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetRdmAllAnalysisSummaryStats @rdm_id=:rdm_id, @rdm_name=:rdm_name, @fin_persp_list=:fin_persp_list"/>
+        <property name="getAnalysisSummaryStatsSqlQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetAnalysisSummaryStats @rdm_id=:rdm_id, @rdm_name=:rdm_name, @analysis_id=:analysis_id, @fin_persp_code=:fin_persp_code, @treaty_label_id=:treaty_label_id"/>
+        <property name="analysisAnlsRegionsStatsSQLQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetRdmAllAnalysisProfileRegions @rdm_id=:rdm_id, @rdm_name=:rdm_name"/>
+        <property name="getAnalysisELTSqlQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetAnalysisElt @rdm_id=:rdm_id, @rdm_name=:rdm_name, @analysis_id=:analysis_id, @fin_persp_code=:fin_persp_code, @treaty_label_id=:treaty_label_id"/>
+        <property name="portfolioAnalysisRegionSQLQuery"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetEdmAllPortfolioAnalysisRegions @edm_id=:edm_id, @edm_name=:edm_name, @Ccy=:currency"/>
+        <property name="portfolioAnalysisRegionSQLQueryInEDMContext"
+                  value="execute ${rms.ds.dbname}.dbo.RR_RL_GetEDMPortfolioAnalysisRegionsList @Edm_id=:edm_id , @Edm_name=:edm_name, @RunID=:run_id"/>
+        <property name="createEDMPortfolioContextSQL" value="${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryPrep]"/>
+        <property name="removeEDMPortfolioContextSQL"
+                  value="exec ${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryClear] @RunID=:RunID"/>
+        <!-- fixup missing  -->
+        <property name="rmsDatabaseName" value="${rms.ds.dbname}"/>
+        <property name="exposureSummarySchema" value="dbo"/>
+        <!--        <property name="exposureSummaryReferenceCacheService" ref="exposureSummaryReferenceCacheService"/>-->
+        <!--        <property name="regionPerilMappingCacheService" ref="regionPerilMappingCacheService"/>-->
+        <property name="getRMSExchangeRatesSqlQuery"
+                  value="execute ${rms.ds.dbname}.[dbo].[RR_RL_GetRMSExchangeRates] @ccyList=:ccyList"/>
+        <property name="getExtractSchemaSqlQuery"
+                  value="execute ${rms.ds.dbname}.[dbo].[RR_RL_GetExtractSchema] @extract_name=:extract_name"/>
+        <property name="getEdmDefailSummarySqlQuery"
+                  value="execute ${rms.ds.dbname}.[dbo].[RR_RL_GetEdmDetailSummary] @edm_id=:edm_id , @edm_name=:edm_name , @runid=:runid, @Portfolio_Id=:Portfolio_Id, @Portfolio_Type=:Portfolio_Type"/>
+        <property name="getAnalysisModellingOptionSettingsSQL"
+                  value="execute ${rms.ds.dbname}.[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=:rdm_id, @rdm_name=:rdm_name, @analysis_id=:analysis_id"/>
+    </bean>
+
+    <bean abstract="true" name="baseFileWriter" class="com.scor.rr.importBatch.processing.batch.BaseFileWriter"
+          parent="baseBatchBean" init-method="init">
+        <constructor-arg name="filePath" value="${ihub.treaty.out.path}"/>
+    </bean>
+
+    <bean abstract="true" name="baseRMSCheck" parent="baseRMSBean"
+          class="com.scor.rr.importBatch.processing.workflow.consistency.rms.AbstractRMSConsistencyCheck">
+        <property name="rmsParameters" ref="parameterRMSBean"/>
+    </bean>
+
+    <bean id="parameterRMSBean" class="com.scor.rr.importBatch.processing.batch.rms.ParameterRMSBean" init-method="init"
+          parent="baseRMSBean" scope="job"/>
+
+    <bean id="mappingHandler" class="com.scor.rr.importBatch.processing.mapping.BaseMappingHandler" init-method="init"
+          scope="job">
+        <property name="modellingSystemInstanceRepository" ref="modellingSystemInstanceRepository"/>
+        <property name="sourceCountryPerilRegionPerilMapRepository" ref="sourceCountryPerilRegionPerilMapRepository"/>
+        <property name="sourceCountryPerilRegionPerilGroupMapRepository"
+                  ref="sourceCountryPerilRegionPerilGroupMapRepository"/>
+        <property name="modelRAPSourceMappingRepository" ref="modelRAPSourceMappingRepository"/>
+        <property name="epMetricMappingRepository" ref="EPMetricMappingRepository"/>
+        <property name="exposureSummaryLookupRepository" ref="exposureSummaryLookupRepository"/>
+        <property name="geographicResolutionMappingRepository" ref="geographicResolutionMappingRepository"/>
+        <property name="geographicResolutionRepository" ref="geographicResolutionRepository"/>
+        <property name="modelRAPRepository" ref="modelRAPRepository"/>
+        <property name="currencyRepository" ref="currencyRepository"/>
+        <property name="instanceId" value="#{jobParameters['instanceId']}"/>
+    </bean>
+
+    <bean id="peqtSelector" class="com.scor.rr.importBatch.processing.ylt.ModelRapPEQTSelector">
+        <constructor-arg index="0" value="${ihub.treaty.peqt.path}"/>
+        <property name="modelRAPRepository" ref="modelRAPRepository"/>
+        <property name="modelRAPSourceMappingRepository" ref="modelRAPSourceMappingRepository"/>
+        <property name="mappingHandler" ref="mappingHandler"/>
+    </bean>
+
+    <bean id="accExtractListener" class="com.scor.rr.importBatch.processing.statistics.ExtractStepListener">
+        <constructor-arg index="0" value="FW ACC EXTRACT"/>
+        <property name="messages" ref="messageData"/>
+    </bean>
+    <bean id="locExtractListener" class="com.scor.rr.importBatch.processing.statistics.ExtractStepListener">
+        <constructor-arg index="0" value="RR LOC EXTRACT"/>
+        <property name="messages" ref="messageData"/>
+    </bean>
+
+    <bean id="locExtractListenerFW" class="com.scor.rr.importBatch.processing.statistics.ExtractStepListener">
+        <constructor-arg index="0" value="FW LOC EXTRACT"/>
+        <property name="messages" ref="messageData"/>
+    </bean>
+
+    <bean id="rmsAccReader" class="com.scor.rr.importBatch.processing.batch.rms.RMSJdbcCursorItemReader"
+          parent="baseItemReader" scope="step">
+        <property name="dsCache" ref="dsCache"/>
+        <property name="fetchSize" value="1000"/>
+        <property name="rowMapper">
+            <bean class="com.scor.rr.importBatch.processing.batch.rms.RMSAccRowMapper"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <value type="java.lang.String">PORTFOLIO</value>
+            </list>
+        </property>
+        <property name="sql">
+            <value><![CDATA[
+---------------------------------------------------------------------
+---
+---  FW ACC Exposure Extract (With Region Peril workaround)
+---
+---------------------------------------------------------------------
+---     29.06.2015  - Fix to address issue with Cat Sub limits
+---------------------------------------------------------------------
+SELECT
+            res.CAR_ID
+      ,     res.Division
+      ,     Res.InceptionDate
+      ,     res.PracticalCompletionDate
+      ,     Coalesce( rp1.RegionPerilCode, rp2.RegionPerilCode ) AS RegionPerilCode
+      ,     MAX( res.CatDeductible )
+      ,     MAX( res.CatSubLimit ) CatSubLimit
+FROM  (
+                  SELECT  t.CAR_ID
+                        ,   t.Division
+                        ,   t.CountryCode
+                        ,   t.LocationGroupCode
+                        ,   t.Peril
+                        ,   t.CatDeductible
+                        ,   t.CatSubLimit
+                        ,   t.InceptionDate
+                        ,   t.PracticalCompletionDate
+                        FROM    (
+                                          SELECT  acg.CAR_ID
+                                                ,   acg.Division
+                                                ,   acg.UWYear
+                                                ,   acg.CountryCode
+                                                ,   acg.LocationGroupCode
+                                                ,   acg.Peril
+                                                ,   pol.CatDeductible
+                                                ,   pol.CatDeductibleCcy
+                                                ,   pol.CatSubLimit
+                                                ,   pol.CatSubLimitCcy
+                                                ,   pol.InceptionDate
+                                                ,   pol.PracticalCompletionDate
+                                          FROM    :edm:.dbo.PortInfo poi
+                                                      INNER JOIN :edm:.dbo.portacct pa
+                                                                  ON  pa.PORTINFOID = poi.PORTINFOID
+                                                      INNER JOIN (
+															    		-------------------------------------------------------------
+                                                                        -- Query to collate the various country, peril and admin1
+                                                                        -------------------------------------------------------------
+                                                                        SELECT    acg.USERID4                      AS CAR_ID
+                                                                              ,   acg.AccGrpID
+                                                                              ,	  ACG.ACCGRPNUM
+                                                                              ,   SUBSTRING( acg.ACCGRPNUM,  1, 9) AS PolicyNum
+                                                                              ,   SUBSTRING( acg.ACCGRPNUM, 10, 2) AS Division
+                                                                              ,   SUBSTRING( acg.ACCGRPNUM, 12, 4) AS UWYear
+                                                                              ,   prl.Peril
+                                                                              ,   CASE WHEN  adr.CountryRMSCode = 'CB'
+                                                                                          THEN  adr.CountryCode
+                                                                                           ELSE  adr.CountryRMSCode
+                                                                                    END as CountryCode
+                                                                              ,   adr.Admin1Code                   as LocationGroupCode
+                                                                              ,	ppt.LOCID
+                                                                              ,	ppt.LOCNUM, ppt.LOCNAME
+                                                                              ,	cvg.TotalExposureAmt
+                                                                        FROM	:edm:.dbo.accgrp acg
+																				INNER JOIN :edm:.dbo.Property  ppt
+																							ON  ppt.ACCGRPID = acg.AccGrpID
+																				INNER JOIN :edm:.dbo.Address adr
+																							ON  ppt.AddressID = adr.AddressID
+																				INNER JOIN ( SELECT DISTINCT
+																											  po.ACCGRPID
+																										,     SUBSTRING( Po.PolicyNum, 18, 2)           AS Peril
+																								  FROM   :edm:.dbo.policy po
+																						   ) prl
+																						ON    prl.AccGrpID = acg.AccGrpID
+																				INNER JOIN (
+																							SELECT	LocID
+																								, 	CASE Peril
+																										WHEN 1 THEN 'EQ'
+																										WHEN 2 THEN 'WS'
+																										WHEN 3 THEN 'CS'
+																										ELSE 'FL'
+																									END AS Peril
+																								,	SUM(ValueAmt) AS TotalExposureAmt
+																							FROM	:edm:.dbo.loccvg cvg
+																							GROUP BY
+																									LOCID
+																								,	Peril
+																							HAVING	SUM(cvg.VALUEAMT) > 0
+																						   ) cvg
+																						ON  cvg.LOCID = ppt.LOCID
+																						AND cvg.Peril = prl.Peril
+																	    ) acg
+                                                                  ON    pa.ACCGRPID = acg.ACCGRPID
+                                                      INNER JOIN (
+                                                                        -------------------------------------------------------------
+                                                                        -- Query to group an Cat Sepecific layer limits & deductible
+                                                                        -------------------------------------------------------------
+                                                                        SELECT    pa.PortInfoID, ac.ACCGRPID
+                                                                              ,   ac.ACCGRPNUM, ac.ACCGRPNAME
+                                                                              ,   SUBSTRING( Po.PolicyNum, 18, 2)        AS Peril
+                                                                              ,   MAX( po.PARTOF )                       AS CatSubLimit
+                                                                              ,   po.PartOfCur                           AS CatSubLimitCcy
+                                                                              ,   MAX( CASE WHEN BlandedAmt > MaxDedAmt
+                                                                                                  THEN CASE WHEN BlanDedAmt > MinDedAmt
+                                                                                                                  THEN BlanDedAmt
+                                                                                                                  ELSE MinDedAmt
+                                                                                                         END
+                                                                                                  ELSE CASE WHEN MaxDedAmt  > MinDedAmt
+                                                                                                                  THEN MaxDedAmt
+                                                                                                                  ELSE MinDedAmt
+                                                                                                         END
+                                                                                          END )
+                                                                                                                         AS CatDeductible
+                                                                              ,   po.BlandedCur                          AS CatDeductibleCcy
+                                                                              ,   po.InceptDate                          AS InceptionDate
+                                                                              ,   po.ExpireDate                          AS PracticalCompletionDate
+                                                                        FROM  :edm:.dbo.portacct pa
+                                                                              INNER JOIN :edm:.dbo.accgrp ac on ac.ACCGRPID = pa.ACCGRPID
+                                                                              INNER JOIN :edm:.dbo.policy po on po.ACCGRPID = ac.ACCGRPID
+                                                                        GROUP BY
+                                                                                  pa.PortInfoID, ac.ACCGRPID
+                                                                              ,   ac.ACCGRPNUM, ac.ACCGRPNAME
+                                                                              ,   SUBSTRING( Po.PolicyNum, 18, 2)
+                                                                              ,   po.PartOfCur
+                                                                              ,   po.BlandedCur
+                                                                              ,   po.InceptDate
+                                                                              ,   po.ExpireDate
+                                                                  ) pol
+                                                            ON    pol.ACCGRPID  = acg.ACCGRPID
+                                                            AND pol.Peril       = acg.Peril
+                                          WHERE poi.PORTNUM = ?
+                        ) t
+            ) res
+            LEFT  JOIN SCOR_REFERENCE.dbo.RegionPerilMapping rp1
+                                    ON    rp1.SourceVendor = 'RMS'
+                                    AND   rp1.PerilCode                 = res.PEril
+                                    AND RTRIM(rp1.CountryCode)  = RTRIM(res.CountryCode)
+                                    AND RTRIM(rp1.Admin1Code)   = RTRIM(res.LocationGroupCode)
+            LEFT  JOIN scor_reference.dbo.RegionPerilMapping rp2
+                        ON    rp2.SourceVendor = 'RMS'
+                        AND   rp2.PerilCode         = IsNull(RTRIM(Convert(Varchar(10),res.Peril)),'')
+                        AND IsNull(RTRIM(rp2.CountryCode),'')  = IsNull(RTRIM(res.CountryCode),'')
+                        AND IsNull(RTRIM(rp2.Admin1Code),'')   = ''
+GROUP BY
+            res.CAR_ID
+      ,     res.Division
+      ,     Res.InceptionDate
+      ,     res.PracticalCompletionDate
+      ,     Coalesce( rp1.RegionPerilCode, rp2.RegionPerilCode )
+        ]]></value>
+        </property>
+    </bean>
+
+    <bean name="locItemWriter" class="org.beanio.spring.BeanIOFlatFileItemWriter" scope="step">
+        <property name="streamFactory" ref="streamFactory"/>
+        <property name="streamName" value="locStream"/>
+        <property name="resource"
+                  value="file:${ihub.treaty.out.path}/tmp/#{jobParameters['catReqId']}_#{jobParameters['division']}.loc"/>
+        <property name="appendAllowed" value="false"/>
+        <property name="transactional" value="false"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+        <property name="headerCallback">
+            <bean class="com.scor.rr.importBatch.processing.statistics.StringHeaderCallback">
+                <constructor-arg index="0"
+                                 value="CatAnalysisRequestID|DivisionNumber|RegionPerilCode|LocationID|LocationName|StreetAddress|CityName|County|State|PostalZipCode|ConstructionScheme|ConstructionCode|ConstructionLabel|OccupancyScheme|OccupancyCode|OccupancyLabel|WindStormZone|ExposedValue|ExpectedLoss|CurrencyCode|BuildingTIV|ContentTIV|BITIV|TIV|AccuracyLevel|PrimaryFloodZone|NeighboringFloodZones|AnnualProbabilityofFlooding|DistCoast|Elevation|SoilTypeName|SoilMatchLevel|LiquefactionName|LiquefactionMatchLevel|LandslideName|LandslideMatchLevel"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="locItemWriterFW" class="org.beanio.spring.BeanIOFlatFileItemWriter" scope="step">
+        <property name="encoding" value="UTF-8"/>
+        <property name="streamFactory" ref="streamFactory"/>
+        <property name="streamName" value="locStreamFW"/>
+        <property name="resource"
+                  value="file:${ihub.treaty.out.path}/tmp/#{jobParameters['catReqId']}_#{jobParameters['division']}_FW.loc"/>
+        <property name="appendAllowed" value="false"/>
+        <property name="transactional" value="false"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+        <property name="headerCallback">
+            <bean class="com.scor.rr.importBatch.processing.statistics.StringHeaderCallback">
+                <constructor-arg index="0"
+                                 value="CatAnalysisRequestID|DivisionNumber|RegionPerilCode|LocationID|ConstructionScheme|ConstructionCode|ConstructionLabel|OccupancyScheme|OccupancyCode|OccupancyLabel|WindStormZone|ExposedValue|ExpectedLoss|CurrencyCode|BuildingTIV|ContentTIV|BITIV|TIV|AccuracyLevel|PrimaryFloodZone|NeighboringFloodZones|AnnualProbabilityofFlooding"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="streamFactory" class="org.beanio.spring.BeanIOStreamFactory">
+        <property name="streamMappings">
+            <list>
+                <value>classpath:/beanio/accloc.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean name="baseItemReader" abstract="true"
+          class="com.scor.rr.importBatch.processing.batch.rms.RMSJdbcCursorItemReader" scope="step" init-method="init">
+        <property name="dsCache" ref="dsCache"/>
+        <property name="rmsParameters" ref="parameterRMSBean"/>
+        <property name="instanceId" value="#{jobParameters['instanceId']}"/>
+        <property name="useSharedExtendedConnection" value="true"/>
+        <property name="driverSupportsAbsolute" value="true"/>
+        <property name="verifyCursorPosition" value="false"/>
+    </bean>
+
+    <bean name="accItemWriter" class="org.beanio.spring.BeanIOFlatFileItemWriter" scope="step">
+        <property name="streamFactory" ref="streamFactory"/>
+        <property name="streamName" value="accStream"/>
+        <property name="resource"
+                  value="file:${ihub.treaty.out.path}/tmp/#{jobParameters['catReqId']}_#{jobParameters['division']}.acc"/>
+        <property name="appendAllowed" value="false"/>
+        <property name="transactional" value="false"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+        <property name="headerCallback">
+            <bean class="com.scor.rr.importBatch.processing.statistics.StringHeaderCallback">
+                <constructor-arg index="0"
+                                 value="CatAnalysisRequestID|DivisionNumber|ContractInceptionDate|PracticalCompletionDate|RegionPerilCode|CatDeductible|CatLimit"/>
+            </bean>
+        </property>
+    </bean>
+
+    <bean name="accItemProcessor" class="com.scor.rr.importBatch.processing.statistics.AccItemProcessor"
+          parent="baseBatchBean" scope="step">
+        <property name="forceCarId" value="true"/>
+    </bean>
+
+    <bean name="locItemProcessor" class="com.scor.rr.importBatch.processing.statistics.LocItemProcessor"
+          parent="baseBatchBean" scope="step">
+        <property name="rmsParameters" ref="parameterRMSBean"/>
+        <property name="forceCarId" value="true"/>
+    </bean>
+
+    <bean id="rmsLocReader" class="com.scor.rr.importBatch.processing.batch.rms.RMSJdbcCursorItemReader"
+          parent="baseItemReader" scope="step">
+        <!--<property name="fetchSize" value="${rms.loc.fetchsize}"/>-->
+        <property name="rowMapper">
+            <bean class="com.scor.rr.importBatch.processing.batch.rms.RMSLocRowMapper"/>
+        </property>
+        <property name="parameters">
+            <list>
+                <value type="java.lang.String">LIABILITY_CCY</value>
+                <value type="java.lang.String">PORTFOLIO</value>
+                <value type="java.lang.String">PORTFOLIO</value>
+            </list>
+        </property>
+        <property name="sql">
+            <value><![CDATA[
+            SELECT	  DISTINCT
+		        res.*
+                ,   Coalesce( rp1.RegionPerilCode, rp2.RegionPerilCode ) AS RegionPerilCode
+            FROM  (
+			    SELECT  acc.USERID4									AS CAR_ID
+				,   Substring( acc.ACCGRPNUM, 10, 2)			AS DivisionID
+				,	CASE WHEN  adr.CountryRMSCode = 'CB'
+						 THEN  adr.CountryCode
+						 ELSE  adr.CountryRMSCode
+                	END as CountryCode
+				,   adr.Admin1Code					   			AS RegionCode
+				,   lcv.Peril                            		AS PerilCode
+				,   ppt.LOCID                            		AS LocationID
+				,   ppt.LOCNUM                           		AS LocationNum
+				,   ppt.LOCNAME                          		AS LocationName
+				,	adr.StreetAddress							AS StreetAddress
+				,	adr.CityName								AS CityName
+				,	adr.Admin2Name								AS County
+				,	adr.Admin1Name								AS State
+				,	adr.PostalCode								AS PostalCode
+				,   ppt.BLDGSCHEME                       		AS BldgScheme
+				,   ppt.BLDGCLASS                        		AS BldgClass
+				,   Coalesce(vulnCons.NAME, '** Invalid Mapping **' )	As ConsName
+				,   ppt.OCCSCHEME                        		As OccScheme
+				,   ppt.OCCTYPE                          		As OccType
+				,   Coalesce(vulnOcc.NAME, '** Invalid Mapping **' )	As OccName
+				,   pir.CATEGORY                         		AS WIND_ZONE
+				,   geo.ISO3A									AS ISO3A
+				,   adr.CountryRMSCode							AS CountryRMSCode
+				,   adr.Admin1Code								AS Admin1Code
+				,   lcv.TIV_BUILDINGS +
+					lcv.TIV_CONTENTS  +
+					lcv.TIV_BI									AS TIV_Value
+				,   Coalesce(rls.PURE_PREMIUM_GU,0)				AS PurePremium_GU
+				,   Coalesce(rls.PURE_PREMIUM_GR,0)				AS PurePremium_GR
+				,   lcv.TIV_BUILDINGS							AS TIV_Buildings
+				,   lcv.TIV_CONTENTS							AS TIV_Contents
+				,   lcv.TIV_BI									AS TIV_BI
+				,   lcv.TIV_BUILDINGS +
+					lcv.TIV_CONTENTS  +
+					lcv.TIV_BI									AS TIV_Combined
+				,   adr.GeoResolutionCode						AS GeoResultionCode
+				,	Coalesce(fld.FLZone,     'Unknown' )		AS PrimaryFloodZone
+				,	Coalesce(fld.OtherZones, 'Unknown' )		AS NeighboringFloodZones
+				,	Coalesce(fld.AnnProb,    'Unknown' )		AS AnnualProbabilityofFlooding
+				,	hud.DISTCOAST								AS DistCoast
+				,	hud.ELEVATION								AS Elevation
+				,	eqd.SOILTYPE								AS SoilType
+				,	CASE eqd.SOILTYPE
+						WHEN 0 THEN 'Unknown'
+						ELSE lk_soil.soil_type_name
+					END											AS SoilTypeName
+				,	eqd.SOILMATCH								AS SoilMatch
+				,	soil_match.VALUENAME						AS SoilMatchLevel
+				,	eqd.LIQUEFACT								AS Liquefact
+				,	CASE eqd.LIQUEFACT
+						WHEN 0 THEN 'Unknown'
+						ELSE lk_liquefact.liquefaction_name
+					END											AS LiquefactionName
+				,	eqd.LIQUEMATCH								AS LiqueMatch
+				,	lique_match.VALUENAME						AS LiquefactionMatchLevel
+				,	eqd.LANDSLIDE								AS Landslide
+				,	CASE eqd.LANDSLIDE
+						WHEN 0 THEN 'Unknown'
+						ELSE lk_land.landslide_name
+					END											AS LandslideName
+				,	eqd.LANDMATCH								AS LandMatch
+				,	land_match.VALUENAME						AS LandslideMatchLevel
+            FROM	:edm:.dbo.portinfo poi
+                    INNER JOIN :edm:.dbo.portacct pra
+                               ON  poi.PORTINFOID = pra.PORTINFOID
+                    INNER JOIN :edm:.dbo.accgrp acc
+                               ON  pra.ACCGRPID = acc.ACCGRPID
+                    INNER JOIN :edm:.dbo.policy plc
+                               ON  acc.ACCGRPID = plc.ACCGRPID
+                    INNER JOIN :edm:.dbo.Property ppt
+                               ON  acc.ACCGRPID = ppt.ACCGRPID
+                    INNER JOIN :edm:.dbo.Address adr
+                               ON  ppt.AddressID = adr.AddressID
+                    LEFT JOIN  (
+								SELECT	lcv.LOCID
+									,	lcv.PERIL
+                                    ,   SUM( CASE WHEN LOSSTYPE = 1
+												  THEN lcv.VALUEAMT * (LocFX.XFACTOR * (1/LimFX.XFactor))
+                                                  ELSE 0
+											  END )            AS TIV_BUILDINGS
+									,	SUM( CASE WHEN LOSSTYPE = 2
+												  THEN lcv.VALUEAMT * (LocFX.XFACTOR * (1/LimFX.XFactor))
+												  ELSE 0
+											 END )             AS TIV_CONTENTS
+									,	SUM( CASE WHEN LOSSTYPE = 3
+												  THEN lcv.VALUEAMT * (LocFX.XFACTOR * (1/LimFX.XFactor))
+												  ELSE 0
+											 END )             AS TIV_BI
+									,	(LocFX.XFACTOR * (1/LimFX.XFactor))
+															   AS FX_CROSSRATE
+								FROM	:edm:.dbo.loccvg lcv
+										INNER JOIN rms_userconfig.dbo.currfx LocFX
+                                                ON  LocFX.CODE  = lcv.VALUECUR
+                                                AND LocFX.XDATE = (
+                                                                   SELECT  MAX( XDATE )
+                                                                   FROM    rms_userconfig.dbo.currfx LocFX
+                                                                   WHERE   CODE = 'USD'
+                                                                  )
+										INNER JOIN rms_userconfig.dbo.currfx LimFX
+                                 				ON  LimFX.CODE  =  ?
+                                                AND LimFX.XDATE = (
+																	SELECT  MAX( XDATE )
+                                                                    FROM    rms_userconfig.dbo.currfx LocFX
+                                                                    WHERE   CODE = 'USD'
+                                                                  )
+								WHERE lcv.LossType <> 4 -- ** ADDED FOR REMOVE REDUNDANT DATA**
+                                GROUP BY
+										lcv.LOCID
+								   ,	lcv.PERIL
+								   ,	(LocFX.XFACTOR * (1/LimFX.XFactor))
+								) lcv
+							ON  lcv.LOCID   = ppt.LOCID
+                            AND lcv.PERIL   = plc.POLICYTYPE
+            		INNER JOIN :edm:.dbo.loc loc
+							ON  loc.LOCID = lcv.LOCID
+                    LEFT  JOIN RMS_SYSTEMDATA.dbo.vulnnames vulnOcc
+                            ON  vulnOcc.COUNTRY     = adr.CountryRMSCode
+                            AND vulnOcc.SCHEME      = ppt.OCCSCHEME
+                            AND vulnOcc.CODE        = ppt.OCCTYPE
+                            AND vulnOcc.attribid    = 521
+					LEFT  JOIN RMS_SYSTEMDATA.dbo.vulnnames vulnCons
+							ON  vulnCons.COUNTRY    = adr.CountryRMSCode
+                            AND vulnCons.SCHEME     = ppt.BLDGSCHEME
+                            AND vulnCons.CODE       = ppt.BLDGCLASS
+                            AND vulnCons.attribid   = 501
+					LEFT  JOIN (
+								SELECT	rls.ID AS LocID
+									,	SUM( CASE WHEN rls.PERSPCODE = 'GU'
+												  THEN PUREPREMIUM
+                                                  ELSE 0
+											 END)             AS PURE_PREMIUM_GU
+									,   SUM( CASE WHEN rls.PERSPCODE = 'GR'
+												  THEN PUREPREMIUM
+                                                  ELSE 0
+											 END )			  AS PURE_PREMIUM_GR
+								FROM    :rdm:.dbo.rdm_locstats rls
+										INNER JOIN (
+													SELECT  t.ID, t.Name
+														,	t.Description
+														,   t.PORTINFOID
+														,   t.SeqOrder
+													FROM    (
+															-- Identify the latest analysis for a
+                                                            -- given dlm profile and exposureport ID
+                                                            SELECT  ra.ID, ra.Name
+																,  ra.Description
+                                                                ,  pio.PortInfoID
+                                                                ,  ra.Status
+                                                                ,  ROW_NUMBER() OVER
+																					(
+                                                                                    PARTITION BY
+																								ra.Description
+                                                                                              , ra.ExposureID
+                                                                                        ORDER BY
+																								ra.RunDate desc
+                                                                                    ) AS SeqOrder
+															FROM    :rdm:.dbo.rdm_analysis ra
+                                                				INNER JOIN :edm:.dbo.PortInfo pio
+																			ON  pio.PortInfoID = ra.ExposureID
+                                                                            AND pio.PortNum    = ra.Name
+															WHERE   pio.PortNum =   ?
+															) t
+													WHERE	t.SeqOrder = 1
+													) rda
+												ON  rls.ANLSID = rda.ID
+												AND rls.PERSPCODE IN ('GU','GR')
+                                                AND EPTYPE     = 1
+								GROUP BY  rls.ID
+                                ) rls
+							ON  rls.LocID  = ppt.LOCID
+					INNER JOIN rms_geography.dbo.country geo
+							ON  adr.CountryCode     = geo.ISO2A
+					LEFT  JOIN rms_systemdata.dbo.pisrperildetail pir
+							ON  adr.Admin1Code      = pir.DEPENDANCY1
+                           AND	adr.CountryRMSCode  = pir.DEPENDANCY2
+                           AND	adr.Admin2Code      = pir.VALUE
+					LEFT  JOIN :edm:.dbo.locconditions lcc
+							ON  ppt.LOCID = lcc.LOCID
+					LEFT  JOIN :edm:.dbo.policyconditions pcc
+							ON  plc.POLICYID        = pcc.POLICYID
+                            AND lcc.CONDITIONID     = pcc.CONDITIONID
+					LEFT  JOIN :edm:.dbo.eqdet eqd ON  ppt.LOCID = eqd.LOCID
+					LEFT  JOIN :edm:.dbo.hudet hud ON  ppt.LOCID = hud.LOCID
+					LEFT  JOIN :edm:.dbo.todet tod ON  ppt.LOCID = tod.LOCID
+					LEFT  JOIN :edm:.dbo.fldet fld ON  ppt.LOCID = fld.LOCID
+					LEFT  JOIN :edm:.dbo.frdet frd ON  ppt.LOCID = frd.LOCID
+					LEFT  JOIN :edm:.dbo.trdet trd ON  ppt.LOCID = trd.LOCID
+					LEFT  JOIN :edm:.Lookup.SoilType lk_soil
+						ON (eqd.SOILTYPE = lk_soil.band_min AND eqd.SOILTYPE = lk_soil.band_max)
+						OR (eqd.SOILTYPE > lk_soil.band_min AND eqd.SOILTYPE <= lk_soil.band_max)
+					LEFT  JOIN RMS_SYSTEMDATA.dbo.fldval soil_match
+						ON soil_match.COUNTRY = adr.CountryRMSCode
+						AND soil_match.FLDID = 351
+						AND soil_match.VALUECODE = eqd.SOILMATCH
+					LEFT  JOIN :edm:.Lookup.Liquefaction lk_liquefact
+						ON (eqd.LIQUEFACT = lk_liquefact.band_min AND eqd.LIQUEFACT = lk_liquefact.band_max)
+						OR (eqd.LIQUEFACT > lk_liquefact.band_min AND eqd.LIQUEFACT <= lk_liquefact.band_max)
+					LEFT  JOIN RMS_SYSTEMDATA.dbo.fldval lique_match
+						ON lique_match.COUNTRY = adr.CountryRMSCode
+						AND lique_match.FLDID = 357
+						AND lique_match.VALUECODE = eqd.LIQUEMATCH
+					LEFT  JOIN :edm:.Lookup.LandSlide lk_land
+						ON (eqd.LANDSLIDE = lk_land.band_min AND eqd.LANDSLIDE = lk_land.band_max)
+						OR (eqd.LANDSLIDE > lk_land.band_min AND eqd.LANDSLIDE <= lk_land.band_max)
+					LEFT  JOIN RMS_SYSTEMDATA.dbo.fldval land_match
+						ON land_match.COUNTRY = adr.CountryRMSCode
+						AND land_match.FLDID = 354
+						AND land_match.VALUECODE = eqd.LANDMATCH
+			WHERE   poi.PortNum =  ?
+            ) res
+	LEFT  JOIN SCOR_REFERENCE.dbo.RegionPerilMapping rp1
+			ON  rp1.SourceVendor        = 'RMS'
+            AND rp1.PerilCode           = RTRIM(Convert(Varchar(10),res.PerilCode))
+            AND RTRIM(rp1.CountryCode)  = RTRIM(res.CountryCode)
+            AND RTRIM(rp1.Admin1Code)   = RTRIM(res.Admin1Code)
+	LEFT  JOIN scor_reference.dbo.RegionPerilMapping rp2
+			ON  rp2.SourceVendor        = 'RMS'
+            AND rp2.PerilCode           = RTRIM(Convert(Varchar(10),res.PerilCode))
+            AND RTRIM(rp2.CountryCode)  = RTRIM(res.CountryCode)
+            AND RTRIM(rp2.Admin1Code)   = ''
+OPTION (FORCE ORDER)  -- ** ADDED FOR PERFORMANCE **
+            ]]></value>
+        </property>
+    </bean>
+
+    <bean id="acclocFilesHandler" class="com.scor.rr.importBatch.processing.statistics.AccLocFilesHandlerImpl"
+          scope="step" parent="baseFileWriter">
+        <constructor-arg name="ihubFwPath" value="${ihub.treaty.fw.path}"/>
+        <property name="catAnalysisModelResultsRepository" ref="CATAnalysisModelResultsRepository"/>
+        <property name="businessKpiService" ref="businessKpiService"/>
+        <property name="businessRulesService" ref="businessRulesService"/>
+    </bean>
+
+    <bean id="ihubCopyFilesHandler" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="acclocFilesHandler"/>
+        <property name="targetMethod" value="copyFilesToIhub"/>
+    </bean>
+
+    <bean id="consistencyCheck" class="com.scor.rr.importBatch.processing.workflow.ConsistencyCheckStep"
+          parent="baseBatchBean" scope="step">
+        <!--consistencyCheck la targetObject, la 1 bean; trong class ConsistencyCheckStep chua targetMethod la runChecks() -->
+        <property name="checksToDo">
+            <!--checksToDo la list co kieu ConsistencyCheck-->
+            <list value-type="com.scor.rr.importBatch.processing.workflow.ConsistencyCheck">
+                <!--cac phan tu cua list deu implements ConsistencyCheck-->
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.EDMAvailableCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <!--name thi trong cau tu cua class EDMAvailableCheck-->
+                    <constructor-arg name="checkName" value="EDMAvailableCheck"/>
+                    <!--khai bao gia tri cua : phan tu dau tien cua list checksToDo getCheckName() trong class AbstractRMSConsistencyCheck
+                    phan tu dau tien co kieu EDMAvailableCheck-->
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.EDMPortfolioCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="EDMPortfolioCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.EDMPortNumCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="EDMPortNumCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.RequestIdCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="RequestIdCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.LiabilityCurrencyCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="LiabilityCurrencyCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.OccupancyCodeCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="OccupancyCodeCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.ConstructionCodeCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="ConstructionCodeCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.BaseCurrencyCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="BaseCurrencyCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.BaseExchangeRateCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="BaseExchangeRateCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.RDMAvailableCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="RDMAvailableCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.RDMPortfolioCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="RDMPortfolioCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.AnalysisStatusCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="AnalysisStatusCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.ResultsReferencesExposureCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="ResultsReferencesExposureCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.ModelledCurrencyCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="ModelledCurrencyCheck"/>
+                </bean>
+                <bean class="com.scor.rr.importBatch.processing.workflow.consistency.rms.MutuallyExclusiveProfilesCheck"
+                      parent="baseRMSCheck" scope="step">
+                    <constructor-arg name="checkName" value="MutuallyExclusiveProfilesCheck"/>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <bean id="eltData" class="com.scor.rr.importBatch.processing.domain.ELTDataImpl" scope="job"/>
+    <bean id="pltData" class="com.scor.rr.importBatch.processing.domain.PLTDataImpl" scope="job"/>
+    <bean id="messageData" class="com.scor.rr.importBatch.processing.domain.MessageDataImpl" scope="job"/>
+    <bean id="transformationPackage" class="com.scor.rr.importBatch.processing.treaty.TransformationPackageImpl"
+          scope="job"/>
+
+    <bean id="rmsSummaryStatisticsExtractor"
+          class="com.scor.rr.importBatch.processing.statistics.rms.RMSSummaryStatisticsExtractor" parent="baseRMSBean"
+          scope="step">
+        <property name="eltData" ref="eltData"/>
+        <property name="writer2" ref="epsWriter"/>
+        <property name="summaryStatsQuery">
+            <value><![CDATA[
+                with aa as
+(
+select
+	p.ANLSID,
+	p.ID as PORTFOLIO_ID,
+	p.PERSPCODE,
+	case
+		when p.LOSSTYPE in (1,2,4,8) then 'PD'
+		when p.LOSSTYPE = 3 then 'BI'
+		else '-'
+	end as COVERAGE_TYPE,
+	sum(ev.RATE * p.PERSPVALUE) as AAL
+from :rdm:.dbo.rdm_portcvg p
+	inner join :rdm:.dbo.rdm_anlsevent ev
+		on ev.ANLSID = p.ANLSID
+		and ev.EVENTID = p.EVENTID
+where
+	p.ANLSID = ?
+	and p.PERSPCODE = ?
+	and p.LOSSTYPE in (1,2,4,8,3)
+group by
+	p.ANLSID,
+	p.ID,
+	p.PERSPCODE,
+	case
+		when p.LOSSTYPE in (1,2,4,8) then 'PD'
+		when p.LOSSTYPE = 3 then 'BI'
+		else '-'
+	end
+)
+select
+	st.ANLSID 						as ANALYSIS_ID,
+	st.ID 							as PORTFOLIO_ID,
+	st.PERSPCODE 						as FINANCIAL_PERSPECTIVE_CODE,
+	st.EPTYPE 						as EP_TYPE_CODE,
+	st.PUREPREMIUM					as PURE_PREMIUM,
+	st.TOTALSTDDEV 					as STANDARD_DEVIATION,
+	st.TOTALSTDDEV / st.PUREPREMIUM 					as COV,
+	100 - round(sum(isnull(bi.AAL,0)) / sum(tot.AAL) * 100, 0)	as PD_SPLIT_PCT,
+	round(sum(isnull(bi.AAL,0)) / sum(tot.AAL) * 100, 0)		as BI_SPLIT_PCT
+from aa
+	inner join :rdm:.dbo.rdm_portstats st
+		on st.ANLSID = aa.ANLSID
+		and st.ID = aa.PORTFOLIO_ID
+		and st.PERSPCODE = aa.PERSPCODE
+	inner join aa tot
+		on tot.ANLSID = aa.ANLSID
+		and tot.PORTFOLIO_ID = aa.PORTFOLIO_ID
+		and tot.PERSPCODE = aa.PERSPCODE
+		and tot.COVERAGE_TYPE = aa.COVERAGE_TYPE
+	left outer join aa pd
+		on pd.ANLSID = aa.ANLSID
+		and pd.PORTFOLIO_ID = aa.PORTFOLIO_ID
+		and pd.PERSPCODE = aa.PERSPCODE
+		and pd.COVERAGE_TYPE = aa.COVERAGE_TYPE
+		and pd.COVERAGE_TYPE = 'PD'
+	left outer join aa bi
+		on bi.ANLSID = aa.ANLSID
+		and bi.PORTFOLIO_ID = aa.PORTFOLIO_ID
+		and bi.PERSPCODE = aa.PERSPCODE
+		and bi.COVERAGE_TYPE = aa.COVERAGE_TYPE
+		and bi.COVERAGE_TYPE = 'BI'
+group by
+	st.ANLSID,
+	st.ID,
+	st.PERSPCODE,
+	st.EPTYPE,
+	st.PUREPREMIUM,
+	st.TOTALSTDDEV,
+	st.TOTALSTDDEV / st.PUREPREMIUM
+order by
+	st.ANLSID,
+	st.PERSPCODE
+			]]></value>
+        </property>
+    </bean>
+    <bean id="rmsEPCurveStatsExtractor" class="com.scor.rr.importBatch.processing.statistics.rms.RMSEPCurveExtractor"
+          parent="baseRMSBean" scope="step">
+        <property name="epCurveWriter" ref="epCurveWriter"/>
+        <property name="epsWriter" ref="epsWriter"/>
+    </bean>
+
+    <bean id="modelingOptionsExtractor" class="com.scor.rr.importBatch.processing.elt.ModelingOptionsExtractor"
+          parent="baseFileWriter" scope="step">
+        <constructor-arg name="fileExtension" value=".xml"/>
+    </bean>
+
+    <!--    <bean id="rmsDLMProfileExtractor" class="com.scor.rr.importBatch.processing.header.rms.RMSHeaderExtractor"-->
+    <!--          parent="baseRMSBean" scope="step">-->
+    <!--        <property name="eltData" ref="eltData"/>-->
+    <!--        <property name="pltData" ref="pltData"/>-->
+    <!--        <property name="rmsParameters" ref="parameterRMSBean"/>-->
+    <!--        <property name="sequence" ref="mongoDBSequenceImpl"/>-->
+    <!--        <property name="writer" ref="xmlWriter"/>-->
+    <!--        <property name="analysisInformationQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--            select-->
+    <!--                an.ID 				as ANALYSIS_ID,-->
+    <!--                an.NAME 			as PORTFOLIO_NUM,-->
+    <!--                an.EXPOSUREID 			as PORTFOLIO_ID,-->
+    <!--                an.DESCRIPTION 		as ANALYSIS_DESCRIPTION,-->
+    <!--                an.RUNDATE 			as ANALYSIS_RUN_DATE,-->
+    <!--                an.DESCRIPTION 		as DLM_PROFILE_NAME,-->
+    <!--                an.CURR 			as ANALYSIS_CURRENCY,-->
+    <!--                1 				as ANALYSIS_CURRENCY_UNIT,-->
+    <!--                an.TYPE 			as ANALYSIS_TYPE,-->
+    <!--                an.PERIL			as PERIL,-->
+    <!--                an.REGION			as REGION,-->
+    <!--                an.SUBPERIL			as SUB_PERIL,-->
+    <!--                an.LOSSAMPLIFICATION 		as LOSS_AMPLIFICATION,-->
+    <!--                an.SCALEFACTOR 		as SCALE_FACTOR,-->
+    <!--                an.EXPOSUREID 			as EXPOSURE_ID,-->
+    <!--                an.EXPOSURETYPE 		as EXPOSURE_TYPE,-->
+    <!--                an.MODE 			as ANALYSIS_MODE,-->
+    <!--                an.ISGROUP			as IS_GROUP,-->
+    <!--                re.RATESCHEMEID as EVENT_SET_ID-->
+    <!--            from :rdm:.dbo.rdm_analysis an-->
+    <!--                left outer join (-->
+    <!--                    select-->
+    <!--                        ANLSID,-->
+    <!--                        PERIL,-->
+    <!--                        MIN(rateschemeid) as rateschemeid-->
+    <!--                    from :rdm:.dbo.rdm_anlsregions-->
+    <!--                    group by-->
+    <!--                        ANLSID,-->
+    <!--                        PERIL-->
+    <!--                ) re-->
+    <!--                    on re.ANLSID = an.ID-->
+    <!--                    and re.PERIL = an.PERIL-->
+    <!--            where-->
+    <!--                an.ID = ?-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="modellingSettingsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--            select-->
+    <!--                sc.ID				as ProfileId,-->
+    <!--                an.DESCRIPTION			as ProfileName,-->
+    <!--                an.ID				as AnalysisId,-->
+    <!--                sc.DESCRIP			as ProfileDescription,-->
+    <!--                an.INSURANCETYPEID		as InsuranceTypeId,-->
+    <!--                insty.NAME			as InsuranceType,-->
+    <!--                an.PERIL			as PerilCode,-->
+    <!--                pe.NAME				as Peril,-->
+    <!--                an.REGION			as RegionCode,-->
+    <!--                re.NAME				as Region,-->
+    <!--                an.TYPE				as AnalysisTypeCode,-->
+    <!--                anty.NAME			as AnalysisType,-->
+    <!--                an.MODE				as AnalysisModeCode,-->
+    <!--                anmo.NAME			as AnalysisMode,-->
+    <!--                an.MODEVALUE			as AnalysisModeValue,-->
+    <!--                an.EVENTDATE			as EventDate,-->
+    <!--                anre.rateschemeid		as EventRateSetId,-->
+    <!--                rs.DESCRIPTION			as EventRateSet,-->
+    <!--                vc.ID				as VulnerabilityCurveSetId,-->
+    <!--                an.VULNCASE			as VulnerabilityCurveSetCase,-->
+    <!--                vc.Description			as VulnerabilityCurveSet,-->
+    <!--                an.SUBPERIL			as SubPerilsCode,-->
+    <!--                an.TIMEWINDOW			as TimeWindow,-->
+    <!--                an.PERSPCODE			as FinancialPerspectiveCode,-->
+    <!--                an.LOSSAMPLIFICATION		as LossAmplificationsCode,-->
+    <!--                an.EXPADJUSTMENTID		as ExposureAdjustmentId,-->
+    <!--                expadj.NAME			as ExposureAdjustment,-->
+    <!--                an.EXPTIME			as ExposureTimeId,-->
+    <!--                exptim.NAME			as ExposureTime,-->
+    <!--                an.EXPDAY			as ExposureDayId,-->
+    <!--                expday.NAME			as ExposureDay,-->
+    <!--                an.PERCENTSUBJECT		as PercentSubject,-->
+    <!--                an.INJURYCOSTSCHEMEID		as InjuryCostSchemeId,-->
+    <!--                ics.NAME			as InjuryCostScheme,-->
+    <!--                an.EVENTTYPEFILTER		as EventTypeFiltersCode,-->
+    <!--                an.ASSUMEUNKNOWNPRIMARY	as AssumeUnknownPrimaryCode,-->
+    <!--                an.ASSUMEUNKNOWNSECONDARY	as AssumeUnknownSecondary,-->
+    <!--                an.SCALEFACTOR			as ScaleFactor,-->
+    <!--                an.SCALEBLDGVALUES		as ScaleBuildingValues,-->
+    <!--                an.SCALECONTENTVALUES		as ScaleContentValues,-->
+    <!--                an.SCALEBIVALUES		as ScaleBIValues,-->
+    <!--                an.ADDRESIDUALDEMANDSURGE	as AddResidualDemandSurge-->
+    <!--            from :rdm:.dbo.rdm_analysis an-->
+    <!--                left outer join rms_dlmprofiles.dbo.scn_scenario sc-->
+    <!--                    on sc.name = an.DESCRIPTION-->
+    <!--                left outer join rms_systemdata.dbo.insurancetype insty-->
+    <!--                    on insty.INSURANCETYPEID = an.INSURANCETYPEID-->
+    <!--                left outer join rms_systemdata.dbo.peril pe-->
+    <!--                    on pe.CODE = an.PERIL-->
+    <!--                left outer join (-->
+    <!--                    select 'CS' as peril, CODE, NAME from rms_systemdata.dbo.regioncs-->
+    <!--                    union-->
+    <!--                    select 'EQ' as peril, CODE, NAME from rms_systemdata.dbo.regioneq-->
+    <!--                    union-->
+    <!--                    select 'FL' as peril, CODE, NAME from rms_systemdata.dbo.regionfl-->
+    <!--                    union-->
+    <!--                    select 'FR' as peril, CODE, NAME from rms_systemdata.dbo.regionfr-->
+    <!--                    union-->
+    <!--                    select 'TO' as peril, CODE, NAME from rms_systemdata.dbo.regionto-->
+    <!--                    union-->
+    <!--                    select 'TR' as peril, CODE, NAME from rms_systemdata.dbo.regiontr-->
+    <!--                    union-->
+    <!--                    select 'WS' as peril, CODE, NAME from rms_systemdata.dbo.regionws-->
+    <!--                    union-->
+    <!--                    select 'WT' as peril, CODE, NAME from rms_systemdata.dbo.regionwt-->
+    <!--                ) re-->
+    <!--                    on re.CODE = an.REGION-->
+    <!--                    and re.peril = an.PERIL-->
+    <!--                left outer join rms_systemdata.dbo.dlmanlstype anty-->
+    <!--                    on anty.CODE = an.TYPE-->
+    <!--                left outer join rms_systemdata.dbo.anlsmode anmo-->
+    <!--                    on anmo.CODE = an.MODE-->
+    <!--                left outer join (-->
+    <!--                    select-->
+    <!--                        ANLSID,-->
+    <!--                        PERIL,-->
+    <!--                        MIN(rateschemeid) as rateschemeid-->
+    <!--                    from :rdm:.dbo.rdm_anlsregions-->
+    <!--                    group by-->
+    <!--                        ANLSID,-->
+    <!--                        PERIL-->
+    <!--                ) anre-->
+    <!--                    on anre.ANLSID = an.ID-->
+    <!--                    and anre.PERIL = an.PERIL-->
+    <!--                left outer join :rdm:.dbo.rdm_ratescheme rs-->
+    <!--                    on rs.RATESCHEMEID = anre.rateschemeid-->
+    <!--                left outer join rms_systemdata.dbo.vulncurveset vc-->
+    <!--                    on vc.Peril = an.PERIL-->
+    <!--                    and vc.Region = an.REGION-->
+    <!--                    and vc.VulnCase = an.VULNCASE-->
+    <!--                left outer join rms_systemdata.dbo.expadjustment expadj-->
+    <!--                    on expadj.EXPADJUSTMENTID = an.EXPADJUSTMENTID-->
+    <!--                left outer join rms_systemdata.dbo.exptime exptim-->
+    <!--                    on exptim.EXPTIMEID = an.EXPTIME-->
+    <!--                left outer join rms_systemdata.dbo.expday expday-->
+    <!--                    on expday.EXPDAYID = an.EXPDAY-->
+    <!--                left outer join :rdm:.dbo.rdm_injurycostscheme ics-->
+    <!--                    on ics.INJURYCOSTSCHEMEID = an.INJURYCOSTSCHEMEID-->
+    <!--            where-->
+    <!--                an.ID = ?-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="analysisRegionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--            select-->
+    <!--                ar.REGION 	as RegionCode,-->
+    <!--                re.NAME 	as Region-->
+    <!--            from :rdm:.dbo.rdm_analysis an-->
+    <!--                inner join :rdm:.dbo.rdm_anlsregions ar-->
+    <!--                    on ar.ANLSID = an.ID-->
+    <!--                left outer join (-->
+    <!--                    select 'CS' as peril, CODE, NAME from rms_systemdata.dbo.regioncs-->
+    <!--                    union-->
+    <!--                    select 'EQ' as peril, CODE, NAME from rms_systemdata.dbo.regioneq-->
+    <!--                    union-->
+    <!--                    select 'FL' as peril, CODE, NAME from rms_systemdata.dbo.regionfl-->
+    <!--                    union-->
+    <!--                    select 'FR' as peril, CODE, NAME from rms_systemdata.dbo.regionfr-->
+    <!--                    union-->
+    <!--                    select 'TO' as peril, CODE, NAME from rms_systemdata.dbo.regionto-->
+    <!--                    union-->
+    <!--                    select 'TR' as peril, CODE, NAME from rms_systemdata.dbo.regiontr-->
+    <!--                    union-->
+    <!--                    select 'WS' as peril, CODE, NAME from rms_systemdata.dbo.regionws-->
+    <!--                    union-->
+    <!--                    select 'WT' as peril, CODE, NAME from rms_systemdata.dbo.regionwt-->
+    <!--                ) re-->
+    <!--                    on re.CODE = ar.REGION-->
+    <!--                    and re.peril = an.PERIL-->
+    <!--            where-->
+    <!--                ar.ANLSID = ?-->
+    <!--            order by-->
+    <!--                ar.REGION-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="csOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.STORMFILE			as FootprintFile,-->
+    <!--                    ano.STORMNUM			as EventNumber-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'CS'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="eqOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.RETURNPERIOD		as ReturnPeriod,-->
+    <!--                    ano.INCLMODIFIER		as IncludeModifier,-->
+    <!--                    ano.MAGNITUDE			as Magnitude,-->
+    <!--                    ano.USERDEFCV			as UserDefinedCV,-->
+    <!--                    ano.REGION			as RegionCode,-->
+    <!--                    re.NAME				as Region,-->
+    <!--                    ano.STORMFILE			as FootprintFile,-->
+    <!--                    ano.STORMNUM			as EventNumber-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                    left outer join (-->
+    <!--                        select 'CS' as peril, CODE, NAME from rms_systemdata.dbo.regioncs-->
+    <!--                        union-->
+    <!--                        select 'EQ' as peril, CODE, NAME from rms_systemdata.dbo.regioneq-->
+    <!--                        union-->
+    <!--                        select 'FL' as peril, CODE, NAME from rms_systemdata.dbo.regionfl-->
+    <!--                        union-->
+    <!--                        select 'FR' as peril, CODE, NAME from rms_systemdata.dbo.regionfr-->
+    <!--                        union-->
+    <!--                        select 'TO' as peril, CODE, NAME from rms_systemdata.dbo.regionto-->
+    <!--                        union-->
+    <!--                        select 'TR' as peril, CODE, NAME from rms_systemdata.dbo.regiontr-->
+    <!--                        union-->
+    <!--                        select 'WS' as peril, CODE, NAME from rms_systemdata.dbo.regionws-->
+    <!--                        union-->
+    <!--                        select 'WT' as peril, CODE, NAME from rms_systemdata.dbo.regionwt-->
+    <!--                    ) re-->
+    <!--                        on re.CODE = ano.REGION-->
+    <!--                        and re.peril = ano.PERIL-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'EQ'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="flOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.STORMFILE			as FootprintFile,-->
+    <!--                    ano.STORMNUM			as EventNumber-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'FL'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="trOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.THREATTYPE			as ThreatType,-->
+    <!--                    ano.RISKOUTLOOK		as RiskOutlook,-->
+    <!--                    ano.DATARESOLUTION		as DataResolution,-->
+    <!--                    ano.ATTACKMODES		as AttackModes,-->
+    <!--                    ano.FIREONLYSFPSTATES		as FireOnlySFPStates,-->
+    <!--                    ano.EXCLUDEPERRISKREINS	as ExcludePerRiskReinsurance,-->
+    <!--                    ano.TRCERTIFICATIONTHRESH	as CertificationThreshold-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'TR'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="wsOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.GUMODIFIERS		as GroundUpModifiersCode,-->
+    <!--                    ano.COVERAGELEAKAGE		as CoverageLeakageCode,-->
+    <!--                    ano.SINGLEFAMILYRATE		as SingleFamilyRate,-->
+    <!--                    ano.MULTIFAMILYRATE		as MultiFamilyRate,-->
+    <!--                    ano.OTHERRATE			as OtherRate,-->
+    <!--                    ano.SINGLEFAMILYFACTOR		as SingleFamilyFactor,-->
+    <!--                    ano.MULTIFAMILYFACTOR		as MultiFamilyFactor,-->
+    <!--                    ano.OTHERFACTOR		as OtherFactor,-->
+    <!--                    ano.STORMFILE			as FootprintFile,-->
+    <!--                    ano.STORMNUM			as EventNumber,-->
+    <!--                    ano.MINSAFFCAT			as MinSaffCategory,-->
+    <!--                    ano.IGNORELOCALDEFENSES	as IgnoreLocalDefenses,-->
+    <!--                    ano.RESETFLOODELEVTODEFAULT	as ResetFloodElevationToDefault,-->
+    <!--                    ano.ASSUME2PERCENT		as Assume2Percent-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'WS'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+    <!--        <property name="wtOptionsQuery">-->
+    <!--            <value><![CDATA[-->
+    <!--                select-->
+    <!--                    ano.PERIL			as PerilCode,-->
+    <!--                    ano.STORMFILE			as FootprintFile,-->
+    <!--                    ano.STORMNUM			as EventNumber-->
+    <!--                from :rdm:.dbo.rdm_analysis ano-->
+    <!--                where-->
+    <!--                    ano.ID = ?-->
+    <!--                    and ano.PERIL = 'WT'-->
+    <!--			]]></value>-->
+    <!--        </property>-->
+
+    <!--    </bean>-->
+
+        <bean id="exposureByCoverageAndRegionPerilExtractor"
+              class="com.scor.rr.importBatch.processing.statistics.rms.RMSGlobalExposureSummaryExtractor"
+              parent="baseRMSBean" scope="step">
+<!--            <property name="rmsParameters" ref="parameterRMSBean"/>-->
+        </bean>
+
+    <bean id="risklinkExtractor" class="com.scor.rr.importBatch.processing.elt.RiskLinkELTExtractor"
+          parent="baseRMSBean" scope="step">
+        <property name="eltData" ref="eltData"/>
+        <property name="eltQuery">
+            <value><![CDATA[
+            select
+                p.EVENTID 		as EventID,
+                ev.RATE 		as Rate,
+                p.PERSPVALUE 	as LossAmount,
+                p.STDDEVI 		as SDI,
+                p.STDDEVC 		as SDC,
+                p.EXPVALUE 		as ExpValue,
+                p.ANLSID 		as ANALYSIS_ID,
+                p.ID 			as PORTFOLIO_ID,
+                p.PERSPCODE 	as FINANCIAL_PERSPECTIVE_CODE
+            from [:rdm:].[dbo].rdm_port p
+                inner join [:rdm:].[dbo].rdm_anlsevent ev
+                    on ev.ANLSID = p.ANLSID
+                    and ev.EVENTID = p.EVENTID
+            where
+                p.ANLSID = ?
+                and p.PERSPCODE = ?
+                and p.PERSPVALUE > ?
+            order by
+                p.PERSPCODE desc,
+                p.EVENTID
+            ]]></value>
+        </property>
+    </bean>
+
+    <bean id="rmsRegionPerilExtractor" class="com.scor.rr.importBatch.processing.elt.RMSELTPartitionerImpl"
+          parent="baseRMSBean" scope="step">
+        <property name="rpListQuery">
+            <value><![CDATA[
+			SELECT   an.ID              AS ANALYSIS_ID
+    ,    av.ANALYSIS_COUNT  AS ANALYSIS_VERSION
+    ,    an.NAME            AS PORTFOLIO_NUM
+    ,    an.EXPOSUREID      AS PORTFOLIO_ID
+    ,    an.DESCRIPTION     AS DLM_PROFILE_NAME
+    ,    an.CURR            AS CURRENCY
+    ,    an.RUNDATE         AS ANALYSIS_RUN_DATE
+    ,    an.PERIL           AS PERIL
+    ,    an.REGION          AS REGION
+    ,    rap.Scope
+    ,    rap.MutuallyExclusiveID
+FROM     :rdm:.dbo.rdm_analysis an
+         INNER JOIN SCOR_REFERENCE.dbo.RiskAnalysisProfileInfo rap
+	           ON  rap.ProfileName  	= an.Description
+	   	     AND rap.Scope   	 	= 'Account'
+	   INNER JOIN  (
+			    SELECT	a.NAME
+				  ,	a.DESCRIPTION
+				  ,	MAX(a.RUNDATE)	AS LATEST_RUN_DATE
+				  ,	COUNT(1)		AS ANALYSIS_COUNT
+			    FROM	:rdm:.dbo.rdm_analysis a
+			    WHERE	a.TYPE = 102 -- EP
+			    AND	a.MODE = 2 -- Distributed
+			    AND	a.STATUS = 102 -- Analyzed
+			    AND	a.EXPOSURETYPE = 8017 -- Portfolio or group
+			    AND	a.GROUPTYPE = 'ANLS' -- Analysis
+			    AND	a.ENGINETYPE = 100 -- DLM
+                      GROUP BY
+                             a.NAME
+                         ,   a.DESCRIPTION
+	              ) av
+		    ON  av.NAME = an.NAME
+		    AND av.LATEST_RUN_DATE = an.RUNDATE
+		    AND av.DESCRIPTION = an.DESCRIPTION
+WHERE	  an.NAME = ? -- Input Portfolio No.
+AND	  an.TYPE = 102 -- EP
+AND	  an.MODE = 2 -- Distributed
+AND	  an.STATUS = 102 -- Analyzed
+AND	  an.EXPOSURETYPE = 8017 -- Portfolio or group
+AND	  an.GROUPTYPE = 'ANLS' -- Analysis
+AND	  an.ENGINETYPE = 100 -- DLM
+AND	  EXISTS (
+	     	    SELECT	1
+		    FROM	:rdm:.dbo.rdm_portstats ps
+		    WHERE	ps.ANLSID = an.ID
+		    AND     ps.PERSPCODE = 'GU'
+	         )
+ORDER BY an.ID
+			]]></value>
+        </property>
+    </bean>
+    <bean id="rmsTIVExtractor" class="com.scor.rr.importBatch.processing.statistics.rms.RMSTIVExtractor"
+          parent="baseRMSBean" scope="step">
+        <property name="eltData" ref="eltData"/>
+        <property name="rmsParameters" ref="parameterRMSBean"/>
+        <property name="tivQuery">
+            <value><![CDATA[
+            SELECT	RegionPerilCode as RegionPerilCode
+			,	SUM( tiv.LocCount ) AS LocCount
+			,	SUM( tiv.TotalTiv ) AS TotalTIV
+		FROM	(
+				SELECT	DISTINCT
+						coalesce( map.RegionPerilCode , map2.RegionPerilCode) as RegionPerilCode
+					,	tiv.*
+				FROM	(
+						----------------------------------------------------------------------
+						-- NEW RAW REGIION PERIL LEVEL TIV & LOC COUNT EXTRACT
+						----------------------------------------------------------------------
+						SELECT  CONVERT( VARCHAR( 1000 ), t.CountryCode )   AS CountryCode
+							 ,  CONVERT( VARCHAR( 1000 ), t.AdminCode1 )    AS Admin1Code
+							 ,  CONVERT( VARCHAR( 1000 ), t.Peril )         AS Peril
+							 ,  SUM( t.TIV_LIMITCCY )                       AS TotalTIV
+							 ,  COUNT( DISTINCT LOCNUM )                    AS LocCount
+						FROM    (
+								SELECT CASE WHEN adr.CountryRMSCode = 'CB'
+											 THEN adr.CountryCode
+											 ELSE adr.CountryRMSCode
+										END									AS CountryCode
+									 ,	adr.Admin1Code						AS AdminCode1
+									 ,  lcv.PERIL
+									 ,  ppt.LOCNUM
+									 ,  ppt.LOCNAME
+									 ,  limfx.CODE                          AS CcyCode
+									 ,
+									  MAX
+										( lcv.VALUEAMT
+										   * (LocFX.XFACTOR * (1/LimFX.XFactor))
+										   )								AS TIV_LIMITCCY
+								FROM    :edm:.dbo.PortInfo poi
+										INNER JOIN :edm:.dbo.PortAcct pra
+												ON  pra.PORTINFOID = poi.PORTINFOID
+										INNER JOIN :edm:.dbo.Property ppt
+												ON  ppt.ACCGRPID   = pra.ACCGRPID
+										INNER JOIN :edm:.dbo.Address adr
+												ON  adr.AddressID  = ppt.AddressID
+										INNER JOIN (
+												   SELECT  lcv.LocID , lcv.Peril, lcv.ValueCur
+														,  SUM( lcv.VALUEAMT )     AS VALUEAMT
+												   FROM    :edm:.dbo.loccvg lcv
+												   GROUP BY
+														   lcv.LOCID , lcv.PERIL, lcv.ValueCur
+												  ) lcv
+												ON lcv.LOCID   = ppt.LOCID
+										INNER JOIN rms_userconfig.dbo.currfx LocFX
+												ON  LocFX.CODE     = lcv.VALUECUR
+												AND LocFX.XDATE    = (
+																	 SELECT  MAX( XDATE )
+																	 FROM    rms_userconfig.dbo.currfx LocFX
+																	 WHERE   CODE = 'USD'
+																	 )
+										INNER JOIN rms_userconfig.dbo.currfx LimFX
+												ON  LimFX.CODE     = ?
+												AND LimFX.XDATE    = (
+																	 SELECT  MAX( XDATE )
+																	 FROM    rms_userconfig.dbo.currfx LocFX
+																	 WHERE   CODE = 'USD'
+																	 )
+								WHERE   poi.PORTNUM = ?
+								GROUP BY
+										CASE WHEN adr.CountryRMSCode = 'CB'
+											 THEN adr.CountryCode
+											 ELSE adr.CountryRMSCode
+										END
+									,	adr.Admin1Code
+									,   lcv.PERIL
+									,   ppt.LOCNUM
+									,   ppt.LOCNAME
+									,   limfx.CODE
+								) t
+						GROUP BY
+								CONVERT( VARCHAR( 1000 ),  t.CountryCode  )
+							,	CONVERT( VARCHAR( 1000 ),  t.AdminCode1  )
+							,   CONVERT( VARCHAR( 1000 ), t.Peril )
+						) tiv
+					LEFT  JOIN SCOR_REFERENCE.dbo.RegionPerilMapping map
+							ON	map.SourceVendor		= 'RMS'
+							AND	map.PerilCode			= tiv.Peril
+							AND RTRIM(map.CountryCode)  = RTRIM(tiv.CountryCode)
+							AND RTRIM(map.Admin1Code)   = RTRIM(tiv.Admin1Code)
+					LEFT  JOIN SCOR_REFERENCE.dbo.RegionPerilMapping map2
+							ON	map2.SourceVendor		= 'RMS'
+							AND	map2.PerilCode			= RTRIM(Convert(Varchar(10),tiv.Peril))
+							AND RTRIM(map2.CountryCode) = RTRIM(tiv.CountryCode)
+							AND RTRIM(map2.Admin1Code)  = ''
+				) tiv
+		GROUP BY
+				RegionPerilCode
+			]]></value>
+        </property>
+    </bean>
+
+    <bean id="rmsConsistencyCheck" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="consistencyCheck"/>
+        <property name="targetMethod" value="runChecks"/>
+    </bean>
+
+    <!--    <bean id="exposureSummaryExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"-->
+    <!--          scope="step">-->
+    <!--        <property name="targetObject" ref="exposureByCoverageAndRegionPerilExtractor"/>-->
+    <!--        <property name="targetMethod" value="runExtraction"/>-->
+    <!--    </bean>-->
+
+    <bean id="summaryStatisticsExtractor"
+          class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+        <property name="targetObject" ref="rmsSummaryStatisticsExtractor"/>
+        <property name="targetMethod" value="runExtraction"/>
+    </bean>
+
+    <bean id="epCurveStatsExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="rmsEPCurveStatsExtractor"/>
+        <property name="targetMethod" value="runExtraction"/>
+    </bean>
+
+    <bean id="exchangeRatesExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean id="rmsExchangeRatesExtractor"
+                  class="com.scor.rr.importBatch.processing.elt.RmsExchangeRatesExtractor" parent="baseRMSBean"
+                  scope="step"></bean>
+        </property>
+        <property name="targetMethod" value="runExtraction"/>
+    </bean>
+
+    <bean id="conformedEPCurveStatsExtractor"
+          class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+        <property name="targetObject" ref="rmsEPCurveStatsExtractor"/>
+        <property name="targetMethod" value="runConformedExtraction"/>
+    </bean>
+
+    <bean id="rmsModelingOptionsExtractor"
+          class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+        <property name="targetObject" ref="modelingOptionsExtractor"/>
+        <property name="targetMethod" value="extract"/>
+    </bean>
+
+    <!--    <bean id="dlmProfileExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"-->
+    <!--          scope="step">-->
+    <!--        <property name="targetObject" ref="rmsDLMProfileExtractor"/>-->
+    <!--        <property name="targetMethod" value="extractHeader"/>-->
+    <!--    </bean>-->
+
+    <bean id="eltRegionPerilExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="rmsRegionPerilExtractor"/>
+        <property name="targetMethod" value="loadRegionPerils"/>
+        <!--load rp-->
+    </bean>
+
+    <bean id="eltExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="risklinkExtractor"/>
+        <property name="targetMethod" value="batchExtract"/>
+    </bean>
+
+    <bean id="tivExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="rmsTIVExtractor"/>
+        <property name="targetMethod" value="runExtraction"/>
+    </bean>
+
+    <bean abstract="true" id="baseTruncator" class="com.scor.rr.importBatch.processing.batch.BaseTruncator"
+          parent="baseBatchBean">
+        <property name="currencyRepository" ref="currencyRepository"/>
+        <property name="exchangeRateRepository" ref="exchangeRateRepository"/>
+    </bean>
+
+    <bean id="eltTruncator" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.elt.ELTTruncator" parent="baseTruncator" scope="step">
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchHandle"/>
+    </bean>
+
+    <bean id="eltConformer" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.elt.ELTConformer" scope="step">
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchHandle"/>
+    </bean>
+
+    <bean id="eltWriter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.elt.ELTBinaryWriter" parent="baseFileWriter" scope="step">
+                <constructor-arg name="fileExtension" value=".bin"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchWrite"/>
+    </bean>
+
+    <bean id="eltHeaderWriter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.elt.ELTBinaryWriter" parent="baseFileWriter" scope="step">
+                <constructor-arg name="fileExtension" value=".bin"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="writeHeader"/>
+    </bean>
+
+    <bean id="eltConverter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.ELTToPLTConverterImpl" parent="baseBatchBean"
+                  scope="step">
+                <constructor-arg name="consumers" value="${convert.executor.consumers}"/>
+                <constructor-arg name="queueSize" value="${convert.executor.queue.size}"/>
+                <constructor-arg name="executor" ref="convertExecutor"/>
+                <constructor-arg name="filePath" value="${ihub.treaty.out.path}"/>
+                <constructor-arg name="chunkSize" value="${convert.executor.chunk.size}"/>
+                <constructor-arg name="bufferSize" value="${convert.executor.buffer.size}"/>
+                <property name="selector" ref="peqtSelector"/>
+                <property name="peqtPath" value="${ihub.treaty.peqt.path}"/>
+                <property name="truncator">
+                    <bean class="com.scor.rr.importBatch.processing.batch.BaseTruncator"/>
+                </property>
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchConvert"/>
+    </bean>
+
+    <bean id="pltTruncator" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.batch.BaseTruncator" parent="baseBatchBean">
+                <property name="currencyRepository" ref="currencyRepository"/>
+                <property name="exchangeRateRepository" ref="exchangeRateRepository"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="handle"/>
+    </bean>
+
+    <bean id="pltAdjuster" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.PLTAdjuster" parent="baseBatchBean" scope="step">
+                <property name="pltData" ref="pltData"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="handle"/>
+    </bean>
+
+    <bean id="pltSaver" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.PLTSaver" parent="baseFileWriter" scope="step">
+                <constructor-arg name="fileExtension" value=".bin"/>
+                <property name="pltData" ref="pltData"/>
+                <property name="transformationPackage" ref="transformationPackage"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="handle"/>
+    </bean>
+    <bean id="epCurveCalculator" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.BasicPLTEPCurveCalculator" parent="baseBatchBean"
+                  scope="step">
+                <property name="transformationPackage" ref="transformationPackage"/>
+                <property name="epCurveWriter" ref="epCurveWriter"/>
+                <property name="epsWriter" ref="epsWriter"/>
+                <property name="pltReader" ref="pltReaderAdj"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="runCalculationForImport"/>
+    </bean>
+
+    <bean id="pltReaderAdj" class="com.scor.rr.domain.utils.plt.PLTBinaryReader" scope="prototype">
+        <property name="ihubPath" value="${ihub.treaty.out.path}"/>
+    </bean>
+
+    <bean id="pltPureWriter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.PLTBinaryWriter" parent="baseFileWriter" scope="step">
+                <!--                <property name="mongoDBSequence" ref="mongoDBSequence"/>-->
+                <constructor-arg name="fileExtension" value=".bin"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchWrite"/>
+    </bean>
+
+    <bean id="pltAdjWriter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.PLTBinaryWriter" parent="baseFileWriter" scope="step">
+                <constructor-arg name="fileExtension" value=".bin"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="batchWrite"/>
+    </bean>
+
+    <bean id="pltHeaderWriter" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.ylt.PLTBinaryWriter" parent="baseFileWriter" scope="step">
+                <constructor-arg name="fileExtension" value=".bin"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="writeHeader"/>
+    </bean>
+
+
+    <bean id="xmlWriter" class="com.scor.rr.importBatch.processing.batch.XMLFileWriter" parent="baseFileWriter"
+          scope="step">
+        <constructor-arg name="fileExtension" value=".xml"/>
+    </bean>
+
+    <bean id="epCurveWriter" class="com.scor.rr.importBatch.processing.statistics.rms.EPCurveBinaryWriter"
+          parent="baseFileWriter" scope="step">
+        <constructor-arg name="fileExtension" value=".bin"/>
+    </bean>
+    <bean id="epsWriter" class="com.scor.rr.importBatch.processing.statistics.rms.EPSBinaryWriter"
+          parent="baseFileWriter" scope="step">
+        <constructor-arg name="fileExtension" value=".bin"/>
+    </bean>
+
+    <bean id="flowHandler" class="com.scor.rr.importBatch.processing.workflow.BasicFlowHandler" parent="baseBatchBean"
+          scope="step">
+        <property name="notifier" ref="stepNotifier"/>
+    </bean>
+
+    <bean id="stepNotifier" class="com.scor.rr.importBatch.processing.batch.RestNotifier">
+        <constructor-arg name="notifyRestHost" value="${notify.rest.host}"/>
+        <constructor-arg name="notifyRestPort" value="${notify.rest.port}"/>
+        <constructor-arg name="eventUrlPath" value="${event.step.path}"/>
+        <constructor-arg name="messageUrlPath" value="${message.rest.path}"/>
+        <constructor-arg name="importUrlPath" value="${import.rest.path}"/>
+    </bean>
+
+    <bean id="initHandler" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="flowHandler"/>
+        <property name="targetMethod" value="handleInit"/>
+    </bean>
+
+    <bean id="completedHandler" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="flowHandler"/>
+        <property name="targetMethod" value="handleCompletion"/>
+    </bean>
+    <bean id="errorHandler" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="flowHandler"/>
+        <property name="targetMethod" value="handleError"/>
+    </bean>
+    <bean id="runningHandler" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="flowHandler"/>
+        <property name="targetMethod" value="handleRunning"/>
+    </bean>
+
+    <bean id="eltToPltSemaphore" class="com.scor.rr.importBatch.processing.batch.LockingSemaphore">
+        <property name="maxConcurrent" value="1"/>
+    </bean>
+
+    <bean id="eltToPLTBarrierTasklet" class="com.scor.rr.importBatch.processing.batch.BarrierTasklet" scope="job">
+        <property name="lockingSemaphore" ref="eltToPltSemaphore"/>
+    </bean>
+
+    <bean id="eltToPLTEnterBarrier" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="eltToPLTBarrierTasklet"/>
+        <property name="targetMethod" value="acquire"/>
+    </bean>
+
+    <bean id="eltToPLTExitBarrier" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="eltToPLTBarrierTasklet"/>
+        <property name="targetMethod" value="release"/>
+    </bean>
+
+    <!--    <bean id="locationLevelExposure" class="com.scor.rr.domain.entities.meta.exposure.LocationLevelExposure">-->
+    <!--        <constructor-arg name="dbName" value="${rms.ds.dbname}" />-->
+    <!--    </bean>-->
+
+    <!--    <bean id="defaultAdjustment" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"-->
+    <!--          scope="step">-->
+    <!--        <property name="targetObject">-->
+    <!--            <bean class="com.scor.rr.importBatch.processing.adjustment.DefaultAdjustment" parent="baseRMSBean"-->
+    <!--                  scope="step">-->
+    <!--                <constructor-arg name="batchRestHost" value="${batch.rest.host}"/>-->
+    <!--                <constructor-arg name="batchRestPort" value="${batch.rest.port}"/>-->
+    <!--                <constructor-arg name="batchRestDefAdj" value="${batch.rest.def.adj}"/>-->
+    <!--            </bean>-->
+    <!--        </property>-->
+    <!--        <property name="targetMethod" value="handle"/>-->
+    <!--    </bean>-->
+
+    <bean id="dsCache" class="com.scor.rr.importBatch.processing.datasources.GuavaDSCache">
+        <constructor-arg name="modellingSystemInstanceRepository" ref="modellingSystemInstanceRepository"/>
+        <property name="initialSize" value="${rms.ds.initialSize}"/>
+        <property name="maxActive" value="${rms.ds.maxActive}"/>
+        <property name="acquireIncrement" value="${rms.ds.acquireIncrement}"/>
+        <property name="maxStatements" value="${rms.ds.maxStatements}"/>
+        <property name="idleConnectionTestPeriod" value="${rms.ds.idleConnectionTestPeriod}"/>
+    </bean>
+
+    <bean id="exposureSummaryTaskletWrapper"
+          class="com.scor.rr.service.exposure.implementation.ExposureSummaryTaskletWrapperImpl" scope="step">
+        <property name="projectId" value="#{jobParameters['projectId']}"/>
+        <property name="rmspicId" value="#{jobParameters['rmspicId']}"/>
+        <property name="projectImportRunId" value="#{jobParameters['projectImportRunId']}"/>
+        <property name="importSequence" value="#{jobParameters['importSequence']}"/>
+        <property name="exposureWriter">
+            <bean class="com.scor.rr.importBatch.processing.exposure.ExposureSummaryWriter" parent="baseFileWriter"
+                  scope="step">
+                <constructor-arg name="fileExtension" value=".txt"/>
+                <!--                    <property name="mongoDBSequence" ref="mongoDBSequence" />-->
+            </bean>
+        </property>
+    </bean>
+
+    <!--    <bean id="accumulationPackageService" class="com.scor.almf.ihub.services.AccumulationPackageService"> </bean>-->
+    <!--    <bean id="updateContractSectionExpectedScopeStep"-->
+    <!--          class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">-->
+    <!--        <property name="targetObject">-->
+    <!--            <bean id="postImportService" class="com.scor.rr.importBatch.processing.treaty.services.PostImportService"-->
+    <!--                  scope="step">-->
+    <!--                <property name="transformationPackage" ref="transformationPackage"/>-->
+    <!--                <property name="projectId" value="#{jobParameters['projectId']}"/>-->
+    <!--            </bean>-->
+    <!--        </property>-->
+    <!--        <property name="targetMethod" value="updateContractSectionExpectedScope"/>-->
+    <!--    </bean>-->
+
+
+</beans>
