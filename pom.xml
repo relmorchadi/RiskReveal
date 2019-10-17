@@ -18,7 +18,7 @@
     </parent>
 
     <modules>
-		<!--<module>RRADJUSTMENT</module>-->
+		<module>RRADJUSTMENT</module>
         <module>RR-Common</module>
         <module>RR-Inuring</module>
     </modules>
