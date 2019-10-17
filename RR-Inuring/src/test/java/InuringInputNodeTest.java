@@ -1,4 +1,4 @@
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.entity.InuringInputAttachedPLT;
 import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
@@ -9,7 +9,7 @@ import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringPackageRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import com.scor.rr.service.InuringInputNodeService;
@@ -60,7 +60,7 @@ public class InuringInputNodeTest {
     private InuringPackageRepository inuringPackageRepository;
 
     @Mock
-    private ScorpltheaderRepository scorpltheaderRepository;
+    private PltHeaderRepository pltHeaderRepository;
 
     private Map<Integer, InuringInputNode> inuringInputNodes;
 
@@ -128,9 +128,9 @@ public class InuringInputNodeTest {
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
-        when(scorpltheaderRepository.findByPkScorPltHeaderId(anyInt())).thenAnswer(plt -> {
+        when(pltHeaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
             int id = plt.getArgument(0);
-            return id == PLT_ID_NOT_FOUND ? null : new ScorPltHeaderEntity();
+            return id == PLT_ID_NOT_FOUND ? null : new PltHeaderEntity();
         });
 
         doAnswer(node -> {
