@@ -33,7 +33,7 @@ public class RmsAnalysisEntity {
     private String user4;
 
     @Basic
-    @Column(name = "LobName", nullable = true, length = 255)
+    @Column(name = "LobName", length = 255)
     public String getLobName() {
         return lobName;
     }
@@ -43,7 +43,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "StatusDescription", nullable = true, length = 255)
+    @Column(name = "StatusDescription", length = 255)
     public String getStatusDescription() {
         return statusDescription;
     }
@@ -53,7 +53,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "analysisCurrency", nullable = true, length = 255)
+    @Column(name = "analysisCurrency", length = 255)
     public String getAnalysisCurrency() {
         return analysisCurrency;
     }
@@ -73,7 +73,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255)
+    @Column(name = "analysisName", length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -83,7 +83,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "cedant", nullable = true, length = 255)
+    @Column(name = "cedant", length = 255)
     public String getCedant() {
         return cedant;
     }
@@ -93,7 +93,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -103,7 +103,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "engineType", nullable = true, length = 255)
+    @Column(name = "engineType", length = 255)
     public String getEngineType() {
         return engineType;
     }
@@ -113,7 +113,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "engineVersion", nullable = true, length = 255)
+    @Column(name = "engineVersion", length = 255)
     public String getEngineVersion() {
         return engineVersion;
     }
@@ -123,7 +123,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "groupTypeName", nullable = true, length = 255)
+    @Column(name = "groupTypeName", length = 255)
     public String getGroupTypeName() {
         return groupTypeName;
     }
@@ -133,7 +133,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "grouping", nullable = true, length = 255)
+    @Column(name = "grouping", length = 255)
     public String getGrouping() {
         return grouping;
     }
@@ -143,7 +143,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "lossAmplification", nullable = true, length = 255)
+    @Column(name = "lossAmplification", length = 255)
     public String getLossAmplification() {
         return lossAmplification;
     }
@@ -153,7 +153,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "modeName", nullable = true, length = 255)
+    @Column(name = "modeName", length = 255)
     public String getModeName() {
         return modeName;
     }
@@ -163,7 +163,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "peril", nullable = true, length = 255)
+    @Column(name = "peril", length = 255)
     public String getPeril() {
         return peril;
     }
@@ -173,7 +173,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "rdmId", nullable = true)
+    @Column(name = "rdmId")
     public Integer getRdmId() {
         return rdmId;
     }
@@ -183,7 +183,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "rdmName", nullable = true, length = 255)
+    @Column(name = "rdmName", length = 255)
     public String getRdmName() {
         return rdmName;
     }
@@ -193,7 +193,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "region", nullable = true, length = 255)
+    @Column(name = "region", length = 255)
     public String getRegion() {
         return region;
     }
@@ -203,7 +203,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "regionName", nullable = true, length = 255)
+    @Column(name = "regionName", length = 255)
     public String getRegionName() {
         return regionName;
     }
@@ -213,7 +213,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "runDate", nullable = true, length = 255)
+    @Column(name = "runDate", length = 255)
     public String getRunDate() {
         return runDate;
     }
@@ -223,7 +223,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "subPeril", nullable = true, length = 255)
+    @Column(name = "subPeril", length = 255)
     public String getSubPeril() {
         return subPeril;
     }
@@ -233,7 +233,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "typeName", nullable = true, length = 255)
+    @Column(name = "typeName", length = 255)
     public String getTypeName() {
         return typeName;
     }
@@ -243,7 +243,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "user1", nullable = true, length = 255)
+    @Column(name = "user1", length = 255)
     public String getUser1() {
         return user1;
     }
@@ -253,7 +253,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "user2", nullable = true, length = 255)
+    @Column(name = "user2", length = 255)
     public String getUser2() {
         return user2;
     }
@@ -263,7 +263,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "user3", nullable = true, length = 255)
+    @Column(name = "user3", length = 255)
     public String getUser3() {
         return user3;
     }
@@ -273,7 +273,7 @@ public class RmsAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "user4", nullable = true, length = 255)
+    @Column(name = "user4", length = 255)
     public String getUser4() {
         return user4;
     }

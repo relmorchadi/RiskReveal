@@ -10,9 +10,7 @@ public class AdjustmentNodeRequest {
     private int adjustmentNodeId;
     private String layer;
     private Integer sequence;
-    private Boolean isInputChanged;
-    private String lossNetFlag;
-    private Boolean hasNewParamsFile;
+    private Boolean capped;
     private Integer adjustmentBasis;
     private Integer adjustmentType;
     private Integer adjustmentState;
@@ -21,19 +19,27 @@ public class AdjustmentNodeRequest {
     private Double rpmf;
     private List<PEATData> peatData;
     private Integer scorPltHeaderInput;
-    private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
 
     public AdjustmentNodeRequest() {
     }
 
-    public AdjustmentNodeRequest(int adjustmentNodeId, String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+    public AdjustmentNodeRequest(int adjustmentNodeId,
+                                 String layer,
+                                 Integer sequence,
+                                 Boolean capped,
+                                 Integer adjustmentBasis,
+                                 Integer adjustmentType,
+                                 Integer adjustmentState,
+                                 Integer adjustmentThreadId,
+                                 Double lmf,
+                                 Double rpmf,
+                                 List<PEATData> peatData,
+                                 Integer scorPltHeaderInput,
+                                 List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.adjustmentNodeId = adjustmentNodeId;
         this.layer = layer;
         this.sequence = sequence;
-        this.isInputChanged = isInputChanged;
-        this.lossNetFlag = lossNetFlag;
-        this.hasNewParamsFile = hasNewParamsFile;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
         this.adjustmentState = adjustmentState;
@@ -42,16 +48,21 @@ public class AdjustmentNodeRequest {
         this.rpmf = rpmf;
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
-        this.nodeId = nodeId;
         this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
     }
 
-    public AdjustmentNodeRequest(String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+    public AdjustmentNodeRequest(String layer,
+                                 Integer sequence,
+                                 Boolean capped,
+                                 Integer adjustmentBasis,
+                                 Integer adjustmentType,
+                                 Integer adjustmentState,
+                                 Integer adjustmentThreadId,
+                                 Double lmf,
+                                 Double rpmf,
+                                 List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.layer = layer;
         this.sequence = sequence;
-        this.isInputChanged = isInputChanged;
-        this.lossNetFlag = lossNetFlag;
-        this.hasNewParamsFile = hasNewParamsFile;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
         this.adjustmentState = adjustmentState;
@@ -60,7 +71,6 @@ public class AdjustmentNodeRequest {
         this.rpmf = rpmf;
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
-        this.nodeId = nodeId;
         this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
     }
 
@@ -86,30 +96,6 @@ public class AdjustmentNodeRequest {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
-    }
-
-    public Boolean getInputChanged() {
-        return isInputChanged;
-    }
-
-    public void setInputChanged(Boolean inputChanged) {
-        isInputChanged = inputChanged;
-    }
-
-    public String getLossNetFlag() {
-        return lossNetFlag;
-    }
-
-    public void setLossNetFlag(String lossNetFlag) {
-        this.lossNetFlag = lossNetFlag;
-    }
-
-    public Boolean getHasNewParamsFile() {
-        return hasNewParamsFile;
-    }
-
-    public void setHasNewParamsFile(Boolean hasNewParamsFile) {
-        this.hasNewParamsFile = hasNewParamsFile;
     }
 
     public Integer getAdjustmentBasis() {
@@ -176,19 +162,19 @@ public class AdjustmentNodeRequest {
         this.scorPltHeaderInput = scorPltHeaderInput;
     }
 
-    public Integer getNodeId() {
-        return nodeId;
-    }
-
-    public void setNodeId(Integer nodeId) {
-        this.nodeId = nodeId;
-    }
-
     public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
         return adjustmentReturnPeriodBendings;
     }
 
     public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    }
+
+    public Boolean getCapped() {
+        return capped;
+    }
+
+    public void setCapped(Boolean capped) {
+        this.capped = capped;
     }
 }

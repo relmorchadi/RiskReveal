@@ -1,7 +1,8 @@
 package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,14 @@ public class AdjustmentThreadRest {
     AdjustmentThreadService adjustmentThreadService;
 
 
-    @PostMapping("pure")
-    public AdjustmentThreadEntity savePurePlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
-        return adjustmentThreadService.savePurePlt(request);
+    @PostMapping("create")
+    public AdjustmentThreadEntity createNewAdjustmentThread(@RequestBody AdjustmentThreadCreationRequest request) throws RRException {
+        return adjustmentThreadService.createNewAdjustmentThread(request);
     }
 
-    @PostMapping("adjusted")
-    public AdjustmentThreadEntity saveAdjustedPlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
-        return adjustmentThreadService.saveAdjustedPlt(request);
+    @PostMapping("update")
+    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(@RequestBody AdjustmentThreadUpdateRequest request) throws RRException {
+        return adjustmentThreadService.updateAdjustmentThreadFinalPLT(request);
     }
 
     @GetMapping

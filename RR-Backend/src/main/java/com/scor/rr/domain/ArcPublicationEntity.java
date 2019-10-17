@@ -7,10 +7,10 @@ import java.util.Objects;
 @Table(name = "ARCPublication", schema = "dbo", catalog = "RiskReveal")
 public class ArcPublicationEntity {
     private int arcPublicationId;
-    private Integer scorPltHeaderId;
+    private Integer pltHeaderId;
 
     @Id
-    @Column(name = "arcPublicationId", nullable = false)
+    @Column(name = "ARCPublicationId", nullable = false)
     public int getArcPublicationId() {
         return arcPublicationId;
     }
@@ -20,13 +20,13 @@ public class ArcPublicationEntity {
     }
 
     @Basic
-    @Column(name = "scorPLTHeaderId", nullable = true)
-    public Integer getScorPltHeaderId() {
-        return scorPltHeaderId;
+    @Column(name = "PLTHeaderId", nullable = true)
+    public Integer getPltHeaderId() {
+        return pltHeaderId;
     }
 
-    public void setScorPltHeaderId(Integer scorPltHeaderId) {
-        this.scorPltHeaderId = scorPltHeaderId;
+    public void setPltHeaderId(Integer pltHeaderId) {
+        this.pltHeaderId = pltHeaderId;
     }
 
     @Override
@@ -35,11 +35,11 @@ public class ArcPublicationEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ArcPublicationEntity that = (ArcPublicationEntity) o;
         return arcPublicationId == that.arcPublicationId &&
-                Objects.equals(scorPltHeaderId, that.scorPltHeaderId);
+                Objects.equals(pltHeaderId, that.pltHeaderId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(arcPublicationId, scorPltHeaderId);
+        return Objects.hash(arcPublicationId, pltHeaderId);
     }
 }

@@ -6,23 +6,40 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeEntity {
-    private Integer sequence;
-    private Boolean capped;
     private int adjustmentNodeId;
+    private EntityEntity entity;
     private AdjustmentThreadEntity adjustmentThread;
-    private AdjustmentBasisEntity adjustmentBasis;
-    private AdjustmentNodeEntity adjustmentNode;
-    private AdjustmentTypeEntity adjustmentType;
     private AdjustmentStateEntity adjustmentState;
+    private AdjustmentBasisEntity adjustmentBasis;
+    private AdjustmentCategoryEntity adjustmentCategory;
+    private AdjustmentTypeEntity adjustmentType;
+    private Boolean capped;
+    private String userNarrative;
     private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning;
 
-    public AdjustmentNodeEntity(Integer sequence, Boolean cappedMaxExposure, AdjustmentThreadEntity adjustmentThreadEntity, AdjustmentBasisEntity adjustmentBasis, AdjustmentTypeEntity adjustmentType, AdjustmentStateEntity adjustmentStateEntityByCodeValid) {
-        this.sequence = sequence;
+
+    @ManyToOne
+    @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    public EntityEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
+    }
+
+    public AdjustmentNodeEntity(Boolean cappedMaxExposure,
+                                AdjustmentThreadEntity adjustmentThreadEntity,
+                                AdjustmentBasisEntity adjustmentBasis,
+                                AdjustmentTypeEntity adjustmentType,
+                                AdjustmentStateEntity adjustmentStateEntity,
+                                AdjustmentCategoryEntity adjustmentCategory) {
         this.capped = cappedMaxExposure;
         this.adjustmentThread = adjustmentThreadEntity;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentStateEntityByCodeValid;
+        this.adjustmentState = adjustmentStateEntity;
+        this.adjustmentCategory = adjustmentCategory;
     }
 
     public AdjustmentNodeEntity() {
@@ -33,23 +50,14 @@ public class AdjustmentNodeEntity {
         this.capped = other.capped;
         this.adjustmentThread = other.adjustmentThread;
         this.adjustmentBasis = other.adjustmentBasis;
-        this.adjustmentNode = other.adjustmentNode;
         this.adjustmentType = other.adjustmentType;
         this.adjustmentState = other.adjustmentState;
     }
 
-    @Basic
-    @Column(name = "sequence", nullable = true)
-    public Integer getSequence() {
-        return sequence;
-    }
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
 
     @Basic
-    @Column(name = "Capped", nullable = true)
+    @Column(name = "Capped")
     public Boolean getCapped() {
         return capped;
     }
@@ -75,17 +83,16 @@ public class AdjustmentNodeEntity {
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeEntity that = (AdjustmentNodeEntity) o;
         return adjustmentNodeId == that.adjustmentNodeId &&
-                Objects.equals(sequence, that.sequence) &&
                 Objects.equals(capped, that.capped);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sequence, capped, adjustmentNodeId);
+        return Objects.hash(capped, adjustmentNodeId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
+    @JoinColumn(name = "AdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
     public AdjustmentThreadEntity getAdjustmentThread() {
         return adjustmentThread;
     }
@@ -95,7 +102,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
+    @JoinColumn(name = "AdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -105,17 +112,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
-        return adjustmentNode;
-    }
-
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
-        this.adjustmentNode = adjustmentNode;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "FKAdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
+    @JoinColumn(name = "AdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }
@@ -125,7 +122,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentStateId", referencedColumnName = "AdjustmentStateId")
+    @JoinColumn(name = "AdjustmentNodeState", referencedColumnName = "AdjustmentStateId")
     public AdjustmentStateEntity getAdjustmentState() {
         return adjustmentState;
     }
@@ -135,13 +132,23 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
+    @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeIdCloning() {
         return adjustmentNodeByFkAdjustmentNodeIdCloning;
     }
 
     public void setAdjustmentNodeByFkAdjustmentNodeIdCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning) {
         this.adjustmentNodeByFkAdjustmentNodeIdCloning = adjustmentNodeByFkAdjustmentNodeIdCloning;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "AdjustmentCategoryId", referencedColumnName = "AdjustmentCategoryId")
+    public AdjustmentCategoryEntity getAdjustmentCategory() {
+        return adjustmentCategory;
+    }
+
+    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
+        this.adjustmentCategory = adjustmentCategory;
     }
 
     @Override

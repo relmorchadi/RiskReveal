@@ -59,7 +59,7 @@ public class ContractSearchResultEntity {
 
     @Id
     @Basic
-    @Column(name = "WorkSpaceId", nullable = true, length = 255)
+    @Column(name = "WorkSpaceId", length = 255)
     public String getWorkSpaceId() {
         return workSpaceId;
     }
@@ -69,7 +69,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "WorkspaceName", nullable = true, length = 255)
+    @Column(name = "WorkspaceName", length = 255)
     public String getWorkspaceName() {
         return workspaceName;
     }
@@ -79,7 +79,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "id", nullable = true, length = 255)
+    @Column(name = "id", length = 255)
     public String getId() {
         return id;
     }
@@ -89,7 +89,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Sectionid", nullable = true)
+    @Column(name = "Sectionid")
     public Integer getSectionid() {
         return sectionid;
     }
@@ -99,7 +99,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SectionLabel", nullable = true, length = 255)
+    @Column(name = "SectionLabel", length = 255)
     public String getSectionLabel() {
         return sectionLabel;
     }
@@ -109,7 +109,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "IsActive", nullable = true)
+    @Column(name = "IsActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -119,7 +119,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "UwYear", nullable = true)
+    @Column(name = "UwYear")
     public Integer getUwYear() {
         return uwYear;
     }
@@ -129,7 +129,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Treatyid", nullable = true, length = 255)
+    @Column(name = "Treatyid", length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -139,7 +139,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "TreatyName", nullable = true, length = 255)
+    @Column(name = "TreatyName", length = 255)
     public String getTreatyName() {
         return treatyName;
     }
@@ -149,7 +149,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "ContractStatusid", nullable = true, length = 255)
+    @Column(name = "ContractStatusid", length = 255)
     public String getContractStatusid() {
         return contractStatusid;
     }
@@ -159,7 +159,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "ContractStatus", nullable = true, length = 255)
+    @Column(name = "ContractStatus", length = 255)
     public String getContractStatus() {
         return contractStatus;
     }
@@ -169,7 +169,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SectionStatusid", nullable = true, length = 255)
+    @Column(name = "SectionStatusid", length = 255)
     public String getSectionStatusid() {
         return sectionStatusid;
     }
@@ -179,7 +179,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SectionStatus", nullable = true, length = 255)
+    @Column(name = "SectionStatus", length = 255)
     public String getSectionStatus() {
         return sectionStatus;
     }
@@ -189,7 +189,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "AccumulationPublicationStatus", nullable = true, length = 1)
+    @Column(name = "AccumulationPublicationStatus", length = 1)
     public String getAccumulationPublicationStatus() {
         return accumulationPublicationStatus;
     }
@@ -199,7 +199,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Bouquetid", nullable = true, length = 255)
+    @Column(name = "Bouquetid", length = 255)
     public String getBouquetid() {
         return bouquetid;
     }
@@ -209,7 +209,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "BouquetName", nullable = true, length = 255)
+    @Column(name = "BouquetName", length = 255)
     public String getBouquetName() {
         return bouquetName;
     }
@@ -219,7 +219,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Programid", nullable = true, length = 255)
+    @Column(name = "Programid", length = 255)
     public String getProgramid() {
         return programid;
     }
@@ -229,7 +229,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "ProgramName", nullable = true, length = 255)
+    @Column(name = "ProgramName", length = 255)
     public String getProgramName() {
         return programName;
     }
@@ -239,7 +239,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "CountryCode", nullable = true, length = 255)
+    @Column(name = "CountryCode", length = 255)
     public String getCountryCode() {
         return countryCode;
     }
@@ -249,7 +249,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "CountryName", nullable = true, length = 255)
+    @Column(name = "CountryName", length = 255)
     public String getCountryName() {
         return countryName;
     }
@@ -259,7 +259,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "CedantName", nullable = true, length = 255)
+    @Column(name = "CedantName", length = 255)
     public String getCedantName() {
         return cedantName;
     }
@@ -269,7 +269,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "CedantCode", nullable = true, length = 255)
+    @Column(name = "CedantCode", length = 255)
     public String getCedantCode() {
         return cedantCode;
     }
@@ -279,7 +279,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "IsEQ", nullable = true)
+    @Column(name = "IsEQ")
     public Boolean getEq() {
         return isEq;
     }
@@ -289,7 +289,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "IsWS", nullable = true)
+    @Column(name = "IsWS")
     public Boolean getWs() {
         return isWs;
     }
@@ -299,7 +299,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "IsFL", nullable = true)
+    @Column(name = "IsFL")
     public Boolean getFl() {
         return isFl;
     }
@@ -309,7 +309,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "InceptionDate", nullable = true)
+    @Column(name = "InceptionDate")
     public Timestamp getInceptionDate() {
         return inceptionDate;
     }
@@ -319,7 +319,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "ExpiryDate", nullable = true)
+    @Column(name = "ExpiryDate")
     public Timestamp getExpiryDate() {
         return expiryDate;
     }
@@ -329,7 +329,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "EarliestDueDate", nullable = true, length = 10)
+    @Column(name = "EarliestDueDate", length = 10)
     public String getEarliestDueDate() {
         return earliestDueDate;
     }
@@ -339,7 +339,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "UwUnitid", nullable = true, length = 255)
+    @Column(name = "UwUnitid", length = 255)
     public String getUwUnitid() {
         return uwUnitid;
     }
@@ -349,7 +349,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "UwUnitLabel", nullable = true, length = 255)
+    @Column(name = "UwUnitLabel", length = 255)
     public String getUwUnitLabel() {
         return uwUnitLabel;
     }
@@ -359,7 +359,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "ContractNatureType", nullable = true, length = 255)
+    @Column(name = "ContractNatureType", length = 255)
     public String getContractNatureType() {
         return contractNatureType;
     }
@@ -369,7 +369,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Underwriterid", nullable = true, length = 255)
+    @Column(name = "Underwriterid", length = 255)
     public String getUnderwriterid() {
         return underwriterid;
     }
@@ -379,7 +379,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "UnderwriterName", nullable = true, length = 511)
+    @Column(name = "UnderwriterName", length = 511)
     public String getUnderwriterName() {
         return underwriterName;
     }
@@ -389,7 +389,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Subsidiaryid", nullable = true)
+    @Column(name = "Subsidiaryid")
     public Integer getSubsidiaryid() {
         return subsidiaryid;
     }
@@ -399,7 +399,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SubsidiaryName", nullable = true, length = 255)
+    @Column(name = "SubsidiaryName", length = 255)
     public String getSubsidiaryName() {
         return subsidiaryName;
     }
@@ -409,7 +409,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SubsidiaryLedgerid", nullable = true, length = 255)
+    @Column(name = "SubsidiaryLedgerid", length = 255)
     public String getSubsidiaryLedgerid() {
         return subsidiaryLedgerid;
     }
@@ -419,7 +419,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SubsidiaryLedgerName", nullable = true, length = 255)
+    @Column(name = "SubsidiaryLedgerName", length = 255)
     public String getSubsidiaryLedgerName() {
         return subsidiaryLedgerName;
     }
@@ -429,7 +429,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "LOBid", nullable = true, length = 255)
+    @Column(name = "LOBid", length = 255)
     public String getLoBid() {
         return loBid;
     }
@@ -439,7 +439,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "LOBName", nullable = true, length = 255)
+    @Column(name = "LOBName", length = 255)
     public String getLobName() {
         return lobName;
     }
@@ -449,7 +449,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SOBid", nullable = true, length = 255)
+    @Column(name = "SOBid", length = 255)
     public String getSoBid() {
         return soBid;
     }
@@ -459,7 +459,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "SOBName", nullable = true, length = 255)
+    @Column(name = "SOBName", length = 255)
     public String getSobName() {
         return sobName;
     }
@@ -469,7 +469,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "TypeOfPolicyid", nullable = true, length = 255)
+    @Column(name = "TypeOfPolicyid", length = 255)
     public String getTypeOfPolicyid() {
         return typeOfPolicyid;
     }
@@ -479,7 +479,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "TypeOfPolicyName", nullable = true, length = 255)
+    @Column(name = "TypeOfPolicyName", length = 255)
     public String getTypeOfPolicyName() {
         return typeOfPolicyName;
     }
@@ -489,7 +489,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Natureid", nullable = true, length = 255)
+    @Column(name = "Natureid", length = 255)
     public String getNatureid() {
         return natureid;
     }
@@ -499,7 +499,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "NatureName", nullable = true, length = 255)
+    @Column(name = "NatureName", length = 255)
     public String getNatureName() {
         return natureName;
     }
@@ -509,7 +509,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "LiabilityCurrencyid", nullable = true, length = 255)
+    @Column(name = "LiabilityCurrencyid", length = 255)
     public String getLiabilityCurrencyid() {
         return liabilityCurrencyid;
     }
@@ -519,7 +519,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "contractSourceTypeName", nullable = true, length = 255)
+    @Column(name = "contractSourceTypeName", length = 255)
     public String getContractSourceTypeName() {
         return contractSourceTypeName;
     }
@@ -529,7 +529,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "LastScopeImpactDate", nullable = true)
+    @Column(name = "LastScopeImpactDate")
     public Timestamp getLastScopeImpactDate() {
         return lastScopeImpactDate;
     }
@@ -539,7 +539,7 @@ public class ContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "LastSyncRunCatDomain", nullable = true)
+    @Column(name = "LastSyncRunCatDomain")
     public Timestamp getLastSyncRunCatDomain() {
         return lastSyncRunCatDomain;
     }

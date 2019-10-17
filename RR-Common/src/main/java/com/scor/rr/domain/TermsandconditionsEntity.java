@@ -49,7 +49,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -59,7 +59,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -69,7 +69,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", nullable = true, length = 255)
+    @Column(name = "SECTION_ID", length = 255)
     public String getFksectionId() {
         return fksectionId;
     }
@@ -79,7 +79,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -89,7 +89,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "UWYEAR", nullable = true)
+    @Column(name = "UWYEAR")
     public Integer getUwyear() {
         return uwyear;
     }
@@ -99,7 +99,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "UWORDER", nullable = true)
+    @Column(name = "UWORDER")
     public Integer getUworder() {
         return uworder;
     }
@@ -109,7 +109,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ENDORSMENTNUMBER", nullable = true)
+    @Column(name = "ENDORSMENTNUMBER")
     public Integer getEndorsmentnumber() {
         return endorsmentnumber;
     }
@@ -119,7 +119,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "SECTIONID", nullable = true)
+    @Column(name = "SECTIONID")
     public Integer getSectionid() {
         return sectionid;
     }
@@ -129,7 +129,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "OCCURENCEBASIS", nullable = true, length = 255)
+    @Column(name = "OCCURENCEBASIS", length = 255)
     public String getOccurencebasis() {
         return occurencebasis;
     }
@@ -139,7 +139,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "SUBJECTPREMIUMCURRENCY_ID", nullable = true, length = 255)
+    @Column(name = "SUBJECTPREMIUMCURRENCY_ID", length = 255)
     public String getSubjectpremiumcurrencyId() {
         return subjectpremiumcurrencyId;
     }
@@ -149,7 +149,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ESTIMATEDSUBJECTPREMIUM", nullable = true, precision = 0)
+    @Column(name = "ESTIMATEDSUBJECTPREMIUM", precision = 0)
     public Double getEstimatedsubjectpremium() {
         return estimatedsubjectpremium;
     }
@@ -159,7 +159,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "SUBJECTPREMIUMBASIS_ID", nullable = true, length = 255)
+    @Column(name = "SUBJECTPREMIUMBASIS_ID", length = 255)
     public String getSubjectpremiumbasisId() {
         return subjectpremiumbasisId;
     }
@@ -169,7 +169,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ISUNLIMITED", nullable = true)
+    @Column(name = "ISUNLIMITED")
     public Boolean getIsunlimited() {
         return isunlimited;
     }
@@ -179,7 +179,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "CEDEDOR1PCTSHARE", nullable = true, length = 255)
+    @Column(name = "CEDEDOR1PCTSHARE", length = 255)
     public String getCededor1Pctshare() {
         return cededor1Pctshare;
     }
@@ -189,7 +189,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMIT", nullable = true, precision = 0)
+    @Column(name = "EVENTLIMIT", precision = 0)
     public Double getEventlimit() {
         return eventlimit;
     }
@@ -199,7 +199,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ANNUALLIMIT", nullable = true, precision = 0)
+    @Column(name = "ANNUALLIMIT", precision = 0)
     public Double getAnnuallimit() {
         return annuallimit;
     }
@@ -209,7 +209,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ANNUALDEDUCTIBLE", nullable = true, precision = 0)
+    @Column(name = "ANNUALDEDUCTIBLE", precision = 0)
     public Double getAnnualdeductible() {
         return annualdeductible;
     }
@@ -219,7 +219,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMITFOREQ", nullable = true, precision = 0)
+    @Column(name = "EVENTLIMITFOREQ", precision = 0)
     public Double getEventlimitforeq() {
         return eventlimitforeq;
     }
@@ -229,7 +229,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMITFORWS", nullable = true, precision = 0)
+    @Column(name = "EVENTLIMITFORWS", precision = 0)
     public Double getEventlimitforws() {
         return eventlimitforws;
     }
@@ -239,7 +239,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMITFORFL", nullable = true, precision = 0)
+    @Column(name = "EVENTLIMITFORFL", precision = 0)
     public Double getEventlimitforfl() {
         return eventlimitforfl;
     }
@@ -249,7 +249,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "CAPACITY", nullable = true, precision = 0)
+    @Column(name = "CAPACITY", precision = 0)
     public Double getCapacity() {
         return capacity;
     }
@@ -259,7 +259,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "ATTACHMENTPOINT", nullable = true, precision = 0)
+    @Column(name = "ATTACHMENTPOINT", precision = 0)
     public Double getAttachmentpoint() {
         return attachmentpoint;
     }
@@ -269,7 +269,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "AGGREGATEDEDUCTIBLE", nullable = true, precision = 0)
+    @Column(name = "AGGREGATEDEDUCTIBLE", precision = 0)
     public Double getAggregatedeductible() {
         return aggregatedeductible;
     }
@@ -279,7 +279,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "UNLIMITEDREINSTATEMENTYN", nullable = true)
+    @Column(name = "UNLIMITEDREINSTATEMENTYN")
     public Boolean getUnlimitedreinstatementyn() {
         return unlimitedreinstatementyn;
     }
@@ -289,7 +289,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "UPDATE_TIME", nullable = true)
+    @Column(name = "UPDATE_TIME")
     public Timestamp getUpdateTime() {
         return updateTime;
     }
@@ -299,7 +299,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEOMEGA", nullable = true)
+    @Column(name = "LASTUPDATEOMEGA")
     public Timestamp getLastupdateomega() {
         return lastupdateomega;
     }
@@ -309,7 +309,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "LASTEXTRACTOMEGA", nullable = true)
+    @Column(name = "LASTEXTRACTOMEGA")
     public Timestamp getLastextractomega() {
         return lastextractomega;
     }
@@ -319,7 +319,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATECATDOMAIN", nullable = true)
+    @Column(name = "LASTUPDATECATDOMAIN")
     public Timestamp getLastupdatecatdomain() {
         return lastupdatecatdomain;
     }
@@ -329,7 +329,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCRUNCATDOMAIN", nullable = true)
+    @Column(name = "LASTSYNCRUNCATDOMAIN")
     public Timestamp getLastsyncruncatdomain() {
         return lastsyncruncatdomain;
     }

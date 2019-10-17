@@ -14,7 +14,7 @@ public class RrWorkspaceEntity {
 
     @Id
     @Basic
-    @Column(name = "id", nullable = true, length = 255)
+    @Column(name = "id", length = 255)
     public String getId() {
         return id;
     }
@@ -24,7 +24,7 @@ public class RrWorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "contractId", nullable = true, length = 255)
+    @Column(name = "contractId", length = 255)
     public String getContractId() {
         return contractId;
     }
@@ -34,7 +34,7 @@ public class RrWorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextCode", nullable = true, length = 255)
+    @Column(name = "workspaceContextCode", length = 255)
     public String getWorkspaceContextCode() {
         return workspaceContextCode;
     }
@@ -44,7 +44,7 @@ public class RrWorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextFlag", nullable = true, length = 255)
+    @Column(name = "workspaceContextFlag", length = 255)
     public String getWorkspaceContextFlag() {
         return workspaceContextFlag;
     }
@@ -54,7 +54,7 @@ public class RrWorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceUwYear", nullable = true, precision = 0)
+    @Column(name = "workspaceUwYear", precision = 0)
     public Double getWorkspaceUwYear() {
         return workspaceUwYear;
     }

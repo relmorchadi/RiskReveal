@@ -33,7 +33,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingVendor", nullable = true, length = 255)
+    @Column(name = "modellingVendor", length = 255)
     public String getModellingVendor() {
         return modellingVendor;
     }
@@ -43,7 +43,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystem", nullable = true, length = 255)
+    @Column(name = "modellingSystem", length = 255)
     public String getModellingSystem() {
         return modellingSystem;
     }
@@ -53,7 +53,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystemVersion", nullable = true, length = 255)
+    @Column(name = "modellingSystemVersion", length = 255)
     public String getModellingSystemVersion() {
         return modellingSystemVersion;
     }
@@ -63,7 +63,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "targetRapCode", nullable = true, length = 255)
+    @Column(name = "targetRapCode", length = 255)
     public String getTargetRapCode() {
         return targetRapCode;
     }
@@ -73,7 +73,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "targetRapDesc", nullable = true, length = 255)
+    @Column(name = "targetRapDesc", length = 255)
     public String getTargetRapDesc() {
         return targetRapDesc;
     }
@@ -83,7 +83,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "petId", nullable = true)
+    @Column(name = "petId")
     public Integer getPetId() {
         return petId;
     }
@@ -93,7 +93,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "sourceRapCode", nullable = true, length = 255)
+    @Column(name = "sourceRapCode", length = 255)
     public String getSourceRapCode() {
         return sourceRapCode;
     }
@@ -103,7 +103,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorGenerated", nullable = true)
+    @Column(name = "isScorGenerated")
     public Boolean getScorGenerated() {
         return isScorGenerated;
     }
@@ -113,7 +113,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorCurrent", nullable = true)
+    @Column(name = "isScorCurrent")
     public Boolean getScorCurrent() {
         return isScorCurrent;
     }
@@ -123,7 +123,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorDefault", nullable = true)
+    @Column(name = "isScorDefault")
     public Boolean getScorDefault() {
         return isScorDefault;
     }
@@ -133,7 +133,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isActive", nullable = true)
+    @Column(name = "isActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -143,7 +143,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "auditCreateDt", nullable = true)
+    @Column(name = "auditCreateDt")
     public Timestamp getAuditCreateDt() {
         return auditCreateDt;
     }
@@ -153,7 +153,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "auditUpdateDt", nullable = true)
+    @Column(name = "auditUpdateDt")
     public Timestamp getAuditUpdateDt() {
         return auditUpdateDt;
     }

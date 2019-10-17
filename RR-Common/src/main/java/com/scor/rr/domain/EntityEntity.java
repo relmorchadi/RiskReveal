@@ -21,7 +21,7 @@ public class EntityEntity {
     }
 
     @Basic
-    @Column(name = "EntityCode", nullable = true, length = 50)
+    @Column(name = "EntityCode", length = 50)
     public String getEntityCode() {
         return entityCode;
     }
@@ -31,7 +31,7 @@ public class EntityEntity {
     }
 
     @Basic
-    @Column(name = "EntityDescription", nullable = true, length = 200)
+    @Column(name = "EntityDescription", length = 200)
     public String getEntityDescription() {
         return entityDescription;
     }

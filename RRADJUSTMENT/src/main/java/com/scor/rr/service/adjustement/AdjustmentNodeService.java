@@ -6,6 +6,7 @@ import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
@@ -36,40 +37,43 @@ public class AdjustmentNodeService {
     private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeService.class);
 
     @Autowired
-    AdjustmentnodeRepository adjustmentnodeRepository;
+    private AdjustmentnodeRepository adjustmentnodeRepository;
 
     @Autowired
-    AdjustmentBasisRepository adjustmentBasisRepository;
+    private AdjustmentBasisRepository adjustmentBasisRepository;
 
     @Autowired
-    AdjustmentThreadRepository adjustmentThread;
+    private AdjustmentThreadRepository adjustmentThread;
 
     @Autowired
-    AdjustmentStateRepository adjustmentStateRepository;
+    private AdjustmentStateRepository adjustmentStateRepository;
 
     @Autowired
-    AdjustmentTypeRepository adjustmentTypeRepository;
+    private AdjustmentTypeRepository adjustmentTypeRepository;
 
     @Autowired
-    AdjustmentScalingParameterService adjustmentScalingParameterService;
+    private AdjustmentScalingParameterService adjustmentScalingParameterService;
 
     @Autowired
-    AdjustmentReturnPeriodBandingParameterService periodBandingParameterService;
+    private AdjustmentReturnPeriodBandingParameterService periodBandingParameterService;
 
     @Autowired
-    AdjustmentEventBasedParameterService eventBasedParameterService;
+    private AdjustmentEventBasedParameterService eventBasedParameterService;
 
     @Autowired
-    AdjustmentNodeProcessingService processingService;
+    private AdjustmentNodeProcessingService processingService;
 
     @Autowired
-    AdjustmentNodeOrderService adjustmentNodeOrderService;
+    private AdjustmentNodeOrderService adjustmentNodeOrderService;
 
     @Autowired
-    AdjustmentNodeOrderService nodeOrderService;
+    private AdjustmentNodeOrderService nodeOrderService;
 
     @Autowired
-    CloningScorPltHeader cloningScorPltHeader;
+    private CloningScorPltHeader cloningScorPltHeader;
+
+    @Autowired
+    private DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
 
     //TODO: implementation for updating node
 
@@ -94,6 +98,37 @@ public class AdjustmentNodeService {
         adjustmentnodeRepository.delete(adjustmentNodeEntity);
     }
 
+    public AdjustmentNodeEntity createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
+                                                                                    DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity) throws RRException {
+
+        Double lmf = null;
+        Double rpmf = null;
+        List<PEATData> peatData = null; //todo
+        List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings = null; //todo
+        DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
+        if (defaultRetPerBandingParamsEntity != null) {
+            if (defaultRetPerBandingParamsEntity.getLmf() != null) {
+                lmf = defaultRetPerBandingParamsEntity.getLmf();
+            }
+            if (defaultRetPerBandingParamsEntity.getRpmf() != null) {
+                rpmf = defaultRetPerBandingParamsEntity.getRpmf();
+            }
+        }
+        AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("Default",
+                defaultAdjustmentNodeEntity.getSequence(),
+                defaultAdjustmentNodeEntity.getCappedMaxExposure(),
+                defaultAdjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisId(),
+                defaultAdjustmentNodeEntity.getAdjustmentType().getAdjustmentTypeId(),
+                adjustmentStateRepository.getAdjustmentStateEntityByCodeInvalid().getAdjustmentStateId(),
+                adjustmentThreadEntity.getAdjustmentThreadId(),
+                lmf,
+                rpmf,
+                peatData,
+                adjustmentThreadEntity.getFinalPLT().getPltHeaderId(),
+                adjustmentReturnPeriodBendings);
+        return save(adjustmentNodeRequest);
+    }
+
     @Transactional
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest) throws RRException {
         log.info(" -----  Creating Node ----------");
@@ -110,7 +145,6 @@ public class AdjustmentNodeService {
                     if(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
                         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
                         log.info("Thread getting successfull : {}",adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-                        adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
                         if(adjustmentNodeRequest.getAdjustmentNodeId() != 0) {
                             adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
                             deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());

@@ -1,6 +1,7 @@
 package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,14 @@ public class DefaultAdjustmentRest {
     DefaultAdjustmentService defaultAdjustmentService;
 
     @GetMapping("lookupdefaultadjustment")
-    public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(Integer scorPltHeaderId) throws RRException {
-        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(scorPltHeaderId);
+    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(int targetRapId,
+                                                                                            int regionPerilId,
+                                                                                            int marketChannelId,
+                                                                                            String engineType,
+                                                                                            int pltEntityId) throws RRException {
+        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(targetRapId, regionPerilId, marketChannelId, engineType, pltEntityId);
     }
+
+
 
 }

@@ -21,7 +21,7 @@ public class InuringObjectNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "outputInuringObjectNodeInuringPltElementId", nullable = true, precision = 0)
+    @Column(name = "outputInuringObjectNodeInuringPltElementId", precision = 0)
     public Integer getOutputInuringPltElementsInuringPltElementId() {
         return outputInuringPltElementsInuringPltElementId;
     }
@@ -31,7 +31,7 @@ public class InuringObjectNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "inputInuringObjectNodeInuringPltElementId", nullable = true, precision = 0)
+    @Column(name = "inputInuringObjectNodeInuringPltElementId", precision = 0)
     public Integer getInputInuringPltElementsInuringPltElementId() {
         return inputInuringPltElementsInuringPltElementId;
     }

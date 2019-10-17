@@ -8,8 +8,8 @@ import java.util.Objects;
 public class AdjustmentNodeProcessingEntity {
     private int adjustmentNodeProcessingId;
     private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode;
-    private ScorPltHeaderEntity scorPltHeaderByFkAdjustedPlt;
-    private ScorPltHeaderEntity scorPltHeaderByFkInputPlt;
+    private PltHeaderEntity adjustedPlt;
+    private PltHeaderEntity inputPlt;
 
     @Id
     @Column(name = "AdjustmentNodeProcessingId", nullable = false)
@@ -36,7 +36,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNode", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNode", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNode() {
         return adjustmentNodeByFkAdjustmentNode;
     }
@@ -46,22 +46,22 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustedPlt", referencedColumnName = "PKScorPltHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByFkAdjustedPlt() {
-        return scorPltHeaderByFkAdjustedPlt;
+    @JoinColumn(name = "AdjustedPlt", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getAdjustedPlt() {
+        return adjustedPlt;
     }
 
-    public void setScorPltHeaderByFkAdjustedPlt(ScorPltHeaderEntity scorPltHeaderByFkAdjustedPlt) {
-        this.scorPltHeaderByFkAdjustedPlt = scorPltHeaderByFkAdjustedPlt;
+    public void setAdjustedPlt(PltHeaderEntity adjustedPlt) {
+        this.adjustedPlt = adjustedPlt;
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKInputPlt", referencedColumnName = "PKScorPltHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByFkInputPlt() {
-        return scorPltHeaderByFkInputPlt;
+    @JoinColumn(name = "InputPlt", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getInputPlt() {
+        return inputPlt;
     }
 
-    public void setScorPltHeaderByFkInputPlt(ScorPltHeaderEntity scorPltHeaderByFkInputPlt) {
-        this.scorPltHeaderByFkInputPlt = scorPltHeaderByFkInputPlt;
+    public void setInputPlt(PltHeaderEntity inputPlt) {
+        this.inputPlt = inputPlt;
     }
 }

@@ -37,7 +37,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -47,7 +47,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -57,7 +57,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -67,7 +67,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "UWYEAR", nullable = true)
+    @Column(name = "UWYEAR")
     public Integer getUwyear() {
         return uwyear;
     }
@@ -77,7 +77,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "UWORDER", nullable = true)
+    @Column(name = "UWORDER")
     public Integer getUworder() {
         return uworder;
     }
@@ -87,7 +87,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "ENDORSMENTNUMBER", nullable = true)
+    @Column(name = "ENDORSMENTNUMBER")
     public Integer getEndorsmentnumber() {
         return endorsmentnumber;
     }
@@ -97,7 +97,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "SECTIONID", nullable = true)
+    @Column(name = "SECTIONID")
     public Integer getSectionid() {
         return sectionid;
     }
@@ -107,7 +107,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "RANK", nullable = true)
+    @Column(name = "RANK")
     public Integer getRank() {
         return rank;
     }
@@ -117,7 +117,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "REINSTATEMENTLABEL", nullable = true, length = 255)
+    @Column(name = "REINSTATEMENTLABEL", length = 255)
     public String getReinstatementlabel() {
         return reinstatementlabel;
     }
@@ -127,7 +127,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "PREMIUM", nullable = true, precision = 0)
+    @Column(name = "PREMIUM", precision = 0)
     public Double getPremium() {
         return premium;
     }
@@ -137,7 +137,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "PROPORTIONCEDEDRATE", nullable = true, precision = 0)
+    @Column(name = "PROPORTIONCEDEDRATE", precision = 0)
     public Double getProportioncededrate() {
         return proportioncededrate;
     }
@@ -147,7 +147,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "PRORATATEMPORISYN", nullable = true)
+    @Column(name = "PRORATATEMPORISYN")
     public Boolean getProratatemporisyn() {
         return proratatemporisyn;
     }
@@ -157,7 +157,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "UPDATE_TIME", nullable = true)
+    @Column(name = "UPDATE_TIME")
     public Timestamp getUpdateTime() {
         return updateTime;
     }
@@ -167,7 +167,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEOMEGA", nullable = true)
+    @Column(name = "LASTUPDATEOMEGA")
     public Timestamp getLastupdateomega() {
         return lastupdateomega;
     }
@@ -177,7 +177,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "LASTEXTRACTOMEGA", nullable = true)
+    @Column(name = "LASTEXTRACTOMEGA")
     public Timestamp getLastextractomega() {
         return lastextractomega;
     }
@@ -187,7 +187,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATECATDOMAIN", nullable = true)
+    @Column(name = "LASTUPDATECATDOMAIN")
     public Timestamp getLastupdatecatdomain() {
         return lastupdatecatdomain;
     }
@@ -197,7 +197,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCRUNCATDOMAIN", nullable = true)
+    @Column(name = "LASTSYNCRUNCATDOMAIN")
     public Timestamp getLastsyncruncatdomain() {
         return lastsyncruncatdomain;
     }

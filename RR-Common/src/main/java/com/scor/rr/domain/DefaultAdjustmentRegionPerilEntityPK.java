@@ -9,7 +9,7 @@ public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
     private int fkDefaultAdjustmentId;
     private int fkRegionPerilId;
 
-    @Column(name = "FKDefaultAdjustmentId", nullable = false)
+    @Column(name = "DefaultAdjustmentId", nullable = false)
     @Id
     public int getFkDefaultAdjustmentId() {
         return fkDefaultAdjustmentId;
@@ -19,7 +19,7 @@ public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
         this.fkDefaultAdjustmentId = fkDefaultAdjustmentId;
     }
 
-    @Column(name = "FKRegionPerilId", nullable = false)
+    @Column(name = "RegionPerilId", nullable = false)
     @Id
     public int getFkRegionPerilId() {
         return fkRegionPerilId;

@@ -27,7 +27,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "taskId", nullable = true)
+    @Column(name = "taskId")
     public Integer getTaskId() {
         return taskId;
     }
@@ -37,7 +37,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "stepName", nullable = true, length = 255)
+    @Column(name = "stepName", length = 255)
     public String getStepName() {
         return stepName;
     }
@@ -47,7 +47,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "stepOrder", nullable = true)
+    @Column(name = "stepOrder")
     public Integer getStepOrder() {
         return stepOrder;
     }
@@ -57,7 +57,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "stepParams", nullable = true, length = 255)
+    @Column(name = "stepParams", length = 255)
     public String getStepParams() {
         return stepParams;
     }
@@ -67,7 +67,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255)
+    @Column(name = "status", length = 255)
     public String getStatus() {
         return status;
     }
@@ -77,7 +77,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "startedDate", nullable = true)
+    @Column(name = "startedDate")
     public Timestamp getStartedDate() {
         return startedDate;
     }
@@ -87,7 +87,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "finishedDate", nullable = true)
+    @Column(name = "finishedDate")
     public Timestamp getFinishedDate() {
         return finishedDate;
     }

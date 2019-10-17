@@ -22,7 +22,7 @@ public class MarketChannelEntity {
     }
 
     @Basic
-    @Column(name = "MarketChannelCode", nullable = true, length = 50)
+    @Column(name = "MarketChannelCode", length = 50)
     public String getMarketChannelCode() {
         return marketChannelCode;
     }
@@ -32,7 +32,7 @@ public class MarketChannelEntity {
     }
 
     @Basic
-    @Column(name = "MarketChannelDescription", nullable = true, length = 200)
+    @Column(name = "MarketChannelDescription", length = 200)
     public String getMarketChannelDescription() {
         return marketChannelDescription;
     }

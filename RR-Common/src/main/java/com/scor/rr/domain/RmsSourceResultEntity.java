@@ -29,7 +29,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "projectId", nullable = true)
+    @Column(name = "projectId")
     public Integer getProjectId() {
         return projectId;
     }
@@ -39,7 +39,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrency", nullable = true, length = 255)
+    @Column(name = "targetCurrency", length = 255)
     public String getTargetCurrency() {
         return targetCurrency;
     }
@@ -49,7 +49,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetRegionPeril", nullable = true, length = 255)
+    @Column(name = "targetRegionPeril", length = 255)
     public String getTargetRegionPeril() {
         return targetRegionPeril;
     }
@@ -59,7 +59,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "overrideRegionPerilBasis", nullable = true, length = 255)
+    @Column(name = "overrideRegionPerilBasis", length = 255)
     public String getOverrideRegionPerilBasis() {
         return overrideRegionPerilBasis;
     }
@@ -69,7 +69,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "occurrenceBasis", nullable = true, length = 255)
+    @Column(name = "occurrenceBasis", length = 255)
     public String getOccurrenceBasis() {
         return occurrenceBasis;
     }
@@ -79,7 +79,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255)
+    @Column(name = "financialPerspective", length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -89,7 +89,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "unitMultiplier", nullable = true, precision = 7)
+    @Column(name = "unitMultiplier", precision = 7)
     public BigDecimal getUnitMultiplier() {
         return unitMultiplier;
     }
@@ -99,7 +99,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "proportion", nullable = true, precision = 7)
+    @Column(name = "proportion", precision = 7)
     public BigDecimal getProportion() {
         return proportion;
     }
@@ -109,7 +109,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetRapCode", nullable = true, length = 255)
+    @Column(name = "targetRapCode", length = 255)
     public String getTargetRapCode() {
         return targetRapCode;
     }

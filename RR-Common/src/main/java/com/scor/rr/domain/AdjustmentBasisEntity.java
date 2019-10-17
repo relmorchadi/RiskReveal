@@ -28,7 +28,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "AdjustmentBasisName", nullable = true, length = 255)
+    @Column(name = "AdjustmentBasisName", length = 255)
     public String getAdjustmentBasisName() {
         return adjustmentBasisName;
     }
@@ -38,7 +38,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "BasisShortName", nullable = true, length = 255)
+    @Column(name = "BasisShortName", length = 255)
     public String getBasisShortName() {
         return basisShortName;
     }
@@ -48,7 +48,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "Description", nullable = true, length = 255)
+    @Column(name = "Description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -58,7 +58,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "ExposureFlag", nullable = true, length = 50)
+    @Column(name = "ExposureFlag", length = 50)
     public String getExposureFlag() {
         return exposureFlag;
     }
@@ -68,7 +68,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "Capped", nullable = true)
+    @Column(name = "Capped")
     public Boolean getCapped() {
         return capped;
     }
@@ -78,7 +78,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "IsActive", nullable = true)
+    @Column(name = "IsActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -88,7 +88,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "IsExposureGrowth", nullable = true)
+    @Column(name = "IsExposureGrowth")
     public Boolean getExposureGrowth() {
         return isExposureGrowth;
     }
@@ -98,7 +98,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "Sequence", nullable = true)
+    @Column(name = "Sequence")
     public Integer getSequence() {
         return sequence;
     }
@@ -129,7 +129,7 @@ public class AdjustmentBasisEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FkCategoryId", referencedColumnName = "AdjustmentCategoryId")
+    @JoinColumn(name = "CategoryId", referencedColumnName = "AdjustmentCategoryId")
     public AdjustmentCategoryEntity getAdjustmentCategoryByFkCategoryId() {
         return adjustmentCategory;
     }

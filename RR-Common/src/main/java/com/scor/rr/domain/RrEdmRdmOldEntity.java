@@ -23,7 +23,7 @@ public class RrEdmRdmOldEntity {
     }
 
     @Basic
-    @Column(name = "create_dt", nullable = true, length = 255)
+    @Column(name = "create_dt", length = 255)
     public String getCreateDt() {
         return createDt;
     }
@@ -33,7 +33,7 @@ public class RrEdmRdmOldEntity {
     }
 
     @Basic
-    @Column(name = "db_name", nullable = true, length = 255)
+    @Column(name = "db_name", length = 255)
     public String getDbName() {
         return dbName;
     }
@@ -43,7 +43,7 @@ public class RrEdmRdmOldEntity {
     }
 
     @Basic
-    @Column(name = "db_type", nullable = true, length = 255)
+    @Column(name = "db_type", length = 255)
     public String getDbType() {
         return dbType;
     }
@@ -53,7 +53,7 @@ public class RrEdmRdmOldEntity {
     }
 
     @Basic
-    @Column(name = "version_num", nullable = true)
+    @Column(name = "version_num")
     public Integer getVersionNum() {
         return versionNum;
     }

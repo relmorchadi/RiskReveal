@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface AdjustmentStateRepository extends JpaRepository<AdjustmentStateEntity,Integer>{
-    @Query("select m from AdjustmentStateEntity m where m.code = 'Valid'")
-    AdjustmentStateEntity getAdjustmentStateEntityByCodeValid();
+    @Query("select m from AdjustmentStateEntity m where m.code = 'Invalid'")
+    AdjustmentStateEntity getAdjustmentStateEntityByCodeInvalid();
 }

@@ -29,7 +29,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -39,7 +39,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -49,7 +49,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", length = 255)
     public String getCode() {
         return code;
     }
@@ -59,7 +59,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 255)
+    @Column(name = "LABEL", length = 255)
     public String getLabel() {
         return label;
     }
@@ -69,7 +69,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODEID", nullable = true, length = 255)
+    @Column(name = "COUNTRYCODEID", length = 255)
     public String getCountrycodeId() {
         return countrycodeId;
     }
@@ -79,7 +79,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "INCEPTIONDATE", nullable = true)
+    @Column(name = "INCEPTIONDATE")
     public Timestamp getInceptiondate() {
         return inceptiondate;
     }
@@ -89,7 +89,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "EXPIRYDATE", nullable = true)
+    @Column(name = "EXPIRYDATE")
     public Timestamp getExpirydate() {
         return expirydate;
     }
@@ -99,7 +99,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "ISREPORTINGCURRENCY", nullable = true)
+    @Column(name = "ISREPORTINGCURRENCY")
     public Boolean getIsreportingcurrency() {
         return isreportingcurrency;
     }
@@ -109,7 +109,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "REPORTINGCURRENCYCODE_ID", nullable = true)
+    @Column(name = "REPORTINGCURRENCYCODE_ID")
     public Integer getReportingcurrencycodeId() {
         return reportingcurrencycodeId;
     }
