@@ -18,9 +18,10 @@
     </parent>
 
     <modules>
-		<module>RRADJUSTMENT</module>
         <module>RR-Common</module>
+		<module>RR-Calibration</module>
         <module>RR-Inuring</module>
+        <module>RR-Import</module>
     </modules>
 
     <properties>
