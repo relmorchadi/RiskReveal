@@ -13,8 +13,16 @@ export class PltApi {
   constructor(private http: HttpClient) {
   }
 
-  public getAllPlts(params?): Observable<any> {
-    return this.http.get(`${this.URL}/`, {params: params});
+  public getAllPlts({workspaceId, uwy}): Observable<any> {
+    return this.http.get(`${this.URL}/?wsId=${workspaceId}&uwYear=${uwy}`);
+  }
+
+  public delete(payload): Observable<any> {
+    return this.http.post(`${this.URL}/delete`, payload);
+  }
+
+  public restore(payload): Observable<any> {
+    return this.http.post(`${this.URL}/restore`, payload);
   }
 
 }

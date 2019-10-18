@@ -2,14 +2,6 @@
   <div class="navigation-icons-drawer">
     <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
   </div>
-
-  <ng-container *ngIf="fullViewActive">
-    <div class="plt-details-header">
-      <hr>
-    </div>
-    <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
-  </ng-container>
-  <ng-container *ngIf="!fullViewActive">
     <div class="plt-details-header">
       <hr>
       <div>PLT Details</div>
@@ -19,7 +11,8 @@
         <i class="icon-check_circle_outline_24px"></i>
         <div class="plt-detail-brief-desc">
           <span>{{inputs['pltDetail']?.pltName}}</span>
-          <span>[{{inputs['pltDetail']?.pltId | textLength}}]</span>
+          <span style="font-weight: bold">[{{inputs['pltDetail']?.pltId}}]</span>
+
         </div>
       </div>
       <div class="plt-details-tabs">
@@ -36,7 +29,12 @@
               </div>
             </div>
             <div class="summary-table">
-              <app-plt-details-pop-up-item *ngFor="let config of pltPopUpItemConfig" [inputs]="config" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-item>
+              <ng-container *ngIf="!fullViewActive;else fullSectionView">
+                <app-plt-details-pop-up-item *ngFor="let config of pltPopUpItemConfig" [inputs]="config" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-item>
+              </ng-container>
+              <ng-template #fullSectionView>
+                <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
+              </ng-template>
             </div>
           </nz-tab>
           <nz-tab nzTitle="EP Metrics">
@@ -386,7 +384,6 @@
         </nz-tabset>
       </div>
     </div>
-  </ng-container>
 </div>
 
 

@@ -1,10 +1,10 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.Project;
-import com.scor.rr.domain.Workspace;
+import com.scor.rr.domain.TargetBuild.Project;
+import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.repository.ContractSearchResultRepository;
-import com.scor.rr.repository.ProjectRepository;
-import com.scor.rr.repository.WorkspaceRepository;
+import com.scor.rr.repository.TargetBuild.ProjectRepository;
+import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto;
 
-import com.scor.rr.domain.PltManagerView;
-import com.scor.rr.domain.UserTag;
+import com.scor.rr.domain.TargetBuild.PLTManagerView;
+import com.scor.rr.domain.TargetBuild.UserTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class PltTagResponse {
 
-    List<PltManagerView> plts;
+    List<PLTManagerView> plts;
     List<UserTag> userTags;
 }
