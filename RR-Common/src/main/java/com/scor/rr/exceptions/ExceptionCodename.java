@@ -16,6 +16,7 @@ public enum ExceptionCodename {
     NODE_PROCESSING_NOT_FOUND("NODE PROCESSING NOT FOUND"),
     ORDER_EXIST("ORDER EXIST"),
     PLT_TYPE_NOT_CORRECT("PLT Type Not correct"),
+    LMF_MUST_BE_POSITIVE("LMF MUST BE POSITIVE"),
 
     /*
         This section is delegated to PLT File Exceptions
@@ -35,6 +36,7 @@ public enum ExceptionCodename {
     INURING_PACKAGE_NOT_FOUND("Inuring Package not found"),
     INURING_INPUT_NODE_NOT_FOUND("Inuring Input Node not found"),
     INURING_CONTRACT_NODE_NOT_FOUND("Inuring Contract Node not found"),
+    INURING_ILLEGAL_REQUEST("Illegal request"),
     INURING_CONTRACT_LAYER_NOT_FOUND("Inuring Contract Layer not found"),
     INURING_FILTER_CRITERIA_NOT_FOUND("Inuring Filter Criteria not found"),
     INURING_SINGLE_LAYER_CONTRACT_NODE("Inuring Contract Node Accepts One Layer Only"),

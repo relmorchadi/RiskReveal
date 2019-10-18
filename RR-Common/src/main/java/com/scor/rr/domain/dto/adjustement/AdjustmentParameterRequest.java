@@ -11,18 +11,18 @@ public class AdjustmentParameterRequest implements Serializable {
     private double lmf;
     private double rpmf;
     private List<PEATData> peatData;
-    private Integer scorPltHeaderInput;
+    private Integer pltHeaderInput;
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
 
     public AdjustmentParameterRequest() {
     }
 
-    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pkScorPltHeaderId, int adjustmentNodeId, List<AdjustmentReturnPeriodBending> returnPeriodBendings) {
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<AdjustmentReturnPeriodBending> returnPeriodBendings) {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
-        this.scorPltHeaderInput = pkScorPltHeaderId;
+        this.pltHeaderInput = pltHeaderInput;
         this.nodeId = adjustmentNodeId;
         this.adjustmentReturnPeriodBendings = returnPeriodBendings;
     }
@@ -51,12 +51,12 @@ public class AdjustmentParameterRequest implements Serializable {
         this.peatData = peatData;
     }
 
-    public Integer getScorPltHeaderInput() {
-        return scorPltHeaderInput;
+    public Integer getPltHeaderInput() {
+        return pltHeaderInput;
     }
 
-    public void setScorPltHeaderInput(Integer scorPltHeaderInput) {
-        this.scorPltHeaderInput = scorPltHeaderInput;
+    public void setPltHeaderInput(Integer pltHeaderInput) {
+        this.pltHeaderInput = pltHeaderInput;
     }
 
     public Integer getNodeId() {

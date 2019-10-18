@@ -23,6 +23,10 @@
         <module>RR-Backend</module>
         <module>RR-Import</module>
         <module>RR-Proxy</module>
+        <module>RR-Common</module>
+		<module>RR-Calibration</module>
+        <module>RR-Inuring</module>
+        <module>RR-Import</module>
     </modules>
 
     <properties>
@@ -77,7 +81,6 @@
                                     <value>org.sonar.java.jacoco.JUnitListener</value>
                                 </property>
                             </properties>
-                            <testFailureIgnore>true</testFailureIgnore>
                         </configuration>
                     </plugin>
                 </plugins>

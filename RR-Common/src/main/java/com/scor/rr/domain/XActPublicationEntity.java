@@ -24,7 +24,7 @@ public class XActPublicationEntity {
     }
 
     @Basic
-    @Column(name = "scorPLTHeaderId", nullable = true)
+    @Column(name = "scorPLTHeaderId")
     public Integer getScorPltHeaderId() {
         return scorPltHeaderId;
     }
@@ -34,7 +34,7 @@ public class XActPublicationEntity {
     }
 
     @Basic
-    @Column(name = "xActAvailable", nullable = true)
+    @Column(name = "xActAvailable")
     public Boolean getxActAvailable() {
         return xActAvailable;
     }
@@ -44,7 +44,7 @@ public class XActPublicationEntity {
     }
 
     @Basic
-    @Column(name = "xActUsed", nullable = true)
+    @Column(name = "xActUsed")
     public Boolean getxActUsed() {
         return xActUsed;
     }
@@ -54,7 +54,7 @@ public class XActPublicationEntity {
     }
 
     @Basic
-    @Column(name = "xActPublicationDate", nullable = true)
+    @Column(name = "xActPublicationDate")
     public Timestamp getxActPublicationDate() {
         return xActPublicationDate;
     }

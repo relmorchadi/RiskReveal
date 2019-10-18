@@ -1,5 +1,6 @@
 package com.scor.rr.repository;
 
+import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentScalingParameterEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

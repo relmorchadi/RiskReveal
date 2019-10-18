@@ -31,7 +31,7 @@ public class InuringInputNodeService {
     @Autowired
     private InuringPackageRepository inuringPackageRepository;
     @Autowired
-    private ScorpltheaderRepository scorpltheaderRepository;
+    private PltHeaderRepository pltHeaderRepository;
     @Autowired
     private InuringEdgeService inuringEdgeService;
 
@@ -41,7 +41,7 @@ public class InuringInputNodeService {
 
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
             for (Integer pltId : request.getAttachedPLTs()) {
-                if (scorpltheaderRepository.findByPkScorPltHeaderId(pltId) == null) throw new InputPLTNotFoundException(pltId);
+                if (pltHeaderRepository.findByPltHeaderId(pltId) == null) throw new InputPLTNotFoundException(pltId);
             }
         }
 
@@ -59,7 +59,7 @@ public class InuringInputNodeService {
         if (request.getAttachedPLTs() != null) {
             Set<Integer> newPLTIds = new HashSet<>();
             for (Integer id : request.getAttachedPLTs()) {
-                if (scorpltheaderRepository.findByPkScorPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
+                if (pltHeaderRepository.findByPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
                 newPLTIds.add(id);
             }
             List<InuringInputAttachedPLT> inuringInputAttachedPLTs = inuringInputAttachedPLTRepository.findByInuringInputNodeId(request.getInuringInputNodeId());

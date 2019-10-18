@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.awt.*;
+
 public interface AdjustmentReturnPeriodBandingParameterRepository extends JpaRepository<AdjustmentReturnPeriodBandingParameterEntity,Integer> {
     @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNodeByFkAdjustmentNodeId = n and n.adjustmentNodeId = :id")
     java.util.List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandingParameterByAdjustmentNodeBy(@Param("id") Integer id);

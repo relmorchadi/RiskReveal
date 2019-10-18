@@ -12,7 +12,7 @@ public class RegionPerilEntity {
     private String regionPerilDesc;
     private String perilCode;
     private String regionPerilGroupCode;
-    private String regionPerilGroupDescription;
+    private String regionPerilGroupDesc;
     private Integer regionHierarchy;
     private String regionDesc;
     private Boolean isModelled;
@@ -21,15 +21,9 @@ public class RegionPerilEntity {
     private Boolean isMinimumGrainRegionPeril;
     private String parentMinimumGrainRegionPeril;
     private Boolean isActive;
-    private Boolean isEntityled;
     private Timestamp lastUpdatedRiskReveal;
     private Timestamp lastUpdatedCatDomain;
     private Timestamp lastSyncRunCatDomain;
-    private String comments;
-    private Integer hierachyLevel;
-    private String hierachyParentCode;
-    private Integer regionHierachy;
-    private String regionPerilGroupDesc;
 
     @Id
     @Column(name = "regionPerilId", nullable = false)
@@ -42,7 +36,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilCode", nullable = true, length = 255)
+    @Column(name = "regionPerilCode", length = 255)
     public String getRegionPerilCode() {
         return regionPerilCode;
     }
@@ -52,7 +46,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilDesc", length = 255)
     public String getRegionPerilDesc() {
         return regionPerilDesc;
     }
@@ -62,7 +56,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255)
+    @Column(name = "perilCode", length = 255)
     public String getPerilCode() {
         return perilCode;
     }
@@ -72,7 +66,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupCode", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupCode", length = 255)
     public String getRegionPerilGroupCode() {
         return regionPerilGroupCode;
     }
@@ -82,17 +76,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupDescription", nullable = true, length = 255)
-    public String getRegionPerilGroupDescription() {
-        return regionPerilGroupDescription;
-    }
-
-    public void setRegionPerilGroupDescription(String regionPerilGroupDescription) {
-        this.regionPerilGroupDescription = regionPerilGroupDescription;
-    }
-
-    @Basic
-    @Column(name = "regionHierarchy", nullable = true)
+    @Column(name = "regionHierarchy")
     public Integer getRegionHierarchy() {
         return regionHierarchy;
     }
@@ -102,7 +86,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionDesc", nullable = true, length = 255)
+    @Column(name = "regionDesc", length = 255)
     public String getRegionDesc() {
         return regionDesc;
     }
@@ -112,7 +96,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isModelled", nullable = true)
+    @Column(name = "isModelled")
     public Boolean getModelled() {
         return isModelled;
     }
@@ -122,7 +106,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyParentCode", nullable = true, length = 255)
+    @Column(name = "hierarchyParentCode", length = 255)
     public String getHierarchyParentCode() {
         return hierarchyParentCode;
     }
@@ -132,7 +116,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyLevel", nullable = true)
+    @Column(name = "hierarchyLevel")
     public Integer getHierarchyLevel() {
         return hierarchyLevel;
     }
@@ -142,7 +126,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isMinimumGrainRegionPeril", nullable = true)
+    @Column(name = "isMinimumGrainRegionPeril")
     public Boolean getMinimumGrainRegionPeril() {
         return isMinimumGrainRegionPeril;
     }
@@ -152,7 +136,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "parentMinimumGrainRegionPeril", nullable = true, length = 255)
+    @Column(name = "parentMinimumGrainRegionPeril", length = 255)
     public String getParentMinimumGrainRegionPeril() {
         return parentMinimumGrainRegionPeril;
     }
@@ -162,7 +146,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isActive", nullable = true)
+    @Column(name = "isActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -172,17 +156,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isEntityled", nullable = true)
-    public Boolean getEntityled() {
-        return isEntityled;
-    }
-
-    public void setEntityled(Boolean entityled) {
-        isEntityled = entityled;
-    }
-
-    @Basic
-    @Column(name = "LastUpdatedRiskReveal", nullable = true)
+    @Column(name = "LastUpdatedRiskReveal")
     public Timestamp getLastUpdatedRiskReveal() {
         return lastUpdatedRiskReveal;
     }
@@ -192,7 +166,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "LastUpdatedCatDomain", nullable = true)
+    @Column(name = "LastUpdatedCatDomain")
     public Timestamp getLastUpdatedCatDomain() {
         return lastUpdatedCatDomain;
     }
@@ -202,7 +176,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "LastSyncRunCatDomain", nullable = true)
+    @Column(name = "LastSyncRunCatDomain")
     public Timestamp getLastSyncRunCatDomain() {
         return lastSyncRunCatDomain;
     }
@@ -212,47 +186,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "comments", nullable = true, length = 100)
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    @Basic
-    @Column(name = "hierachyLevel", nullable = true)
-    public Integer getHierachyLevel() {
-        return hierachyLevel;
-    }
-
-    public void setHierachyLevel(Integer hierachyLevel) {
-        this.hierachyLevel = hierachyLevel;
-    }
-
-    @Basic
-    @Column(name = "hierachyParentCode", nullable = true, length = 255)
-    public String getHierachyParentCode() {
-        return hierachyParentCode;
-    }
-
-    public void setHierachyParentCode(String hierachyParentCode) {
-        this.hierachyParentCode = hierachyParentCode;
-    }
-
-    @Basic
-    @Column(name = "regionHierachy", nullable = true)
-    public Integer getRegionHierachy() {
-        return regionHierachy;
-    }
-
-    public void setRegionHierachy(Integer regionHierachy) {
-        this.regionHierachy = regionHierachy;
-    }
-
-    @Basic
-    @Column(name = "regionPerilGroupDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupDescription", length = 255)
     public String getRegionPerilGroupDesc() {
         return regionPerilGroupDesc;
     }
@@ -271,7 +205,6 @@ public class RegionPerilEntity {
                 Objects.equals(regionPerilDesc, that.regionPerilDesc) &&
                 Objects.equals(perilCode, that.perilCode) &&
                 Objects.equals(regionPerilGroupCode, that.regionPerilGroupCode) &&
-                Objects.equals(regionPerilGroupDescription, that.regionPerilGroupDescription) &&
                 Objects.equals(regionHierarchy, that.regionHierarchy) &&
                 Objects.equals(regionDesc, that.regionDesc) &&
                 Objects.equals(isModelled, that.isModelled) &&
@@ -280,19 +213,14 @@ public class RegionPerilEntity {
                 Objects.equals(isMinimumGrainRegionPeril, that.isMinimumGrainRegionPeril) &&
                 Objects.equals(parentMinimumGrainRegionPeril, that.parentMinimumGrainRegionPeril) &&
                 Objects.equals(isActive, that.isActive) &&
-                Objects.equals(isEntityled, that.isEntityled) &&
                 Objects.equals(lastUpdatedRiskReveal, that.lastUpdatedRiskReveal) &&
                 Objects.equals(lastUpdatedCatDomain, that.lastUpdatedCatDomain) &&
                 Objects.equals(lastSyncRunCatDomain, that.lastSyncRunCatDomain) &&
-                Objects.equals(comments, that.comments) &&
-                Objects.equals(hierachyLevel, that.hierachyLevel) &&
-                Objects.equals(hierachyParentCode, that.hierachyParentCode) &&
-                Objects.equals(regionHierachy, that.regionHierachy) &&
                 Objects.equals(regionPerilGroupDesc, that.regionPerilGroupDesc);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDescription, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive, isEntityled, lastUpdatedRiskReveal, lastUpdatedCatDomain, lastSyncRunCatDomain, comments, hierachyLevel, hierachyParentCode, regionHierachy, regionPerilGroupDesc);
+        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDesc, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive, lastUpdatedRiskReveal, lastUpdatedCatDomain, lastSyncRunCatDomain);
     }
 }

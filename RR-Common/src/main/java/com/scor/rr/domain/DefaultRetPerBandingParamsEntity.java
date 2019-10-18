@@ -81,7 +81,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKDefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
+    @JoinColumn(name = "DefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
     public DefaultAdjustmentNodeEntity getDefaultAdjustmentNodeByFkDefaultNode() {
         return defaultAdjustmentNodeByFkDefaultNode;
     }

@@ -67,7 +67,7 @@ public class AdjustmentEventBasedParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeId() {
         return adjustmentNodeByFkAdjustmentNodeId;
     }

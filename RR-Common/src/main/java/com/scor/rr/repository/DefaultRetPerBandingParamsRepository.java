@@ -1,5 +1,6 @@
 package com.scor.rr.repository;
 
+import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.domain.DefaultRetPerBandingParamsEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

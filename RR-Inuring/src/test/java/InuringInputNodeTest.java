@@ -1,4 +1,4 @@
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.entity.InuringInputAttachedPLT;
 import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
@@ -9,18 +9,28 @@ import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringPackageRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import com.scor.rr.service.InuringInputNodeService;
+import javafx.beans.binding.When;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +60,7 @@ public class InuringInputNodeTest {
     private InuringPackageRepository inuringPackageRepository;
 
     @Mock
-    private ScorpltheaderRepository scorpltheaderRepository;
+    private PltHeaderRepository pltHeaderRepository;
 
     private Map<Integer, InuringInputNode> inuringInputNodes;
 
@@ -118,9 +128,9 @@ public class InuringInputNodeTest {
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
-        when(scorpltheaderRepository.findByPkScorPltHeaderId(anyInt())).thenAnswer(plt -> {
+        when(pltHeaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
             int id = plt.getArgument(0);
-            return id == PLT_ID_NOT_FOUND ? null : new ScorPltHeaderEntity();
+            return id == PLT_ID_NOT_FOUND ? null : new PltHeaderEntity();
         });
 
         doAnswer(node -> {
