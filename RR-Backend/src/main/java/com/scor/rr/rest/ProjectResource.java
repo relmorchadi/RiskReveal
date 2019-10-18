@@ -1,6 +1,6 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.Project;
+import com.scor.rr.domain.TargetBuild.Project;
 import com.scor.rr.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

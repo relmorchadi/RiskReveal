@@ -1,5 +1,7 @@
-package com.scor.rr.domain;
+package com.scor.rr.domain.TargetBuild;
 
+import com.scor.rr.domain.ContractSearchResult;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,19 +10,32 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "search_tb")
+@Table(name = "Workspace", schema = "dr")
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 public class Workspace implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "WorkspaceId")
     private Long workspaceId;
+
+    @Column(name = "Entity")
     private Integer entity;
+
+    @Column(name = "WorkspaceContextCode")
     private String workspaceContextCode;
+
+    @Column(name = "WorkspaceUwYear")
     private Integer workspaceUwYear;
+
+    @Column(name = "WorkspaceName")
     private String workspaceName;
+
+    @Column(name = "CedantName")
     private String cedantName;
+
 
     @OneToMany
     @JoinColumn(name = "workspaceId")
@@ -33,5 +48,4 @@ public class Workspace implements Serializable {
         this.workspaceName = c.getWorkspaceName();
         this.cedantName = c.getCedantName();
     }
-
 }

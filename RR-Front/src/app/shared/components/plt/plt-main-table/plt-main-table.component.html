@@ -32,7 +32,7 @@
                    [nzIndeterminate]="!tableInputs.showDeleted ? tableInputs.someItemsAreSelected : tableInputs.someDeletedItemsAreSelected"></label>
             <i (click)="checkBoxSort()" style="cursor: pointer;position: relative;left: 3px;" nz-icon nzType="down" nzTheme="outline"></i>
           </th>
-          <th *ngIf="col?.type == 'checkbox-scope'"   [ngStyle]="{'width': col?.width + col?.unit }">
+          <th *ngIf="col?.type == 'checkbox-scope'"  [ngStyle]="{'width': col?.width + col?.unit }">
             <label nz-checkbox style="padding-left: 8px;"
                    [nzChecked]="checkSelectedRows()"
                    (nzCheckedChange)="checkAllScope($event)"
@@ -149,22 +149,22 @@
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + col?.unit }">
             <div class="td-wrapper-tags">
-              <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
+              <ng-container *ngFor="let tag of rowData[col?.fields];let i= index;">
                 <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
-                <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData.userTags.length - 1)" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
+                <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData[col?.fields].length - 1)" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
               </ng-container>
 
             </div>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
-            <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
+            <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields != 'peril' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields != 'perilGroupCode' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
               <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields == 'peril' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields == 'perilGroupCode' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
             <ng-container>
               <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData.peril]}">{{ rowData[col.fields] }}</div>
             </ng-container>
@@ -175,14 +175,17 @@
             </ng-container>
           </td>
           <td *ngIf="col?.type == 'icon'" [ngStyle]="{'width': col?.width + col?.unit }">
-            <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
-              <i nz-dropdown [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
+            <nz-dropdown *ngIf="col?.highlight; else iconStandalone" [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+              <i nz-dropdown [ngClass]="{ 'icon-check': rowData[col?.fields], 'icon-remove_24px': !rowData[col?.fields] }"></i>
               <ul nz-menu>
                 <li nz-menu-item (click)="log('1st menu item')">1st menu item</li>
                 <li nz-menu-item (click)="log('2nd menu item')">2nd menu item</li>
                 <li nz-menu-item (click)="log('3rd menu item')">3rd menu item</li>
               </ul>
             </nz-dropdown>
+            <ng-template #iconStandalone>
+              <i nz-dropdown [ngClass]="{ 'icon-check': rowData[col?.fields], 'icon-remove_24px': !rowData[col?.fields] }"></i>
+            </ng-template>
           </td>
         </ng-container>
       </ng-container>

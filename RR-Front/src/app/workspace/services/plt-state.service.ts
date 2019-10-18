@@ -36,18 +36,24 @@ export class PltStateService {
       .pipe(
         mergeMap((data) => {
           ctx.patchState(produce(ctx.getState(), draft => {
-            const deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-            //draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
-            draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: plt})));
+            const {
+              plts,
+              deletedPlts,
+              tags
+            } = data;
+
+
+            draft.content[wsIdentifier].plts = _.merge({}, ...plts.map(plt => ({[plt.pltId]: plt})));
             draft.content[wsIdentifier].pltManager = {
               ...draft.content[wsIdentifier].pltManager,
               filters: {systemTag: [], userTag: []},
-              data: _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.data,plt, deletedPlts)})))
+              data: _.merge({}, ...plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.data,plt)}))),
+              deleted: _.merge({}, ...deletedPlts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.deleted,plt)})))
             };
           }));
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
             wsIdentifier: wsIdentifier,
-            userTags: data.userTags
+            userTags: data.tags
           }));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
@@ -214,7 +220,8 @@ export class PltStateService {
   selectPlts(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
       plts,
-      wsIdentifier
+      wsIdentifier,
+      forDelete
     } = payload;
 
     let inComingData = {};
@@ -225,7 +232,7 @@ export class PltStateService {
     });
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data = _.merge({}, draft.content[wsIdentifier].pltManager.data, inComingData);
+      draft.content[wsIdentifier].pltManager[forDelete ? 'deleted' : 'data'] = _.merge({}, draft.content[wsIdentifier].pltManager[forDelete ? 'deleted' : 'data'], inComingData);
     }));
   }
 
@@ -364,28 +371,24 @@ export class PltStateService {
   }
 
   deletePlt(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const state = ctx.getState();
     const {
-      pltIds,
-      wsIdentifier
+      request,
+      params
     } = payload;
 
-    const {
-      data
-    } = ctx.getState().content[wsIdentifier].pltManager;
+    const wsIdenrifier = state.currentTab.wsIdentifier;
 
-    let newData = {};
-    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-
-    _.forEach(pltIds, k => {
-      newData[k] = {...data[k], deleted: true, selected: false}
-      ls = _.merge({}, ls, {[k]: {deleted: true, deletedBy: 'DEV', deletedAt: moment.now()}})
-    });
-
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data = {...data, ...newData}
-    }));
-
-    localStorage.setItem('deletedPlts', JSON.stringify(ls))
+    return this.pltApi.delete(request)
+      .pipe(
+        mergeMap(() => {
+          return ctx.dispatch(new fromPlt.loadAllPlts({
+            params: params,
+            wsIdentifier: wsIdenrifier
+          }))
+        }),
+        catchError(err => of(null))
+      )
   }
 
   renameTag(ctx: StateContext<WorkspaceModel>, payload: any) {
@@ -442,41 +445,34 @@ export class PltStateService {
   }
 
   restorePlt(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const state = ctx.getState();
     const {
-      pltIds,
-      wsIdentifier
+      pltHeaderIds,
+      params
     } = payload;
 
-    const {
-      data
-    } = ctx.getState().content[wsIdentifier].pltManager;
+    const wsIdenrifier = state.currentTab.wsIdentifier;
 
-    let newData = {};
-    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
+    return this.pltApi.restore(pltHeaderIds)
+      .pipe(
+        mergeMap(() => {
+          return ctx.dispatch(new fromPlt.loadAllPlts({
+            params: params,
+            wsIdentifier: wsIdenrifier
+          }))
+        }),
+        catchError(err => of(null))
+      )
 
-    _.forEach(pltIds, k => {
-
-      newData[k] = {...data[k], deleted: false, selected: false}
-      ls = _.omit(ls, `${k}`)
-    });
-
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
-    }));
-
-    localStorage.setItem('deletedPlts', JSON.stringify(ls));
   }
 
-  private _appendPltMetaData(oldData,plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
+  private _appendPltMetaData(oldData,plt) {
     return ({
       ...plt,
       selected: oldData[plt.pltId] ? oldData[plt.pltId].selected : undefined,
       visible: true,
       tagFilterActive: false,
-      opened: false,
-      deleted: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deleted : undefined,
-      deletedBy: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedBy : undefined,
-      deletedAt: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedAt : undefined,
+      opened: false
     });
   }
 

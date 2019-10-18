@@ -179,13 +179,11 @@ export class WorkspaceState {
   }
 
   static getDeletedPltsForPlt(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => e.deleted), 'pltId'));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.deleted);
   }
 
   static getPltsForPlts(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
   }
 
   static getProjectsPlt(wsIdentifier: string) {
