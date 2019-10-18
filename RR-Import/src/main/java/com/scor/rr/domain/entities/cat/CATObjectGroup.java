@@ -6,6 +6,7 @@ import com.scor.rr.domain.entities.references.omega.PeriodBasis;
 import com.scor.rr.domain.entities.references.plt.FinancialPerspective;
 import com.scor.rr.domain.utils.cat.ModellingResult;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -20,7 +21,8 @@ import java.util.Map;
 @Data
 public class CATObjectGroup {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "CATObjectGroupId")
     private String catObjectGroupId;
 

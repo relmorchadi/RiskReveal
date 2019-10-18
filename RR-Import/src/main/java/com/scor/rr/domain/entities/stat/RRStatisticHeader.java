@@ -3,6 +3,7 @@ package com.scor.rr.domain.entities.stat;
 import com.scor.rr.domain.entities.ihub.RRFinancialPerspective;
 import com.scor.rr.domain.enums.StatisticMetric;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,7 +18,8 @@ import java.util.List;
 @Data
 public class RRStatisticHeader implements Cloneable {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "RRStatisticHeaderId")
     private String rrStatisticHeaderId;
     @Column(name = "ProjectId")

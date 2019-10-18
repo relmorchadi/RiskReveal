@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.workspace;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +16,8 @@ import java.util.Date;
 @Data
 public class AssociationVersion {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "AssociationVersionId")
     private String associationVersionId;
     @Column(name = "Name")

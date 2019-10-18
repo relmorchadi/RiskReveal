@@ -41,6 +41,7 @@ import com.scor.rr.repository.workspace.ProjectRepository;
 import com.scor.rr.service.RmsDataProviderService;
 import com.scor.rr.service.exposure.abstraction.ExposureSummaryTaskletWrapper;
 import com.scor.rr.utils.Step;
+import lombok.Data;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Data
 public class ExposureSummaryTaskletWrapperImpl implements ExposureSummaryTaskletWrapper
 {
 	private static final Logger log= LoggerFactory.getLogger(ExposureSummaryTaskletWrapperImpl.class);

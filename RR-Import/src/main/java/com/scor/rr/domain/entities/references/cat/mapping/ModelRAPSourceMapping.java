@@ -5,6 +5,7 @@ import com.scor.rr.domain.entities.plt.ModellingSystem;
 import com.scor.rr.domain.entities.plt.ModellingSystemVersion;
 import com.scor.rr.domain.entities.plt.ModellingVendor;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -18,7 +19,8 @@ import javax.persistence.*;
 @Data
 public class ModelRAPSourceMapping {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ModelRAPSourceMappingId")
     private String modelRAPSourceMappingId;
     @Column(name = "DlmProfileName")

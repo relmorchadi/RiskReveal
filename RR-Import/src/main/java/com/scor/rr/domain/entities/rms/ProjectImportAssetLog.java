@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.rms;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ import java.util.List;
 @Data
 public class ProjectImportAssetLog {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ProjectImportAssetLogId")
     private String projectImportAssetLogId;
     @Column(name = "ProjectId")

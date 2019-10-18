@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.ihub;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -18,7 +19,8 @@ import java.util.List;
 @Data
 public class RRLossTable {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "RRLossTableId")
     private String rrLossTableId;
     @Column(name = "ProjectId")

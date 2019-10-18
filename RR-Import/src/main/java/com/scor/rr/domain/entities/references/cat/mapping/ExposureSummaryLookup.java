@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.references.cat.mapping;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -15,7 +16,8 @@ import java.util.Objects;
 @Data
 public class ExposureSummaryLookup implements Comparable<ExposureSummaryLookup> {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "Id")
     private String id;
     @Column(name = "ExposureViewTitle")

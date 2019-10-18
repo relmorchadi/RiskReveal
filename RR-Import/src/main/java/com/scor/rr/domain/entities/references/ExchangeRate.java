@@ -19,7 +19,7 @@ import java.util.Map;
 @Data
 public class ExchangeRate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ExchangeRateId")
     private Long exchangeRateId;
     @Column(name = "EffectiveDate")

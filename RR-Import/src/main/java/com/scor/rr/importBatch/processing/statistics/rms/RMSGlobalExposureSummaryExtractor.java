@@ -38,6 +38,7 @@ import com.scor.rr.repository.references.ExposureGlobalViewRepository;
 import com.scor.rr.repository.rms.ExposureViewDefinitionRepository;
 import com.scor.rr.repository.rms.ExposureViewExtractQueryRepository;
 import com.scor.rr.repository.rms.ExposureViewVersionRepository;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ import java.util.*;
 /**
  * Created by U002629 on 31/03/2015.
  */
+@Data
 public class RMSGlobalExposureSummaryExtractor extends BaseRMSBeanImpl implements StatisticsExtractor {
     private static final Logger log = LoggerFactory.getLogger(RMSGlobalExposureSummaryExtractor.class);
 

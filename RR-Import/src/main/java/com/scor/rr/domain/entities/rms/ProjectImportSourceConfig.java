@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.rms;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,7 +15,8 @@ import javax.persistence.*;
 @Data
 public class ProjectImportSourceConfig {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ProjectImportSourceConfigId")
     private String projectImportSourceConfigId;
     @Column(name = "ProjectId")

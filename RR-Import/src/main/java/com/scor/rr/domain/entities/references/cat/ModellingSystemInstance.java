@@ -2,6 +2,7 @@ package com.scor.rr.domain.entities.references.cat;
 
 import com.scor.rr.domain.entities.plt.ModellingSystemVersion;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -15,7 +16,8 @@ import javax.persistence.*;
 @Data
 public class ModellingSystemInstance {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ModellingSystemInstanceId")
     private String modellingSystemInstanceId;
     @Column(name = "Name")

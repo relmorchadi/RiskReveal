@@ -2,6 +2,7 @@ package com.scor.rr.domain.entities.cat;
 
 import com.scor.rr.domain.entities.references.cat.Narrative;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -18,7 +19,8 @@ public class CATAnalysis {
     public static final String DEFAULT = "Default";
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "CATAnalysisId")
     private String catAnalysisId;
     @Column(name = "Name")

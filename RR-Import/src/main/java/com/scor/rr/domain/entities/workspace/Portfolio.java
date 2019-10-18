@@ -6,6 +6,7 @@ import com.scor.rr.domain.entities.ihub.RmsPortfolioAnalysisRegion;
 import com.scor.rr.domain.entities.rms.RmsPortfolio;
 import com.scor.rr.domain.enums.ScanResult;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -24,7 +25,8 @@ import java.util.List;
 @Data
 public class Portfolio {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "PortfolioId")
     private String portfolioId;
     @Column(name = "Tags")

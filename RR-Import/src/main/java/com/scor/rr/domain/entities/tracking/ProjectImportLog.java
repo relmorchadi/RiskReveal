@@ -2,6 +2,7 @@ package com.scor.rr.domain.entities.tracking;
 
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -16,7 +17,8 @@ import java.util.Date;
 @Data
 public class ProjectImportLog {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ProjectImportLogId")
     private String projectImportLogId;
     @Column(name = "ProjectId")

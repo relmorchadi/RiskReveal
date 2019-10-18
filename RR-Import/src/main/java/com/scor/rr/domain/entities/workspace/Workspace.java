@@ -2,6 +2,7 @@ package com.scor.rr.domain.entities.workspace;
 
 import com.scor.rr.domain.entities.workspace.workspaceContext.WorkspaceContext;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -18,13 +19,16 @@ import java.util.List;
 @Data
 public class Workspace {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "WorkspaceId")
     private String workspaceId;
     @Column(name = "CedantName")
     private String cedantName;
     @Column(name = "WorkspaceName")
     private String workspaceName;
+    @Column(name = "ContractId")
+    private String contractId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "WorkspaceContextId")
     private WorkspaceContext workspaceContext;

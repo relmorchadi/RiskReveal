@@ -1,5 +1,7 @@
 package com.scor.rr.domain.entities.cat;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 
 /**
@@ -11,7 +13,8 @@ import javax.persistence.*;
 @Table(name = "CATAnalysisReply")
 public class CATAnalysisReply {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "CATAnalysisReplyId")
     private String catAnalysisReplyId;
     @ManyToOne(fetch = FetchType.LAZY)

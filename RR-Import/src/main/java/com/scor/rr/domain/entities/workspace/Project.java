@@ -2,6 +2,7 @@ package com.scor.rr.domain.entities.workspace;
 
 import com.scor.rr.domain.entities.references.User;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -19,7 +20,8 @@ import java.util.List;
 @Data
 public class Project {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ProjectId")
     private String projectId;
     @Column(name = "Name")

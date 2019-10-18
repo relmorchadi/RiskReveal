@@ -39,7 +39,7 @@
     <batch:job id="importLossData" job-repository="myJobRepository" incrementer="idIncrementer">
         <batch:step id="init">
             <batch:flow parent="initFlow"/>
-<!--            <batch:next on="*" to="mainFlow"/>-->
+            <batch:next on="*" to="mainFlow"/>
             <batch:next on="RUNNING" to="running"/>
             <batch:next on="WRONG_STATUS" to="error"/>
         </batch:step>
@@ -161,7 +161,7 @@
         <!--</batch:step>-->
 
         <batch:step id="adjustDefault" next="handleAnalysisImport">
-<!--            <batch:tasklet ref="defaultAdjustment"/>-->
+            <!--            <batch:tasklet ref="defaultAdjustment"/>-->
             <!--step 16 -->
         </batch:step>
 
@@ -372,49 +372,49 @@
         <property name="fileExtension" value=".bin"/>
     </bean>
 
-<!--    <bean id="myJobRepository"-->
-<!--          class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">-->
-<!--        <property name="transactionManager" ref="myTransactionManager"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myJobRepository"-->
+    <!--          class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">-->
+    <!--        <property name="transactionManager" ref="myTransactionManager"/>-->
+    <!--    </bean>-->
 
-<!--    <bean id="myJobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>-->
+    <!--    <bean id="myJobRegistry" class="org.springframework.batch.core.configuration.support.MapJobRegistry"/>-->
 
-<!--    <bean id="myJobService" class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">-->
-<!--        <property name="jobRepository" ref="myJobRepository"/>-->
-<!--        <property name="jobLauncher" ref="myJobLauncher"/>-->
-<!--        <property name="jobLocator" ref="myJobRegistry"/>-->
-<!--        <property name="dataSource" ref="myDataSource"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myJobService" class="org.springframework.batch.admin.service.SimpleJobServiceFactoryBean">-->
+    <!--        <property name="jobRepository" ref="myJobRepository"/>-->
+    <!--        <property name="jobLauncher" ref="myJobLauncher"/>-->
+    <!--        <property name="jobLocator" ref="myJobRegistry"/>-->
+    <!--        <property name="dataSource" ref="myDataSource"/>-->
+    <!--    </bean>-->
 
-<!--    <bean id="myJobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">-->
-<!--        <property name="jobRepository" ref="jobRepository"/>-->
-<!--        <property name="taskExecutor" ref="jobLauncherTaskExecutor"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myJobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">-->
+    <!--        <property name="jobRepository" ref="jobRepository"/>-->
+    <!--        <property name="taskExecutor" ref="jobLauncherTaskExecutor"/>-->
+    <!--    </bean>-->
 
-<!--    <bean id="myDataSource"-->
-<!--          class="org.apache.commons.dbcp2.BasicDataSource">-->
-<!--        <property name="driverClassName" value="${batch.jdbc.driver}" />-->
-<!--        <property name="url" value="${batch.jdbc.url}" />-->
-<!--        <property name="username" value="${batch.jdbc.user}" />-->
-<!--        <property name="password" value="${batch.jdbc.password}" />-->
-<!--        <property name="testWhileIdle" value="${batch.jdbc.testWhileIdle}"/>-->
-<!--        <property name="validationQuery" value="${batch.jdbc.validationQuery}"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myDataSource"-->
+    <!--          class="org.apache.commons.dbcp2.BasicDataSource">-->
+    <!--        <property name="driverClassName" value="${batch.jdbc.driver}" />-->
+    <!--        <property name="url" value="${batch.jdbc.url}" />-->
+    <!--        <property name="username" value="${batch.jdbc.user}" />-->
+    <!--        <property name="password" value="${batch.jdbc.password}" />-->
+    <!--        <property name="testWhileIdle" value="${batch.jdbc.testWhileIdle}"/>-->
+    <!--        <property name="validationQuery" value="${batch.jdbc.validationQuery}"/>-->
+    <!--    </bean>-->
 
-<!--    <bean id="myDataSource" destroy-method="close" class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
-<!--        <property name="driverClass" value="${batch.jdbc.driver}"/>-->
-<!--        <property name="jdbcUrl"     value="${batch.jdbc.url}"/>-->
-<!--        <property name="user"        value="${batch.jdbc.user}"/>-->
-<!--        <property name="password"    value="${batch.jdbc.password}"/>-->
-<!--        <property name="initialPoolSize" value="10"/>-->
-<!--        <property name="maxPoolSize" value="50"/>-->
-<!--        <property name="maxStatements" value="100"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myDataSource" destroy-method="close" class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
+    <!--        <property name="driverClass" value="${batch.jdbc.driver}"/>-->
+    <!--        <property name="jdbcUrl"     value="${batch.jdbc.url}"/>-->
+    <!--        <property name="user"        value="${batch.jdbc.user}"/>-->
+    <!--        <property name="password"    value="${batch.jdbc.password}"/>-->
+    <!--        <property name="initialPoolSize" value="10"/>-->
+    <!--        <property name="maxPoolSize" value="50"/>-->
+    <!--        <property name="maxStatements" value="100"/>-->
+    <!--    </bean>-->
 
-<!--    <bean id="myTransactionManager"-->
-<!--          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
-<!--        <property name="dataSource" ref="dataSource"/>-->
-<!--    </bean>-->
+    <!--    <bean id="myTransactionManager"-->
+    <!--          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+    <!--        <property name="dataSource" ref="dataSource"/>-->
+    <!--    </bean>-->
 
     <bean id="idIncrementer" class="org.springframework.batch.core.launch.support.RunIdIncrementer"/>
 
@@ -1503,11 +1503,11 @@ order by
 
     <!--    </bean>-->
 
-        <bean id="exposureByCoverageAndRegionPerilExtractor"
-              class="com.scor.rr.importBatch.processing.statistics.rms.RMSGlobalExposureSummaryExtractor"
-              parent="baseRMSBean" scope="step">
-<!--            <property name="rmsParameters" ref="parameterRMSBean"/>-->
-        </bean>
+    <bean id="exposureByCoverageAndRegionPerilExtractor"
+          class="com.scor.rr.importBatch.processing.statistics.rms.RMSGlobalExposureSummaryExtractor"
+          parent="baseRMSBean" scope="step">
+        <property name="rmsParameters" ref="parameterRMSBean"/>
+    </bean>
 
     <bean id="risklinkExtractor" class="com.scor.rr.importBatch.processing.elt.RiskLinkELTExtractor"
           parent="baseRMSBean" scope="step">
@@ -1700,11 +1700,11 @@ ORDER BY an.ID
         <property name="targetMethod" value="runChecks"/>
     </bean>
 
-    <!--    <bean id="exposureSummaryExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"-->
-    <!--          scope="step">-->
-    <!--        <property name="targetObject" ref="exposureByCoverageAndRegionPerilExtractor"/>-->
-    <!--        <property name="targetMethod" value="runExtraction"/>-->
-    <!--    </bean>-->
+    <bean id="exposureSummaryExtractor" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject" ref="exposureByCoverageAndRegionPerilExtractor"/>
+        <property name="targetMethod" value="runExtraction"/>
+    </bean>
 
     <bean id="summaryStatisticsExtractor"
           class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">
@@ -1979,22 +1979,18 @@ ORDER BY an.ID
         <property name="targetMethod" value="release"/>
     </bean>
 
-    <!--    <bean id="locationLevelExposure" class="com.scor.rr.domain.entities.meta.exposure.LocationLevelExposure">-->
-    <!--        <constructor-arg name="dbName" value="${rms.ds.dbname}" />-->
-    <!--    </bean>-->
-
-    <!--    <bean id="defaultAdjustment" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"-->
-    <!--          scope="step">-->
-    <!--        <property name="targetObject">-->
-    <!--            <bean class="com.scor.rr.importBatch.processing.adjustment.DefaultAdjustment" parent="baseRMSBean"-->
-    <!--                  scope="step">-->
-    <!--                <constructor-arg name="batchRestHost" value="${batch.rest.host}"/>-->
-    <!--                <constructor-arg name="batchRestPort" value="${batch.rest.port}"/>-->
-    <!--                <constructor-arg name="batchRestDefAdj" value="${batch.rest.def.adj}"/>-->
-    <!--            </bean>-->
-    <!--        </property>-->
-    <!--        <property name="targetMethod" value="handle"/>-->
-    <!--    </bean>-->
+    <bean id="defaultAdjustment" class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter"
+          scope="step">
+        <property name="targetObject">
+            <bean class="com.scor.rr.importBatch.processing.adjustment.DefaultAdjustment" parent="baseRMSBean"
+                  scope="step">
+                <constructor-arg name="batchRestHost" value="${batch.rest.host}"/>
+                <constructor-arg name="batchRestPort" value="${batch.rest.port}"/>
+                <constructor-arg name="batchRestDefAdj" value="${batch.rest.def.adj}"/>
+            </bean>
+        </property>
+        <property name="targetMethod" value="handle"/>
+    </bean>
 
     <bean id="dsCache" class="com.scor.rr.importBatch.processing.datasources.GuavaDSCache">
         <constructor-arg name="modellingSystemInstanceRepository" ref="modellingSystemInstanceRepository"/>
@@ -2015,23 +2011,23 @@ ORDER BY an.ID
             <bean class="com.scor.rr.importBatch.processing.exposure.ExposureSummaryWriter" parent="baseFileWriter"
                   scope="step">
                 <constructor-arg name="fileExtension" value=".txt"/>
-                <!--                    <property name="mongoDBSequence" ref="mongoDBSequence" />-->
             </bean>
         </property>
     </bean>
 
-    <!--    <bean id="accumulationPackageService" class="com.scor.almf.ihub.services.AccumulationPackageService"> </bean>-->
-    <!--    <bean id="updateContractSectionExpectedScopeStep"-->
-    <!--          class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">-->
-    <!--        <property name="targetObject">-->
-    <!--            <bean id="postImportService" class="com.scor.rr.importBatch.processing.treaty.services.PostImportService"-->
-    <!--                  scope="step">-->
-    <!--                <property name="transformationPackage" ref="transformationPackage"/>-->
-    <!--                <property name="projectId" value="#{jobParameters['projectId']}"/>-->
-    <!--            </bean>-->
-    <!--        </property>-->
-    <!--        <property name="targetMethod" value="updateContractSectionExpectedScope"/>-->
-    <!--    </bean>-->
+    <bean id="accumulationPackageService" class="com.scor.rr.service.AccumulationPackageService"></bean>
+
+    <!--        <bean id="updateContractSectionExpectedScopeStep"-->
+    <!--              class="org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter" scope="step">-->
+    <!--            <property name="targetObject">-->
+    <!--                <bean id="postImportService" class="com.scor.rr.importBatch.processing.treaty.services.PostImportService"-->
+    <!--                      scope="step">-->
+    <!--                    <property name="transformationPackage" ref="transformationPackage"/>-->
+    <!--                    <property name="projectId" value="#{jobParameters['projectId']}"/>-->
+    <!--                </bean>-->
+    <!--            </property>-->
+    <!--            <property name="targetMethod" value="updateContractSectionExpectedScope"/>-->
+    <!--        </bean>-->
 
 
 </beans>

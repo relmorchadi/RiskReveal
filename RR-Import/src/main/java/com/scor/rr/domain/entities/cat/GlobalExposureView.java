@@ -3,6 +3,7 @@ package com.scor.rr.domain.entities.cat;
 import com.scor.rr.domain.entities.references.cat.GlobalViewSummary;
 import com.scor.rr.domain.entities.references.omega.PeriodBasis;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -17,7 +18,8 @@ import java.util.Map;
 @Data
 public class GlobalExposureView {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "GlobalExposureViewId")
     private String globalExposureViewId;
     @Column(name = "Name")
@@ -38,10 +40,6 @@ public class GlobalExposureView {
 
     @Transient
     private Map<Integer, GlobalViewSummary> globalViewSummariesByName;
-
-    public static String buildId(String carId, String division, String periodBasis, String dsName) {
-        return carId + "_" + division + "_" + periodBasis + "_" + dsName;
-    }
 
     public GlobalExposureView(String carID, Integer divisionNumber, PeriodBasis periodBasis, Integer version, String name, File exposureData, Map<Integer, GlobalViewSummary> globalViewSummariesByName) {
         globalExposureViewId = buildId(carID, String.valueOf(divisionNumber), periodBasis.getPeriodBasisId(), name);
@@ -64,5 +62,9 @@ public class GlobalExposureView {
         this.name = name;
         this.exposureData = exposureData;
         this.globalViewSummariesByName = globalViewSummariesByName;
+    }
+
+    public static String buildId(String carId, String division, String periodBasis, String dsName) {
+        return carId + "_" + division + "_" + periodBasis + "_" + dsName;
     }
 }

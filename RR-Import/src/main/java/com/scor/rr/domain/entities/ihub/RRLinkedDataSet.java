@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.ihub;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.List;
 public class RRLinkedDataSet {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "RRLinkedDataSetId")
     private String rrLinkedDataSetId;
     @Column(name = "ProjectId")

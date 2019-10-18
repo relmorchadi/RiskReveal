@@ -10,6 +10,7 @@ import com.scor.rr.domain.entities.workspace.Project;
 import com.scor.rr.domain.enums.FinancialPerspectiveSelectType;
 import com.scor.rr.domain.enums.ScanResult;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -28,7 +29,8 @@ import java.util.List;
 @Data
 public class SourceResult {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "SourceResultId")
     private String sourceResultId;
     @Column(name = "IncludedTargetRapIds")
@@ -112,7 +114,7 @@ public class SourceResult {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ImportDecisionId")
     private ImportDecision importDecision;
-//    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "FinancialPerspectiveId")
 //    private AnalysisFinancialPerspective financialPerspective;
     @Column(name = "FinancialPerspectiveSelectType")

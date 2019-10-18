@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.references.plt;
 
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -14,7 +15,8 @@ import javax.persistence.*;
 @Data
 public class TTFinancialPerspective {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "TTFinancialPerspectiveId")
     private String ttFinancialPerspectiveId;
     @Column(name = "ModellingVendor")

@@ -5,6 +5,7 @@ import com.scor.rr.domain.entities.references.cat.Narrative;
 import com.scor.rr.domain.entities.references.omega.PeriodBasis;
 import com.scor.rr.domain.entities.references.plt.FinancialPerspective;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -18,7 +19,8 @@ import javax.persistence.*;
 @Data
 public class CATAnalysisModelResults {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "CATAnalysisModelResultsId")
     private String CATAnalysisModelResultsId;
     @Column(name = "Version")

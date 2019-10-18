@@ -16,7 +16,7 @@ import java.sql.Date;
 @Data
 public class RmsPortfolioBasic {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RmsPortfolioBasicId")
     private Long rmsPortfolioBasicId;
     @Column(name = "EDMId")

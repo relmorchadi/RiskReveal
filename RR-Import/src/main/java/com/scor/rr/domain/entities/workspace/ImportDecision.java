@@ -3,6 +3,7 @@ package com.scor.rr.domain.entities.workspace;
 import com.scor.rr.domain.entities.references.User;
 import com.scor.rr.domain.enums.ImportStatus;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -17,7 +18,8 @@ import java.sql.Date;
 @Data
 public class ImportDecision {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     @Column(name = "ImportDecisionId")
     private String importDecisionId;
     @Column(name = "ImportEndDate")

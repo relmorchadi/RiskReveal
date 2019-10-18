@@ -1,10 +1,17 @@
 package com.scor.rr.importBatch.processing.adjustment;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 /**
  * Created by u004119 on 17/05/2016.
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DefaultAdjustmentRequest {
 
     private String projectId;
@@ -13,7 +20,7 @@ public class DefaultAdjustmentRequest {
 
     private String scorPLTHeaderId;
 
-    private Long analysisId;
+    private String analysisId;
 
     private String analysisName;
 
@@ -23,71 +30,8 @@ public class DefaultAdjustmentRequest {
 
     private Integer targetRapId;
 
-    public String getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(String projectId) {
-        this.projectId = projectId;
-    }
-
     public DefaultAdjustmentRequest(String scorPLTHeaderId) {
         this.scorPLTHeaderId = scorPLTHeaderId;
     }
 
-    public List<String> getStructureIds() {
-        return structureIds;
-    }
-
-    public void setStructureIds(List<String> structureIds) {
-        this.structureIds = structureIds;
-    }
-
-    public String getScorPLTHeaderId() {
-        return scorPLTHeaderId;
-    }
-
-    public void setScorPLTHeaderId(String scorPLTHeaderId) {
-        this.scorPLTHeaderId = scorPLTHeaderId;
-    }
-
-    public Long getAnalysisId() {
-        return analysisId;
-    }
-
-    public void setAnalysisId(Long analysisId) {
-        this.analysisId = analysisId;
-    }
-
-    public String getAnalysisName() {
-        return analysisName;
-    }
-
-    public void setAnalysisName(String analysisName) {
-        this.analysisName = analysisName;
-    }
-
-    public String getRdmName() {
-        return rdmName;
-    }
-
-    public void setRdmName(String rdmName) {
-        this.rdmName = rdmName;
-    }
-
-    public Long getRdmId() {
-        return rdmId;
-    }
-
-    public void setRdmId(Long rdmId) {
-        this.rdmId = rdmId;
-    }
-
-    public Integer getTargetRapId() {
-        return targetRapId;
-    }
-
-    public void setTargetRapId(Integer targetRapId) {
-        this.targetRapId = targetRapId;
-    }
 }

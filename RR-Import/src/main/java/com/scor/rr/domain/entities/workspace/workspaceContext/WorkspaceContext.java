@@ -1,6 +1,7 @@
 package com.scor.rr.domain.entities.workspace.workspaceContext;
 
 import com.scor.rr.domain.entities.omega.Contract;
+import com.scor.rr.domain.enums.WorkspaceType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -24,6 +25,8 @@ public abstract class WorkspaceContext {
     protected String workspaceContextCode;
     @Column(name = "WorkspaceUwYear")
     protected Integer workspaceUwYear;
+    @Column(name="WorkspaceContextFlag")
+    private WorkspaceType workspaceContextFlag;
     @OneToMany(mappedBy = "workspaceContext")
     private List<Contract> contracts;
     // @ManyToMany

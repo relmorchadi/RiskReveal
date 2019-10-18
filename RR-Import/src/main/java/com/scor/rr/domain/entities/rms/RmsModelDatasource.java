@@ -17,7 +17,7 @@ import java.sql.Date;
 @Data
 public class RmsModelDatasource {
     @Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RmsId")
     private Long rmsId;
     @Column(name = "Name")
