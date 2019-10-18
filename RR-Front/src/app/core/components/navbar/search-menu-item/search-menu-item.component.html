@@ -1,0 +1,177 @@
+<form class="my-class" [formGroup]="contractFilterFormGroup">
+
+  <nz-input-group class="global-search-input-grp"
+                  [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
+                  [nzSuffix]="suffixIconSearch"
+                  [nzAddOnBefore]="prefixIconTag">
+    <input searchInput [ngClass]="{'search-page-active-border': isSearchRoute()}"
+           (onEnter)="onEnter($event)"
+           (onSpace)="onSpace($event)"
+           (onBackspace)="onBackspace($event)"
+           (onDelete)="onDelete($event)"
+           appScrollToParent
+           [scrollTo]="scrollParams?.scrollTo"
+           [listLength]="scrollParams?.listLength"
+           (emitScrollTo)="scrollParams.scrollTo = $event"
+           #searchInput
+           formControlName="globalKeyword" (click)="focusInput($event)"
+           class="search-input" type="text" nz-input [placeholder]="'Search for ' + searchMode || 'Treaty' ">
+  </nz-input-group>
+
+  <ng-template #prefixIconTag>
+    <div class="prefix-wrapper">
+      <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover
+              [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+        <i class="icon-code_24px"></i>
+      </button>
+<!--      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
+              (click)="toggleSearchConfigPopIn()" style="font-size: 16px; margin-right: 0px"
+              nz-popover [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
+        <i nz-icon nzType="setting" nzTheme="outline"></i>
+      </button>-->
+      <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
+              nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+      </button>
+      <div class="chips-wrapper">
+        <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)"
+                      [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #suffixIconSearch>
+    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
+       nzTheme="outline"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
+       class="icon-search_24px"></i>
+  </ng-template>
+
+  <ng-template #searchDropdown>
+    <div class="search-contextual-table"
+         nz-menu style="height: 300px; overflow: auto; width: 750px">
+      <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
+        <div class="search-history-component" style="position: relative;">
+          <div class="header-wrapper">
+            <span class="search-history-header">RECENT SEARCH</span>
+            <!--                <span class="search-history-viewAll">See All</span>-->
+          </div>
+          <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
+            <li *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)"
+                (dblclick)="selectSearchAndRedirect(items)">
+              <div class="chip-container" *ngFor="let instance of items">
+                <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
+              </div>
+            </li>
+          </ul>
+
+          <ng-template #emptyRecent>
+            <div>
+<!--              <nz-empty></nz-empty>-->
+            </div>
+          </ng-template>
+        </div>
+        <div class="search-history-component" style="position: relative;">
+          <div class="header-wrapper">
+            <span class="search-history-header">SAVED SEARCH</span>
+            <span class="search-history-viewAll">See All</span>
+          </div>
+          <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
+            <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
+              <div class="chip-container" *ngFor="let instance of items">
+                <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <ng-template #basicTable>
+        <div class="result-wrapper" *ngIf="state?.data?.length > 0 && !state?.emptyResult; else loadingTemp">
+          <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
+            <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span"
+                  *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
+            <ul class="search-result-list">
+              <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index"
+                  [scrollTo]="scrollParams.scrollTo" [i]="i" [k]="k" [data]="state?.data"
+                  (setPos)="scrollParams.position= $event" appKeyDownScroll
+                  (click)="selectSearchBadge(state?.tables[i], val.label)">
+                <span>{{val.countOccur}}</span>
+                <p [innerHtml]="val.label| boldSpan: state.searchValue"></p>
+                <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #loadingTemp>
+        <ng-container *ngIf="state?.loading;else emptyState">
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </ng-container>
+        <ng-template #emptyState>
+          <div>
+            <nz-empty [nzNotFoundContent]="'No Corresponding Results !'"></nz-empty>
+          </div>
+        </ng-template>
+      </ng-template>
+      <div class="more-results-sction">
+        <button (click)="onEnter($event)" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #tagDropdown>
+    <div class="search-contextual-table"
+    nz-menu style="height: 550px; border-radius: 10px" [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '550px' : '350px'}">
+        <div class="tag-header">
+          <span>SEARCH MODE</span>
+          <div>
+            <nz-select
+              class="a-dropdown-small"
+              style="width: 100px;"
+              nzShowSearch
+              [nzAllowClear]="false"
+              nzPlaceHolder="Select Search Mode"
+              [(ngModel)]="searchMode"
+              [ngModelOptions]="{standalone: true}"
+            >
+              <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+              <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <div class="tag-header">
+          <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" class="switch-input" formControlName="expertModeToggle"></nz-switch>
+        </div>
+        <div class="tag-body" style="margin-bottom: 8px;">
+          <div class="tag-body-header">
+            <div style="line-height: 17px;">Using "" while in Expert Mode will display the results with the exact search term.<br/>
+                  Eg: c:"axa"
+            </div>
+          </div>
+        </div>
+        <div class="tag-body">
+          <div class="tag-body-header">
+              <i class="icon-info_24px"></i>
+              <span>Shortcut List:</span>
+          </div>
+          <div class="tags-wrapper">
+            <div [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '45%' : '75%'}" style="margin:auto">
+              <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
+                  <div class="tags-wrapper-left" *ngIf="i < 10">{{items.tag}}</div>
+                  <div class="tags-wrapper-right" *ngIf="i < 10">{{items.value}}</div>
+              </div>
+            </div>
+            <div *ngIf="state?.tagShortcuts.length > 10" style="width:45%; margin:auto">
+              <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
+                  <div class="tags-wrapper-left" *ngIf="i >= 10">{{items.tag}}</div>
+                  <div class="tags-wrapper-right" *ngIf="i >= 10">{{items.value}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </ng-template>
+
+</form>
+

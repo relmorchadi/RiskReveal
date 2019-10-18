@@ -1,0 +1,229 @@
+.a-buttons-contained, .a-buttons-contained-mini, .a-buttons-contained-micro {
+  background-color: #0700CF;
+  color: #FFFFFF;
+  font-size: 14.22px;
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  border-radius: 36px;
+  line-height: 16px;
+  text-align: center;
+  cursor: pointer;
+  padding: 7px 20px 7px;
+  border: none;
+  background-position: center;
+  transition: background 1s;
+  text-transform: uppercase;
+
+  &:hover {
+    background: #0700CF radial-gradient(circle, transparent 1%, #0700CF 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.32) !important;
+    background-size: 100% !important;
+    transition: background 0s !important;
+  }
+
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.a-buttons-contained-disabled, .a-buttons-contained-disabled-mini, .a-buttons-contained-disabled-micro {
+  background-color: #DFDFDF;
+  color: #8A8A8A;
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: 500;
+  border-radius: 36px;
+  letter-spacing: 1.25px;
+  padding: 7px 20px 7px;
+  border: none;
+  line-height: 16px;
+  text-align: center;
+  background-position: center;
+  transition: background 0.8s;
+  text-transform: uppercase;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.a-buttons-contained-mini, .a-buttons-contained-disabled-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
+}
+
+.a-buttons-contained-micro, .a-buttons-contained-disabled-micro {
+  font-size: 11px;
+  line-height: 12px;
+  padding: 6px 15px 6px;
+}
+
+.a-buttons-outlined, .a-buttons-outlined-mini {
+  border: 1px solid #0700CF;
+  border-radius: 18px;
+  background-color: rgba(98, 2, 238, 0);
+  color: #0700CF;
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: bold;
+  letter-spacing: 1.25px;
+  text-align: center;
+  padding: 6px 11px;
+  cursor: pointer;
+  background-position: center;
+  transition: background 1s;
+  text-transform: uppercase;
+
+  i{
+    font-weight: bold;
+  }
+
+  &:hover {
+    background: transparent radial-gradient(circle, transparent 1%, #FFFFFF 1%) center/15000%;
+  }
+
+  &:active {
+    background-color: #D5D5EF !important;
+    background-size: 100% !important;
+    transition: background 0s !important;
+  }
+
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.a-buttons-outlined-mini {
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.a-button-text, .a-button-text-warning, .a-button-text-cancel, .a-button-text-cancel-mini {
+  border: none;
+  background-color: #FFFFFF;
+  color: #0700CF;
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: bold;
+  letter-spacing: 1.25px;
+  text-align: center;
+  padding: 8px 20px 6px;
+  cursor: pointer;
+  background-position: center;
+  transition: background 1s;
+  text-transform: uppercase;
+  border-radius: 20px;
+
+  &:hover {
+    background: #EBEBF8 radial-gradient(circle, transparent 1%, #EBEBF8 1%) center/15000%;
+    border-radius: 20px;
+  }
+
+  &:active {
+    background-color: #D5D5EF !important;
+    background-size: 100% !important;
+    transition: background 0s !important;
+  }
+
+  &:focus {
+    outline: 0 !important;
+  }
+
+}
+
+.a-button-text-cancel, .a-button-text-cancel-mini {
+  color: #A8A8A8;
+}
+
+.a-button-text-warning {
+  color: #D0021B;
+}
+
+.a-button-text-cancel-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
+}
+
+.button-outlined-disabled {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 18px;
+  color: rgba(0, 0, 0, 0.38);
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  padding: 8px 20px 6px;
+  line-height: 16px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.button-no-outline-disabled {
+  border-radius: 18px;
+  color: rgba(0, 0, 0, 0.6);
+  background-color: #FFFFFF;
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: bold;
+  letter-spacing: 1.25px;
+  padding: 8px 20px 6px;
+  border: none;
+  line-height: 16px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.button-icon-default {
+  background-color: #0700CF;
+  color: #FFFFFF;
+  padding: 1px;
+  font-size: 17px;
+  border: none;
+  border-radius: 20px;
+  text-transform: uppercase;
+
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.button-icon-outlined {
+
+}
+
+.button-icon-disabled {
+
+}
+
+.pine-btn {
+  box-sizing: border-box;
+  height: 57px;
+  width: 57px;
+  background: transparent;
+  border: 1px solid #E5E9FA;
+
+  .active {
+    color: rgb(91, 139, 159);
+  }
+
+  .inactive {
+    color: #fff;
+  }
+}
+
+.a-buttons-linked {
+  background-color: transparent;
+  border: none;
+  color: rgba(0,0,0,0.6);
+  line-height: 28px;
+  text-decoration: underline;
+
+  &:focus {
+    outline: 0;
+  }
+}

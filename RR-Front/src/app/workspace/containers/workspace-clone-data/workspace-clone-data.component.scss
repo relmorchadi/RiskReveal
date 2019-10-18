@@ -1,0 +1,273 @@
+:host {
+  display: flex;
+  width: 100%;
+
+  @media  screen and (min-width: 1900px) {
+    height: 100vh;
+  }
+
+
+  .app-wrapper{
+    background-color: #F4F6FC;
+    display: flex;
+    flex-direction: column;
+    width:100%;
+    height: 100%;
+
+    .app-header{
+      display: flex;
+      width: 100%;
+      margin: 20px;
+      flex: 0 1 auto;
+    }
+
+    .app-body{
+      flex: 1 1 auto;
+      display: flex;
+      flex-flow: column;
+    }
+    .subtitle-2 {
+      display: flex;
+      align-items: flex-end;
+    }
+  }
+
+  .box-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 25px;
+    margin-top: 25px;
+  }
+
+  .plts-detail-boxes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    //justify-content: center;
+    //align-items: center;
+    //padding: 25px;
+  }
+
+  .box {
+    margin: 10px;
+    background-color: #fff;
+    display: flex;
+    width: 23%;
+
+    .left {
+      font-size: 25px;
+      i {
+        color: #fff;
+      }
+    }
+
+    .right {
+      position: relative;
+      display: flex;
+      flex-flow: column;
+      padding: 0 0 0 16px;
+    }
+  }
+
+  .edit-box {
+    justify-content: center;
+    align-items: center;
+
+    i, span {
+      color: #3b00dd;
+      margin: 0 3px;
+      cursor: pointer;
+    }
+
+    span {
+      text-decoration: underline;
+    }
+
+  }
+
+  .box:nth-child(2) {
+    i {
+      padding: 0 4px;
+    }
+  }
+
+  .box-item {
+    margin-top: 25px;
+    padding: 16px 25px;
+
+    .left-box, .right-box {
+      width: 50%;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+    }
+
+    .left-box {
+      justify-content: flex-start;
+    }
+
+    .right-box {
+      justify-content: flex-end;
+    }
+  }
+
+  .box-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 50px;
+    padding: 25px;
+
+    button {
+      margin: 0 3px;
+    }
+  }
+  .a-button-text {
+    background-color: inherit;
+  }
+  .a-button-text:hover {
+    background-color: #fff;
+  }
+
+  .default-radio {
+    label {
+      padding: 7px;
+    }
+
+    .label-border {
+      border: 3px solid var(--primary-1);
+      z-index: 1;
+      border-bottom: 3px solid #F4F6FC;
+    }
+  }
+
+  ::ng-deep {
+    .ant-radio-group {
+      display: flex;
+    }
+    .ant-radio-wrapper {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  ::ng-deep {
+    .ant-divider-horizontal {
+      height: 1.5px;
+    }
+  }
+
+  app-plt-left-menu {
+    ::ng-deep {
+      .ant-tabs-content {
+        padding-left: 3px;
+      }
+    }
+  }
+
+}
+
+
+.override {
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  i {
+    font-size: 25px;
+  }
+}
+
+.toHide {
+  width: 100%;
+  height: 10px;
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  background-color: #F4F6FC;
+}
+
+.content {
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    justify-content: space-between;
+
+    span {
+      padding: 16px 43px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+    }
+  }
+
+  .right, .left {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 6px rgba(0,0,0,0.23);
+    margin-right: 10px;
+  }
+
+  .PLTs-content {
+    padding: 0 21px 0 16px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+}
+
+.global-search-input-grp {
+  ::ng-deep span.ant-input-group-addon.ng-star-inserted {
+    background-color: #FFF;
+    border: none;
+    border-radius: 20px 0px 0px 20px;
+    padding-right: 0px !important;
+    padding: 0 6px;
+  }
+
+  ::ng-deep {
+    .ant-input-affix-wrapper .ant-input:not(:last-child) {
+      padding-left: 6px;
+    }
+
+    .ant-input-affix-wrapper .ant-input-suffix {
+      display: flex;
+    }
+  }
+
+  ::ng-deep nz-tag {
+    margin: 0px 5px !important;
+    border-radius: 10px;
+  }
+
+  //::ng-deep i.icon-pricetag-alt{
+  //  font-size: 22px;
+  //  margin-left: -5px;
+  //}
+}
+
+.search-input {
+  border-radius: 24px;
+  background-color: #FFF;
+  border: none;
+}
+
+.prefix-wrapper {
+  display: flex;
+  line-height: 0rem;
+
+  .chips-wrapper {
+    display: flex;
+  }
+}
+
+.code-button {
+  font-size: 19px;
+  background: transparent;
+  border: none;
+  padding: 1px 5px;
+  //margin-right: 4px;
+  &:focus {
+    outline: 0;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+}
