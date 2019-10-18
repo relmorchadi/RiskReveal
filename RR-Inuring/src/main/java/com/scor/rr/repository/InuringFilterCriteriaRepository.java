@@ -1,8 +1,11 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.entity.InuringFilterCriteria;
+import com.scor.rr.enums.InuringElementType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by Soufiane Izend on 01/10/2019.
@@ -14,4 +17,6 @@ public interface InuringFilterCriteriaRepository extends JpaRepository<InuringFi
     void deleteByInuringFilterCriteriaId(int inuringFilterCriteriaId);
 
     InuringFilterCriteria findByInuringFilterCriteriaId(int inuringFilterCriteriaId);
+
+    List<InuringFilterCriteria> findByInuringObjectIdAndInuringObjectType(int inuringObjectId, InuringElementType inuringElementType);
 }

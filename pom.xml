@@ -23,6 +23,7 @@
         <module>RR-Backend</module>
         <module>RR-Import</module>
         <module>RR-Proxy</module>
+        <module>RR-Inuring</module>
     </modules>
 
     <properties>

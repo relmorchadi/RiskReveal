@@ -27,6 +27,9 @@ public class InuringFinalNode {
         this.inuringOutputGrain = InuringOutputGrain.MinimunRegionPeril;
     }
 
+    public InuringFinalNode(){
+    }
+
     @Id
     @Column(name = "InuringFinalNodeId", nullable = false)
     public int getInuringFinalNodeId() {

@@ -3,6 +3,7 @@ package com.scor.rr.rest;
 
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.request.InuringContractNodeCreationRequest;
+import com.scor.rr.response.InuringContractNodeDetailsResponse;
 import com.scor.rr.service.InuringContractNodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,17 @@ public class InuringContractNodeController {
     @PostMapping("create")
     public ResponseEntity<?> createInuringContract(@RequestBody InuringContractNodeCreationRequest request) throws RRException {
         inuringContractNodeService.createInuringContractNode(request);
+        return ResponseEntity.ok("it's working");
+    }
+
+    @PostMapping("read")
+    public InuringContractNodeDetailsResponse readInuringContract(@RequestParam("id") int id) throws RRException{
+        return inuringContractNodeService.readInuringContractNode(id);
+    }
+
+    @DeleteMapping("delete")
+    public ResponseEntity<?> deleteInuringContract(@RequestParam("id") int id){
+        inuringContractNodeService.deleteInuringContractNode(id);
         return ResponseEntity.ok("it's working");
     }
 }

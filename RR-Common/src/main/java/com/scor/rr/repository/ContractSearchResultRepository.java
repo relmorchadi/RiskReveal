@@ -19,7 +19,7 @@ public interface ContractSearchResultRepository extends JpaRepository<ContractSe
     Stream<ContractSearchResult> findDistinctByWorkSpaceId(String uwy);
 
     @Query("select c from ContractSearchResult c where c.workSpaceId= :wkspId and concat(c.uwYear,'')= :uwy order by c.workSpaceId asc, c.uwYear asc")
-    List<ContractSearchResult> findByTreatyidAndUwYear(@Param("wkspId") String workspaceId, String uwy);
+    List<ContractSearchResult> findByTreatyidAndUwYear(@Param("wkspId") String workspaceId,@Param("uwy") String uwy);
 
 
     @Query(value = "select c.workSpaceId as workSpaceId, c.workspaceName as workspaceName, c.uwYear as uwYear, c.cedantCode as cedantCode, c.cedantName as cedantName, c.countryName as countryName from ContractSearchResult c " +
