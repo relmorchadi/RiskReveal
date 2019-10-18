@@ -11,6 +11,6 @@ public interface PLTHeaderTagRepository extends JpaRepository<PLTHeaderTag, Inte
 
     Set<PLTHeaderTag> findByPltHeaderId(Integer pltHeaderId);
 
-    Set<PLTHeaderTag> findByWorkspaceId(Integer workspaceId);
+    Set<PLTHeaderTag> findByWorkspaceId(Long workspaceId);
 
 }

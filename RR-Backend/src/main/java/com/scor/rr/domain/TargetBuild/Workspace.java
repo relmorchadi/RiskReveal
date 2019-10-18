@@ -1,9 +1,7 @@
 package com.scor.rr.domain.TargetBuild;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.TargetBuild.Project.Project;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,17 +10,16 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "tb")
+@Table(name = "Workspace", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class Workspace implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WorkspaceId")
-    private Integer workspaceId;
+    private Long workspaceId;
 
     @Column(name = "Entity")
     private Integer entity;

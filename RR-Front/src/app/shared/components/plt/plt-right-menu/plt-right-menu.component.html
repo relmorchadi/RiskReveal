@@ -2,395 +2,388 @@
   <div class="navigation-icons-drawer">
     <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
   </div>
-
-  <ng-container *ngIf="fullViewActive">
-    <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
-  </ng-container>
-  <ng-container *ngIf="!fullViewActive">
     <div class="plt-details-header">
       <hr>
       <div>PLT Details</div>
     </div>
     <div class="plt-detail-body">
       <div class="plt-details-brief">
-        <i *ngIf="inputs['pltDetail']?.pltStatus == 'valid'" class="icon-check_circle_outline_24px"></i>
+        <i class="icon-check_circle_outline_24px"></i>
         <div class="plt-detail-brief-desc">
           <span>{{inputs['pltDetail']?.pltName}}</span>
-          <div style="display: flex;justify-content: space-around">
-            <span style="font-weight: bold">[{{inputs['pltDetail']?.pltId}}]</span>
-            <span style="font-weight: bold">[{{inputs['pltDetail']?.pltType}}]</span>
-          </div>
+          <span style="font-weight: bold">[{{inputs['pltDetail']?.pltId}}]</span>
+
         </div>
       </div>
-      <nz-tabset
-        [nzSelectedIndex]="activeTabIndex"
-        (nzSelectedIndexChange)="loadTab($event)"
-      >
-        <nz-tab nzTitle="Summary">
-          <div class="summary-content">
-            <div style="display: flex">
-              <div *ngFor="let tag of inputs['pltDetail']?.tags" style="margin: 4px 5px 5px 4px;">
-                <span class="a-chips-input-filled-textonly" style="padding: 1px 10px !important;" [ngStyle]="{'background-color': tag?.defaultColor}">
-                  <span class="chips-content">{{tag?.tagName}}</span>
-                </span>
+      <div class="plt-details-tabs">
+        <nz-tabset >
+          <nz-tab nzTitle="Summary">
+            <div class="summary-content">
+              <div style="display: flex">
+                <div *ngFor="let tag of inputs['pltDetail']?.userTags" style="margin: 4px 5px 5px 4px;">
+                        <span class="a-chips-input-filled-textonly" style="padding: 1px 10px !important;"
+                              [ngStyle]="{'background-color': tag.tagColor}">
+                          <span class="chips-content">{{tag.tagName}}</span>
+                        </span>
+                </div>
               </div>
             </div>
-          </div>
-            <ng-container *ngIf="!fullViewActive;else fullSectionView">
-              <div class="summary-table">
+            <div class="summary-table">
+              <ng-container *ngIf="!fullViewActive;else fullSectionView">
                 <app-plt-details-pop-up-item *ngFor="let config of pltPopUpItemConfig" [inputs]="config" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-item>
-              </div>
-            </ng-container>
-            <ng-template #fullSectionView>
-              <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
-            </ng-template>
-        </nz-tab>
-        <nz-tab nzTitle="EP Metrics">
-          <div class="ep-metrics-content">
-            <div nz-row class="dropdowns">
-              <div nz-col [nzSpan]="6">
-                <div class="dropdown-currency">
-                  <nz-dropdown [nzTrigger]="'click'">
-                    <a nz-dropdown>
-                      <div style="display:flex">
-                        <div class="dropdown-currency-title">
-                          <span class="dropdown-currency-header">Display Currency</span>
-                          <span class="dropdown-currency-subtitle" style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
-                        </div>
-                        <i nz-icon type="down"></i>
-                      </div>
-                    </a>
-                    <ul nz-menu>
-                      <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
-                          *ngFor="let currency of currencies">{{currency?.label}}
-                      </li>
-                    </ul>
-                  </nz-dropdown>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="1">&nbsp;</div>
-              <div nz-col [nzSpan]="6">
-                <div class="dropdown-financial-unit">
-                  <nz-dropdown [nzTrigger]="'click'">
-                    <a nz-dropdown>
-                      <div style="display:flex">
-                        <div class="dropdown-unit-title">
-                          <span class="dropdown-unit-header">Financial Unit</span>
-                          <span class="dropdown-unit-subtitle"
-                                style="font-weight: bold;">{{epMetricsFinancialUnitSelected}}</span>
-                        </div>
-                        <i nz-icon type="down"></i>
-                      </div>
-                    </a>
-                    <ul nz-menu>
-                      <li nz-menu-item (click)="epMetricsFinancialUnitSelected = unit?.label"
-                          *ngFor="let unit of units">{{unit?.label}}
-                      </li>
-                    </ul>
-                  </nz-dropdown>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="4">&nbsp;</div>
-              <div nz-col [nzSpan]="6">
-                <div class="dropdown-ep-metric">
-                  <nz-dropdown [nzTrigger]="'click'">
-                    <a nz-dropdown nz-row>
-                      <div nz-col [nzSpan]="12">
-                        Metric
-                      </div>
-                      <div nz-col [nzSpan]="6">&nbsp;</div>
-                      <i nz-icon type="down" nz-col [nzSpan]="6"></i>
-                    </a>
-                    <ul nz-menu>
-                      <li nz-menu-item>AEP</li>
-                      <li nz-menu-item>OEP</li>
-                    </ul>
-                  </nz-dropdown>
-                </div>
-              </div>
-              <div nz-col [nzSpan]="1">&nbsp;</div>
+              </ng-container>
+              <ng-template #fullSectionView>
+                <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
+              </ng-template>
             </div>
-            <div class="ep-metric-tabset">
+          </nz-tab>
+          <nz-tab nzTitle="EP Metrics">
+            <div class="ep-metrics-content">
+              <div nz-row class="dropdowns">
+                <div nz-col [nzSpan]="6">
+                  <div class="dropdown-currency">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <a nz-dropdown>
+                        <div style="display:flex">
+                          <div class="dropdown-currency-title">
+                            <span class="dropdown-currency-header">Display Currency</span>
+                            <span class="dropdown-currency-subtitle"
+                                  style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
+                          </div>
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </a>
+                      <ul nz-menu>
+                        <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
+                            *ngFor="let currency of currencies">{{currency?.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+                <div nz-col [nzSpan]="1">&nbsp;</div>
+                <div nz-col [nzSpan]="6">
+                  <div class="dropdown-financial-unit">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <a nz-dropdown>
+                        <div style="display:flex">
+                          <div class="dropdown-unit-title">
+                            <span class="dropdown-unit-header">Financial Unit</span>
+                            <span class="dropdown-unit-subtitle"
+                                  style="font-weight: bold;">{{epMetricsFinancialUnitSelected}}</span>
+                          </div>
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </a>
+                      <ul nz-menu>
+                        <li nz-menu-item (click)="epMetricsFinancialUnitSelected = unit?.label"
+                            *ngFor="let unit of units">{{unit?.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+                <div nz-col [nzSpan]="4">&nbsp;</div>
+                <div nz-col [nzSpan]="6">
+                  <div class="dropdown-ep-metric">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <a nz-dropdown nz-row>
+                        <div nz-col [nzSpan]="12">
+                          Metric
+                        </div>
+                        <div nz-col [nzSpan]="6">&nbsp;</div>
+                        <i nz-icon type="down" nz-col [nzSpan]="6"></i>
+                      </a>
+                      <ul nz-menu>
+                        <li nz-menu-item>AEP</li>
+                        <li nz-menu-item>OEP</li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+                <div nz-col [nzSpan]="1">&nbsp;</div>
+              </div>
+              <div class="ep-metric-tabset">
+                <nz-tabset>
+                  <nz-tab [nzTitle]="table">
+                    <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+                    <div class="metric-table-content">
+                      <nz-table [nzData]="metrics" [nzShowPagination]="false" class="table metric-table">
+                        <thead>
+                        <tr>
+                          <th>&nbsp;</th>
+                          <th style="max-width: 70px !important;">Retrun Period</th>
+                          <th>OEP</th>
+                          <th>AEP</th>
+                          <th>TVaR-OEP</th>
+                          <th>TVaR-AEP</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let metric of metrics">
+                          <td>&nbsp;</td>
+                          <td>{{metric.retrunPeriod}}</td>
+                          <td>{{metric.OEP}}</td>
+                          <td>{{metric.AEP}}</td>
+                          <td>{{metric.TVaR_AEP}}</td>
+                          <td>{{metric.TVaR_OEP}}</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                          <td><i class="icon-plus-circle"></i></td>
+                          <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                          </td>
+                          <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                          </td>
+                          <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                          </td>
+                          <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                          </td>
+                          <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                          </td>
+                        </tr>
+                        </tfoot>
+                      </nz-table>
+                    </div>
+                    <div class="metric-table-footer">
+                      <div nz-row>
+                        <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
+                        <div nz-col nzSpan="1">&nbsp;</div>
+                        <div nz-col nzSpan="5">323,849</div>
+                        <div nz-col nzSpan="3">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
+                        <div nz-col nzSpan="1">&nbsp;</div>
+                        <div nz-col nzSpan="5">5,806,767</div>
+                        <div nz-col nzSpan="3">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="5" style="text-align: right">CoV</div>
+                        <div nz-col nzSpan="1">&nbsp;</div>
+                        <div nz-col nzSpan="5">17.83</div>
+                        <div nz-col nzSpan="3">&nbsp;</div>
+                      </div>
+
+                    </div>
+                  </nz-tab>
+                  <nz-tab [nzTitle]="chart">
+                    <ng-template #chart><i class="icon-show_chart_24px"
+                                           style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+                    </ng-template>
+                    <div class="metric-chart-content">
+                      <img src="../../../../assets/images/RRchartInVision.png">
+                    </div>
+                  </nz-tab>
+                </nz-tabset>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Other Metrics">
+            <div class="other-metrics-content"></div>
+          </nz-tab>
+          <nz-tab nzTitle="Calibration">
+            <div class="calibration-content">
               <nz-tabset>
-                <nz-tab [nzTitle]="table">
-                  <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
-                  <div class="metric-table-content">
-                    <nz-table [nzData]="metrics" [nzShowPagination]="false" class="table metric-table">
-                      <thead>
-                      <tr>
-                        <th>&nbsp;</th>
-                        <th style="max-width: 70px !important;">Retrun Period</th>
-                        <th>OEP</th>
-                        <th>AEP</th>
-                        <th>TVaR-OEP</th>
-                        <th>TVaR-AEP</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr *ngFor="let metric of metrics">
-                        <td>&nbsp;</td>
-                        <td>{{metric.retrunPeriod}}</td>
-                        <td>{{metric.OEP}}</td>
-                        <td>{{metric.AEP}}</td>
-                        <td>{{metric.TVaR_AEP}}</td>
-                        <td>{{metric.TVaR_OEP}}</td>
-                      </tr>
-                      </tbody>
-                      <tfoot>
-                      <tr>
-                        <td><i class="icon-plus-circle"></i></td>
-                        <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
-                        </td>
-                        <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
-                        </td>
-                        <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
-                        </td>
-                        <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
-                        </td>
-                        <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
-                        </td>
-                      </tr>
-                      </tfoot>
-                    </nz-table>
-                  </div>
-                  <div class="metric-table-footer">
-                    <div nz-row>
-                      <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
-                      <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">323,849</div>
-                      <div nz-col nzSpan="3">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
-                      <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">5,806,767</div>
-                      <div nz-col nzSpan="3">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="5" style="text-align: right">CoV</div>
-                      <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">17.83</div>
-                      <div nz-col nzSpan="3">&nbsp;</div>
-                    </div>
 
-                  </div>
-                </nz-tab>
-                <nz-tab [nzTitle]="chart">
-                  <ng-template #chart><i class="icon-show_chart_24px"
-                                         style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
-                  </ng-template>
-                  <div class="metric-chart-content">
-                    <img src="../../../../assets/images/RRchartInVision.png">
-                  </div>
-                </nz-tab>
-              </nz-tabset>
-            </div>
-          </div>
-        </nz-tab>
-        <nz-tab nzTitle="Other Metrics">
-          <div class="other-metrics-content"></div>
-        </nz-tab>
-        <nz-tab nzTitle="Calibration">
-          <div class="calibration-content">
-            <nz-tabset>
+                <nz-tab nzTitle="Thread">
+                  <div class="thread-content">
 
-              <nz-tab nzTitle="Thread">
-                <div class="thread-content">
-
-                  <div nz-row *ngFor="let thead of theads">
-                    <div nz-col nzSpan="6" class="title">
+                    <div nz-row *ngFor="let thead of theads">
+                      <div nz-col nzSpan="6" class="title">
                             <span>
                               {{thead.title}}
                             </span>
-                    </div>
-                    <div nz-col nzSpan="3"></div>
-                    <div nz-col nzSpan="6">
-                      <div class="card" *ngFor="let card of thead.cards"
-                           [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected), 'box-shadow': getBoxShadow(card.selected)}"
-                           (click)="selectCardThead(card)">
-                        <span>{{card.content}}</span>
-                        <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
                       </div>
+                      <div nz-col nzSpan="3"></div>
+                      <div nz-col nzSpan="6">
+                        <div class="card" *ngFor="let card of thead.cards"
+                             [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected), 'box-shadow': getBoxShadow(card.selected)}"
+                             (click)="selectCardThead(card)">
+                          <span>{{card.content}}</span>
+                          <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
+                        </div>
+                      </div>
+                      <div nz-col nzSpan="9i"></div>
                     </div>
-                    <div nz-col nzSpan="9i"></div>
+
                   </div>
+                </nz-tab>
 
-                </div>
-              </nz-tab>
-
-              <nz-tab nzTitle="Impact">
-                <div class="impact-content">
-                  <div nz-row class="dropdowns">
-                    <div nz-col [nzSpan]="6">
-                      <div class="dropdown-currency">
-                        <nz-dropdown [nzTrigger]="'click'">
-                          <a nz-dropdown>
-                            <div style="display:flex">
-                              <div class="dropdown-currency-title">
-                                <span class="dropdown-currency-header">Display Currency</span>
-                                <span class="dropdown-currency-subtitle"
-                                      style="font-weight: bold;">{{CalibrationImpactCurrencySelected}}</span>
+                <nz-tab nzTitle="Impact">
+                  <div class="impact-content">
+                    <div nz-row class="dropdowns">
+                      <div nz-col [nzSpan]="6">
+                        <div class="dropdown-currency">
+                          <nz-dropdown [nzTrigger]="'click'">
+                            <a nz-dropdown>
+                              <div style="display:flex">
+                                <div class="dropdown-currency-title">
+                                  <span class="dropdown-currency-header">Display Currency</span>
+                                  <span class="dropdown-currency-subtitle"
+                                        style="font-weight: bold;">{{CalibrationImpactCurrencySelected}}</span>
+                                </div>
+                                <i nz-icon type="down"></i>
                               </div>
-                              <i nz-icon type="down"></i>
-                            </div>
-                          </a>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="CalibrationImpactCurrencySelected = currency?.label"
-                                *ngFor="let currency of currencies">{{currency?.label}}
-                            </li>
-                          </ul>
-                        </nz-dropdown>
+                            </a>
+                            <ul nz-menu>
+                              <li nz-menu-item (click)="CalibrationImpactCurrencySelected = currency?.label"
+                                  *ngFor="let currency of currencies">{{currency?.label}}
+                              </li>
+                            </ul>
+                          </nz-dropdown>
+                        </div>
                       </div>
-                    </div>
-                    <div nz-col [nzSpan]="1">&nbsp;</div>
-                    <div nz-col [nzSpan]="6">
-                      <div class="dropdown-financial-unit">
-                        <nz-dropdown [nzTrigger]="'click'">
-                          <a nz-dropdown>
-                            <div style="display:flex">
-                              <div class="dropdown-unit-title">
-                                <span class="dropdown-unit-header">Financial Unit</span>
-                                <span class="dropdown-unit-subtitle"
-                                      style="font-weight: bold;">{{CalibrationImpactFinancialUnitSelected}}</span>
+                      <div nz-col [nzSpan]="1">&nbsp;</div>
+                      <div nz-col [nzSpan]="6">
+                        <div class="dropdown-financial-unit">
+                          <nz-dropdown [nzTrigger]="'click'">
+                            <a nz-dropdown>
+                              <div style="display:flex">
+                                <div class="dropdown-unit-title">
+                                  <span class="dropdown-unit-header">Financial Unit</span>
+                                  <span class="dropdown-unit-subtitle"
+                                        style="font-weight: bold;">{{CalibrationImpactFinancialUnitSelected}}</span>
+                                </div>
+                                <i nz-icon type="down"></i>
                               </div>
-                              <i nz-icon type="down"></i>
+                            </a>
+                            <ul nz-menu>
+                              <li nz-menu-item (click)="CalibrationImpactFinancialUnitSelected = unit?.label"
+                                  *ngFor="let unit of units">{{unit?.label}}
+                              </li>
+                            </ul>
+                          </nz-dropdown>
+                        </div>
+                      </div>
+                      <div nz-col [nzSpan]="4">&nbsp;</div>
+                      <div nz-col [nzSpan]="6">
+                        <div class="dropdown-ep-metric">
+                          <nz-dropdown [nzTrigger]="'click'">
+                            <a nz-dropdown nz-row>
+                              <div nz-col [nzSpan]="12">
+                                EP Metric
+                              </div>
+                              <div nz-col [nzSpan]="6">&nbsp;</div>
+                              <i nz-icon type="down" nz-col [nzSpan]="6"></i>
+                            </a>
+                            <ul nz-menu>
+                              <li nz-menu-item>AEP</li>
+                              <li nz-menu-item>OEP</li>
+                            </ul>
+                          </nz-dropdown>
+                        </div>
+                      </div>
+                      <div nz-col [nzSpan]="1">&nbsp;</div>
+                    </div>
+                    <div class="impact-tabset">
+                      <nz-tabset>
+                        <nz-tab [nzTitle]="table">
+                          <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+                          <div class="metric-table-content">
+                            <table class="table metric-table">
+                              <thead>
+                              <tr>
+                                <th>Retrun Period</th>
+                                <th>OEP</th>
+                                <th>AEP</th>
+                                <th>TVaR-OEP</th>
+                                <th>TVaR-AEP</th>
+                              </tr>
+                              </thead>
+                              <tbody *ngFor="let metric of metrics">
+                              <tr>
+                                <td align="right">{{metric.retrunPeriod}}</td>
+                                <td>{{metric.OEP}}</td>
+                                <td>{{metric.AEP}}</td>
+                                <td>{{metric.TVaR_AEP}}</td>
+                                <td>{{metric.TVaR_OEP}}</td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="metric-table-footer">
+                            <div nz-row>
+                              <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
+                              <div nz-col nzSpan="1">&nbsp;</div>
+                              <div nz-col nzSpan="5">323,849</div>
+                              <div nz-col nzSpan="5">323,884</div>
+                              <div nz-col nzSpan="5">323,8894</div>
+                              <div nz-col nzSpan="3">&nbsp;</div>
                             </div>
-                          </a>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="CalibrationImpactFinancialUnitSelected = unit?.label"
-                                *ngFor="let unit of units">{{unit?.label}}
-                            </li>
-                          </ul>
-                        </nz-dropdown>
-                      </div>
-                    </div>
-                    <div nz-col [nzSpan]="4">&nbsp;</div>
-                    <div nz-col [nzSpan]="6">
-                      <div class="dropdown-ep-metric">
-                        <nz-dropdown [nzTrigger]="'click'">
-                          <a nz-dropdown nz-row>
-                            <div nz-col [nzSpan]="12">
-                              EP Metric
+                            <div nz-row>
+                              <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
+                              <div nz-col nzSpan="1">&nbsp;</div>
+                              <div nz-col nzSpan="5">5,806,767</div>
+                              <div nz-col nzSpan="5">5,806,767</div>
+                              <div nz-col nzSpan="5">5,806,767</div>
+                              <div nz-col nzSpan="3">&nbsp;</div>
                             </div>
-                            <div nz-col [nzSpan]="6">&nbsp;</div>
-                            <i nz-icon type="down" nz-col [nzSpan]="6"></i>
-                          </a>
-                          <ul nz-menu>
-                            <li nz-menu-item>AEP</li>
-                            <li nz-menu-item>OEP</li>
-                          </ul>
-                        </nz-dropdown>
-                      </div>
+                            <div nz-row>
+                              <div nz-col nzSpan="5" style="text-align: right">CoV</div>
+                              <div nz-col nzSpan="1">&nbsp;</div>
+                              <div nz-col nzSpan="5">17.83</div>
+                              <div nz-col nzSpan="5">17.83</div>
+                              <div nz-col nzSpan="5">17.83</div>
+                              <div nz-col nzSpan="3">&nbsp;</div>
+                            </div>
+
+                          </div>
+                        </nz-tab>
+                        <nz-tab [nzTitle]="chart">
+                          <ng-template #chart><i class="icon-show_chart_24px"
+                                                 style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+                          </ng-template>
+                          <div class="metric-chart-content">
+                            <img src="../../../../assets/images/RRchartInVision.png">
+                          </div>
+                        </nz-tab>
+                      </nz-tabset>
                     </div>
-                    <div nz-col [nzSpan]="1">&nbsp;</div>
                   </div>
-                  <div class="impact-tabset">
-                    <nz-tabset>
-                      <nz-tab [nzTitle]="table">
-                        <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
-                        <div class="metric-table-content">
-                          <table class="table metric-table">
-                            <thead>
-                            <tr>
-                              <th>Retrun Period</th>
-                              <th>OEP</th>
-                              <th>AEP</th>
-                              <th>TVaR-OEP</th>
-                              <th>TVaR-AEP</th>
-                            </tr>
-                            </thead>
-                            <tbody *ngFor="let metric of metrics">
-                            <tr>
-                              <td align="right">{{metric.retrunPeriod}}</td>
-                              <td>{{metric.OEP}}</td>
-                              <td>{{metric.AEP}}</td>
-                              <td>{{metric.TVaR_AEP}}</td>
-                              <td>{{metric.TVaR_OEP}}</td>
-                            </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <div class="metric-table-footer">
-                          <div nz-row>
-                            <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
-                            <div nz-col nzSpan="1">&nbsp;</div>
-                            <div nz-col nzSpan="5">323,849</div>
-                            <div nz-col nzSpan="5">323,884</div>
-                            <div nz-col nzSpan="5">323,8894</div>
-                            <div nz-col nzSpan="3">&nbsp;</div>
-                          </div>
-                          <div nz-row>
-                            <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
-                            <div nz-col nzSpan="1">&nbsp;</div>
-                            <div nz-col nzSpan="5">5,806,767</div>
-                            <div nz-col nzSpan="5">5,806,767</div>
-                            <div nz-col nzSpan="5">5,806,767</div>
-                            <div nz-col nzSpan="3">&nbsp;</div>
-                          </div>
-                          <div nz-row>
-                            <div nz-col nzSpan="5" style="text-align: right">CoV</div>
-                            <div nz-col nzSpan="1">&nbsp;</div>
-                            <div nz-col nzSpan="5">17.83</div>
-                            <div nz-col nzSpan="5">17.83</div>
-                            <div nz-col nzSpan="5">17.83</div>
-                            <div nz-col nzSpan="3">&nbsp;</div>
-                          </div>
+                </nz-tab>
 
-                        </div>
-                      </nz-tab>
-                      <nz-tab [nzTitle]="chart">
-                        <ng-template #chart><i class="icon-show_chart_24px"
-                                               style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
-                        </ng-template>
-                        <div class="metric-chart-content">
-                          <img src="../../../../assets/images/RRchartInVision.png">
-                        </div>
-                      </nz-tab>
-                    </nz-tabset>
-                  </div>
-                </div>
-              </nz-tab>
-
-            </nz-tabset>
-          </div>
-        </nz-tab>
-        <nz-tab nzTitle="Lineage">
-          <div class="lineage-content">
-            <nz-tabset>
-              <nz-tab nzTitle="Dependencies">
-                <div class="dependencies-content">
-                  <div nz-row>
-                    <div nz-col nzSpan="8">&nbsp;</div>
-                    <div nz-col nzSpan="8" class="dependecies">
-                      <div class="dependency-card" *ngFor="let dependency of dependencies">
-                        <div nz-row class="card-content">
-                          <div nz-col nzSpan="7" class="title">{{dependency.title}}</div>
-                          <div nz-col nzSpan="16" class="content">{{dependency.content}}</div>
-                        </div>
-                        <div nz-row>
-                          <div nz-col nzSpan="8">&nbsp;</div>
-                          <div nz-col nzSpan="16">
-                            <nz-tag [nzColor]="'#e5e9fa'">{{dependency.chip}}</nz-tag>
+              </nz-tabset>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Lineage">
+            <div class="lineage-content">
+              <nz-tabset>
+                <nz-tab nzTitle="Dependencies">
+                  <div class="dependencies-content">
+                    <div nz-row>
+                      <div nz-col nzSpan="8">&nbsp;</div>
+                      <div nz-col nzSpan="8" class="dependecies">
+                        <div class="dependency-card" *ngFor="let dependency of dependencies">
+                          <div nz-row class="card-content">
+                            <div nz-col nzSpan="7" class="title">{{dependency.title}}</div>
+                            <div nz-col nzSpan="16" class="content">{{dependency.content}}</div>
+                          </div>
+                          <div nz-row>
+                            <div nz-col nzSpan="8">&nbsp;</div>
+                            <div nz-col nzSpan="16">
+                              <nz-tag [nzColor]="'#e5e9fa'">{{dependency.chip}}</nz-tag>
+                            </div>
                           </div>
                         </div>
                       </div>
+                      <div nz-col nzSpan="8">&nbsp;</div>
                     </div>
-                    <div nz-col nzSpan="8">&nbsp;</div>
                   </div>
-                </div>
-              </nz-tab>
-              <nz-tab nzTitle="Usage">
-                <div class="usage-content"></div>
-              </nz-tab>
-            </nz-tabset>
-          </div>
-        </nz-tab>
-        <nz-tab nzTitle="Impact to layer">
-          <div class="impact-to-layer-content"></div>
-        </nz-tab>
-      </nz-tabset>
+                </nz-tab>
+                <nz-tab nzTitle="Usage">
+                  <div class="usage-content"></div>
+                </nz-tab>
+              </nz-tabset>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Impact to layer">
+            <div class="impact-to-layer-content"></div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
     </div>
-  </ng-container>
 </div>
 
 

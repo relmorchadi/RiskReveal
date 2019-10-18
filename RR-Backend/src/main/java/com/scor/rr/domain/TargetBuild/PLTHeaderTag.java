@@ -10,7 +10,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "PLTHeaderTag", schema = "tb")
+@Table(name = "PLTHeaderTag", schema = "dr")
 @Data
 @NoArgsConstructor
 public class PLTHeaderTag {
@@ -27,7 +27,7 @@ public class PLTHeaderTag {
     private Integer pltHeaderId;
 
     @Column(name = "WorkspaceId")
-    private Integer workspaceId;
+    private Long workspaceId;
 
     @Column(name = "TagId")
     private Integer tagId;

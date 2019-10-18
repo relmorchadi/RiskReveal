@@ -1,10 +1,9 @@
 <p-dialog
   [visible]="visible"
-  [styleClass]="'m-dialog-modal-col-manager'"
-  [autoZIndex]="false"
-  [baseZIndex]="1"
   [closable]="false"
+  styleClass="m-dialog-modal cols-manager-pop-up"
   [modal]="true"
+  [autoZIndex]="false"
   [responsive]="true"
   (onHide)="onHide()"
   (onShow)="onShow()"
@@ -29,7 +28,7 @@
         class="m-box-d"
         (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
-          <div class="m-box-drag" cdkDrag>
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
             <div class="m-box-overlay">
               <div class="left">
                 <div class="burger" cdkDragHandle>
@@ -82,7 +81,7 @@
         class="m-box-d"
         (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
-          <div class="m-box-drag" cdkDrag>
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
             <div class="m-box-overlay">
               <div class="left">
                 <div class="burger" cdkDragHandle>
@@ -97,7 +96,7 @@
                   <div class="line"></div>
                 </div>
                 <span class="subtitle-2">
-              {{col?.header || col?.tooltip}}
+              {{col.header}}
               </span>
               </div>
               <!--
