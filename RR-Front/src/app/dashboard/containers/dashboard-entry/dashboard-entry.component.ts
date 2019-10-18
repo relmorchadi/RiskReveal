@@ -66,22 +66,22 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs',
+          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 102, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 102, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -135,22 +135,22 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs',
+          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status',
+          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -195,22 +195,22 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 99, icon: 'icon-camera-focus', title: 'New CARs',
+        id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs',
+        id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 101, icon: 'icon-camera-focus', title: 'Archived CARs',
+        id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status',
+        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }
@@ -268,17 +268,18 @@ export class DashboardEntryComponent implements OnInit {
           id: key,
           componentName,
           name: title,
-          icon: icon,
+          icon,
           selected: false,
           position: {rows: 2, cols: 3}
         })
       ),
       fac: _.map(selectedFacComponent,
-        ({componentName, title, icon}: any, key) => ({
+        ({componentName, title, type, icon}: any, key) => ({
           id: key,
           componentName,
           name: title,
-          icon: icon,
+          icon,
+          type,
           selected: false,
           position: {rows: 2, cols: 3}
         }))

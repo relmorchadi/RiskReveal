@@ -155,7 +155,7 @@ export class SubmissionPageComponent implements OnInit {
       contractName: 'ENNMG1800030 /ex ENEUR2800034',
       uwAnalysisProjectId: 'P-000' + Math.floor(Math.random() * 100000),
       uwAnalysisContractDate: this.uwYear + '-01',
-      assignedAnalyst: 'Nathalie Dulac',
+      assignedAnalyst: 'Unassigned',
       carStatus: 'New',
       division: this.dataCoverage,
       regionPeril: _.filter(Regions.regionPeril, item => _.includes(this.metaData, item.regionPerilCode))

@@ -606,6 +606,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   changeFinancialValidator(value, item) {
     this.dispatch(new fromWs.PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
+    console.log(value, value === 'division');
     if (value === 'division') {
       this.UpdateCheckboxStatus();
       this.setFilterDivision();

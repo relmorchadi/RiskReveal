@@ -67,7 +67,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '2 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Nathalie Dulac',
+    assignedAnalyst: 'Unassigned',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'B0801116998G16',
     uwanalysisContractFacNumber: 'FA0061072',
@@ -126,7 +126,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'Completed',
     division: [
       {
         divisionNo: 1,
@@ -177,7 +177,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'Completed',
+    carStatus: 'Superseded',
     division: [
       {
         divisionNo: 1,
@@ -279,7 +279,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,
@@ -322,7 +322,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '10 @ Subsidiaries',
     uwanalysisContractYear: 2019,
     uwAnalysisContractDate: '2019-01',
-    assignedAnalyst: 'Richard DEEM',
+    assignedAnalyst: 'Unassigned',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
@@ -330,7 +330,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'In Progress',
+    carStatus: 'New',
     division: [
       {
         divisionNo: 1,
@@ -374,7 +374,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,
@@ -476,7 +476,7 @@ const facWs = [
     uwanalysisContractContractId: '10F131564',
     contractName: 'NB18',
     uwanalysisContractInsured: '1000217722 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In progress',
     division: [
       {
         divisionNo: 1,
@@ -527,7 +527,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0025896',
     contractName: 'Mountain View, CA Apartment buildings',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,
@@ -680,7 +680,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'NB14-KB',
     uwanalysisContractInsured: '100059061 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,
@@ -731,7 +731,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0050322',
     contractName: 'Data invalid',
     uwanalysisContractInsured: '1000418967 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,
@@ -884,7 +884,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
         divisionNo: 1,

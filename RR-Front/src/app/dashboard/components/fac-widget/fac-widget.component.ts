@@ -29,10 +29,6 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-/*  filterAssignedNew = false;
-  filterAssignedCurrent = false;
-  filterAssignedArchive = false;*/
-
   @Input()
   itemName = 'Car Widget';
   @Input()
@@ -41,6 +37,8 @@ export class FacWidgetComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  type: any;
   newDashboard: any;
   editName = false;
 
@@ -107,11 +105,11 @@ export class FacWidgetComponent implements OnInit {
   }
 
   setFilters() {
-    if (this.itemName === 'New CARs') {
+    if (this.type === 'newCar') {
       this.filterNew = true;
-    } else if (this.itemName === 'In Progress CARs') {
+    } else if (this.type === 'inProgressCar') {
       this.filterCurrent = true;
-    } else if (this.itemName === 'Archived CARs') {
+    } else if (this.type === 'archivedCar') {
       this.filterArchive = true;
     }
   }

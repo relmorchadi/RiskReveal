@@ -18,6 +18,11 @@ import produce from 'immer';
   providedIn: 'root'
 })
 export class RiskLinkStateService {
+  divisionTag = {
+    'Division N°1': '_01',
+    'Division N°2': '_02',
+    'Division N°3': '_03'
+  };
 
   constructor(private riskApi: RiskApi) {
   }
@@ -664,7 +669,9 @@ export class RiskLinkStateService {
             financialPerspective: ['RL'],
             occurrenceBasis: 'PerEvent',
             regionPeril: 'EUET',
-            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
+            division: _.uniq([..._.get(state.content[wsIdentifier].riskLink.results,
+              `data.${dt.analysisId}-${dt.analysisName}.division`, []),
+              state.content[wsIdentifier].riskLink.financialValidator.division.selected]),
             ty: true,
             peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
               {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
@@ -686,7 +693,9 @@ export class RiskLinkStateService {
             id: dt.dataSourceId + '-' + dt.dataSourceName,
             selected: false,
             scanned: true,
-            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
+            division: _.uniq([..._.get(state.content[wsIdentifier].riskLink.summaries,
+              `data.${dt.dataSourceId}-${dt.dataSourceName}.division`, []),
+              state.content[wsIdentifier].riskLink.financialValidator.division.selected]),
             status: 100,
             unitMultiplier: 1,
             proportion: 100,
@@ -714,9 +723,11 @@ export class RiskLinkStateService {
           indeterminate: _.get(draft.content[wsIdentifier].riskLink.results, 'indeterminate', false)
         };
         draft.content[wsIdentifier].riskLink.analysis = _.forEach(draft.content[wsIdentifier].riskLink.analysis,
-            item => {_.forEach(item.data ,dt => {if (dt.selected) {dt.imported = true} })});
+            item => {_.forEach(item.data, dt => {if (dt.selected) {dt.imported = true; } });
+        });
         draft.content[wsIdentifier].riskLink.portfolios = _.forEach(draft.content[wsIdentifier].riskLink.portfolios,
-          item => {_.forEach(item.data ,dt => {if (dt.selected) {dt.imported = true} })});
+          item => {_.forEach(item.data, dt => {if (dt.selected) {dt.imported = true; } });
+        });
       })
     );
 
@@ -1263,9 +1274,20 @@ export class RiskLinkStateService {
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const divisions = state.content[wsIdentifier].riskLink.financialValidator.division.data;
     const analysis = state.content[wsIdentifier].riskLink.analysis;
-    const dataTable = Object.assign({}, ...divisions.map(item => {
-        return {[item]: analysis};
-      }));
+    const newDivisions = {};
+    _.forEach(divisions, div => {
+      newDivisions[div] = {};
+      _.forEach(analysis, (item, analysisKey) => {
+        newDivisions[div][analysisKey] = {...analysis[analysisKey], data: {}};
+        _.forEach(item.data, analysisItem => {
+          newDivisions[div][analysisKey].data[analysisItem.analysisId] = {
+            ...analysisItem,
+            selected: analysisItem.analysisName === state.content[wsIdentifier].wsId + this.divisionTag[div]
+          };
+        });
+      });
+    });
+    console.log(analysis, this.divisionTag);
     if (key !== null) {
       ctx.patchState(
         produce(ctx.getState(), draft => {
@@ -1274,7 +1296,7 @@ export class RiskLinkStateService {
     } else {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.analysisFac = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.analysisFac);
+          draft.content[wsIdentifier].riskLink.analysisFac = _.merge({}, newDivisions, draft.content[wsIdentifier].riskLink.analysisFac);
         }));
     }
   }
@@ -1331,7 +1353,7 @@ export class RiskLinkStateService {
               ...dataTable,
               [payload[i].id]: {
                 data: Object.assign({},
-                  ...dt.map(portfolio => ({
+                  ..._.uniqBy(dt, (item: any) => item.portName).map((portfolio: any) => ({
                       [portfolio.id]: {
                         id: portfolio.id,
                         dataSourceId: portfolio.id,
@@ -1349,11 +1371,12 @@ export class RiskLinkStateService {
                         type: portfolio.portType,
                         selected: this._getSelectionValue(ctx, portfolio.portName)
                       }}
-                  ))),
+                  ))
+                ),
                 allChecked: false,
                 indeterminate: false,
-                totalNumberElement: dt.length,
-                numberOfElement: dt.length,
+                totalNumberElement: _.uniqBy(dt, (item: any) => item.portName).length,
+                numberOfElement: _.uniqBy(dt, (item: any) => item.portName).length,
                 filter: {}
               }
             };
@@ -1378,11 +1401,19 @@ export class RiskLinkStateService {
     const key = _.get(payload, 'key', null);
     const divisions = state.content[wsIdentifier].riskLink.financialValidator.division.data;
     const portfolio = state.content[wsIdentifier].riskLink.portfolios;
-    const dataTable = Object.assign({},
-      ...divisions.map(item => {
-        return {[item]: portfolio};
-      })
-    );
+    const newDivisions = {};
+    _.forEach(divisions, div => {
+      newDivisions[div] = {};
+      _.forEach(portfolio, (item, portKey) => {
+        newDivisions[div][portKey] = {...portfolio[portKey], data: {}};
+        _.forEach(item.data, portfolioItem => {
+          newDivisions[div][portKey].data[portfolioItem.id] = {
+            ...portfolioItem,
+            selected: portfolioItem.dataSourceName === state.content[wsIdentifier].wsId + this.divisionTag[div]
+          };
+        });
+      });
+    })
     if (key !== null) {
       ctx.patchState(
         produce(ctx.getState(), draft => {
@@ -1391,7 +1422,7 @@ export class RiskLinkStateService {
     } else {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.portfolioFac = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.portfolioFac);
+          draft.content[wsIdentifier].riskLink.portfolioFac = _.merge({}, newDivisions, draft.content[wsIdentifier].riskLink.portfolioFac);
         }));
     }
   }
@@ -1925,9 +1956,14 @@ export class RiskLinkStateService {
   private _getSelectionValue(ctx, value) {
     const state = ctx.getState();
     const wsIdentifier = state.currentTab.wsIdentifier;
-    const applyFilters =  value === state.content[wsIdentifier].wsId + '_01' ||
-      value === state.content[wsIdentifier].wsId + '_02' || value === state.content[wsIdentifier].wsId + '_03';
-    return applyFilters;
+    return value === state.content[wsIdentifier].wsId +
+      this.divisionTag[state.content[wsIdentifier].riskLink.financialValidator.division.selected];
+  }
+
+  private _getSelectionValueCostume(ctx, value, division) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return value === state.content[wsIdentifier].wsId + this.divisionTag[division];
   }
 
 }

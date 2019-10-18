@@ -43,7 +43,7 @@
                   </renewal-contract-scope>
                   <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  (delete)="deleteItemFac(dashboard.id, $event)"
+                                  (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
