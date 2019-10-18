@@ -39,7 +39,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   frozenColsTreaty;
 
   scrollableColsFac ;
-  frozenColsFac ;
 
   colsReinstatement;
   colsRegionPeril;
@@ -94,7 +93,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.scrollableColsTreaty = ContractData.scrollableColsTreaty;
     this.frozenColsTreaty = ContractData.frozenColsTreaty;
     this.scrollableColsFac = ContractData.scrollableColsFac;
-    this.frozenColsFac = ContractData.frozenColsFac;
     this.colsReinstatement = ContractData.colsReinstatement;
     this.colsRegionPeril = ContractData.colsRegionPeril;
     this.treatyData = ContractData.treatyData;

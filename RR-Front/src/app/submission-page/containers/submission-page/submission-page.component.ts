@@ -140,6 +140,7 @@ export class SubmissionPageComponent implements OnInit {
       requestedByFirstName: this.raisedBy.value,
       requestedByFullName: this.raisedBy.value,
       requestedByLastName: this.raisedBy.value,
+      uwAnalysis: this.uwAnalysis,
       uwanalysisContractBusinessType: this.businessType.value,
       uwanalysisContractContractId: this.contractId,
       uwanalysisContractEndorsementNumber: 0,

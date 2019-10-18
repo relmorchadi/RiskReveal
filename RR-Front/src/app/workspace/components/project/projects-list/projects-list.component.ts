@@ -13,8 +13,8 @@ export class ProjectsListComponent implements OnInit {
   @Output('delete') deleteEmitter;
 
   constructor() {
-    this.selectEmitter= new EventEmitter();
-    this.deleteEmitter= new EventEmitter();
+    this.selectEmitter = new EventEmitter();
+    this.deleteEmitter = new EventEmitter();
   }
 
   ngOnInit() {
