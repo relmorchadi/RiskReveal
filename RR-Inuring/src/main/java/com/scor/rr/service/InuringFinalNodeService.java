@@ -41,4 +41,10 @@ public class InuringFinalNodeService {
         inuringFinalNode.setInuringOutputGrain(request.getInuringOutputGrain());
         inuringFinalNodeRepository.save(inuringFinalNode);
     }
+
+    public InuringFinalNode readInuringFinalNodeByPackageId(int id) throws RRException{
+        InuringFinalNode inuringFinalNode =  inuringFinalNodeRepository.findByInuringPackageId(id);
+        if(inuringFinalNode == null) throw new InuringFinalNodeNotFoundException(id);
+        return inuringFinalNode;
+    }
 }
