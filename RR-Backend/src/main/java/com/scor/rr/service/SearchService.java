@@ -1,9 +1,12 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.TargetBuild.Project;
+import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
+import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import com.scor.rr.repository.counter.*;
 import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;

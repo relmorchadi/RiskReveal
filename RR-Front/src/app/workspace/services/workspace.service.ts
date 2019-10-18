@@ -88,6 +88,7 @@ export class WorkspaceService {
           plts: {},
           pltManager: {
             data: {},
+            deleted: {},
             filters: {
               systemTag: [], userTag: []
             },
@@ -103,6 +104,7 @@ export class WorkspaceService {
           },
           calibration: {
             data: {},
+            deleted: {},
             loading: false,
             filters: {
               systemTag: [],

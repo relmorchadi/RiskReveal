@@ -1,10 +1,13 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.UserTag;
-import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.TargetBuild.PLTHeader;
+import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
+import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
+import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
+import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.service.PltBrowserService;
+import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,35 +20,26 @@ public class PltBrowserResource {
     @Autowired
     PltBrowserService pltBrowserService;
 
+    @Autowired
+    TagService tagService;
+
     @GetMapping
-    public PltTagResponse searchPltTable(PltFilter filter) {
-        return pltBrowserService.searchPltTable(filter);
-    }
+    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
 
-    @GetMapping("tag")
-
-    @PostMapping("create-user-tag")
-    public UserTag createUserTag(@RequestBody UserTagRequest userTagRequest) {
-        /*return pltBrowserService.assignUserTag(assignPltsRequest);*/
-        return pltBrowserService.createUserTag(userTagRequest);
-    }
 
     @PostMapping("assign-user-tag")
-    public List<UserTag> assignUpdateUserTag(@RequestBody AssignUpdatePltsRequest request) {
-        return pltBrowserService.assignUpdateUserTag(request);
-    }
-    @DeleteMapping("user-tag/{id}")
-    public void deleteUserTag(@PathVariable Integer id) {
-        pltBrowserService.deleteUserTag(id);
+    public Boolean assignUpdateUserTag(@RequestBody AssignTagToPltsRequest request) {
+        return tagService.assignTagToPlts(request);
     }
 
-    @PutMapping("update-user-tag")
-    public ResponseEntity<UserTag> updateTag(@RequestBody UserTag userTag) {
-        try {
-            return ResponseEntity.ok(pltBrowserService.updateUserTag(userTag));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @PostMapping("delete")
+    public Boolean deletePLT(@RequestBody PLTHeaderDeleteRequest request) {
+        return pltBrowserService.deletePLTheader(request);
+    }
+
+    @PostMapping("restore")
+    public Boolean deletePLT(@RequestBody List<Integer> pltHeaderIds) {
+        return pltBrowserService.restorePLTHeader(pltHeaderIds);
     }
 
 }
