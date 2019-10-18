@@ -146,6 +146,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   };
 
   inuringPackageFG: FormGroup;
+  newPackageId: any;
 
   constructor(private actions: Actions, private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef, private _fb: FormBuilder) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -194,6 +195,12 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   showAddPackagePopup() {
     this.addPackageVisibility = true;
+    const inuringPackage = this.inuringPackageFG.value;
+    if (!inuringPackage.edit) {
+      let today = new Date();
+      let id = today.getMilliseconds() + today.getSeconds() + today.getHours();
+      this.newPackageId = 'IP000000' + id;
+    }
     this.inuringPackageFG.patchValue({edit: false});
   }
 
@@ -205,6 +212,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     else
       this.dispatch(new fromInuring.AddInuringPackage({wsIdentifier: this.wsIdentifier, inuringPackage}));
     this.addPackageVisibility = false;
+    this.inuringPackageFG.reset();
   }
 
 

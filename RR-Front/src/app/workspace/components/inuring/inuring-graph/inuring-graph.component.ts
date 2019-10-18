@@ -23,6 +23,7 @@ import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import {AddInputNode, AddJoinNode, AddNoteNode, EditInputNode} from "../../../store/actions";
 import * as fromInuring from "../../../store/actions/inuring.actions"
+import * as _ from "lodash";
 
 @Component({
   selector: 'inuring-graph',
@@ -30,22 +31,17 @@ import * as fromInuring from "../../../store/actions/inuring.actions"
   styleUrls: ['./inuring-graph.component.scss']
 })
 export class InuringGraphComponent extends BaseContainer implements OnInit, AfterViewInit, OnDestroy {
-
-  surfaceId = 'flowchart';
-  toolkitId = 'flowchartSurface';
+  surfaceId = '';
+  toolkitId = '';
   toggleGrip;
 
   surface: Surface;
   @Output('editNode') editNodeEmitter: EventEmitter<any> = new EventEmitter();
   @Output('editEdge') editEdgeEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('appendNode') appendNodeEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('wsIdentifier') wsIdentifier;
   @Input('inuringPackage') inuringPackage;
-
-  @Input('data')
-  set setInuringData(d){
-    console.log('Data Inuring Graph', d);
-  }
   view = {
     nodes: {
       'selectable': {
@@ -118,7 +114,6 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
         hoverPaintStyle: {strokeWidth: 2, stroke: '#b95124'}, // hover paint style for this edge type.
         events: {
           dblclick: (params: any) => {
-            // console.log('***************',params)
           }
         },
         overlays: [
@@ -130,6 +125,16 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
             events: {
               click: (params) => {
                 this.edgeLabelClick(params)
+              }
+            }
+          }],
+          ['Label', {
+            cssClass: "edge-delete-point",
+            label: '<i class="icon-trash-alt"></i>',
+            location: 0.02,
+            events: {
+              click: (params) => {
+                this.deleteEdge(params)
               }
             }
           }],
@@ -211,6 +216,11 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       },
     }
   };
+
+  @Input('data')
+  set setInuringData(d) {
+    console.log('Data Inuring Graph', d);
+  }
   private editableNode: any;
 
   renderParams = {
@@ -229,6 +239,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     },
     consumeRightClick: false,
     elementsDroppable: true,
+    clampToBackground: true,
     dragOptions: {
       start: (params) => {
         console.log('drag Start', params);
@@ -251,29 +262,38 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     super(_router, _cdRef, _store);
   }
 
+  patchState(state: any): void {
+    const path = state.data.inuring;
+    let nodes = path.content[this.inuringPackage].nodes;
+    _.forEach(nodes, node => {
+      console.log('patched***********', node)
+      this.appendNodeEmitter.emit(node);
+      this.toolkit.addNode(node);
+    })
+  }
+
   ngOnInit(): void {
+    let today = new Date();
+    let id = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    this.toolkitId = 'T' + id;
+    this.surfaceId = 'S' + id;
     this._actions.pipe(
       this.unsubscribeOnDestroy,
       ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode, AddNoteNode)
     ).subscribe(action => {
-      console.log('Actions here')
-      if (action instanceof AddInputNode){
-        return this.toolkit.addNode({
-          type: 'inputNode',
-          plts: action.payload.plts,
-          index: action.payload.index,
-          name: 'Input Node'
-        });
+      if (action.payload.inuringPackage === this.inuringPackage) {
+        console.log('Actions here')
+        if (action instanceof AddInputNode) {
+          return this.toolkit.addNode(action.payload.node);
+        } else if (action instanceof AddJoinNode)
+          return this.toolkit.addNode({type: 'joinNode'});
+        else if (action instanceof EditInputNode) {
+          let data = action.payload.data;
+          return this.toolkit.updateNode(this.editableNode, data);
+        } else if (action instanceof AddNoteNode) {
+          this.toolkit.addNode({type: 'noteNode', name: action.payload.name});
+        }
       }
-      else if (action instanceof AddJoinNode)
-        return this.toolkit.addNode({type: 'joinNode'});
-      else if (action instanceof EditInputNode) {
-        let data = action.payload.data;
-        return this.toolkit.updateNode(this.editableNode, data);
-      } else if (action instanceof AddNoteNode) {
-        this.toolkit.addNode({type: 'noteNode', name: action.payload.name});
-      }
-
     })
   }
 
@@ -284,34 +304,36 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
     if (this.toolkit.getNodes().length == 0) {
-      /*this.addNode('inputNode','Input Node');
-      this.addNode('finalNode','Final Node');*/
-      this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+      this.addNode('inputNode', 'Input Node',);
       this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
-      this.afterViewInit = true;
+      /*this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+      this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});*/
     }
 
     console.log('============>', this.toolkit.getNodes().map(row => row.data));
   }
 
-  drop(param) {
-    this.toolkit.addNode({type: 'contractNode'});
+  drop(event) {
+    console.log('==============>', event)
+    this.toolkit.addNode({type: 'contractNode', top: event.y - 220, left: event.x - 595});
   }
 
-  addNode(type, name, top = 0, left = 0, plts = null) {
+  addNode(type, name, plts = null, top = 0, left = 0) {
     let today = new Date();
     let id = today.getMilliseconds() + today.getSeconds() + today.getHours();
     let node = {nodeId: id, type: type, top: top, left: left, name: name, plts: plts};
+    this.appendNodeEmitter.emit(node);
+    this.toolkit.addNode(node);
     this._store.dispatch(new AddInputNode({
       wsIdentifier: this.wsIdentifier,
       inuringPackage: this.inuringPackage,
       node: node
     }));
-    this.toolkit.addNode(node);
   }
+
   refreshToolkit() {
     this.toolkit.clear();
-    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+    this.addNode('inputNode', 'Input Node',);
     this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
     this.dispatch(new fromInuring.RefreshInuringGraph(null))
   }
@@ -320,7 +342,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     this.toolkit.addNode({type: 'joinNode'});
   }
 
-  addNoteNode(){
+  addNoteNode() {
     this.toolkit.addNode({type: 'noteNode', content: 'Heey !!', name: 'New Note', color: '#ffed78'});
   }
 
@@ -338,7 +360,6 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       this.editNodeEmitter.emit({type: 'contractNode', popup: true, params: {...params}});
     }
 
-
   }
 
   edgeLabelClick(params: any) {
@@ -355,5 +376,14 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   selectMode() {
     this.surface.setMode('select');
     this.surfaceMode = 'select';
+  }
+
+  private edgeDblclick(params: any) {
+
+  }
+
+  private deleteEdge(params: any) {
+    console.log(params);
+    this.toolkit.removeEdge(params.edge.data.id);
   }
 }
