@@ -25,7 +25,10 @@ import {HelperService} from "../../../../shared/helper.service";
   selector: 'search-menu-item',
   templateUrl: './search-menu-item.component.html',
   styleUrls: ['./search-menu-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown)': 'onKeyPress($event)'
+  }
 })
 export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
@@ -238,5 +241,13 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     console.log(event);
     this.inputDisabled = event;
     this.contractFilterFormGroup.patchValue({globalKeyword: item.key + ':' + item.value})
+  }
+
+  onKeyPress($event: KeyboardEvent) {
+    if ($event.shiftKey && $event.ctrlKey && $event.code == "KeyS") {
+      console.log('shift + ctrl + s');
+      this.searchInput.nativeElement.focus();
+      this.searchInput.nativeElement.click();
+    }
   }
 }

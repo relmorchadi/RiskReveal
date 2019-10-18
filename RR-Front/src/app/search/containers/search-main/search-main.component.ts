@@ -7,10 +7,11 @@ import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
-import {CloseAllTagsAction, CloseTagByIndexAction, saveSearch} from '../../../core/store';
+import {CloseAllTagsAction, CloseTagByIndexAction, saveSearch, UpdateBadges} from '../../../core/store';
 import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
 
 
 @Component({
@@ -356,5 +357,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   toggleSavedSearch() {
     this.savedSearchVisibility = !this.savedSearchVisibility;
+  }
+
+  applySearch(search: any) {
+    this.store.dispatch(new UpdateBadges(search.badges));
+    this.store.dispatch(new SearchActions.SearchAction(search.badges, ''));
   }
 }

@@ -18,7 +18,8 @@ import {
   SearchContractsCountAction,
   SearchInputFocusAction,
   SearchInputValueChange,
-  SelectBadgeAction
+  SelectBadgeAction,
+  UpdateBadges
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
@@ -180,6 +181,14 @@ export class SearchNavBarState implements NgxsOnInit {
     });
     if (keyword && keyword.length && ctx.getState().visibleSearch)
       ctx.dispatch(new SearchContractsCountAction(keyword));
+  }
+
+  @Action(UpdateBadges)
+  updateBadges(ctx: StateContext<SearchNavBar>, {payload}: UpdateBadges) {
+    const badges = payload;
+    ctx.patchState({
+      badges: [...badges]
+    });
   }
 
 

@@ -104,6 +104,7 @@
            (onRowSelect)="rowSelect($event)"
            (onRowUnselect)="rowUnselect($event)"
            [(selection)]="selectedRow"
+           [columnResizeMode]="'expand'"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -112,8 +113,9 @@
     </ng-template>
     <ng-template pTemplate="header" let-columns>
       <tr>
-        <th *ngFor="let col of columns" pResizableColumn>
-        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}"
+        <th *ngFor="let col of columns" [pResizableColumnDisabled]="col.field=='checkbox'" pResizableColumn>
+        <span
+          [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden','border-right': col.field=='checkbox' ?'none': '1px solid #c8c8c8'}"
               style="display:flex;justify-content: space-between">
           {{col?.header}}
           <ng-container *ngIf="col.type === 'checkbox'">

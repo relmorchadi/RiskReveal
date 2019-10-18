@@ -329,4 +329,47 @@ nz-layout {
   font-size: 12px;
   font-weight: bold;
   text-align: center;
+  align-items: center;
+  vertical-align: middle;
+  display: inline-grid;
+  width: 10%;
+}
+
+.chips-cell {
+  display: flex;
+  width: 90%;
+  align-items: center;
+}
+
+.search-cell-container {
+  display: flex;
+  height: 35px;
+  border-bottom: .5px solid #dee2e6;
+  font-family: Rubik, sans-serif;
+  cursor: pointer;
+}
+
+.search-cell-container:hover {
+  background-color: #f1f5f9;
+}
+
+.saved-search-arrow {
+  top: 45px;
+  border-width: 0 10px 10px;
+  right: 170px;
+  margin-left: -5px;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent;
+  border-bottom-color: #ffffff !important;
+}
+
+.no-search-data-found {
+  display: flex;
+  height: 25px;
+  align-items: center;
+  font-family: Rubik, sans-serif;
+  padding-left: 15px;
 }
