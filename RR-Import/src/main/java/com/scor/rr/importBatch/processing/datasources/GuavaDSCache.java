@@ -1,6 +1,9 @@
 package com.scor.rr.importBatch.processing.datasources;
 
-import com.google.common.cache.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalNotification;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
 import com.scor.rr.domain.entities.references.cat.ModellingSystemInstance;
@@ -20,141 +23,137 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * GuavaDSCache Implementation
- * 
- * @author HADDINI Zakariyae
  *
+ * @author HADDINI Zakariyae
  */
-@Service
+@Service(value = "dsCache")
 @Data
 public class GuavaDSCache implements DSCache {
 
-	private static final Logger logger = LoggerFactory.getLogger(GuavaDSCache.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuavaDSCache.class);
 
-	@Value("${rms.ds.initialSize}")
-	protected Integer initialSize;
-	@Value("${rms.ds.maxActive}")
-	protected Integer maxActive;
-	@Value("${rms.ds.acquireIncrement}")
-	protected Integer acquireIncrement;
-	@Value("${rms.ds.maxStatements}")
-	protected Integer maxStatements;
-	@Value("${rms.ds.idleConnectionTestPeriod}")
-	protected Integer idleConnectionTestPeriod;
+    @Value("${rms.ds.initialSize}")
+    protected Integer initialSize;
+    @Value("${rms.ds.maxActive}")
+    protected Integer maxActive;
+    @Value("${rms.ds.acquireIncrement}")
+    protected Integer acquireIncrement;
+    @Value("${rms.ds.maxStatements}")
+    protected Integer maxStatements;
+    @Value("${rms.ds.idleConnectionTestPeriod}")
+    protected Integer idleConnectionTestPeriod;
 
-	private LoadingCache<String, DataSource> cache;
+    private LoadingCache<String, DataSource> cache;
 
-	public GuavaDSCache() {
-	}
+    public GuavaDSCache() {
+    }
 
-	public GuavaDSCache(ModellingSystemInstanceRepository modellingSystemInstanceRepository) {
-		// @formatter:off
-		cache = CacheBuilder.newBuilder()
-							.maximumSize(50)
-							.expireAfterAccess(120, TimeUnit.MINUTES)
-							.removalListener(new RemovalListener<String, DataSource>() {
+    public GuavaDSCache(ModellingSystemInstanceRepository modellingSystemInstanceRepository) {
+        // @formatter:off
+        cache = CacheBuilder.newBuilder()
+                .maximumSize(50)
+                .expireAfterAccess(120, TimeUnit.MINUTES)
+                .removalListener((RemovalNotification<String, DataSource> notification) -> {
 
-								public void onRemoval(RemovalNotification<String, DataSource> notification) {
-									DataSource dataSource = notification.getValue();
-			
-									logger.info("cleaning up datasource '{}'", notification.getKey());
-			
-									if (ALMFUtils.isNotNull(dataSource)) {
-										try {
-											DataSources.destroy(dataSource);
-										} catch (SQLException e) {
-											logger.error("ds destroy error for instance : '{}', ds destroy error : {}",
-														 notification.getKey(), e);
-			
-											throw new RuntimeException(e);
-										}
-									}
-								}
-					
-							})
-							.build(new CacheLoader<String, DataSource>() {
-				
-								public DataSource load(String instanceId) {
-									ModellingSystemInstance instance = modellingSystemInstanceRepository.findById(instanceId)
-											.orElse(null);
-			
-									if (ALMFUtils.isNotNull(instance)) {
-										try {
-											logger.debug("instanciating RMS datasource '{}' => {}",
-													new Object[] { instanceId, ToStringBuilder.reflectionToString(instance) });
-			
-											return constructAComboPooledDataSource(instanceId, instance);
-										} catch (Exception e) {
-											logger.error("ds init error for RMS datasource : '{}', ds init error : {} ", instanceId,
-													e);
-			
-											throw new RuntimeException("ds init error", e);
-										}
-									}
-			
-									logger.error("instance '{}' was not found in repository", instanceId);
-			
-									throw new RuntimeException(
-											"instance '".concat(instanceId).concat("' was not found in repository"));
-								}
-				
-							});
-		// @formatter:on
-	}
+                        DataSource dataSource = notification.getValue();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public synchronized DataSource getDataSource(String instanceId) {
-		return cache.getUnchecked(instanceId);
-	}
+                        logger.info("cleaning up datasource '{}'", notification.getKey());
 
-	/**
-	 * construct a ComboPooledDataSource
-	 * 
-	 * @param instanceId
-	 * @param instance
-	 * @return
-	 * @throws PropertyVetoException
-	 */
-	private DataSource constructAComboPooledDataSource(String instanceId, ModellingSystemInstance instance)
-			throws PropertyVetoException {
-		ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
+                        if (ALMFUtils.isNotNull(dataSource)) {
+                            try {
+                                DataSources.destroy(dataSource);
+                            } catch (SQLException e) {
+                                logger.error("ds destroy error for instance : '{}', ds destroy error : {}",
+                                        notification.getKey(), e);
 
-		comboPooledDataSource.setDataSourceName(instanceId);
+                                throw new RuntimeException(e);
+                            }
+                        }
+                })
+                .build(new CacheLoader<String, DataSource>() {
 
-		comboPooledDataSource.setDriverClass(instance.getDriverClass());
+                    public DataSource load(String instanceId) {
+                        ModellingSystemInstance instance = modellingSystemInstanceRepository.findById(instanceId)
+                                .orElse(null);
 
-		comboPooledDataSource.setJdbcUrl(instance.getUrl());
+                        if (ALMFUtils.isNotNull(instance)) {
+                            try {
+                                logger.debug("instanciating RMS datasource '{}' => {}",
+                                        new Object[]{instanceId, ToStringBuilder.reflectionToString(instance)});
 
-		comboPooledDataSource.setUser(instance.getLogin());
+                                return constructAComboPooledDataSource(instanceId, instance);
+                            } catch (Exception e) {
+                                logger.error("ds init error for RMS datasource : '{}', ds init error : {} ", instanceId,
+                                        e);
 
-		comboPooledDataSource.setPassword(instance.getPass());
+                                throw new RuntimeException("ds init error", e);
+                            }
+                        }
 
-		comboPooledDataSource.setNumHelperThreads(2);
+                        logger.error("instance '{}' was not found in repository", instanceId);
 
-		comboPooledDataSource.setAcquireRetryAttempts(1);
+                        throw new RuntimeException(
+                                "instance '".concat(instanceId).concat("' was not found in repository"));
+                    }
 
-		comboPooledDataSource.setAcquireRetryDelay(1000);
+                });
+        // @formatter:on
+    }
 
-		comboPooledDataSource.setInitialPoolSize(initialSize);
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized DataSource getDataSource(String instanceId) {
+        return cache.getUnchecked(instanceId);
+    }
 
-		comboPooledDataSource.setMinPoolSize(initialSize);
+    /**
+     * construct a ComboPooledDataSource
+     *
+     * @param instanceId
+     * @param instance
+     * @return
+     * @throws PropertyVetoException
+     */
+    private DataSource constructAComboPooledDataSource(String instanceId, ModellingSystemInstance instance)
+            throws PropertyVetoException {
+        ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
 
-		comboPooledDataSource.setAcquireIncrement(acquireIncrement);
+        comboPooledDataSource.setDataSourceName(instanceId);
 
-		comboPooledDataSource.setMaxPoolSize(maxActive);
+        comboPooledDataSource.setDriverClass(instance.getDriverClass());
 
-		comboPooledDataSource.setMaxStatements(maxStatements);
+        comboPooledDataSource.setJdbcUrl(instance.getUrl());
 
-		comboPooledDataSource.setTestConnectionOnCheckin(true);
+        comboPooledDataSource.setUser(instance.getLogin());
 
-		comboPooledDataSource.setTestConnectionOnCheckout(true);
+        comboPooledDataSource.setPassword(instance.getPass());
 
-		comboPooledDataSource.setPreferredTestQuery(instance.getTestQuery());
+        comboPooledDataSource.setNumHelperThreads(2);
 
-		comboPooledDataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
+        comboPooledDataSource.setAcquireRetryAttempts(1);
 
-		return comboPooledDataSource;
-	}
+        comboPooledDataSource.setAcquireRetryDelay(1000);
+
+        comboPooledDataSource.setInitialPoolSize(initialSize);
+
+        comboPooledDataSource.setMinPoolSize(initialSize);
+
+        comboPooledDataSource.setAcquireIncrement(acquireIncrement);
+
+        comboPooledDataSource.setMaxPoolSize(maxActive);
+
+        comboPooledDataSource.setMaxStatements(maxStatements);
+
+        comboPooledDataSource.setTestConnectionOnCheckin(true);
+
+        comboPooledDataSource.setTestConnectionOnCheckout(true);
+
+        comboPooledDataSource.setPreferredTestQuery(instance.getTestQuery());
+
+        comboPooledDataSource.setIdleConnectionTestPeriod(idleConnectionTestPeriod);
+
+        return comboPooledDataSource;
+    }
 
 }

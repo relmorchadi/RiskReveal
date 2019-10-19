@@ -1992,14 +1992,14 @@ ORDER BY an.ID
         <property name="targetMethod" value="handle"/>
     </bean>
 
-    <bean id="dsCache" class="com.scor.rr.importBatch.processing.datasources.GuavaDSCache">
-        <constructor-arg name="modellingSystemInstanceRepository" ref="modellingSystemInstanceRepository"/>
-        <property name="initialSize" value="${rms.ds.initialSize}"/>
-        <property name="maxActive" value="${rms.ds.maxActive}"/>
-        <property name="acquireIncrement" value="${rms.ds.acquireIncrement}"/>
-        <property name="maxStatements" value="${rms.ds.maxStatements}"/>
-        <property name="idleConnectionTestPeriod" value="${rms.ds.idleConnectionTestPeriod}"/>
-    </bean>
+<!--    <bean id="dsCache" class="com.scor.rr.importBatch.processing.datasources.GuavaDSCache">-->
+<!--        <constructor-arg name="modellingSystemInstanceRepository" ref="modellingSystemInstanceRepository"/>-->
+<!--        <property name="initialSize" value="${rms.ds.initialSize}"/>-->
+<!--        <property name="maxActive" value="${rms.ds.maxActive}"/>-->
+<!--        <property name="acquireIncrement" value="${rms.ds.acquireIncrement}"/>-->
+<!--        <property name="maxStatements" value="${rms.ds.maxStatements}"/>-->
+<!--        <property name="idleConnectionTestPeriod" value="${rms.ds.idleConnectionTestPeriod}"/>-->
+<!--    </bean>-->
 
     <bean id="exposureSummaryTaskletWrapper"
           class="com.scor.rr.service.exposure.implementation.ExposureSummaryTaskletWrapperImpl" scope="step">
