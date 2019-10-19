@@ -500,12 +500,12 @@
 
     .summary-content {
       margin: 7px 0;
-      flex: 0 1 auto;
     }
 
     .summary-table {
       flex: 1 1 auto;
       overflow-y: auto;
+      height: calc( 100vh - 320px) !important;
 
       .ant-row {
         border-bottom: 1px solid #bfbfbf;
