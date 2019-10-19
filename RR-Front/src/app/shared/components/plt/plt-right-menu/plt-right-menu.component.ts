@@ -184,66 +184,46 @@ export class PltRightMenuComponent implements OnInit {
   CalibrationImpactFinancialUnitSelected: any = 'Million';
   fullViewActive: boolean;
   currentFullView: any;
-  activeTabIndex: number;
 
   constructor() {
     this.pltPopUpItemConfig= [
       {
+        title: "Header",
+        cols: {
+          summary: [{header: "PLT Status", field: "pltStatus"},{header: "PLT Name", field: "pltName"},{header: "PLT ID", field: "pltId"},{header: "PLT Type", field: "pltType"}],
+          sections: [{title: "PLT Detail" , headers: [{header: "PLT Status", field: "pltStatus"},{header: "PLT Name", field: "pltName"},{header: "PLT ID", field: "pltId"},{header: "PLT Type", field: "pltType"}]}]
+        }
+      },
+      {
         title: "PLT Thread",
         cols: {
-          summary: [{header: "Target RAP Code", field: "targetRAPCode"}, {header: "Target RAP Desc", field: "targetRAPDesc"}, {header: "Root Region Peril Code", field: "minimumGrainRPCode"}, {header: "Root Region Peril Desc", field: ""}, {header: "Region Peril Code", field: "regionPerilCode"}, {header: "Region Peril Desc", field: "regionPerilDesc"}, {header: "Grain", field: "grain"}, {header: "Grouped PLT", field: "groupedPlt", type: "indicator"},{header: "Cloned PLT", field: "clonedPlt", type: "indicator"}, {header: "OccurenceBasis", field: "occurenceBasis"}, {header: "Base Adjusted", field: "baseAdjustment", type: "indicator"}, {header: "Default Adjusted", field: "defaultAdjustment", type: "indicator"}, {header: "Client Adjusted", field: "clientAdjustment", type: "indicator"}, {header: "PLT Ccy", field: "pltCcy"}, {header: "Create Date", field: "createDate"}, {header: "Created By", field: "createdBy"}, {header: "Archived", field: "archived", type: "indicator"}, {header: "Archived Date", field: "archivedDate"}],
-          sections: [{ title: "Thread Details", rows: [{label: "Target RAP Code", field: "targetRAPCode"}, {label: "Target RAP Desc", field: "targetRAPDesc"}, {label: "Root Region Peril Code", field: "minimumGrainRPCode"}, {label: "Root Region Peril Desc", field: ""}, {label: "Minimum Grain Grain RP Code", field: "minimumGrainRPCode"}, {label: "Minimum Grain RP Desc", field: ""}, {label: "Region Peril Code", field: "regionPerilCode"}, {label: "Region Peril Desc", field: "regionPerilDesc"}, {label: "Peril Group Code", field: "perilGroupCode"}, {label: "Peril Group Desc", field: "perilGroupDesc"}, {label: "Grain", field: "grain"}, {label: "Grouped PLT", field: "groupedPlt", type: "indicator"},{label: "Cloned PLT", field: "clonedPlt", type: "indicator"}, {label: "Occurence Basis Default", field: "defaultOccurenceBasis"}, {label: "OccurenceBasis", field: "occurenceBasis"}, {label: "Base Adjusted", field: "baseAdjustment", type: "indicator"}, {label: "Default Adjusted", field: "defaultAdjustment", type: "indicator"}, {label: "Client Adjusted", field: "clientAdjustment", type: "indicator"}, {label: "PLT Ccy", field: "pltCcy"}, {label: "Create Date", field: "createDate"}, {label: "Created By", field: "createdBy"}, {label: "Archived", field: "archived"}, {label: "Archived Date", field: "archivedDate"}]}]
+          summary: [{header: "Target RAP Code", field: "targetRAPCode"}, {header: "Target RAP Desc", field: "targetRAPDesc"}, {header: "Root Region Peril Code", field: "minimumGrainRPCode"}, {header: "Root Region Peril Desc", field: ""}, {header: "Minimum Grain Grain RP Code", field: "minimumGrainRPCode"}, {header: "Minimum Grain RP Desc", field: ""}, {header: "Region Peril Code", field: "regionPerilCode"}, {header: "Region Peril Desc", field: "regionPerilDesc"}, {header: "Peril Group Code", field: "perilGroupCode"}, {header: "Peril Group Desc", field: "perilGroupDesc"}, {header: "Grain", field: "grain"}, {header: "Grouped PLT", field: "groupedPlt"},{header: "Cloned PLT", field: "clonedPlt"}, {header: "Occurence Basis Default", field: "defaultOccurenceBasis"}, {header: "OccurenceBasis", field: "occurenceBasis"}, {header: "Base Adjusted", field: "baseAdjustment"}, {header: "Default Adjusted", field: "defaultAdjustment"}, {header: "Client Adjusted", field: "clientAdjustment"}, {header: "PLT Ccy", field: "pltCcy"}, {header: "Create Date", field: "createDate"}, {header: "Created By", field: "createdBy"}, {header: "Archived", field: "archived"}, {header: "Archived Date", field: "archivedDate"}]
         }
       },
       {
         title: "EP & Statistics",
         cols: {
           summary: [
+            {header: "AEP 10", field: "aep10"},
+            {header: "AEP 50", field: "aep50"},
+            {header: "AEP 100", field: "aep100"},
+            {header: "AEP 250", field: "aep250"},
+            {header: "AEP 500", field: "aep500"},
+            {header: "AEP 1000", field: "aep1000"},
+            {header: "OEP 10", field: "oep10"},
+            {header: "OEP 50", field: "oep50"},
+            {header: "OEP 100", field: "oep100"},
+            {header: "OEP 250", field: "oep250"},
+            {header: "OEP 500", field: "oep500"},
+            {header: "OEP 1000", field: "oep1000"},
             {header: "AAL", field: "aal"},
             {header: "CoV", field: "cov"},
             {header: "Std Dev", field: "stdDev"},
           ]
-        },
-        table: {
-            cols: ['Return Period', 'AEP', 'OEP'],
-            data: [
-              {
-                'Return Period': 10,
-                'AEP': 'aep10',
-                'OEP': 'oep10'
-              },
-              {
-                'Return Period': 50,
-                'AEP': 'aep50',
-                'OEP': 'oep50'
-              },
-              {
-                'Return Period': 100,
-                'AEP': 'aep100',
-                'OEP': 'oep100'
-              },
-              {
-                'Return Period': 250,
-                'AEP': 'aep250',
-                'OEP': 'oep250'
-              },
-              {
-                'Return Period': 500,
-                'AEP': 'aep500',
-                'OEP': 'oep500'
-              },
-              {
-                'Return Period': 1000,
-                'AEP': 'aep1000',
-                'OEP': 'oep1000'
-              },
-            ]
-        },
-        isTable: true
+        }
       },
       {
         title: "Cloning Source",
-        cloningSource: true,
         cols: {
           summary: [
             {header: "Clone Source PLT", field: "ClonedSourcePlt"}, {header: "Clone Source Project", field: "ClonedSourceProject"}, {header: "Clone Source Workspace", field: "ClonedSourceWorkspace"}
@@ -255,30 +235,14 @@ export class PltRightMenuComponent implements OnInit {
         cols: {
           summary: [
             {header: "Project ID", field: "projectId"}, {header: "Project Name", field: "projectName"}, {header: "Project Description", field: "projectDescription"}, {header: "Project Type", field: "projectType"}, {header: "Assigned Analyst", field: "assignedTo"}, {header: "Created Date", field: "createdDate"}, {header: "Created By", field: "createdBy"}, {header: "Car ID", field: "carId"}, {header: "CAR Source System", field: "carSourceSystem"}, {header: "CAR Source System Ref", field: "carSourceSystemRef"}, {header: "CAR Raised Ref", field: "carRaisedRef"}, {header: "Master Project ID", field: "masterProjectId"}, {header: "Master Project Name", field: "masterProjectName"}, {header: "Master Project Description", field: "masterProjectDescription"}, {header: "Master Project Workspace", field: "masterProjectWorkspace"}, {header: "Master Project Client", field: "masterProjectClient"}, {header: "MGA Details", field: ""}
-          ],
-          sections: [
-            {
-              title: "Project", rows: [{label: "Project ID", field: "projectId"}, {label: "Project Name", field: "projectName"}, {label: "Project Description", field: "projectDescription"}, {label: "Project Type", field: "projectType"}, {label: "Assigned Analyst", field: "assignedTo"}, {label: "Created Date", field: "createdDate"}, {label: "Created By", field: "createdBy"}
-            ],
-            },
-            {
-              title: "CAR Details", rows: [{label: "Car ID", field: "carId"}, {label: "CAR Source System", field: "carSourceSystem"}, {label: "CAR Source System Ref", field: "carSourceSystemRef"}, {label: "CAR Raised Ref", field: "carRaisedRef"}]
-            },
-            {
-              title: "Master Project", rows: [{label: "Master Project ID", field: "masterProjectId"}, {label: "Master Project Name", field: "masterProjectName"}, {label: "Master Project Description", field: "masterProjectDescription"}, {label: "Master Project Workspace", field: "masterProjectWorkspace"}, {label: "Master Project Client", field: "masterProjectClient"}]
-            }
-            ]
+          ]
         }
       },
       {
         title: "Publishing Status",
         cols: {
           summary: [
-            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
-          ],
-          sections: [
-            { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
-            { title: "Accumulation", rows: [{label: "(A) Published to ARC", field: "arcPublication"}, {label: "Published to ARC Date", field: ""}, {label: "Published to ARC By", field: ""}]}
+            {header: "(X) Publishied to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced"}, {header: "(A) Published to ARC", field: "arcPublication"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
           ]
         }
       },
@@ -287,9 +251,6 @@ export class PltRightMenuComponent implements OnInit {
         cols: {
           summary: [
             {header: "Pure PLT ID", field: "pureId"}, {header: "Pure PLT Name", field: "pureName"},
-          ],
-          sections: [
-            { title: "Pure PLT", rows: [{label: "Pure PLT ID", field: "pureId"}, {label: "Pure PLT Name", field: "pureName"}] }
           ]
         }
       },
@@ -298,14 +259,6 @@ export class PltRightMenuComponent implements OnInit {
         cols: {
           summary: [
             {header: "Group PLT ID", field: ""}, {header: "Group PLT Name", field: ""}, {header: "Created Date", field: ""}, {header: "Created By", field: ""}, {header: "Source PLT Count", field: ""}, {header: "PLT Ccy", field: ""}, {header: "Source PLT ID", field: ""}, {header: "Source PLT Ccy", field: ""}, {header: "Source PLT Name", field: ""},
-          ],
-          sections: [
-            {
-              title: "Group PLT", rows: [{label: "Group PLT ID", field: ""}, {label: "Group PLT Name", field: ""}, {label: "Created Date", field: ""}, {label: "Created By", field: ""}, {label: "Source PLT Count", field: ""}, {label: "PLT Ccy", field: ""}]
-            },
-            {
-              title: "Source PLT List", rows: [{label: "Source PLT ID", field: ""}, {label: "Source PLT Ccy", field: ""}, {label: "Source PLT Name", field: ""}]
-            }
           ]
         }
       },
@@ -314,11 +267,6 @@ export class PltRightMenuComponent implements OnInit {
         cols: {
           summary: [
             {header: "Loss Table Type", field: "lossTableType"}, {header: "Loss Table Id", field: "lossTypeId"}, {header: "Vendor System", field: "vendorSystem"}, {header: "Modelling Data Source", field: "modellingDataSource"}, {header: "Source Analaysis Id", field: "sourceAnalysisId"}, {header: "Source Analysis Name", field: "sourceAnalysisName"}, {header: "Source Analysis Description", field: "sourceAnalysisDescription"}, {header: "Source Financial Perspective", field: "sourceFinancialPerspective"}
-          ],
-          sections: [
-            {
-              title: "Source Loss Table", rows : [{label: "Loss Table Type", field: "lossTableType"}, {label: "Loss Table Id", field: "lossTypeId"}, {label: "Vendor System", field: "vendorSystem"}, {label: "Modelling Data Source", field: "modellingDataSource"}, {label: "Source Analaysis Id", field: "sourceAnalysisId"}, {label: "Source Analysis Name", field: "sourceAnalysisName"}, {label: "Source Analysis Description", field: "sourceAnalysisDescription"}, {label: "Source Financial Perspective", field: "sourceFinancialPerspective"}]
-            }
           ]
         }
       },
@@ -327,22 +275,17 @@ export class PltRightMenuComponent implements OnInit {
         cols: {
           summary: [
             {header: "ID", field: "inuringPackageId"}, {header: "Name", field: "inuringPackageName"}, {header: "Description", field: "inuringPackageDescription"}, {header: "Package Status", field: "inuringPackageStatus"}, {header: "Locked Indicator", field: "inuringPackageLocked"}, {header: "Created On", field: "inuringCreatedOn"}, {header: "Last Updated", field: "inuringLastModifiedOn"}, {header: "Last Updated By", field: "inuringLastModifiedBy"},
-          ],
-          sections: [
-            {
-              title: "Inuring Pkg", rows: [{label: "ID", field: "inuringPackageId"}, {label: "Name", field: "inuringPackageName"}, {label: "Description", field: "inuringPackageDescription"}, {label: "Package Status", field: "inuringPackageStatus"}, {label: "Locked Indicator", field: "inuringPackageLocked"}, {label: "Created On", field: "inuringCreatedOn"}, {label: "Last Updated", field: "inuringLastModifiedOn"}, {label: "Last Updated By", field: "inuringLastModifiedBy"},]
-            }
           ]
         }
       }
     ];
     this.fullViewActive= false;
-    this.currentFullView= {};
+    this.currentFullView= {
+
+    };
   }
 
   ngOnInit() {
-    this.activeTabIndex =0;
-    this.loadTab(this.activeTabIndex);
   }
 
   closeDrawer() {
@@ -391,8 +334,9 @@ export class PltRightMenuComponent implements OnInit {
   }
 
   openSection(title) {
-    this.currentFullView = _.find(this.pltPopUpItemConfig, ['title', title]);
-    if(this.currentFullView.cols.sections && this.currentFullView.cols.sections.length) this.fullViewActive= true;
+    this.fullViewActive= true;
+    console.log(_.find(this.pltPopUpItemConfig, ['title', title]));
+    this.currentFullView = _.find(this.pltPopUpItemConfig, ['title', title]).cols.sections;
   }
 
   closeSection() {
@@ -407,11 +351,4 @@ export class PltRightMenuComponent implements OnInit {
     })
   }
 
-  loadTab(tabIndex: number) {
-    console.log(tabIndex);
-    this.actionDispatcher.emit({
-      type: rightMenuStore.loadTab,
-      payload: tabIndex
-    })
-  }
 }
