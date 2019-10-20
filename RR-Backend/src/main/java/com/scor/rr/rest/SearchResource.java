@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class SearchResource {
 
     @GetMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
+    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size) {
         return searchService.globalSearchWorkspaces(filter, offset, size);
     }
 
@@ -53,24 +54,44 @@ public class SearchResource {
 //    }
 
     @GetMapping("searchcount")
-    Page<?> countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
+    Page<?> countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size) {
         return searchService.countInWorkspace(table, keyword, size);
     }
 
     @GetMapping("worspace/{workspaceId}/{uwy}")
-    ResponseEntity<WorkspaceDetailsDTO> getWorkspaceDetails(@PathVariable("workspaceId") String worspaceId, @PathVariable("uwy") String uwy){
-        return  searchService.getWorkspaceDetails(worspaceId, uwy)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+    ResponseEntity<WorkspaceDetailsDTO> getWorkspaceDetails(@PathVariable("workspaceId") String worspaceId, @PathVariable("uwy") String uwy) {
+        return searchService.getWorkspaceDetails(worspaceId, uwy)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    ResponseEntity<?> saveSearch(@RequestParam SearchType searchType, @RequestBody List<SearchItem> items) {
+        return ResponseEntity.ok(
+                searchService.saveSearch(searchType, items)
+        );
+    }
+
+    @GetMapping("saved-search")
+    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType) {
+        return ResponseEntity.ok(
+                searchService.getSavedSearches(searchType)
+        );
+    }
+
+    @DeleteMapping
+    ResponseEntity<?> deleteSavedSearch(@RequestParam SearchType searchType, @RequestParam Long id) {
+        searchService.deleteSavedSearch(searchType, id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("fac-treaties")
-    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable){
+    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
         return searchService.getAllFacTreaties(filter, pageable);
     }
 
     @PostMapping("workspace/expert-mode")
-    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request){
+    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request) {
         return searchService.expertModeSearch(request);
     }
 }

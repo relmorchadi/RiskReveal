@@ -2,6 +2,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.counter.*;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -79,6 +81,15 @@ public class SearchService {
     VwFacTreatyRepository vwFacTreatyRepository;
     @Autowired
     VwFacTreatySpecification vwFacTreatySpecification;
+
+    @Autowired
+    FacSearchRepository facSearchRepository;
+    @Autowired
+    FacSearchItemRepository facSearchItemRepository;
+    @Autowired
+    TreatySearchRepository treatySearchRepository;
+    @Autowired
+    TreatySearchItemRepository treatySearchItemRepository;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -170,5 +181,71 @@ public class SearchService {
         return resultList.stream().map((r) ->
                 new ContractSearchResult((String) r[0], (String) r[1], (String) r[2], (String) r[3], (String) r[4], (Integer) r[5])
         ).collect(Collectors.toList());
+    }
+
+    public Object saveSearch(SearchType searchType, List<SearchItem> items) {
+        /** @TODO: Make it user Specific **/
+
+        if (searchType.equals(SearchType.FAC)) {
+            return this.saveFacSearch(items);
+        } else if (searchType.equals(SearchType.TREATY)) {
+            return this.saveTreatySearch(items);
+        } else {
+            throw new RuntimeException("Unsupported Search Type" + searchType);
+        }
+    }
+
+    private TreatySearch saveTreatySearch(List<SearchItem> items) {
+        TreatySearch treatySearch = this.treatySearchRepository.save(new TreatySearch());
+        List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
+        treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
+        return treatySearch;
+    }
+
+    private FacSearch saveFacSearch(List<SearchItem> items) {
+        FacSearch facSearch= this.facSearchRepository.save(new FacSearch());
+        List<FacSearchItem> facSearchItems= items.stream().map(item -> new FacSearchItem(item, facSearch.getId())).collect(toList());
+        facSearch.setItems(this.facSearchItemRepository.saveAll(facSearchItems));
+        return facSearch;
+    }
+
+
+    public List<?> getSavedSearches(SearchType searchType) {
+        /** @TODO: Make it user Specific **/
+
+        if(searchType.equals(SearchType.FAC))
+            return facSearchRepository.findAll();
+        else if (searchType.equals(SearchType.TREATY))
+            return treatySearchRepository.findAll();
+        else {
+            throw new RuntimeException("Unsupported Search Type" + searchType);
+        }
+    }
+
+    public void deleteSavedSearch(SearchType searchType, Long id) {
+        if(searchType.equals(SearchType.FAC)){
+            this.deleteFacSearch(id);
+        }
+        else if (searchType.equals(SearchType.TREATY)){
+            this.deleteTreatySearch(id);
+        }
+        else {
+            throw new RuntimeException("Unsupported Search Type" + searchType);
+        }
+    }
+
+    private void deleteFacSearch(Long id) {
+        if(!facSearchRepository.existsById(id))
+            throw new RuntimeException("No available Fac Saved Search with ID " + id);
+
+        facSearchItemRepository.deleteByFacSearchId(id);
+        facSearchRepository.deleteById(id);
+    }
+
+    private void deleteTreatySearch(Long id) {
+        if(!treatySearchRepository.existsById(id))
+            throw new RuntimeException("No available Treaty Saved Search with ID " + id);
+        treatySearchItemRepository.deleteByTreatySearchId(id);
+        treatySearchRepository.deleteById(id);
     }
 }
