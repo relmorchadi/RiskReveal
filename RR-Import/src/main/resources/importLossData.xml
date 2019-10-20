@@ -20,7 +20,7 @@
             <drools:resource type="DRL" source="classpath:rules/truncationThresholds.drl"/>
             <drools:resource type="DRL" source="classpath:rules/activeChecks.drl"/>
             <drools:resource type="DRL" source="classpath:rules/transformationLibrary.drl"/>
-            <drools:resource type="DRL" source="classpath:rules/fileNamingConventions.drl"/>
+<!--            <drools:resource type="DRL" source="classpath:rules/fileNamingConventions.drl"/>-->
             <drools:resource type="DRL" source="classpath:rules/adjustmentLibrary.drl"/>
             <!-- exemple for config drules server -->
             <!--              <drools:resource    -->

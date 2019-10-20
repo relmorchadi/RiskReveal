@@ -1,0 +1,22 @@
+package almf.rules
+
+import com.scor.rr.importBatch.businessrules.bean.BusinessRulesBean;
+import com.scor.rr.importBatch.processing.adjustment.LinearAdjustmentFactory
+import com.scor.rr.importBatch.processing.adjustment.DummyAdjustmentFactory;
+import com.scor.rr.domain.adjustments.LinearAdjustmentDefinition;
+import com.scor.rr.domain.adjustments.DummyAdjustmentDefinition;
+
+rule "adjustmentLinear"
+      when
+         $businessRulesBean : BusinessRulesBean( $map:inputData["adjustmentType"] == LinearAdjustmentDefinition.type)
+      then
+          modify ($businessRulesBean) {setOutputData("adjustmentFactory",new LinearAdjustmentFactory())}
+end
+
+rule "adjustmentDummy"
+      when
+         $businessRulesBean : BusinessRulesBean( $map:inputData["adjustmentType"] == DummyAdjustmentDefinition.type)
+      then
+          modify ($businessRulesBean) {setOutputData("adjustmentFactory",new DummyAdjustmentFactory())}
+end
+// TODO: add new adjustment
