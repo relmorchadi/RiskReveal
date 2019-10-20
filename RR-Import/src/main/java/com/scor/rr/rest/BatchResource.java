@@ -119,7 +119,7 @@ public class BatchResource {
         return new ResponseEntity(jobExecutionId, HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("triggerImport")
     public ResponseEntity runImportBatchJob(
             @RequestParam("batchJobName") String batchJobName,
             @RequestParam("instanceId") String instanceId,

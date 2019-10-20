@@ -3,6 +3,7 @@ package com.scor.rr.domain.entities.references;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 /**
  * The persistent class for the RegionPeril database table
@@ -15,32 +16,40 @@ import javax.persistence.*;
 public class RegionPeril {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RegionPerilId")
+    @Column(name = "regionPerilId")
     private Integer regionPerilId;
-    @Column(name = "RegionPerilCode")
+    @Column(name = "regionPerilCode")
     private String regionPerilCode;
-    @Column(name = "RegionPerilDescription")
+    @Column(name = "regionPerilDescription")
     private String regionPerilDesc;
-    @Column(name = "PerilCode")
+    @Column(name = "perilCode")
     private String perilCode;
-    @Column(name = "RegionPerilGroupCode")
+    @Column(name = "regionPerilGroupCode")
     private String regionPerilGroupCode;
-    @Column(name = "RegionPerilGroupDescription")
+    @Column(name = "regionPerilGroupDescription")
     private String regionPerilGroupDesc;
-    @Column(name = "RegionHierarchy")
+    @Column(name = "regionHierarchy")
     private Integer regionHierarchy;
-    @Column(name = "RegionDescription")
+    @Column(name = "regionDescription")
     private String regionDesc;
-    @Column(name = "IsModelled")
+    @Column(name = "isModelled")
     private Boolean isModelled;
-    @Column(name = "HierarchyParentCode")
+    @Column(name = "hierarchyParentCode")
     private String hierarchyParentCode;
-    @Column(name = "HierarchyLevel")
+    @Column(name = "hierarchyLevel")
     private String hierarchyLevel;
-    @Column(name = "IsMinimumGrainRegionPeril")
+    @Column(name = "isMinimumGrainRegionPeril")
     private Boolean isMinimumGrainRegionPeril;
-    @Column(name = "ParentMinimumGrainRegionPeril")
+    @Column(name = "parentMinimumGrainRegionPeril")
     private String parentMinimumGrainRegionPeril;
-    @Column(name = "IsActive")
+    @Column(name = "LastUpdatedRiskReveal")
+    private Date LastUpdatedRiskReveal;
+    @Column(name = "LastUpdatedCatDomain")
+    private Date LastUpdatedCatDomain;
+    @Column(name = "LastSyncRunCatDomain")
+    private Date LastSyncRunCatDomain;
+    @Column(name = "isActive")
     private Boolean isActive;
+    @Column(name = "comments")
+    private String comments;
 }

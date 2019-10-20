@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Thu Oct 17 14:57:09 CEST 2019:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-016d-d9cb-1b9a-000028325990 
+Sun Oct 20 18:10:06 CEST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-016d-e9ee-d6d7-00001e1bfd78 
 on database directory C:\scor\data\ihub\batch\db\almftrt with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
-Loaded from file:/C:/dev/mvnrepo322/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
-java.vendor=Azul Systems, Inc.
-java.runtime.version=1.8.0_202-b05
-user.dir=C:\Users\user\Desktop\RiskReveal-import-backend
-os.name=Windows 7
+Loaded from file:/C:/Users/U008922/.m2/repository/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_211-b12
+user.dir=C:\Users\U008922\Desktop\RR--19-10-2019\RR-import
+os.name=Windows 10
 os.arch=amd64
-os.version=6.1
+os.version=10.0
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

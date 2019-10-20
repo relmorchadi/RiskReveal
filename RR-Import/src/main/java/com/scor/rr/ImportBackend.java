@@ -5,11 +5,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.scor.rr.repository")
 @EnableBatchProcessing
+@ImportResource("classpath:importLossData.xml")
 public class ImportBackend extends SpringBootServletInitializer implements CommandLineRunner {
 
 

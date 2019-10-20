@@ -44,6 +44,10 @@ public class AnalysisFinancialPerspective {
     public AnalysisFinancialPerspective() {
     }
 
+    public AnalysisFinancialPerspective(String code) {
+        this.code = code;
+    }
+
     public AnalysisFinancialPerspective(String code, String treatyLabel, Integer treatyId) {
         this.code = code;
         this.treatyLabel = treatyLabel;

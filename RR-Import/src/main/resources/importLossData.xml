@@ -34,12 +34,10 @@
 
     <task:executor id="convertExecutor" pool-size="${convert.executor.pool.size}"/>
 
-    <task:executor id="jobLauncherTaskExecutor" pool-size="${batch.job.executor.pool.size}" rejection-policy="ABORT"/>
-
     <batch:job id="importLossData" job-repository="myJobRepository" incrementer="idIncrementer">
         <batch:step id="init">
             <batch:flow parent="initFlow"/>
-            <batch:next on="*" to="mainFlow"/>
+            <batch:next on="*" to="main"/>
             <batch:next on="RUNNING" to="running"/>
             <batch:next on="WRONG_STATUS" to="error"/>
         </batch:step>
@@ -161,7 +159,7 @@
         <!--</batch:step>-->
 
         <batch:step id="adjustDefault" next="handleAnalysisImport">
-            <!--            <batch:tasklet ref="defaultAdjustment"/>-->
+            <batch:tasklet ref="defaultAdjustment"/>
             <!--step 16 -->
         </batch:step>
 
@@ -306,9 +304,9 @@
         <!--<batch:tasklet ref="completedHandler"/>-->
         <!--</batch:step>-->
         <!--must ask Viet-->
-        <batch:step id="postImport" next="updateCDMWithStatusOK">
-            <!--            <batch:tasklet ref="updateContractSectionExpectedScopeStep"/>-->
-        </batch:step>
+<!--        <batch:step id="postImport" next="updateCDMWithStatusOK">-->
+<!--             <batch:tasklet ref="updateContractSectionExpectedScopeStep"/>-->
+<!--        </batch:step>-->
         <batch:step id="updateCDMWithStatusOK">
             <batch:tasklet ref="completedHandler"/>
         </batch:step>
@@ -432,6 +430,8 @@
         <!--<property name="edmId" value="#{jobParameters['edmId']}" />-->
         <!--<property name="rdmId" value="#{jobParameters['rdmId']}" />-->
     </bean>
+
+    <bean class="org.springframework.batch.core.scope.StepScope" />
 
     <bean id="rmsDataProvider" class="com.scor.rr.service.RmsDataProviderService">
         <property name="dsCache" ref="dsCache"/>
