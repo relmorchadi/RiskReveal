@@ -155,7 +155,7 @@ public class ELTBinaryWriter extends BaseFileWriter implements ELTWriter {
             projectImportAssetLogA.getErrorMessages().add(String.format("Error writing RRLT file %s, eventCount %s, exception %s", rrImportedLossData.getRrLossTableId(), eventCount, e));
             return null;
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -250,7 +250,7 @@ public class ELTBinaryWriter extends BaseFileWriter implements ELTWriter {
             } catch (IOException e) {
                 log.error("Exception: ", e);
             } finally {
-                IOUtils.closeQuietly(out);
+                //IOUtils.closeQuietly(out);
                 if (buffer != null) {
                     closeDirectBuffer(buffer);
                 }
@@ -286,7 +286,7 @@ public class ELTBinaryWriter extends BaseFileWriter implements ELTWriter {
             } catch (IOException e) {
                 log.error("Exception: ", e);
             } finally {
-                IOUtils.closeQuietly(out);
+                //IOUtils.closeQuietly(out);
                 if (buffer != null) {
                     closeDirectBuffer(buffer);
                 }

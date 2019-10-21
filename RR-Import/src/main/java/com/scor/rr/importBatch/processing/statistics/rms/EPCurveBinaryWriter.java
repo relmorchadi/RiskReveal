@@ -93,7 +93,7 @@ public class EPCurveBinaryWriter extends BaseFileWriter implements EPCurveWriter
         } catch (IOException e) {
             log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -200,7 +200,7 @@ public class EPCurveBinaryWriter extends BaseFileWriter implements EPCurveWriter
         } catch (IOException e) {
             log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }

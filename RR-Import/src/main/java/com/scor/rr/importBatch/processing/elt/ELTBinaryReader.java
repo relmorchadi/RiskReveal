@@ -57,7 +57,7 @@ public class ELTBinaryReader {
         } catch (IOException e) {
             log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(fc);
+            //IOUtils.closeQuietly(fc);
         }
 
         testWriteELTValidation(events);
@@ -124,7 +124,7 @@ public class ELTBinaryReader {
             log.error("Exception: ", e);
             return false;
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }

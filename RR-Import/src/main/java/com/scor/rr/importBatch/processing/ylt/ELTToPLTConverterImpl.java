@@ -588,7 +588,7 @@ public class ELTToPLTConverterImpl extends BaseBatchBeanImpl implements ELTToPLT
                 log.error("Master {}: reading PEQT {}, IOException", this.id, peqtFile.getFileName(), e);
             }finally {
                 log.info("Master {}: finish reading PEQT {}, total period count {}", this.id, peqtFile.getFileName(), periodCount);
-                IOUtils.closeQuietly(fc);
+                //IOUtils.closeQuietly(fc);
                 pool.shutdown();
             }
 
@@ -600,7 +600,7 @@ public class ELTToPLTConverterImpl extends BaseBatchBeanImpl implements ELTToPLT
             }
 
             for (Map.Entry<String, FileOutputStream> entry : outputStreamForPLT.entrySet()) {
-                IOUtils.closeQuietly(entry.getValue());
+                //IOUtils.closeQuietly(entry.getValue());
             }
 
             Date endConvert = new Date();

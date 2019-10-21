@@ -59,7 +59,7 @@ public class EPSBinaryWriter extends BaseFileWriter implements EPSWriter {
         } catch (IOException e) {
             log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -109,7 +109,7 @@ public class EPSBinaryWriter extends BaseFileWriter implements EPSWriter {
         } catch (IOException e) {
             log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }

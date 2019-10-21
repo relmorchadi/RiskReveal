@@ -184,7 +184,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             if (DBG) log.error("Exception: ", e);
             return null;
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -225,7 +225,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             if (DBG) log.error("Exception: ", e);
             return null;
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -288,7 +288,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             if (DBG) log.error("Exception {}", e);
         } finally {
             // if (DBG) log.info("Writing PLT {}, nEvents = {}", file, list.size());
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -329,7 +329,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             if (DBG) log.error("Exception {}", e);
         } finally {
             // if (DBG) log.info("Writing PLT {}, nEvents = {}", file, list.size());
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -379,7 +379,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             if (DBG) log.error("Exception {}", e);
         } finally {
             if (DBG) log.info("Writing PLTv2 {}, size = {}, eventCount = {}", file, list.size(), eventCount);
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -445,7 +445,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
         } catch (IOException e) {
             if (DBG) log.error("Exception: ", e);
         } finally {
-            IOUtils.closeQuietly(out);
+            //IOUtils.closeQuietly(out);
             if (buffer != null) {
                 closeDirectBuffer(buffer);
             }
@@ -495,7 +495,7 @@ public class PLTBinaryWriter extends BaseFileWriter implements PLTWriter {
             } catch (IOException e) {
                 if (DBG) log.error("Exception: ", e);
             } finally {
-                IOUtils.closeQuietly(out);
+                //IOUtils.closeQuietly(out);
                 if (buffer != null) {
                     closeDirectBuffer(buffer);
                 }
