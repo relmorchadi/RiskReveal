@@ -159,7 +159,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     })
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
-      console.log("=========>", savedSearch);
     })
     this.initColumns();
   }
@@ -223,7 +222,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Debounce(500)
   filterData($event, target) {
     this._filter = {...this._filter, [target]: $event || null};
-    this._loadData();
+    this._loadData('0', '100', true);
   }
 
   navigateBack() {
@@ -256,7 +255,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  private _loadData(offset = '0', size = '100') {
+  private _loadData(offset = '0', size = '100', filter: boolean = false) {
     this.loading = true;
     let params = {
       keyword: this.globalSearchItem,
@@ -275,6 +274,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           size: data.numberOfElements,
           total: data.totalElements
         };
+        if (data.totalElements == 1) {
+          if (!filter)
+            this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear)
+        }
         this.detectChanges();
       });
   }
