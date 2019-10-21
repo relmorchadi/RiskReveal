@@ -3,7 +3,8 @@ import {
   ClearSearchValuesAction,
   CloseAllTagsAction,
   CloseBadgeByIndexAction,
-  CloseGlobalSearchAction, CloseSearchPopIns,
+  CloseGlobalSearchAction,
+  CloseSearchPopIns,
   CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
@@ -12,11 +13,13 @@ import {
   ExpertModeSearchAction,
   LoadRecentSearchAction,
   PatchSearchStateAction,
+  saveSearch,
   SearchAction,
   SearchContractsCountAction,
   SearchInputFocusAction,
   SearchInputValueChange,
-  SelectBadgeAction
+  SelectBadgeAction,
+  UpdateBadges
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
@@ -116,6 +119,16 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Selector()
+  static getSavedSearch(state: SearchNavBar) {
+    return state.savedSearch;
+  }
+
+  @Selector()
+  static getBadges(state: SearchNavBar) {
+    return state.badges;
+  }
+
+  @Selector()
   static getSearchTarget(state: SearchNavBar) {
     return state.searchTarget;
   }
@@ -168,6 +181,14 @@ export class SearchNavBarState implements NgxsOnInit {
     });
     if (keyword && keyword.length && ctx.getState().visibleSearch)
       ctx.dispatch(new SearchContractsCountAction(keyword));
+  }
+
+  @Action(UpdateBadges)
+  updateBadges(ctx: StateContext<SearchNavBar>, {payload}: UpdateBadges) {
+    const badges = payload;
+    ctx.patchState({
+      badges: [...badges]
+    });
   }
 
 
@@ -306,6 +327,14 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.visible = false;
       draft.visibleSearch = false;
+    }));
+  }
+
+  @Action(saveSearch)
+  saveSearchList(ctx: StateContext<SearchNavBar>, {payload}: saveSearch) {
+    const search = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.savedSearch = [...draft.savedSearch, search];
     }));
   }
 

@@ -25,7 +25,10 @@ import {HelperService} from "../../../../shared/helper.service";
   selector: 'search-menu-item',
   templateUrl: './search-menu-item.component.html',
   styleUrls: ['./search-menu-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:keydown)': 'onKeyPress($event)'
+  }
 })
 export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
@@ -40,6 +43,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   private unSubscribe$: Subject<void>;
   searchMode: string = 'Treaty';
   searchConfigPopInVisible: boolean = false;
+  inputDisabled: boolean = true;
 
 
   @Input('state')
@@ -227,4 +231,23 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 
+  onChangeTagValue(badge) {
+    let index = _.findIndex(this.state.badges, row => row.key == badge.key);
+    this.state.badges[index] = badge;
+    this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
+  }
+
+  toggleInput(event: boolean, item) {
+    console.log(event);
+    this.inputDisabled = event;
+    this.contractFilterFormGroup.patchValue({globalKeyword: item.key + ':' + item.value})
+  }
+
+  onKeyPress($event: KeyboardEvent) {
+    if ($event.shiftKey && $event.ctrlKey && $event.code == "KeyS") {
+      console.log('shift + ctrl + s');
+      this.searchInput.nativeElement.focus();
+      this.searchInput.nativeElement.click();
+    }
+  }
 }
