@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Sun Oct 20 18:10:06 CEST 2019:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-016d-e9ee-d6d7-00001e1bfd78 
-on database directory C:\scor\data\ihub\batch\db\almftrt with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
+Sun Oct 20 20:00:46 CEST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.11.1.1 - (1616546): instance a816c00e-016d-ea54-255a-000020d53670 
+on database directory C:\Users\U008922\Desktop\RR--19-10-2019\RR-import\derby-home\almftrt with class loader sun.misc.Launcher$AppClassLoader@18b4aac2 
 Loaded from file:/C:/Users/U008922/.m2/repository/org/apache/derby/derby/10.11.1.1/derby-10.11.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_211-b12

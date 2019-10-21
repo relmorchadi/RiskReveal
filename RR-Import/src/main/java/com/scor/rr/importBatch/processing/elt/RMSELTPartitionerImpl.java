@@ -116,10 +116,14 @@ public class RMSELTPartitionerImpl extends BaseRMSBeanImpl implements RMSELTPart
         log.debug("Starting loadRegionPerils");
         Date startDate = new Date();
         java.sql.Date startDateSql = new java.sql.Date(startDate.getTime());
+//        ////
+//        setProjectId("1");
+//        setRmspicId("1");
+//        ////
         project = projectRepository.findById(getProjectId()).orElse(null);
-
         // new code ri
         rmsProjectImportConfig = rmsProjectImportConfigRepository.findById(getRmspicId()).orElse(null);
+
         if (rmsProjectImportConfig == null || rmsProjectImportConfig.getSelectedAssociationBags() == null) {
             return false;
         }

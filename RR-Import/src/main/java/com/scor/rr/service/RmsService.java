@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -30,7 +30,7 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @Slf4j
-@Transactional
+@Transactional(transactionManager = "getDataSourceTransactionManager")
 public class RmsService {
 
     @Autowired

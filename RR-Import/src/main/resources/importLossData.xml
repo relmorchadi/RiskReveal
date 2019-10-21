@@ -60,11 +60,11 @@
     </batch:job>
 
     <batch:flow id="mainFlow">
-        <batch:step id="checkConsistency">
-            <batch:tasklet ref="rmsConsistencyCheck"/>
-            <batch:fail on="FAILED"/>
-            <batch:next on="*" to="loadRegionPerils"/>
-        </batch:step>
+<!--        <batch:step id="checkConsistency">-->
+<!--            <batch:tasklet ref="rmsConsistencyCheck"/>-->
+<!--            <batch:fail on="FAILED"/>-->
+<!--            <batch:next on="*" to="loadRegionPerils"/>-->
+<!--        </batch:step>-->
         <batch:step id="loadRegionPerils" next="extractEPCurveStats">
             <batch:tasklet ref="eltRegionPerilExtractor"/>
             <!--step 1-->
@@ -432,6 +432,10 @@
     </bean>
 
     <bean class="org.springframework.batch.core.scope.StepScope" />
+
+    <bean id="jobScope" class="org.springframework.batch.core.scope.JobScope">
+        <property name="autoProxy" value="true" />
+    </bean>
 
     <bean id="rmsDataProvider" class="com.scor.rr.service.RmsDataProviderService">
         <property name="dsCache" ref="dsCache"/>

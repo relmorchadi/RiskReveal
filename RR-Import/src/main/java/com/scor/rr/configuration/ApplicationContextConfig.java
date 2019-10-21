@@ -6,13 +6,10 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.support.MapJobRegistry;
 import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.explore.support.JobExplorerFactoryBean;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.guava.GuavaCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -55,36 +52,31 @@ public class ApplicationContextConfig {
     @Bean(value = "myDataSource")
     public BasicDataSource getDataSource(){
         BasicDataSource basicDataSource = new BasicDataSource();
-        basicDataSource.setDriverClassName(env.getProperty("batch.jdbc.driver"));
+//        basicDataSource.setDriverClassName(env.getProperty("batch.jdbc.driver"));
         basicDataSource.setUrl(env.getProperty("batch.jdbc.url"));
         basicDataSource.setUsername(env.getProperty("batch.jdbc.user"));
         basicDataSource.setPassword(env.getProperty("batch.jdbc.password"));
-        basicDataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("batch.jdbc.testWhileIdle")));
-        basicDataSource.setValidationQuery(env.getProperty("validationQuery"));
+//        basicDataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("batch.jdbc.testWhileIdle")));
+//        basicDataSource.setValidationQuery(env.getProperty("validationQuery"));
+
         return basicDataSource;
     }
 
     @Bean(value = "myJobRepository")
     public JobRepository getJobRepository() throws Exception{
-        MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setTransactionManager(getDataSourceTransactionManager());
+        factory.setDataSource(getDataSource());
         return factory.getObject();
     }
 
     @Bean(value = "myJobRegistry")
     public JobRegistry getJobRegistry() throws Exception{
-        MapJobRegistry jobRegistry = new MapJobRegistry();
+        JobRegistry jobRegistry = new MapJobRegistry();
         Job importLossData = context.getBean("importLossData", Job.class);
         jobRegistry.register(new ReferenceJobFactory(importLossData));
         return jobRegistry;
     }
-
-//    @Bean
-//    public JobExplorer getJobExplorer() throws Exception {
-//        JobExplorerFactoryBean fac = new JobExplorerFactoryBean();
-//        fac.setDataSource(getDataSource());
-//        return fac.getObject();
-//    }
 
     @Bean(value = "myJobLauncher")
     public SimpleJobLauncher getJobLauncher() throws Exception{
