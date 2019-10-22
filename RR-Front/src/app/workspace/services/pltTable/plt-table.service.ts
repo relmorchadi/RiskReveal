@@ -163,7 +163,7 @@ export class PltTableService {
         width: '80',
         unit: 'px',
         icon: null,
-        type: 'field',
+        type: 'peril',
         active: true
       },
       {

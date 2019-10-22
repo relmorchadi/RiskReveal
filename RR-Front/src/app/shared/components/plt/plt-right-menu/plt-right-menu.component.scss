@@ -436,6 +436,8 @@
       background: #fff;
       box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
       z-index: 9999;
+      display: flex;
+      flex-flow: column;
 
       .navigation-icons-drawer {
         position: absolute;
@@ -454,6 +456,8 @@
     }
 
     .plt-details-header {
+      height: 60px;
+
       span {
         display: flex;
         color: rgba(0, 0, 0, 0.87);
@@ -493,8 +497,6 @@
 
       .plt-detail-brief-desc {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
       }
     }
 
@@ -505,7 +507,7 @@
     .summary-table {
       flex: 1 1 auto;
       overflow-y: auto;
-      height: calc( 100vh - 320px) !important;
+      height: calc( 100vh - 390px) !important;
 
       .ant-row {
         border-bottom: 1px solid #bfbfbf;
@@ -536,6 +538,15 @@
       display: flex;
       flex-direction: column;
     }
+  }
+}
+
+::ng-deep {
+  .icon-check {
+    background-color: #0700e4;
+    color: #fff;
+    border-radius: 25px;
+    font-size: 16px;
   }
 }
 

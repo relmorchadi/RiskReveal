@@ -3,12 +3,8 @@
     <i class="icon-arrow_back_ios_24px" (click)="closeSection()"></i>
     <div class="title">
       <span>
-        {{plt?.pltName}}
+        {{inputs?.title}}
       </span>
-      <div class="sub-title">
-        <span>[{{plt?.pltId}}]</span>
-        <span>[{{plt?.pltType}}]</span>
-      </div>
     </div>
   </div>
   <div class="body">
@@ -21,7 +17,7 @@
         <tr *ngFor="let row of section?.rows">
           <td style="min-width: 150px;padding: 5px 16px;">{{row?.label}}</td>
           <ng-container *ngIf="!row?.type">
-            <td style="font-weight: bold;">{{plt[row?.field]}}</td>
+            <td>{{plt[row?.field]}}</td>
           </ng-container>
           <ng-container *ngIf="row?.type == 'tags'">
               <td style="min-width: 150px;padding: 5px 16px;">
@@ -31,8 +27,8 @@
               </td>
           </ng-container>
           <ng-container *ngIf="row?.type == 'indicator'">
-            <td style="min-width: 150px;padding: 5px 16px;font-weight: bold;" class="indicator">
-              <i class="icon-check" *ngIf="plt[col?.field]"></i>
+            <td style="min-width: 150px;padding: 5px 16px;" class="indicator">
+              <i nz-dropdown [ngClass]="{ 'icon-check': plt[row?.field], 'icon-remove_24px': !plt[row?.field] }"></i>
             </td>
           </ng-container>
         </tr>
@@ -41,4 +37,3 @@
     </div>
   </div>
 </div>
-
