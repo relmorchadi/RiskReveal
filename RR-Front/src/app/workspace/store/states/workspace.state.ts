@@ -357,7 +357,7 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence.data;
+    return state.content[wsIdentifier].scopeOfCompletence;
   }
 
   static getPltsForScopeCompleteness(wsIdentifier: string) {

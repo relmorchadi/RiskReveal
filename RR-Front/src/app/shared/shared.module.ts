@@ -11,15 +11,16 @@ import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
 import {ColorGithubModule} from 'ngx-color/github';
 import {DragDropModule, DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
-import {DIRECTIVES} from "./directives";
+import {DIRECTIVES} from './directives';
 import {SidebarModule} from 'primeng/sidebar';
-import {AngularDraggableModule} from "angular2-draggable";
-import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
-import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
-import {AngularResizedEventModule} from "angular-resize-event";
+import {AngularDraggableModule} from 'angular2-draggable';
+import {SystemTagFilterPipe} from './pipes/system-tag-filter.pipe';
+import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
+import {AngularResizedEventModule} from 'angular-resize-event';
+import { TrimFormatPipe } from './pipes/trim-format.pipe';
 
 @NgModule({
-  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES ],
+  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe ],
   imports: [
     CommonModule,
     NgZorroAntdModule,

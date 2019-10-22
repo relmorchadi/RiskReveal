@@ -34,7 +34,7 @@
             <gridster  [options]="options" style="background-color: transparent" >
               <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
-                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent'"
+                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
                                           (changeName)="changeName(dashboard.id, $event)"
@@ -53,6 +53,12 @@
                                         (changeName)="changeNameFac(dashboard.id, $event)"
                                         (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-chart-widget>
+                  <app-fac-subsidiary-chart *ngIf="item.componentName === 'facSubsidiaryChartComponent'"
+                                            [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                            (delete)="deleteItemFac(dashboard.id, $event)"
+                                            (changeName)="changeNameFac(dashboard.id, $event)"
+                                            (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
+                  </app-fac-subsidiary-chart>
                 </gridster-item>
               </ng-container>
             </gridster>
@@ -64,7 +70,7 @@
     </nz-tabset>
 
   </nz-content>
-  <div class="PLT-slider closed-slider"  >
+  <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
       <i class="clickable-item icon-settings_24px" style="font-size: 24px"
          (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
@@ -150,9 +156,9 @@
         <div class="highlight" style="margin-top: 10px">
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
-        <ul class="widgets-list" style="height: 129px;">
+        <ul class="widgets-list" style="height: 160px;">
           <ng-container *ngFor="let fac of selectedDashboard.fac;let i = index">
-            <li *ngIf="i < 4"
+            <li *ngIf="i < 5"
                 (click)="addRemoveItemFac(fac, selectedDashboard)"
                 class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
               <!--            <i [ngClass]="fac.icon"></i>-->

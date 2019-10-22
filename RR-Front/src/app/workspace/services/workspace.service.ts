@@ -190,6 +190,7 @@ export class WorkspaceService {
           },
           scopeOfCompletence: {
             data: {},
+            wsType: null,
           },
           fileBaseImport: {
             folders: null,
@@ -239,7 +240,8 @@ export class WorkspaceService {
             sourceWsId: null,
             sourceWsName: null,
             locking: null,
-            selected: false
+            selected: false,
+            projectType: 'fac'
           };
         });
         draft.content[wsIdentifier].projects[0].selected = true;

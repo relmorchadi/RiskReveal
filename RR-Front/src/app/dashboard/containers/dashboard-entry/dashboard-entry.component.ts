@@ -81,8 +81,13 @@ export class DashboardEntryComponent implements OnInit {
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 102, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'chart',
+          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
+          componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -153,6 +158,11 @@ export class DashboardEntryComponent implements OnInit {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
+          componentName: 'facSubsidiaryChartComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
     },
@@ -212,6 +222,11 @@ export class DashboardEntryComponent implements OnInit {
       {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
+      },
+      {
+        id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
+        componentName: 'facSubsidiaryChartComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }
     ]
@@ -514,7 +529,6 @@ export class DashboardEntryComponent implements OnInit {
         ds.selected = !ds.selected;
       }
     });
-    console.log(dashboard.fac);
     _.forEach(this.dashboards , ds => {
       if (ds.id === dashboard.id) {
         ds = dashboard;
