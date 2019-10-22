@@ -2,7 +2,7 @@ import {Selector, State} from '@ngxs/store';
 
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
-import {RiskApi} from '../../services/risk.api';
+import {RiskApi} from '../../services/api/risk.api';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 
 const initiaState: RiskLinkModel = {

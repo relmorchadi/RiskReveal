@@ -149,7 +149,7 @@
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + col?.unit }">
             <div class="td-wrapper-tags">
               <ng-container *ngFor="let tag of rowData[col?.fields];let i= index;">
-                <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+                <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength" [ngStyle]="{ 'background-color': tag.defaultColor}">&nbsp;</span>
                 <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData[col?.fields].length - 1)" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
               </ng-container>
 
@@ -158,14 +158,14 @@
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
             <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields != 'perilGroupCode' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
               <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields == 'perilGroupCode' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
             <ng-container>
-              <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData.peril]}">{{ rowData[col.fields] }}</div>
+              <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData[col?.fields]]}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">

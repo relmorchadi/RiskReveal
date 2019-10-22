@@ -3,14 +3,28 @@
     <span>
       {{inputs.title}}
     </span>
-    <i class="icon-arrow_right_24px" (click)="openSection(inputs.title)"></i>
+    <i *ngIf="inputs?.cols?.sections?.length > 0" class="icon-arrow_forward_ios_24px" (click)="openSection(inputs.title)"></i>
   </div>
   <div *ngIf="plt && inputs?.cols" class="pop-up-item-body">
     <table class="pop-up-item-table">
       <tbody>
         <tr *ngFor="let col of inputs?.cols?.summary">
-          <td style="min-width: 150px;padding: 16px;">{{col?.header}}</td>
-          <td style="width: auto;padding: 16px;">{{plt[col?.field]}}</td>
+          <td style="min-width: 150px;padding: 5px 16px;">{{col?.header}}</td>
+          <ng-container *ngIf="!col?.type">
+            <td style="width: auto;padding: 5px 16px;">{{plt[col?.field]}}</td>
+          </ng-container>
+          <ng-container *ngIf="col?.type == 'tags'">
+            <td style="width: auto;padding: 5px 16px;">
+              <ng-container *ngFor="let tag of plt[col?.field];">
+                <span class="tag-el" [ngStyle]="{ 'background-color': tag.defaultColor}">&nbsp;</span>
+              </ng-container>
+            </td>
+          </ng-container>
+          <ng-container *ngIf="col?.type == 'indicator'">
+            <td style="width: auto;padding: 5px 16px;" class="indicator">
+              <i nz-dropdown [ngClass]="{ 'icon-check': plt[col?.field], 'icon-remove_24px': !plt[col?.field] }"></i>
+            </td>
+          </ng-container>
         </tr>
       </tbody>
     </table>

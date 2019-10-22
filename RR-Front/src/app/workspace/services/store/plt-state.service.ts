@@ -1,17 +1,17 @@
 import {Injectable} from '@angular/core';
 import {StateContext} from '@ngxs/store';
-import * as fromPlt from '../store/actions/plt_main.actions';
+import * as fromPlt from '../../store/actions/plt_main.actions';
 import {catchError, mergeMap, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
-import {PltApi} from './plt.api';
-import {WorkspaceModel} from '../model';
+import {PltApi} from '../api/plt.api';
+import {WorkspaceModel} from '../../model';
 import {of} from 'rxjs';
 import * as moment from 'moment';
 import produce from "immer";
-import {WsApi} from "./workspace.api";
-import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
-import {TagsApi} from "./tags.api";
-import {loadAllPlts} from "../store/actions/";
+import {WsApi} from "../api/workspace.api";
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../../containers/workspace-calibration/data";
+import {TagsApi} from "../api/tags.api";
+import {loadAllPlts} from "../../store/actions";
 
 @Injectable({
   providedIn: 'root'
@@ -95,11 +95,20 @@ export class PltStateService {
                 plts: {},
                 pltManager: {
                   data: {},
+                  deleted: {},
                   filters: {
                     systemTag: [], userTag: []
                   },
                   openedPlt: {},
                   userTags: {},
+                  userTagManager: {
+                    usedInWs: {},
+                    suggested: {},
+                    allTags: {}
+                  },
+                  pltDetails: {
+                    summary: {}
+                  },
                   cloneConfig: {},
                   loading: false
                 },
@@ -526,13 +535,6 @@ export class PltStateService {
       )
   }
 
-  /*deleteTag(ctx: StateContext<WorkspaceModel>, payload: any) {
-    return this.pltApi.deleteUserTag(payload)
-      .pipe(
-        mergeMap( userTag => of(userTag))
-      )
-  }*/
-
   getTagsBySelection(ctx: StateContext<WorkspaceModel>, payload: any) {
     return this.tagApi.getTagsBySelection(payload)
       .pipe(
@@ -575,102 +577,33 @@ export class PltStateService {
       )
   }
 
-  /** @ToRefactor **/
-  /*assignPltsToTag(ctx: StateContext<WorkspaceModel>, payload: any) {
-    console.log(payload);
-    switch (payload.type) {
-      case 'assignOrRemove':
-        return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
-          mergeMap((tags) => {
-            console.log(payload);
-            return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-              workspaceId: payload.wsIdentifier.split('-')[0],
-              uwYear: payload.wsIdentifier.split('-')[1]
-            }));
-          })
-        );
-      case 'createTag':
-        return this.pltApi.creatUserTag(_.omit(payload, 'wsIdentifier')).pipe(
-          mergeMap((userTag) => {
-            return ctx.dispatch(new fromPlt.CreateTagSuccess({
-              wsIdentifier: payload.wsIdentifier,
-              userTag
-            }))
-          }),
-          catchError(() => of(new fromPlt.assignPltsToTagFail()))
-        )
-    }
-  }*/
-
-  /*createUserTagSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
-    const {
-      userTag,
-      wsIdentifier
-    } = payload;
-
-    const {
-      data,
-      userTags
-    } = ctx.getState().content[wsIdentifier].pltManager;
-
-    let newData = {};
-
-    _.forEach(userTag.pltHeaders, header => {
-      newData[header.id] = {
-        ...data[header.id],
-        userTags: [...data[header.id].userTags, userTag]
-      }
-    });
-
-
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
-      draft.content[wsIdentifier].pltManager.userTags = {
-        ...userTags,
-        [userTag.tagId]: {...userTag, count: userTag.pltHeaders.length, selected: false}
-      }
-    }));
-  }*/
-
-  /*assignPltsToTagSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
-    ctx.dispatch(new fromPlt.loadAllPlts({
-      params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}, wsIdentifier: payload.workspaceId
-        + "-" + payload.uwYear
-    }))
-  }*/
-
   deleteUserTag(ctx: StateContext<WorkspaceModel>, payload: any) {
     /*return this.pltApi.deleteUserTag(payload.userTagId).pipe(
       mergeMap(() => ctx.dispatch(new fromPlt.deleteUserTagSuccess(payload)))
     )*/
   }
 
-  /*deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, payload: any) {
+  loadSummaryDetail(ctx: StateContext<WorkspaceModel>, payload: any) {
+
     const {
-      userTagId,
+      wsIdentifier
+    } = ctx.getState().currentTab;
+
+    return this.pltApi.getSummary(payload)
+      .pipe(
+        mergeMap( summaryDetail => ctx.dispatch(new fromPlt.loadSummaryDetailSuccess({summaryDetail, wsIdentifier})))
+      )
+  }
+
+  loadSummaryDetailSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
+
+    const {
+      summaryDetail,
       wsIdentifier
     } = payload;
 
-    const {
-      data,
-      userTags
-    } = ctx.getState().content[wsIdentifier].pltManager;
-
-    console.log(payload);
-    console.log(data,userTags)
-
-    let newData = {};
-
-    _.forEach(userTags[userTagId].pltHeaders, (plt) => {
-      newData[plt.id] = {
-        ...data[plt.id],
-        userTags: _.filter(data[plt.id].userTags, (userTag: any) => userTag.tagId !== userTagId)
-      }
-    });
-
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
-      draft.content[wsIdentifier].pltManager.userTags = _.omit(userTags, userTagId)
-    }));
-  }*/
+      draft.content[wsIdentifier].pltManager.pltDetails.summary = summaryDetail;
+    }))
+  }
 }

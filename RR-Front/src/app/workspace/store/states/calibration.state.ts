@@ -9,7 +9,7 @@ import {
   PURE,
   SYSTEM_TAGS
 } from "../../containers/workspace-calibration/data";
-import {PltApi} from "../../services/plt.api";
+import {PltApi} from "../../services/api/plt.api";
 import {CalibrationService} from "../../services/calibration.service";
 
 const initiaState: CalibrationModel = {

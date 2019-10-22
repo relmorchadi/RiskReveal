@@ -9,7 +9,7 @@ import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
 import {InuringService} from '../../services/inuring.service';
 import * as fromPlt from '../actions/plt_main.actions';
-import {PltStateService} from '../../services/plt-state.service';
+import {PltStateService} from '../../services/store/plt-state.service';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
@@ -175,6 +175,10 @@ export class WorkspaceState {
 
   static getUserTagManager(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager);
+  }
+
+  static getSummary(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.pltDetails.summary);
   }
 
   /***********************************
@@ -505,6 +509,16 @@ export class WorkspaceState {
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ClosePLTinDrawer) {
     return this.pltStateService.closePLTinDrawer(ctx, payload);
+  }
+
+  @Action(fromPlt.loadSummaryDetail)
+  LoadSummaryDetail(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadSummaryDetail) {
+    return this.pltStateService.loadSummaryDetail(ctx, payload);
+  }
+
+  @Action(fromPlt.loadSummaryDetailSuccess)
+  LoadSummaryDetailSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadSummaryDetailSuccess) {
+    return this.pltStateService.loadSummaryDetailSuccess(ctx, payload);
   }
 
   @Action(fromPlt.setUserTagsFilters)
