@@ -33,7 +33,8 @@
               nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
       </button>
       <div class="chips-wrapper">
-        <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)"
+        <app-chip-tag (dblclick)="onChangeTagValue(items)" (onclick)="closeSearchBadge($event, i)"
+                      *ngFor="let items of state?.badges; let i = index"
                       [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
       </div>
     </div>
