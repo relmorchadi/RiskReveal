@@ -141,6 +141,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       },
       tabs: {'basket': true,'pltDetail': true},
       visible: false,
+      summary: {},
+      pltHeaderId: "",
       mode: "pop-up"
     };
     this.tableInputs= {
@@ -664,6 +666,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       },
       tabs: {'basket': true,'pltDetail': true},
       visible: false,
+      pltHeaderId: "",
+      summary: {},
       mode: "pop-up"
     };
 
