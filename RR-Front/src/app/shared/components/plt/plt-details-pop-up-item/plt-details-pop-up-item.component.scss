@@ -4,11 +4,24 @@
     align-items: center;
     border-bottom: 1px solid #bfbfbf;
     color: #1890ff;
+    font-size: 16px;
+    margin: 7px 5px;
 
     i {
-      font-size: 36px;
+      font-size: 16px;
       cursor: pointer;
     }
 
+  }
+}
+
+
+::ng-deep {
+  .tag-el {
+    border-radius: 29px;
+    font-size: 14px;
+    margin-left: -7px;
+    padding: 0px 7px 0px 7px;
+    border: 2px solid white;
   }
 }

@@ -184,12 +184,22 @@ export class AssignPltsToTag {
 }
 
 export class assignPltsToTagSuccess {
-  static readonly type = '[PLT Main] Assign plts to Tag Success'
+  static readonly type = '[PLT Main] Assign plts to Tag Success';
   constructor(public payload?: any) {}
 }
 
 export class assignPltsToTagFail {
-  static readonly type = '[PLT Main] Assign plts to Tag Fail'
+  static readonly type = '[PLT Main] Assign plts to Tag Fail';
+  constructor(public payload?: any) {}
+}
+
+export class loadSummaryDetail {
+  static readonly type = '[PLT Main] Load Summary Detail';
+  constructor(public payload?: any) {}
+}
+
+export class loadSummaryDetailSuccess {
+  static readonly type = '[PLT Main] Load Summary Detail Success';
   constructor(public payload?: any) {}
 }
 

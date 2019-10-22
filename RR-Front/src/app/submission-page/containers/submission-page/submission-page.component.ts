@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
-import {WsApi} from '../../../workspace/services/workspace.api';
-import {Router} from '@angular/router';
-import * as _ from 'lodash';
-import {Select, Store} from '@ngxs/store';
+import {WsApi} from '../../../workspace/services/api/workspace.api';
+import {Router} from "@angular/router";
+import {Select, Store} from "@ngxs/store";
 import * as fromWs from '../../../workspace/store/actions';
-import {WorkspaceState} from '../../../workspace/store/states';
+import {WorkspaceState} from "../../../workspace/store/states";
 
 @Component({
   selector: 'app-submission-page',
@@ -133,14 +132,13 @@ export class SubmissionPageComponent implements OnInit {
 
   submitData() {
     const data = {
-      id: 'CAR-00' + this.facSequence,
+      id: 'CAR-0' + this.facSequence,
       lastUpdateDate: null,
       lastUpdatedBy: null,
       requestCreationDate: new Date(),
       requestedByFirstName: this.raisedBy.value,
       requestedByFullName: this.raisedBy.value,
       requestedByLastName: this.raisedBy.value,
-      uwAnalysis: this.uwAnalysis,
       uwanalysisContractBusinessType: this.businessType.value,
       uwanalysisContractContractId: this.contractId,
       uwanalysisContractEndorsementNumber: 0,
@@ -154,12 +152,10 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractYear: this.uwYear,
       cedantName: 'INGREDION, INC_',
       contractName: 'ENNMG1800030 /ex ENEUR2800034',
-      uwAnalysisProjectId: 'P-000' + Math.floor(Math.random() * 100000),
+      uwAnalysisProjectId: 'P-000' + Math.random() * 10000,
       uwAnalysisContractDate: this.uwYear + '-01',
-      assignedAnalyst: 'Unassigned',
-      carStatus: 'New',
-      division: this.dataCoverage,
-      regionPeril: _.filter(Regions.regionPeril, item => _.includes(this.metaData, item.regionPerilCode))
+      assignedAnalyst: 'Amina Cheref',
+      carStatus: 'New'
     };
 /*    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));*/
     this.store.dispatch(new fromWs.CreateNewFac(data));

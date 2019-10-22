@@ -1,4 +1,5 @@
 package com.scor.rr.domain;
 
-public class InuringPackageStatus {
+public enum InuringPackageStatus {
+    Invalid, InProgress, Error, Valid;
 }

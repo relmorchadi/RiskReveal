@@ -98,13 +98,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
         title: 'pltDetail',
       },
       tabs: {'pltDetail': true},
       visible: false,
-      mode: "default"
+      mode: "default",
+      summary: {}
     };
     this.tableInputs = {
       scrollConfig: {
@@ -236,6 +238,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.select(WorkspaceState.getUserTagManager(this.workspaceId + '-' + this.uwy))
   }
 
+  getSummary() {
+    return this.select(WorkspaceState.getSummary(this.workspaceId + '-' + this.uwy));
+  }
+
   ngOnInit() {
 
     this.observeRouteParams().pipe(
@@ -303,7 +309,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
-      this.updateMenuKey('pltDetail', openedPlt);
       this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
       this.detectChanges();
@@ -315,6 +320,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateTagsInput('usedInWs', _.toArray(userTagManager.usedInWs || []));
       this.detectChanges();
     });
+
+    this.observeRouteParamsWithSelector(() => this.getSummary()).subscribe( summary => {
+      this.updateMenuKey('pltDetail', summary);
+      this.updateMenuKey('summary', summary);
+      this.detectChanges();
+    })
 
     this.actions$
       .pipe(
@@ -426,6 +437,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
+    this.updateMenuKey('pltHeaderId', plt);
     this.updateMenuKey('visible', true);
   }
 
@@ -566,9 +578,25 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.updateMenuKey('visible', false);
         this.closePltInDrawer();
         break;
+
+      case rightMenuStore.loadTab:
+        this.loadPLTDetailsTab(action.payload);
+        break;
       default:
         console.log('default right menu action');
     }
+  }
+
+  loadPLTDetailsTab(tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        this.loadSummaryTab(this.getRightMenuKey('pltHeaderId'))
+        break;
+    }
+  }
+
+  loadSummaryTab(pltHeaderId) {
+    this.dispatch(new fromWorkspaceStore.loadSummaryDetail(pltHeaderId));
   }
 
   setRightMenuSelectedTab(tab) {

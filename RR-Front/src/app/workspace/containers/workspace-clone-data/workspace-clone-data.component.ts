@@ -11,7 +11,7 @@ import {PreviousNavigationService} from '../../services/previous-navigation.serv
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
-import {WsApi} from "../../services/workspace.api";
+import {WsApi} from "../../services/api/workspace.api";
 
 interface SourceData {
   plts: any[];

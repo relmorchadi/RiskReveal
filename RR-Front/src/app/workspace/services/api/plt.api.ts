@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {backendUrl} from "../../shared/api";
+import {backendUrl} from "../../../shared/api";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +23,10 @@ export class PltApi {
 
   public restore(payload): Observable<any> {
     return this.http.post(`${this.URL}/restore`, payload);
+  }
+
+  public getSummary(payload): Observable<any> {
+    return this.http.get(`${this.URL}/detail/summary/?pltHeaderId=${payload}`);
   }
 
 }
