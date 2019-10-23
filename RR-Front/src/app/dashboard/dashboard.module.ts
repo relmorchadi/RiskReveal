@@ -9,6 +9,7 @@ import {DataTableModule} from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
 import {FacWidgetComponent} from './components/fac-widget/fac-widget.component';
 import {FacChartWidgetComponent} from './components/fac-chart-widget/fac-chart-widget.component';
+import {CalendarModule} from 'primeng/calendar';
 import {NgxEchartsModule} from 'ngx-echarts';
 
 const routes = [
@@ -19,6 +20,7 @@ const routes = [
 @NgModule({
   declarations: [...CONTAINERS, SliderRightComponent, RenewalContractScopeComponent, FacWidgetComponent, FacChartWidgetComponent],
   imports: [
+    CalendarModule,
     NgxEchartsModule,
     GridsterModule,
     SharedModule,
