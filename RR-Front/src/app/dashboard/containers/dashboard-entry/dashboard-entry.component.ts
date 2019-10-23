@@ -282,7 +282,8 @@ export class DashboardEntryComponent implements OnInit {
     const data = window.localStorage.getItem('previousUrl');
     console.log(data);
     if (data === '/CreateNewFile') {
-      this.idTab = 1;
+      // this.idTab = 1;
+      this.dashboardChange(1);
     }
   }
 
@@ -317,7 +318,6 @@ export class DashboardEntryComponent implements OnInit {
     };
     if (item.name != null) {
       this.dashboards = [...this.dashboards, item];
-      console.log(this.dashboards);
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
       this.newDashboardTitle = '';

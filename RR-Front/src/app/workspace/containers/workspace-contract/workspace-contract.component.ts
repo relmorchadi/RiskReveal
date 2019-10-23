@@ -78,10 +78,12 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.tabStatus = _.get(value, 'typeWs', null);
         this.treatyDataInfo = _.get(value, 'treaty', null);
-        this.facDataInfo = _.get(value, 'fac', []);
-        this.contracts = this.facDataInfo.map(item => { return {id: item.id}; });
-        this.selectedContract = this.contracts[0].id;
-        this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
+        this.facDataInfo = _.get(value, 'fac', null);
+        if (this.facDataInfo !== null) {
+          this.contracts = this.facDataInfo.map(item => { return {id: item.id}; });
+          this.selectedContract = this.contracts[0].id;
+          this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
+        }
         this.detectChanges();
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
