@@ -879,6 +879,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasket(ctx);
   }
 
+  @Action(fromWS.AddToBasketDefaultAction)
+  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
   @Action(fromWS.ApplyFinancialPerspectiveAction)
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyFinancialPerspectiveAction) {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);

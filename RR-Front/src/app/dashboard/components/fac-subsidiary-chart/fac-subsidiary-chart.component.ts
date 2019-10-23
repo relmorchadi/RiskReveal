@@ -224,7 +224,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
     let option = null;
     option = {
       title: {
-        text: 'Routing Time'
+        text: ''
       },
       tooltip : {
         trigger: 'axis',
@@ -234,7 +234,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
             backgroundColor: '#6495ED'
           }
         },
-        formatter: (params) => {
+/*        formatter: (params) => {
           const colorSpan = color => {
             return '<span style="display:inline-block;border-radius:10px;width:9px;height:9px;background-color:' + color + '"></span>';
           };
@@ -246,10 +246,10 @@ export class FacSubsidiaryChartComponent implements OnInit {
             rez += xx;
           });
           return rez;
-        },
+        },*/
       },
       legend: {
-        data: ['Max Time', 'Average Time', 'Min Time']
+        data: []
       },
       dataZoom: [{
         type: 'inside'

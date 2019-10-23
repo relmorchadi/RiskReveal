@@ -4,7 +4,7 @@ import {RenewalContractScopeComponent} from '../../components/renewal-contract-s
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from '../../../shared/notification.service';
-import {Router} from '@angular/router';
+import {NavigationStart, Router} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -231,6 +231,7 @@ export class DashboardEntryComponent implements OnInit {
       }
     ]
   };
+  previousUrl: string;
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
@@ -268,6 +269,21 @@ export class DashboardEntryComponent implements OnInit {
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
     this.dashboardChange(this.idSelected);
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        window.localStorage.setItem('previousUrl', this.router.url);
+      }
+    });
+    this.setTabValue();
+  }
+
+  setTabValue() {
+    const data = window.localStorage.getItem('previousUrl');
+    console.log(data);
+    if (data === '/CreateNewFile') {
+      this.idTab = 1;
+    }
   }
 
   addDashboard() {

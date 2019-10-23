@@ -25,8 +25,8 @@ import {BaseContainer} from '../../../shared/base';
 import {SystemTagsService} from '../../../shared/services/system-tags.service';
 import {StateSubscriber} from '../../model/state-subscriber';
 import {ExcelService} from '../../../shared/services/excel.service';
-import produce from "immer";
-import {ResizedEvent} from "angular-resize-event";
+import produce from 'immer';
+import {ResizedEvent} from 'angular-resize-event';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -199,7 +199,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       icon: null,
       type: 'field',
       active: true
-    },{
+    },
+    {
       sortDir: 1,
       fields: '',
       header: '',
@@ -242,6 +243,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       highlight: 'Accumulated'
     }];
   size = 'large';
+  wsType = null;
   drawerIndex: any;
   contextMenuItemsCache = [
     {
@@ -329,6 +331,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       showDeleted: false,
       pltColumns: [
         {
+          identifier: 'select',
           sortDir: 1,
           fields: '',
           header: '',
@@ -342,6 +345,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'User Tags',
           sortDir: 1,
           fields: '',
           header: 'User Tags',
@@ -355,6 +359,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'PLT ID',
           sortDir: 1,
           fields: 'pltId',
           header: 'PLT ID',
@@ -368,6 +373,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'PLT Name',
           sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
@@ -381,6 +387,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'Peril',
           sortDir: 1,
           fields: 'peril',
           header: 'Peril',
@@ -395,6 +402,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'Region Peril Code',
           sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
@@ -408,6 +416,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'Region Peril Name',
           sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
@@ -421,6 +430,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'Grain',
           sortDir: 1,
           fields: 'grain',
           header: 'Grain',
@@ -434,6 +444,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           active: true
         },
         {
+          identifier: 'Deleted By',
           sortDir: 1,
           fields: 'deletedBy',
           forDelete: true,
@@ -445,6 +456,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           type: 'field', active: false
         },
         {
+          identifier: 'Deleted On',
           sortDir: 1,
           fields: 'deletedAt',
           forDelete: true,
@@ -456,6 +468,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           type: 'date', active: false
         },
         {
+          identifier: 'Vendor System',
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
@@ -467,6 +480,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           type: 'field', active: true
         },
         {
+          identifier: 'RAP',
           sortDir: 1,
           fields: 'rap',
           header: 'RAP',
@@ -478,7 +492,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           icon: null,
           type: 'field',
           active: true
-        },{
+        },
+        {
+          identifier: 'Icon Note',
           sortDir: 1,
           fields: '',
           header: '',
@@ -493,6 +509,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           highlight: 'Published'
         },
         {
+          identifier: 'Icon Dollar ALT',
           sortDir: 1,
           fields: '',
           header: '',
@@ -507,6 +524,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           highlight: 'Priced'
         },
         {
+          identifier: 'Icon Focus Add',
           sortDir: 1,
           fields: '',
           header: '',
@@ -540,7 +558,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         },
       }
     };
-    this.leftMenuInputs= {
+    this.leftMenuInputs = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -554,7 +572,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsHeaderSelected: true,
       pathTab: true
     };
-    this.tagsInputs= {
+    this.tagsInputs = {
       _tagModalVisible: false,
       toRemove: [],
       toAssign: [],
@@ -583,7 +601,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
       this.updateLeftMenuInputs('wsId', this.workspaceId);
       this.updateLeftMenuInputs('uwYear', this.uwy);
-    }))
+    }));
   }
 
   observeRouteParamsWithSelector(operator) {
@@ -591,7 +609,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       .pipe(
         switchMap(() => operator()),
         this.unsubscribeOnDestroy
-      )
+      );
   }
 
   getPlts() {
@@ -615,7 +633,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   getUserTagManager() {
-    return this.select(WorkspaceState.getUserTagManager(this.workspaceId + '-' + this.uwy))
+    return this.select(WorkspaceState.getUserTagManager(this.workspaceId + '-' + this.uwy));
+  }
+
+  getCurrentWorkspaces() {
+    return this.select(WorkspaceState.getCurrentWorkspaces);
   }
 
   ngOnInit() {
@@ -664,7 +686,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
         &&
         this.getTableInputKey('listOfDeletedPltsData').length > 0);
-
       this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
       this.detectChanges();
     });
@@ -693,6 +714,30 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.detectChanges();
     });
 
+    this.observeRouteParamsWithSelector(() => this.getCurrentWorkspaces()).subscribe(workspace => {
+      this.wsType = _.get(workspace, 'workspaceType', null);
+      console.log(this.wsType);
+      if (this.wsType === 'fac') {
+        this.tableInputs.pltColumns.splice(5, 0, {
+          identifier: 'Override',
+          sortDir: 1,
+          fields: 'override',
+          header: 'Override',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70',
+          unit: 'px',
+          icon: null,
+          type: 'field',
+          active: true
+        });
+        this.tableInputs.pltColumns = _.uniqBy(this.tableInputs.pltColumns, item => item.identifier);
+      } else {
+        this.tableInputs.pltColumns = _.filter(this.tableInputs.pltColumns, item => item.fields !== 'override');
+      }
+    });
+
     this.actions$
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.AddNewTag)
@@ -705,14 +750,14 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         ofActionSuccessful(fromWorkspaceStore.DeleteTag)
       ).subscribe( userTag => {
       this.detectChanges();
-    })
+    });
   }
 
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.updateTable('sortData', _.merge({}, this.getTableInputKey('sortData'), {
         [sort.key]: sort.value === 'descend' ? 'desc' : 'asc'
-      }))
+      }));
     } else {
       this.updateTable('sortData', _.omit(this.getTableInputKey('sortData'), [sort.key]))
     }
@@ -756,8 +801,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.updateTagsInput('_tagModalVisible', true);
 
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
-
-    d= _.uniqBy(_.flatten(d), 'tagId');
+    d = _.uniqBy(_.flatten(d), 'tagId');
     this.updateTagsInput('assignedTags', this.updateTagsType(d));
     this.updateTagsInput('assignedTagsCache', _.cloneDeep(d));
 
@@ -833,7 +877,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           if (tag == tKey && section == sKey) {
             draft[sKey][tKey] = {...t, selected: !t.selected}
           }
-        })
+        });
       });
     }));
   }

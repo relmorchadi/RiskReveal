@@ -771,6 +771,72 @@ export class RiskLinkStateService {
     );*/
   }
 
+  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const results = {};
+    const summaries = {};
+    const dataAnalysis = state.content[wsIdentifier].riskLink.analysisFac;
+    const dataPortfolio = state.content[wsIdentifier].riskLink.portfolioFac;
+    _.forEach(dataAnalysis, (division, key) => {
+      _.forEach(division , item => {
+        _.forEach(item.data, analysisItem => {
+          if (analysisItem.selected) {
+            results[analysisItem.analysisId + '-' + analysisItem.analysisName] = {
+              ...analysisItem,
+              id: analysisItem.analysisId + '-' + analysisItem.analysisName,
+              scanned: true,
+              status: 100,
+              unitMultiplier: 1,
+              proportion: 100,
+              targetCurrency: 'USD',
+              financialPerspective: ['RL'],
+              occurrenceBasis: 'PerEvent',
+              regionPeril: 'EUET',
+              division: [key],
+              ty: true,
+              peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
+                {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
+                {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}],
+              override: 'EUET',
+              reason: '',
+              selected: false
+            };
+          }
+        });
+      });
+    });
+
+    _.forEach(dataPortfolio, (division, key) => {
+      _.forEach(division, item => {
+        _.forEach(item.data, portfolioItem => {
+          if (portfolioItem.selected) {
+            summaries[portfolioItem.dataSourceId + '-' + portfolioItem.dataSourceName] = {
+              ...portfolioItem,
+              id: portfolioItem.dataSourceId + '-' + portfolioItem.dataSourceName,
+              selected: false,
+              scanned: true,
+              division: [key],
+              status: 100,
+              unitMultiplier: 1,
+              proportion: 100,
+              targetCurrency: 'USD',
+              sourceCurrency: 'USD',
+              exposedLocation: true
+            };
+          }
+        });
+      });
+    });
+
+    console.log(results, summaries);
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].riskLink.results = {data: results};
+      draft.content[wsIdentifier].riskLink.summaries = {data: summaries};
+    }));
+  }
+
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -1413,7 +1479,7 @@ export class RiskLinkStateService {
           };
         });
       });
-    })
+    });
     if (key !== null) {
       ctx.patchState(
         produce(ctx.getState(), draft => {

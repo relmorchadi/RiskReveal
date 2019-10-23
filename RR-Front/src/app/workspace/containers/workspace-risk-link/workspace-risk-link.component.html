@@ -226,6 +226,7 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+              <i class="icon-link_24px" *ngIf="tabStatus === 'fac'" nz-tooltip nzTitle="Auto Link" (click)="autoLinkAnalysis()"></i>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -417,7 +418,7 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="state?.activeAddBasket"  (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
                 </button>
                 <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled-mini" disabled>ADD FOR IMPORT
                 </button>

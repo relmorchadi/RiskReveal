@@ -181,6 +181,21 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.wsIdentifier = wsIdentifier;
   }
 
+  autoLinkAnalysis() {
+    this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
+    this.dispatch(new fromWs.AddToBasketDefaultAction());
+    if (this.tabStatus === 'fac') {
+      this.confirmationService.confirm({
+        message: 'You are attempting to import multiple analysis for the following region peril/division',
+        rejectVisible: false,
+        header: 'Warning',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+        }
+      });
+    }
+  }
+
   setFilterDivision() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
       this.filterAnalysis['analysisName'] = this.ws.wsId +  this.divisionTag[this.state.financialValidator.division.selected];
