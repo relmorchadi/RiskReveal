@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 
 
 // @ts-ignore
@@ -16,8 +16,17 @@ export class ChipTagComponent implements OnInit {
   closeStatus: boolean;
   @Output()
   onclick: EventEmitter<boolean> =  new EventEmitter();
+  @Output()
+  onChangeValue: EventEmitter<any> = new EventEmitter();
+  @ViewChild('inputElem')
+  textEl: ElementRef;
+  inputMinWidth: number = 40;
+  inputWidth: number = this.inputMinWidth;
+  charWith: number = 6;
+  inputDisabled: boolean = true;
 
-  constructor() { }
+  constructor(private crf: ChangeDetectorRef) {
+  }
 
   ngOnInit() {
   }
@@ -26,4 +35,16 @@ export class ChipTagComponent implements OnInit {
     this.onclick.emit(status);
   }
 
+  resize() {
+    this.inputWidth = this.value.length * this.charWith > this.inputMinWidth ? this.value.length * this.charWith : this.inputMinWidth;
+
+    this.crf.detectChanges();
+  }
+
+  toggleInput(event: boolean) {
+    console.log(event);
+    this.inputDisabled = event;
+    if (event)
+      this.onChangeValue.emit({key: this.key, value: this.value});
+  }
 }
