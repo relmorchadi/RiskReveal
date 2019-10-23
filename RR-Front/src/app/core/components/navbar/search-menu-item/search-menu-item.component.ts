@@ -34,6 +34,19 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   readonly componentName: string = 'search-pop-in';
 
+  searchShortCuts = [
+    {name: "Cedant Name", shortcut: "c:"},
+    {name: "Cedant Code", shortcut: "cid:"},
+    {name: "Country", shortcut: "ctr:"},
+    {name: "Year", shortcut: "uwy:"},
+    {name: "Project", shortcut: "p:"},
+    {name: "Workspace Name", shortcut: "w:"},
+    {name: "Workspace Code", shortcut: "wid:"},
+    {name: "PLT", shortcut: "plt:"},
+    {name: "Section Name", shortcut: "s:"},
+    {name: "UW Unit", shortcut: "uwu:"}
+  ];
+
   @ViewChild('searchInput')
   searchInput: ElementRef;
   contractFilterFormGroup: FormGroup;
@@ -72,6 +85,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._subscribeGlobalKeywordChanges();
     this._subscribeToDistatchedEvents();
+    this.contractFilterFormGroup.setValue({
+      globalKeyword: '',
+      expertModeToggle: true
+    })
   }
 
   private calculateContractChoicesLength() {
@@ -119,7 +136,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     evt.preventDefault();
     console.log(this.isExpertMode);
     if (this.isExpertMode) {
-      console.log(this.convertBadgeToExpression(this.state.badges) + this.globalKeyword);
       this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + this.globalKeyword));
     } else {
       this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
@@ -140,6 +156,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     let globalExpression = "";
     let expression;
     _.forEach(badges, badge => {
+
       switch (badge.key) {
         case "Cedant Name":
           expression = "c:" + badge.value;
@@ -174,6 +191,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
         default:
           expression = badge.value;
       }
+
       globalExpression += expression + " ";
     })
     return globalExpression;
