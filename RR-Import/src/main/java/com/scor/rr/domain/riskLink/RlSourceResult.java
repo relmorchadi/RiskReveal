@@ -1,13 +1,11 @@
 package com.scor.rr.domain.riskLink;
 
-import com.scor.rr.domain.RRFinancialPerspective;
 import com.scor.rr.domain.RdmAnalysis;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Getter
@@ -25,7 +23,7 @@ public class RlSourceResult {
     @Column(name = "projectId")
     private Long projectId;
     @Column(name = "rlAnalysisId")
-    private Integer rlAnalysisId;
+    private Long rlAnalysisId;
     @Column(name = "targetCurrency")
     private String targetCurrency;
     @Column(name = "targetRegionPeril")
@@ -43,7 +41,9 @@ public class RlSourceResult {
     @Column(name = "targetRAPCode")
     private String targetRAPCode;
 
-
+    @ManyToOne
+    @JoinColumn(name = "rlAnalysisId")
+    private RLAnalysis rlAnalysis;
 
     public RlSourceResult(RdmAnalysis analysis, Long projectId){
         this.entity=1;

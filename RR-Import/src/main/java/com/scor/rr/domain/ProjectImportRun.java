@@ -1,24 +1,25 @@
 package com.scor.rr.domain;
 
 import com.scor.rr.domain.enums.TrackingStatus;
+import com.scor.rr.domain.riskReveal.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "ProjectImportRun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectImportRunId {
+public class ProjectImportRun {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ProjectImportRunId")
-    private int projectImportRunId;
+    @Column(name = "ProjectImportRun")
+    private Long projectImportRunId;
     @Column(name = "Entity")
     private int entity;
     @Column(name = "RunId")
@@ -26,13 +27,16 @@ public class ProjectImportRunId {
     @Column(name = "Status")
     private TrackingStatus status;
     @Column(name = "StartDate")
-    private LocalDate startDate;
+    private Date startDate;
     @Column(name = "EndDate")
-    private LocalDate endDate;
+    private Date endDate;
     @Column(name = "LossImportEndDate")
-    private LocalDate lossImportEndDate;
+    private Date lossImportEndDate;
     @Column(name = "ImportedBy")
     private String importedBy;
     @Column(name = "SourceConfigVendor")
     private String sourceConfigVendor;
+
+    @ManyToOne
+    private Project project;
 }

@@ -43,7 +43,7 @@ public class RmsAnalysisNewEntity {
 
     @Id
     @Column(name = "rmsAnalysisId", nullable = false)
-    public int getRmsAnalysisId() {
+    public int getRlAnalysisId() {
         return rmsAnalysisId;
     }
 

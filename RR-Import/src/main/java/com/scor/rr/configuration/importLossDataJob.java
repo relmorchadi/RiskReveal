@@ -26,16 +26,16 @@ public class importLossDataJob {
     RegionPerilExtractor regionPerilExtractor;
 
     @Bean
-    public Tasklet extractRegionPeril(){
+    public Tasklet extractRegionPerilTasklet(){
         return (StepContribution contribution, ChunkContext chunkContext) -> {
-            regionPerilExtractor.loadRegionPeril();
+            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLoassTableHeader();
             return RepeatStatus.FINISHED;
         };
     }
 
     @Bean
     public Step getExtractRegionPeril() {
-        return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPeril()).build();
+        return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
     }
 
     @Bean

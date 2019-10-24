@@ -1,4 +1,4 @@
-package com.scor.rr.domain.workspace;
+package com.scor.rr.domain.riskReveal;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
