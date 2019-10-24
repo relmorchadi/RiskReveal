@@ -12,6 +12,9 @@ public class PEQTFileSchema {
     private String type;
     private String mappedPeqtField;
 
+    public PEQTFileSchema() {
+    }
+
     @Id
     @Column(name = "PEQTFileSchemaId", nullable = false)
     public String getId() {
@@ -43,7 +46,7 @@ public class PEQTFileSchema {
     }
 
     @Basic
-    @Column(name = "Order", nullable = false)
+    @Column(name = "OrderSchema", nullable = false)
     public int getOrder() {
         return order;
     }

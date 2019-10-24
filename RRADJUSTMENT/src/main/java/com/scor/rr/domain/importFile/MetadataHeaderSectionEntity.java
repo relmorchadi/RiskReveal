@@ -6,6 +6,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "MetadataHeaderSection", schema = "dbo", catalog = "RiskReveal")
 public class MetadataHeaderSectionEntity {
+    public static final String MANDATORY_Y = "Y";
+    public static final String MANDATORY_N = "N";
+    public static final String MANDATORY_D = "D";
+
     private int id;
     private String metadataAttribute;
     private String description;

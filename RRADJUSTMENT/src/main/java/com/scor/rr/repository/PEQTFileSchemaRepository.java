@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface PEQTFileSchemaRepository extends JpaRepository<PEQTFileSchema, String>, JpaSpecificationExecutor<PEQTFileSchema> {
 
-//    @Query("select c from PEQTFileSchema c where c.peqtFileTypeID= :peqtFileTypeID")
+    @Query("select c from PEQTFileSchema c where c.peqtFileTypeID= :peqtFileTypeID")
     List<PEQTFileSchema> findByPeqtFileTypeID(String peqtFileTypeID);
 }
