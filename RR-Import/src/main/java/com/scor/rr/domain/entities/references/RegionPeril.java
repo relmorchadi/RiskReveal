@@ -33,9 +33,9 @@ public class RegionPeril {
     private String regionDesc;
     @Column(name = "IsModelled")
     private Boolean isModelled;
-    @Column(name = "HierarchyParentCode")
+    @Column(name = "HierachyParentCode")
     private String hierarchyParentCode;
-    @Column(name = "HierarchyLevel")
+    @Column(name = "HierachyLevel")
     private String hierarchyLevel;
     @Column(name = "IsMinimumGrainRegionPeril")
     private Boolean isMinimumGrainRegionPeril;

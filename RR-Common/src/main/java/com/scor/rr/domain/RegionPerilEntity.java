@@ -106,7 +106,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyParentCode", length = 255)
+    @Column(name = "hierachyParentCode", length = 255)
     public String getHierarchyParentCode() {
         return hierarchyParentCode;
     }
@@ -116,7 +116,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyLevel")
+    @Column(name = "hierachyLevel")
     public Integer getHierarchyLevel() {
         return hierarchyLevel;
     }
