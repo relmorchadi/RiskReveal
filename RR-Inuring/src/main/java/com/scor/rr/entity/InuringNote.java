@@ -10,7 +10,7 @@ import javax.persistence.*;
 public class InuringNote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringNoteId", nullable = false)
     private int inuringNoteId;
 

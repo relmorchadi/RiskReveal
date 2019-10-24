@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class InuringFilterCriteria {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringFilterCriteriaId", nullable = false)
     private int inuringFilterCriteriaId;
 

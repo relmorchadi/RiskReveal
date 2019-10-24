@@ -3,10 +3,7 @@ package com.scor.rr.entity;
 import com.scor.rr.enums.InuringNodeStatus;
 import org.apache.commons.lang.StringUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 /**
@@ -30,10 +27,14 @@ public class InuringInputNode {
         this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.inputInuringNodeStatus = InuringNodeStatus.Valid;
-        this.inputNodeName = ! StringUtils.isEmpty(inputNodeName) ? inputNodeName : "Input Node";
+        this.inputNodeName = !StringUtils.isEmpty(inputNodeName) ? inputNodeName : "Input Node";
+    }
+
+    public InuringInputNode() {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringInputNodeId", nullable = false)
     public int getInuringInputNodeId() {
         return inuringInputNodeId;

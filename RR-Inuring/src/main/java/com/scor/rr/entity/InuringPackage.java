@@ -2,11 +2,10 @@ package com.scor.rr.entity;
 
 import com.scor.rr.enums.InuringPackageStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by u004602 on 11/09/2019.
@@ -14,6 +13,7 @@ import java.util.Date;
 @Entity
 @Table(name = "InuringPackage", schema = "dbo", catalog = "RiskReveal")
 public class InuringPackage {
+
     private int inuringPackageId;
     private int entity;
     private String packageName;
@@ -35,15 +35,16 @@ public class InuringPackage {
         this.packageDescription = packageDescription;
         this.workspaceId = workspaceId;
         this.createdBy = createdBy;
-        this.createdOn = new Date();
+//        this.createdOn = new Date();
         this.lastModifiedBy = createdBy;
-        this.lastModifiedOn = this.createdOn;
+//        this.lastModifiedOn = this.createdOn;
         this.locked = false;
         this.inuringPackageStatus = InuringPackageStatus.Invalid;
     }
 
     @Id
-    @Column(name = "InuringPackageId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "InuringPackageId")
     public int getInuringPackageId() {
         return inuringPackageId;
     }
@@ -140,5 +141,28 @@ public class InuringPackage {
 
     public void setInuringPackageStatus(InuringPackageStatus inuringPackageStatus) {
         this.inuringPackageStatus = inuringPackageStatus;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InuringPackage that = (InuringPackage) o;
+        return inuringPackageId == that.inuringPackageId &&
+                entity == that.entity &&
+                workspaceId == that.workspaceId &&
+                createdBy == that.createdBy &&
+                lastModifiedBy == that.lastModifiedBy &&
+                locked == that.locked &&
+                Objects.equals(packageName, that.packageName) &&
+                Objects.equals(packageDescription, that.packageDescription) &&
+                Objects.equals(createdOn, that.createdOn) &&
+                Objects.equals(lastModifiedOn, that.lastModifiedOn) &&
+                inuringPackageStatus == that.inuringPackageStatus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inuringPackageId, entity, packageName, packageDescription, workspaceId, createdBy, createdOn, lastModifiedBy, lastModifiedOn, locked, inuringPackageStatus);
     }
 }

@@ -233,7 +233,7 @@ public class InuringInputNodeTest {
         }
     }
 
-    @Test
+   /* @Test
     public void testDeleteAnInputNode() {
         try {
             inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
@@ -258,7 +258,7 @@ public class InuringInputNodeTest {
         } catch (RRException ex) {
             fail();
         }
-    }
+    }*/
 
     @Test
     public void testRenameAnNotExistingInputNode() {

@@ -2,6 +2,7 @@ package com.scor.rr.repository;
 
 import com.scor.rr.entity.InuringContractLayer;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +20,8 @@ public interface InuringContractLayerRepository extends JpaRepository<InuringCon
 
     List<InuringContractLayer> findByInuringContractNodeId(int inuringContractNodeId);
 
-    @Query(value="UPDATE InuringContractLayer SET LayerNumber = LayerNumber - 1 WHERE LayerNumber > ?1 AND InuringContractNodeId = ?2",nativeQuery = true)
+    @Modifying(clearAutomatically = true)
+    @Query(value="UPDATE InuringContractLayer SET layerNumber = layerNumber - 1 WHERE layerNumber > ?1 AND inuringContractNodeId = ?2")
     void reorderTheLayers(int layerNumber,int contractNodeId);
 
 

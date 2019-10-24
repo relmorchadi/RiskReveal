@@ -15,10 +15,12 @@ import com.scor.rr.response.InuringContractNodeDetailsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class InuringContractNodeService {
 
     @Autowired
@@ -90,7 +92,6 @@ public class InuringContractNodeService {
         /**Still have to test if the Cascade delete works**/
     }
 
-
     public InuringContractNodeDetailsResponse readInuringContractNode(int inuringContractNodeId) throws RRException {
         InuringContractNode inuringContractNode = inuringContractNodeRepository.findByInuringContractNodeId(inuringContractNodeId);
         if (inuringContractNode == null) throw new InuringContractNodeNotFoundException(inuringContractNodeId);
@@ -134,5 +135,7 @@ public class InuringContractNodeService {
         return inuringContractNodeDetailsResponse;
 
     }
+
+    /** the Update service needs to be discussed with the frontend dev because the popup has a lot of components**/
 
 }
