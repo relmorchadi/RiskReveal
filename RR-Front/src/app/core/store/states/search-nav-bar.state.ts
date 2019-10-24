@@ -234,7 +234,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(EnableExpertMode)
   enableExpertMode(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({visibleSearch: false});
+    // ctx.patchState({visibleSearch: false});
   }
 
   @Action(DisableExpertMode)
@@ -269,7 +269,7 @@ export class SearchNavBarState implements NgxsOnInit {
       draft.searchValue = value;
       draft.showLastSearch = value === '' || value.length < 2;
       draft.showResult = !(value === '' || value.length < 2);
-      draft.visibleSearch = true;
+      draft.visibleSearch = value !== '';
       draft.visible = false;
     }));
   }
