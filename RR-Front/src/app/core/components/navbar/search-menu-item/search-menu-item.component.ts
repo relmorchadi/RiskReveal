@@ -34,6 +34,19 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   readonly componentName: string = 'search-pop-in';
 
+  searchShortCuts = [
+    {name: "Cedant Name", shortcut: "c:"},
+    {name: "Cedant Code", shortcut: "cid:"},
+    {name: "Country", shortcut: "ctr:"},
+    {name: "Year", shortcut: "uwy:"},
+    {name: "Project", shortcut: "p:"},
+    {name: "Workspace Name", shortcut: "w:"},
+    {name: "Workspace Code", shortcut: "wid:"},
+    {name: "PLT", shortcut: "plt:"},
+    {name: "Section Name", shortcut: "s:"},
+    {name: "UW Unit", shortcut: "uwu:"}
+  ];
+
   @ViewChild('searchInput')
   searchInput: ElementRef;
   contractFilterFormGroup: FormGroup;
@@ -72,6 +85,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._subscribeGlobalKeywordChanges();
     this._subscribeToDistatchedEvents();
+    this.contractFilterFormGroup.setValue({
+      globalKeyword: '',
+      expertModeToggle: true
+    })
   }
 
   private calculateContractChoicesLength() {
@@ -117,8 +134,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
+    console.log(this.isExpertMode);
     if (this.isExpertMode) {
-      this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.globalKeyword));
+      this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + this.globalKeyword));
     } else {
       this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
     }
@@ -132,6 +150,51 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       this.selectSearchBadge(HelperService.upperFirstWordsInSetence(this.state.tables[i]), this.state.data[i][j].label);
       this.scrollParams.scrollTo = -1;
     }
+  }
+
+  convertBadgeToExpression(badges) {
+    let globalExpression = "";
+    let expression;
+    _.forEach(badges, badge => {
+
+      switch (badge.key) {
+        case "Cedant Name":
+          expression = "c:" + badge.value;
+          break;
+        case "Cedant Code":
+          expression = "cid:" + badge.value;
+          break;
+        case "Country":
+          expression = "ctr:" + badge.value;
+          break;
+        case "Year":
+          expression = "uwy:" + badge.value;
+          break;
+        case "Workspace Name":
+          expression = "w:" + badge.value;
+          break;
+        case "Workspace Code":
+          expression = "wid:" + badge.value;
+          break;
+        case "Project":
+          expression = "p:" + badge.value;
+          break;
+        case "PLT":
+          expression = "plt:" + badge.value;
+          break;
+        case "Section Name":
+          expression = "s:" + badge.value;
+          break;
+        case "UW Unit":
+          expression = "uwu:" + badge.value;
+          break;
+        default:
+          expression = badge.value;
+      }
+
+      globalExpression += expression + " ";
+    })
+    return globalExpression;
   }
 
   onBackspace(evt: KeyboardEvent) {
@@ -232,9 +295,11 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   onChangeTagValue(badge) {
-    let index = _.findIndex(this.state.badges, row => row.key == badge.key);
-    this.state.badges[index] = badge;
-    this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
+    if (this.isExpertMode) {
+      let index = _.findIndex(this.state.badges, row => row.key == badge.key);
+      this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index, this.isExpertMode));
+      this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
+    }
   }
 
   toggleInput(event: boolean, item) {

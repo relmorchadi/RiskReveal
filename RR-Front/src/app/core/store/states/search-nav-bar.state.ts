@@ -76,7 +76,6 @@ const initiaState: SearchNavBar = {
   },
   searchContent: {value: null}
 };
-
 @State<SearchNavBar>({
   name: 'searchBar',
   defaults: initiaState
@@ -84,6 +83,7 @@ const initiaState: SearchNavBar = {
 export class SearchNavBarState implements NgxsOnInit {
 
   ctx = null;
+  searchShortCuts = ["uwy:", "c:", "wid:", "w:", "ctr:", "cid:"];
 
   constructor(@Inject(SearchService) private _searchService: SearchService,
               @Inject(BadgesService) private _badgesService: BadgesService) {
@@ -147,18 +147,31 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
+    let expression: any = keyword;
+    const checkShortCut = this.checkShortCut(expression);
+    if (checkShortCut !== null) {
+      expression = checkShortCut[1];
+    }
     ctx.patchState({
       data: [],
       emptyResult: false,
       loading: true
     });
     return forkJoin(
-      ...ctx.getState().tables.map(tableName => this.searchLoader(keyword, tableName))
+      ...ctx.getState().tables.map(tableName => this.searchLoader(expression, tableName))
     ).pipe(
       switchMap(payload => {
-        const data = _.map(payload, 'content');
+        let data = _.map(payload, 'content');
+        if (checkShortCut !== null) {
+          data = _.map(data, (row, i) => {
+            if (i !== checkShortCut[0]) {
+              return []
+            } else return row;
+          })
+        }
         return of(ctx.patchState({
           loading: false,
+          searchValue: expression,
           emptyResult: _.isEmpty( _.flatten(data) ),
           data
         }));
@@ -169,6 +182,16 @@ export class SearchNavBarState implements NgxsOnInit {
         return of();
       })
     );
+  }
+
+  @Action(SearchInputFocusAction)
+  searchInputFocus(ctx: StateContext<SearchNavBar>, {expertMode, inputValue}) {
+    ctx.patchState(produce(ctx.getState(), draftState => {
+      draftState.showLastSearch = inputValue === '' || inputValue.length < 2;
+      draftState.showResult = !(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult;
+      draftState.visibleSearch = true;
+      draftState.visible = false;
+    }));
   }
 
   @Action(SelectBadgeAction)
@@ -240,34 +263,27 @@ export class SearchNavBarState implements NgxsOnInit {
     }));
   }
 
-  @Action(SearchInputFocusAction)
-  searchInputFocus(ctx: StateContext<SearchNavBar>, {expertMode, inputValue}) {
-    ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.showLastSearch = expertMode ? true : ((inputValue === '' || inputValue.length < 2) ? true : false);
-      draftState.showResult = expertMode ? false : (!(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult);
-      draftState.visibleSearch = true;
-      draftState.visible = false;
-    }));
-  }
-
   @Action(SearchInputValueChange)
   searchInputValueChange(ctx: StateContext<SearchNavBar>, {expertMode, value}) {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchValue = value;
-      draft.showResult = !(value === '');
-      if (!expertMode) {
-        if (value === '' || value.length < 2) {
-          draft = _.merge(draft, {showLastSearch: true, showResult: false})
-        } else {
-          draft.showLastSearch = false;
-          draft.showResult = true;
-        }
-        draft.visibleSearch = true;
-      } else {
-        draft.visibleSearch = false;
-      }
+      draft.showLastSearch = value === '' || value.length < 2;
+      draft.showResult = !(value === '' || value.length < 2);
+      draft.visibleSearch = true;
       draft.visible = false;
     }));
+  }
+
+  private checkShortCut(keyword: string) {
+    const twoChars = keyword.substring(0, 2);
+    const threeChars = keyword.substring(0, 4);
+    let firstCheck = _.findIndex(this.searchShortCuts, row => row == twoChars);
+    let secondCheck = _.findIndex(this.searchShortCuts, row => row == threeChars);
+    if (firstCheck > -1) {
+      return [firstCheck, keyword.substring(2)]
+    } else if (secondCheck > -1) {
+      return [secondCheck, keyword.substring(4)]
+    } else return null;
   }
 
   @Action(ExpertModeSearchAction)
