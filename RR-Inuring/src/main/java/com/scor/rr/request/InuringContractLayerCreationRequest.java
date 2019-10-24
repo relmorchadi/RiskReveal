@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.List;
 
-@Data
+
 public class InuringContractLayerCreationRequest {
 
     private int inuringContractNodeId;
@@ -13,4 +13,24 @@ public class InuringContractLayerCreationRequest {
 
     private List<InuringContractLayerDto> listOfLayers;
 
+    public InuringContractLayerCreationRequest(int inuringContractNodeId, int contractTypeCode, List<InuringContractLayerDto> listOfLayers) {
+        this.inuringContractNodeId = inuringContractNodeId;
+        this.contractTypeCode = contractTypeCode;
+        this.listOfLayers = listOfLayers;
+    }
+
+    public InuringContractLayerCreationRequest() {
+    }
+
+    public int getInuringContractNodeId() {
+        return inuringContractNodeId;
+    }
+
+    public int getContractTypeCode() {
+        return contractTypeCode;
+    }
+
+    public List<InuringContractLayerDto> getListOfLayers() {
+        return listOfLayers;
+    }
 }

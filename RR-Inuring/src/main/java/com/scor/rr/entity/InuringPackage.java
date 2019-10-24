@@ -35,9 +35,9 @@ public class InuringPackage {
         this.packageDescription = packageDescription;
         this.workspaceId = workspaceId;
         this.createdBy = createdBy;
-//        this.createdOn = new Date();
+        this.createdOn = new Date();
         this.lastModifiedBy = createdBy;
-//        this.lastModifiedOn = this.createdOn;
+        this.lastModifiedOn = this.createdOn;
         this.locked = false;
         this.inuringPackageStatus = InuringPackageStatus.Invalid;
     }
