@@ -12,9 +12,11 @@ import com.scor.rr.repository.*;
 import com.scor.rr.request.InuringInputNodeBulkDeleteRequest;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
+import com.scor.rr.response.InuringInputNodeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +25,7 @@ import java.util.Set;
  * Created by u004602 on 10/09/2019.
  */
 @Service
+@Transactional
 public class InuringInputNodeService {
     @Autowired
     private InuringInputNodeRepository inuringInputNodeRepository;
@@ -107,5 +110,19 @@ public class InuringInputNodeService {
             inuringInputNodeRepository.deleteById(inputNode.getInuringInputNodeId());
         }
         /**Still have to test if the Cascade delete works**/
+    }
+
+    public InuringInputNodeResponse readInuringInputNodeDetails(int inuringInputNodeId) throws RRException{
+        InuringInputNode inuringInputNode = inuringInputNodeRepository.findByInuringInputNodeId(inuringInputNodeId);
+        if(inuringInputNode == null ) throw new InuringInputNodeNotFoundException(inuringInputNodeId);
+        InuringInputNodeResponse inuringInputNodeResponse = new InuringInputNodeResponse();
+        inuringInputNodeResponse.setInuringInputNode(inuringInputNode);
+
+        List<InuringInputAttachedPLT> PLTHeaderIdList = inuringInputAttachedPLTRepository.findByInuringInputNodeId(inuringInputNodeId);
+        if(PLTHeaderIdList != null) inuringInputNodeResponse.setPLTHeaderIdList(PLTHeaderIdList);
+
+        return inuringInputNodeResponse;
+
+
     }
 }

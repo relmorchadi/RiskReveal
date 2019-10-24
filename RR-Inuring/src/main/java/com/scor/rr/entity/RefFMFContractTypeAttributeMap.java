@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class RefFMFContractTypeAttributeMap {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RefFMFContractTypeAttributeMapId", nullable = false)
     private int refFMFContractTypeAttributeMapId;
 

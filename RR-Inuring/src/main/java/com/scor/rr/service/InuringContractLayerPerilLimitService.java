@@ -8,7 +8,12 @@ import com.scor.rr.repository.InuringContractLayerPerilLimitRepository;
 import com.scor.rr.repository.InuringContractLayerRepository;
 import com.scor.rr.request.InuringContractLayerPerilLimitCreationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
+@Service
+@Transactional
 public class InuringContractLayerPerilLimitService {
 
     @Autowired

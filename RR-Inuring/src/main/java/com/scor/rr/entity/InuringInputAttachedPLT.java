@@ -1,9 +1,6 @@
 package com.scor.rr.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by u004602 on 10/09/2019.
@@ -22,7 +19,11 @@ public class InuringInputAttachedPLT {
         this.pltHeaderId = pltHeaderId;
     }
 
+    public InuringInputAttachedPLT() {
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringInputAttachedPLTId", nullable = false)
     public int getInuringInputAttachedPLTId() {
         return inuringInputAttachedPLTId;

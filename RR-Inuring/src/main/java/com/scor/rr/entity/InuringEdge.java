@@ -4,10 +4,7 @@ import com.scor.rr.enums.InuringFinancialPerspective;
 import com.scor.rr.enums.InuringFinancialTreatment;
 import com.scor.rr.enums.InuringNodeType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by u004602 on 13/09/2019.
@@ -30,6 +27,9 @@ public class InuringEdge {
         this(inuringPackageId, sourceNodeId, sourceNodeType, targetNodeId, targetNodeType, InuringFinancialPerspective.Net, InuringFinancialTreatment.Positive);
     }
 
+    public InuringEdge() {
+    }
+
     public InuringEdge(int inuringPackageId, int sourceNodeId, InuringNodeType sourceNodeType, int targetNodeId, InuringNodeType targetNodeType, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment) {
         this.entity = 1;
         this.inuringPackageId = inuringPackageId;
@@ -43,6 +43,7 @@ public class InuringEdge {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringEdgeId", nullable = false)
     public int getInuringEdgeId() {
         return inuringEdgeId;

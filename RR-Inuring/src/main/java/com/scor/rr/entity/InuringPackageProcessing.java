@@ -15,7 +15,7 @@ import java.util.Date;
 public class InuringPackageProcessing {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
     private int inuringPackageProcessingId;
 
