@@ -2,11 +2,12 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.riskLink.RLAnalysis;
+import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,14 +34,14 @@ public class RmsRessource {
 
 
     @PostMapping("add-edm-rdm")
-    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Integer projectId, @RequestParam String instanceId, @RequestParam String instanceName){
-        rmsService.addEdmRdms(dataSources,projectId,instanceId,instanceName);
+    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Integer projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+        rmsService.addEdmRdms(dataSources, projectId, instanceId, instanceName);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("analysis-detail-scan")
-    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId){
-        rmsService.scanAnalysisDetail(rlAnalysisList,projectId);
+    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId) {
+        rmsService.scanAnalysisDetail(rlAnalysisList, projectId);
         return ResponseEntity.ok().build();
     }
 
@@ -204,8 +205,17 @@ public class RmsRessource {
 
     @GetMapping("GetAnalysisModellingOptionSettings")
     public String getAnalysisModellingOptionSettings(@RequestParam(value = "rdmId") int rdmId,
-                                                            @RequestParam(value = "rdmName") String rdmName,
-                                                            @RequestParam(value = "analysisId") int analysisId) {
+                                                     @RequestParam(value = "rdmName") String rdmName,
+                                                     @RequestParam(value = "analysisId") int analysisId) {
         return rmsService.getAnalysisModellingOptionSettings(rdmId, rdmName, analysisId);
+    }
+
+    @PostMapping("saveSourceResults")
+    public ResponseEntity<?> saveSourceResults(@RequestBody List<SourceResultDto> sourceResultDtoList) {
+        try {
+            return new ResponseEntity<>(rmsService.saveSourceResults(sourceResultDtoList), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

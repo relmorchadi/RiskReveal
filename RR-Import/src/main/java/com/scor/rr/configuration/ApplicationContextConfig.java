@@ -1,6 +1,5 @@
 package com.scor.rr.configuration;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.batch.admin.service.SimpleJobServiceFactoryBean;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -9,7 +8,10 @@ import org.springframework.batch.core.configuration.support.ReferenceJobFactory;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.cache.guava.GuavaCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +20,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import javax.sql.DataSource;
 
 @Configuration
 public class ApplicationContextConfig {
@@ -49,17 +53,10 @@ public class ApplicationContextConfig {
         return dataSourceTransactionManager;
     }
 
-    @Bean(value = "myDataSource")
-    public BasicDataSource getDataSource(){
-        BasicDataSource basicDataSource = new BasicDataSource();
-//        basicDataSource.setDriverClassName(env.getProperty("batch.jdbc.driver"));
-        basicDataSource.setUrl(env.getProperty("batch.jdbc.url"));
-        basicDataSource.setUsername(env.getProperty("batch.jdbc.user"));
-        basicDataSource.setPassword(env.getProperty("batch.jdbc.password"));
-//        basicDataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("batch.jdbc.testWhileIdle")));
-//        basicDataSource.setValidationQuery(env.getProperty("validationQuery"));
-
-        return basicDataSource;
+    @Bean(name = "dataSource")
+    @ConfigurationProperties(prefix = "batch.jdbc")
+    public DataSource getDataSource() {
+        return DataSourceBuilder.create().build();
     }
 
     @Bean(value = "myJobRepository")
@@ -70,13 +67,13 @@ public class ApplicationContextConfig {
         return factory.getObject();
     }
 
-    @Bean(value = "myJobRegistry")
-    public JobRegistry getJobRegistry() throws Exception{
-        JobRegistry jobRegistry = new MapJobRegistry();
-        Job importLossData = context.getBean("importLossData", Job.class);
-        jobRegistry.register(new ReferenceJobFactory(importLossData));
-        return jobRegistry;
-    }
+//    @Bean(value = "myJobRegistry")
+//    public JobRegistry getJobRegistry() throws Exception{
+//        JobRegistry jobRegistry = new JobRegistry();
+//        Job importLossData = context.getBean("importLossData", Job.class);
+//        jobRegistry.register(new ReferenceJobFactory(importLossData));
+//        return jobRegistry;
+//    }
 
     @Bean(value = "myJobLauncher")
     public SimpleJobLauncher getJobLauncher() throws Exception{
@@ -94,7 +91,7 @@ public class ApplicationContextConfig {
 
         simpleJobServiceFactoryBean.setDataSource(getDataSource());
         simpleJobServiceFactoryBean.setJobLauncher(getJobLauncher());
-        simpleJobServiceFactoryBean.setJobLocator(getJobRegistry());
+        simpleJobServiceFactoryBean.setJobLocator(new MapJobRegistry());
         simpleJobServiceFactoryBean.setJobRepository(getJobRepository());
 
         return simpleJobServiceFactoryBean;

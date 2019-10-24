@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @SpringBootApplication
 @EnableJpaRepositories("com.scor.rr.repository")
 @EnableBatchProcessing
-@ImportResource("classpath:importLossData.xml")
 public class ImportBackend extends SpringBootServletInitializer implements CommandLineRunner {
 
 

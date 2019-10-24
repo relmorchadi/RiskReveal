@@ -2,18 +2,19 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
+import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
 import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.mapper.*;
-import com.scor.rr.repository.RlAnalysisRepository;
-import com.scor.rr.repository.RlAnalysisScanStatusRepository;
-import com.scor.rr.repository.RlModelDataSourceRepository;
+import com.scor.rr.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,15 @@ public class RmsService {
     @Autowired
     RlAnalysisRepository rlAnalysisRepository;
 
+    @Autowired
+    RRFinancialPerspectiveRepository rrFinancialPerspectiveRepository;
+
+    @Autowired
+    RlSourceResultRepository rlSourceResultRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
+
     @Value("${rms.database}")
     private String DATABASE;
 
@@ -60,7 +70,6 @@ public class RmsService {
         this.logger.debug("the data returned ", dataSources);
         return dataSources;
     }
-
 
     public void addEdmRdms(List<DataSource> dataSources, Integer projectId, String instanceId, String instanceName) {
         Set<MultiKey> selectedDataSources = new HashSet<>();
@@ -115,7 +124,6 @@ public class RmsService {
 
     }
 
-
     private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
         return rlAnalysisList.stream().filter(item -> item.getRdmId().equals(rdmId) && item.getRdmName().equals(rdmName))
                 .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
@@ -140,7 +148,6 @@ public class RmsService {
         this.logger.debug("the data returned ", edmPortfolioBasic);
         return edmPortfolioBasic;
     }
-
 
     public List<RdmAnalysis> listRdmAnalysis(Long id, String name, List<Long> analysisIdList) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_ListRdmAnalysis @rdm_id=" + id + ", @rdm_name=" + name;
@@ -438,5 +445,18 @@ public class RmsService {
             this.logger.debug("Conversion failed", e);
         }
         return json;
+    }
+
+    /**
+     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
+     * @param sourceResultDtoList
+     */
+    public List<Integer> saveSourceResults(List<SourceResultDto> sourceResultDtoList){
+
+        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
+                .map(sourceResult -> {
+                    sourceResult = rlSourceResultRepository.save(sourceResult);
+                    return sourceResult.getRlSourceResultId();
+                }).collect(toList());
     }
 }
