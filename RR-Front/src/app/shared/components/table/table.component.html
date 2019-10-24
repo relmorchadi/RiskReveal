@@ -54,9 +54,9 @@
         <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
             (dblclick)="doubleClickRow(rowData)"
             (click)="selectRow(rowData, i)">
-          <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rawStatus'" style="display:flex">
+          <div *ngIf="col?.type === 'text' || col?.type === 'date'" style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+            <span *ngIf="rowData[col.field] !== 'Unassigned'" [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
           </div>
           <div class="fav-status-info" (click)="updateFavValue(rowData)" *ngIf="col?.type === 'favStatus'">
             <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>

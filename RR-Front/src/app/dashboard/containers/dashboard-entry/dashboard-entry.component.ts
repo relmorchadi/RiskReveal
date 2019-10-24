@@ -4,7 +4,7 @@ import {RenewalContractScopeComponent} from '../../components/renewal-contract-s
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from '../../../shared/notification.service';
-import {Router} from '@angular/router';
+import {NavigationStart, Router} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -66,23 +66,28 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs',
+          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 102, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
+          componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -135,23 +140,28 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs',
+          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
-          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status',
+          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
+          componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -195,27 +205,33 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 99, icon: 'icon-camera-focus', title: 'New CARs',
+        id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs',
+        id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 101, icon: 'icon-camera-focus', title: 'Archived CARs',
+        id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
-        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status',
+        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
+      },
+      {
+        id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
+        componentName: 'facSubsidiaryChartComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }
     ]
   };
+  previousUrl: string;
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
@@ -253,6 +269,22 @@ export class DashboardEntryComponent implements OnInit {
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
     this.dashboardChange(this.idSelected);
+
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        window.localStorage.setItem('previousUrl', this.router.url);
+      }
+    });
+    this.setTabValue();
+  }
+
+  setTabValue() {
+    const data = window.localStorage.getItem('previousUrl');
+    console.log(data);
+    if (data === '/CreateNewFile') {
+      // this.idTab = 1;
+      this.dashboardChange(1);
+    }
   }
 
   addDashboard() {
@@ -268,24 +300,24 @@ export class DashboardEntryComponent implements OnInit {
           id: key,
           componentName,
           name: title,
-          icon: icon,
+          icon,
           selected: false,
           position: {rows: 2, cols: 3}
         })
       ),
       fac: _.map(selectedFacComponent,
-        ({componentName, title, icon}: any, key) => ({
+        ({componentName, title, type, icon}: any, key) => ({
           id: key,
           componentName,
           name: title,
-          icon: icon,
+          icon,
+          type,
           selected: false,
           position: {rows: 2, cols: 3}
         }))
     };
     if (item.name != null) {
       this.dashboards = [...this.dashboards, item];
-      console.log(this.dashboards);
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
       this.newDashboardTitle = '';
@@ -513,7 +545,6 @@ export class DashboardEntryComponent implements OnInit {
         ds.selected = !ds.selected;
       }
     });
-    console.log(dashboard.fac);
     _.forEach(this.dashboards , ds => {
       if (ds.id === dashboard.id) {
         ds = dashboard;

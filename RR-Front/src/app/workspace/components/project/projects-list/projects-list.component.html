@@ -18,8 +18,9 @@
           <i *ngIf="project.postInuredFlag" class="fa fa-code-fork"></i>
         </div>
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-          <span>{{project?.name}}</span>
-          <span>{{project?.projectId}}</span>
+          <span *ngIf="project.projectType === 'fac'">{{project?.name | trimFormat}}</span>
+          <span *ngIf="!project.projectType">{{project?.name}}</span>
+          <span>{{project?.projectId | trimFormat}}</span>
         </div>
         <div class="icon-card-wrapper">
           <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
@@ -108,7 +109,10 @@
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
           <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</a>
         </div>
-        <p class="project-kpi-details-title">
+        <p class="project-kpi-details-title" *ngIf="project.projectType === 'fac'">
+           {{project?.id}} - {{project?.uwAnalysis}}
+        </p>
+        <p class="project-kpi-details-title" *ngIf="!project.projectType">
           {{project?.description}}
         </p>
         <div class="border-top d-flex project-kpi-details-content">

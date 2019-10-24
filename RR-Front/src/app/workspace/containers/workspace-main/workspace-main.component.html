@@ -41,6 +41,7 @@
                 <div class="workspace-title-wrapper">
                   <div class="d-inline-flex flex-column">
                     <h3 class="workspace-title">{{data[wsIdentifier]?.cedantName}}
+                      <span *ngIf="data[wsIdentifier]?.workspaceType === 'fac'">| {{filterSelected()?.id}} | {{filterSelected()?.projectId}}</span>
                       <i (click)="addToFavorite(wsIdentifier, data[wsIdentifier])"
                          *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon" class="icon-star_border_24px"></i>
                       <ng-template #favoriteIcon>

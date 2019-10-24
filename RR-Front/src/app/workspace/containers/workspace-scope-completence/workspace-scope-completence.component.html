@@ -147,13 +147,19 @@
                 <!--<button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button-->
                         <!--nzType="default">Attach PLTs-->
                 <!--</button>-->
-                  <button class="a-buttons-contained-micro" style="margin-top: 12px;" (click)="addRemoveModal=true; rowInformation= null">Attach PLTs</button>
+                  <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="wsType !== 'fac'"
+                          (click)="addRemoveModal=true; rowInformation= null">Attach PLTs</button>
               </div>
             </th>
-            <ng-container *ngFor="let item of treatySections[0]">
+            <ng-container *ngFor="let item of treatySections[0]; let i = index">
               <th class="divided-col" style="width:90px; "
                   *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')">
-                <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
+                <ng-container *ngIf="wsType === 'treaty'">
+                  <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
+                </ng-container>
+                <ng-container *ngIf="wsType === 'fac'">
+                  <div style="text-align: center;">Division N° {{i + 1}}<br/>{{item.name}}</div>
+                </ng-container>
                 <div *ngIf="checkTreatySectionAttached(item) " class="icon-holder" nz-tooltip [nzTitle]="checked">
                   <ng-container>
                     <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
@@ -228,7 +234,7 @@
                     </a>
                     <ul nz-menu style="font-size: 12px">
                       <li nz-menu-item (click)="overrideRow(rowData)">Override</li>
-                      <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>
+                      <li nz-menu-item *ngIf="wsType !== 'fac'" (click)="getRowInformation(rowData)">Attach Plts</li>
                     </ul>
                   </nz-dropdown>
 

@@ -1,22 +1,19 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
-import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import {Data} from '../../../core/model/data';
-import {Select, Store} from '@ngxs/store';
-import {WorkspaceState} from '../../../workspace/store/states';
-import {WsApi} from '../../../workspace/services/workspace.api';
-import {dashData} from '../../../shared/data/dashboard-data';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
+import {Data} from "../../../core/model/data";
+import {Select, Store} from "@ngxs/store";
+import {WorkspaceState} from "../../../workspace/store/states";
+import {WsApi} from "../../../workspace/services/workspace.api";
 import * as _ from 'lodash';
-import * as moment from 'moment';
-import {GeneralConfigState} from '../../../core/store/states';
-import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {EChartOption} from 'echarts';
+import {GeneralConfigState} from "../../../core/store/states";
+import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
 
 @Component({
-  selector: 'app-fac-chart-widget',
-  templateUrl: './fac-chart-widget.component.html',
-  styleUrls: ['./fac-chart-widget.component.scss']
+  selector: 'app-fac-subsidiary-chart',
+  templateUrl: './fac-subsidiary-chart.component.html',
+  styleUrls: ['./fac-subsidiary-chart.component.scss']
 })
-export class FacChartWidgetComponent implements OnInit {
+export class FacSubsidiaryChartComponent implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -43,7 +40,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
+      data: [],
       align: 'left',
       left: 10
     },
@@ -88,43 +85,7 @@ export class FacChartWidgetComponent implements OnInit {
         }
       }
     },
-    series: [
-      {
-        name: 'new',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'In Progress',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Canceled',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Superseded',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Completed',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      }
-    ],
+    series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
   };
 
@@ -152,7 +113,7 @@ export class FacChartWidgetComponent implements OnInit {
   data: any[];
   filteredData: any[];
 
-  analystList: any;
+  subsidiaryList: any;
   selectedAnalyst = 'ALL';
 
   dateTo: any;
@@ -169,8 +130,9 @@ export class FacChartWidgetComponent implements OnInit {
     this.facData$.subscribe(value => {
       this.data = value;
       this.filteredData = value;
-      this.chartOption.xAxis.data = _.uniq(value.map(item => item.assignedAnalyst));
-      this.analystList = [..._.uniq(value.map(item => item.assignedAnalyst)), 'ALL'];
+      this.chartOption.xAxis.data = _.uniq(value.map(item => item.uwanalysisContractSubsidiary));
+      this.chartOption.legend.data = _.uniq(value.map(item => item.assignedAnalyst));
+      this.subsidiaryList = [..._.uniq(value.map(item => item.uwanalysisContractSubsidiary)), 'ALL'];
       this.setValues();
     });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
@@ -243,26 +205,17 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   setValues() {
-    _.forEach(this.chartOption.xAxis.data,
-        item => this.chartOption.series[0].data =
-          [...this.chartOption.series[0].data, _.filter(this.filteredData, fac =>
-            fac.assignedAnalyst === item && fac.carStatus === 'New').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[1].data =
-        [...this.chartOption.series[1].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'In Progress').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[2].data =
-        [...this.chartOption.series[2].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Canceled').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[3].data =
-        [...this.chartOption.series[3].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Superseded').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[4].data =
-        [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
+    let series = [];
+    const {data} = this.chartOption.legend;
+    _.forEach(data, item => {
+      let trad = [];
+      _.forEach(this.subsidiaryList, subsItem => {
+        trad = [...trad, _.filter(this.data, dt =>
+          dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length];
+      });
+      series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+    });
+    this.chartOption.series = series;
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {
@@ -271,7 +224,7 @@ export class FacChartWidgetComponent implements OnInit {
     let option = null;
     option = {
       title: {
-        text: 'Routing Time'
+        text: ''
       },
       tooltip : {
         trigger: 'axis',
@@ -281,7 +234,7 @@ export class FacChartWidgetComponent implements OnInit {
             backgroundColor: '#6495ED'
           }
         },
-        formatter: (params) => {
+/*        formatter: (params) => {
           const colorSpan = color => {
             return '<span style="display:inline-block;border-radius:10px;width:9px;height:9px;background-color:' + color + '"></span>';
           };
@@ -293,10 +246,10 @@ export class FacChartWidgetComponent implements OnInit {
             rez += xx;
           });
           return rez;
-        },
+        },*/
       },
       legend: {
-        data: ['Max Time', 'Average Time', 'Min Time']
+        data: []
       },
       dataZoom: [{
         type: 'inside'
@@ -369,4 +322,5 @@ export class FacChartWidgetComponent implements OnInit {
   setFilter(col: string, $event: {}) {
     this.mockData = _.filter(this.mockDataCache, (e) => $event ? e[col] === $event : true);
   }
+
 }

@@ -1,4 +1,4 @@
-import {Pipe, PipeTransform} from "@angular/core";
+import {Pipe, PipeTransform} from '@angular/core';
 
 
 @Pipe({
@@ -14,17 +14,17 @@ export class StatusFilterPipe implements PipeTransform {
     for (const thread of value) {
       for (const row of thread.thread) {
         if (inProgress) {
-          if (row.status === "in progress") {
+          if (row.status === 'in progress') {
             res.push(row);
           }
         }
         if (checked) {
-          if (row.status === "checked") {
+          if (row.status === 'checked') {
             res.push(row);
           }
         }
         if (locked) {
-          if (row.status === "locked") {
+          if (row.status === 'locked') {
             res.push(row);
           }
         }

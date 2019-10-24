@@ -62,6 +62,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(content => {
         this.data = content;
+        console.log(this.data);
         this.detectChanges();
       });
   }
@@ -144,6 +145,10 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
       programName,
       cedantName
     })]);
+  }
+
+  filterSelected() {
+    return _.filter(this.data[this.currentWsIdentifier].projects, item => item.selected)[0];
   }
 
   unFavorite(wsIdentifier, {wsId, uwYear}) {

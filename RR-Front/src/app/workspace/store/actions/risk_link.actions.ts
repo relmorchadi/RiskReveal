@@ -98,6 +98,11 @@ export class AddToBasketAction {
   constructor() {}
 }
 
+export class AddToBasketDefaultAction {
+  static readonly type = '[Risk Link] Auto Attach Fac Data';
+  constructor() {}
+}
+
 export class DeleteFromBasketAction {
   static readonly type = '[Risk Link] Delete From Basket';
   constructor(public payload: any) {}

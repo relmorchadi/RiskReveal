@@ -226,6 +226,7 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+              <i class="icon-link_24px" *ngIf="tabStatus === 'fac'" nz-tooltip nzTitle="Auto Link" (click)="autoLinkAnalysis()"></i>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -237,12 +238,12 @@
           <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
-                <div class="body-wrap-menu-header">
+                <div class="body-wrap-menu-header" style="flex-direction: column">
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
-                    <i nz-tooltip nzTitle="Save" (click)="saveEDMAndRDMSelection()" style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Synchronize" (click)="synchronizeEDMAndRDMSelection()" class="icon-sync_24px"></i>
-                    <i nz-tooltip nzTitle="Remove" (click)="removeEDMAndRDMSelection()" class="icon-close_24px"></i>
+                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveEDMAndRDMSelection()" style="font-size: 23px" class="icon-save_24px"></i>
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="synchronizeEDMAndRDMSelection()" class="icon-sync_24px"></i>
+                    <i nz-tooltip nzTitle="Clear default settings" (click)="removeEDMAndRDMSelection()" class="icon-close_24px"></i>
                   </div>
                 </div>
               </div>
@@ -417,7 +418,7 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="state?.activeAddBasket"  (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
                 </button>
                 <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled-mini" disabled>ADD FOR IMPORT
                 </button>

@@ -374,6 +374,26 @@
         }
       }
     }
+
+    .unfold-fac-component {
+      border: none;
+      margin-top: 0;
+
+      .body-wrap-border-body {
+        padding-top: 0;
+      }
+    }
+
+    .header-style {
+      margin-top: 15px;
+      padding-left: 20px;
+      padding-bottom: 15px;
+      color: rgba(0, 0, 0, 0.87);
+      font-size: 20.32px;
+      font-weight: 500;
+      letter-spacing: 0.25px;
+      line-height: 24px;
+    }
   }
 }
 

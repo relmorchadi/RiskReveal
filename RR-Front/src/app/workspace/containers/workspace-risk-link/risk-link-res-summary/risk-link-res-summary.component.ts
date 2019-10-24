@@ -112,8 +112,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   allCheckedAnalysis: boolean;
   indeterminateAnalysis: boolean;
-  allCheckedPeqt: boolean;
-  indeterminatePeqt: boolean;
 
   collapseDataSources = false;
   collapseFPDataTable = false;
