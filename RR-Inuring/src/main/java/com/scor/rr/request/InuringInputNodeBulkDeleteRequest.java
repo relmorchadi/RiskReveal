@@ -5,19 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
-
+@Data
 public class InuringInputNodeBulkDeleteRequest {
 
     private List<InuringInputNode> inuringInputNodes;
 
-    public InuringInputNodeBulkDeleteRequest(List<InuringInputNode> inuringInputNodes) {
-        this.inuringInputNodes = inuringInputNodes;
-    }
-
-    public InuringInputNodeBulkDeleteRequest() {
-    }
-
-    public List<InuringInputNode> getInuringInputNodes() {
-        return inuringInputNodes;
-    }
 }

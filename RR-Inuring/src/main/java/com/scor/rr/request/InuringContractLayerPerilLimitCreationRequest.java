@@ -4,7 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
-
+@Data
 public class InuringContractLayerPerilLimitCreationRequest {
 
     private int inuringContractLayerId;
@@ -13,24 +13,5 @@ public class InuringContractLayerPerilLimitCreationRequest {
 
     private BigDecimal limit;
 
-    public InuringContractLayerPerilLimitCreationRequest(int inuringContractLayerId, String peril, BigDecimal limit) {
-        this.inuringContractLayerId = inuringContractLayerId;
-        this.peril = peril;
-        this.limit = limit;
-    }
 
-    public InuringContractLayerPerilLimitCreationRequest() {
-    }
-
-    public int getInuringContractLayerId() {
-        return inuringContractLayerId;
-    }
-
-    public String getPeril() {
-        return peril;
-    }
-
-    public BigDecimal getLimit() {
-        return limit;
-    }
 }
