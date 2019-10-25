@@ -7,7 +7,13 @@ import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
-import {CloseAllTagsAction, CloseTagByIndexAction, saveSearch, UpdateBadges} from '../../../core/store';
+import {
+  CloseAllTagsAction,
+  CloseTagByIndexAction,
+  saveSearch,
+  toggleSavedSearch,
+  UpdateBadges
+} from '../../../core/store';
 import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
@@ -31,6 +37,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   @Select(SearchNavBarState.getSavedSearch)
   savedSearch$;
+
+  @Select(SearchNavBarState.getShowSavedSearch)
+  savedSearchVisibility$;
 
   savedSearch;
   badges;
@@ -138,7 +147,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   private _filter = {};
   searchContent;
   manageColumns: boolean = false;
-  savedSearchVisibility: boolean = false;
+  savedSearchVisibility: boolean;
+  saveSearchPopup: boolean = false;
+  searchLabel: any;
 
   constructor(private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
@@ -159,6 +170,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     })
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
+    })
+    this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
+      this.savedSearchVisibility = savedSearchVisibility;
+      this.cdRef.detectChanges();
     })
     this.initColumns();
   }
@@ -353,17 +368,33 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     this.extraColumnsCache = this.extraColumns;
   }
 
+  openSavedSearch() {
+    this.saveSearchPopup = true;
+  }
   saveSearch() {
-    this.store.dispatch(new saveSearch({date: new Date().toLocaleDateString(), badges: this.badges}));
+    if (this.searchContent.length > 0) {
+      this.store.dispatch(new saveSearch({
+        date: new Date().toLocaleDateString(),
+        label: this.searchLabel,
+        badges: this.searchContent
+      }));
+      this.searchLabel = null;
+      this.saveSearchPopup = false;
+    }
   }
 
 
   toggleSavedSearch() {
-    this.savedSearchVisibility = !this.savedSearchVisibility;
+    this.store.dispatch(new toggleSavedSearch());
   }
 
   applySearch(search: any) {
     this.store.dispatch(new UpdateBadges(search.badges));
     this.store.dispatch(new SearchActions.SearchAction(search.badges, ''));
+  }
+
+  closeSaveSearchPup() {
+    this.saveSearchPopup = false;
+    this.searchLabel = null;
   }
 }
