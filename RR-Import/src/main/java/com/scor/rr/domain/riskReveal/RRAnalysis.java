@@ -10,7 +10,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
-@Table(name = "RRAnalysis", schema = "dr")
+@Table(name = "RRAnalysis")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

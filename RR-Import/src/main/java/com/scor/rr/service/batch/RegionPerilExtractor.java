@@ -62,7 +62,7 @@ public class RegionPerilExtractor {
     @Value("${jobParameters[instanceId]}")
     private String instanceId;
 
-    public void loadRegionPerilAndCreateRRAnalysisAndRRLoassTableHeader() {
+    public void loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
         log.debug("Start loading region perils");
         Optional<Project> projectOptional = projectRepository.findById(projectId);
         Project project;

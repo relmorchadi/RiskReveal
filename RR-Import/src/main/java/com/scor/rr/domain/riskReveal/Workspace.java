@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "dr")
+@Table(name = "Workspace")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class importLossDataJob {
+public class ImportLossDataJob {
 
     @Autowired
     JobBuilderFactory jobBuilderFactory;
@@ -28,7 +28,7 @@ public class importLossDataJob {
     @Bean
     public Tasklet extractRegionPerilTasklet(){
         return (StepContribution contribution, ChunkContext chunkContext) -> {
-            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLoassTableHeader();
+            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
             return RepeatStatus.FINISHED;
         };
     }
@@ -38,7 +38,7 @@ public class importLossDataJob {
         return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
     }
 
-    @Bean
+    @Bean(value = "importLossData")
     public Job getImportLossData() {
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPeril())

@@ -22,8 +22,6 @@ public class RlSourceResult {
     private Integer entity;
     @Column(name = "projectId")
     private Long projectId;
-    @Column(name = "rlAnalysisId")
-    private Long rlAnalysisId;
     @Column(name = "targetCurrency")
     private String targetCurrency;
     @Column(name = "targetRegionPeril")

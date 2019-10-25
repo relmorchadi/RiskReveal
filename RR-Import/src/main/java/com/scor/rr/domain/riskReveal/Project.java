@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "Project", schema = "dr")
+@Table(name = "Project")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
