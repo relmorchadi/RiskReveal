@@ -30,7 +30,8 @@
         <i nz-icon nzType="setting" nzTheme="outline"></i>
       </button>-->
       <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
-              nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+              (nzVisibleChange)="closeSearch()" [nzContent]="searchDropdown" nz-popover nzPlacement="bottomLeft"
+              nzTrigger="click">
       </button>
       <div class="chips-wrapper">
         <app-chip-tag (dblclick)="onChangeTagValue(items)" (onclick)="closeSearchBadge($event, i)"
@@ -74,7 +75,7 @@
         <div class="search-history-component" style="position: relative;">
           <div class="header-wrapper">
             <span class="search-history-header">SAVED SEARCH</span>
-            <span class="search-history-viewAll">See All</span>
+            <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
           </div>
           <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
             <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
@@ -124,7 +125,7 @@
   <ng-template #tagDropdown>
     <div class="search-contextual-table"
          [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '550px' : '350px'}" nz-menu
-         style="height: 420px; border-radius: 10px">
+         style="height: 500px; border-radius: 10px">
         <div class="tag-header">
           <span>SEARCH MODE</span>
           <div>
@@ -145,9 +146,9 @@
       <div class="tag-header" style="display: none">
           <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" class="switch-input" formControlName="expertModeToggle"></nz-switch>
         </div>
-      <div class="tag-body" style="margin-bottom: 8px;display: none">
+      <div class="tag-body" style="margin-bottom: 8px">
           <div class="tag-body-header">
-            <div style="line-height: 17px;">Using "" while in Expert Mode will display the results with the exact search term.<br/>
+            <div style="line-height: 17px;">Using "" will display the results with the exact search term.<br/>
                   Eg: c:"axa"
             </div>
           </div>

@@ -332,12 +332,22 @@ nz-layout {
   align-items: center;
   vertical-align: middle;
   display: inline-grid;
-  width: 10%;
+  width: 7%;
+}
+
+.label-cell {
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  align-items: center;
+  vertical-align: middle;
+  display: inline-grid;
+  width: 7%;
 }
 
 .chips-cell {
   display: flex;
-  width: 90%;
+  width: 86%;
   align-items: center;
 }
 

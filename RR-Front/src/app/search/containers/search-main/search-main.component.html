@@ -42,7 +42,7 @@
               <i
                 [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
             </button>
-            <button (click)="saveSearch()" class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
+            <button (click)="openSavedSearch()" class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
           </div>
         </div>
         <div *ngIf="savedSearchVisibility" class="saved-search-arrow"></div>
@@ -53,6 +53,9 @@
                    class="search-cell-container">
                 <div class="date-cell">
                   {{search.date}}
+                </div>
+                <div class="label-cell">
+                  {{search.label}}
                 </div>
                 <div class="chips-cell">
                   <app-chip-tag *ngFor="let badge of search.badges"
@@ -214,6 +217,51 @@
     <div class="footer">
       <button (click)="closeManageColumns()" nz-button class="a-button-text">cancel</button>
       <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="saveSearchPopup"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Save Search</h6>
+      <i style="cursor: pointer" (click)="closeSaveSearchPup()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: flex;flex-direction: column; width: 400px;height: 300px;">
+    <div class="ui-g">
+      <div class="ui-g-5">
+        <label style="margin-top: 15px;"> Search Label: </label>
+      </div>
+      <div class="ui-g-7">
+        <input [(ngModel)]="searchLabel" class="a-textfield-mini" style="width: 200px">
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-5">
+        <label style="margin-top: 15px;"> Search Criteria: </label>
+      </div>
+      <div class="ui-g-7">
+        <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
+          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key'
+                        [value]="items.value"></app-chip-tag>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveSearchPup()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveSearch()" nz-button>
         Save
       </button>
     </div>
