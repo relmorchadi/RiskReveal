@@ -1,5 +1,6 @@
 package com.scor.rr.configuration;
 
+import com.scor.rr.service.batch.EpCurveExtractor;
 import com.scor.rr.service.batch.RegionPerilExtractor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,6 +26,9 @@ public class ImportLossDataJob {
     @Autowired
     RegionPerilExtractor regionPerilExtractor;
 
+    @Autowired
+    EpCurveExtractor epCurveExtractor;
+
     @Bean
     public Tasklet extractRegionPerilTasklet(){
         return (StepContribution contribution, ChunkContext chunkContext) -> {
@@ -34,15 +38,27 @@ public class ImportLossDataJob {
     }
 
     @Bean
-    public Step getExtractRegionPeril() {
+    public Tasklet extractEpCurveStatsTasklet(){
+        return (StepContribution contribution, ChunkContext chunkContext) -> epCurveExtractor.extractEpCurve();
+    }
+
+    @Bean
+    public Step getExtractRegionPerilStep() {
         return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
     }
 
-    @Bean(value = "importLossData")
+    @Bean
+    public Step getExtractEpCurveStatsStep() {
+        return stepBuilderFactory.get("extractEpCurve").tasklet(extractEpCurveStatsTasklet()).build();
+    }
+
+    @Bean
     public Job getImportLossData() {
         return jobBuilderFactory.get("importLossData")
-                .start(getExtractRegionPeril())
+                .start(getExtractRegionPerilStep())
+                .next(getExtractEpCurveStatsStep())
                 .build();
     }
+
 
 }

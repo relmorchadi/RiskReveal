@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 import java.util.Date;
 
 
@@ -19,13 +20,13 @@ public class RlAnalysisScanStatus {
     @Id
     private Integer RLAnalysisScanStatusId;
     private Integer entity;
-    private Integer rlAnalysisId;
+    private BigInteger rlAnalysisId;
     private Integer scanLevel;
     private Integer scanStatus;
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastScan;
 
-    public RlAnalysisScanStatus(int rlAnalysisId, int scanStatus) {
+    public RlAnalysisScanStatus(BigInteger rlAnalysisId, int scanStatus) {
         this.entity = 1;
         this.rlAnalysisId = rlAnalysisId;
         this.scanLevel = 0; //TODO: define scan level enum

@@ -112,23 +112,23 @@ public class RegionPerilExtractor {
                 }
 
                 RRAnalysis rrAnalysis = new RRAnalysis();
-                //rrAnalysis.setRegion(sourceResult.getRlAnalysis().getRegion());
-                //rrAnalysis.setSourceResultsReference(sourceResult.getModelingResultDataSource().getModelingResultDataSourceId());
-                //rrAnalysis.setSubPeril(sourceResult.getRlAnalysis().getSubPeril());
-                //rrAnalysis.setProfileName(sourceResult.getRlAnalysis().getProfileName());
-                //rrAnalysis.setIncludedTargetRapIds(sourceResult.getIncludedTargetRapIds());/
-                //sourceResult.setImportStatus(rrAnalysis.getImportStatus());
-                //rrAnalysis.setGrain(sourceResult.getUserSelectedGrain() != null ? sourceResult.getUserSelectedGrain() : sourceResult.getRlAnalysis().getDefaultGrain());
-                //rrAnalysis.setGeoCode(sourceResult.getRlAnalysis().getGeoCode());
-                //rrAnalysis.setProxyScalingBasis(sourceResult.getProxyScalingBasis());
-                //rrAnalysis.setProxyScalingNarrative(sourceResult.getProxyScalingNarrative());
-                //rrAnalysis.setDescription(sourceResult.getRlAnalysis().getDescription());
-                //rrAnalysis.setMultiplierBasis(sourceResult.getMultiplierBasis());
-                //rrAnalysis.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
-                //rrAnalysis.setTags(sourceResult.getTags());
-                //rrAnalysis.setUserNotes(sourceResult.getNotes());
-                //rrAnalysis.setOverrideReasonText(sourceResult.getOverrideReasonText());
-                //rrAnalysis.setDefaultOccurrenceBasis(analysisFinancialPerspective.getDefaultOccurrenceBasis());
+//                rrAnalysis.setRegion(sourceResult.getRlAnalysis().getRegion());
+//                rrAnalysis.setSourceResultsReference(sourceResult.getModelingResultDataSource().getModelingResultDataSourceId());
+//                rrAnalysis.setSubPeril(sourceResult.getRlAnalysis().getSubPeril());
+//                rrAnalysis.setProfileName(sourceResult.getRlAnalysis().getProfileName());
+//                rrAnalysis.setIncludedTargetRapIds(sourceResult.getIncludedTargetRapIds());
+//                sourceResult.setImportStatus(rrAnalysis.getImportStatus());
+//                rrAnalysis.setGrain(sourceResult.getUserSelectedGrain() != null ? sourceResult.getUserSelectedGrain() : sourceResult.getRlAnalysis().getDefaultGrain());
+//                rrAnalysis.setGeoCode(sourceResult.getRlAnalysis().getGeoCode());
+//                rrAnalysis.setProxyScalingBasis(sourceResult.getProxyScalingBasis());
+//                rrAnalysis.setProxyScalingNarrative(sourceResult.getProxyScalingNarrative());
+//                rrAnalysis.setMultiplierBasis(sourceResult.getMultiplierBasis());
+//                rrAnalysis.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
+//                rrAnalysis.setDescription(sourceResult.getRlAnalysis().getDescription());
+//                rrAnalysis.setTags(sourceResult.getTags());
+//                rrAnalysis.setUserNotes(sourceResult.getNotes());
+//                rrAnalysis.setOverrideReasonText(sourceResult.getOverrideReasonText()); //region peril
+//                rrAnalysis.setDefaultOccurrenceBasis(analysisFinancialPerspective.getDefaultOccurrenceBasis());
                 rrAnalysis.setTargetCurrency(sourceResult.getTargetCurrency());
                 rrAnalysis.setProjectId(project.getProjectId());
                 rrAnalysis.setCreationDate(new Date());
@@ -142,7 +142,7 @@ public class RegionPerilExtractor {
 //                    rrAnalysis.setSourceModellingVendor(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName());
 //                    rrAnalysis.setSourceModellingSystem(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName());
 //                    rrAnalysis.setSourceModellingSystemVersion(modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion().toString());
-                });
+            });
 
                 rrAnalysis.setDataSourceId(sourceResult.getRlAnalysis().getRdmId());
                 rrAnalysis.setDataSourceName(sourceResult.getRlAnalysis().getRdmName());

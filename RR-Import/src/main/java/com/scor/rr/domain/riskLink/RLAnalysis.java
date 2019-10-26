@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -16,7 +17,7 @@ public class RLAnalysis {
 
     @Id
     @GeneratedValue
-    private Integer rlAnalysisId;
+    private BigInteger rlAnalysisId;
     private Integer entity;
     private Integer rlModelDataSourceId;
     private Integer projectId;
@@ -56,6 +57,9 @@ public class RLAnalysis {
     private RlAnalysisScanStatus rlAnalysisScanStatus;
     @OneToOne
     private RlSourceResult rlSourceResult;
+
+    @OneToMany(mappedBy = "rLAnalysisId")
+    List<RlSourceEpHeader> rlSourceEpHeaders;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
         this.entity=1;
