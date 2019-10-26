@@ -153,6 +153,17 @@
                            nz-checkbox></label>
                   </div>
                   <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                  <div *ngIf="col.type === 'table'">
+                    <span nz-tooltip [nzTitle]="items" *ngIf="rowData[col.field].length > 1">M*</span>
+                    <span *ngIf="rowData[col.field].length === 1">{{rowData[col.field][0]}}</span>
+                    <ng-template #items>
+                      <div class="popover-menu">
+                        <ul style="margin-bottom: 0">
+                          <li *ngFor="let item of rowData[col.field]">{{item}}</li>
+                        </ul>
+                      </div>
+                    </ng-template>
+                  </div>
                   <div *ngIf="col.type === 'progress'">
                     <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
                                  [nzWidth]="20" nzType="circle"></nz-progress>
@@ -426,6 +437,17 @@
                   <div class="" *ngIf="col.type === 'selection'">
                     <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"
                            [ngModel]="rowData.selected"></label>
+                  </div>
+                  <div *ngIf="col.type === 'table'">
+                    <span nz-tooltip [nzTitle]="items" *ngIf="rowData[col.field].length > 1">M*</span>
+                    <span *ngIf="rowData[col.field].length === 1">{{rowData[col.field][0]}}</span>
+                    <ng-template #items>
+                      <div class="popover-menu">
+                        <ul style="margin-bottom: 0">
+                          <li *ngFor="let item of rowData[col.field]">{{item}}</li>
+                        </ul>
+                      </div>
+                    </ng-template>
                   </div>
                   <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                   <div class="text-data" *ngIf="col.type === 'progress'">

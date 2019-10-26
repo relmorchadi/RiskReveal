@@ -255,7 +255,20 @@ app-table {
   margin: 8px 10px;
 }
 
-.selectedTab {
-  font-weight: bold;
-  color: #0700CF;
+.widget-footer {
+  display: flex;
+
+  .filter-div {
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+
+    .filter-label {
+      margin: 0 10px;
+      color: rgba(0,0,0,0.5);
+      font-size: 16.22px;
+      font-weight: bold;
+      font-family: rubik;
+    }
+  }
 }
