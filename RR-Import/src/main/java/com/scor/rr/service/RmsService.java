@@ -2,6 +2,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
+import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
@@ -335,19 +336,19 @@ public class RmsService {
         return rdmAllAnalysisProfileRegions;
     }
 
-    public List<AnalysisElt> getAnalysisElt(int rdmId, String rdmName, int analysisId, String finPerspCode, Integer treatyLabelId) {
+    public RLAnalysisELT getAnalysisElt(Integer instanceId,Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId
                 + ", @fin_persp_code=" + finPerspCode;
-        List<AnalysisElt> analysisElt = new ArrayList<>();
+        List<RlEltLoss> rlEltLoss = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ", @treaty_label_id=" + treatyLabelId;
-            analysisElt = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
         } else {
-            analysisElt = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
         }
-        this.logger.debug("the data returned ", analysisElt);
-        return analysisElt;
+        this.logger.debug("the data returned ", rlEltLoss);
+        return new RLAnalysisELT(rdmId, rdmName, analysisId, instanceId, finPerspCode, rlEltLoss);
     }
 
     public List<EdmAllPortfolioAnalysisRegions> getEdmAllPortfolioAnalysisRegions(int edmId, String edmName, String ccy) {

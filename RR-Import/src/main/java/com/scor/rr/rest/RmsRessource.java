@@ -154,8 +154,8 @@ public class RmsRessource {
                                             @RequestParam(value = "finPerspCode") String finPerspCode,
                                             @RequestParam(value = "treatyLabelId", required = false) Integer treatyLabelId) {
         this.logger.debug("start getting AnalysisElt ...");
-        List<AnalysisElt> analysisElt = rmsService.getAnalysisElt(rdmId, rdmName, analysisId, finPerspCode, treatyLabelId);
-        return ResponseEntity.ok(analysisElt);
+        List<RlEltLoss> rlEltLoss = rmsService.getAnalysisElt(rdmId, rdmName, analysisId, finPerspCode, treatyLabelId);
+        return ResponseEntity.ok(rlEltLoss);
     }
 
     @GetMapping("EdmAllPortfolioAnalysisRegions")

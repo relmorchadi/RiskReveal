@@ -17,15 +17,12 @@ import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.guava.GuavaCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
@@ -63,7 +60,7 @@ public class RiskRevealApplicationTests {
     private AnalysisEpCurves analysisEpCurves;
     private AnalysisSummaryStats analysisSummaryStats;
     private RdmAllAnalysisProfileRegions rdmAllAnalysisProfileRegions;
-    private AnalysisElt analysisElt;
+    private RlEltLoss rlEltLoss;
     private EdmAllPortfolioAnalysisRegions edmAllPortfolioAnalysisRegions;
     private RdmAllAnalysisTreatyStructure rdmAllAnalysisTreatyStructure;
     private RmsExchangeRate rmsExchangeRate1;
@@ -324,15 +321,15 @@ public class RiskRevealApplicationTests {
         rdmAllAnalysisProfileRegions.setAal(BigDecimal.valueOf(99999999.00).setScale(2));
 
         //****************************************************************************************
-        analysisElt = new AnalysisElt();
+        rlEltLoss = new RlEltLoss();
 
-        analysisElt.setAnalysisId(1);
-        analysisElt.setFinPerspCode("GR");
-        analysisElt.setEventId(3160002L);
-        analysisElt.setRate(1E-10);
-        analysisElt.setLoss(BigDecimal.valueOf(28160796.6674257).setScale(7).doubleValue());
-        analysisElt.setStdDevC(BigDecimal.valueOf(19009281.734197).setScale(6).doubleValue());
-        analysisElt.setExposureValue(152009835130L);
+        rlEltLoss.setAnalysisId(1);
+        rlEltLoss.setFinPerspCode("GR");
+        rlEltLoss.setEventId(3160002L);
+        rlEltLoss.setRate(1E-10);
+        rlEltLoss.setLoss(BigDecimal.valueOf(28160796.6674257).setScale(7).doubleValue());
+        rlEltLoss.setStdDevC(BigDecimal.valueOf(19009281.734197).setScale(6).doubleValue());
+        rlEltLoss.setExposureValue(152009835130L);
 
         //***************************************************************************************************
         edmAllPortfolioAnalysisRegions = new EdmAllPortfolioAnalysisRegions();
@@ -685,12 +682,12 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getAnalysisElt() {
-        Mockito.when(rmsService.getAnalysisElt(id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(analysisElt));
-        List<AnalysisElt> analysisElts = (List<AnalysisElt>) rmsRessource.getAnalysisElt(id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
-        Assert.assertNotNull(analysisElts.get(0));
+        Mockito.when(rmsService.getAnalysisElt(id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(rlEltLoss));
+        List<RlEltLoss> rlEltLosses = (List<RlEltLoss>) rmsRessource.getAnalysisElt(id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
+        Assert.assertNotNull(rlEltLosses.get(0));
 
         try {
-            Assert.assertEquals(analysisElts.get(0), analysisElt);
+            Assert.assertEquals(rlEltLosses.get(0), rlEltLoss);
             this.logger.debug("Test has been passed successfully,The objects are equal");
         } catch (AssertionError e) {
             this.logger.debug("Test Failed !!!!!, the objects are not equal", e);
