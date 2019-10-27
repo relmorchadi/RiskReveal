@@ -303,3 +303,21 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+.car-status-temp {
+  font-size: 13.26px;
+  padding: 3px 12px;
+  background: lightblue;
+  color: white;
+  text-shadow: -15px 5px 20px rgba(0,0,0,0.8);
+  border-radius: 20px;
+  margin: 0 5px;
+}
+
+.field-car-status {
+  flex: 0 0 34%;
+  letter-spacing: 0.08px;
+  line-height: 20px;
+  font-size: 11px;
+  padding-left: 14px;
+}

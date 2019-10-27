@@ -488,6 +488,11 @@ export class WorkspaceState {
     this.contractService.loadContractData(ctx);
   }
 
+  @Action(fromWS.ToggleFacDivisonAction)
+  toggleFacDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFacDivisonAction) {
+    this.contractService.toggleFacDivision(ctx, payload);
+  }
+
   /***********************************
    *
    * Plt Manager Actions

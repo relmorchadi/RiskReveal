@@ -28,6 +28,7 @@ const facWs = [
     carStatus: 'Canceled',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -35,13 +36,15 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
         principal: true,
         lob: 'Property',
@@ -49,7 +52,38 @@ const facWs = [
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01579',
@@ -80,28 +114,62 @@ const facWs = [
     carStatus: 'New',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
-        lob: 'Property',
+        lob: 'Construction',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00067',
@@ -132,6 +200,7 @@ const facWs = [
     carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -139,6 +208,7 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
         lob: 'Property',
@@ -146,14 +216,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
-        principal: true,
+        principal: false,
         lob: 'Property',
-        coverage: 'PD, BI',
+        coverage: 'BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00083',
@@ -184,28 +286,62 @@ const facWs = [
     carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
-        coverage: 'PD, BI',
+        coverage: 'PD',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00099',
@@ -236,28 +372,62 @@ const facWs = [
     carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00111',
@@ -288,28 +458,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Construction',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-00021',
@@ -340,6 +544,7 @@ const facWs = [
     carStatus: 'New',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -347,14 +552,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
-        principal: true,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00047',
@@ -385,28 +622,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00584',
@@ -437,28 +708,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-01585',
@@ -489,28 +794,62 @@ const facWs = [
     carStatus: 'In progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00043',
@@ -541,28 +880,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01525',
@@ -593,28 +966,62 @@ const facWs = [
     carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
+        coverage: 'BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00037',
@@ -645,28 +1052,62 @@ const facWs = [
     carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-01527',
@@ -697,28 +1138,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01533',
@@ -749,28 +1224,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
-        coverage: 'ZBI, BI',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00117',
@@ -801,28 +1310,54 @@ const facWs = [
     carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00135',
@@ -853,6 +1388,7 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -860,6 +1396,7 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
         lob: 'Property',
@@ -867,14 +1404,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
-        principal: true,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00136',
@@ -905,28 +1474,70 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
+        selected: false,
+        divisionNo: 2,
+        principal: false,
+        lob: 'Construction',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
         divisionNo: 3,
         principal: true,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 4,
+        principal: false,
+        lob: 'Property',
+        coverage: 'BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   }
 ];
 
