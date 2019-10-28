@@ -2,18 +2,24 @@
   <div class="navigation-icons-drawer">
     <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
   </div>
+
+  <ng-container *ngIf="fullViewActive">
+    <app-plt-details-pop-up-full-section [inputs]="currentFullView" [plt]="inputs['pltDetail']" (actionDispatcher)="popupActionHandler($event)"></app-plt-details-pop-up-full-section>
+  </ng-container>
+  <ng-container *ngIf="!fullViewActive">
     <div class="plt-details-header">
       <hr>
       <div>PLT Details</div>
     </div>
     <div class="plt-detail-body">
       <div class="plt-details-brief">
-        <i class="icon-check_circle_outline_24px"></i>
+        <i *ngIf="inputs['pltDetail']?.pltStatus == 'valid'" class="icon-check_circle_outline_24px"></i>
         <div class="plt-detail-brief-desc">
-          <span>{{inputs['pltDetail']?.pltName}}  </span>
-          <span style="font-weight: bold">[{{inputs['pltDetail']?.pltId}}]  </span>
-          <span style="font-weight: bold">[{{inputs['pltDetail']?.pltStatus}}]  </span>
-          <span style="font-weight: bold">[{{inputs['pltDetail']?.pltType}}]</span>
+          <span>{{inputs['pltDetail']?.pltName}}</span>
+          <div style="display: flex;justify-content: space-around">
+            <span style="font-weight: bold">[{{inputs['pltDetail']?.pltId}}]</span>
+            <span style="font-weight: bold">[{{inputs['pltDetail']?.pltType}}]</span>
+          </div>
         </div>
       </div>
       <nz-tabset
@@ -384,6 +390,7 @@
         </nz-tab>
       </nz-tabset>
     </div>
+  </ng-container>
 </div>
 
 

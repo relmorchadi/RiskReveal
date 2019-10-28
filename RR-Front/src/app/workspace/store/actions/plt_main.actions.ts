@@ -53,7 +53,7 @@ export class FilterPltsByUserTags{
   constructor(public payload?: any) {}
 }
 
-export class FilterPltsByStatus{
+export class FilterByFalesely{
   static readonly  type = '[PLT Main] Filter Plts By Status'
   constructor(public payload?: any) {}
 }

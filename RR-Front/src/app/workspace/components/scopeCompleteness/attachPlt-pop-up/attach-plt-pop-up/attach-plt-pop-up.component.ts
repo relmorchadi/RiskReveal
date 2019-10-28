@@ -795,7 +795,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
         this.toggleSelectPlts(action.payload);
         break;
 
-      case tableStore.filterByStatus:
+      case tableStore.filterByFalesely:
         const status = this.getTableInputKey('status');
 
         this.updateTable('status', {
@@ -804,7 +804,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
             selected: !status[action.payload].selected
           }
         });
-        this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+        this.dispatch(new fromWorkspaceStore.FilterByFalesely({
           wsIdentifier: this.workspaceId + "-" + this.uwy,
           status: this.getTableInputKey('status')
         }));
