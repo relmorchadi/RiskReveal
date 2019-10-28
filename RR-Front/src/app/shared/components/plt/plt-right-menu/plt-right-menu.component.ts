@@ -191,7 +191,7 @@ export class PltRightMenuComponent implements OnInit {
       {
         title: "PLT Thread",
         cols: {
-          summary: [{header: "Target RAP Code", field: "targetRAPCode"}, {header: "Target RAP Desc", field: "targetRAPDesc"}, {header: "Root Region Peril Code", field: "minimumGrainRPCode"}, {header: "Root Region Peril Desc", field: ""}, {header: "Region Peril Code", field: "regionPerilCode"}, {header: "Region Peril Desc", field: "regionPerilDesc"}, {header: "Grain", field: "grain"}, {header: "Grouped PLT", field: "groupedPlt", type: "indicator"},{header: "Cloned PLT", field: "clonedPlt", type: "indicator"}, {header: "OccurenceBasis", field: "occurenceBasis"}, {header: "Base Adjusted", field: "baseAdjustment", type: "indicator"}, {header: "Default Adjusted", field: "defaultAdjustment", type: "indicator"}, {header: "Client Adjusted", field: "clientAdjustment", type: "indicator"}, {header: "PLT Ccy", field: "pltCcy"}, {header: "Create Date", field: "createDate"}, {header: "Created By", field: "createdBy"}, {header: "Archived", field: "archived"}, {header: "Archived Date", field: "archivedDate"}],
+          summary: [{header: "Target RAP Code", field: "targetRAPCode"}, {header: "Target RAP Desc", field: "targetRAPDesc"}, {header: "Root Region Peril Code", field: "minimumGrainRPCode"}, {header: "Root Region Peril Desc", field: ""}, {header: "Region Peril Code", field: "regionPerilCode"}, {header: "Region Peril Desc", field: "regionPerilDesc"}, {header: "Grain", field: "grain"}, {header: "Grouped PLT", field: "groupedPlt", type: "indicator"},{header: "Cloned PLT", field: "clonedPlt", type: "indicator"}, {header: "OccurenceBasis", field: "occurenceBasis"}, {header: "Base Adjusted", field: "baseAdjustment", type: "indicator"}, {header: "Default Adjusted", field: "defaultAdjustment", type: "indicator"}, {header: "Client Adjusted", field: "clientAdjustment", type: "indicator"}, {header: "PLT Ccy", field: "pltCcy"}, {header: "Create Date", field: "createDate"}, {header: "Created By", field: "createdBy"}, {header: "Archived", field: "archived", type: "indicator"}, {header: "Archived Date", field: "archivedDate"}],
           sections: [{ title: "Thread Details", rows: [{label: "Target RAP Code", field: "targetRAPCode"}, {label: "Target RAP Desc", field: "targetRAPDesc"}, {label: "Root Region Peril Code", field: "minimumGrainRPCode"}, {label: "Root Region Peril Desc", field: ""}, {label: "Minimum Grain Grain RP Code", field: "minimumGrainRPCode"}, {label: "Minimum Grain RP Desc", field: ""}, {label: "Region Peril Code", field: "regionPerilCode"}, {label: "Region Peril Desc", field: "regionPerilDesc"}, {label: "Peril Group Code", field: "perilGroupCode"}, {label: "Peril Group Desc", field: "perilGroupDesc"}, {label: "Grain", field: "grain"}, {label: "Grouped PLT", field: "groupedPlt", type: "indicator"},{label: "Cloned PLT", field: "clonedPlt", type: "indicator"}, {label: "Occurence Basis Default", field: "defaultOccurenceBasis"}, {label: "OccurenceBasis", field: "occurenceBasis"}, {label: "Base Adjusted", field: "baseAdjustment", type: "indicator"}, {label: "Default Adjusted", field: "defaultAdjustment", type: "indicator"}, {label: "Client Adjusted", field: "clientAdjustment", type: "indicator"}, {label: "PLT Ccy", field: "pltCcy"}, {label: "Create Date", field: "createDate"}, {label: "Created By", field: "createdBy"}, {label: "Archived", field: "archived"}, {label: "Archived Date", field: "archivedDate"}]}]
         }
       },
@@ -199,26 +199,51 @@ export class PltRightMenuComponent implements OnInit {
         title: "EP & Statistics",
         cols: {
           summary: [
-            {header: "AEP 10", field: "aep10"},
-            {header: "AEP 50", field: "aep50"},
-            {header: "AEP 100", field: "aep100"},
-            {header: "AEP 250", field: "aep250"},
-            {header: "AEP 500", field: "aep500"},
-            {header: "AEP 1000", field: "aep1000"},
-            {header: "OEP 10", field: "oep10"},
-            {header: "OEP 50", field: "oep50"},
-            {header: "OEP 100", field: "oep100"},
-            {header: "OEP 250", field: "oep250"},
-            {header: "OEP 500", field: "oep500"},
-            {header: "OEP 1000", field: "oep1000"},
             {header: "AAL", field: "aal"},
             {header: "CoV", field: "cov"},
             {header: "Std Dev", field: "stdDev"},
           ]
-        }
+        },
+        table: {
+            cols: ['Return Period', 'AEP', 'OEP'],
+            data: [
+              {
+                'Return Period': 10,
+                'AEP': 'aep10',
+                'OEP': 'oep10'
+              },
+              {
+                'Return Period': 50,
+                'AEP': 'aep50',
+                'OEP': 'oep50'
+              },
+              {
+                'Return Period': 100,
+                'AEP': 'aep100',
+                'OEP': 'oep100'
+              },
+              {
+                'Return Period': 250,
+                'AEP': 'aep250',
+                'OEP': 'oep250'
+              },
+              {
+                'Return Period': 500,
+                'AEP': 'aep500',
+                'OEP': 'oep500'
+              },
+              {
+                'Return Period': 1000,
+                'AEP': 'aep1000',
+                'OEP': 'oep1000'
+              },
+            ]
+        },
+        isTable: true
       },
       {
         title: "Cloning Source",
+        cloningSource: true,
         cols: {
           summary: [
             {header: "Clone Source PLT", field: "ClonedSourcePlt"}, {header: "Clone Source Project", field: "ClonedSourceProject"}, {header: "Clone Source Workspace", field: "ClonedSourceWorkspace"}
@@ -249,7 +274,7 @@ export class PltRightMenuComponent implements OnInit {
         title: "Publishing Status",
         cols: {
           summary: [
-            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced"}, {header: "(A) Published to ARC", field: "arcPublication"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
+            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
           ],
           sections: [
             { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
