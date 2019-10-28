@@ -1,8 +1,6 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,17 +30,17 @@ public class RmsRessource {
     }
 
 
-    @PostMapping("add-edm-rdm")
-    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Integer projectId, @RequestParam String instanceId, @RequestParam String instanceName){
-        rmsService.addEdmRdms(dataSources,projectId,instanceId,instanceName);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("analysis-detail-scan")
-    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId){
-        rmsService.scanAnalysisDetail(rlAnalysisList,projectId);
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping("add-edm-rdm")
+//    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Integer projectId, @RequestParam String instanceId, @RequestParam String instanceName){
+//        rmsService.addEdmRdms(dataSources,projectId,instanceId,instanceName);
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    @PostMapping("analysis-detail-scan")
+//    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId){
+//        rmsService.scanAnalysisDetail(rlAnalysisList,projectId);
+//        return ResponseEntity.ok().build();
+//    }
 
 
     @GetMapping("listRdmAnalysisBasic")

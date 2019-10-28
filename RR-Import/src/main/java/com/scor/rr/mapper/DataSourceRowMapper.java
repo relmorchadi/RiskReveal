@@ -1,7 +1,6 @@
 package com.scor.rr.mapper;
 
 import com.scor.rr.domain.DataSource;
-import com.scor.rr.domain.enums.ModelDataSourceType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -19,11 +18,11 @@ public class DataSourceRowMapper implements RowMapper<DataSource> {
         dataSource.setRmsId(rs.getLong("db_id"));
         dataSource.setName(rs.getString("db_name"));
         if (StringUtils.equalsIgnoreCase(rs.getString("db_type"), "EDM")) {
-            dataSource.setType(ModelDataSourceType.EDM.toString());
+            dataSource.setType("EDM");
         } else if (StringUtils.equalsIgnoreCase(rs.getString("db_type"), "RDM")) {
-            dataSource.setType(ModelDataSourceType.RDM.toString());
+            dataSource.setType("RDM");
         } else {
-            dataSource.setType(ModelDataSourceType.UNKNOWN.toString());
+            dataSource.setType("Unknown");
         }
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         dataSource.setDateCreated(df.format(rs.getTimestamp("create_dt").toLocalDateTime()));

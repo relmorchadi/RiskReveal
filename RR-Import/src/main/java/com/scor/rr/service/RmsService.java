@@ -1,16 +1,8 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
 import com.scor.rr.mapper.*;
-import com.scor.rr.repository.RlAnalysisRepository;
-import com.scor.rr.repository.RlAnalysisScanStatusRepository;
-import com.scor.rr.repository.RlModelDataSourceRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.keyvalue.MultiKey;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
@@ -23,10 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
 
 @Component
 @Slf4j
@@ -36,15 +26,6 @@ public class RmsService {
     @Autowired
     @Qualifier("jdbcRms")
     JdbcTemplate rmsJdbcTemplate;
-
-    @Autowired
-    RlModelDataSourceRepository rlModelDataSourcesRepository;
-
-    @Autowired
-    RlAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
-
-    @Autowired
-    RlAnalysisRepository rlAnalysisRepository;
 
     @Value("${rms.database}")
     private String DATABASE;
@@ -61,65 +42,65 @@ public class RmsService {
         return dataSources;
     }
 
-
-    public void addEdmRdms(List<DataSource> dataSources, Integer projectId, String instanceId, String instanceName) {
-        Set<MultiKey> selectedDataSources = new HashSet<>();
-        for (DataSource dataSource : dataSources) {
-            selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
-        }
-        List<RlModelDataSource> existingRlModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
-        for (RlModelDataSource existingRlModelDataSource : existingRlModelDataSources) {
-            if (!selectedDataSources.contains(new MultiKey(existingRlModelDataSource.getType(), existingRlModelDataSource.getInstanceId(), existingRlModelDataSource.getRlId()))) {
-                rlModelDataSourcesRepository.delete(existingRlModelDataSource);
-            }
-        }
-
-        for (DataSource dataSource : dataSources) {
-            RlModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
-                    (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
-            if (rlModelDataSource == null) {
-                rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
-                rlModelDataSourcesRepository.save(rlModelDataSource);
-                if ("RDM".equals(rlModelDataSource.getType())) {
-                    scanAnalysisBasicForRdm(rlModelDataSource);
-                }
-            }
-        }
-
-    }
-
-    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
-        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
-            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
-                    new RLAnalysis(rdmAnalysisBasic, rdm)
-            );
-            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
-            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-        }
-    }
-
-    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
-        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
-
-        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
-                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((BigInteger) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
-
-        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
-            Long rdmId = ((BigInteger) multiKeyListEntry.getKey().getKey(0)).longValue();
-            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
-            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue()).forEach(rdmAnalysis -> {
-                this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis );
-            });
-        }
-
-    }
-
-
-    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
-        return rlAnalysisList.stream().filter(item -> item.getRdmId().equals(rdmId) && item.getRdmName().equals(rdmName))
-                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
-    }
+//
+//    public void addEdmRdms(List<DataSource> dataSources, Integer projectId, String instanceId, String instanceName) {
+//        Set<MultiKey> selectedDataSources = new HashSet<>();
+//        for (DataSource dataSource : dataSources) {
+//            selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
+//        }
+//        List<RlModelDataSource> existingRlModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
+//        for (RlModelDataSource existingRlModelDataSource : existingRlModelDataSources) {
+//            if (!selectedDataSources.contains(new MultiKey(existingRlModelDataSource.getType(), existingRlModelDataSource.getInstanceId(), existingRlModelDataSource.getRlId()))) {
+//                rlModelDataSourcesRepository.delete(existingRlModelDataSource);
+//            }
+//        }
+//
+//        for (DataSource dataSource : dataSources) {
+//            RlModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
+//                    (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
+//            if (rlModelDataSource == null) {
+//                rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
+//                rlModelDataSourcesRepository.save(rlModelDataSource);
+//                if ("RDM".equals(rlModelDataSource.getType())) {
+//                    scanAnalysisBasicForRdm(rlModelDataSource);
+//                }
+//            }
+//        }
+//
+//    }
+//
+//    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
+//        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
+//        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+//            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
+//                    new RLAnalysis(rdmAnalysisBasic, rdm)
+//            );
+//            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+//            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
+//        }
+//    }
+//
+//    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
+//        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
+//
+//        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
+//                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((BigInteger) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
+//
+//        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
+//            Long rdmId = ((BigInteger) multiKeyListEntry.getKey().getKey(0)).longValue();
+//            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+//            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue()).forEach(rdmAnalysis -> {
+//                this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis );
+//            });
+//        }
+//
+//    }
+//
+//
+//    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
+//        return rlAnalysisList.stream().filter(item -> item.getRdmId().equals(rdmId) && item.getRdmName().equals(rdmName))
+//                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
+//    }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(Long id, String name) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListRdmAnalysisBasic @rdm_id=" + id + " ,@rdm_name=" + name;
