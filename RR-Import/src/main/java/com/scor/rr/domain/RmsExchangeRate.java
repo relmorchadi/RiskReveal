@@ -6,6 +6,6 @@ import lombok.Data;
 public class RmsExchangeRate {
 
     private String ccy;
-    private double roe;
-    private String roeAsAt;
+    private double exchangeRate;
+    private String date;
 }
