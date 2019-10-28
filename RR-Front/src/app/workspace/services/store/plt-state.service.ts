@@ -485,12 +485,6 @@ export class PltStateService {
     });
   }
 
-  mappingColumns= {
-    'Published': 'isScorCurrent',
-    'Priced': 'isScorDefault',
-    'Accumulated': 'isScorGenerated'
-  }
-
   filterPltsByStatus(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
       wsIdentifier,
@@ -511,17 +505,17 @@ export class PltStateService {
       }
     });
 
-    if(_.keys(activeStatus).length) {
-      _.forEach(data, (plt,k) => {
+    const willFilter = _.keys(activeStatus).length;
 
-        newData[k]= {...plt, visible: _.some(activeStatus, (v,statue) => plt[this.mappingColumns[statue]])};
+    _.forEach(data, (plt,k) => {
 
-      });
+      newData[k]= {...plt, visible: willFilter ? _.some(activeStatus, (v,statue) => plt[statue]) : true};
 
-      ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
-      }));
-    }
+    });
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
+    }));
 
   }
 

@@ -9,6 +9,7 @@ import {ManageColumnsComponent} from "./manage-columns/manage-columns.component"
 import {PltDetailsPopUpItemComponent} from "./plt/plt-details-pop-up-item/plt-details-pop-up-item.component";
 import {PltDetailsPopUpFullSectionComponent} from "./plt/plt-details-pop-up-full-section/plt-details-pop-up-full-section.component";
 import {PltTagManagerComponent} from "./plt/plt-tag-manager/plt-tag-manager.component";
+import {InputComponent} from "./input/input.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -21,7 +22,8 @@ export const COMPONENTS = [
   ManageColumnsComponent,
   PltDetailsPopUpItemComponent,
   PltDetailsPopUpFullSectionComponent,
-  PltTagManagerComponent
+  PltTagManagerComponent,
+  InputComponent
 ];
 
 export * from './table/table.component';

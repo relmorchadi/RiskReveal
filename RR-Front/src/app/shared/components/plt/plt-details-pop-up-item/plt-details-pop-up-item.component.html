@@ -5,27 +5,70 @@
     </span>
     <i *ngIf="inputs?.cols?.sections?.length > 0" class="icon-arrow_forward_ios_24px" (click)="openSection(inputs.title)"></i>
   </div>
+  <ng-container *ngIf="inputs?.isTable">
+    <nz-table class="metrics" style="width: 70% !important;" #detailTable [nzData]="inputs?.table?.data" [nzShowPagination]="false">
+      <thead>
+      <tr>
+        <th style="text-align: right !important;" *ngFor="let col of inputs?.table?.cols">{{col}}</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of detailTable.data">
+          <ng-container *ngFor="let col of inputs?.table?.cols;let i=index;">
+            <td style="text-align: right !important;">
+              <ng-container *ngIf="i > 0">
+                {{plt[row[col]]}}
+              </ng-container>
+              <ng-container *ngIf="i == 0">
+                {{row[col]}}
+              </ng-container>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
   <div *ngIf="plt && inputs?.cols" class="pop-up-item-body">
     <table class="pop-up-item-table">
-      <tbody>
+      <tbody *ngIf="!inputs?.cloningSource">
         <tr *ngFor="let col of inputs?.cols?.summary">
           <td style="min-width: 150px;padding: 5px 16px;">{{col?.header}}</td>
           <ng-container *ngIf="!col?.type">
-            <td style="width: auto;padding: 5px 16px;">{{plt[col?.field]}}</td>
+            <td style="width: auto;padding: 5px 16px;font-weight: bold;">{{plt[col?.field]}}</td>
           </ng-container>
           <ng-container *ngIf="col?.type == 'tags'">
-            <td style="width: auto;padding: 5px 16px;">
+            <td>
               <ng-container *ngFor="let tag of plt[col?.field];">
                 <span class="tag-el" [ngStyle]="{ 'background-color': tag.defaultColor}">&nbsp;</span>
               </ng-container>
             </td>
           </ng-container>
           <ng-container *ngIf="col?.type == 'indicator'">
-            <td style="width: auto;padding: 5px 16px;" class="indicator">
-              <i nz-dropdown [ngClass]="{ 'icon-check': plt[col?.field], 'icon-remove_24px': !plt[col?.field] }"></i>
+            <td class="indicator">
+              <i class="icon-check" *ngIf="plt[col?.field]"></i>
             </td>
           </ng-container>
         </tr>
+      </tbody>
+      <tbody *ngIf="inputs?.cloningSource">
+        <tr>
+          <td>Clone Source PLT</td>
+          <td>
+            {{plt['clonedPltName']}}  [{{plt['clonedSourcePlt']}}]
+          </td>
+        </tr>
+        <tr>
+          <td>Clone Source Project</td>
+          <td>{{plt['clonedSourceProjectName']}}  [{{plt['clonedSourceProject']}}]</td>
+        </tr>
+      <tr>
+        <td>Clone Source Workspace</td>
+        <td>{{plt['clonedSourceWorkspaceName']}}  [{{plt['clonedSourceWorkspace']}} - {{plt['clonedSourceWorkspaceUwYear']}}]</td>
+      </tr>
+      <tr>
+        <td>Source</td>
+        <td>{{ plt['sourceClonedPlt'] ? 'cloned' : 'imported'}}</td>
+      </tr>
       </tbody>
     </table>
   </div>

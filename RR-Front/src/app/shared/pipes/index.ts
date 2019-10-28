@@ -12,6 +12,7 @@ import {ReFormatPIDPipe} from './re-format-pid.pipe';
 import {PickKeysPipe} from './pull-keys.pipe';
 import {CalibratePipe} from "./calibrate.pipe";
 import {FilterByStatusPipe} from "./filter-by-status.pipe";
+import {FalselyFilterPipe} from "./falsely-filter.pipe";
 
 
 export const PIPES = [
@@ -28,7 +29,8 @@ export const PIPES = [
   LogPipe,
   BoldPipe,
   SystemTagFilterPipe,
-  FilterByStatusPipe
+  FilterByStatusPipe,
+  FalselyFilterPipe
 ]
 
 export * from './input-search.pipe';

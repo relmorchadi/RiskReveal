@@ -272,13 +272,15 @@ export class NodeCreationPopupComponent extends BaseComponent implements OnInit 
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
-        title: 'basket',
+        title: 'pltDetail',
       },
-      tabs: {'basket': true, 'pltDetail': true},
-      visible: true,
-      mode: "pop-up"
+      tabs: {'basket': true,'pltDetail': true},
+      visible: false,
+      mode: "pop-up",
+      summary: {}
     };
     this.setRightMenuSelectedTab('basket');
   }

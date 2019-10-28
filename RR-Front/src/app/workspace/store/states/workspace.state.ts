@@ -598,8 +598,8 @@ export class WorkspaceState {
     return this.pltStateService.restorePlt(ctx, payload);
   }
 
-  @Action(fromPlt.FilterPltsByStatus)
-  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus) {
+  @Action(fromPlt.FilterByFalesely)
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterByFalesely) {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
