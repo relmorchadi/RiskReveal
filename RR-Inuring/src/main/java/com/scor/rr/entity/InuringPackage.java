@@ -156,8 +156,8 @@ public class InuringPackage {
                 locked == that.locked &&
                 Objects.equals(packageName, that.packageName) &&
                 Objects.equals(packageDescription, that.packageDescription) &&
-                Objects.equals(createdOn, that.createdOn) &&
-                Objects.equals(lastModifiedOn, that.lastModifiedOn) &&
+//                Objects.equals(createdOn, that.createdOn) &&
+//                Objects.equals(lastModifiedOn, that.lastModifiedOn) &&
                 inuringPackageStatus == that.inuringPackageStatus;
     }
 
