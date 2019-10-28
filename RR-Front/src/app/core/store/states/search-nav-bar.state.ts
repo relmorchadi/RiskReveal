@@ -4,6 +4,7 @@ import {
   CloseAllTagsAction,
   CloseBadgeByIndexAction,
   CloseGlobalSearchAction,
+  closeSearch,
   CloseSearchPopIns,
   CloseTagByIndexAction,
   DeleteAllBadgesAction,
@@ -19,6 +20,8 @@ import {
   SearchInputFocusAction,
   SearchInputValueChange,
   SelectBadgeAction,
+  showSavedSearch,
+  toggleSavedSearch,
   UpdateBadges
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
@@ -48,6 +51,7 @@ const initiaState: SearchNavBar = {
   recentSearch: [],
   showRecentSearch: [],
   emptyResult: false,
+  showSavedSearch: false,
   tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'COUNTRY', 'CEDANT_CODE'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
@@ -133,6 +137,11 @@ export class SearchNavBarState implements NgxsOnInit {
     return state.searchTarget;
   }
 
+  @Selector()
+  static getShowSavedSearch(state: SearchNavBar) {
+    return state.showSavedSearch;
+  }
+
 
   /**
    * Commands
@@ -196,14 +205,16 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SelectBadgeAction)
   addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword}: SelectBadgeAction) {
-    ctx.patchState({
-      badges: [...ctx.getState().badges, badge],
-      showLastSearch: true,
-      showResult: true,
-      keywordBackup: keyword
-    });
-    if (keyword && keyword.length && ctx.getState().visibleSearch)
-      ctx.dispatch(new SearchContractsCountAction(keyword));
+    if (badge !== null) {
+      ctx.patchState({
+        badges: [...ctx.getState().badges, badge],
+        showLastSearch: true,
+        showResult: true,
+        keywordBackup: keyword
+      });
+      if (keyword && keyword.length && ctx.getState().visibleSearch)
+        ctx.dispatch(new SearchContractsCountAction(keyword));
+    }
   }
 
   @Action(UpdateBadges)
@@ -274,16 +285,12 @@ export class SearchNavBarState implements NgxsOnInit {
     }));
   }
 
-  private checkShortCut(keyword: string) {
-    const twoChars = keyword.substring(0, 2);
-    const threeChars = keyword.substring(0, 4);
-    let firstCheck = _.findIndex(this.searchShortCuts, row => row == twoChars);
-    let secondCheck = _.findIndex(this.searchShortCuts, row => row == threeChars);
-    if (firstCheck > -1) {
-      return [firstCheck, keyword.substring(2)]
-    } else if (secondCheck > -1) {
-      return [secondCheck, keyword.substring(4)]
-    } else return null;
+  @Action(showSavedSearch)
+  showSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: showSavedSearch) {
+    const search = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.showSavedSearch = true
+    }));
   }
 
   @Action(ExpertModeSearchAction)
@@ -352,6 +359,34 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.savedSearch = [...draft.savedSearch, search];
     }));
+  }
+
+  @Action(toggleSavedSearch)
+  toggleSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: toggleSavedSearch) {
+    const search = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.showSavedSearch = !draft.showSavedSearch
+    }));
+  }
+
+  @Action(closeSearch)
+  closeSearch(ctx: StateContext<SearchNavBar>, {payload}: closeSearch) {
+    const search = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.visibleSearch = false;
+    }));
+  }
+
+  private checkShortCut(keyword: string) {
+    const twoChars = keyword.substring(0, 2).toLowerCase();
+    const threeChars = keyword.substring(0, 4).toLowerCase();
+    let firstCheck = _.findIndex(this.searchShortCuts, row => row == twoChars);
+    let secondCheck = _.findIndex(this.searchShortCuts, row => row == threeChars);
+    if (firstCheck > -1) {
+      return [firstCheck, keyword.substring(2)]
+    } else if (secondCheck > -1) {
+      return [secondCheck, keyword.substring(4)]
+    } else return null;
   }
 
   private searchLoader(keyword, table) {

@@ -163,5 +163,26 @@ export class saveSearch {
   }
 }
 
+export class showSavedSearch {
+  static readonly type = '[Search Nav Bar] Show Saved Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class toggleSavedSearch {
+  static readonly type = '[Search Nav Bar] toggle Saved Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class closeSearch {
+  static readonly type = '[Search Nav Bar] Close Search DropDown';
+
+  constructor(public payload?: any) {
+  }
+}
+
 
 

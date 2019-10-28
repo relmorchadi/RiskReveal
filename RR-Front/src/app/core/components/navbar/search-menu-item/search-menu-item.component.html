@@ -30,7 +30,8 @@
         <i nz-icon nzType="setting" nzTheme="outline"></i>
       </button>-->
       <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
-              nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+              (nzVisibleChange)="closeSearch()" [nzContent]="searchDropdown" nz-popover nzPlacement="bottomLeft"
+              nzTrigger="click">
       </button>
       <div class="chips-wrapper">
         <app-chip-tag (dblclick)="onChangeTagValue(items)" (onclick)="closeSearchBadge($event, i)"
@@ -74,7 +75,7 @@
         <div class="search-history-component" style="position: relative;">
           <div class="header-wrapper">
             <span class="search-history-header">SAVED SEARCH</span>
-            <span class="search-history-viewAll">See All</span>
+            <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
           </div>
           <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
             <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">

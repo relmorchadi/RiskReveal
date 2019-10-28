@@ -14,6 +14,7 @@ import {debounceTime, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
+import {closeSearch, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
 import {Actions, ofActionDispatched, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
@@ -154,47 +155,28 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   convertBadgeToExpression(badges) {
     let globalExpression = "";
-    let expression;
-    _.forEach(badges, badge => {
-
-      switch (badge.key) {
-        case "Cedant Name":
-          expression = "c:" + badge.value;
-          break;
-        case "Cedant Code":
-          expression = "cid:" + badge.value;
-          break;
-        case "Country":
-          expression = "ctr:" + badge.value;
-          break;
-        case "Year":
-          expression = "uwy:" + badge.value;
-          break;
-        case "Workspace Name":
-          expression = "w:" + badge.value;
-          break;
-        case "Workspace Code":
-          expression = "wid:" + badge.value;
-          break;
-        case "Project":
-          expression = "p:" + badge.value;
-          break;
-        case "PLT":
-          expression = "plt:" + badge.value;
-          break;
-        case "Section Name":
-          expression = "s:" + badge.value;
-          break;
-        case "UW Unit":
-          expression = "uwu:" + badge.value;
-          break;
-        default:
-          expression = badge.value;
+    let index;
+    _.forEach(badges, (badge, i: number) => {
+      index = this.searchShortCuts.findIndex(row => row.name == badge.key);
+      if (i == badges.length - 1) {
+        globalExpression += this.searchShortCuts[index].shortcut + badge.value;
+      } else {
+        globalExpression += this.searchShortCuts[index].shortcut + badge.value + " ";
       }
-
-      globalExpression += expression + " ";
     })
     return globalExpression;
+  }
+
+  convertExpressionToBadge(expression) {
+    const twoChars = expression.substring(0, 2).toLowerCase();
+    const threeChars = expression.substring(0, 4).toLowerCase();
+    let firstCheck = _.findIndex(this.searchShortCuts.map(row => row.shortcut), row => row == twoChars);
+    let secondCheck = _.findIndex(this.searchShortCuts.map(row => row.shortcut), row => row == threeChars);
+    if (firstCheck > -1) {
+      return {key: this.searchShortCuts[firstCheck].name, value: expression.substring(2)}
+    } else if (secondCheck > -1) {
+      return {key: this.searchShortCuts[secondCheck].name, value: expression.substring(4)}
+    } else return null;
   }
 
   onBackspace(evt: KeyboardEvent) {
@@ -298,8 +280,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     if (this.isExpertMode) {
       let index = _.findIndex(this.state.badges, row => row.key == badge.key);
       this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index, this.isExpertMode));
+      if (this.globalKeyword.length > 0) {
+        this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword));
+      }
       this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
     }
+
   }
 
   toggleInput(event: boolean, item) {
@@ -313,6 +299,22 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       console.log('shift + ctrl + s');
       this.searchInput.nativeElement.focus();
       this.searchInput.nativeElement.click();
+    }
+  }
+
+  seeAllSavedSearch() {
+    if (this.router.url == '/search') {
+      this.store.dispatch(new showSavedSearch())
+    } else {
+      this.router.navigate(["/search"]);
+      this.store.dispatch(new showSavedSearch())
+    }
+    this.cdRef.detectChanges();
+  }
+
+  closeSearch() {
+    if (!this.state.visibleSearch) {
+      this.store.dispatch(new closeSearch())
     }
   }
 }

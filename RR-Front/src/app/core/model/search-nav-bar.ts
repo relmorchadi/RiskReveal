@@ -20,6 +20,7 @@ export class SearchNavBar {
   sortcutFormKeysMapper: any;
   searchContent: any;
   emptyResult: boolean;
+  showSavedSearch: boolean;
 }
 
 
