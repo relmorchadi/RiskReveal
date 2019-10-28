@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -55,7 +54,7 @@ public class RRAnalysis {
     private String sourceModellingSystemVersion;
 
     @Column(name = "DataSourceId")
-    private BigInteger dataSourceId;
+    private Long dataSourceId;
 
     @Column(name = "DataSourceName")
     private String dataSourceName;
@@ -64,7 +63,7 @@ public class RRAnalysis {
     private String fileName;
 
     @Column(name = "AnalysisId")
-    private BigInteger analysisId;
+    private Long analysisId;
 
     @Column(name = "AnalysisName")
     private String analysisName;
@@ -84,8 +83,16 @@ public class RRAnalysis {
     @Column(name = "Peril")
     private String peril;
 
+    //TODO : review with shaun
+    @Column(name = "SubPeril")
+    private String subPeril;
+
     @Column(name = "GeoCode")
     private String geoCode;
+
+    //TODO : review with shaun
+    @Column(name = "Region")
+    private String region;
 
     @Column(name = "RegionPeril")
     private String regionPeril;
@@ -128,6 +135,10 @@ public class RRAnalysis {
 
     @Column(name = "ProfileKey")
     private String profileKey;
+
+    //TODO : review with shaun
+    @Column(name = "ProfileName")
+    private String profileName;
 
     @Column(name = "Description")
     private String description;

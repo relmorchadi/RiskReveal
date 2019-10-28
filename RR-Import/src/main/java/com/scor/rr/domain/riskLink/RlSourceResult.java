@@ -1,23 +1,21 @@
 package com.scor.rr.domain.riskLink;
 
 import com.scor.rr.domain.RdmAnalysis;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Data
-@Getter
-@Setter
 @Entity
 @Table(name = "RLSourceResult")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RlSourceResult {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlSourceResultId")
-    private Integer rlSourceResultId;
+    private Long rlSourceResultId;
     @Column(name = "Entity")
     private Integer entity;
     @Column(name = "projectId")
@@ -26,6 +24,8 @@ public class RlSourceResult {
     private String targetCurrency;
     @Column(name = "targetRegionPeril")
     private String targetRegionPeril;
+    @Column(name="UserSelectedGrain")
+    private String userSelectedGrain;
     @Column(name = "overrideRegionPerilBasis")
     private String overrideRegionPerilBasis;
     @Column(name = "occurrenceBasis")
@@ -38,6 +38,16 @@ public class RlSourceResult {
     private Number proportion;
     @Column(name = "targetRAPCode")
     private String targetRAPCode;
+    // TODO : Review with shaun
+    @Column(name = "ProxyScalingBasis")
+    private String proxyScalingBasis;
+    @Column(name = "ProxyScalingNarrative")
+    private String proxyScalingNarrative;
+    @Column(name = "MultiplierBasis")
+    private String multiplierBasis;
+    @Column(name = "MultiplierNarrative")
+    private String multiplierNarrative;
+    //
 
     @ManyToOne
     @JoinColumn(name = "rlAnalysisId")

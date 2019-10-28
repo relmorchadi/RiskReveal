@@ -45,6 +45,9 @@ public class RegionPerilExtractor {
     private RlModelDataSourceRepository rlModelDataSourceRepository;
 
     @Autowired
+    private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
+
+    @Autowired
     private RRAnalysisRepository rrAnalysisRepository;
 
     @Autowired
@@ -53,13 +56,13 @@ public class RegionPerilExtractor {
     @Autowired
     private TransformationPackage transformationPackage;
 
-    @Value("${jobParameters[projectId]}")
+    @Value("#{jobParameters['projectId']}")
     private Long projectId;
 
-    @Value("${jobParameters[sourceResultIdsInput]}")
+    @Value("#{jobParameters['sourceResultIdsInput']}")
     private String sourceResultIdsInput;
 
-    @Value("${jobParameters[instanceId]}")
+    @Value("#{jobParameters['instanceId']}")
     private String instanceId;
 
     public void loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
@@ -112,23 +115,27 @@ public class RegionPerilExtractor {
                 }
 
                 RRAnalysis rrAnalysis = new RRAnalysis();
-                //rrAnalysis.setRegion(sourceResult.getRlAnalysis().getRegion());
+
                 //rrAnalysis.setSourceResultsReference(sourceResult.getModelingResultDataSource().getModelingResultDataSourceId());
-                //rrAnalysis.setSubPeril(sourceResult.getRlAnalysis().getSubPeril());
-                //rrAnalysis.setProfileName(sourceResult.getRlAnalysis().getProfileName());
-                //rrAnalysis.setIncludedTargetRapIds(sourceResult.getIncludedTargetRapIds());/
-                //sourceResult.setImportStatus(rrAnalysis.getImportStatus());
-                //rrAnalysis.setGrain(sourceResult.getUserSelectedGrain() != null ? sourceResult.getUserSelectedGrain() : sourceResult.getRlAnalysis().getDefaultGrain());
-                //rrAnalysis.setGeoCode(sourceResult.getRlAnalysis().getGeoCode());
-                //rrAnalysis.setProxyScalingBasis(sourceResult.getProxyScalingBasis());
-                //rrAnalysis.setProxyScalingNarrative(sourceResult.getProxyScalingNarrative());
-                //rrAnalysis.setDescription(sourceResult.getRlAnalysis().getDescription());
-                //rrAnalysis.setMultiplierBasis(sourceResult.getMultiplierBasis());
-                //rrAnalysis.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
                 //rrAnalysis.setTags(sourceResult.getTags());
                 //rrAnalysis.setUserNotes(sourceResult.getNotes());
-                //rrAnalysis.setOverrideReasonText(sourceResult.getOverrideReasonText());
-                //rrAnalysis.setDefaultOccurrenceBasis(analysisFinancialPerspective.getDefaultOccurrenceBasis());
+                rrAnalysis.setRegion(sourceResult.getRlAnalysis().getRegion());
+                rrAnalysis.setSubPeril(sourceResult.getRlAnalysis().getSubPeril());
+                rrAnalysis.setProfileName(sourceResult.getRlAnalysis().getProfileName());
+                rrAnalysis.setGrain(sourceResult.getUserSelectedGrain() != null ? sourceResult.getUserSelectedGrain() : sourceResult.getRlAnalysis().getDefaultGrain());
+                rrAnalysis.setGeoCode(sourceResult.getRlAnalysis().getGeoCode());
+                rrAnalysis.setProxyScalingBasis(sourceResult.getProxyScalingBasis());
+                rrAnalysis.setProxyScalingNarrative(sourceResult.getProxyScalingNarrative());
+                rrAnalysis.setMultiplierBasis(sourceResult.getMultiplierBasis());
+                rrAnalysis.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
+                rrAnalysis.setDescription(sourceResult.getRlAnalysis().getDescription());
+                //TODO ; know what should be done. gonna implement later
+//                rrAnalysis.setIncludedTargetRapIds(sourceResult.getIncludedTargetRapIds());
+
+                // TODO : Not sure ?
+                rrAnalysis.setOverrideReasonText(sourceResult.getOverrideRegionPerilBasis());
+
+                rrAnalysis.setDefaultOccurrenceBasis(sourceResult.getRlAnalysis().getDefaultOccurrenceBasis());
                 rrAnalysis.setTargetCurrency(sourceResult.getTargetCurrency());
                 rrAnalysis.setProjectId(project.getProjectId());
                 rrAnalysis.setCreationDate(new Date());
@@ -138,10 +145,11 @@ public class RegionPerilExtractor {
 
                 rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId()).ifPresent(rlModelDataSource -> {
                     rrAnalysis.setSourceModellingSystemInstance(rlModelDataSource.getInstanceName());
-//                    ModellingSystemInstance modellingSystemInstance = modellingSystemInstanceRepository.findById(rlModelDataSource.getInstanceId()).get();
-//                    rrAnalysis.setSourceModellingVendor(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName());
-//                    rrAnalysis.setSourceModellingSystem(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName());
-//                    rrAnalysis.setSourceModellingSystemVersion(modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion().toString());
+                    modellingSystemInstanceRepository.findById(rlModelDataSource.getInstanceId()).ifPresent(modellingSystemInstance -> {
+                        rrAnalysis.setSourceModellingVendor(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName());
+                        rrAnalysis.setSourceModellingSystem(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName());
+                        rrAnalysis.setSourceModellingSystemVersion(modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion().toString());
+                    });
                 });
 
                 rrAnalysis.setDataSourceId(sourceResult.getRlAnalysis().getRdmId());
@@ -235,10 +243,7 @@ public class RegionPerilExtractor {
         }
 
         RRLossTableHeader rrLossTable = new RRLossTableHeader();
-//        rrLossTable.setProjectId(getProjectId());
 //        rrLossTable.setRrRepresentationDatasetId(rrRepresentationDataset.getId());
-//        rrLossTable.setFinancialPerspective(afp != null ? new RRFinancialPerspective(afp) : null);
-//        rrLossTable.setUserSelectedGrain(rrAnalysis.getGrain());
 //        rrLossTable.setFileType("bin");
         rrLossTable.setRrAnalysis(rrAnalysis);
         rrLossTable.setCreatedDate(new Date());
@@ -255,9 +260,7 @@ public class RegionPerilExtractor {
 
         RRLossTableHeader conformedRRLT = new RRLossTableHeader();
 //        conformedRRLT.setRrRepresentationDatasetId(sourceRRLT.getRrRepresentationDatasetId());
-//        conformedRRLT.setFinancialPerspective(sourceRRLT.getFinancialPerspective());
 //        conformedRRLT.setFileType(RRLossTable.FILE_TYPE_BIN); // TODO non c'est RMS
-//        conformedRRLT.setUserSelectedGrain(rrAnalysis.getGrain());
         conformedRRLT.setRrAnalysis(rrAnalysis);
         conformedRRLT.setLossTableType("ELT");
         conformedRRLT.setFileDataFormat("Treaty");

@@ -2,34 +2,36 @@ package com.scor.rr.domain.riskLink;
 
 
 import com.scor.rr.domain.RdmAnalysisBasic;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "RLAnalysis")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RLAnalysis {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer rlAnalysisId;
     private Integer entity;
     private Integer rlModelDataSourceId;
     private Integer projectId;
-    private BigInteger rdmId;
+    private Long rdmId;
     private String rdmName;
-    private BigInteger analysisId;
+    private Long analysisId;
     private String analysisName;
     private String analysisDescription;
     private String defaultGrain;
     private String exposureType;
     private Integer exposureTypeCode;
     private String edmNameSourceLink;
-    private BigInteger exposureId;
+    private Long exposureId;
     private String analysisCurrency;
     private Number rlExchangeRate;
     private Integer typeCode;
@@ -38,10 +40,11 @@ public class RLAnalysis {
     private Date runDate;
     private String region;
     private String peril;
+    // TODO ; Review with shaun
+    private String geoCode;
     private String rpCode;
     private String subPeril;
     private String lossAmplification;
-    private BigInteger rlAnalysisStatus;
     private Integer analysisMode;
     private Integer engineTypeCode;
     private String engineType;
@@ -49,21 +52,28 @@ public class RLAnalysis {
     private String engineVersionMajor;
     private String profileName;
     private String profileKey;
-    private String purePremium;
-    private String exposureTIV;
+    private Double  purePremium;
+    private Double exposureTIV;
+    //TODO : review with shaun
+    private String description;
+    //TODO : review with shaun
+    private String defaultOccurrenceBasis;
 
     @OneToOne
+    @JoinColumn(name = "analysisScanStatus")
     private RlAnalysisScanStatus rlAnalysisScanStatus;
-    @OneToOne
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rlSourceResult")
     private RlSourceResult rlSourceResult;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
         this.entity=1;
         this.rlModelDataSourceId= rdm.getRlModelDataSourceId();
         this.projectId= rdm.getProjectId();
-        this.rdmId= BigInteger.valueOf(rdm.getRlModelDataSourceId());
+        this.rdmId= rdm.getRlModelDataSourceId().longValue();
         this.rdmName=rdm.getName();
-        this.analysisId= BigInteger.valueOf(rdmAnalysisBasic.getAnalysisId());
+        this.analysisId= rdmAnalysisBasic.getAnalysisId();
         this.analysisName= rdmAnalysisBasic.getAnalysisName();
         this.analysisDescription= rdmAnalysisBasic.getDescription();
         this.defaultGrain= null; // TO Check

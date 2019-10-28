@@ -1,5 +1,6 @@
 package com.scor.rr.configuration;
 
+import com.scor.rr.service.batch.ExchangeRateExtractor;
 import com.scor.rr.service.batch.RegionPerilExtractor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -17,13 +18,16 @@ import org.springframework.context.annotation.Configuration;
 public class ImportLossDataJob {
 
     @Autowired
-    JobBuilderFactory jobBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
-    StepBuilderFactory stepBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    RegionPerilExtractor regionPerilExtractor;
+    private RegionPerilExtractor regionPerilExtractor;
+
+    @Autowired
+    private ExchangeRateExtractor exchangeRateExtractor;
 
     @Bean
     public Tasklet extractRegionPerilTasklet(){
@@ -34,14 +38,37 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet extractExchangeRatesTasklet(){
+        return (StepContribution contribution, ChunkContext chunkContext) -> {
+            exchangeRateExtractor.runExchangeRateExtraction();
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    /**
+     * @implNote Step 1 of the main job : used to extract region perils
+     * @return
+     */
+    @Bean
     public Step getExtractRegionPeril() {
         return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
+    }
+
+    /**
+     * @implNote Step 2 of the main job : used to extract exchange rates for the currencies used
+     * @return
+     */
+    @Bean
+    public Step getExtractExchangeRates() {
+        return stepBuilderFactory.get("exchangeRatesExtraction").tasklet(extractExchangeRatesTasklet()).build();
     }
 
     @Bean(value = "importLossData")
     public Job getImportLossData() {
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPeril())
+                .on("COMPLETE").to(getExtractExchangeRates())
+                .end()
                 .build();
     }
 

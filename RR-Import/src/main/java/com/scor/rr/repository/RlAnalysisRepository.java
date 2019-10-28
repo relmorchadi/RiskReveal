@@ -20,6 +20,8 @@ public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Integer>
             " ra.edmNameSourceLink = :#{#analysis.edmNameSourceLink}, " +
             " ra.exposureId = :#{#analysis.exposureId}, " +
             " ra.rlExchangeRate = :#{#analysis.rmsExchangeRate}, " +
+            " ra.geoCode = :#{#analysis.geoCode}, " +
+            " ra.rpCode = :#{#analysis.rpCode}, " +
             " ra.typeCode = :#{#analysis.typeCode}, " +
             " ra.analysisMode = :#{#analysis.analysisMode}, " +
             " ra.engineTypeCode = :#{#analysis.engineTypeCode}, " +

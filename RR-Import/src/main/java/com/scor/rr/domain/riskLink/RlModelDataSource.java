@@ -2,21 +2,22 @@ package com.scor.rr.domain.riskLink;
 
 
 import com.scor.rr.domain.DataSource;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @Entity
 @Table(name = "RlModelDataSource")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RlModelDataSource {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer rlModelDataSourceId;
     private Integer entity;
     private Integer projectId;
@@ -44,7 +45,7 @@ public class RlModelDataSource {
         this.name= dataSource.getName();
         this.type = dataSource.getType();
         this.versionId = String.valueOf(dataSource.getVersionId());
-        this.dateCreated= new Date(dataSource.getDateCreated());
+        this.dateCreated= new Date();
     }
 
 

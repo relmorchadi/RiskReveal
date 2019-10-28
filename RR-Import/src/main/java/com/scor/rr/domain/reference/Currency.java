@@ -19,7 +19,7 @@ import java.sql.Date;
 public class Currency {
     @Id
     @Column(name = "CurrencyId")
-    private Long currencyId;
+    private String currencyId;
     @Column(name = "Code")
     private String code;
     @Column(name = "CountryCode")

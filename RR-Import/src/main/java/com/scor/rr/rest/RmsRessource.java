@@ -215,6 +215,8 @@ public class RmsRessource {
         try {
             return new ResponseEntity<>(rmsService.saveSourceResults(sourceResultDtoList), HttpStatus.OK);
         } catch (Exception ex) {
+            ex.printStackTrace();
+
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

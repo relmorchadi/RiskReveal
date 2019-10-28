@@ -1,22 +1,21 @@
 package com.scor.rr.domain.riskLink;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 
 
 @Data
-@Getter
-@Setter
 @Entity
 @Table(name = "RLAnalysisScanStatus")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RlAnalysisScanStatus {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer RLAnalysisScanStatusId;
     private Integer entity;
     private Integer rlAnalysisId;

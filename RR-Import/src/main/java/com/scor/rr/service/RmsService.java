@@ -9,7 +9,6 @@ import com.scor.rr.domain.riskLink.RlModelDataSource;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +29,10 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 @Component
-@Slf4j
-@Transactional(transactionManager = "getDataSourceTransactionManager")
+@Transactional(transactionManager = "rmsTransactionManager")
 public class RmsService {
+
+    private final Logger logger = LoggerFactory.getLogger(RmsService.class);
 
     @Autowired
     @Qualifier("jdbcRms")
@@ -59,7 +59,6 @@ public class RmsService {
     @Value("${rms.database}")
     private String DATABASE;
 
-    private final Logger logger = LoggerFactory.getLogger(RmsService.class);
 
     public List<DataSource> listAvailableDataSources() {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
@@ -97,38 +96,6 @@ public class RmsService {
 
     }
 
-    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
-        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
-            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
-                    new RLAnalysis(rdmAnalysisBasic, rdm)
-            );
-            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
-            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-        }
-    }
-
-    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
-        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
-
-        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
-                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((BigInteger) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
-
-        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
-            Long rdmId = ((BigInteger) multiKeyListEntry.getKey().getKey(0)).longValue();
-            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
-            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue()).forEach(rdmAnalysis -> {
-                this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis );
-            });
-        }
-
-    }
-
-    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
-        return rlAnalysisList.stream().filter(item -> item.getRdmId().equals(rdmId) && item.getRdmName().equals(rdmName))
-                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
-    }
-
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(Long id, String name) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListRdmAnalysisBasic @rdm_id=" + id + " ,@rdm_name=" + name;
         this.logger.debug("Service starts executing the query ...");
@@ -137,16 +104,6 @@ public class RmsService {
         );
         this.logger.debug("the data returned ", rdmAnalysisBasic);
         return rdmAnalysisBasic;
-    }
-
-    public List<EdmPortfolioBasic> listEdmPortfolioBasic(Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
-        this.logger.debug("Service starts executing the query ...");
-        List<EdmPortfolioBasic> edmPortfolioBasic = rmsJdbcTemplate.query(
-                sql, new EdmPortfolioBasicRowMapper()
-        );
-        this.logger.debug("the data returned ", edmPortfolioBasic);
-        return edmPortfolioBasic;
     }
 
     public List<RdmAnalysis> listRdmAnalysis(Long id, String name, List<Long> analysisIdList) {
@@ -165,6 +122,50 @@ public class RmsService {
         }
         this.logger.debug("the data returned ", rdmAnalysis);
         return rdmAnalysis;
+    }
+
+    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
+        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
+        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
+                    new RLAnalysis(rdmAnalysisBasic, rdm)
+            );
+            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
+        }
+    }
+
+    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
+        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
+
+        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
+                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm(BigInteger.valueOf((int)key.getKey(0)), (String) key.getKey(1), rlAnalysisList)));
+
+        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
+
+            Long rdmId = ((Integer)multiKeyListEntry.getKey().getKey(0)).longValue();
+            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue())
+                    .forEach(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis));
+
+        }
+
+    }
+
+    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
+        return rlAnalysisList.stream().filter(item -> item.getRdmId().intValue()==rdmId.intValue() && item.getRdmName().equals(rdmName))
+                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
+    }
+
+    public List<EdmPortfolioBasic> listEdmPortfolioBasic(Long id, String name) {
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
+        this.logger.debug("Service starts executing the query ...");
+        List<EdmPortfolioBasic> edmPortfolioBasic = rmsJdbcTemplate.query(
+                sql, new EdmPortfolioBasicRowMapper()
+        );
+        this.logger.debug("the data returned ", edmPortfolioBasic);
+        return edmPortfolioBasic;
     }
 
     public List<EdmPortfolio> listEdmPortfolio(Long id, String name, List<String> portfolioList) {
@@ -396,12 +397,14 @@ public class RmsService {
     }
 
     public List<RmsExchangeRate> getRmsExchangeRates(List<String> ccyy) {
+
         String ccy = ccyy.toString().replaceAll(" ", "");
         List<RmsExchangeRate> rmsExchangeRate = new ArrayList<>();
         String sql = "execute " + DATABASE + ".[dbo].[RR_RL_GetRMSExchangeRates] @ccyList=" + ccy;
         this.logger.debug("Service starts executing the query ...");
         rmsExchangeRate = rmsJdbcTemplate.query(sql, new RmsExchangeRateRowMapper());
         this.logger.debug("the data returned ", rmsExchangeRate);
+
         return rmsExchangeRate;
     }
 
@@ -451,7 +454,7 @@ public class RmsService {
      * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
      * @param sourceResultDtoList
      */
-    public List<Integer> saveSourceResults(List<SourceResultDto> sourceResultDtoList){
+    public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList){
 
         return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
                 .map(sourceResult -> {

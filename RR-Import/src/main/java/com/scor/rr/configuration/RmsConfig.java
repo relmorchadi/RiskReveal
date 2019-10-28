@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -28,12 +29,17 @@ public class RmsConfig {
         return DataSourceBuilder.create().build();
     }
 
+    @Bean(name="rmsTransactionManager")
+    public DataSourceTransactionManager getRmsTransactionManager(){
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(createRmsDataSource());
+        return dataSourceTransactionManager;
+    }
 
     @Bean(name = "jdbcRms")
     @Autowired
     public JdbcTemplate createJdbcTemplateRms(@Qualifier("dbRms") DataSource rmsDS) {
         return new JdbcTemplate(rmsDS);
     }
-
 
 }

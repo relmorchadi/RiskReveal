@@ -31,7 +31,8 @@ public class BatchExecution {
             JobParametersBuilder builder = new JobParametersBuilder()
                     .addString("userId", importLossDataParams.getUserId())
                     .addString("projectId", importLossDataParams.getProjectId())
-                    .addString("sourceResultIds", importLossDataParams.getSourceResultInputIds())
+                    .addString("sourceResultIdsInput", importLossDataParams.getSourceResultInputIds())
+                    .addString("instanceId", importLossDataParams.getInstanceId())
                     .addDate("runDate", new Date());
 
             log.info("Starting import batch: userId {}, projectId {}, sourceResultIds {}", importLossDataParams.getUserId(), importLossDataParams.getProjectId(), importLossDataParams.getSourceResultInputIds());
