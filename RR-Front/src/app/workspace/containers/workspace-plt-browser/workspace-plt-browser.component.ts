@@ -150,15 +150,30 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       selectedListOfDeletedPlts: [],
       selectedListOfPlts: [],
       status: {
-        Published: {
+        arcPublication: {
           selected: false
         },
-        Priced: {
+        xactPublication: {
           selected: false
         },
-        Accumulated: {
+        xactPriced: {
           selected: false
         },
+        groupedPlt: {
+          selected: false
+        },
+        clonedPlt: {
+          selected: false
+        },
+        clientAdjustment: {
+          selected: false
+        },
+        defaultAdjustment: {
+          selected: false
+        },
+        baseAdjustment: {
+          selected: false
+        }
       }
     };
     this.leftMenuInputs= {
@@ -558,7 +573,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       systemTag: {}
     });
     this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}});
-    this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+    this.dispatch(new fromWorkspaceStore.FilterByFalesely({
       wsIdentifier: this.workspaceId+"-"+this.uwy,
       status: this.getTableInputKey('status')
     }));
@@ -647,8 +662,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.toggleSelectPlts(action.payload);
         break;
 
-      case tableStore.filterByStatus:
+      case tableStore.filterByFalesely:
         const status= this.getTableInputKey('status');
+
+        console.log(status, action.payload);
 
         this.updateTable('status', {
           ...status,
@@ -657,10 +674,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           }
         });
 
-        this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+        /*this.dispatch(new fromWorkspaceStore.FilterByFalesely({
           wsIdentifier: this.workspaceId+"-"+this.uwy,
           status: this.getTableInputKey('status')
-        }));
+        }));*/
         break;
 
 
