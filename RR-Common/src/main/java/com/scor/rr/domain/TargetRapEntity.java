@@ -19,8 +19,8 @@ public class TargetRapEntity {
     private Boolean isScorCurrent;
     private Boolean isScorDefault;
     private Boolean isActive;
-    private Timestamp auditCreateDt;
-    private Timestamp auditUpdateDt;
+//    private Timestamp auditCreateDt;
+//    private Timestamp auditUpdateDt;
 
     @Id
     @Column(name = "targetRapId", nullable = false)
@@ -142,25 +142,25 @@ public class TargetRapEntity {
         isActive = active;
     }
 
-    @Basic
-    @Column(name = "auditCreateDt", nullable = true)
-    public Timestamp getAuditCreateDt() {
-        return auditCreateDt;
-    }
-
-    public void setAuditCreateDt(Timestamp auditCreateDt) {
-        this.auditCreateDt = auditCreateDt;
-    }
-
-    @Basic
-    @Column(name = "auditUpdateDt", nullable = true)
-    public Timestamp getAuditUpdateDt() {
-        return auditUpdateDt;
-    }
-
-    public void setAuditUpdateDt(Timestamp auditUpdateDt) {
-        this.auditUpdateDt = auditUpdateDt;
-    }
+//    @Basic
+//    @Column(name = "auditCreateDt", nullable = true)
+//    public Timestamp getAuditCreateDt() {
+//        return auditCreateDt;
+//    }
+//
+//    public void setAuditCreateDt(Timestamp auditCreateDt) {
+//        this.auditCreateDt = auditCreateDt;
+//    }
+//
+//    @Basic
+//    @Column(name = "auditUpdateDt", nullable = true)
+//    public Timestamp getAuditUpdateDt() {
+//        return auditUpdateDt;
+//    }
+//
+//    public void setAuditUpdateDt(Timestamp auditUpdateDt) {
+//        this.auditUpdateDt = auditUpdateDt;
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -178,13 +178,11 @@ public class TargetRapEntity {
                 Objects.equals(isScorGenerated, that.isScorGenerated) &&
                 Objects.equals(isScorCurrent, that.isScorCurrent) &&
                 Objects.equals(isScorDefault, that.isScorDefault) &&
-                Objects.equals(isActive, that.isActive) &&
-                Objects.equals(auditCreateDt, that.auditCreateDt) &&
-                Objects.equals(auditUpdateDt, that.auditUpdateDt);
+                Objects.equals(isActive, that.isActive);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetRapId, modellingVendor, modellingSystem, modellingSystemVersion, targetRapCode, targetRapDesc, petId, sourceRapCode, isScorGenerated, isScorCurrent, isScorDefault, isActive, auditCreateDt, auditUpdateDt);
+        return Objects.hash(targetRapId, modellingVendor, modellingSystem, modellingSystemVersion, targetRapCode, targetRapDesc, petId, sourceRapCode, isScorGenerated, isScorCurrent, isScorDefault, isActive);
     }
 }

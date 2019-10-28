@@ -32,7 +32,7 @@ public class AccumulationPackageEntity {
 
 
     @Basic
-    @Column(name = "StatusId", nullable = true,)
+    @Column(name = "StatusId", nullable = true)
     public Integer getIdstatus() {
         return idstatus;
     }

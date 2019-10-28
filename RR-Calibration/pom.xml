@@ -21,6 +21,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.scor.rr</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
             <version>5.2.6.Final</version>

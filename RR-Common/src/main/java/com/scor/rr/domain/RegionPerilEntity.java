@@ -21,9 +21,9 @@ public class RegionPerilEntity {
     private Boolean isMinimumGrainRegionPeril;
     private String parentMinimumGrainRegionPeril;
     private Boolean isActive;
-    private Timestamp lastUpdatedRiskReveal;
-    private Timestamp lastUpdatedCatDomain;
-    private Timestamp lastSyncRunCatDomain;
+//    private Timestamp lastUpdatedRiskReveal;
+//    private Timestamp lastUpdatedCatDomain;
+//    private Timestamp lastSyncRunCatDomain;
 
     @Id
     @Column(name = "regionPerilId", nullable = false)
@@ -106,7 +106,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierachyParentCode", length = 255)
+    @Column(name = "hierarchyParentCode", length = 255)
     public String getHierarchyParentCode() {
         return hierarchyParentCode;
     }
@@ -116,7 +116,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierachyLevel")
+    @Column(name = "hierarchyLevel")
     public Integer getHierarchyLevel() {
         return hierarchyLevel;
     }
@@ -155,38 +155,38 @@ public class RegionPerilEntity {
         isActive = active;
     }
 
+//    @Basic
+//    @Column(name = "LastUpdatedRiskReveal")
+//    public Timestamp getLastUpdatedRiskReveal() {
+//        return lastUpdatedRiskReveal;
+//    }
+//
+//    public void setLastUpdatedRiskReveal(Timestamp lastUpdatedRiskReveal) {
+//        this.lastUpdatedRiskReveal = lastUpdatedRiskReveal;
+//    }
+//
+//    @Basic
+//    @Column(name = "LastUpdatedCatDomain")
+//    public Timestamp getLastUpdatedCatDomain() {
+//        return lastUpdatedCatDomain;
+//    }
+//
+//    public void setLastUpdatedCatDomain(Timestamp lastUpdatedCatDomain) {
+//        this.lastUpdatedCatDomain = lastUpdatedCatDomain;
+//    }
+//
+//    @Basic
+//    @Column(name = "LastSyncRunCatDomain")
+//    public Timestamp getLastSyncRunCatDomain() {
+//        return lastSyncRunCatDomain;
+//    }
+//
+//    public void setLastSyncRunCatDomain(Timestamp lastSyncRunCatDomain) {
+//        this.lastSyncRunCatDomain = lastSyncRunCatDomain;
+//    }
+
     @Basic
-    @Column(name = "LastUpdatedRiskReveal")
-    public Timestamp getLastUpdatedRiskReveal() {
-        return lastUpdatedRiskReveal;
-    }
-
-    public void setLastUpdatedRiskReveal(Timestamp lastUpdatedRiskReveal) {
-        this.lastUpdatedRiskReveal = lastUpdatedRiskReveal;
-    }
-
-    @Basic
-    @Column(name = "LastUpdatedCatDomain")
-    public Timestamp getLastUpdatedCatDomain() {
-        return lastUpdatedCatDomain;
-    }
-
-    public void setLastUpdatedCatDomain(Timestamp lastUpdatedCatDomain) {
-        this.lastUpdatedCatDomain = lastUpdatedCatDomain;
-    }
-
-    @Basic
-    @Column(name = "LastSyncRunCatDomain")
-    public Timestamp getLastSyncRunCatDomain() {
-        return lastSyncRunCatDomain;
-    }
-
-    public void setLastSyncRunCatDomain(Timestamp lastSyncRunCatDomain) {
-        this.lastSyncRunCatDomain = lastSyncRunCatDomain;
-    }
-
-    @Basic
-    @Column(name = "regionPerilGroupDescription", length = 255)
+    @Column(name = "regionPerilGroupDesc", length = 255)
     public String getRegionPerilGroupDesc() {
         return regionPerilGroupDesc;
     }
@@ -213,14 +213,14 @@ public class RegionPerilEntity {
                 Objects.equals(isMinimumGrainRegionPeril, that.isMinimumGrainRegionPeril) &&
                 Objects.equals(parentMinimumGrainRegionPeril, that.parentMinimumGrainRegionPeril) &&
                 Objects.equals(isActive, that.isActive) &&
-                Objects.equals(lastUpdatedRiskReveal, that.lastUpdatedRiskReveal) &&
-                Objects.equals(lastUpdatedCatDomain, that.lastUpdatedCatDomain) &&
-                Objects.equals(lastSyncRunCatDomain, that.lastSyncRunCatDomain) &&
+//                Objects.equals(lastUpdatedRiskReveal, that.lastUpdatedRiskReveal) &&
+//                Objects.equals(lastUpdatedCatDomain, that.lastUpdatedCatDomain) &&
+//                Objects.equals(lastSyncRunCatDomain, that.lastSyncRunCatDomain) &&
                 Objects.equals(regionPerilGroupDesc, that.regionPerilGroupDesc);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDesc, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive, lastUpdatedRiskReveal, lastUpdatedCatDomain, lastSyncRunCatDomain);
+        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDesc, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive);
     }
 }

@@ -21,7 +21,7 @@ public class AccumulationPackagePltContractSectionEntity {
     }
 
     @Basic
-    @Column(name = "PltHeaderId", nullable = true,)
+    @Column(name = "PltHeaderId", nullable = true)
     public Integer getPltHeaderId() {
         return pltHeaderId;
     }
@@ -31,7 +31,7 @@ public class AccumulationPackagePltContractSectionEntity {
     }
 
     @Basic
-    @Column(name = "AccumulationPackageId", nullable = true,)
+    @Column(name = "AccumulationPackageId", nullable = true)
     public Integer getAccumulationPackageId() {
         return accumulationPackageId;
     }

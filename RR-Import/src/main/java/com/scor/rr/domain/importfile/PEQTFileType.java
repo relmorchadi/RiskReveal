@@ -15,6 +15,9 @@ public class PEQTFileType {
     private String delim;
     private boolean hasHeader;
 
+    public PEQTFileType() {
+    }
+
     @Id
     @Column(name = "PEQTFileTypeId", nullable = false)
     public String getId() {
