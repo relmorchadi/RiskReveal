@@ -18,15 +18,19 @@
              [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
           <i *ngIf="project.postInuredFlag" class="fa fa-code-fork"></i>
         </div>
-        <div *ngIf="project.projectType === 'fac'"
-             class="standard-flag-icon project-header-icon d-flex justify-content-center align-items-center">
-          <i class='icon-assignment_24px'></i>
+        <div *ngIf="project.projectType === 'fac'" [ngClass]="{'standard-flag-icon': project.projectFacSource === 'manual',
+        'standard-fac-flag-icon': project.projectFacSource === 'specific'}"
+             class="project-header-icon d-flex justify-content-center align-items-center">
+          <i *ngIf="project.projectFacSource === 'manual'" class='icon-assignment_24px'></i>
+          <i *ngIf="project.projectFacSource === 'specific'" class='icon-copy'></i>
         </div>
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
           <div class="d-flex justify-content-between" *ngIf="project.projectType === 'fac'">
-            <span>{{project?.name | trimFormat}}</span>
+            <div class="d-flex flex-column">
+              <span>{{project?.name | trimFormat}}</span>
+              <span>{{project?.projectId | trimFormat}}</span>
+            </div>
             <div class="d-flex align-items-center">
-              <div>{{project?.projectId | trimFormat}}</div>
               <div class="car-status-temp">{{project?.carStatus}}</div>
             </div>
           </div>
@@ -43,7 +47,7 @@
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
               <li nz-menu-item class="contextMenu border-bottom"
-                  (click)="delete({projectId: project?.projectId ,projectIndex: i})"><i
+                  (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})"><i
                 class="icon-trash-alt"></i>Delete
               </li>
               <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
@@ -122,12 +126,12 @@
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
           <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</a>
         </div>
-        <div style="height: 55px;" class="d-flex flex-column project-kpi-details-title" *ngIf="project.projectType === 'fac'">
-          <div class="d-flex">
+        <div style="height: 65px; padding: 0" class="d-flex flex-column project-kpi-details-title" *ngIf="project.projectType === 'fac'">
+          <div style="padding: 6px 0;" class="d-flex border-bottom">
             <span class="field-car-status">CAR ID :</span>
-            <span class="font-weight-bold">{{project?.id | trimFormat}}</span>
+            <span class="font-weight-bold">{{project?.id | parseId}}</span>
           </div>
-          <div class="d-flex">
+          <div style="padding: 6px 0;" class="d-flex">
             <span class="field-car-status">UW Analysis :</span>
             <span class="font-weight-bold">{{project?.uwAnalysis}}</span>
           </div>

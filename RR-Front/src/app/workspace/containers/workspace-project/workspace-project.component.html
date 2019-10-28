@@ -25,7 +25,7 @@
               Add New
             </button>
             <ul nz-menu nzSelectable>
-              <li (click)="newProject = true; searchWorkspace = false;" nz-menu-item> Project</li>
+              <li (click)="newFacProject = true;" nz-menu-item> Project</li>
             </ul>
           </nz-dropdown>
         </div>
@@ -45,7 +45,9 @@
     </div>
     <div>
       <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
-                     (delete)="delete($event)"></projects-list>
+                     (delete)="delete($event)" *ngIf="status === 'treaty'"></projects-list>
+      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
+                     (delete)="deleteFacProject($event)" *ngIf="status === 'fac'"></projects-list>
     </div>
 
     <app-workspace-project-popup [isVisible]="searchWorkspace"
@@ -57,14 +59,15 @@
     <app-create-project-popup [isVisible]="newProject"
                               [workspace]="workspace"
                               [newProject]="selectedProject"
-                              (onCancelCreateProject)="onCancelCreateProject()"
-    ></app-create-project-popup>
-    <app-create-fac-project-popup>
+                              (onCancelCreateProject)="onCancelCreateProject()">
+    </app-create-project-popup>
 
+    <app-create-fac-project-popup [isVisible]="newFacProject"
+                                  [workspace]="workspace"
+                                  [newProject]="selectedProject"
+                                  (onCancelCreateProject)="onCancelCreateProject()">
     </app-create-fac-project-popup>
   </div>
-
-
 </div>
 
 <!--<p-toast></p-toast>-->

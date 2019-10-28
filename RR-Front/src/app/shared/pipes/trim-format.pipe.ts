@@ -7,11 +7,11 @@ import * as _ from 'lodash';
 export class TrimFormatPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    if (value === undefined) {
+    if (value === undefined || value === null) {
       return null;
     } else {
       return value.split('-')[0] + '-' + _.trimStart(value.split('-')[1], '0');
-    };
+    }
   }
 
 }

@@ -472,9 +472,19 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
+  @Action(fromWS.AddNewFacProject)
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
+    return this.wsService.addNewFacProject(ctx, payload);
+  }
+
   @Action(fromWS.DeleteProject)
   deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
     return this.wsService.deleteProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteFacProject)
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteFacProject) {
+    return this.wsService.deleteFacProject(ctx, payload);
   }
 
   /***********************************
