@@ -4,17 +4,17 @@
                   [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
-    <input searchInput [ngClass]="{'search-page-active-border': isSearchRoute()}"
-           (onEnter)="onEnter($event)"
-           (onSpace)="onSpace($event)"
-           (onBackspace)="onBackspace($event)"
-           (onDelete)="onDelete($event)"
-           appScrollToParent
-           [scrollTo]="scrollParams?.scrollTo"
-           [listLength]="scrollParams?.listLength"
-           (emitScrollTo)="scrollParams.scrollTo = $event"
+    <input
+      searchInput
+      [ngClass]="{'search-page-active-border': isSearchRoute()}"
+            (onEnter)="onEnter($event)"
+            (onSpace)="onSpace($event)"
+            (onBackspace)="onBackspace($event)"
+            (onDelete)="onDelete($event)"
+            (onDoublePoints)="onDoublePoints($event)"
            #searchInput
-           formControlName="globalKeyword" (click)="focusInput($event)"
+           formControlName="globalKeyword"
+           (click)="focusInput($event)"
            class="search-input" type="text" nz-input [placeholder]="'Search for ' + searchMode || 'Treaty' ">
   </nz-input-group>
 
@@ -34,9 +34,9 @@
               nzTrigger="click">
       </button>
       <div class="chips-wrapper">
-        <app-chip-tag (dblclick)="onChangeTagValue(items)" (onclick)="closeSearchBadge($event, i)"
-                      *ngFor="let items of state?.badges; let i = index"
-                      [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
+        <app-chip-tag (dblclick)="onChangeTagValue(item)" (onclick)="closeSearchBadge($event, i)"
+                      *ngFor="let item of state?.badges; let i = index"
+                      [closeStatus]="true" [key]="mapBadgeShortCutToBadgeKey[item.key]" [value]="item.value"></app-chip-tag>
       </div>
     </div>
   </ng-template>
@@ -49,8 +49,9 @@
   </ng-template>
 
   <ng-template #searchDropdown>
-    <div class="search-contextual-table"
-         nz-menu style="height: 300px; overflow: auto; width: 750px">
+    <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px">
+      <!-- List Of Shortcuts -->
+
       <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
         <div class="search-history-component" style="position: relative;">
           <div class="header-wrapper">
@@ -78,7 +79,7 @@
             <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
           </div>
           <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
-            <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
+            <li *ngFor="let items of state?.savedSearch;" (click)="appendSearchBadges(items)">
               <div class="chip-container" *ngFor="let instance of items">
                 <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
               </div>
@@ -88,21 +89,36 @@
       </div>
 
       <ng-template #basicTable>
-        <div class="result-wrapper" *ngIf="state?.data?.length > 0 && !state?.emptyResult; else loadingTemp">
-          <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
-            <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span"
-                  *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
+        <div scrollManager class="result-wrapper">
+          <div class="search-result-wrapper" *ngIf="showListOfShortCuts">
+          <span class="search-result-span">Attribute Labels</span>
             <ul class="search-result-list">
-              <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index"
-                  [scrollTo]="scrollParams.scrollTo" [i]="i" [k]="k" [data]="state?.data"
-                  (setPos)="scrollParams.position= $event" appKeyDownScroll
-                  (click)="selectSearchBadge(state?.tables[i], val.label)">
-                <span>{{val.countOccur}}</span>
-                <p [innerHtml]="val.label| boldSpan: state.searchValue"></p>
-                <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+              <li style="display: flex; height: 31px;"
+                  *ngFor="let possibleShortCut of possibleShortCuts; let i=index;"
+                  scrollItem
+                  (onTrigger)="replaceExpressionWithShortCut(possibleShortCut)"
+                  (click)="replaceExpressionWithShortCut(possibleShortCut)">
+                <p [innerHtml]="mapBadgeShortCutToBadgeKey[possibleShortCut] | boldSpan: globalKeyword"></p>
               </li>
             </ul>
           </div>
+          <ng-container *ngIf="state?.data?.length > 0 && !state?.emptyResult; else loadingTemp">
+            <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
+            <span (click)="addBadgeFromResultList(state?.tables[i])"
+                  class="search-result-span"
+                  *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
+              <ul class="search-result-list">
+                <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];"
+                    scrollItem
+                    (onTrigger)="selectSearchBadge(mapTableNameToBadgeKey[state?.tables[i]], val.label)"
+                    (click)="selectSearchBadge(mapTableNameToBadgeKey[state?.tables[i]], val.label)">
+                  <span>{{val.countOccur}}</span>
+                  <p [innerHtml]="val.label| boldSpan: state.searchValue"></p>
+                  <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+                </li>
+              </ul>
+            </div>
+          </ng-container>
         </div>
       </ng-template>
       <ng-template #loadingTemp>

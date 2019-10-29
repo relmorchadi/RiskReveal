@@ -6,11 +6,15 @@ const ARROW_UP= 'ArrowUp';
 const ARROW_DOWN= 'ArrowDown';
 const DELETE='Delete';
 const BACKSPACE='Backspace';
+const DOUBLE_POINTS =':';
 
 @Directive({
   selector: '[searchInput]'
 })
 export class SearchInputDirective {
+
+  @Output('onDoublePoints')
+  onDoublePoints:EventEmitter<KeyboardEvent>=new EventEmitter();
 
   @Output('onEnter')
   onEnter:EventEmitter<KeyboardEvent>=new EventEmitter();
@@ -31,6 +35,7 @@ export class SearchInputDirective {
   onBackspace:EventEmitter<KeyboardEvent>=new EventEmitter();
 
   readonly keyToEmitterMapper= {
+    [DOUBLE_POINTS]: this.onDoublePoints,
     [ENTER]: this.onEnter,
     [SPACE]: this.onSpace,
     [ARROW_UP]: this.onArrowUp,
@@ -44,7 +49,7 @@ export class SearchInputDirective {
 
   @HostListener('keydown', ['$event'])
   onKeydown(keyboardEvent:KeyboardEvent){
-    let {key}=keyboardEvent;
+    let { key }= keyboardEvent;
     let dispatcher= this.keyToEmitterMapper[key];
     dispatcher ? dispatcher.emit(keyboardEvent) : null;
     this.lastEvent=key;
