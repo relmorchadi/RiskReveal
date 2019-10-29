@@ -21,6 +21,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.scor.rr</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
