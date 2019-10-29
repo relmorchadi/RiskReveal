@@ -230,7 +230,7 @@ node ('dcvprdadm04') {
         parallel stepsForParallel
         }
 
-        stage ('frontend deployment') {
+        /*stage ('frontend deployment') {
         try {
             dir ("${ScorPRDToolkitAnsible}/playbook"){
             sh "ansible-playbook -i ../frontend/hosts/${frontpom.artifactId}/${Cur_Environment}/hosts playbook_nginx.yml -e app_version=${rootpom.properties.rr_version} -e env=${Cur_Environment} -e app_name=${frontpom.artifactId} -e app_groupid=${frontpom.groupId} -e app_artifactid=${frontpom.artifactId} -e group_hosts=${frontpom.artifactId}_${Cur_Environment} -e app_extension=tar -e app_classifier=front"
@@ -241,7 +241,7 @@ node ('dcvprdadm04') {
             SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "front deployment", "${rootpom.name}")
         throw (error)
         }
-        }
+        }*/
 
         //stage ('clean workspace') {
         //cleanWs()
