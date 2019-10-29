@@ -178,4 +178,12 @@ public class PathUtils {
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();
     }
+
+    public static String makePLTFileName(
+            String financialPersp,
+            Date creationDate,
+            String fileExtension) {
+        // @TODO Review the required params for this
+        return "PLT"+String.valueOf(creationDate.getTime()).concat(financialPersp).concat(".").concat(fileExtension);
+    }
 }

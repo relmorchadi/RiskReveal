@@ -153,9 +153,9 @@ public class EpCurveExtractor {
                 double targetExchangeRate = 1.0d;
                 for (RmsExchangeRate rmsExchangeRate : bundle.getRmsExchangeRatesOfRRLT()) {
                     if (rmsExchangeRate.getCcy().equals(sourceRRLT.getCurrency()))
-                        sourceExchangeRate = rmsExchangeRate.getRoe();
+                        sourceExchangeRate = rmsExchangeRate.getExchangeRate();
                     else if (rmsExchangeRate.getCcy().equals(conformedRRLT.getCurrency()))
-                        targetExchangeRate = rmsExchangeRate.getRoe();
+                        targetExchangeRate = rmsExchangeRate.getExchangeRate();
                     else
                         log.debug("Something wrong: ccy {} found for source ELT currency {} conformed ELT currency {}", rmsExchangeRate.getCcy(), sourceRRLT.getCurrency(), conformedRRLT.getCurrency());
                 }

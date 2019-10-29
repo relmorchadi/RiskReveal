@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Integer> {
+public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
 
 
     // @TODO : Check Instance ID Param

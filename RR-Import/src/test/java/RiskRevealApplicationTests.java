@@ -367,14 +367,14 @@ public class RiskRevealApplicationTests {
         rmsExchangeRate1 = new RmsExchangeRate();
 
         rmsExchangeRate1.setCcy("CAD");
-        rmsExchangeRate1.setRoe(BigDecimal.valueOf(1.3108429700).setScale(10).doubleValue());
-        rmsExchangeRate1.setRoeAsAt("2018-09-30 00:00:00.000");
+        rmsExchangeRate1.setExchangeRate(BigDecimal.valueOf(1.3108429700).setScale(10).doubleValue());
+        rmsExchangeRate1.setDate("2018-09-30 00:00:00.000");
 
         rmsExchangeRate2 = new RmsExchangeRate();
 
         rmsExchangeRate2.setCcy("ANG");
-        rmsExchangeRate2.setRoe(BigDecimal.valueOf(1.7609894900).setScale(10).doubleValue());
-        rmsExchangeRate2.setRoeAsAt("2018-09-30 00:00:00.000");
+        rmsExchangeRate2.setExchangeRate(BigDecimal.valueOf(1.7609894900).setScale(10).doubleValue());
+        rmsExchangeRate2.setDate("2018-09-30 00:00:00.000");
         //*************************************************************************************************************
         cChkBaseCcy = new CChkBaseCcy();
 

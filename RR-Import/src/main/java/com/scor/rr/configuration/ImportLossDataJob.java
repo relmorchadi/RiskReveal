@@ -1,7 +1,6 @@
 package com.scor.rr.configuration;
 
 import com.scor.rr.service.batch.*;
-import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.ELTWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -39,6 +38,9 @@ public class ImportLossDataJob {
 
     @Autowired
     ELTTruncator eltTruncator;
+
+    @Autowired
+    ELTToPLTConverter eltToPLTConverter;
 
     @Autowired
     @Qualifier(value = "eltWriter")
@@ -85,6 +87,11 @@ public class ImportLossDataJob {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltWriter.writeHeader();
     }
 
+    @Bean
+    public Tasklet EltToPLTTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> eltToPLTConverter.convertEltToPLT();
+    }
+
     /**
      * @return
      * @implNote Step 1 of the main job : used to extract region perils
@@ -119,6 +126,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Step getEltToPLTStep() {
+        return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
+    }
+
+    @Bean
     public Step getEltBinaryWritingStep(){
         return stepBuilderFactory.get("EltBinaryWriting").tasklet(eltBinaryWritingTasklet()).build();
     }
@@ -141,9 +153,12 @@ public class ImportLossDataJob {
                 //.next("extractModelingOptions")
                 .next(getEltBinaryWritingStep())
                 .next(getEltHeaderWritingStep())
+                .next(getEltToPLTStep())
                 .end()
                 .build();
     }
+
+
 
 
 }
