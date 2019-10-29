@@ -1129,8 +1129,10 @@ const treatySections = [
 
 const treatySections2 = [
   {
-    id: "17T008583/ 1",
-    name: "1st Cat XL",
+    id: '17T008583/ 1',
+    name: '1st Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-DE',
@@ -1353,8 +1355,10 @@ const treatySections2 = [
     }]
   },
   {
-    id: "17T010540 / 1",
-    name: "2nd Cat XL",
+    id: '17T010540 / 1',
+    name: '2nd Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-DE',
@@ -1527,8 +1531,10 @@ const treatySections2 = [
     }]
   },
   {
-    id: "20T002794 / 1",
-    name: "Property/Engineering CAT 1st XL (All Perils)",
+    id: '20T002794 / 1',
+    name: 'Property/Engineering CAT 1st XL (All Perils)',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-AD',

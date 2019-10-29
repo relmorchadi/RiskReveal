@@ -1394,8 +1394,9 @@ export class RiskLinkStateService {
           };
         });
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.results.data = _.merge({},
-            draft.content[wsIdentifier].riskLink.results.data, dataTable);
+          const newData =  _.merge({}, draft.content[wsIdentifier].riskLink.results.data, dataTable);
+          draft.content[wsIdentifier].riskLink.results.data = newData;
+          draft.content[wsIdentifier].riskLink.results.isValid = this._isValidImport(ctx, _.toArray(newData));
           })));
       }),
       catchError(err => {
@@ -2036,6 +2037,7 @@ export class RiskLinkStateService {
   private _isValidImport(ctx, data) {
     const valid = _.uniq(_.map(data, item => ({regionPeril: item.regionPeril, division: item.division})));
     const divisions = _.uniq(_.map(data, item => item.division));
+    console.log(valid, division);
     return valid.length >= 2 * divisions.length;
   }
 

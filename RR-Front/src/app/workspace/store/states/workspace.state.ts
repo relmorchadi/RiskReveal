@@ -280,8 +280,7 @@ export class WorkspaceState {
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
     };
   }
 
@@ -293,8 +292,7 @@ export class WorkspaceState {
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
     };
   }
 
