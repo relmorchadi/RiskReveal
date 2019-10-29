@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 
-public interface RlModelDataSourceRepository extends JpaRepository<RlModelDataSource, Integer> {
+public interface RlModelDataSourceRepository extends JpaRepository<RlModelDataSource, Long> {
 
-    List<RlModelDataSource> findByProjectId(Integer projectId);
-    RlModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(int projectId, String type, String instanceId, String rrId);
+    List<RlModelDataSource> findByProjectId(Long projectId);
+    RlModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, Long instanceId, String rrId);
 
 }

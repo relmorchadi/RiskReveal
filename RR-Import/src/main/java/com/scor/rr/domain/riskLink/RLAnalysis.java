@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -18,10 +19,10 @@ public class RLAnalysis {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer rlAnalysisId;
+    private Long rlAnalysisId;
     private Integer entity;
-    private Integer rlModelDataSourceId;
-    private Integer projectId;
+    private Long rlModelDataSourceId;
+    private Long projectId;
     private Long rdmId;
     private String rdmName;
     private Long analysisId;
@@ -66,6 +67,9 @@ public class RLAnalysis {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rlSourceResult")
     private RlSourceResult rlSourceResult;
+
+    @OneToMany(mappedBy = "rLAnalysisId")
+    List<RlSourceEpHeader> rlSourceEpHeaders;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
         this.entity=1;

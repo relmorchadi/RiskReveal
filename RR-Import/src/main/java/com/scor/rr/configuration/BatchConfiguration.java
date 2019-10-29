@@ -45,16 +45,4 @@ public class BatchConfiguration {
 
         return simpleJobLauncher;
     }
-
-//    @Bean(value = "myJobService")
-//    public SimpleJobServiceFactoryBean getJobServiceFactory() throws Exception{
-//        SimpleJobServiceFactoryBean simpleJobServiceFactoryBean = new SimpleJobServiceFactoryBean();
-//
-//        simpleJobServiceFactoryBean.setDataSource(getDataSource());
-//        simpleJobServiceFactoryBean.setJobLauncher(getJobLauncher());
-//        simpleJobServiceFactoryBean.setJobLocator(getJobRegistry());
-//        simpleJobServiceFactoryBean.setJobRepository(getJobRepository());
-//
-//        return simpleJobServiceFactoryBean;
-//    }
 }

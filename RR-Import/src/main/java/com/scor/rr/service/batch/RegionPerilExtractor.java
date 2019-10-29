@@ -143,9 +143,13 @@ public class RegionPerilExtractor {
                 rrAnalysis.setImportStatus(TrackingStatus.INPROGRESS.toString());
                 rrAnalysis.setProjectImportRunId(projectImportRun.getProjectImportRunId());
 
-                rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId()).ifPresent(rlModelDataSource -> {
-                    rrAnalysis.setSourceModellingSystemInstance(rlModelDataSource.getInstanceName());
-                    modellingSystemInstanceRepository.findById(rlModelDataSource.getInstanceId()).ifPresent(modellingSystemInstance -> {
+                TransformationBundle bundle = new TransformationBundle();
+                bundle.setInstanceId(Long.parseLong(instanceId));
+
+                rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId()).ifPresent(rlModelDataSourceItem -> {
+                    bundle.setInstanceId(rlModelDataSourceItem.getInstanceId());
+                    rrAnalysis.setSourceModellingSystemInstance(rlModelDataSourceItem.getInstanceName());
+                    modellingSystemInstanceRepository.findById(rlModelDataSourceItem.getInstanceId()).ifPresent(modellingSystemInstance -> {
                         rrAnalysis.setSourceModellingVendor(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName());
                         rrAnalysis.setSourceModellingSystem(modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName());
                         rrAnalysis.setSourceModellingSystemVersion(modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion().toString());
@@ -198,16 +202,15 @@ public class RegionPerilExtractor {
 
                 RRLossTableHeader conformedRRLT = makeConformedRRLT(rrAnalysis, sourceRRLT, targetCurrency);
 
-                TransformationBundle bundle = new TransformationBundle();
+
                 // TODO :  Review Later with viet
 //                bundle.setSourceRapMapping(sourceRapMapping);
                 bundle.setFinancialPerspective(sourceResult.getFinancialPerspective());
                 bundle.setSourceResult(sourceResult);
-                bundle.setRmsAnalysis(sourceResult.getRlAnalysis());
+                bundle.setRlAnalysis(sourceResult.getRlAnalysis());
                 bundle.setRegionPeril(getRegionPeril(sourceResult));
                 bundle.setRrAnalysis(rrAnalysis);
                 bundle.setSourceRRLT(sourceRRLT);
-                bundle.setInstanceId(instanceId);
                 bundle.setConformedRRLT(conformedRRLT);
                 transformationPackage.addTransformationBundle(bundle);
 

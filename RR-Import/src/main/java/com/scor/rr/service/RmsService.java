@@ -2,6 +2,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
+import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
@@ -70,7 +71,7 @@ public class RmsService {
         return dataSources;
     }
 
-    public void addEdmRdms(List<DataSource> dataSources, Integer projectId, String instanceId, String instanceName) {
+    public void addEdmRdms(List<DataSource> dataSources, Long projectId, Long instanceId, String instanceName) {
         Set<MultiKey> selectedDataSources = new HashSet<>();
         for (DataSource dataSource : dataSources) {
             selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
@@ -246,7 +247,7 @@ public class RmsService {
 
         List<RdmAllAnalysisSummaryStats> rdmAllAnalysisSummaryStats = new ArrayList<>();
 
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisSummaryStats @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisSummaryStats @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the q uery ...");
         if (analysisIdList != null && !LIST.isEmpty()) {
             String sql = query + ", @fin_persp_list=" + "'" + LIST + "'" + ", @analysis_id_list=" + analysisIdList;
@@ -280,9 +281,9 @@ public class RmsService {
         return rdmAllAnalysisSummaryStats;
     }
 
-    public List<AnalysisEpCurves> getAnalysisEpCurves(int rdmID, String rdmName, int analysisId, String finPerspCode, Integer treatyLabelId) {
+    public List<AnalysisEpCurves> getAnalysisEpCurves(Long rdmID, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
         List<AnalysisEpCurves> analysisEpCurves = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisEpCurves @rdm_id=" + rdmID + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId + ", @fin_persp_code=" + finPerspCode;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisEpCurves @rdm_id=" + rdmID.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue() + ", @fin_persp_code=" + finPerspCode;
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ",@treaty_label_id=" + treatyLabelId;
@@ -300,10 +301,10 @@ public class RmsService {
         return analysisEpCurves;
     }
 
-    public List<AnalysisSummaryStats> getAnalysisSummaryStats(int rdmId, String rdmName, int analysisId, String fpCode, Integer treatyLabelId) {
+    public List<AnalysisSummaryStats> getAnalysisSummaryStats(Long rdmId, String rdmName, Long analysisId, String fpCode, Integer treatyLabelId) {
 
         List<AnalysisSummaryStats> analysisSummaryStats = new ArrayList<>();
-        String query = " execute " + DATABASE + ".dbo.RR_RL_GetAnalysisSummaryStats @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId + ", @fin_persp_code=" + fpCode;
+        String query = " execute " + DATABASE + ".dbo.RR_RL_GetAnalysisSummaryStats @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue() + ", @fin_persp_code=" + fpCode;
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ",@treaty_label_id=" + treatyLabelId;
@@ -320,10 +321,10 @@ public class RmsService {
         return analysisSummaryStats;
     }
 
-    public List<RdmAllAnalysisProfileRegions> getRdmAllAnalysisProfileRegions(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisProfileRegions> getRdmAllAnalysisProfileRegions(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisProfileRegions> rdmAllAnalysisProfileRegions = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisProfileRegions @rdm_id=" + rdmId + ",@rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisProfileRegions @rdm_id=" + rdmId.longValue() + ",@rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
         if (analysisIdList != null) {
 
@@ -336,36 +337,36 @@ public class RmsService {
         return rdmAllAnalysisProfileRegions;
     }
 
-    public List<AnalysisElt> getAnalysisElt(int rdmId, String rdmName, int analysisId, String finPerspCode, Integer treatyLabelId) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId
+    public RLAnalysisELT getAnalysisElt(Long instanceId,Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue()
                 + ", @fin_persp_code=" + finPerspCode;
-        List<AnalysisElt> analysisElt = new ArrayList<>();
+        List<RlEltLoss> rlEltLoss = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ", @treaty_label_id=" + treatyLabelId;
-            analysisElt = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
         } else {
-            analysisElt = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
         }
-        this.logger.debug("the data returned ", analysisElt);
-        return analysisElt;
+        this.logger.debug("the data returned ", rlEltLoss);
+        return new RLAnalysisELT(instanceId, rdmId, rdmName, analysisId, finPerspCode, rlEltLoss);
     }
 
-    public List<EdmAllPortfolioAnalysisRegions> getEdmAllPortfolioAnalysisRegions(int edmId, String edmName, String ccy) {
+    public List<EdmAllPortfolioAnalysisRegions> getEdmAllPortfolioAnalysisRegions(Long edmId, String edmName, String ccy) {
 
         List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegions = new ArrayList<>();
 
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_GetEdmAllPortfolioAnalysisRegions @edm_id=" + edmId + ", @edm_name=" + edmName + ", @Ccy=" + ccy;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_GetEdmAllPortfolioAnalysisRegions @edm_id=" + edmId.longValue() + ", @edm_name=" + edmName + ", @Ccy=" + ccy;
         this.logger.debug("Service starts executing the query ...");
         edmAllPortfolioAnalysisRegions = rmsJdbcTemplate.query(sql, new EdmAllPortfolioAnalysisRegionsRowMapper());
         this.logger.debug("the data returned ", edmAllPortfolioAnalysisRegions);
         return edmAllPortfolioAnalysisRegions;
     }
 
-    public List<RdmAllAnalysisTreatyStructure> getRdmAllAnalysisTreatyStructure(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisTreatyStructure> getRdmAllAnalysisTreatyStructure(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructure = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisTreatyStructure @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisTreatyStructure @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
         if (analysisIdList != null) {
             String sql = query + ", @analysis_id_list=" + analysisIdList;
@@ -377,11 +378,11 @@ public class RmsService {
         return rdmAllAnalysisTreatyStructure;
     }
 
-    public List<RdmAllAnalysisMultiRegionPerils> getRdmAllAnalysisMultiRegionPerils(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisMultiRegionPerils> getRdmAllAnalysisMultiRegionPerils(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerils = new ArrayList<>();
 
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisMultiRegionPerils @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisMultiRegionPerils @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
 
         if (analysisIdList != null) {
@@ -422,9 +423,10 @@ public class RmsService {
         return cChkBaseCcyFxRate;
     }
 
-    public String getAnalysisModellingOptionSettings(int rdmId, String rdmName, int analysisId) {
-        String query = "execute " + DATABASE + ".[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId;
-        String json = "";
+    public String getAnalysisModellingOptionSettings(Long instanceId, Long rdmId, String rdmName, Long analysisId) {
+        String query = "execute " + DATABASE + ".[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue();
+        //String json = "";
+
         List<Map<String, Object>> result = rmsJdbcTemplate.queryForList(query);
         if (result == null) {
             return null;
@@ -439,15 +441,15 @@ public class RmsService {
                 }
             }
         }
-        try {
-            JSONObject jsonObj = XML.toJSONObject(builder.toString());
-            json = jsonObj.toString(4);
-            return json;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            this.logger.debug("Conversion failed", e);
-        }
-        return json;
+//        try {
+//            JSONObject jsonObj = XML.toJSONObject(builder.toString());
+//            json = jsonObj.toString(4);
+//            return json;
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            this.logger.debug("Conversion failed", e);
+//        }
+        return builder.toString();
     }
 
     /**

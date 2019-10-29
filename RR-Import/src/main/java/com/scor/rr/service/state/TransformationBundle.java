@@ -1,6 +1,7 @@
 package com.scor.rr.service.state;
 
 import com.scor.rr.domain.RmsExchangeRate;
+import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
@@ -17,7 +18,7 @@ public class TransformationBundle {
 
     private RlSourceResult sourceResult;
 
-    private RLAnalysis rmsAnalysis;
+    private RLAnalysis rlAnalysis;
 
 //    private SourceRapMapping sourceRapMapping;
 
@@ -27,10 +28,16 @@ public class TransformationBundle {
 
     private RRLossTableHeader sourceRRLT;
 
-    private String instanceId;
+    private Long instanceId;
 
     private RRLossTableHeader conformedRRLT;
 
     private List<RmsExchangeRate> rmsExchangeRatesOfRRLT;
+
+    private RLAnalysisELT rlAnalysisELT;
+
+    private RLAnalysisELT conformedRlAnalysisELT;
+
+    private List<String> modelingOptionsOfRRLT;
 
 }

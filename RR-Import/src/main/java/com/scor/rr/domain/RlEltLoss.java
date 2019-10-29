@@ -3,7 +3,7 @@ package com.scor.rr.domain;
 import lombok.Data;
 
 @Data
-public class AnalysisElt {
+public class RlEltLoss {
     private int analysisId;
     private String finPerspCode;
     private Long eventId;
@@ -11,5 +11,6 @@ public class AnalysisElt {
     private double loss;
     private double stdDevI;
     private double stdDevC;
+    private double stdDevUSq;
     private double exposureValue;
 }

@@ -29,6 +29,17 @@ public class BatchExecution {
 
         try {
             JobParametersBuilder builder = new JobParametersBuilder()
+                    .addString("reinsuranceType", null)
+                    .addString("prefix", null)
+                    .addString("clientName", null)
+                    .addString("clientId", null)
+                    .addString("contractId", null)
+                    .addString("division",null)
+                    .addString("uwYear", null)
+                    .addString("sourceVendor",null)
+                    .addString("modelSystemVersion", null)
+                    .addString("periodBasis", null)
+                    .addLong("importSequence", null)
                     .addString("userId", importLossDataParams.getUserId())
                     .addString("projectId", importLossDataParams.getProjectId())
                     .addString("sourceResultIdsInput", importLossDataParams.getSourceResultInputIds())

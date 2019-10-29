@@ -18,15 +18,15 @@ public class RlModelDataSource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer rlModelDataSourceId;
+    private Long rlModelDataSourceId;
     private Integer entity;
-    private Integer projectId;
+    private Long projectId;
     // To define a Sequence
     private String rlDataSource;
     // To review the type with Shaun
     private String rlId;
     private String instanceName;
-    private String instanceId;
+    private Long instanceId;
     private String name;
     private String type;
     // To review the type with Shaun
@@ -36,7 +36,7 @@ public class RlModelDataSource {
 //    @Transient
 //    private List<RlAnalysis> rlAnalysisList;
 
-    public RlModelDataSource(DataSource dataSource,Integer projectId, String instanceId,String instanceName){
+    public RlModelDataSource(DataSource dataSource,Long projectId, Long instanceId,String instanceName){
         this.projectId= projectId;
         this.entity=1;
         this.instanceId= instanceId;
