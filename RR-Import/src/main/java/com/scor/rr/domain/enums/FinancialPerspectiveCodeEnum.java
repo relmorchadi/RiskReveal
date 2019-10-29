@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum FinancialPerspectiveCodeEnum {
 
-    TY("TY");
+    TY("TY"), UP("UP");
 
     private String code;
 

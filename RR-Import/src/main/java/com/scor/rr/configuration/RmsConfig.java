@@ -35,5 +35,4 @@ public class RmsConfig {
         return new JdbcTemplate(rmsDS);
     }
 
-
 }

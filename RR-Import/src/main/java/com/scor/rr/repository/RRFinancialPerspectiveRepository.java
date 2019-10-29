@@ -4,4 +4,6 @@ import com.scor.rr.domain.RRFinancialPerspective;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RRFinancialPerspectiveRepository extends JpaRepository<RRFinancialPerspective, Long> {
+
+    RRFinancialPerspective findByCode(String code);
 }

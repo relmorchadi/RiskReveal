@@ -18,6 +18,7 @@ public class RlSourceResult {
     @GeneratedValue
     @Column(name = "RlSourceResultId")
     private Integer rlSourceResultId;
+    private Long rlAnalysisId;
     @Column(name = "Entity")
     private Integer entity;
     @Column(name = "projectId")

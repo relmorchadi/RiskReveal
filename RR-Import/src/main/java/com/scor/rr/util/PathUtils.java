@@ -24,4 +24,12 @@ public class PathUtils {
         // @TODO Review the required params for this
         return "SUMMARY_STAT"+String.valueOf(creationDate.getTime()).concat(financialPersp).concat(".").concat(fileExtension);
     }
+
+    public static String makePLTFileName(
+            String financialPersp,
+            Date creationDate,
+            String fileExtension) {
+        // @TODO Review the required params for this
+        return "PLT"+String.valueOf(creationDate.getTime()).concat(financialPersp).concat(".").concat(fileExtension);
+    }
 }

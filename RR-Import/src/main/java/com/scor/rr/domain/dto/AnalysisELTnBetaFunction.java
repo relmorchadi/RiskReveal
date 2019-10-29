@@ -1,7 +1,10 @@
 package com.scor.rr.domain.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class AnalysisELTnBetaFunction {
 
     private Long rdmId;

@@ -1,9 +1,6 @@
 package com.scor.rr.configuration;
 
-import com.scor.rr.service.batch.ELTExtractor;
-import com.scor.rr.service.batch.ELTTruncator;
-import com.scor.rr.service.batch.EpCurveExtractor;
-import com.scor.rr.service.batch.RegionPerilExtractor;
+import com.scor.rr.service.batch.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -37,6 +34,9 @@ public class ImportLossDataJob {
     @Autowired
     ELTTruncator eltTruncator;
 
+    @Autowired
+    ELTToPLTConverter eltToPLTConverter;
+
     @Bean
     public Tasklet extractRegionPerilTasklet(){
         return (StepContribution contribution, ChunkContext chunkContext) -> {
@@ -62,6 +62,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet EltToPLTTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> eltToPLTConverter.convertEltToPLT();
+    }
+
+    @Bean
     public Step getExtractRegionPerilStep() {
         return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
     }
@@ -81,6 +86,10 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("truncateELT").tasklet(truncateELTTasklet()).build();
     }
 
+    @Bean
+    public Step getEltToPLTStep() {
+        return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
+    }
 
     @Bean
     public Job getImportLossData() {
@@ -90,10 +99,8 @@ public class ImportLossDataJob {
                 // @SkippedStep (ExtractRmsExchangeRates)
                 .next(geExtractELTStep())
                 .next(getELTTruncatorStep())
+                .next(getEltToPLTStep())
                 .build();
     }
-
-
-
 
 }
