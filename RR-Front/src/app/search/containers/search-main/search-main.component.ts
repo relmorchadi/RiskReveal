@@ -18,6 +18,7 @@ import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
+import {mapBadgeShortCutToBadgeKey, mapTableNameToBadgeKey} from "../../../core/service/badges.service";
 
 
 @Component({
@@ -150,11 +151,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   savedSearchVisibility: boolean;
   saveSearchPopup: boolean = false;
   searchLabel: any;
+  mapBadgeShortCutToBadgeKey: any;
+  mapTableNameToBadgeKey: any;
 
   constructor(private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
-
+    this.mapBadgeShortCutToBadgeKey= mapBadgeShortCutToBadgeKey;
+    this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
   }
 
   ngOnInit() {
@@ -278,6 +282,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       offset,
       size
     };
+    console.log('EXPERT');
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {

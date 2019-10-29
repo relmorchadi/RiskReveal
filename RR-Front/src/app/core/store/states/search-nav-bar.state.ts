@@ -88,6 +88,14 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ctx = null;
   searchShortCuts = ["uwy:", "c:", "wid:", "w:", "ctr:", "cid:"];
+  shortCuts = [
+    'Year:',
+    'CedantName:',
+    'WorkspaceId:',
+    'WorkspaceName:',
+    'Country:',
+    'Cedant Code:',
+  ];
 
   constructor(@Inject(SearchService) private _searchService: SearchService,
               @Inject(BadgesService) private _badgesService: BadgesService) {
@@ -157,7 +165,8 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     let expression: any = keyword;
-    const checkShortCut = this.checkShortCut(expression);
+    console.log(keyword);s
+    const checkShortCut: any = this.checkShortCut(expression);
     console.log(checkShortCut);
     if (checkShortCut !== null) {
       expression = checkShortCut[1];
@@ -290,6 +299,7 @@ export class SearchNavBarState implements NgxsOnInit {
   showSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: showSavedSearch) {
     const search = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
+      draft.visibleSearch= false;
       draft.showSavedSearch = true
     }));
   }
@@ -299,6 +309,7 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       if (!_.isEmpty(expression)) {
         draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
+        console.log(draft.searchContent);
         draft.badges = _.isArray(draft.searchContent.value) ? draft.searchContent.value : [];
       }
       if (_.isArray(draft.searchContent.value)) {
@@ -379,7 +390,10 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   private checkShortCut(keyword: string) {
-    const twoChars = keyword.substring(0, 2).toLowerCase();
+    const foundShortCut = _.find(this.shortCuts, shortCut => _.includes(keyword, shortCut));
+    const index= _.findIndex(this.shortCuts, s => s == foundShortCut);
+    return index > -1 ? [_.findIndex(this.shortCuts, s => s == foundShortCut) , foundShortCut ? keyword.substring(foundShortCut.length) : keyword] : null;
+    /*const twoChars = keyword.substring(0, 2).toLowerCase();
     const threeChars = keyword.substring(0, 4).toLowerCase();
     let firstCheck = _.findIndex(this.searchShortCuts, row => row == twoChars);
     let secondCheck = _.findIndex(this.searchShortCuts, row => row == threeChars);
@@ -387,7 +401,8 @@ export class SearchNavBarState implements NgxsOnInit {
       return [firstCheck, keyword.substring(2)]
     } else if (secondCheck > -1) {
       return [secondCheck, keyword.substring(4)]
-    } else return null;
+    } else return null;*/
+
   }
 
   private searchLoader(keyword, table) {
