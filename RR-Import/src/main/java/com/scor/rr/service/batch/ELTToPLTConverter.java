@@ -8,15 +8,19 @@ import com.scor.rr.domain.RRFinancialPerspective;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
+import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.model.PET;
 import com.scor.rr.domain.model.TargetRAP;
 import com.scor.rr.domain.reference.Contract;
+import com.scor.rr.domain.reference.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
+import com.scor.rr.service.state.TransformationBundle;
+import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -53,8 +57,8 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class ELTToPLTConverter {
 
-    RRFinancialPerspective financialPerspective;
-    RRFinancialPerspectiveRepository financialPerspectiveRepository;
+    FinancialPerspective financialPerspective;
+    FinancialPerspectiveRepository financialPerspectiveRepository;
 
     @Autowired
     ContractRepository contractRepository;
@@ -97,6 +101,21 @@ public class ELTToPLTConverter {
     @Value("${convert.executor.queue.size}")
     private int queueSize;
 
+    @Value("#{jobParameters['importSequence']}")
+    private Integer importSequence;
+
+    @Value("#{jobParameters['contractId']}")
+    private String contractId;
+
+    @Value("#{jobParameters['uwYear']}")
+    private Integer uwYear;
+
+    @Value("#{jobParameters['prefix']}")
+    private String prefix;
+
+    @Autowired
+    TransformationPackage transformationPackage;
+
     private ConvertFunctionFactory factory = new CMBetaConvertFunctionFactory();
 
     public RepeatStatus convertEltToPLT() {
@@ -106,53 +125,39 @@ public class ELTToPLTConverter {
 
     public void batchConvert() {
         log.debug("Starting batchConvert");
-        List<Map> bundles = new ArrayList<>();
         Date startDate = new Date();
+        // @TODO Get TTFinancial persp Ref Table
         financialPerspective = ofNullable(financialPerspective).orElse(financialPerspectiveRepository.findByCode(FinancialPerspectiveCodeEnum.UP.getCode()));
-        log.debug("fpUP is {}", ofNullable(financialPerspective).map(RRFinancialPerspective::getCode).orElse(null));
-        log.debug("nbBundles is {}", bundles.size());
-
-        // @TODO Get from the Batch params
-        String contractId = null;
-        String uwYear = null;
-        PLTModelingBasis modelingBasis = getModelingBasis(contractId, uwYear);
-
-
+        log.debug("fpUP is {}", ofNullable(financialPerspective).map(FinancialPerspective::getCode).orElse(null));
+        log.debug("nbBundles is {}", transformationPackage.getTransformationBundles().size());
+        PLTModelingBasis modelingBasis = getModelingBasis();
         log.debug("Modeling basis: {}", modelingBasis);
 
         Map<String, List<PLTHeader>> pltsByPeqt = new HashMap<>();
-        Map<Integer, Map> bundleForPLT = new HashMap<>();
+        Map<Integer, TransformationBundle> bundleForPLT = new HashMap<>();
 
-        for (Map bundle : bundles) {
+        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
 
-            RlSourceResult sourceResult = (RlSourceResult) bundle.get("SourceResult");
+            RlSourceResult sourceResult = bundle.getSourceResult();
+            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(sourceResult.getRlSourceResultId());
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
             String analysisName = rlAnalysisOpt.map(RLAnalysis::getAnalysisName).orElse(null);
             Long analysisId = rlAnalysisOpt.map(RLAnalysis::getAnalysisId).orElse(null);
 
-            Map<String, String> fpRRAnalysis = (Map) bundle.get("fpRRAnalysis");
-
-            // @TODO Review With Viet
             RRAnalysis rrAnalysis = ofNullable(fpRRAnalysis)
-                    .map(fpAn -> fpAn.get(financialPerspective.getDisplayCode()))
-                    .map(i -> rrAnalysisRepository.findById(financialPerspective.getDisplayCode()).get())
+                    .map(fpAn -> fpAn.get(financialPerspective.getCode()))
+                    .map(id -> rrAnalysisRepository.findById(id).get())
                     .orElse(null);
 
             if (financialPerspective == null) {
-//                TransformationUtils.setImportDecisionError(importDecisionRepository, srImport, String.format("Error: no UP financial perspective found for analysis %s , id %s", analysisName, analysisId));
                 log.error("Error creating PLTs: no UP financial perspective found for analysis {} , id {}", analysisName, analysisId);
                 if (rrAnalysis != null) {
                     rrAnalysis.setImportStatus("ERROR");
-                    // @TODO Do we need the import status within SourceResult
-                    //sourceResult.setImportStatus(rrAnalysis.getImportStatus());
-                    //sourceResultRepository.save(sourceResult);
                     rrAnalysisRepository.save(rrAnalysis);
                 }
                 continue;
             }
-            // @TODO: Validate with Viet, (with the new DATA MODEL, do we need to keep the source RAP Logic ...)
-            //AnalysisIncludedTargetRAP sourceRapMapping = analysisIncludedTargetRAPRepository.findById(sourceRapMappingId).get();
             List<TargetRAP> targetRaps = analysisIncludedTargetRAPRepository.findByModelAnalysisId(rrAnalysis.getRrAnalysisId())
                     .map(AnalysisIncludedTargetRAP::getTargetRAPId)
                     .map(targetRAPRepository::findById)
@@ -160,35 +165,20 @@ public class ELTToPLTConverter {
                     .collect(toList());
 
             if (targetRaps == null || targetRaps.isEmpty()) {
-                log.info("Finish tracking at the end of STEP 12 : CONVERT_ELT_TO_PLT for analysis {}, status {}", bundle.get("SourceResultId"), "Error", "stop this tracking");
+                log.info("Finish tracking at the end of STEP 12 : CONVERT_ELT_TO_PLT for analysis {}, status {}", bundle.getSourceRRLT(), "Error", "stop this tracking");
 
                 if (rrAnalysis != null) {
-                    /*
-                    rrAnalysis.setImportStatus(ProjectImportLog.TrackingStatus.Error.toString());
-                    sourceResult.setImportStatus(rrAnalysis.getImportStatus());
-                    sourceResultRepository.save(sourceResult);
-                    */
-                    //rrAnalysisRepository.save(rrAnalysis);
+                    rrAnalysis.setImportStatus("ERROR");
+                    rrAnalysisRepository.save(rrAnalysis);
                 }
 
                 continue;
             }
 
-            /**   @TODO: How to get the SourceResult related TargetRaps IDs (there is a missing join in the new DM Between TRap/SourceRes)
-            if (sourceResult.getIncludedTargetRapIds() != null) {
-            for (int i = 0; i < targetRaps.size(); i++) {
-            if (!sourceResult.getIncludedTargetRapIds().contains(String.valueOf(targetRaps.get(i).getTargetRapId()))) {
-            targetRaps.remove(i);
-            i--;
-            }
-            }
-            }
-             */
-
             List<PLTHeader> pltHeaders = makePurePLTHeaders(bundle, targetRaps, modelingBasis);
             if (pltHeaders == null || pltHeaders.isEmpty()) {
 //                log.error("RRLT {} has no PLTs, dataset {} error", bundle.getConformedELTHeader().getId(), bundle.getConformedELTHeader().getRepresentationDataset().getId());
-                log.error("RRLT {} has no PLTs, error", (String)bundle.get("ConformedRRLTId"));
+                log.error("RRLT {} has no PLTs, error", bundle.getConformedRRLT());
                 continue;
             }
 
@@ -202,23 +192,18 @@ public class ELTToPLTConverter {
             for (PLTHeader pltHeader : pltHeaders) {
                 PLTBundle pltBundle = new PLTBundle();
                 pltBundle.setHeader(pltHeader);
-                bundle.put("pltBundle",pltBundle);
-
-                //Truncator
-                pltHeader.setTruncationCurrency((String) bundle.get("TruncationCurrency"));
+                bundle.addPLTBundle(pltBundle);
+                pltHeader.setTruncationCurrency(bundle.getTruncationCurrency());
                 pltHeader.setTruncationThreshold(threshold);
 //                pltHeader.setTruncationThresholdEur(truncator.getThresholdInEur());
+                //@TODO Review With Vier
                 //pltHeader.setTruncationThresholdEur(threshold);
-
-                //Loss data fle
                 String filename = makePLTFileName(
                         rrAnalysis.getFinancialPerspective(),
                         pltHeader.getCreatedDate(),
                         ".bin"
                 );
-                // @TODO : Prefix Directory Impl
-                String prefixDir= null;
-                File file = makeFullFile(prefixDir, filename);
+                File file = makeFullFile(prefix, filename);
                 BinFile binFile= new BinFile(file);
                 pltHeader.setPltLossDataFilePath(binFile.getPath());
 
@@ -241,7 +226,7 @@ public class ELTToPLTConverter {
             // Date endDate = new Date();
             // projectImportAssetLogA.setEndDate(endDate);
             // projectImportAssetLogRepository.save(projectImportAssetLogA);
-            log.info("Finish import progress STEP 12 : CONVERT_ELT_TO_PLT for analysis: {}", (String) bundle.get("SourceResult"));
+            log.info("Finish import progress STEP 12 : CONVERT_ELT_TO_PLT for analysis: {}", bundle.getSourceRRLT());
         }
         // end loop for of bundles in function batchConvert()
 
@@ -262,9 +247,9 @@ public class ELTToPLTConverter {
 //                List<ScorPLTHeader> scorPLTHeaders = entry.getValue();
                 Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT = new HashMap<>(scorPLTHeaders.size());
                 for (PLTHeader scorPLTHeader : scorPLTHeaders) {
-                    Map bundle = bundleForPLT.get(scorPLTHeader.getPltHeaderId());
+                    TransformationBundle bundle = bundleForPLT.get(scorPLTHeader.getPltHeaderId());
                     if (bundle != null) {
-                        AnalysisELTnBetaFunction analysisELTnBetaFunction = (AnalysisELTnBetaFunction) bundle.get("AnalysisELTnBetaFunction");
+                        AnalysisELTnBetaFunction analysisELTnBetaFunction = bundle.getAnalysisELTnBetaFunction();
                         log.debug("analysisELTnBetaFunction.getEltLosses().size() = {}", 0);
                         Map<Long, ELTLossBetaConvertFunction> convertFunctionMap = new HashMap<>(analysisELTnBetaFunction.getEltLosses().size());
                         for (int j = 0; j < analysisELTnBetaFunction.getEltLosses().size(); j++) {
@@ -295,107 +280,42 @@ public class ELTToPLTConverter {
         log.debug("batchConvert completed");
     }
 
-    private List<PLTHeader> makePurePLTHeaders(Map bundle, List<TargetRAP> targetRaps, PLTModelingBasis modelingBasis) {
-        String originalTarget = (String) bundle.get("ConformedRRLTOriginalTarget");
-        RRAnalysis rrAnalysis= (RRAnalysis) bundle.get("rrAnalysis");
-        if (!RRLossTableType.CONFORMED.toString().equals(originalTarget)) {
+    private List<PLTHeader> makePurePLTHeaders(TransformationBundle bundle, List<TargetRAP> targetRaps, PLTModelingBasis modelingBasis) {
+        LossDataHeader lossDataHeader= bundle.getConformedRRLT();
+        RRAnalysis rrAnalysis= bundle.getRrAnalysis();
+
+        if (!RRLossTableType.CONFORMED.toString().equals(lossDataHeader.getOriginalTarget())) {
             throw new IllegalStateException();
         }
-        int i = 0;
+
         List<PLTHeader> pltHeaders = new ArrayList<>();
         for (TargetRAP targetRap : targetRaps) {
-            i++;
-
-
             PET pet = petRepository.findById(targetRap.getPetId()).get();
             RRFile file = new RRFile(pet);
-            //read now only PEQT 100k
-//            String peqt_100k = file.getFileName().replaceAll("(.+_)800K(.+)", "$1" + "100K" + "$2");
-//            BinFile peqtFile = new BinFile(peqt_100k, peqtPath, null);
             BinFile peqtFile = new BinFile(file.getFileName(), peqtPath, null);
-
-
             PLTHeader scorPLTHeader = new PLTHeader();
-            // @TODO Review With Viet the mappings here
-            // scorPLTHeader.setPeqtFile(peqtFile);
-            // scorPLTHeader.setPltLossDataFile(null);
-//            scorPLTHeader.setPLTEPHeaders(null); // fill later TODO ????????????????????????????????????????????????????????????
-            //scorPLTHeader.setPltStatisticList(null);
-
-            //scorPLTHeader.setPltGrouping(PLTGrouping.UnGrouped);
-            //scorPLTHeader.setPltInuring(PLTInuring.None);
-            //scorPLTHeader.setPltStatus(PLTStatus.Pending);
-            //scorPLTHeader.setInuringPackageDefinition(null);
             scorPLTHeader.setPltSimulationPeriods(pet.getNumberSimulationPeriods());
             scorPLTHeader.setPltType(PLTType.Pure.getCode());
-
-//            scorPLTHeader.setProject(eltHeader.getProject());
-//            scorPLTHeader.setEltHeader(eltHeader);
-//            scorPLTHeader.setCurrency(eltHeader.getCurrency());
-//            scorPLTHeader.setRepresentationDataset(eltHeader.getRepresentationDataset());
-//            scorPLTHeader.setTargetRap(targetRap);
-//            scorPLTHeader.setRegionPeril(eltHeader.getRegionPeril());
-//            scorPLTHeader.setSourceResult(eltHeader.getSourceResult());
-//            scorPLTHeader.setFinancialPerspective(fpUP);
-
-            Integer projectId = null; // @TODO Get projectID from params (or bundle)
             scorPLTHeader.setProjectId(rrAnalysis.getProjectId());
-            //scorPLTHeader.setRrRepresentationDatasetId(transformationPackage.getRrRepresentationDatasetId());
-            scorPLTHeader.setRrAnalysisId(rrAnalysis.getRrAnalysisId());
-            //scorPLTHeader.setRrLossTableId(bundle.getConformedRRLT().getId());
-
-            // TODO faux code
-//            List<RRStatisticHeader> rrStatisticHeaderList = rrStatisticHeaderRepository.findByLossTableId(bundle.getConformedRRLT().getId());
-//            scorPLTHeader.setPltStatisticList(rrStatisticHeaderList);
-
-            String currencyId = (String) bundle.get("lossCurrencyId");
-            scorPLTHeader.setCurrencyid(currencyId);
-//            scorPLTHeader.setRepresentationDataset(eltHeader.getRepresentationDataset());
+            scorPLTHeader.setCurrencyid(lossDataHeader.getCurrency());
             scorPLTHeader.setTargetRAPId(targetRap.getTargetRAPId());
-
-            scorPLTHeader.setRegionPerilId((Integer) bundle.get("regionPerilID"));
-//            scorPLTHeader.setSourceResult(eltHeader.getSourceResult());
-            //scorPLTHeader.setFinancialPerspective(fpUP);
-
-            //scorPLTHeader.setAdjustmentStructure(null);
-            //scorPLTHeader.setCatAnalysisDefinition(null);
-
+            scorPLTHeader.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
+            scorPLTHeader.setRrAnalysisId(rrAnalysis.getRrAnalysisId());
             scorPLTHeader.setCloningSourceId(null);
-            scorPLTHeader.setDefaultPltName("Pure-" + i); // FIXME: 16/07/2016
-            //scorPLTHeader.setUserShortName("Pure-u-" + i); // FIXME: 16/07/2016
-            //scorPLTHeader.setTags(null);
-
+            scorPLTHeader.setDefaultPltName("Pure-" + targetRaps.indexOf(targetRap)); // FIXME: 16/07/2016
             scorPLTHeader.setCreatedDate(new Date());
-            //scorPLTHeader.setxActPublicationDate(null);
-            //scorPLTHeader.setxActUsed(false);
-            //scorPLTHeader.setxActAvailable(false);
-            //scorPLTHeader.setxActModelVersion(makeXActModelVersion(pet.getRmsModelVersion(), pet.getModelVersionSuffixForxAct()));
-
             scorPLTHeader.setGeneratedFromDefaultAdjustment(false);
-            //scorPLTHeader.setUserSelectedGrain(bundle.getRrAnalysis().getGrain());
-            //scorPLTHeader.setExportedDPM(false);
             scorPLTHeader.setRmsSimulationSet(pet.getRmsSimulationSetId());
-
             scorPLTHeader.setGeoCode(rrAnalysis.getGeoCode());
             scorPLTHeader.setGeoDescription(rrAnalysis.getGeoCode());
             scorPLTHeader.setPerilCode(rrAnalysis.getPeril());
-
-            //scorPLTHeader.setEngineType(bundle.getRmsAnalysis().getEngineType());
-            //scorPLTHeader.setInstanceId(bundle.getInstanceId());
-
-            // @TODO Get form params
-            Integer importSeq= null;
-            scorPLTHeader.setImportSequence(importSeq);
-
+            scorPLTHeader.setImportSequence(importSequence);
             scorPLTHeader.setSourceLossModelingBasis(modelingBasis.getCode());
-
             String sourceFinPersp = rrAnalysis.getFinancialPerspective();
-
             scorPLTHeader.setUdName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
             scorPLTHeader.setDefaultPltName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
 
             pltHeaders.add(scorPLTHeader);
-
             log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPLTHeader.getPltHeaderId(), targetRap.getTargetRAPId(), targetRap.getSourceRAPCode(), targetRap.getTargetRAPCode());
         }
         return pltHeaders;
@@ -419,9 +339,9 @@ public class ELTToPLTConverter {
     }
 
 
-    private PLTModelingBasis getModelingBasis(String contractId, String uwYear) {
+    private PLTModelingBasis getModelingBasis() {
         if (contractId != null && uwYear != null) {
-            String sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId, parseUwYear(uwYear))
+            String sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId,uwYear)
                     .map(Contract::getContractSourceTypeId)
                     .orElse(null);
             return "5".equals(sourceTypeId) ? PLTModelingBasis.PM : PLTModelingBasis.AM;
