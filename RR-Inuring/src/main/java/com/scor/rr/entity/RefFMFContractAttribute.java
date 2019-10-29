@@ -65,5 +65,9 @@ public class RefFMFContractAttribute {
     @Column(name = "DefaultValueNotes")
     private String defaultValueNotes;
 
-
+    public RefFMFContractAttribute(String uIAttributeName, String dataType, String defaultValue) {
+        this.uIAttributeName = uIAttributeName;
+        this.dataType = dataType;
+        this.defaultValue = defaultValue;
+    }
 }
