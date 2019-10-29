@@ -4,7 +4,9 @@ import com.scor.rr.domain.RmsExchangeRate;
 import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.RLAnalysisELT;
+import com.scor.rr.domain.model.EPCurveHeader;
 import com.scor.rr.domain.model.LossDataHeader;
+import com.scor.rr.domain.model.SummaryStatisticHeader;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
@@ -45,10 +47,18 @@ public class TransformationBundle {
 
     private String truncationCurrency;
 
+    private Integer truncatedEvents;
+    private Double truncatedAAL;
+    private Double truncatedSD;
+    private Double truncationThreshold;
+
     @Deprecated // to be gc-ed
     private AnalysisELTnBetaFunction analysisELTnBetaFunction; // contains data for binary files
 
     private List<PLTBundle> pltBundles;
+
+    List<EPCurveHeader> epCurves;
+    List<SummaryStatisticHeader> summaryStatisticHeaders;
 
     public synchronized void addPLTBundle(PLTBundle pltBundle) {
         if (this.pltBundles == null) {

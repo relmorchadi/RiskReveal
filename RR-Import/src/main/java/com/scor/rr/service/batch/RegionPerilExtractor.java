@@ -3,6 +3,7 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.ProjectImportRun;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
+import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.reference.Currency;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RlSourceResult;
@@ -116,9 +117,6 @@ public class RegionPerilExtractor {
 
                 RRAnalysis rrAnalysis = new RRAnalysis();
 
-                //rrAnalysis.setSourceResultsReference(sourceResult.getModelingResultDataSource().getModelingResultDataSourceId());
-                //rrAnalysis.setTags(sourceResult.getTags());
-                //rrAnalysis.setUserNotes(sourceResult.getNotes());
                 rrAnalysis.setRegion(sourceResult.getRlAnalysis().getRegion());
                 rrAnalysis.setSubPeril(sourceResult.getRlAnalysis().getSubPeril());
                 rrAnalysis.setProfileName(sourceResult.getRlAnalysis().getProfileName());
@@ -161,6 +159,8 @@ public class RegionPerilExtractor {
                 rrAnalysis.setAnalysisId(sourceResult.getRlAnalysis().getAnalysisId());
                 rrAnalysis.setAnalysisName(sourceResult.getRlAnalysis().getAnalysisName());
                 rrAnalysis.setFinancialPerspective(sourceResult.getFinancialPerspective());
+
+                // TODO : get from SourceEpHeader
 //                if ("TY".equals(rrAnalysis.getFinancialPerspective())) {
 //                    rrAnalysis.setTreatyLabel(analysisFinancialPerspective.getTreatyLabel());
 //                    rrAnalysis.setTreatyTag(analysisFinancialPerspective.getTreatyTag());
@@ -190,7 +190,7 @@ public class RegionPerilExtractor {
                     analysisCurrency = currencyRepository.findByCode("USD");
                 }
 
-                RRLossTableHeader sourceRRLT = makeSourceRRLT(rrAnalysis, sourceResult, sourceResult.getFinancialPerspective(), analysisCurrency);
+                LossDataHeader sourceRRLT = makeSourceRRLT(rrAnalysis, sourceResult, sourceResult.getFinancialPerspective(), analysisCurrency);
 
                 Currency targetCurrency;
                 if (sourceResult.getTargetCurrency() != null) {
@@ -200,7 +200,7 @@ public class RegionPerilExtractor {
                     targetCurrency = currencyRepository.findByCode("USD");
                 }
 
-                RRLossTableHeader conformedRRLT = makeConformedRRLT(rrAnalysis, sourceRRLT, targetCurrency);
+                LossDataHeader conformedRRLT = makeConformedRRLT(rrAnalysis, sourceRRLT, targetCurrency);
 
 
                 // TODO :  Review Later with viet
@@ -239,16 +239,16 @@ public class RegionPerilExtractor {
         return regionPerilRepository.findByRegionPerilCode(rpCode);
     }
 
-    private RRLossTableHeader makeSourceRRLT(RRAnalysis rrAnalysis, RlSourceResult sourceResult, String financialPerspective, Currency analysisCurrency) {
+    private LossDataHeader makeSourceRRLT(RRAnalysis rrAnalysis, RlSourceResult sourceResult, String financialPerspective, Currency analysisCurrency) {
 
         if (financialPerspective == null) {
             log.debug("no analysis financial perspective found for source result {}", sourceResult.getRlSourceResultId());
         }
 
-        RRLossTableHeader rrLossTable = new RRLossTableHeader();
+        LossDataHeader rrLossTable = new LossDataHeader();
 //        rrLossTable.setRrRepresentationDatasetId(rrRepresentationDataset.getId());
 //        rrLossTable.setFileType("bin");
-        rrLossTable.setRrAnalysis(rrAnalysis);
+        rrLossTable.setModelAnalysisId(rrAnalysis.getRrAnalysisId());
         rrLossTable.setCreatedDate(new Date());
         rrLossTable.setLossTableType("ELT");
         rrLossTable.setFileDataFormat("Treaty");
@@ -259,19 +259,19 @@ public class RegionPerilExtractor {
         return rrLossTable;
     }
 
-    private RRLossTableHeader makeConformedRRLT(RRAnalysis rrAnalysis, RRLossTableHeader sourceRRLT, Currency currency) {
+    private LossDataHeader makeConformedRRLT(RRAnalysis rrAnalysis, LossDataHeader sourceRRLT, Currency currency) {
 
-        RRLossTableHeader conformedRRLT = new RRLossTableHeader();
+        LossDataHeader conformedRRLT = new LossDataHeader();
 //        conformedRRLT.setRrRepresentationDatasetId(sourceRRLT.getRrRepresentationDatasetId());
 //        conformedRRLT.setFileType(RRLossTable.FILE_TYPE_BIN); // TODO non c'est RMS
-        conformedRRLT.setRrAnalysis(rrAnalysis);
+        conformedRRLT.setModelAnalysisId(rrAnalysis.getRrAnalysisId());
         conformedRRLT.setLossTableType("ELT");
         conformedRRLT.setFileDataFormat("Treaty");
         conformedRRLT.setOriginalTarget(RRLossTableType.CONFORMED.getCode());
         conformedRRLT.setCurrency(currency.getCode()); //  target currency
         // TODO fileName, filePath later
 
-        log.info("Conformed ELT Header {}", conformedRRLT.getRrLossTableHeaderId());
+        log.info("Conformed ELT Header {}", conformedRRLT.getLossDataHeaderId());
         return conformedRRLT;
     }
 }
