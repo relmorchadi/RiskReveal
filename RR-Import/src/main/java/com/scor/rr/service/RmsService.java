@@ -30,7 +30,7 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 @Component
-@Transactional(transactionManager = "rmsTransactionManager")
+//@Transactional(transactionManager = "rmsTransactionManager")
 public class RmsService {
 
     private final Logger logger = LoggerFactory.getLogger(RmsService.class);

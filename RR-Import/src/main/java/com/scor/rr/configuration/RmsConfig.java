@@ -33,6 +33,7 @@ public class RmsConfig {
     public DataSourceTransactionManager getRmsTransactionManager(){
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(createRmsDataSource());
+        dataSourceTransactionManager.setEnforceReadOnly(true);
         return dataSourceTransactionManager;
     }
 

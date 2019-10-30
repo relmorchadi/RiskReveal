@@ -17,10 +17,11 @@ import java.util.List;
 @RequestMapping("api/rms")
 public class RmsRessource {
 
+    private final Logger logger = LoggerFactory.getLogger(RmsRessource.class);
+
     @Autowired
     RmsService rmsService;
 
-    private final Logger logger = LoggerFactory.getLogger(RmsRessource.class);
 
     @GetMapping("listAvailableDataSources")
     public ResponseEntity<?> listAvailableDataSources() {

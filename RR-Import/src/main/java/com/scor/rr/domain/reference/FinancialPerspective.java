@@ -16,8 +16,7 @@ import javax.persistence.Id;
 public class FinancialPerspective {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long financialPerspectiveId;
+    private String financialPerspectiveId;
 
     private String modellingVendor;
 

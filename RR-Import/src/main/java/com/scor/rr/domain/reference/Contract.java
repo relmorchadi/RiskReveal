@@ -14,7 +14,7 @@ import java.util.Date;
 public class Contract {
 
     @Id
-    private Long id;
+    private String id;
 
     private String description;
     private String contractSourceTypeName;
