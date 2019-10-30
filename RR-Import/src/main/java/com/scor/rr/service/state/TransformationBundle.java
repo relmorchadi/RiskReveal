@@ -25,8 +25,6 @@ public class TransformationBundle {
 
     private RLAnalysis rlAnalysis;
 
-//    private SourceRapMapping sourceRapMapping;
-
     private RegionPeril regionPeril;
 
     private RRAnalysis rrAnalysis;
@@ -48,8 +46,11 @@ public class TransformationBundle {
     private String truncationCurrency;
 
     private Integer truncatedEvents;
+
     private Double truncatedAAL;
+
     private Double truncatedSD;
+
     private Double truncationThreshold;
 
     @Deprecated // to be gc-ed
@@ -58,6 +59,7 @@ public class TransformationBundle {
     private List<PLTBundle> pltBundles;
 
     List<EPCurveHeader> epCurves;
+
     List<SummaryStatisticHeader> summaryStatisticHeaders;
 
     public synchronized void addPLTBundle(PLTBundle pltBundle) {

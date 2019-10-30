@@ -11,13 +11,13 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "PLTHeader", schema = "dr")
+@Table(name = "PLTHeader")
 public class PLTHeader {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "PLTHeaderId")
-    private Integer pltHeaderId;
+    private Long pltHeaderId;
 
     @Column(name = "Entity")
     private Integer entity;
@@ -125,7 +125,7 @@ public class PLTHeader {
     private Date archivedDate;
 
 
-    public PLTHeader(Integer pltHeaderId, String deletedBy) {
+    public PLTHeader(Long pltHeaderId, String deletedBy) {
         this.pltHeaderId = pltHeaderId;
         this.deletedBy = deletedBy;
     }

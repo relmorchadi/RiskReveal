@@ -134,7 +134,7 @@ public class ELTToPLTConverter {
         log.debug("Modeling basis: {}", modelingBasis);
 
         Map<String, List<PLTHeader>> pltsByPeqt = new HashMap<>();
-        Map<Integer, TransformationBundle> bundleForPLT = new HashMap<>();
+        Map<Long, TransformationBundle> bundleForPLT = new HashMap<>();
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
@@ -245,7 +245,7 @@ public class ELTToPLTConverter {
                 int end = (i + 1) * chunkSize < entry.getValue().size() ? (i + 1) * chunkSize : entry.getValue().size();
                 List<PLTHeader> scorPLTHeaders = entry.getValue().subList(start, end);
 //                List<ScorPLTHeader> scorPLTHeaders = entry.getValue();
-                Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT = new HashMap<>(scorPLTHeaders.size());
+                Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT = new HashMap<>(scorPLTHeaders.size());
                 for (PLTHeader scorPLTHeader : scorPLTHeaders) {
                     TransformationBundle bundle = bundleForPLT.get(scorPLTHeader.getPltHeaderId());
                     if (bundle != null) {
@@ -373,12 +373,12 @@ public class ELTToPLTConverter {
         private CountDownLatch latch;
         private BinFile peqtFile;
         private List<PLTHeader> scorPLTHeaders;
-        Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
+        Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
         private Boolean[] finished = { Boolean.FALSE };
         private int nbWorkers;
 
         public TreatyBatchLauncher(CountDownLatch latch, BinFile peqtFile, List<PLTHeader> scorPLTHeaders,
-                                   Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT) {
+                                   Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT) {
             this.id = hashCode();
             this.queue = new ArrayBlockingQueue<>(queueSize);
             this.latch = latch;
@@ -415,7 +415,7 @@ public class ELTToPLTConverter {
             CountDownLatch workerLatch = new CountDownLatch(nbWorkers);
             ExecutorService pool = Executors.newFixedThreadPool(nbWorkers);
             Timer timer = new Timer();
-            Map<Integer, FileOutputStream> outputStreamForPLT = new HashMap<>();
+            Map<Long, FileOutputStream> outputStreamForPLT = new HashMap<>();
             for (PLTHeader pltHeader : scorPLTHeaders) {
                 File file = new File(pltHeader.getPltLossDataFilePath(), pltHeader.getPltLossDataFileName());
                 try {
@@ -527,7 +527,7 @@ public class ELTToPLTConverter {
                 log.error("Exception: {}, {}", peqtFile.getFileName(), e);
             }
 
-            for (Map.Entry<Integer, FileOutputStream> entry : outputStreamForPLT.entrySet()) {
+            for (Map.Entry<Long, FileOutputStream> entry : outputStreamForPLT.entrySet()) {
                 IOUtils.closeQuietly(entry.getValue());
             }
 
@@ -562,15 +562,15 @@ public class ELTToPLTConverter {
         private final BlockingQueue<RRPeriod> queue;
         private final CountDownLatch workerLatch;
         private List<PLTHeader> scorPLTHeaders;
-        private Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
-        private Map<Integer, FileOutputStream> outputStreamForPLT;
+        private Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
+        private Map<Long, FileOutputStream> outputStreamForPLT;
         private Timer timer;
         private Comparator<PLTLossData> cmp;
-        private Map<Integer, List<PLTLossData>> pltLossDataForPLT;
+        private Map<Long, List<PLTLossData>> pltLossDataForPLT;
 
 
         public TreatyBatchWorker(int masterId, Boolean[] finished, BlockingQueue<RRPeriod> queue, CountDownLatch workerLatch, Timer timer, List<PLTHeader> scorPLTHeaders,
-                                 Map<Integer, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT, Map<Integer, FileOutputStream> outputStreamForPLT) {
+                                 Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT, Map<Long, FileOutputStream> outputStreamForPLT) {
             id = hashCode();
             this.masterId = masterId;
             this.finished = finished;

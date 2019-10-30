@@ -41,8 +41,6 @@ public class BatchConfiguration {
 
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
         simpleJobLauncher.setJobRepository(getJobRepository());
-        //simpleJobLauncher.setTaskExecutor(getTaskExecutor());
-
         return simpleJobLauncher;
     }
 }

@@ -60,4 +60,10 @@ public class SummaryStatisticHeader {
         this.ePSFilePath = ePSFilePath;
         this.ePSFileName = ePSFileName;
     }
+
+    public SummaryStatisticHeader(SummaryStatisticHeader summaryStatisticHeader) {
+        this.entity = summaryStatisticHeader.getEntity();
+        this.financialPerspective = summaryStatisticHeader.getFinancialPerspective();
+        this.lossDataType = summaryStatisticHeader.getLossDataType();
+    }
 }

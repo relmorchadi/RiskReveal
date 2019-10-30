@@ -64,9 +64,8 @@ public class RLAnalysis {
     @JoinColumn(name = "analysisScanStatus")
     private RlAnalysisScanStatus rlAnalysisScanStatus;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rlSourceResult")
-    private RlSourceResult rlSourceResult;
+    @OneToMany(mappedBy = "rlAnalysisId",fetch = FetchType.LAZY)
+    private List<RlSourceResult> rlSourceResult;
 
     @OneToMany(mappedBy = "rLAnalysisId")
     List<RlSourceEpHeader> rlSourceEpHeaders;
