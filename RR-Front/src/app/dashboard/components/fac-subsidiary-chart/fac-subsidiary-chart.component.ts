@@ -18,6 +18,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
 
+  myChart: any;
+
   private dropdown: NzDropdownContextComponent;
   uwyUnits;
   cedants = Data.cedant;
@@ -54,7 +56,16 @@ export class FacSubsidiaryChartComponent implements OnInit {
           },
           type: ['stack', 'tiled']
         },
+        myCostumeTool: {
+          show: true,
+          title: 'rate',
+          icon: 'image://http://echarts.baidu.com/images/favicon.png',
+          onclick: () => {
+            this.switchData();
+          }
+        }
       },
+      itemSize: 20
     },
     xAxis: {
       type: 'category',
@@ -88,6 +99,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
     series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
   };
+  alternateSeriesData: any;
 
   @ViewChild('chart') chart;
 
@@ -206,16 +218,36 @@ export class FacSubsidiaryChartComponent implements OnInit {
 
   setValues() {
     let series = [];
+    let alternateSeries = [];
     const {data} = this.chartOption.legend;
     _.forEach(data, item => {
       let trad = [];
+      let part = [];
       _.forEach(this.subsidiaryList, subsItem => {
         trad = [...trad, _.filter(this.data, dt =>
           dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length];
+        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length /
+        _.filter(this.data, dt => dt.uwanalysisContractSubsidiary === subsItem).length) * 100];
       });
       series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      alternateSeries = [...alternateSeries, {name: item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
+    this.alternateSeriesData = alternateSeries;
+    console.log(alternateSeries);
     this.chartOption.series = series;
+  }
+
+  onChartInit(instance) {
+    this.myChart = instance;
+  }
+
+  switchData() {
+    // console.log('switch data');
+    const switchedSeries = this.chartOption.series;
+    this.myChart.setOption({
+      series: this.alternateSeriesData
+    });
+    this.alternateSeriesData = switchedSeries;
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {

@@ -20,6 +20,7 @@ import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {HelperService} from "../../../../shared/helper.service";
+import {BadgesService, mapBadgeShortCutToBadgeKey, mapTableNameToBadgeKey} from "../../../service/badges.service";
 
 
 @Component({
@@ -36,16 +37,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   readonly componentName: string = 'search-pop-in';
 
   searchShortCuts = [
-    {name: "Cedant Name", shortcut: "c:"},
-    {name: "Cedant Code", shortcut: "cid:"},
+    {name: "CedantName", shortcut: "c:"},
+    {name: "CedantCode", shortcut: "cid:"},
     {name: "Country", shortcut: "ctr:"},
     {name: "Year", shortcut: "uwy:"},
-    {name: "Project", shortcut: "p:"},
-    {name: "Workspace Name", shortcut: "w:"},
-    {name: "Workspace Code", shortcut: "wid:"},
-    {name: "PLT", shortcut: "plt:"},
-    {name: "Section Name", shortcut: "s:"},
-    {name: "UW Unit", shortcut: "uwu:"}
+    {name: "WorkspaceName", shortcut: "w:"},
+    {name: "WorkspaceId", shortcut: "wid:"}
   ];
 
   @ViewChild('searchInput')
@@ -58,7 +55,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   searchMode: string = 'Treaty';
   searchConfigPopInVisible: boolean = false;
   inputDisabled: boolean = true;
-
+  mapBadgeShortCutToBadgeKey: any;
+  mapTableNameToBadgeKey: any;
+  showListOfShortCuts: boolean;
+  possibleShortCuts: string[];
 
   @Input('state')
   set setState(value) {
@@ -69,7 +69,11 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
               private _notifcationService: NotificationService, private store: Store,
-              private actions$: Actions, private cdRef: ChangeDetectorRef) {
+              private actions$: Actions, private cdRef: ChangeDetectorRef,
+              private badgeService: BadgesService
+  ) {
+    this.mapBadgeShortCutToBadgeKey = mapBadgeShortCutToBadgeKey;
+    this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
     this.contractFilterFormGroup = this._fb.group({
       expertModeToggle: [false],
       globalKeyword: ['']
@@ -81,6 +85,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       if (from != this.componentName)
         this.store.dispatch(new SearchActions.CloseSearchPopIns());
     });
+    this.showListOfShortCuts = false;
+    this.possibleShortCuts= [];
   }
 
   ngOnInit() {
@@ -96,7 +102,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     if (this.state.data && this.state.data.length > 0) {
       this.scrollParams.listLength = _.reduce(this.state.data, (sum, n) => {
         return sum + (n.length > 5 ? 5 : n.length);
-      }, 0);
+      }, 0) + this.possibleShortCuts.length;
+    } else {
+      this.scrollParams.listLength = this.possibleShortCuts.length;
     }
   }
 
@@ -124,59 +132,43 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       .valueChanges
       .pipe(takeUntil(this.unSubscribe$), debounceTime(500))
       .subscribe((value) => {
+        value && value.length > 1 && this.updatePossibleShortCuts(value);
         this.store.dispatch(new SearchActions.SearchInputValueChange(this.isExpertMode, value))
         this._contractChoicesSearch(value);
       });
+  }
+
+  updatePossibleShortCuts(expr) {
+    if( !_.includes(expr, ":")) {
+      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.name), _.toLower(expr))), shortCut => shortCut.name);
+    } else {
+      this.possibleShortCuts = [];
+    }
+    this.showListOfShortCuts = this.possibleShortCuts.length > 0;
   }
 
   isSearchRoute() {
     return window.location.href.match('search');
   }
 
+  onDoublePoints = _.debounce(($event: KeyboardEvent) => {
+    this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword));
+  }, 350);
+
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    console.log(this.isExpertMode);
-    if (this.isExpertMode) {
-      this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + this.globalKeyword));
-    } else {
-      this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
-    }
-    // this.clearSearchValue();
+    console.log(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword)
+    this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword));
+    this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
 
   onSpace(evt: KeyboardEvent) {
     if (this.scrollParams.position && this.scrollParams.scrollTo >= 0) {
       evt.preventDefault();
       let {i, j} = this.scrollParams.position;
-      this.selectSearchBadge(HelperService.upperFirstWordsInSetence(this.state.tables[i]), this.state.data[i][j].label);
+      this.selectSearchBadge(this.mapTableNameToBadgeKey[this.state.tables[i]], this.state.data[i][j].label);
       this.scrollParams.scrollTo = -1;
     }
-  }
-
-  convertBadgeToExpression(badges) {
-    let globalExpression = "";
-    let index;
-    _.forEach(badges, (badge, i: number) => {
-      index = this.searchShortCuts.findIndex(row => row.name == badge.key);
-      if (i == badges.length - 1) {
-        globalExpression += this.searchShortCuts[index].shortcut + badge.value;
-      } else {
-        globalExpression += this.searchShortCuts[index].shortcut + badge.value + " ";
-      }
-    })
-    return globalExpression;
-  }
-
-  convertExpressionToBadge(expression) {
-    const twoChars = expression.substring(0, 2).toLowerCase();
-    const threeChars = expression.substring(0, 4).toLowerCase();
-    let firstCheck = _.findIndex(this.searchShortCuts.map(row => row.shortcut), row => row == twoChars);
-    let secondCheck = _.findIndex(this.searchShortCuts.map(row => row.shortcut), row => row == threeChars);
-    if (firstCheck > -1) {
-      return {key: this.searchShortCuts[firstCheck].name, value: expression.substring(2)}
-    } else if (secondCheck > -1) {
-      return {key: this.searchShortCuts[secondCheck].name, value: expression.substring(4)}
-    } else return null;
   }
 
   onBackspace(evt: KeyboardEvent) {
@@ -188,8 +180,36 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.store.dispatch(new SearchActions.DeleteAllBadgesAction());
   }
 
+  onKeyPress($event: KeyboardEvent) {
+    if ($event.shiftKey && $event.ctrlKey && $event.code == "KeyS") {
+      this.searchInput.nativeElement.focus();
+      this.searchInput.nativeElement.click();
+    }
+  }
+
+  convertBadgeToExpression(badges) {
+    let globalExpression = "";
+    let index;
+    console.log(badges);
+    _.forEach(badges, (badge, i: number) => {
+      console.log(badge);
+      index = this.searchShortCuts.findIndex(row => row.name == badge.key);
+      if(i == badges.length - 1) {
+        globalExpression += this.searchShortCuts[index].name + ":" + badge.value;
+      } else {
+        globalExpression += this.searchShortCuts[index].name + ":" + badge.value + " ";
+      }
+    });
+    return globalExpression;
+  }
+
+  convertExpressionToBadge(expression) {
+    const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, shortCut.name));
+    return foundShortCut ? { key: foundShortCut.name, value: expression.substring(foundShortCut.name.length + 1) } : null;
+  }
+
   selectSearchBadge(key, value) {
-    key = HelperService.upperFirstWordsInSetence(key);
+    event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword));
     this.searchInput.nativeElement.focus();
@@ -201,7 +221,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   addBadgeFromResultList(key) {
-    this.selectSearchBadge(HelperService.upperFirstWordsInSetence(key), this.state.actualGlobalKeyword);
+    this.selectSearchBadge(this.mapTableNameToBadgeKey[key], this.state.actualGlobalKeyword);
   }
 
   closeSearchBadge(status, index) {
@@ -223,11 +243,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   focusInput(event) {
-    if (this.searchConfigPopInVisible)
-      this.searchConfigPopInVisible = false;
-    this._searchService.setvisibleDropdown(false);
-    this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
-    this.togglePopup();
+    if(!this.state.visibleSearch) {
+      if (this.searchConfigPopInVisible) this.searchConfigPopInVisible = false;
+      this._searchService.setvisibleDropdown(false);
+      this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
+      this.togglePopup();
+    }
   }
 
   openClose(): void {
@@ -240,7 +261,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       }]));
     this.togglePopup();
   }
-
 
   get isExpertMode() {
     return this.contractFilterFormGroup.get('expertModeToggle').value;
@@ -294,14 +314,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.contractFilterFormGroup.patchValue({globalKeyword: item.key + ':' + item.value})
   }
 
-  onKeyPress($event: KeyboardEvent) {
-    if ($event.shiftKey && $event.ctrlKey && $event.code == "KeyS") {
-      console.log('shift + ctrl + s');
-      this.searchInput.nativeElement.focus();
-      this.searchInput.nativeElement.click();
-    }
-  }
-
   seeAllSavedSearch() {
     if (this.router.url == '/search') {
       this.store.dispatch(new showSavedSearch())
@@ -316,5 +328,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     if (!this.state.visibleSearch) {
       this.store.dispatch(new closeSearch())
     }
+  }
+
+  replaceExpressionWithShortCut(possibleShortCut: string) {
+    event.preventDefault();
+    this.contractFilterFormGroup.get('globalKeyword').patchValue(possibleShortCut + ":");
   }
 }

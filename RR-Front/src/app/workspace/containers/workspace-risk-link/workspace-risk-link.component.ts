@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angu
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -18,6 +18,7 @@ import {combineLatest} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from "../../../shared/pipes/table-sort-and-filter.pipe";
 import {NotificationService} from "../../../shared/services";
+import {debounceTime} from "rxjs/operators";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -127,6 +128,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   constructor(
     private _helper: HelperService,
     private route: ActivatedRoute,
+    private actions$: Actions,
     private tableFilter: TableSortAndFilterPipe,
     private confirmationService: ConfirmationService,
     private notification: NotificationService,
@@ -134,7 +136,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
-
   ngOnInit() {
     this.serviceSubscription = [
       this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
@@ -167,7 +168,23 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
           this.dispatch([new fromWs.LoadFacDataAction()]);
         }
         this.detectChanges();
-      })
+      }),
+      this.actions$.pipe(ofActionSuccessful(fromWs.AddToBasketAction, fromWs.LoadDetailAnalysisFacAction))
+        .pipe(this.unsubscribeOnDestroy, debounceTime(500))
+        .subscribe(() => {
+          console.log(this.state.results.isValid);
+/*          if (!this.state.results.isValid) {
+            this.confirmationService.confirm({
+              message: 'You are attempting to import multiple analysis for the following region peril/division',
+              rejectVisible: false,
+              header: 'Warning',
+              icon: 'pi pi-exclamation-triangle',
+              accept: () => {
+              }
+            });
+          }*/
+          this.detectChanges();
+        }),
     ];
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
@@ -376,16 +393,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   displayImported() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketAction());
-    if (this.tabStatus === 'fac') {
-      this.confirmationService.confirm({
-        message: 'You are attempting to import multiple analysis for the following region peril/division',
-        rejectVisible: false,
-        header: 'Warning',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-        }
-      });
-    }
   }
 
   getScrollableCols() {

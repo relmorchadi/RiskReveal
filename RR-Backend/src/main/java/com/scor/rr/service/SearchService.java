@@ -135,7 +135,7 @@ public class SearchService {
 
     public Page<?> countInWorkspace(TableNames table, String keyword, int size) {
         return ofNullable(countMapper.get(table))
-                .map(callback -> callback.apply("%" + keyword + "%", PageRequest.of(0, size)))
+                .map(callback -> callback.apply( keyword , PageRequest.of(0, size)))
                 .orElseThrow(() -> new RuntimeException("Table parameter not found"));
     }
 

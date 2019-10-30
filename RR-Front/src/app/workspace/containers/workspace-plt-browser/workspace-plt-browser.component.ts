@@ -719,10 +719,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       console.log(this.wsType);
       if (this.wsType === 'fac') {
         this.tableInputs.pltColumns.splice(5, 0, {
-          identifier: 'Override',
+          identifier: 'Division',
           sortDir: 1,
-          fields: 'override',
-          header: 'Override',
+          fields: 'division',
+          header: 'Division',
           sorted: true,
           filtred: true,
           resizable: true,

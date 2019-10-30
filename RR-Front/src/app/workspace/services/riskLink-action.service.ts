@@ -714,13 +714,14 @@ export class RiskLinkStateService {
           data: summaryInfo,
           numberOfElement: _.toArray(summaryInfo).length,
           allChecked: false,
-          indeterminate: _.get(draft.content[wsIdentifier].riskLink.summaries, 'indeterminate', false)
+          indeterminate: _.get(draft.content[wsIdentifier].riskLink.summaries, 'indeterminate', false),
         };
         draft.content[wsIdentifier].riskLink.results = {
           data: resultsInfo,
           numberOfElement: _.toArray(resultsInfo).length,
           allChecked: false,
-          indeterminate: _.get(draft.content[wsIdentifier].riskLink.results, 'indeterminate', false)
+          indeterminate: _.get(draft.content[wsIdentifier].riskLink.results, 'indeterminate', false),
+          isValid: this._isValidImport(ctx, _.toArray(resultsInfo)),
         };
         draft.content[wsIdentifier].riskLink.analysis = _.forEach(draft.content[wsIdentifier].riskLink.analysis,
             item => {_.forEach(item.data, dt => {if (dt.selected) {dt.imported = true; } });
@@ -1393,8 +1394,9 @@ export class RiskLinkStateService {
           };
         });
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.results.data = _.merge({},
-            draft.content[wsIdentifier].riskLink.results.data, dataTable);
+          const newData =  _.merge({}, draft.content[wsIdentifier].riskLink.results.data, dataTable);
+          draft.content[wsIdentifier].riskLink.results.data = newData;
+          draft.content[wsIdentifier].riskLink.results.isValid = this._isValidImport(ctx, _.toArray(newData));
           })));
       }),
       catchError(err => {
@@ -2030,6 +2032,13 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = state.currentTab.wsIdentifier;
     return value === state.content[wsIdentifier].wsId + this.divisionTag[division];
+  }
+
+  private _isValidImport(ctx, data) {
+    const valid = _.uniq(_.map(data, item => ({regionPeril: item.regionPeril, division: item.division})));
+    const divisions = _.uniq(_.map(data, item => item.division));
+    console.log(valid, divisions);
+    return valid.length >= 2 * divisions.length;
   }
 
 }

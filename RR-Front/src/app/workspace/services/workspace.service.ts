@@ -444,6 +444,15 @@ export class WorkspaceService {
       }));
   }
 
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
+      draft.facWs.sequence = draft.facWs.sequence + 1;
+    }));
+  }
+
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {project, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
@@ -458,6 +467,22 @@ export class WorkspaceService {
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });
+  }
+
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
+    console.log(selected);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (selected.length > 0) {
+        draft.content[wsIdentifier].projects = this._selectProject(
+          _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id), 0
+        );
+      } else {
+        draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id);
+      }
+    }));
   }
 
   private _selectProject(projects: any, projectIndex: number): Array<any> {

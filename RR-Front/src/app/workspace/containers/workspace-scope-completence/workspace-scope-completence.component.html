@@ -158,7 +158,7 @@
                   <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
                 </ng-container>
                 <ng-container *ngIf="wsType === 'fac'">
-                  <div style="text-align: center;">Division N° {{i + 1}}<br/>{{item.name}}</div>
+                  <div style="text-align: center;">Division N° {{i + 1}}<br/>{{item.divisionInfo}}<br/>{{item.property}}</div>
                 </ng-container>
                 <div *ngIf="checkTreatySectionAttached(item) " class="icon-holder" nz-tooltip [nzTitle]="checked">
                   <ng-container>

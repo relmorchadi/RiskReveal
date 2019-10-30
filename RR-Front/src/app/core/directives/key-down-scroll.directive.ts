@@ -8,14 +8,14 @@ export class KeyDownScrollDirective implements OnChanges{
   @Input() appKeyDownScroll: boolean;
   @Input() i: number;
   @Input() k: number;
-  @Input() data: any;
+  @Input() range: any;
   @Input() scrollTo: number;
   @Output() setPos = new EventEmitter();
 
   calculatePos(i: number, j: number) {
     let r = 0;
     for(let index=0; index < i;index++) {
-      r+= this.data[index].length;
+      r+= this.range[index].length;
     }
     return j + r
   }
