@@ -6,9 +6,7 @@ import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
 import com.scor.rr.repository.LossDataHeaderRepository;
-import com.scor.rr.repository.RRLossTableHeaderRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
@@ -103,11 +101,11 @@ public class ELTWriter extends AbstractWriter {
             for (RlEltLoss rmseltLoss : eltLossList) {
                 eventCount++;
                 buffer.putInt(rmseltLoss.getEventId().intValue());
-                buffer.putDouble(rmseltLoss.getLoss());
-                buffer.putDouble(rmseltLoss.getExposureValue());
-                buffer.putDouble(rmseltLoss.getStdDevC());
-                buffer.putDouble(rmseltLoss.getStdDevI());
-                buffer.putDouble(rmseltLoss.getRate());
+                buffer.putFloat((float) rmseltLoss.getLoss());
+                buffer.putFloat((float) rmseltLoss.getExposureValue());
+                buffer.putFloat((float) rmseltLoss.getStdDevC());
+                buffer.putFloat((float) rmseltLoss.getStdDevI());
+                buffer.putFloat((float) rmseltLoss.getRate());
             }
         } catch (IOException e) {
             log.error("Error writing RRLT file {}, eventCount {}, exception {}", rrImportedLossData.getLossDataHeaderId(), eventCount, e);

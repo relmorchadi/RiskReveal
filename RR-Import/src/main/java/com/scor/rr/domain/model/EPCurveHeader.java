@@ -27,11 +27,11 @@ public class EPCurveHeader {
     private String ePCFilePath;
     private String ePCFileName;
 
-    public EPCurveHeader(EPCurveHeader epCurveHeader){
-        this.entity = epCurveHeader.getEntity();
-        this.lossDataType = epCurveHeader.getLossDataType();
-        this.financialPerspective = epCurveHeader.getFinancialPerspective();
-        this.statisticMetric = epCurveHeader.getStatisticMetric();
-    }
+//    public EPCurveHeader(EPCurveHeader epCurveHeader){
+//        this.entity = epCurveHeader.getEntity();
+//        this.lossDataType = epCurveHeader.getLossDataType();
+//        this.financialPerspective = epCurveHeader.getFinancialPerspective();
+//        this.statisticMetric = epCurveHeader.getStatisticMetric();
+//    }
 
 }
