@@ -2037,7 +2037,7 @@ export class RiskLinkStateService {
   private _isValidImport(ctx, data) {
     const valid = _.uniq(_.map(data, item => ({regionPeril: item.regionPeril, division: item.division})));
     const divisions = _.uniq(_.map(data, item => item.division));
-    console.log(valid, division);
+    console.log(valid, divisions);
     return valid.length >= 2 * divisions.length;
   }
 
