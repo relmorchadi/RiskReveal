@@ -224,85 +224,7 @@ public class EpCurveExtractor {
             epCurveHeaderRepository.saveAll(conformedEpCurvesHeaders);
 
 
-
-//            for (StatFile statFileSource : bundle.getSourceRRLT().getStatFiles()) {
-//                StatFile statFileConformed = new StatFile();
-//                for (String rrStatisticHeaderId : statFileSource.getStatisticHeaders()) {
-//                    RRStatisticHeader rrStatisticHeader = rrStatisticHeaderRepository.findOne(rrStatisticHeaderId);
-//                    //            for (ELTEPHeader eltepHeader : eltHeader.getELTEPHeaders()) {
-//                    RRFinancialPerspective fp = rrStatisticHeader.getFinancialPerspective();
-////                AnalysisFinancialPerspective fp = bundle.getSourceResult().getFinancialPerspective(); // TODO false
-//                    StatisticMetric metric = rrStatisticHeader.getStatisticData().getStatisticMetric();
-//                    RRSummaryStatistic confSumStat = conformSummaryStatistic(rrStatisticHeader.getStatisticData().getSummaryStatistic(), proportion, multiplier, exchangeRate); // ELTEPSummaryStatistic
-//                    List<RREPCurve> confEPCurves = conformELTEPCurves(rrStatisticHeader.getStatisticData().getEpCurves(), proportion, multiplier, exchangeRate);
-
-//                ELTEPHeader confELTEPHeader = new ELTEPHeader();
-//                confELTEPHeader.setEltHeader(confELTHeader);
-//                confELTEPHeader.setFinancialPerspective(fp);
-//                confELTEPHeader.setStatisticMetric(metric);
-//                confELTEPHeader.setSummaryStatistic(confSumStat);
-//                confELTEPHeader.setEpCurves(confEPCurves);
-//
-//                mongoDBSequence.nextSequenceId(confELTEPHeader);
-//                confELTEPHeaders.add(confELTEPHeader);
-
-//                    SummaryStatisticHeader confRrStatisticHeader = new SummaryStatisticHeader();
-//                    //confRrStatisticHeader.setProjectId(transformationPackage.getProjectId());
-//                    confRrStatisticHeader.setLossTableId(conformedRRLT.getRrLossTableHeaderId());
-//                    statFileConformed.getStatisticHeaders().add(confRrStatisticHeader.getId());
-//                    confRrStatisticHeader.setLossDataType(RRStatisticHeader.STAT_DATA_TYPE_ELT);
-//                    confRrStatisticHeader.setFinancialPerspective(fp);
-//                    statFileConformed.setFinancialPerspective(fp);
-//                    confRrStatisticHeader.getStatisticData().setStatisticMetric(metric);
-//                    confRrStatisticHeader.getStatisticData().setSummaryStatistic(confSumStat);
-//                    confRrStatisticHeader.getStatisticData().setEpCurves(confEPCurves);
-//
-//                    confRrStatisticHeaders.add(confRrStatisticHeader);
-
-            // build map for writing purpose
-//            if (fp2Metric2EPCurves.get(fp) == null) {
-//                Map<StatisticMetric, List<RREPCurve>> metric2EPCurves = new HashMap<>();
-//                metric2EPCurves.put(metric, confEPCurves);
-//                fp2Metric2EPCurves.put(new AnalysisFinancialPerspective(fp), metric2EPCurves);
-//            } else {
-//                fp2Metric2EPCurves.get(fp).put(metric, confEPCurves);
-//            }
-//            if (fp2SumStat.get(fp) == null) {
-//                fp2SumStat.put(new AnalysisFinancialPerspective(fp), confSumStat);
-//            }
-//                }
-//                conformedRRLT.getStatFiles().add(statFileConformed);
-//            }
-//
-//
-//            log.debug("conformed ELTHeader id {} currency {}, ", conformedRRLT.getId(), conformedRRLT.getCurrency());
-//
-//            for (AnalysisFinancialPerspective fp : fp2SumStat.keySet()) {
-//                log.info("Writing conformed EP curves and sum stats for fp {}", fp.getFullCode());
-//
-//                for (StatFile statFileConformed : conformedRRLT.getStatFiles()) {
-//                    if (statFileConformed.getFinancialPerspective().getCode().equals(fp.getCode())) {
-//                        // String epcFname = makeELTEPCurveFilename(confELTHeader.getCreatedDate(), eltHeader.getRegionPeril().getRegionPerilCode(), fp.getFullCode(), confELTHeader.getCurrency(), XLTOT.TARGET, confELTHeader.getId(), getFileExtension());
-//                        String epcFname = makeELTEPCurveFilename(bundle.getRrAnalysis().getCreationDate(), bundle.getRrAnalysis().getRegionPeril(), fp.getFullCode(), conformedRRLT.getCurrency(), XLTOT.TARGET, conformedRRLT.getId(), getFileExtension());
-//                        BinFile binFileEPC = epCurveWriter.writeELTEPCurves(fp2Metric2EPCurves.get(fp), epcFname);
-//                        statFileConformed.setEpcFileName(binFileEPC.getFileName());
-//                        statFileConformed.setEpcFilePath(binFileEPC.getPath());
-//
-//                        // String epsFname = makeELTSummaryStatFilename(confELTHeader.getCreatedDate(), eltHeader.getRegionPeril().getRegionPerilCode(), fp.getFullCode(), confELTHeader.getCurrency(), XLTOT.TARGET, confELTHeader.getId(), getFileExtension());
-//                        String epsFname = makeELTSummaryStatFilename(bundle.getRrAnalysis().getCreationDate(), bundle.getRrAnalysis().getRegionPeril(), fp.getFullCode(), conformedRRLT.getCurrency(), XLTOT.TARGET, conformedRRLT.getId(), getFileExtension());
-//                        BinFile binFileEPS = epsWriter.writePLTSummaryStatistics(fp2SumStat.get(fp), epsFname);
-//                        statFileConformed.setEpsFileName(binFileEPS.getFileName());
-//                        statFileConformed.setEpsFilePath(binFileEPS.getPath());
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            rrLossTableRepository.save(conformedRRLT);
-////            eltepHeaderRepository.save(confELTEPHeaders);
-//            rrStatisticHeaderRepository.save(confRrStatisticHeaders);
-//
-//            log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getId());
+            log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
         }
         log.debug("RMSEPCurveExtractor.runConformedExtraction completed");
         return RepeatStatus.FINISHED;
@@ -360,7 +282,7 @@ public class EpCurveExtractor {
                                 .financialPerspective(fp)
                                 .statisticMetric(statisticMetric)
                                 .lossDataType(StatisticsType.ELT.getCode())
-                                .ePCurves(analysisEpCurves.toString()) // to be implemented
+                                .ePCurves(gson.toJson(analysisEpCurves)) // to be implemented
                                 .ePCFileName(makeEpCurveFileName)
                                 .ePCFilePath(file.getPath())
                                 .lossDataId(lossDataHeaderId)

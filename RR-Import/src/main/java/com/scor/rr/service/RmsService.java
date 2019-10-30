@@ -9,11 +9,11 @@ import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
 import com.scor.rr.domain.riskLink.RlModelDataSource;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.mapper.*;
-import com.scor.rr.repository.*;
+import com.scor.rr.repository.RlAnalysisRepository;
+import com.scor.rr.repository.RlAnalysisScanStatusRepository;
+import com.scor.rr.repository.RlModelDataSourceRepository;
+import com.scor.rr.repository.RlSourceResultRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +47,6 @@ public class RmsService {
 
     @Autowired
     RlAnalysisRepository rlAnalysisRepository;
-
-    @Autowired
-    FinancialPerspectiveRepository rrFinancialPerspectiveRepository;
 
     @Autowired
     RlSourceResultRepository rlSourceResultRepository;
