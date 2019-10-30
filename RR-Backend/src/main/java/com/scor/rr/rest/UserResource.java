@@ -1,7 +1,9 @@
 package com.scor.rr.rest;
 
 
+import com.scor.rr.domain.TargetBuild.ShortCut;
 import com.scor.rr.domain.dto.UserResponse;
+import com.scor.rr.service.TargetBuild.ShortCutService;
 import com.scor.rr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ public class UserResource {
     @Autowired
     UserService userService;
 
+    @Autowired
+    ShortCutService shortCutService;
+
     @GetMapping("/{userName}")
     List<UserResponse> getUsers(@RequestParam String userName) {
 
@@ -28,6 +33,11 @@ public class UserResource {
 
             return users;
         }
+    }
+
+    @GetMapping
+    List<ShortCut> getShortCuts() {
+        return this.shortCutService.getShortCuts();
     }
 
 }

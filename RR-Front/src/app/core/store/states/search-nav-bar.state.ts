@@ -406,7 +406,19 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   private searchLoader(keyword, table) {
-    return this._searchService.searchByTable(keyword || '', '5', table || '');
+    return this._searchService.searchByTable( this.parseAsterisk(keyword) || '', '5', table || '');
+  }
+
+  private parseAsterisk(expr: string) {
+    if(!_.includes(expr, "*")) {
+      return this.padWithLike('e', this.padWithLike('s', expr));
+    } else {
+      return _.replace(expr, '*', '%');
+    }
+  }
+
+  private padWithLike(t, expr) {
+    return (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
   }
 
 
