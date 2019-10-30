@@ -48,7 +48,7 @@ public class ELTConformer {
             String rdmName = rlAnalysis.getRdmName();
             String fpCode = (String) bundle.get("fpCode"); // not understood ???
             Integer treatyLabelID = isTreaty(fpCode) ? (Integer) bundle.get("treatyLabelId") : null;
-            Long instanceId = rlAnalysis.getRlModelDataSourceId();
+            String instanceId = "RL-18";
             RLAnalysisELT sourceAnalysisPLT =  (RLAnalysisELT) bundle.get("RlAnalysisELT");
             RlSourceResult sourceResult= (RlSourceResult) bundle.get("rlSourceResult");
 

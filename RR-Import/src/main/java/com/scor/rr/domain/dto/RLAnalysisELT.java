@@ -13,11 +13,11 @@ public class RLAnalysisELT {
     private Long rdmId;
     private String rdmName;
     private Long analysisId;
-    private Long instanceId;
+    private String instanceId;
     private String financialPerspective;
     private List<RlEltLoss> eltLosses;
 
-    public RLAnalysisELT(Long instanceId, Long rdmId, String rdmName, Long analysisId, String financialPerspective, List<RlEltLoss> eltLosses)
+    public RLAnalysisELT(String instanceId, Long rdmId, String rdmName, Long analysisId, String financialPerspective, List<RlEltLoss> eltLosses)
     {
         this.rdmId=rdmId;
         this.rdmName=rdmName;

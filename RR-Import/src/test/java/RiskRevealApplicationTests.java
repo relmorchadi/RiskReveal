@@ -790,7 +790,7 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getAnalysisModellingOptionSettings() {
-        Mockito.when(rmsService.getAnalysisModellingOptionSettings(1L,50L, "AC15_RL15_AUT_R", 1L)).thenReturn(resultTest);
+        Mockito.when(rmsService.getAnalysisModellingOptionSettings("RL-18",50L, "AC15_RL15_AUT_R", 1L)).thenReturn(resultTest);
         String analysisModellingOptionSettings = rmsRessource.getAnalysisModellingOptionSettings(50L, "AC15_RL15_AUT_R", 1L);
         Assert.assertNotNull(analysisModellingOptionSettings);
         try {

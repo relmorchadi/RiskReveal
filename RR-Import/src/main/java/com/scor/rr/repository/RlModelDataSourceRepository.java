@@ -9,6 +9,6 @@ import java.util.List;
 public interface RlModelDataSourceRepository extends JpaRepository<RlModelDataSource, Long> {
 
     List<RlModelDataSource> findByProjectId(Long projectId);
-    RlModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, Long instanceId, String rrId);
+    RlModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, String instanceId, String rrId);
 
 }

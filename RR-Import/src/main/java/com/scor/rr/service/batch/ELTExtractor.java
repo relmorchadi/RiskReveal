@@ -1,9 +1,11 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.domain.DataSource;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
+import com.scor.rr.repository.RlModelDataSourceRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -33,6 +35,10 @@ public class ELTExtractor {
     @Autowired
     TransformationPackage transformationPackage;
 
+    @Autowired
+    RlModelDataSourceRepository rlModelDataSourceRepository;
+
+
     @Value("#{jobParameters['contractId']}")
     private String contractId;
 
@@ -58,14 +64,17 @@ public class ELTExtractor {
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
             RlSourceResult sourceResult =  bundle.getSourceResult();
             String fpCode = bundle.getFinancialPerspective();
-            Long defaultInstanceId = bundle.getInstanceId();
+            String defaultInstanceId = bundle.getInstanceId();
             Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId)  : null;
             Long analysisId = riskLinkAnalysis.getAnalysisId();
             Long rdmId = riskLinkAnalysis.getRdmId();
             String rdmName = riskLinkAnalysis.getRdmName();
 
             log.info("Extracting ELT data for rdm {} - {}, analysis {}, fp {} ", rdmId, rdmName, analysisId, fpCode);
-            Long instanceId = ofNullable(riskLinkAnalysis.getRlModelDataSourceId()).orElseGet(() -> {
+            String instanceId = ofNullable(riskLinkAnalysis.getRlModelDataSourceId())
+                    .map(dsId -> rlModelDataSourceRepository.findById(dsId).get())
+                    .map(ds -> ds.getInstanceId())
+                    .orElseGet(() -> {
                 log.warn("RmsModelDatasource is null for rlAnalysis {} - use instanceId from batch", riskLinkAnalysis.getAnalysisId());
                 return defaultInstanceId;
             });

@@ -87,7 +87,7 @@ public class EpCurveExtractor {
 
         transformationBundle.forEach(bundle -> {
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
-            Long instanceId = bundle.getInstanceId();
+            String instanceId = bundle.getInstanceId();
             RRAnalysis rrAnalysis = bundle.getRrAnalysis();
             List<RlSourceEpHeader> epHeaders = riskLinkAnalysis.getRlSourceEpHeaders();
             String selectedFp = bundle.getFinancialPerspective();
@@ -239,13 +239,13 @@ public class EpCurveExtractor {
      * @param analysisId
      * @return
      */
-    private EpCurveExtractResult mapFinancialPerspectiveToSummaryStats(List<String> fPs, RLAnalysis riskLinkAnalysis, Long defaultInstanceId, Long rdmId, String rdmName, Long analysisId) {
+    private EpCurveExtractResult mapFinancialPerspectiveToSummaryStats(List<String> fPs, RLAnalysis riskLinkAnalysis, String defaultInstanceId, Long rdmId, String rdmName, Long analysisId) {
         EpCurveExtractResult result = new EpCurveExtractResult();
         fPs.forEach(fp -> {
             Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve = new HashMap<>();
             Long datasourceId = riskLinkAnalysis.getRlModelDataSourceId();
             RlModelDataSource datasource = dataSourceRepository.findById(datasourceId).orElseThrow(() -> new RuntimeException("No available datasource with ID " + datasourceId));
-            Long instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
+            String instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
 
             // @TODO : Get the treaty label regarding the FP Object
             rmsService.getAnalysisEpCurves(rdmId, rdmName, analysisId, fp, null)

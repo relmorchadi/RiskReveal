@@ -11,11 +11,11 @@ public class AnalysisELTnBetaFunction {
     private String rdmName;
 
     private Long analysisId;
-    private Long instanceId;
+    private String instanceId;
     private String financialPerspective;
     private List<ELTLossnBetaFunction> eltLosses;
 
-    public AnalysisELTnBetaFunction(Long rdmId, String rdmName, Long analysisId, Long instanceId, String financialPerspective, List<ELTLossnBetaFunction> eltLosses) {
+    public AnalysisELTnBetaFunction(Long rdmId, String rdmName, Long analysisId, String instanceId, String financialPerspective, List<ELTLossnBetaFunction> eltLosses) {
         super();
         this.rdmId = rdmId;
         this.rdmName = rdmName;

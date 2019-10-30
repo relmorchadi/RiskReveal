@@ -31,7 +31,7 @@ public class TransformationBundle {
 
     private LossDataHeader sourceRRLT;
 
-    private Long instanceId;
+    private String instanceId;
 
     private LossDataHeader conformedRRLT;
 

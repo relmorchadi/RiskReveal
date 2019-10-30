@@ -35,7 +35,7 @@ public class RmsRessource {
 
 
     @PostMapping("add-edm-rdm")
-    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam Long instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
         rmsService.addEdmRdms(dataSources, projectId, instanceId, instanceName);
         return ResponseEntity.ok().build();
     }

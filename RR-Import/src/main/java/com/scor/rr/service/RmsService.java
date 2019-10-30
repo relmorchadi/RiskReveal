@@ -68,7 +68,7 @@ public class RmsService {
         return dataSources;
     }
 
-    public void addEdmRdms(List<DataSource> dataSources, Long projectId, Long instanceId, String instanceName) {
+    public void addEdmRdms(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
         Set<MultiKey> selectedDataSources = new HashSet<>();
         for (DataSource dataSource : dataSources) {
             selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
@@ -334,7 +334,7 @@ public class RmsService {
         return rdmAllAnalysisProfileRegions;
     }
 
-    public RLAnalysisELT getAnalysisElt(Long instanceId,Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
+    public RLAnalysisELT getAnalysisElt(String instanceId,Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue()
                 + ", @fin_persp_code=" + finPerspCode;
         List<RlEltLoss> rlEltLoss = new ArrayList<>();
@@ -420,7 +420,7 @@ public class RmsService {
         return cChkBaseCcyFxRate;
     }
 
-    public String getAnalysisModellingOptionSettings(Long instanceId, Long rdmId, String rdmName, Long analysisId) {
+    public String getAnalysisModellingOptionSettings(String instanceId, Long rdmId, String rdmName, Long analysisId) {
         String query = "execute " + DATABASE + ".[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue();
         //String json = "";
 

@@ -37,7 +37,7 @@ public class ExchangeRateExtractor {
         /**
          * Map<InstanceId, List<CurrencyCode>>
          */
-        Map<Long, List<String>> ccyInstanceMap = new HashMap<>();
+        Map<String, List<String>> ccyInstanceMap = new HashMap<>();
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
             LossDataHeader sourceRRLT = bundle.getSourceRRLT();
@@ -56,9 +56,9 @@ public class ExchangeRateExtractor {
             ccyInstanceMap.put(bundle.getInstanceId(), ccyList);
         }
 
-        Map<Long, List<RmsExchangeRate>> rmsExchangeRates = new HashMap<>(ccyInstanceMap.size());
+        Map<String, List<RmsExchangeRate>> rmsExchangeRates = new HashMap<>(ccyInstanceMap.size());
 
-        for (Map.Entry<Long, List<String>> entry : ccyInstanceMap.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : ccyInstanceMap.entrySet()) {
 
             List<RmsExchangeRate> exList = rmsService.getRmsExchangeRates(/*entry.getKey()instanceId,*/ entry.getValue()/*ccyList*/);
             if (exList == null) {

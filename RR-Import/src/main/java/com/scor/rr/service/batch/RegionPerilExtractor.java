@@ -142,7 +142,7 @@ public class RegionPerilExtractor {
                 rrAnalysis.setProjectImportRunId(projectImportRun.getProjectImportRunId());
 
                 TransformationBundle bundle = new TransformationBundle();
-                bundle.setInstanceId(Long.parseLong(instanceId));
+                bundle.setInstanceId(instanceId);
 
                 rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId()).ifPresent(rlModelDataSourceItem -> {
                     bundle.setInstanceId(rlModelDataSourceItem.getInstanceId());
