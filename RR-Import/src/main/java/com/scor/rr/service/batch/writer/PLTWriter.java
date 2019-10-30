@@ -2,6 +2,7 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.PLTHeader;
 import com.scor.rr.domain.dto.PLTBundle;
+import com.scor.rr.repository.PLTHeaderRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class PLTWriter {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private PLTHeader
+    private PLTHeaderRepository pltHeaderRepository;
 
     private static boolean DBG = true;
 
@@ -29,16 +30,16 @@ public class PLTWriter {
 
             for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-                if (bundle.getPltBundles() == null) {
-                    log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getRrLossTableHeaderId());
-                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
-                    continue;
-                }
-                for (PLTBundle pltBundle : bundle.getPltBundles()) {
-                    if (!pltBundle.getPltError()) {
-                        persistHeader(pltBundle.getHeader100k());
-                    }
-                }
+//                if (bundle.getPltBundles() == null) {
+//                    log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getRrLossTableHeaderId());
+//                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+//                    continue;
+//                }
+//                for (PLTBundle pltBundle : bundle.getPltBundles()) {
+//                    if (!pltBundle.getPltError()) {
+//                        persistHeader(pltBundle.getHeader100k());
+//                    }
+//                }
 
                 log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
             }
