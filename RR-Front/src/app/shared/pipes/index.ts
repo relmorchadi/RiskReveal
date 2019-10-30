@@ -13,6 +13,7 @@ import {ReFormatPIDPipe} from './re-format-pid.pipe';
 import {PickKeysPipe} from './pull-keys.pipe';
 import {CalibratePipe} from './calibrate.pipe';
 import {FilterByStatusPipe} from './filter-by-status.pipe';
+import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 
 
 export const PIPES = [
@@ -23,6 +24,7 @@ export const PIPES = [
   TableSortAndFilterPipe,
   TextLengthPipe,
   TrimFormatPipe,
+  TrimSecondaryFormatPipe,
   KeysPipe,
   ShowLastPipe,
   InputSearchPipe,
@@ -33,6 +35,7 @@ export const PIPES = [
   FilterByStatusPipe
 ];
 
+export * from './trim-secondary-format.pipe';
 export * from './trim-format.pipe';
 export * from './input-search.pipe';
 export * from './keys.pipe';

@@ -165,7 +165,7 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     let expression: any = keyword;
-    console.log(keyword);
+    console.log(keyword);s
     const checkShortCut: any = this.checkShortCut(expression);
     console.log(checkShortCut);
     if (checkShortCut !== null) {

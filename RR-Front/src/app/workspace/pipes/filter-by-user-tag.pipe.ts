@@ -5,8 +5,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class FilterByUserTagPipe implements PipeTransform {
 
-  transform(array:Array<any>, badge): any {
-    return array
+  transform(array: Array<any>, badge): any {
+    return array;
   }
 
 }

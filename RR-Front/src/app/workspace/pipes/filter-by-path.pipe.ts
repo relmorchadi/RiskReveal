@@ -6,7 +6,7 @@ import {Pipe, PipeTransform} from '@angular/core';
 export class FilterByPathPipe implements PipeTransform {
 
   transform(array: Array<any>, pathId): any {
-    return pathId ? array.filter(plt => plt.pathId == pathId ): array;
+    return pathId ? array.filter(plt => plt.pathId === pathId ) : array;
   }
 
 }

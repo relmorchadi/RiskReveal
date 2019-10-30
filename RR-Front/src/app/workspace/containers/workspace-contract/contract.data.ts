@@ -37,7 +37,7 @@ const colsReinstatement = [
 const colsRegionPeril = [
   {field: 'regionPerilCode', header: 'Region Peril Code', width: '60px', type: 'text', display: true, filtered: false, indicator: false, color: null},
   {field: 'regionPerilDesc', header: 'Region Peril Description', width: '150px', type: 'text', display: true, filtered: false, indicator: false, color: null},
-  {field: 'reinstLabel', header: 'Reinst. Label', width: '100px', type: 'text', display: true, filtered: false, indicator: false, color: null},
+  {field: 'isValidMinimumGrain', header: 'Is Valid', width: '100px', type: 'text', display: true, filtered: false, indicator: false, color: null},
 ];
 
 const treatyData = [

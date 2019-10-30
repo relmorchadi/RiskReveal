@@ -210,6 +210,13 @@
   }
 }
 
+.fac-title {
+  font-size: 14.26px;
+  padding-top: 1px;
+  height: 20px;
+  line-height: 22px;
+}
+
 .treaty-list {
   list-style: none;
   font-size: 11px;
@@ -585,4 +592,10 @@
 
 .d-inline-flex.flex-column.justify-content-end {
   border-left: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.dropdown-project-style {
+  padding-top: 2px;
+  margin-left: 9px;
+  font-size: 13.26px;
 }

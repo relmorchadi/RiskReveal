@@ -280,8 +280,7 @@ export class WorkspaceState {
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
     };
   }
 
@@ -293,8 +292,7 @@ export class WorkspaceState {
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
     };
   }
 
@@ -472,9 +470,19 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
+  @Action(fromWS.AddNewFacProject)
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
+    return this.wsService.addNewFacProject(ctx, payload);
+  }
+
   @Action(fromWS.DeleteProject)
   deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
     return this.wsService.deleteProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteFacProject)
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteFacProject) {
+    return this.wsService.deleteFacProject(ctx, payload);
   }
 
   /***********************************
@@ -486,6 +494,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadContractAction)
   loadContractData(ctx: StateContext<WorkspaceModel>) {
     this.contractService.loadContractData(ctx);
+  }
+
+  @Action(fromWS.ToggleFacDivisonAction)
+  toggleFacDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFacDivisonAction) {
+    this.contractService.toggleFacDivision(ctx, payload);
   }
 
   /***********************************

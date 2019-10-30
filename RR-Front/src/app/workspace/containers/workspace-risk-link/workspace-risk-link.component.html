@@ -226,7 +226,8 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-              <i class="icon-link_24px" *ngIf="tabStatus === 'fac'" nz-tooltip nzTitle="Auto Link" (click)="autoLinkAnalysis()"></i>
+              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'fac'"
+                      class="a-buttons-contained-micro">Auto Attach</button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"

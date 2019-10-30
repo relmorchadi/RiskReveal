@@ -2,7 +2,7 @@
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
-<div echarts [options]="chartOption" class="demo-chart" #chart></div>
+<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" #chart></div>
 
 <div class="widget-footer">
   <div class="filter-div">

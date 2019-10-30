@@ -2,15 +2,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash';
 
 @Pipe({
-  name: 'trimFormat'
+  name: 'trimSecondaryFormat'
 })
-export class TrimFormatPipe implements PipeTransform {
+export class TrimSecondaryFormatPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
     if (value === undefined || value === null) {
       return null;
     } else {
-      return value.split('-')[0] + '-' + _.trimStart(value.split('-')[1], '0');
+      return value.split('-')[0] + _.trimStart(value.split('-')[1], '0');
     }
   }
 
