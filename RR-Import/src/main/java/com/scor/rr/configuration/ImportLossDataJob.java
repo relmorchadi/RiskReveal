@@ -31,21 +31,27 @@ public class ImportLossDataJob {
     private ExchangeRateExtractor exchangeRateExtractor;
 
     @Autowired
-    EpCurveExtractor epCurveExtractor;
+    private EpCurveExtractor epCurveExtractor;
 
     @Autowired
-    ELTExtractor eltExtractor;
+    private ELTExtractor eltExtractor;
 
     @Autowired
-    ELTTruncator eltTruncator;
+    private ELTTruncator eltTruncator;
 
     @Autowired
-    ELTToPLTConverter eltToPLTConverter;
+    private ELTToPLTConverter eltToPLTConverter;
 
     @Autowired
     @Qualifier(value = "eltWriter")
     private ELTWriter eltWriter;
 
+    @Autowired
+    private ModellingOptionsExtractor modellingOptionsExtractor;
+
+
+
+    /** Tasklet */
     @Bean
     public Tasklet extractRegionPerilTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> {
@@ -78,6 +84,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet extractModellingOptionsTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> modellingOptionsExtractor.extractModellingOptions();
+    }
+
+    @Bean
     public Tasklet eltBinaryWritingTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltWriter.writeBinary();
     }
@@ -91,6 +102,10 @@ public class ImportLossDataJob {
     public Tasklet EltToPLTTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltToPLTConverter.convertEltToPLT();
     }
+
+
+
+    /** Steps */
 
     /**
      * @return
@@ -126,19 +141,27 @@ public class ImportLossDataJob {
     }
 
     @Bean
-    public Step getEltToPLTStep() {
-        return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
+    public Step getExtractModellingOptionsStep(){
+        return stepBuilderFactory.get("extractModellingOptions").tasklet(extractModellingOptionsTasklet()).build();
     }
 
     @Bean
-    public Step getEltBinaryWritingStep(){
+    public Step getEltBinaryWritingStep() {
         return stepBuilderFactory.get("EltBinaryWriting").tasklet(eltBinaryWritingTasklet()).build();
     }
 
     @Bean
-    public Step getEltHeaderWritingStep(){
+    public Step getEltHeaderWritingStep() {
         return stepBuilderFactory.get("EltHeaderWriting").tasklet(eltHeaderWritingTasklet()).build();
     }
+
+    @Bean
+    public Step getEltToPLTStep() {
+        return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
+    }
+
+
+    /** Job */
 
     @Bean(value = "importLossData")
     public Job getImportLossData() {
@@ -150,6 +173,7 @@ public class ImportLossDataJob {
                 .next(getELTTruncateELTStep())
                 //.next("conformer")
                 //.next("conformEpCurves")
+                .next(getExtractModellingOptionsStep())
                 //.next("extractModelingOptions")
                 .next(getEltBinaryWritingStep())
                 .next(getEltHeaderWritingStep())
@@ -157,8 +181,6 @@ public class ImportLossDataJob {
                 .end()
                 .build();
     }
-
-
 
 
 }

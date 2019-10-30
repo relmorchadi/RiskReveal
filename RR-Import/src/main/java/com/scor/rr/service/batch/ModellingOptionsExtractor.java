@@ -27,9 +27,9 @@ import java.util.List;
 
 @Service
 @StepScope
-public class ModelingOptionsExtractor extends AbstractWriter {
+public class ModellingOptionsExtractor extends AbstractWriter {
 
-    private static final Logger log = LoggerFactory.getLogger(ModelingOptionsExtractor.class);
+    private static final Logger log = LoggerFactory.getLogger(ModellingOptionsExtractor.class);
 
     @Autowired
     private TransformationPackage transformationPackage;

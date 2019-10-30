@@ -2,10 +2,7 @@ package com.scor.rr.domain.reference;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 
@@ -44,6 +41,7 @@ public class Contract {
     private String underwriterFirstName;
     private String underwriterLastName;
     @ManyToOne
+    @JoinColumn(name = "liabilityCurrency")
     private Currency liabilityCurrency;
     private String annualLimitAmmount;
     private String eventLimitAmount;
