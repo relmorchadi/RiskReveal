@@ -2,8 +2,10 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
+import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.domain.riskReveal.RRLossTableHeader;
+import com.scor.rr.repository.RRAnalysisRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.XMLWriter;
@@ -30,6 +32,9 @@ import java.util.List;
 public class ModellingOptionsExtractor extends AbstractWriter {
 
     private static final Logger log = LoggerFactory.getLogger(ModellingOptionsExtractor.class);
+
+    @Autowired
+    RRAnalysisRepository rrAnalysisRepository;
 
     @Autowired
     private TransformationPackage transformationPackage;
@@ -76,14 +81,16 @@ public class ModellingOptionsExtractor extends AbstractWriter {
         return RepeatStatus.FINISHED;
     }
 
-    private void writeFile(RRAnalysis rrAnalysis, RRLossTableHeader rrLossTable, String options) {
+    private void writeFile(RRAnalysis rrAnalysis, LossDataHeader rrLossTable, String options) {
+        RRAnalysis lossAnalysis = rrAnalysisRepository.findById(rrLossTable.getModelAnalysisId()).get();
+
         String filename = makeAPSFileName(
                 rrAnalysis.getCreationDate(),
                 rrAnalysis.getRegionPeril(),
-                rrLossTable.getRrAnalysis().getFinancialPerspective(),
+                lossAnalysis.getFinancialPerspective(),
                 rrLossTable.getCurrency(),
                 rrLossTable.getOriginalTarget().equals(RRLossTableType.CONFORMED.toString()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
-                rrLossTable.getRrLossTableHeaderId(),
+                rrLossTable.getLossDataHeaderId(),
                 ".xml");
         Path iHubPath = Paths.get(iHub);
         File file = PathUtils.makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename, iHubPath);

@@ -1,7 +1,6 @@
 package com.scor.rr.service.batch;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
+import com.google.gson.Gson;
 import com.scor.rr.domain.AnalysisEpCurves;
 import com.scor.rr.domain.AnalysisSummaryStats;
 import com.scor.rr.domain.RmsExchangeRate;
@@ -12,13 +11,10 @@ import com.scor.rr.domain.enums.StatisticsType;
 import com.scor.rr.domain.model.EPCurveHeader;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.model.SummaryStatisticHeader;
-import com.scor.rr.domain.riskLink.DefaultReturnPeriod;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlModelDataSource;
 import com.scor.rr.domain.riskLink.RlSourceEpHeader;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader_;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -32,7 +28,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static com.scor.rr.util.PathUtils.makeEpCurveFileName;
@@ -76,6 +71,8 @@ public class EpCurveExtractor {
 
     private String fpTYCode = "TY";
 
+    private Gson gson;
+
     /**
      * Extract EP Curve Tasklet main entry
      *
@@ -84,53 +81,54 @@ public class EpCurveExtractor {
     public RepeatStatus extractEpCurve() {
         // Given some transformation bundles
 
-        List<Map> transformationBundle = new ArrayList<>();
+        List<TransformationBundle> transformationBundle = transformationPackage.getTransformationBundles();
 
         transformationBundle.forEach(bundle -> {
-            RLAnalysis riskLinkAnalysis = (RLAnalysis) bundle.get("rlAnalysis");
-            Long instanceId = (Long) bundle.get("instanceId");
-            RRAnalysis rrAnalysis = (RRAnalysis) bundle.get("rrAnalysis");
+            RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
+            Long instanceId = bundle.getInstanceId();
+            RRAnalysis rrAnalysis = bundle.getRrAnalysis();
             List<RlSourceEpHeader> epHeaders = riskLinkAnalysis.getRlSourceEpHeaders();
+            String selectedFp = bundle.getFinancialPerspective();
 
             Long analysisId = riskLinkAnalysis.getRlAnalysisId();
             Long rdmId = riskLinkAnalysis.getRdmId();
             String rdmName = riskLinkAnalysis.getRdmName();
 
-            LossDataHeader lossDataHeader = (LossDataHeader) bundle.get("lossDataHeader");
-
-            // @TODO: Where could we track the selected Financial Perspective
+            LossDataHeader lossDataHeader = bundle.getSourceRRLT();
 
             List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerpective()).collect(toList());
             List<String> filteredFPs = sourceFPs.stream().filter(fp -> !StringUtils.equalsIgnoreCase(fp, FinancialPerspectiveCodeEnum.TY.getCode())).collect(toList());
 
-            // @TODO: Add the selected FP if eq. to 'TY' (to check this logic with Viet)
+            if (StringUtils.equalsIgnoreCase(selectedFp, FinancialPerspectiveCodeEnum.TY.getCode()))
+                filteredFPs.add(selectedFp);
 
             EpCurveExtractResult epCurveExtractResult = this.mapFinancialPerspectiveToSummaryStats(filteredFPs, riskLinkAnalysis, instanceId, rdmId, rdmName, analysisId);
 
             lossDataHeaderRepository.save(lossDataHeader);
             Long lossDataHeaderId = lossDataHeader.getLossDataHeaderId();
+            List<EPCurveHeader> epCurves = this.generateEpCurveHeaders(filteredFPs, epCurveExtractResult, rrAnalysis, lossDataHeaderId);
+            List<SummaryStatisticHeader> summaryStats = this.generateSummaryStatsHeader(filteredFPs, epCurveExtractResult, lossDataHeaderId);
 
-            epCurveHeaderRepository.saveAll(
-                    this.generateEpCurveHeaders(filteredFPs, epCurveExtractResult, rrAnalysis, lossDataHeaderId)
-            );
-            summaryStatisticHeaderRepository.saveAll(
-                    this.generateSummaryStatsHeader(filteredFPs, epCurveExtractResult, lossDataHeaderId)
-            );
+            epCurveHeaderRepository.saveAll(epCurves);
+            summaryStatisticHeaderRepository.saveAll(summaryStats);
 
+            // Push results into the Bundle
+            bundle.setEpCurves(epCurves);
+            bundle.setSummaryStatisticHeaders(summaryStats);
         });
 
 
         return RepeatStatus.FINISHED;
     }
 
-    public RepeatStatus extractConformedEpCurves(){
+    public RepeatStatus extractConformedEpCurves() {
         log.debug("Starting RMSEPCurveExtractor.runConformedExtraction");
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
 
-            RRLossTableHeader sourceRRLT = bundle.getSourceRRLT();
-            RRLossTableHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
 
 
 //            List<ELTEPHeader> confELTEPHeaders = new ArrayList<>(); <--> confRrStatisticHeaders
@@ -143,12 +141,12 @@ public class EpCurveExtractor {
             Map<String, Map<StatisticMetric, List<EPCurveHeader>>> fp2Metric2EPCurves = new HashMap<>();
             Map<String, SummaryStatisticHeader> fp2SumStat = new HashMap<>();
 
-            double proportion = bundle.getSourceResult().getProportion() == null ? 1: bundle.getSourceResult().getProportion().doubleValue() / 100;
-            double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1: bundle.getSourceResult().getUnitMultiplier().doubleValue();
-            log.info("Conforming EP curves and sum stats for conformedRRLT {}, proportion {}, multiplier {}", bundle.getConformedRRLT().getRrLossTableHeaderId(), proportion, multiplier);
+            double proportion = bundle.getSourceResult().getProportion() == null ? 1 : bundle.getSourceResult().getProportion().doubleValue() / 100;
+            double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1 : bundle.getSourceResult().getUnitMultiplier().doubleValue();
+            log.info("Conforming EP curves and sum stats for conformedRRLT {}, proportion {}, multiplier {}", bundle.getConformedRRLT().getLossDataHeaderId(), proportion, multiplier);
 
             double exchangeRate = 1.0d;
-            if (! conformedRRLT.getCurrency().equals(sourceRRLT.getCurrency())) {
+            if (!conformedRRLT.getCurrency().equals(sourceRRLT.getCurrency())) {
                 double sourceExchangeRate = 1.0d;
                 double targetExchangeRate = 1.0d;
                 for (RmsExchangeRate rmsExchangeRate : bundle.getRmsExchangeRatesOfRRLT()) {
@@ -162,9 +160,31 @@ public class EpCurveExtractor {
 
                 exchangeRate = targetExchangeRate / sourceExchangeRate;
             }
-            log.debug("source ELT currency {} conformed ELT currency {} exchange rate {}", sourceRRLT.getCurrency(), conformedRRLT.getCurrency(), exchangeRate) ;
+            log.debug("source ELT currency {} conformed ELT currency {} exchange rate {}", sourceRRLT.getCurrency(), conformedRRLT.getCurrency(), exchangeRate);
 
-//            List<RRStatisticHeader> rrStatisticHeaderList = rrStatisticHeaderRepository.findByLossTableId(bundle.getSourceRRLT().getId());
+            List<SummaryStatisticHeader> conformedSummaryStatHeaders = new ArrayList<>();
+            for (SummaryStatisticHeader statisticHeader : bundle.getSummaryStatisticHeaders()) {
+                SummaryStatisticHeader confSumStat = conformSummaryStatistic(statisticHeader, proportion, multiplier, exchangeRate);
+                confSumStat.setLossDataId(bundle.getConformedRRLT().getLossDataHeaderId());
+                conformedSummaryStatHeaders.add(confSumStat);
+            }
+
+            List<EPCurveHeader> conformedEpCurvesHeaders = new ArrayList<>();
+            for (EPCurveHeader epCurveHeader : bundle.getEpCurves()) {
+                AnalysisEpCurves confEPCurves =
+                        conformELTEPCurves(
+                                gson.fromJson(epCurveHeader.getEPCurves(), AnalysisEpCurves.class),
+                                proportion,
+                                multiplier,
+                                exchangeRate);
+
+                EPCurveHeader conformedEPCurvesHeader = new EPCurveHeader(epCurveHeader);
+                conformedEPCurvesHeader.setEPCurves(gson.toJson(confEPCurves));
+                conformedEpCurvesHeaders.add(conformedEPCurvesHeader);
+            }
+
+            summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
+            epCurveHeaderRepository.saveAll(conformedEpCurvesHeaders);
 
 
 //            for (StatFile statFileSource : bundle.getSourceRRLT().getStatFiles()) {
@@ -281,7 +301,7 @@ public class EpCurveExtractor {
                             metricToEPCurve.put(metric, asList(epCurve));
                     });
 
-            result.fpToELTEPCurves.put(fp, interpolateEltEPCurve(metricToEPCurve));
+            result.fpToELTEPCurves.put(fp, metricToEPCurve);
 
             // @TODO : Get the treaty label regarding the FP Object
             AnalysisSummaryStats summaryStats =
@@ -329,62 +349,6 @@ public class EpCurveExtractor {
         }).collect(toList());
     }
 
-    private Map<StatisticMetric, List<AnalysisEpCurves>> interpolateEltEPCurve(Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve) {
-        Map<StatisticMetric, List<AnalysisEpCurves>> metricToDrpEPCurve = new HashMap<>();
-        List<DefaultReturnPeriod> drpList = defaultReturnPeriodRepository.findAll();
-        List<Double> epList = new ArrayList<>(drpList.size());
-        for (DefaultReturnPeriod drp : drpList) {
-            epList.add(drp.getExcedanceProbability());
-        }
-
-        for (Map.Entry<StatisticMetric, List<AnalysisEpCurves>> entry : metricToEPCurve.entrySet()) {
-            List<AnalysisEpCurves> drpELTEPCurve = new ArrayList<>(epList.size());
-
-            List<Double> ascKeys = new ArrayList<>(entry.getValue().size());
-            List<Double> values = new ArrayList<>(entry.getValue().size());
-
-            for (AnalysisEpCurves eltepCurve : entry.getValue()) {
-                ascKeys.add(eltepCurve.getExeceedanceProb().doubleValue());
-                values.add(eltepCurve.getLoss());
-            }
-
-            List<Double> loss = lerp(epList, ascKeys, values);
-
-            for (int i = 0; i < epList.size(); ++i) {
-                drpELTEPCurve.add(new AnalysisEpCurves(BigDecimal.valueOf(epList.get(i).longValue()), loss.get(i)));
-            }
-            metricToDrpEPCurve.put(entry.getKey(), drpELTEPCurve);
-        }
-
-        return metricToDrpEPCurve;
-    }
-
-    private List<Double> lerp(List<Double> inputs, List<Double> ascKeys, List<Double> values) {
-        List<Double> out = new ArrayList<>();
-        for (Double input : inputs) {
-            int idx = Collections.binarySearch(ascKeys, input);
-            double interped;
-            if (idx == -1) { // under the referenced range
-                interped = values.get(0);
-            } else if (idx == -1 - ascKeys.size()) { // beyond the referenced range
-                interped = values.get(ascKeys.size() - 1);
-            } else if (idx >= 0) { // it matches one endpoint in RP input list
-                interped = values.get(idx);
-            } else { // it falls into an interval
-                int lowIdx = Math.abs(idx + 2);
-                int highIdx = Math.abs(idx + 1);
-                Double loKey = ascKeys.get(lowIdx);
-                Double hiKey = ascKeys.get(highIdx);
-                Double loValue = values.get(lowIdx);
-                Double hiValue = values.get(highIdx);
-
-                interped = (input - loKey) * (hiValue - loValue) / (hiKey - loKey) + loValue;
-            }
-            out.add(interped);
-        }
-        return out;
-    }
-
     private static class EpCurveExtractResult {
         Map<String, Map<StatisticMetric, List<AnalysisEpCurves>>> fpToELTEPCurves;
         Map<String, AnalysisSummaryStats> fpToELTSumStat;
@@ -394,5 +358,27 @@ public class EpCurveExtractor {
             fpToELTSumStat = new HashMap<>();
         }
     }
+
+    private SummaryStatisticHeader conformSummaryStatistic(SummaryStatisticHeader input, double proportion, double multiplier, double exchangeRate) {
+        SummaryStatisticHeader output = new SummaryStatisticHeader(input);
+        output.setCov(input.getCov());
+        output.setPurePremium(input.getPurePremium() * proportion * multiplier * exchangeRate);
+        output.setStandardDeviation(input.getStandardDeviation() * proportion * multiplier * exchangeRate);
+        return output;
+    }
+
+    private AnalysisEpCurves conformELTEPCurves(AnalysisEpCurves input, double proportion, double multiplier, double exchangeRate) {
+
+        AnalysisEpCurves output = new AnalysisEpCurves();
+
+        output.setExeceedanceProb(input.getExeceedanceProb());
+        output.setAnalysisId(input.getAnalysisId());
+        output.setEpTypeCode(input.getEpTypeCode());
+        output.setFinPerspCode(input.getFinPerspCode());
+        //output.setReturnPeriod(input.getReturnPeriod());
+        output.setLoss(input.getLoss() * proportion * multiplier * exchangeRate);
+
+        return output;
+}
 
 }

@@ -2,6 +2,7 @@ package com.scor.rr.configuration;
 
 import com.scor.rr.service.batch.*;
 import com.scor.rr.service.batch.writer.ELTWriter;
+import com.scor.rr.service.batch.writer.PLTWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -45,6 +46,9 @@ public class ImportLossDataJob {
     @Autowired
     @Qualifier(value = "eltWriter")
     private ELTWriter eltWriter;
+
+    @Autowired
+    private PLTWriter pltWriter;
 
     @Autowired
     private ModellingOptionsExtractor modellingOptionsExtractor;
@@ -103,6 +107,10 @@ public class ImportLossDataJob {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltToPLTConverter.convertEltToPLT();
     }
 
+    @Bean
+    public Tasklet pltWriterTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> pltWriter.writeHeader();
+    }
 
 
     /** Steps */
@@ -160,6 +168,11 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
     }
 
+    @Bean
+    public Step getPltWriterStep() {
+        return stepBuilderFactory.get("pltWriter").tasklet(pltWriterTasklet()).build();
+    }
+
 
     /** Job */
 
@@ -178,6 +191,7 @@ public class ImportLossDataJob {
                 .next(getEltBinaryWritingStep())
                 .next(getEltHeaderWritingStep())
                 .next(getEltToPLTStep())
+                .next(getPltWriterStep())
                 .end()
                 .build();
     }

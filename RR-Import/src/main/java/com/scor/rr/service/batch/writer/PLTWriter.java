@@ -22,6 +22,7 @@ public class PLTWriter {
     @Autowired
     private PLTHeaderRepository pltHeaderRepository;
 
+    // TODO : Review its utility with viet
     private static boolean DBG = true;
 
     public RepeatStatus writeHeader(){
@@ -30,16 +31,16 @@ public class PLTWriter {
 
             for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-//                if (bundle.getPltBundles() == null) {
-//                    log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getRrLossTableHeaderId());
-//                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
-//                    continue;
-//                }
-//                for (PLTBundle pltBundle : bundle.getPltBundles()) {
-//                    if (!pltBundle.getPltError()) {
-//                        persistHeader(pltBundle.getHeader100k());
-//                    }
-//                }
+                if (bundle.getPltBundles() == null) {
+                    log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getLossDataHeaderId());
+                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+                    continue;
+                }
+                for (PLTBundle pltBundle : bundle.getPltBundles()) {
+                    if (!pltBundle.getPltError()) {
+                        persistHeader(pltBundle.getHeader100k());
+                    }
+                }
 
                 log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
             }

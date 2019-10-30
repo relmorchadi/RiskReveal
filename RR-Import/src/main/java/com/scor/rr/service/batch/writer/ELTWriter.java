@@ -4,8 +4,10 @@ import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
+import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.domain.riskReveal.RRLossTableHeader;
+import com.scor.rr.repository.LossDataHeaderRepository;
 import com.scor.rr.repository.RRLossTableHeaderRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -39,7 +41,7 @@ public class ELTWriter extends AbstractWriter {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private RRLossTableHeaderRepository rrLossTableRepository;
+    private LossDataHeaderRepository lossDataHeaderRepository;
 
     @Value("${ihub.path}")
     private String iHub;
@@ -61,17 +63,17 @@ public class ELTWriter extends AbstractWriter {
         return RepeatStatus.FINISHED;
     }
 
-    private void writeELT(RRAnalysis rrAnalysis, RRLossTableHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
+    private void writeELT(RRAnalysis rrAnalysis, LossDataHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
 
         log.debug("Starting write RRLT");
 
         String filename = makeELTFileName(
                 rrAnalysis.getCreationDate(),
                 rrAnalysis.getRegionPeril(),
-                rrImportedLossData.getRrAnalysis().getFinancialPerspective(),
+                rrAnalysis.getFinancialPerspective(),
                 rrImportedLossData.getCurrency(),
                 rrImportedLossData.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
-                rrImportedLossData.getRrLossTableHeaderId(),
+                rrImportedLossData.getLossDataHeaderId(),
                 ".bin");
 
         log.debug("write ELT filename = {} elt lost list size = {}", filename, eltLossList.size());
@@ -86,7 +88,7 @@ public class ELTWriter extends AbstractWriter {
         log.debug("writeELT completed");
     }
 
-    private File writeELTFile(String filename, RRLossTableHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
+    private File writeELTFile(String filename, LossDataHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
         log.debug("Starting write RRLT File");
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -108,7 +110,7 @@ public class ELTWriter extends AbstractWriter {
                 buffer.putDouble(rmseltLoss.getRate());
             }
         } catch (IOException e) {
-            log.error("Error writing RRLT file {}, eventCount {}, exception {}", rrImportedLossData.getRrLossTableHeaderId(), eventCount, e);
+            log.error("Error writing RRLT file {}, eventCount {}, exception {}", rrImportedLossData.getLossDataHeaderId(), eventCount, e);
             return null;
         } finally {
             IOUtils.closeQuietly(out);
@@ -127,13 +129,13 @@ public class ELTWriter extends AbstractWriter {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            RRLossTableHeader sourceRRLT = bundle.getSourceRRLT();
-            rrLossTableRepository.save(sourceRRLT);
+            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
+            lossDataHeaderRepository.save(sourceRRLT);
 
-            RRLossTableHeader conformedRRLT = bundle.getConformedRRLT();
-            rrLossTableRepository.save(conformedRRLT);
+            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            lossDataHeaderRepository.save(conformedRRLT);
 
-            log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getRrLossTableHeaderId(), conformedRRLT.getRrLossTableHeaderId());
+            log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
 
             log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
         }

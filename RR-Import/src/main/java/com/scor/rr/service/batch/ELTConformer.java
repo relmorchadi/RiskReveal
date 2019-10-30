@@ -80,6 +80,7 @@ public class ELTConformer {
                         eltLossesnBetaFunction);
                 betaConvertFunc.put(new MultiKey(instanceId, rdmId, anlsId, fpCode, treatyLabelID), analysisELTnBetaFunction);
             }
+
             log.debug("eltLossesnBetaFunction.size = {}", eltLossesnBetaFunction.size());
 
             bundle.put("conformedAnalysisELT",conformedAnalysisELT);
@@ -108,17 +109,10 @@ public class ELTConformer {
                     log.debug("Something wrong: ccy {} found for source RRLT currency {} conformed RRLT currency {}", rmsExchangeRate.getCcy(), sourceRRLT.getCurrency(),conformedRRLT.getCurrency());
             }
 
-            /** Eliminate Redundant ExchangeRate Between LossDataHeader / RRAnalysis(ModelAnalysis) Table
-            sourceRRLT.setExchangeRate(sourceExchangeRate);
-            rrLossTableRepository.save(sourceRRLT);
-            conformedRRLT.setExchangeRate(targetExchangeRate);
-            rrLossTableRepository.save(conformedRRLT);
-            */
-
             if (! conformedRRLT.getCurrency().equals(sourceRRLT.getCurrency())) {
                 exchangeRate = targetExchangeRate / sourceExchangeRate;
-                rrAnalysisRepository.updateExchangeRateByAnalysisId(conformedRRLT.getModelAnalysisId(), exchangeRate);
             }
+            rrAnalysisRepository.updateExchangeRateByAnalysisId(conformedRRLT.getModelAnalysisId(), exchangeRate);
 
             log.debug("source RRLT currency {} conformed RRLT currency {} exchange rate {}", sourceRRLT.getCurrency(),conformedRRLT.getCurrency(), exchangeRate) ;
 
@@ -138,7 +132,7 @@ public class ELTConformer {
                 eltLossesnBetaFunction.add(new ELTLossnBetaFunction(conformedELTLoss));
             }
 
-            /** @TODO Review the update Min Layer Attribute Logic **/
+            /** @TODO Review the update Min Layer Attribute Logic => Delete + Threshold default Val on ELTLossnBetaFunction **/
             Double minLayerAtt= (Double) bundle.get("minLayerAtt");
             for (ELTLossnBetaFunction ELTLossnBetaFunction : eltLossesnBetaFunction) {
                 ELTLossnBetaFunction.setMinLayerAtt(minLayerAtt);

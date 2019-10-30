@@ -49,7 +49,7 @@ public class RmsService {
     RlAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RRFinancialPerspectiveRepository rrFinancialPerspectiveRepository;
+    FinancialPerspectiveRepository rrFinancialPerspectiveRepository;
 
     @Autowired
     RlSourceResultRepository rlSourceResultRepository;

@@ -5,9 +5,13 @@ import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
+import com.scor.rr.service.state.TransformationBundle;
+import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,18 +25,22 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class ELTTruncator {
 
+    @Value("${import.params.threshold}")
+    private double threshold;
+
+    @Autowired
+    TransformationPackage transformationPackage;
     public RepeatStatus truncateELTs() {
         log.debug("Starting ELTTruncator");
 
-        List<Map> bundles = new ArrayList<>();
+        List<TransformationBundle> bundles = new ArrayList<>();
 
-        for (Map bundle : bundles) {
+        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             // start new step (import progress) : step 5 TRUNCATE_ELT for this analysis in loop of many analysis :
-            RLAnalysis riskLinkAnalysis = (RLAnalysis) bundle.get("RlAnalysis");
-            RLAnalysisELT riskLinkAnalysisELT = (RLAnalysisELT) bundle.get("RlAnalysisELT");
-            RlSourceResult sourceResult= (RlSourceResult) bundle.get("rlSouceResult");
+            RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
+            RLAnalysisELT riskLinkAnalysisELT = bundle.getRlAnalysisELT();
+            RlSourceResult sourceResult=bundle.getSourceResult();
             log.info("truncating ELT data for analysis " + riskLinkAnalysis.getAnalysisId());
-            double threshold = 0;//getThresholdFor(bundle.getRlAnalysis().getRegion(), bundle.getRlAnalysis().getPeril(), bundle.getRlAnalysis().getAnalysisCurrency(), "ELT");
             log.info("Threshold found: " + threshold);
             log.debug("Source ELT size = {}", riskLinkAnalysisELT.getEltLosses().size());
 
@@ -46,11 +54,12 @@ public class ELTTruncator {
             riskLinkAnalysisELT.setEltLosses(validELTLosses);
 
             log.debug("Dest ELT size = {}", riskLinkAnalysisELT.getEltLosses().size());
-            bundle.put("truncatedAAL", truncatedAAL);
-            bundle.put("truncatedEvents",truncatedEvents);
-            bundle.put("truncatedSD",truncatedSD);
-            bundle.put("truncationCurrency", riskLinkAnalysis.getAnalysisCurrency());
-            bundle.put("truncationThreshold",threshold);
+
+            bundle.setTruncatedAAL(truncatedAAL);
+            bundle.setTruncatedEvents(truncatedEvents);
+            bundle.setTruncatedSD(truncatedSD);
+            bundle.setTruncationCurrency(riskLinkAnalysis.getAnalysisCurrency());
+            bundle.setTruncationThreshold(threshold);
 
             // finish step 5 TRUNCATE_ELT for one analysis in loop for of many analysis
             log.info("Finish import progress STEP 5 : TRUNCATE_ELT for analysis: {}", sourceResult.getRlSourceResultId());

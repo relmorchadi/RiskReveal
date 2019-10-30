@@ -4,7 +4,6 @@ package com.scor.rr.domain.model;
 import com.scor.rr.domain.enums.StatisticMetric;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,5 +26,12 @@ public class EPCurveHeader {
     private String ePCurves;
     private String ePCFilePath;
     private String ePCFileName;
+
+    public EPCurveHeader(EPCurveHeader epCurveHeader){
+        this.entity = epCurveHeader.getEntity();
+        this.lossDataType = epCurveHeader.getLossDataType();
+        this.financialPerspective = epCurveHeader.getFinancialPerspective();
+        this.statisticMetric = epCurveHeader.getStatisticMetric();
+    }
 
 }

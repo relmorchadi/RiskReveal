@@ -5,12 +5,15 @@ import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.state.TransformationBundle;
+import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -27,29 +30,36 @@ public class ELTExtractor {
     @Autowired
     RmsService rmsService;
 
+    @Autowired
+    TransformationPackage transformationPackage;
+
+    @Value("#{jobParameters['contractId']}")
+    private String contractId;
+
+    @Value("${import.params.threshold}")
+    private double threshold;
+
     public RepeatStatus extractElts() {
-        // @TODO: Review with Viet use of Threshold parameter
-        this.extractELT(0);
+        // @TODO: Review with Viet use of Threshold parameter => TO be external. & Direct use in corresponding parts
+        this.extractELT();
         return RepeatStatus.FINISHED;
     }
 
 
-    private void extractELT(Integer threshold) {
+    private void extractELT() {
 
         Map<MultiKey, RLAnalysisELT> extractedELT = new HashMap<>();
         // Given some Bundles
-        List<Map> bundles = new ArrayList<>();
 
-        for (Map bundle : bundles) {
+        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             // start new step (import progress) : step 4 EXTRACT_ELT for this analysis in loop of many analysis
 
             // Build Parameters
-            RLAnalysis riskLinkAnalysis = (RLAnalysis) bundle.get("rlAnalysis");
-            RlSourceResult sourceResult = (RlSourceResult) bundle.get("sourceResult");
-            String fpCode = (String) bundle.get("fpPerspectiveCode"); // not understood ???
-            // @TODO: Review where we can get the Instance Batch Param
-            Long defaultInstanceId = (Long)bundle.get("defaultInstanceId"); // not understood ???
-            Integer treatyLabelID = isTreaty(fpCode) ? (Integer) bundle.get("treatyLabelId") : null;
+            RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
+            RlSourceResult sourceResult =  bundle.getSourceResult();
+            String fpCode = bundle.getFinancialPerspective();
+            Long defaultInstanceId = bundle.getInstanceId();
+            Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId)  : null;
             Long analysisId = riskLinkAnalysis.getAnalysisId();
             Long rdmId = riskLinkAnalysis.getRdmId();
             String rdmName = riskLinkAnalysis.getRdmName();
@@ -68,9 +78,7 @@ public class ELTExtractor {
             }
             log.debug("Rms Analysis ELT loss data size = {}", rlAnalysisELT.getEltLosses().size());
 
-            // @TODO: Review the bundle output
-            bundle.put("rlAnalysisELT", rlAnalysisELT);
-            bundle.put("MinLayerAtt", Double.valueOf(threshold));
+            bundle.setRlAnalysisELT(rlAnalysisELT);
 
             // finish step 4 EXTRACT_ELT for one analysis in loop for of many analysis
             log.info("Finish import progress STEP 4 : EXTRACT_ELT for analysis: {}", sourceResult.getRlSourceResultId());

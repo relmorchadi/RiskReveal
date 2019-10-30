@@ -4,8 +4,6 @@ import lombok.Data;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "RRFinancialPerspective")
 @Data
 public class RRFinancialPerspective {
 
@@ -14,7 +12,7 @@ public class RRFinancialPerspective {
     private long id;
     private String code;
     private String fullCode;
-    private Long displayCode;
+
 
     // TODO : review the rest with shaun and viet
 }
