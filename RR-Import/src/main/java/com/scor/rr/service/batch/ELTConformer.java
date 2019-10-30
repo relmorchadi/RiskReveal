@@ -11,12 +11,15 @@ import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.repository.RRAnalysisRepository;
+import com.scor.rr.service.state.TransformationBundle;
+import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,6 +34,12 @@ public class ELTConformer {
     @Autowired
     RRAnalysisRepository rrAnalysisRepository;
 
+    @Autowired
+    TransformationPackage transformationPackage;
+
+    @Value("#{jobParameters['contractId']}")
+    String contractId;
+
     public RepeatStatus conformeELT(){
         log.debug("Starting ELTConformer");
 
@@ -38,19 +47,18 @@ public class ELTConformer {
 
         Map<MultiKey, RLAnalysisELT> conformedELT = new HashMap<>();
         Map<MultiKey, AnalysisELTnBetaFunction> betaConvertFunc = new HashMap<>();
-        List<Map> bundles = new ArrayList<>();
 
-        for (Map bundle : bundles) {
+        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             // Extract Params
-            RLAnalysis rlAnalysis = (RLAnalysis) bundle.get("rlAnalysis");
-            Long anlsId = rlAnalysis.getAnalysisId().longValue();
-            Long rdmId =rlAnalysis.getRdmId().longValue();
+            RLAnalysis rlAnalysis = bundle.getRlAnalysis();
+            Long anlsId = rlAnalysis.getAnalysisId();
+            Long rdmId =rlAnalysis.getRdmId();
             String rdmName = rlAnalysis.getRdmName();
-            String fpCode = (String) bundle.get("fpCode"); // not understood ???
-            Integer treatyLabelID = isTreaty(fpCode) ? (Integer) bundle.get("treatyLabelId") : null;
-            String instanceId = "RL-18";
-            RLAnalysisELT sourceAnalysisPLT =  (RLAnalysisELT) bundle.get("RlAnalysisELT");
-            RlSourceResult sourceResult= (RlSourceResult) bundle.get("rlSourceResult");
+            String fpCode = bundle.getFinancialPerspective(); // not understood ???
+            Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId) : null;
+            String instanceId = bundle.getInstanceId();
+            RLAnalysisELT sourceAnalysisPLT =  bundle.getRlAnalysisELT();
+            RlSourceResult sourceResult= bundle.getSourceResult();
 
             List<RlEltLoss> conformedELTLosses = new ArrayList<>();
 
@@ -83,8 +91,8 @@ public class ELTConformer {
 
             log.debug("eltLossesnBetaFunction.size = {}", eltLossesnBetaFunction.size());
 
-            bundle.put("conformedAnalysisELT",conformedAnalysisELT);
-            bundle.put("AnalysisELTnBetaFunction", analysisELTnBetaFunction);
+            bundle.setConformedRlAnalysisELT(conformedAnalysisELT);
+            bundle.setAnalysisELTnBetaFunction(analysisELTnBetaFunction);
 
             //TODO: check null ???
             double proportion = ofNullable(sourceResult.getProportion()).map(Number::doubleValue).map( val -> val / 100).orElse(1d);
@@ -92,9 +100,9 @@ public class ELTConformer {
 
             log.info("ELT {}, proportion {}, multiplier {}", conformedAnalysisELT.getAnalysisId(), proportion, multiplier);
 
-            LossDataHeader sourceRRLT = (LossDataHeader) bundle.get("SourceRRLT");
-            LossDataHeader conformedRRLT = (LossDataHeader) bundle.get("ConformedRRLT");
-            List<RmsExchangeRate> rlExchangeRates= (List) bundle.get("RmsExchangeRatesOfRRLT");
+            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            List<RmsExchangeRate> rlExchangeRates= bundle.getRmsExchangeRatesOfRRLT();
 
             double exchangeRate = 1.0d;
             double sourceExchangeRate = 1.0d;
@@ -133,12 +141,12 @@ public class ELTConformer {
             }
 
             /** @TODO Review the update Min Layer Attribute Logic => Delete + Threshold default Val on ELTLossnBetaFunction **/
-            Double minLayerAtt= (Double) bundle.get("minLayerAtt");
             for (ELTLossnBetaFunction ELTLossnBetaFunction : eltLossesnBetaFunction) {
-                ELTLossnBetaFunction.setMinLayerAtt(minLayerAtt);
+                ELTLossnBetaFunction.setMinLayerAtt(0d);
             }
 
-            bundle.put("eltLossesnBetaFunction", eltLossesnBetaFunction);
+            //@TODO Review
+            //bundle.setAnalysisELTnBetaFunction(eltLossesnBetaFunction);
 
             log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlSourceResultId());
         }

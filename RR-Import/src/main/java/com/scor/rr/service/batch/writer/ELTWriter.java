@@ -41,7 +41,7 @@ public class ELTWriter extends AbstractWriter {
     @Autowired
     private LossDataHeaderRepository lossDataHeaderRepository;
 
-    @Value("${ihub.path}")
+    @Value("${ihub.treaty.out.path}")
     private String iHub;
 
     public RepeatStatus writeBinary() {

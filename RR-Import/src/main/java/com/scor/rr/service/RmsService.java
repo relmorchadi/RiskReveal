@@ -54,7 +54,7 @@ public class RmsService {
     @Autowired
     ModelMapper modelMapper;
 
-    @Value("${rms.database}")
+    @Value("${rms.ds.dbname}")
     private String DATABASE;
 
 

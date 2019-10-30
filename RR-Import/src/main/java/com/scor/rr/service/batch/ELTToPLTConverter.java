@@ -58,6 +58,7 @@ import static java.util.stream.Collectors.toList;
 public class ELTToPLTConverter {
 
     FinancialPerspective financialPerspective;
+    @Autowired
     FinancialPerspectiveRepository financialPerspectiveRepository;
 
     @Autowired
@@ -140,13 +141,13 @@ public class ELTToPLTConverter {
 
 
             RlSourceResult sourceResult = bundle.getSourceResult();
-            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(sourceResult.getRlSourceResultId());
+            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlSourceResultId()));
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
             String analysisName = rlAnalysisOpt.map(RLAnalysis::getAnalysisName).orElse(null);
             Long analysisId = rlAnalysisOpt.map(RLAnalysis::getAnalysisId).orElse(null);
 
             RRAnalysis rrAnalysis = ofNullable(fpRRAnalysis)
-                    .map(fpAn -> fpAn.get(financialPerspective.getCode()))
+                    .map(fpAn -> fpAn.get(bundle.getFinancialPerspective()))
                     .map(id -> rrAnalysisRepository.findById(id).get())
                     .orElse(null);
 

@@ -27,6 +27,8 @@ public class Utils {
         InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
         Document document = reader.read(is);
 
+        Element root = document.getRootElement();
+
         List nodes = document.selectNodes("//RmsDlmProfile/ModellingOptions/*");
 
         for (Iterator iter = nodes.iterator(); iter.hasNext(); ) {

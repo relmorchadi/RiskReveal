@@ -45,7 +45,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
     @Autowired
     private RmsService rmsService;
 
-    @Value("${ihub.path}")
+    @Value("${ihub.treaty.out.path}")
     private String iHub;
 
     public RepeatStatus extractModellingOptions() {

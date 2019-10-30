@@ -1,10 +1,8 @@
 package com.scor.rr.service.batch.writer;
 
 
-import com.scor.rr.domain.AnalysisEpCurves;
 import com.scor.rr.domain.AnalysisSummaryStats;
 import com.scor.rr.domain.dto.BinFile;
-import com.scor.rr.domain.model.SummaryStatisticHeader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,15 +19,21 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.List;
 
 @Slf4j
 @Service
 public class EpSummaryStatWriter {
-    @Value("${ihub.path}")
+
+
     private Path ihubPath;
+
+    @Value("${ihub.treaty.out.path}")
+    private void setIhubPath(String path){
+        this.ihubPath= Paths.get(path);
+    }
 
     @Value("${ihub.prefix.directory}")
     private String prefixDirectory;
