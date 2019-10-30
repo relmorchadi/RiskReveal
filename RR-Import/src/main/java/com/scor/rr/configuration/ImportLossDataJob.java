@@ -38,7 +38,11 @@ public class ImportLossDataJob {
     private ELTExtractor eltExtractor;
 
     @Autowired
+    ELTConformer eltConformer;
+
+    @Autowired
     private ELTTruncator eltTruncator;
+
 
     @Autowired
     private ELTToPLTConverter eltToPLTConverter;
@@ -52,6 +56,7 @@ public class ImportLossDataJob {
 
     @Autowired
     private ModellingOptionsExtractor modellingOptionsExtractor;
+
 
 
 
@@ -83,6 +88,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet conformeEltTasklet(){
+        return (StepContribution contribution, ChunkContext chunkContext) -> eltConformer.conformeELT();
+    }
+
+    @Bean
     public Tasklet truncateELTTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltTruncator.truncateELTs();
     }
@@ -110,6 +120,11 @@ public class ImportLossDataJob {
     @Bean
     public Tasklet pltWriterTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> pltWriter.writeHeader();
+    }
+
+    @Bean
+    public Tasklet conformEPCurvesTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> epCurveExtractor.extractConformedEpCurves();
     }
 
 
@@ -144,6 +159,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Step conformeEltStep(){
+        return stepBuilderFactory.get("conformeELT").tasklet(conformeEltTasklet()).build();
+    }
+
+    @Bean
     public Step getELTTruncateELTStep() {
         return stepBuilderFactory.get("truncateELT").tasklet(truncateELTTasklet()).build();
     }
@@ -172,6 +192,10 @@ public class ImportLossDataJob {
     public Step getPltWriterStep() {
         return stepBuilderFactory.get("pltWriter").tasklet(pltWriterTasklet()).build();
     }
+    @Bean
+    public Step conformEPCurvesStep() {
+        return stepBuilderFactory.get("conformEpCurves").tasklet(conformEPCurvesTasklet()).build();
+    }
 
 
     /** Job */
@@ -180,19 +204,17 @@ public class ImportLossDataJob {
     public Job getImportLossData() {
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPerilStep())
-                .on("COMPLETE").to(getExtractExchangeRatesStep())
                 .next(getExtractEpCurveStatsStep())
+                .next(getExtractExchangeRatesStep())
                 .next(geExtractELTStep())
                 .next(getELTTruncateELTStep())
-                //.next("conformer")
-                //.next("conformEpCurves")
-                .next(getExtractModellingOptionsStep())
-                //.next("extractModelingOptions")
+                .next(conformeEltStep())
+                .next(conformEPCurvesStep())
                 .next(getEltBinaryWritingStep())
                 .next(getEltHeaderWritingStep())
+                .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
                 .next(getPltWriterStep())
-                .end()
                 .build();
     }
 
