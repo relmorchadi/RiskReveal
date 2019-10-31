@@ -17,6 +17,7 @@ import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
 import com.scor.rr.service.state.TransformationBundle;
@@ -55,7 +56,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @StepScope
 @Slf4j
-public class ELTToPLTConverter {
+public class ELTToPLTConverter extends AbstractWriter {
 
     FinancialPerspective financialPerspective;
     @Autowired
@@ -138,8 +139,6 @@ public class ELTToPLTConverter {
         Map<Long, TransformationBundle> bundleForPLT = new HashMap<>();
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
-
-
             RlSourceResult sourceResult = bundle.getSourceResult();
             Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlSourceResultId()));
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
@@ -200,10 +199,18 @@ public class ELTToPLTConverter {
                 //@TODO Review With Vier
                 //pltHeader.setTruncationThresholdEur(threshold);
                 String filename = makePLTFileName(
-                        rrAnalysis.getFinancialPerspective(),
                         pltHeader.getCreatedDate(),
+                        String.valueOf(pltHeader.getRegionPerilId()),
+                        financialPerspective.getCode(),
+                        pltHeader.getCurrencyid(),
+                        XLTOT.TARGET,
+                        pltHeader.getTargetRAPId(),
+                        pltHeader.getPltSimulationPeriods(),
+                        PLTPublishStatus.PURE,
+                        0, // pure PLT, no thread number
+                        pltHeader.getPltHeaderId(),
                         ".bin"
-                );
+                        );
                 File file = makeFullFile(prefix, filename);
                 BinFile binFile= new BinFile(file);
                 pltHeader.setPltLossDataFilePath(binFile.getPath());
