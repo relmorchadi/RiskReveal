@@ -34,7 +34,6 @@ import java.util.*;
 
 import static com.scor.rr.util.PathUtils.makeEpCurveFileName;
 import static com.scor.rr.util.PathUtils.makeEpSummaryStatFileName;
-import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -73,7 +72,7 @@ public class EpCurveExtractor {
 
     private String fpTYCode = "TY";
 
-    private Gson gson;
+    private Gson gson = new Gson();
 
     /**
      * Extract EP Curve Tasklet main entry
@@ -101,7 +100,7 @@ public class EpCurveExtractor {
             List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerpective()).collect(toList());
             List<String> filteredFPs = sourceFPs.stream().filter(fp -> !StringUtils.equalsIgnoreCase(fp, FinancialPerspectiveCodeEnum.TY.getCode())).collect(toList());
 
-            if (StringUtils.equalsIgnoreCase(selectedFp, FinancialPerspectiveCodeEnum.TY.getCode()))
+            if (!StringUtils.equalsIgnoreCase(selectedFp, FinancialPerspectiveCodeEnum.TY.getCode()))
                 filteredFPs.add(selectedFp);
 
             EpCurveExtractResult epCurveExtractResult = this.mapFinancialPerspectiveToSummaryStats(filteredFPs, riskLinkAnalysis, instanceId, rdmId, rdmName, analysisId);
@@ -191,7 +190,8 @@ public class EpCurveExtractor {
             List<AnalysisEpCurves> confEPCurvesList = new ArrayList<>();
 
             for (EPCurveHeader epCurveHeader : bundle.getEpCurves()) {
-                Type listType = new TypeToken<ArrayList<AnalysisEpCurves>>(){}.getType();
+                Type listType = new TypeToken<ArrayList<AnalysisEpCurves>>() {
+                }.getType();
                 List<AnalysisEpCurves> confEPCurves =
                         conformELTEPCurves(
                                 gson.fromJson(epCurveHeader.getEPCurves(), listType),
@@ -251,10 +251,12 @@ public class EpCurveExtractor {
             rmsService.getAnalysisEpCurves(rdmId, rdmName, analysisId, fp, null)
                     .forEach(epCurve -> {
                         StatisticMetric metric = StatisticMetric.getFrom(epCurve.getEpTypeCode());
-                        if (metricToEPCurve.containsKey(metric))
+                        if (metricToEPCurve.containsKey(metric) && metricToEPCurve.get(metric) != null) {
                             metricToEPCurve.get(metric).add(epCurve);
-                        else
-                            metricToEPCurve.put(metric, asList(epCurve));
+                        } else{
+                            metricToEPCurve.put(metric, new ArrayList<>(Collections.singleton(epCurve)));
+
+                        }
                     });
 
             result.fpToELTEPCurves.put(fp, metricToEPCurve);

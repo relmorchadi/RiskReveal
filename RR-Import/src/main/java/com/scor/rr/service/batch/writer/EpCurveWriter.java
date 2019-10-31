@@ -12,6 +12,7 @@ import sun.nio.ch.DirectBuffer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -75,13 +76,14 @@ public class EpCurveWriter {
         FileChannel out = null;
         MappedByteBuffer buffer = null;
         try {
+            out = new RandomAccessFile(file, "rw").getChannel();
             log.info("EPCurve file: {}", file);
             int size = 18 * epCurves.size();
             buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             if (epCurves != null) {
                 for (AnalysisEpCurves pltepCurve : epCurves) {
-                    buffer.putInt(pltepCurve.getEpTypeCode());
+                    buffer.putShort( (short) pltepCurve.getEpTypeCode() );
                     buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
                     buffer.putDouble(pltepCurve.getLoss());
                 }

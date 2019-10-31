@@ -14,11 +14,7 @@ public class PLTBundle {
 
     private PLTHeader header;
 
-    private PLTHeader header100k;
-
     private LossDataHeader lossDataHeader;
-
-    private LossDataHeader lossDataHeader100k;
 
     private String errorMessage;
 }

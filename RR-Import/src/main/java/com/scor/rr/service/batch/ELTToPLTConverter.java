@@ -207,6 +207,7 @@ public class ELTToPLTConverter {
                 File file = makeFullFile(prefix, filename);
                 BinFile binFile= new BinFile(file);
                 pltHeader.setPltLossDataFilePath(binFile.getPath());
+                pltHeader.setPltLossDataFileName(binFile.getFileName());
 
                 bundleForPLT.put(pltHeader.getPltHeaderId(), bundle);
 
@@ -285,7 +286,7 @@ public class ELTToPLTConverter {
         LossDataHeader lossDataHeader= bundle.getConformedRRLT();
         RRAnalysis rrAnalysis= bundle.getRrAnalysis();
 
-        if (!RRLossTableType.CONFORMED.toString().equals(lossDataHeader.getOriginalTarget())) {
+        if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeader.getOriginalTarget())) {
             throw new IllegalStateException();
         }
 

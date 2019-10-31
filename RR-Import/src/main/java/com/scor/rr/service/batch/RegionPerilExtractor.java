@@ -3,6 +3,7 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.ProjectImportRun;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
+import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.reference.Currency;
 import com.scor.rr.domain.reference.RegionPeril;
@@ -56,6 +57,12 @@ public class RegionPerilExtractor {
 
     @Autowired
     private TransformationPackage transformationPackage;
+
+    @Autowired
+    private TargetRAPRepository targetRAPRepository;
+
+    @Autowired
+    private AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
 
     @Value("#{jobParameters['projectId']}")
     private Long projectId;
@@ -127,8 +134,6 @@ public class RegionPerilExtractor {
                 rrAnalysis.setMultiplierBasis(sourceResult.getMultiplierBasis());
                 rrAnalysis.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
                 rrAnalysis.setDescription(sourceResult.getRlAnalysis().getDescription());
-                //TODO ; know what should be done. gonna implement later
-//                rrAnalysis.setIncludedTargetRapIds(sourceResult.getIncludedTargetRapIds());
 
                 // TODO : Not sure ?
                 rrAnalysis.setOverrideReasonText(sourceResult.getOverrideRegionPerilBasis());
@@ -179,7 +184,15 @@ public class RegionPerilExtractor {
                 rrAnalysis.setLossAmplification(sourceResult.getRlAnalysis().getLossAmplification());
                 rrAnalysis.setModel(sourceResult.getRlAnalysis().getEngineType());
 
-                rrAnalysisRepository.save(rrAnalysis);
+                RRAnalysis rrAnalysisLambda = rrAnalysisRepository.saveAndFlush(rrAnalysis);
+
+                targetRAPRepository.findByTargetRAPCode(sourceResult.getTargetRAPCode()).ifPresent(targetRAP -> {
+                    AnalysisIncludedTargetRAP analysisIncludedTargetRAP = new AnalysisIncludedTargetRAP();
+                    analysisIncludedTargetRAP.setTargetRAPId(targetRAP.getTargetRAPId());
+                    analysisIncludedTargetRAP.setModelAnalysisId(rrAnalysisLambda.getRrAnalysisId());
+                    analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAP);
+                });
+
                 fpRRAnalysis.put(sourceResult.getFinancialPerspective(), rrAnalysis.getRrAnalysisId());
 
                 Currency analysisCurrency;

@@ -1,5 +1,6 @@
 package com.scor.rr.configuration;
 
+import com.google.gson.Gson;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
@@ -42,5 +43,10 @@ public class BatchConfiguration {
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
         simpleJobLauncher.setJobRepository(getJobRepository());
         return simpleJobLauncher;
+    }
+
+    @Bean
+    public Gson getGson(){
+        return new Gson();
     }
 }

@@ -38,7 +38,7 @@ public class PLTWriter {
                 }
                 for (PLTBundle pltBundle : bundle.getPltBundles()) {
                     if (!pltBundle.getPltError()) {
-                        persistHeader(pltBundle.getHeader100k());
+                        persistHeader(pltBundle.getHeader());
                     }
                 }
 
