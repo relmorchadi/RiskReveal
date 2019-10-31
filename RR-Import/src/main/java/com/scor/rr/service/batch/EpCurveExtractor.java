@@ -132,16 +132,6 @@ public class EpCurveExtractor {
             LossDataHeader conformedRRLT = bundle.getConformedRRLT();
 
 
-//            List<ELTEPHeader> confELTEPHeaders = new ArrayList<>(); <--> confRrStatisticHeaders
-//            confELTHeader.setELTEPHeaders(confELTEPHeaders); <--> confRrStatisticHeaders
-
-//            List<SummaryStatisticHeader> confRrStatisticHeaders = new ArrayList<>();
-//            // 1 conformedRRLT --> List<RRStatisticHeader> confRrStatisticHeaders
-//            // conformedRRLT.setELTEPHeaders(confRrStatisticHeaders); //TODO ?? DBRef to String, 1 way
-//
-//            Map<String, Map<StatisticMetric, List<EPCurveHeader>>> fp2Metric2EPCurves = new HashMap<>();
-//            Map<String, SummaryStatisticHeader> fp2SumStat = new HashMap<>();
-
             double proportion = bundle.getSourceResult().getProportion() == null ? 1 : bundle.getSourceResult().getProportion().doubleValue() / 100;
             double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1 : bundle.getSourceResult().getUnitMultiplier().doubleValue();
             log.info("Conforming EP curves and sum stats for conformedRRLT {}, proportion {}, multiplier {}", bundle.getConformedRRLT().getLossDataHeaderId(), proportion, multiplier);
@@ -220,6 +210,7 @@ public class EpCurveExtractor {
             });
 
 
+            lossDataHeaderRepository.save(conformedRRLT);
             summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
             epCurveHeaderRepository.saveAll(conformedEpCurvesHeaders);
 
