@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service';
-import {debounceTime, takeUntil} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, first, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
@@ -20,7 +20,9 @@ import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {HelperService} from "../../../../shared/helper.service";
-import {BadgesService, mapBadgeShortCutToBadgeKey, mapTableNameToBadgeKey} from "../../../service/badges.service";
+import {BadgesService } from "../../../service/badges.service";
+import {ShortCut} from "../../../model/shortcut.model";
+import {SearchNavBarState} from "../../../store/states";
 
 
 @Component({
@@ -36,14 +38,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   readonly componentName: string = 'search-pop-in';
 
-  searchShortCuts = [
-    {name: "CedantName", shortcut: "c:"},
-    {name: "CedantCode", shortcut: "cid:"},
-    {name: "Country", shortcut: "ctr:"},
-    {name: "Year", shortcut: "uwy:"},
-    {name: "WorkspaceName", shortcut: "w:"},
-    {name: "WorkspaceId", shortcut: "wid:"}
-  ];
+  searchShortCuts: ShortCut[];
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -55,7 +50,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   searchMode: string = 'Treaty';
   searchConfigPopInVisible: boolean = false;
   inputDisabled: boolean = true;
-  mapBadgeShortCutToBadgeKey: any;
   mapTableNameToBadgeKey: any;
   showListOfShortCuts: boolean;
   possibleShortCuts: string[];
@@ -72,8 +66,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
               private actions$: Actions, private cdRef: ChangeDetectorRef,
               private badgeService: BadgesService
   ) {
-    this.mapBadgeShortCutToBadgeKey = mapBadgeShortCutToBadgeKey;
-    this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
     this.contractFilterFormGroup = this._fb.group({
       expertModeToggle: [false],
       globalKeyword: ['']
@@ -90,6 +82,18 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    this.store.select(SearchNavBarState.getShortCuts).subscribe( shortCuts => {
+      this.searchShortCuts = this.updateShortCuts(shortCuts);
+      this.detectChanges();
+    });
+
+    this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(first(v => v)).subscribe( mapTableNameToBadgeKey => {
+      this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
+      console.log(mapTableNameToBadgeKey);
+      this.detectChanges();
+    });
+
     this._subscribeGlobalKeywordChanges();
     this._subscribeToDistatchedEvents();
     this.contractFilterFormGroup.setValue({
@@ -97,6 +101,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       expertModeToggle: true
     })
   }
+
+  private updateShortCuts = _.memoize((shortCuts) => {
+    return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable));
+  });
 
   private calculateContractChoicesLength() {
     if (this.state.data && this.state.data.length > 0) {
@@ -140,7 +148,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   updatePossibleShortCuts(expr) {
     if( !_.includes(expr, ":")) {
-      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.name), _.toLower(expr))), shortCut => shortCut.name);
+      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.shortCutLabel), _.toLower(expr))), shortCut => shortCut.shortCutLabel);
     } else {
       this.possibleShortCuts = [];
     }
@@ -157,7 +165,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    console.log(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword)
     this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
@@ -166,7 +173,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     if (this.scrollParams.position && this.scrollParams.scrollTo >= 0) {
       evt.preventDefault();
       let {i, j} = this.scrollParams.position;
-      this.selectSearchBadge(this.mapTableNameToBadgeKey[this.state.tables[i]], this.state.data[i][j].label);
+      //this.selectSearchBadge(this.mapTableNameToBadgeKey[this.state.tables[i]], this.state.data[i][j].label);
       this.scrollParams.scrollTo = -1;
     }
   }
@@ -190,22 +197,21 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   convertBadgeToExpression(badges) {
     let globalExpression = "";
     let index;
-    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       console.log(badge);
-      index = this.searchShortCuts.findIndex(row => row.name == badge.key);
+      index = this.searchShortCuts.findIndex(row => row.shortCutLabel == badge.key);
       if(i == badges.length - 1) {
-        globalExpression += this.searchShortCuts[index].name + ":" + badge.value;
+        globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
       } else {
-        globalExpression += this.searchShortCuts[index].name + ":" + badge.value + " ";
+        globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value + " ";
       }
     });
     return globalExpression;
   }
 
   convertExpressionToBadge(expression) {
-    const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, shortCut.name));
-    return foundShortCut ? { key: foundShortCut.name, value: expression.substring(foundShortCut.name.length + 1) } : null;
+    const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, shortCut.shortCutLabel));
+    return foundShortCut ? { key: foundShortCut.shortCutLabel, value: expression.substring(foundShortCut.shortCutLabel.length + 1) } : null;
   }
 
   selectSearchBadge(key, value) {

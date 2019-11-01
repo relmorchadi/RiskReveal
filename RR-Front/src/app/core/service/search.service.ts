@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
@@ -47,6 +47,10 @@ export class SearchService {
 
   expertModeSearch(filter) {
     return this._http.post(`${this.api}workspace/expert-mode`, filter);
+  }
+
+  loadShort(): Observable<any> {
+    return this._http.get(`${this.api}shortcuts`);
   }
 
   affectItems(item) {

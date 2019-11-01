@@ -1,33 +1,25 @@
 import {Injectable} from '@angular/core';
 import * as _ from "lodash";
+import {ShortCut} from "../model/shortcut.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class BadgesService {
 
-  readonly regularExpession = /(\w*:){1}(((\w|\")*\s)*)/g;
+  readonly regularExpession = /(\w*:){1}(((\w|\"|\*)*\s)*)/g;
 
   readonly shortcuts = {
     c: 'CedantName',
     cid: 'CedantCode',
-    uwy: 'Year',
-    wn: 'WorkspaceName',
+    uwy: 'UWYear',
+    w: 'WorkspaceName',
     wid: 'WorkspaceId',
     ctr: 'CountryName'
   };
 
-  /*readonly shortcuts = {
-    c: 'Cedant Name',
-    cid: 'Cedant Code',
-    uwy: 'Year',
-    wn: 'Workspace Name',
-    wid: 'Workspace Id',
-    ctr: 'Country Name'
-  };*/
-
-
   constructor() {
+
   }
 
   public generateBadges(expression, shortcuts = this.shortcuts): string | Array<{ key, value, operator }> {
@@ -64,22 +56,28 @@ export class BadgesService {
       return shortCutExist ? shortCutExist + ":" : shortcut;
     });
   }
+
+  public initMappers(shortCuts: ShortCut[]) {
+    let mapTableNameToBadgeKey= {};
+    shortCuts.forEach( shortCut => {
+      mapTableNameToBadgeKey[shortCut.mappingTable] = shortCut.shortCutLabel;
+    })
+    return mapTableNameToBadgeKey;
+  }
+
+  public clearString(expr) {
+    return _.replace(expr, /["]/g, '')
+  }
+
+  public parseAsterisk(expr: string) {
+    if(!_.includes(expr, "*")) {
+      return this.padWithLike('e', this.padWithLike('s', expr));
+    } else {
+      return _.replace(expr, /[*]/g, '%');
+    }
+  }
+
+  public padWithLike(t, expr) {
+    return (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
+  }
 }
-
-export const mapTableNameToBadgeKey= {
-  "CEDANT_NAME": "CedantName",
-  "YEAR": "Year",
-  "WORKSPACE_ID": "WorkspaceId",
-  "WORKSPACE_NAME": "WorkspaceName",
-  "COUNTRY": "Country",
-  "CEDANT_CODE": "CedentCode"
-};
-
-export const mapBadgeShortCutToBadgeKey= {
-  "CedantName": "Cedant Name",
-  "Year": "Year",
-  "WorkspaceId": "Workspace Id",
-  "WorkspaceName": "Workspace Name",
-  "Country": "Country",
-  "CedantCode": "Cedent Code"
-};

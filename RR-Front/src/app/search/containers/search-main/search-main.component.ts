@@ -18,7 +18,8 @@ import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
-import {mapBadgeShortCutToBadgeKey, mapTableNameToBadgeKey} from "../../../core/service/badges.service";
+import {BadgesService} from "../../../core/service/badges.service";
+import {distinctUntilChanged, takeUntil} from "rxjs/operators";
 
 
 @Component({
@@ -151,17 +152,18 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   savedSearchVisibility: boolean;
   saveSearchPopup: boolean = false;
   searchLabel: any;
-  mapBadgeShortCutToBadgeKey: any;
   mapTableNameToBadgeKey: any;
 
-  constructor(private _searchService: SearchService, private _helperService: HelperService,
+  constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
-    this.mapBadgeShortCutToBadgeKey= mapBadgeShortCutToBadgeKey;
-    this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
   }
 
   ngOnInit() {
+    this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(this.unsubscribeOnDestroy,distinctUntilChanged()).subscribe( mapTableNameToBadgeKey => {
+      this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
+      this.detectChanges();
+    });
     this.searchContent$
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(({value}) => {
@@ -261,7 +263,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   get filter() {
-    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
+    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []).map(item => ({
+      ...item,
+      value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value)),
+    }));
     let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
     return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
       ...item,
