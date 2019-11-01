@@ -7,7 +7,7 @@ public enum TableNames {
     WORKSPACE_ID("workspace_id"),
     WORKSPACE_NAME("workspace_name"),
 //    TREATY("treaty"),
-    YEAR("year");
+    UW_YEAR("year");
 
     private String value;
     TableNames(String value) {

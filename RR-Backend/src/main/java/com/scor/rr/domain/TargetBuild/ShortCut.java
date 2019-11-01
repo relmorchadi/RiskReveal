@@ -23,4 +23,7 @@ public class ShortCut {
     @Column(unique = true)
     private String shortCutAttribute;
 
+    @Column(unique = true, nullable = false, updatable = false)
+    private String mappingTable;
+
 }
