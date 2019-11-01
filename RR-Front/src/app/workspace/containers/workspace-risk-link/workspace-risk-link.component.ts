@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Actions, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -18,7 +18,8 @@ import {combineLatest} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from "../../../shared/pipes/table-sort-and-filter.pipe";
 import {NotificationService} from "../../../shared/services";
-import {debounceTime} from "rxjs/operators";
+import {debounceTime, takeUntil, withLatestFrom} from "rxjs/operators";
+import {SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -110,6 +111,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   allCheckedPortolfios: boolean;
   indeterminatePortfolio: boolean;
 
+  @Select(WorkspaceState.getValidResults) validate$;
+  showPopUp = false;
+
   filterAnalysis = {};
 
   filterPortfolio = {
@@ -161,6 +165,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.ws = _.merge({}, value);
       }),
+      this.validate$.pipe().subscribe(value => {
+        if (value !== undefined && value !== null) {
+          this.showPopUp = !value;
+        }
+      }),
       this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
         this.hyperLinksConfig = {wsId, uwYear: year};
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
@@ -169,23 +178,26 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }
         this.detectChanges();
       }),
-      this.actions$.pipe(ofActionSuccessful(fromWs.AddToBasketAction, fromWs.LoadDetailAnalysisFacAction))
-        .pipe(this.unsubscribeOnDestroy, debounceTime(500))
-        .subscribe(() => {
-          console.log(this.state.results.isValid);
-/*          if (!this.state.results.isValid) {
-            this.confirmationService.confirm({
-              message: 'You are attempting to import multiple analysis for the following region peril/division',
-              rejectVisible: false,
-              header: 'Warning',
-              icon: 'pi pi-exclamation-triangle',
-              accept: () => {
-              }
-            });
-          }*/
-          this.detectChanges();
-        }),
+      this.actions$
+        .pipe(
+          ofActionDispatched(SetCurrentTab)
+        ).subscribe(({payload}) => {
+          console.log(payload, this.ws.wsId, this.ws.uwYear);
+        if (payload.wsIdentifier != this.ws.wsId + '-' + this.ws.uwYear) this.destroy();
+        this.detectChanges();
+      })
     ];
+
+/*
+
+    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+      console.log(payload);
+      if (payload.wsIdentifier !== this.ws.wsId + '-' + this.ws.uwYear) this.destroy();
+    });
+*/
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
@@ -201,16 +213,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   autoLinkAnalysis() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketDefaultAction());
-    if (this.tabStatus === 'fac') {
-      this.confirmationService.confirm({
-        message: 'You are attempting to import multiple analysis for the following region peril/division',
-        rejectVisible: false,
-        header: 'Warning',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-        }
-      });
-    }
   }
 
   setFilterDivision() {

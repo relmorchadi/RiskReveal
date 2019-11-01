@@ -309,6 +309,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -895,6 +901,11 @@ export class WorkspaceState {
   @Action(fromWS.AddToBasketDefaultAction)
   addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)

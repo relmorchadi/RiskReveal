@@ -81,7 +81,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
         this.detectChanges();
       });
     this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.tabStatus = _.get(value, 'typeWs', null);
       this.treatyDataInfo = _.get(value, 'treaty', null);
       this.facDataInfo = _.get(value, 'fac', null);
       this.detectChanges();
@@ -89,6 +88,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.ws = _.merge({}, value);
       this.selectedProject = _.filter(this.ws[this.currentWsIdentifier].projects, item => item.selected)[0];
+      this.tabStatus = _.get(this.selectedProject, 'projectType', null);
       this.selectDataScope();
       this.detectChanges();
     });

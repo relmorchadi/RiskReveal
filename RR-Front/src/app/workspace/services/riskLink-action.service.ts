@@ -836,6 +836,17 @@ export class RiskLinkStateService {
       draft.content[wsIdentifier].riskLink.results = {data: results};
       draft.content[wsIdentifier].riskLink.summaries = {data: summaries};
     }));
+
+    ctx.dispatch(new fromWs.LoadDetailAnalysisFacAction(_.filter(_.toArray(results), (item: any) => item.typeWs === 'fac')));
+    ctx.dispatch(new fromWs.LoadLinkingDataAction({analysis: _.toArray(results), portfolios: _.toArray(summaries)}));
+  }
+
+  importRiskLinkImport(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].riskLink.importPLTs = true;
+    }));
   }
 
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1983,7 +1994,8 @@ export class RiskLinkStateService {
                   summaries: null,
                   selectedEDMOrRDM: null,
                   activeAddBasket: false,
-                  synchronize: false
+                  synchronize: false,
+                  importPLTs: false
                 };
               }
             )
@@ -2035,10 +2047,11 @@ export class RiskLinkStateService {
   }
 
   private _isValidImport(ctx, data) {
-    const valid = _.uniq(_.map(data, item => ({regionPeril: item.regionPeril, division: item.division})));
-    const divisions = _.uniq(_.map(data, item => item.division));
-    console.log(valid, division);
-    return valid.length >= 2 * divisions.length;
+    const valid = _.uniqBy([..._.map(data, item => ({regionPeril: item.regionPeril,
+      division: _.flatten(item.division)}))], item => item.regionPeril);
+    const divisions = _.uniq(_.flatten(_.map(data, item => item.division)));
+    console.log(valid.length <= divisions.length, valid, divisions);
+    return valid.length <= divisions.length;
   }
 
 }
