@@ -9,6 +9,8 @@ const facWs = [
     requestedByFullName: 'Clementine RIPOLL',
     requestCreationDate: '2015-07-21T17:01:30.060Z',
     cedantName: 'GALP ENERGIA',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -27,6 +29,7 @@ const facWs = [
     carStatus: 'Canceled',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -34,13 +37,15 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
         principal: true,
         lob: 'Property',
@@ -48,7 +53,38 @@ const facWs = [
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01579',
@@ -60,6 +96,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-17T10:21:40.567Z',
     cedantName: 'EUROPEAN SPACE AGENCY',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -67,7 +105,7 @@ const facWs = [
     uwanalysisContractSubsidiary: '2 @ Subsidiaries',
     uwanalysisContractYear: 2016,
     uwAnalysisContractDate: '2016-01',
-    assignedAnalyst: 'Nathalie Dulac',
+    assignedAnalyst: 'Unassigned',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'B0801116998G16',
     uwanalysisContractFacNumber: 'FA0061072',
@@ -78,28 +116,62 @@ const facWs = [
     carStatus: 'New',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
-        lob: 'Property',
+        lob: 'Construction',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00067',
@@ -111,6 +183,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -122,13 +196,14 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0051168',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00033475',
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -136,6 +211,7 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
         lob: 'Property',
@@ -143,14 +219,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
-        principal: true,
+        principal: false,
         lob: 'Property',
-        coverage: 'PD, BI',
+        coverage: 'BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00083',
@@ -162,6 +270,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -173,35 +283,69 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00021078',
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'Completed',
+    carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
-        coverage: 'PD, BI',
+        coverage: 'PD',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00099',
@@ -213,6 +357,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    projectFacSource: 'specific',
+    uwAnalysis: '',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -231,28 +377,62 @@ const facWs = [
     carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00111',
@@ -264,6 +444,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -275,35 +457,69 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00016478',
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Construction',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-00021',
@@ -315,6 +531,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -322,17 +540,18 @@ const facWs = [
     uwanalysisContractSubsidiary: '10 @ Subsidiaries',
     uwanalysisContractYear: 2019,
     uwAnalysisContractDate: '2019-01',
-    assignedAnalyst: 'Richard DEEM',
+    assignedAnalyst: 'Unassigned',
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00098624',
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'In Progress',
+    carStatus: 'New',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -340,14 +559,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
-        principal: true,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00047',
@@ -359,6 +610,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -370,35 +623,69 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00007547',
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00584',
@@ -410,6 +697,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-17T12:37:37.405Z',
     cedantName: 'Facebook, Inc.',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -428,28 +717,62 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-01585',
@@ -461,6 +784,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-17T13:12:32.550Z',
     cedantName: 'EUROPEAN SPACE AGENCY',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -476,31 +801,65 @@ const facWs = [
     uwanalysisContractContractId: '10F131564',
     contractName: 'NB18',
     uwanalysisContractInsured: '1000217722 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00043',
@@ -512,6 +871,8 @@ const facWs = [
     requestedByFullName: 'Matthieu BACQUEVILLE',
     requestCreationDate: '2015-07-22T10:26:42.603Z',
     cedantName: 'Facebook, Inc.',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -523,35 +884,69 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: null,
     uwanalysisContractFacNumber: 'FA0025896',
-    uwAnalysisProjectId: 'P-00012478',
+    uwAnalysisProjectId: 'P-00014442',
     uwanalysisContractContractId: 'FA0025896',
     contractName: 'Mountain View, CA Apartment buildings',
     uwanalysisContractInsured: '2000047946 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01525',
@@ -563,6 +958,8 @@ const facWs = [
     requestedByFullName: 'Yifan SUN',
     requestCreationDate: '2015-12-14T16:01:29.452Z',
     cedantName: 'GALP ENERGIA',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -581,28 +978,62 @@ const facWs = [
     carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
+        coverage: 'BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Construction',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00037',
@@ -614,6 +1045,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'INGREDION, INC_',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -632,28 +1065,62 @@ const facWs = [
     carStatus: 'Completed',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-01527',
@@ -665,6 +1132,8 @@ const facWs = [
     requestedByFullName: 'Yifan SUN',
     requestCreationDate: '2015-12-14T19:11:37.830Z',
     cedantName: 'GALP ENERGIA',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -680,31 +1149,65 @@ const facWs = [
     uwanalysisContractContractId: 'FA0051168',
     contractName: 'NB14-KB',
     uwanalysisContractInsured: '100059061 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
+        lob: 'Property',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   },
   {
     id: 'CAR-01533',
@@ -716,6 +1219,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:08:54.137Z',
     cedantName: 'INGREDION, INC_',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -731,31 +1236,65 @@ const facWs = [
     uwanalysisContractContractId: 'FA0050322',
     contractName: 'Data invalid',
     uwanalysisContractInsured: '1000418967 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
-        coverage: 'ZBI, BI',
+        coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 3,
+        principal: false,
+        lob: 'Property',
+        coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      }
+    ]
   },
   {
     id: 'CAR-00117',
@@ -767,6 +1306,8 @@ const facWs = [
     requestedByFullName: 'Clementine RIPOLL',
     requestCreationDate: '2015-07-21T17:01:30.060Z',
     cedantName: 'GALP ENERGIA',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -785,28 +1326,54 @@ const facWs = [
     carStatus: 'Superseded',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
-        divisionNo: 3,
+        selected: false,
+        divisionNo: 2,
         principal: true,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00135',
@@ -818,6 +1385,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:44:01.466Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '01 @ LOBs',
     uwanalysisContractBusinessType: 'Renewal',
     uwanalysisContractEndorsementNumber: 0,
@@ -836,6 +1405,7 @@ const facWs = [
     carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
         principal: true,
         lob: 'Property',
@@ -843,6 +1413,7 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 2,
         principal: false,
         lob: 'Property',
@@ -850,14 +1421,46 @@ const facWs = [
         currency: 'USD'
       },
       {
+        selected: false,
         divisionNo: 3,
-        principal: true,
+        principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '3'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      }
+    ]
   },
   {
     id: 'CAR-00136',
@@ -869,6 +1472,8 @@ const facWs = [
     requestedByFullName: 'Maelle DANIEL',
     requestCreationDate: '2015-12-15T09:56:24.237Z',
     cedantName: 'EFL Development Company, LP',
+    uwAnalysis: '',
+    projectFacSource: 'specific',
     uwanalysisContractLob: '02 @ LOBs',
     uwanalysisContractBusinessType: 'New Business',
     uwanalysisContractEndorsementNumber: 0,
@@ -880,35 +1485,77 @@ const facWs = [
     uwanalysisContractOrderNumber: 1,
     uwanalysisContractLabel: 'Citrus County Combined Cycle Project',
     uwanalysisContractFacNumber: 'FA0024677',
-    uwAnalysisProjectId: 'P-00012786',
+    uwAnalysisProjectId: 'P-00017624',
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'New',
+    carStatus: 'In Progress',
     division: [
       {
+        selected: false,
         divisionNo: 1,
-        principal: true,
-        lob: 'Property',
-        coverage: 'PD, BI',
-        currency: 'USD'
-      },
-      {
-        divisionNo: 2,
         principal: false,
         lob: 'Property',
         coverage: 'PD, BI',
         currency: 'USD'
       },
       {
+        selected: false,
+        divisionNo: 2,
+        principal: false,
+        lob: 'Construction',
+        coverage: 'PD',
+        currency: 'USD'
+      },
+      {
+        selected: false,
         divisionNo: 3,
         principal: true,
-        lob: 'Property',
+        lob: 'Construction',
         coverage: 'PD, BI',
+        currency: 'USD'
+      },
+      {
+        selected: false,
+        divisionNo: 4,
+        principal: false,
+        lob: 'Property',
+        coverage: 'BI',
         currency: 'USD'
       }
     ],
-    regionPeril: []
+    regionPeril: [
+      {
+        regionPerilCode: 'ACEQ-CR',
+        regionPerilDesc: 'Central America (Costa Rica) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'ACEQ-GT',
+        regionPerilDesc: 'Central America (Guatemala) Earthquake',
+        isValidMinimumGrain: true,
+        division: '2'
+      },
+      {
+        regionPerilCode: 'ACEQ-SV',
+        regionPerilDesc: 'Central America (El Salvador) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'AHEQ-CL',
+        regionPerilDesc: 'South America (Chile) Earthquake',
+        isValidMinimumGrain: true,
+        division: '4'
+      },
+      {
+        regionPerilCode: 'AHEQ-CO',
+        regionPerilDesc: 'South America (Colombia) Earthquake',
+        isValidMinimumGrain: true,
+        division: '1'
+      }
+    ]
   }
 ];
 

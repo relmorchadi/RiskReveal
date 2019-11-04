@@ -40,15 +40,42 @@
               <div style="display: flex; flex: 1;">
                 <div class="workspace-title-wrapper">
                   <div class="d-inline-flex flex-column">
-                    <h3 class="workspace-title">{{data[wsIdentifier]?.cedantName}}
+                    <h3 class="workspace-title"
+                        [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}">
+                      {{data[wsIdentifier]?.cedantName}}
                       <i (click)="addToFavorite(wsIdentifier, data[wsIdentifier])"
                          *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon" class="icon-star_border_24px"></i>
                       <ng-template #favoriteIcon>
                         <i (click)="unFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_24px"></i>
                       </ng-template>
                     </h3>
-                    <h4 class="workspace-title"> {{data[wsIdentifier]?.workspaceName}} | {{data[wsIdentifier]?.uwYear}}
-                      | {{data[wsIdentifier]?.wsId}} <ng-container *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">|</ng-container> </h4>
+                    <h4 class="workspace-title" [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}">
+                      {{data[wsIdentifier]?.workspaceName}} | {{data[wsIdentifier]?.uwYear}} | {{data[wsIdentifier]?.wsId}}
+                      <ng-container *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">|</ng-container> </h4>
+                    <span style="display: flex; align-items: center" *ngIf="data[wsIdentifier]?.workspaceType === 'fac'">
+                      <span [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}"
+                            class="tab-metadata-title">Selected Project:</span>
+                      <span>
+                        <nz-dropdown [nzTrigger]="'click'">
+                          <a nz-dropdown>
+                            <span class="d-flex align-items-center">
+                              <span class="dropdown-project-style">
+                                {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}]
+                              </span>
+                              <span class="d-flex">
+                                 <i class="pl-3 drop-icon" *ngIf="filterListProject().length > 0"
+                                    style="font-size: 12px; margin: 0 !important;" nz-icon type="down"></i>
+                              </span>
+                            </span>
+                          </a>
+                          <ul style="padding:0" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
+                            <li (click)="selectProject(item.id)" *ngFor="let item of filterListProject()" nz-menu-item>
+                              {{item.id | trimFormat}} [{{item.projectId | trimSecondaryFormat}}]
+                            </li>
+                          </ul>
+                        </nz-dropdown>
+                      </span>
+                    </span>
                   </div>
                 </div>
                 <div [ngClass]="{'collapse':!data[wsIdentifier]?.collapseWorkspaceDetail}" class="header-tab-right">
@@ -105,7 +132,7 @@
                     <div class="row">
                         <span style="flex: 0 0 49.333333%;"
                               class="col-7 tab-metadata-title">Contract Source :</span>
-                      <span class="col-5 tab-metadata-value">Omega</span>
+                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.contractSource}}</span>
                     </div>
                   </div>
                   <div nz-col style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row
@@ -122,12 +149,24 @@
                           class="d-block tab-metadata-value">{{data[wsIdentifier]?.expiryDate | date:'dd/MM/yyyy'}}</span>
                       </div>
                     </div>
-                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" [nzSpan]="16">
+                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'" [nzSpan]="16">
                       <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Treaty Section :</span>
                       <ul class="treaty-list">
                         <li
                           *ngFor="let section of sliceContent(data[wsIdentifier]?.treatySections, state?.sliceValidator)">
                           {{section}}
+                        </li>
+                      </ul>
+                      <ng-container *ngIf="data[wsIdentifier]?.treatySections?.length > 2">
+                        <span (click)="patchSliceValue(false)" *ngIf="state?.sliceValidator" class="tab-metadata-more">See All</span>
+                        <span (click)="patchSliceValue(true)" *ngIf="!state?.sliceValidator" class="tab-metadata-more">Hide</span>
+                      </ng-container>
+                    </div>
+                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'fac'" [nzSpan]="16">
+                      <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Division :</span>
+                      <ul class="treaty-list">
+                        <li *ngFor="let division of filterSelectedDivision()">
+                          Division N°{{division}}
                         </li>
                       </ul>
                       <ng-container *ngIf="data[wsIdentifier]?.treatySections?.length > 2">

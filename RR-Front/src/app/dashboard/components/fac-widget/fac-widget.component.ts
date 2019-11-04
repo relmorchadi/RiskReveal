@@ -29,10 +29,6 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-/*  filterAssignedNew = false;
-  filterAssignedCurrent = false;
-  filterAssignedArchive = false;*/
-
   @Input()
   itemName = 'Car Widget';
   @Input()
@@ -41,6 +37,8 @@ export class FacWidgetComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  type: any;
   newDashboard: any;
   editName = false;
 
@@ -52,7 +50,7 @@ export class FacWidgetComponent implements OnInit {
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractLabel', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
@@ -107,11 +105,11 @@ export class FacWidgetComponent implements OnInit {
   }
 
   setFilters() {
-    if (this.itemName === 'New CARs') {
+    if (this.type === 'newCar') {
       this.filterNew = true;
-    } else if (this.itemName === 'In Progress CARs') {
+    } else if (this.type === 'inProgressCar') {
       this.filterCurrent = true;
-    } else if (this.itemName === 'Archived CARs') {
+    } else if (this.type === 'archivedCar') {
       this.filterArchive = true;
     }
   }

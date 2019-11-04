@@ -92,6 +92,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].workspaceType;
   }
 
+  @Selector()
+  static getSelectedProject(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -280,8 +286,7 @@ export class WorkspaceState {
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
     };
   }
 
@@ -293,8 +298,7 @@ export class WorkspaceState {
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
     };
   }
 
@@ -311,6 +315,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -320,6 +330,12 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  @Selector()
+  static getImportStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
@@ -357,7 +373,7 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence.data;
+    return state.content[wsIdentifier].scopeOfCompletence;
   }
 
   static getPltsForScopeCompleteness(wsIdentifier: string) {
@@ -472,9 +488,19 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
+  @Action(fromWS.AddNewFacProject)
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
+    return this.wsService.addNewFacProject(ctx, payload);
+  }
+
   @Action(fromWS.DeleteProject)
   deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
     return this.wsService.deleteProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteFacProject)
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteFacProject) {
+    return this.wsService.deleteFacProject(ctx, payload);
   }
 
   /***********************************
@@ -486,6 +512,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadContractAction)
   loadContractData(ctx: StateContext<WorkspaceModel>) {
     this.contractService.loadContractData(ctx);
+  }
+
+  @Action(fromWS.ToggleFacDivisonAction)
+  toggleFacDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFacDivisonAction) {
+    this.contractService.toggleFacDivision(ctx, payload);
   }
 
   /***********************************
@@ -877,6 +908,16 @@ export class WorkspaceState {
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.addToBasket(ctx);
+  }
+
+  @Action(fromWS.AddToBasketDefaultAction)
+  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)

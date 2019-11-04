@@ -1,3 +1,5 @@
+import {ShortCut} from "./shortcut.model";
+
 export class SearchNavBar {
   contracts: any;
   showResult: boolean;
@@ -10,16 +12,17 @@ export class SearchNavBar {
   searchValue: string;
   searchTarget: any;
   badges: any[];
-  data: any[];
+  data: any;
   loading: boolean;
   recentSearch: any[];
   showRecentSearch: any[];
-  tables: any[];
   savedSearch: any[];
-  tagShortcuts: any;
+  shortcuts: ShortCut[];
+  mapTableNameToBadgeKey: any;
   sortcutFormKeysMapper: any;
   searchContent: any;
   emptyResult: boolean;
+  showSavedSearch: boolean;
 }
 
 

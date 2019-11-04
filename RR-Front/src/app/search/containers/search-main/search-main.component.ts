@@ -7,9 +7,19 @@ import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
-import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
+import {
+  CloseAllTagsAction,
+  CloseTagByIndexAction,
+  saveSearch,
+  toggleSavedSearch,
+  UpdateBadges
+} from '../../../core/store';
 import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
+import {BadgesService} from "../../../core/service/badges.service";
+import {distinctUntilChanged, takeUntil} from "rxjs/operators";
 
 
 @Component({
@@ -23,6 +33,18 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   @Select(SearchNavBarState.getSearchContent)
   searchContent$;
+
+  @Select(SearchNavBarState.getBadges)
+  badges$;
+
+  @Select(SearchNavBarState.getSavedSearch)
+  savedSearch$;
+
+  @Select(SearchNavBarState.getShowSavedSearch)
+  savedSearchVisibility$;
+
+  savedSearch;
+  badges;
 
   expandWorkspaceDetails = false;
   contracts = [];
@@ -120,16 +142,28 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filtered: false
     }
   ];
+  columnsCache = [];
+  extraColumns = [];
+  extraColumnsCache = [];
+
   private _filter = {};
   searchContent;
+  manageColumns: boolean = false;
+  savedSearchVisibility: boolean;
+  saveSearchPopup: boolean = false;
+  searchLabel: any;
+  mapTableNameToBadgeKey: any;
 
-  constructor(private _searchService: SearchService, private _helperService: HelperService,
+  constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
-
   }
 
   ngOnInit() {
+    this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(this.unsubscribeOnDestroy,distinctUntilChanged()).subscribe( mapTableNameToBadgeKey => {
+      this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
+      this.detectChanges();
+    });
     this.searchContent$
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(({value}) => {
@@ -137,6 +171,22 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         this._loadData();
         this.detectChanges();
       });
+    this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
+      this.badges = badges;
+    })
+    this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
+      this.savedSearch = savedSearch;
+    })
+    this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
+      this.savedSearchVisibility = savedSearchVisibility;
+      this.cdRef.detectChanges();
+    })
+    this.initColumns();
+  }
+
+  initColumns() {
+    this.columnsCache = _.merge([], this.columns);
+    this.extraColumnsCache = _.merge([], this.extraColumns);
   }
 
   openWorkspace(wsId, year) {
@@ -193,7 +243,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Debounce(500)
   filterData($event, target) {
     this._filter = {...this._filter, [target]: $event || null};
-    this._loadData();
+    this._loadData('0', '100', true);
   }
 
   navigateBack() {
@@ -213,7 +263,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   get filter() {
-    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
+    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []).map(item => ({
+      ...item,
+      value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value)),
+    }));
     let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
     return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
       ...item,
@@ -226,7 +279,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  private _loadData(offset = '0', size = '100') {
+  private _loadData(offset = '0', size = '100', filter: boolean = false) {
     this.loading = true;
     let params = {
       keyword: this.globalSearchItem,
@@ -234,6 +287,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       offset,
       size
     };
+    console.log('EXPERT');
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
@@ -245,9 +299,112 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           size: data.numberOfElements,
           total: data.totalElements
         };
+        if (data.totalElements == 1) {
+          if (!filter)
+            this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear)
+        }
         this.detectChanges();
       });
   }
 
+  dropColumn(event: CdkDragDrop<any>) {
+    console.log(event);
+    const {
+      previousContainer,
+      container
+    } = event;
 
+    if (previousContainer === container) {
+      if (container.id == "usedListOfColumns") {
+        moveItemInArray(
+          this.columnsCache,
+          event.previousIndex + 1,
+          event.currentIndex + 1
+        );
+        console.log(container.id, this.columnsCache);
+      }
+    } else {
+      if (this.extraColumnsCache.length > 0) {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      } else {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex + 1,
+          event.currentIndex + 1
+        );
+      }
+    }
+  }
+
+  saveColumns() {
+    this.columns = this.columnsCache;
+    this.extraColumns = this.extraColumnsCache;
+    this.columns.splice(_.findIndex(this.columns, row => row.field == 'checkbox'), 1);
+    this.columns.unshift({
+      field: 'checkbox',
+      header: '',
+      width: '20px',
+      display: true,
+      sorted: true,
+      filtered: false,
+      type: 'checkbox',
+      class: 'icon-check_24px',
+    })
+    this.manageColumns = false;
+    this.cdRef.detectChanges();
+    console.log('columns==>', this.columns)
+    console.log('extraColumns==>', this.extraColumns)
+  }
+
+  dropAll(side: string) {
+    if (side == 'right') {
+      this.columnsCache = [...this.columnsCache, ...this.extraColumnsCache];
+      this.extraColumnsCache = [];
+    } else if (side == 'left') {
+      this.extraColumnsCache = [...this.extraColumnsCache, ...this.columnsCache];
+      this.columnsCache = [];
+    }
+  }
+
+  closeManageColumns() {
+    this.manageColumns = false;
+    this.columnsCache = this.columns;
+    this.extraColumnsCache = this.extraColumns;
+  }
+
+  openSavedSearch() {
+    this.saveSearchPopup = true;
+  }
+  saveSearch() {
+    if (this.searchContent.length > 0) {
+      this.store.dispatch(new saveSearch({
+        date: new Date().toLocaleDateString(),
+        label: this.searchLabel,
+        badges: this.searchContent
+      }));
+      this.searchLabel = null;
+      this.saveSearchPopup = false;
+    }
+  }
+
+
+  toggleSavedSearch() {
+    this.store.dispatch(new toggleSavedSearch());
+  }
+
+  applySearch(search: any) {
+    this.store.dispatch(new UpdateBadges(search.badges));
+    this.store.dispatch(new SearchActions.SearchAction(search.badges, ''));
+  }
+
+  closeSaveSearchPup() {
+    this.saveSearchPopup = false;
+    this.searchLabel = null;
+  }
 }

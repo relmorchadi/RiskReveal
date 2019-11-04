@@ -113,6 +113,10 @@
       background-color: #F5A623;
     }
 
+    .standard-fac-flag-icon {
+      background-color: #14617A;
+    }
+
     .link-flag-icon {
       background-color: #36C6FE;
     }
@@ -246,7 +250,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
       height: 35px;
-      padding: 10px !important;
+      padding: 10px;
       font-size: 0.9em;
 
       .source-Ws {
@@ -302,4 +306,22 @@
   line-height: 32px;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.car-status-temp {
+  font-size: 13.26px;
+  padding: 3px 12px;
+  background: lightblue;
+  color: white;
+  text-shadow: -15px 5px 20px rgba(0,0,0,0.8);
+  border-radius: 20px;
+  margin: 0 5px;
+}
+
+.field-car-status {
+  flex: 0 0 34%;
+  letter-spacing: 0.08px;
+  line-height: 20px;
+  font-size: 11px;
+  padding-left: 24px;
 }
