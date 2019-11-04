@@ -1,10 +1,13 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.AnalysisHeader;
+import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +17,11 @@ import java.util.List;
 @RequestMapping("api/rms")
 public class RmsRessource {
 
+    private final Logger logger = LoggerFactory.getLogger(RmsRessource.class);
+
     @Autowired
     RmsService rmsService;
 
-    private final Logger logger = LoggerFactory.getLogger(RmsRessource.class);
 
     @GetMapping("listAvailableDataSources")
     public ResponseEntity<?> listAvailableDataSources() {
@@ -30,17 +34,17 @@ public class RmsRessource {
     }
 
 
-//    @PostMapping("add-edm-rdm")
-//    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Integer projectId, @RequestParam String instanceId, @RequestParam String instanceName){
-//        rmsService.addEdmRdms(dataSources,projectId,instanceId,instanceName);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("analysis-detail-scan")
-//    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId){
-//        rmsService.scanAnalysisDetail(rlAnalysisList,projectId);
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("add-edm-rdm")
+    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+        rmsService.addEdmRdms(dataSources, projectId, instanceId, instanceName);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("analysis-detail-scan")
+    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId) {
+        rmsService.scanAnalysisDetail(rlAnalysisList, projectId);
+        return ResponseEntity.ok().build();
+    }
 
 
     @GetMapping("listRdmAnalysisBasic")
@@ -109,9 +113,9 @@ public class RmsRessource {
     }
 
     @GetMapping("AnalysisEpCurves")
-    public ResponseEntity<?> getAnalysisEpCurves(@RequestParam(value = "rdmID") int rdmID,
+    public ResponseEntity<?> getAnalysisEpCurves(@RequestParam(value = "rdmID") Long rdmID,
                                                  @RequestParam(value = "rdmName") String rdmName,
-                                                 @RequestParam(value = "analysisId") int analysisId,
+                                                 @RequestParam(value = "analysisId") Long analysisId,
                                                  @RequestParam(value = "finPerspCode") String finPerspCode,
                                                  @RequestParam(value = "treatyLabelId", required = false) Integer treatyLabelId) {
         this.logger.debug("start getting AnalysisEpCurves ...");
@@ -122,9 +126,9 @@ public class RmsRessource {
     }
 
     @GetMapping("AnalysisSummaryStats")
-    public ResponseEntity<?> getAnalysisSummaryStats(@RequestParam(value = "rdmId") int rdmId,
+    public ResponseEntity<?> getAnalysisSummaryStats(@RequestParam(value = "rdmId") Long rdmId,
                                                      @RequestParam(value = "rdmName") String rdmName,
-                                                     @RequestParam(value = "analysisId") int analysisId,
+                                                     @RequestParam(value = "analysisId") Long analysisId,
                                                      @RequestParam(value = "finPerspCode") String finPerspCode,
                                                      @RequestParam(value = "treatyLabelId", required = false) Integer treatyLabelId) {
 
@@ -134,9 +138,9 @@ public class RmsRessource {
     }
 
     @GetMapping("RdmAllAnalysisProfileRegions")
-    public ResponseEntity<?> getRdmAllAnalysisProfileRegions(@RequestParam(value = "rdmId") int rdmId,
+    public ResponseEntity<?> getRdmAllAnalysisProfileRegions(@RequestParam(value = "rdmId") Long rdmId,
                                                              @RequestParam(value = "rdmName") String rdmName,
-                                                             @RequestParam(value = "analysisIdList", required = false) List<Integer> analysisIdList) {
+                                                             @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList) {
 
         this.logger.debug("start getting RdmAllAnalysisProfileRegions ...");
         List<RdmAllAnalysisProfileRegions> rdmAllAnalysisProfileRegions = rmsService.getRdmAllAnalysisProfileRegions(rdmId, rdmName, analysisIdList);
@@ -145,18 +149,18 @@ public class RmsRessource {
     }
 
     @GetMapping("AnalysisElt")
-    public ResponseEntity<?> getAnalysisElt(@RequestParam(value = "rdmId") int rdmId,
+    public ResponseEntity<?> getAnalysisElt(@RequestParam(value = "rdmId") Long rdmId,
                                             @RequestParam(value = "rdmName") String rdmName,
-                                            @RequestParam(value = "analysisId") int analysisId,
+                                            @RequestParam(value = "analysisId") Long analysisId,
                                             @RequestParam(value = "finPerspCode") String finPerspCode,
                                             @RequestParam(value = "treatyLabelId", required = false) Integer treatyLabelId) {
         this.logger.debug("start getting AnalysisElt ...");
-        List<AnalysisElt> analysisElt = rmsService.getAnalysisElt(rdmId, rdmName, analysisId, finPerspCode, treatyLabelId);
-        return ResponseEntity.ok(analysisElt);
+        //List<RlEltLoss> rlEltLoss = rmsService.getAnalysisElt(0,rdmId, rdmName, analysisId, finPerspCode, treatyLabelId);
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("EdmAllPortfolioAnalysisRegions")
-    public ResponseEntity<?> getEdmAllPortfolioAnalysisRegions(@RequestParam(value = "edmId") int edmId,
+    public ResponseEntity<?> getEdmAllPortfolioAnalysisRegions(@RequestParam(value = "edmId") Long edmId,
                                                                @RequestParam(value = "edmName") String edmName,
                                                                @RequestParam(value = "ccy") String ccy) {
         this.logger.debug("start getting EdmAllPortfolioAnalysisRegions ...");
@@ -165,17 +169,17 @@ public class RmsRessource {
     }
 
     @GetMapping("RdmAllAnalysisTreatyStructure")
-    public ResponseEntity<?> getRdmAllAnalysisTreatyStructure(@RequestParam(value = "rdmId") int rdmId,
+    public ResponseEntity<?> getRdmAllAnalysisTreatyStructure(@RequestParam(value = "rdmId") Long rdmId,
                                                               @RequestParam(value = "rdmName") String rdmname,
-                                                              @RequestParam(value = "analysisIdList", required = false) List<Integer> analysisIdList) {
+                                                              @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList) {
         List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructure = rmsService.getRdmAllAnalysisTreatyStructure(rdmId, rdmname, analysisIdList);
         return ResponseEntity.ok(rdmAllAnalysisTreatyStructure);
     }
 
     @GetMapping("RdmAllAnalysisMultiRegionPerils")
-    public ResponseEntity<?> getRdmAllAnalysisMultiRegionPerils(@RequestParam(value = "rdmId") int rdmId,
+    public ResponseEntity<?> getRdmAllAnalysisMultiRegionPerils(@RequestParam(value = "rdmId") Long rdmId,
                                                                 @RequestParam(value = "rdmName") String rdmName,
-                                                                @RequestParam(value = "analysisIdList", required = false) List<Integer> analysisIdList) {
+                                                                @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList) {
 
         List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerils = rmsService.getRdmAllAnalysisMultiRegionPerils(rdmId, rdmName, analysisIdList);
 
@@ -201,9 +205,20 @@ public class RmsRessource {
     }
 
     @GetMapping("GetAnalysisModellingOptionSettings")
-    public String getAnalysisModellingOptionSettings(@RequestParam(value = "rdmId") int rdmId,
-                                                            @RequestParam(value = "rdmName") String rdmName,
-                                                            @RequestParam(value = "analysisId") int analysisId) {
-        return rmsService.getAnalysisModellingOptionSettings(rdmId, rdmName, analysisId);
+    public String getAnalysisModellingOptionSettings(@RequestParam(value = "rdmId") Long rdmId,
+                                                     @RequestParam(value = "rdmName") String rdmName,
+                                                     @RequestParam(value = "analysisId") Long analysisId) {
+        return rmsService.getAnalysisModellingOptionSettings(null, rdmId, rdmName, analysisId);
+    }
+
+    @PostMapping("saveSourceResults")
+    public ResponseEntity<?> saveSourceResults(@RequestBody List<SourceResultDto> sourceResultDtoList) {
+        try {
+            return new ResponseEntity<>(rmsService.saveSourceResults(sourceResultDtoList), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

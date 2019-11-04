@@ -8,6 +8,7 @@
 /RR-Front/node/**
 /RR-Front/node_modules/**
 /RR-Backend/src/main/resources/static/
+/RR-Import/target
 .project
 /RR-IO/target/
 /RRADJUSTMENT/target/

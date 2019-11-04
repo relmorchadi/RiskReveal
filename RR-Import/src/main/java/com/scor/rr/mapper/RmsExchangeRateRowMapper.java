@@ -14,9 +14,9 @@ public class RmsExchangeRateRowMapper implements RowMapper<RmsExchangeRate> {
 
         RmsExchangeRate rmsExchangeRate = new RmsExchangeRate();
         rmsExchangeRate.setCcy(rs.getString("Ccy"));
-        rmsExchangeRate.setRoe(rs.getDouble("Roe"));
+        rmsExchangeRate.setExchangeRate(rs.getDouble("Roe"));
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        rmsExchangeRate.setRoeAsAt(df.format(rs.getTimestamp("RoeAsAt").toLocalDateTime()));
+        rmsExchangeRate.setDate(df.format(rs.getTimestamp("RoeAsAt").toLocalDateTime()));
 
         return rmsExchangeRate;
     }
