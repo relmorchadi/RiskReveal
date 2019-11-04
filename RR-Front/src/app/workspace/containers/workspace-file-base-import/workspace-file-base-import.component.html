@@ -12,6 +12,7 @@
     >
     </app-pin>
   </div>
+  <!--
   <div class="app-body">
     <div [ngClass]="{'menu-left-wrapper': selectedPlt != null}">
       <div class="menu-searchPlt-wrapper">
@@ -29,17 +30,12 @@
         <span class="body-1 menu-left-header" style="width: 100%">
           <ng-container *ngIf="!collapseSearchFiles">Text Files Available</ng-container>
           <div class="body-wrapper-header-right" style="flex: 1">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
             <i *ngIf="!collapseSearchFiles" (click)="collapseSearchFiles = true"
                class="icon-keyboard_arrow_up_24px"></i>
             <i *ngIf="collapseSearchFiles" (click)="collapseSearchFiles = false"
                class="icon-keyboard_arrow_down_24px"></i>
         </div>
         </span>
-<!--          <div class="tab-search-input search-document-wrap" *ngIf="!collapseSearchFiles">
-            <i class="icon-search_24px"></i>
-            <input class="input-search"/>
-          </div>-->
           <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
                      [resizableColumns]="true" [value]="selectedData">
@@ -93,18 +89,6 @@
               </ng-template>
             </p-table>
           </div>
-<!--          <div *ngIf="fileBase?.files?.length > 0 && !collapseSearchFiles" class="popover-menu files-selection-wrap">
-            <ul>
-              <li *ngFor="let items of fileBase?.files; let i = index">
-                <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
-                  <span [nzTitle]="items.label" nzPlacement="topLeft" nz-tooltip>{{items.label}}</span>
-                </label>
-              </li>
-            </ul>
-          </div>-->
-<!--          <div *ngIf="fileBase?.files?.length === 0 && !collapseSearchFiles" class="empty-data-wrap">
-            <nz-empty></nz-empty>
-          </div>-->
           <div class="menu-left-footer" *ngIf="!collapseSearchFiles">
             <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()" class="a-buttons-contained-micro">
               ADD TO PROJECT
@@ -136,13 +120,6 @@
               </ul>
             </nz-dropdown>
           </div>
-          <!--          <div class="body-wrapper-header-right">
-                      &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
-                      <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
-                         class="icon-keyboard_arrow_up_24px"></i>
-                      <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
-                         class="icon-keyboard_arrow_down_24px"></i>
-                    </div>-->
         </div>
 
         <div class="summary-info fixed-table-height" [ngClass]="{'empty-table': getLength()}">
@@ -355,6 +332,11 @@
         </ul>
       </div>
     </div>
+
+  </div>
+
+-->
+  <div class="app-body">
 
   </div>
 </div>
