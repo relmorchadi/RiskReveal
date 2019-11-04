@@ -23,10 +23,7 @@
                   {{dt?.selectedRows?.length}} of {{paginationOption?.total}} selected
                 </div>
                 <ng-template #noSelects>
-                  Showing
-                  {{paginationOption?.offset + 1 + ' to '}}
-                  {{paginationOption?.total > paginationOption?.offset + paginationOption?.pageSize ? paginationOption?.offset + paginationOption?.pageSize : paginationOption?.total}}
-                  {{' of ' + paginationOption?.total}}
+                  Showing {{paginationOption?.currentPage + 1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
                   Results
                 </ng-template>
               </ng-template>
@@ -99,7 +96,7 @@
 
         </div>
         <app-table [tableColumn]="columns" [sortable]="false"
-                   [rows]="100"
+                   [rows]="paginationOption?.size"
                    [totalRecords]="paginationOption?.total"
                    #dt
                    [listOfData]="contracts"
@@ -109,8 +106,6 @@
                    [tableHeight]="'560px'"
                    (loadMore)="loadMore($event)"
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
-                   (sortDataChange)="sortChange($event)"
-                   [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [activateContextMenu]="true"
                    [loading]="loading">

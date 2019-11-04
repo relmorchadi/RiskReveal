@@ -9,7 +9,7 @@ import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
 import {
   CloseAllTagsAction,
-  CloseTagByIndexAction, LoadMostUsedSavedSearch,
+  CloseTagByIndexAction,
   saveSearch,
   toggleSavedSearch,
   UpdateBadges
@@ -43,21 +43,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Select(SearchNavBarState.getShowSavedSearch)
   savedSearchVisibility$;
 
-  sortData: any;
-
   savedSearch;
   badges;
 
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {
-    offset: 0,
-    pageNumber: 0,
-    pageSize: 100,
-    size: 100,
-    totalPages: 0,
-    total: '-'
-  };
+  paginationOption = {currentPage: 0, page: 0, size: 100, total: '-'};
   selectedWorkspace: any;
   sliceValidator = true;
   globalSearchItem = '';
@@ -81,7 +72,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'CountryName'
+      filterParam: 'countryName'
     },
     {
       field: 'cedantName',
@@ -90,7 +81,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'CedantName'
+      filterParam: 'cedantName'
     },
     {
       field: 'cedantCode',
@@ -99,7 +90,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'CedantCode'
+      filterParam: 'cedantCode'
     },
     {
       field: 'uwYear',
@@ -108,7 +99,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'UwYear'
+      filterParam: 'year'
     },
     {
       field: 'workspaceName',
@@ -117,7 +108,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'WorkspaceName'
+      filterParam: 'workspaceName'
     },
     {
       field: 'workSpaceId',
@@ -126,7 +117,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'WorkspaceId'
+      filterParam: 'workspaceId'
     },
     {
       field: 'openInHere',
@@ -162,13 +153,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   saveSearchPopup: boolean = false;
   searchLabel: any;
   mapTableNameToBadgeKey: any;
-  fromSavedSearch: boolean;
 
   constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
-    this.sortData = {};
-    this.fromSavedSearch= false;
   }
 
   ngOnInit() {
@@ -185,15 +173,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
-    });
+    })
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
-      this.detectChanges();
-    });
+    })
     this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
       this.savedSearchVisibility = savedSearchVisibility;
       this.cdRef.detectChanges();
-    });
+    })
     this.initColumns();
   }
 
@@ -203,7 +190,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'PltBrowser', type: 'treaty'}));
+    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'treaty'}));
   }
 
   navigateToTab(value) {
@@ -274,7 +261,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       ...item,
       value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value)),
     }));
-    let tableFilter = _.map(this._filter, (value, key) => ({key, value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
+    let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
     return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
       ...item,
       field: _.camelCase(item.key),
@@ -287,57 +274,33 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   loadMore(event: LazyLoadEvent) {
-    this._loadData(event.first, event.rows);
-  }
-
-  getSortColumns(sortData) {
-    return _.map(sortData, (order, col) => ({columnName: this.mapColToQuery(col), order}))
-  }
-
-  mapColToQuery(col) {
-    return _.find(this.columns, column => column.field == col).queryParam;
+    console.log(event);
+    this.paginationOption.currentPage = event.first;
+    this._loadData(event.rows);
   }
 
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
     this.loading = true;
     let params = {
-      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(this.globalSearchItem)),
+      keyword: this.globalSearchItem,
       filter: this.filter,
-      sort: this.getSortColumns(this.sortData),
       offset,
-      size: size,
-      fromSavedSearch: this.fromSavedSearch
+      size
     };
+    console.log('EXPERT');
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
+        console.log(data);
         this.contracts = _.map(data.content, item => ({...item, selected: false}));
         this.loading = false;
-        const {
-          pageable: {
-            offset,
-            pageNumber,
-            pageSize
-          },
-          size,
-          totalElements,
-          totalPages
-        } = data;
-
         this.paginationOption = {
-          offset,
-          pageNumber: pageNumber + 1,
-          pageSize,
-          size,
-          total: totalElements,
-          totalPages: totalPages
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
         };
-
-        if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
-        if(this.fromSavedSearch) {
-          this.dispatch(new LoadMostUsedSavedSearch());
-          this.fromSavedSearch = false;
-        }
+        if (data.totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
         this.detectChanges();
       });
   }
@@ -419,9 +382,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   saveSearch() {
     if (this.searchContent.length > 0) {
       this.store.dispatch(new saveSearch({
-        searchType: "TREATY",
+        date: new Date().toLocaleDateString(),
         label: this.searchLabel,
-        items: this.searchContent
+        badges: this.searchContent
       }));
       this.searchLabel = null;
       this.saveSearchPopup = false;
@@ -434,7 +397,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   applySearch(search: any) {
-    this.fromSavedSearch = true;
     this.store.dispatch(new UpdateBadges(search.badges));
     this.store.dispatch(new SearchActions.SearchAction(search.badges, ''));
   }
@@ -442,10 +404,5 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   closeSaveSearchPup() {
     this.saveSearchPopup = false;
     this.searchLabel = null;
-  }
-
-  sortChange(sortData) {
-    this.sortData = sortData;
-    this._loadData(this.paginationOption.offset);
   }
 }
