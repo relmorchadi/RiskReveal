@@ -292,11 +292,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       offset,
       size: size
     };
-    console.log('EXPERT');
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
-        console.log(data);
         this.contracts = _.map(data.content, item => ({...item, selected: false}));
         this.loading = false;
         const {
