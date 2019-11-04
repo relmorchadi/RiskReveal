@@ -98,10 +98,15 @@
 <!--nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700"> </-->
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
            [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-           [scrollable]="true" [scrollHeight]="tableHeight" [rows]="rows" [totalRecords]="totalRecords"
+           [scrollable]="true" [scrollHeight]="tableHeight"
+           [rows]="rows"
+           [totalRecords]="totalRecords"
            [virtualScroll]="true"
+           [virtualRowHeight]="35"
            (onLazyLoad)="loadDataOnScroll($event)"
-           [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
+           [lazy]="true"
+           [showLoader]="false"
+           [(contextMenuSelection)]="contextSelectedItem"
            [contextMenu]="getContextMenu()" class="table-ngPrime"
            [selectionMode]="selectionMode"
            (onRowSelect)="rowSelect($event)"
@@ -109,6 +114,7 @@
            [(selection)]="selectedRow"
            [columnResizeMode]="'expand'"
            scrollIndicator
+           (click)="log(dt)"
            [step]="35"
   >
     <ng-template pTemplate="colgroup" let-columns>
