@@ -3,7 +3,7 @@ import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {WsApi} from './workspace.api';
+import {WsApi} from './api/workspace.api';
 import * as fromHeader from '../../core/store/actions/header.action';
 import produce from 'immer';
 import * as _ from 'lodash';

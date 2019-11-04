@@ -3,7 +3,7 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import {Data} from "../../../core/model/data";
 import {Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../../workspace/store/states";
-import {WsApi} from "../../../workspace/services/workspace.api";
+import {WsApi} from "../../../workspace/services/api/workspace.api";
 import * as _ from 'lodash';
 import {GeneralConfigState} from "../../../core/store/states";
 import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";

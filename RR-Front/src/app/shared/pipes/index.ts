@@ -14,8 +14,6 @@ import {PickKeysPipe} from './pull-keys.pipe';
 import {CalibratePipe} from "./calibrate.pipe";
 import {FilterByStatusPipe} from "./filter-by-status.pipe";
 import {FalselyFilterPipe} from "./falsely-filter.pipe";
-import {CalibratePipe} from './calibrate.pipe';
-import {FilterByStatusPipe} from './filter-by-status.pipe';
 import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 
