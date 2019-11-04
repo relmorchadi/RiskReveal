@@ -115,7 +115,6 @@ class Scroll {
   }
 
   handler = (e) => {
-    console.log(e);
     if (this.initialY == 0) {
       if (this.timeout.handle == null) {
         if (this.callbacks.start) {

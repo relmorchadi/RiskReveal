@@ -48,7 +48,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
+  paginationOption = {currentPage: 0, page: 0, size: 100, total: '-'};
   selectedWorkspace: any;
   sliceValidator = true;
   globalSearchItem = '';
@@ -201,12 +201,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     }
   }
 
-
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
   openWorkspaceInSlider(contract) {
     this.currentWorkspace = contract;
     this.sliceValidator = true;
@@ -243,7 +237,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Debounce(500)
   filterData($event, target) {
     this._filter = {...this._filter, [target]: $event || null};
-    this._loadData('0', '100', true);
+    this._loadData(0, 100, true);
   }
 
   navigateBack() {
@@ -279,7 +273,13 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  private _loadData(offset = '0', size = '100', filter: boolean = false) {
+  loadMore(event: LazyLoadEvent) {
+    console.log(event);
+    this.paginationOption.currentPage = event.first;
+    this._loadData(event.rows);
+  }
+
+  private _loadData(offset = 0, size = 100, filter: boolean = false) {
     this.loading = true;
     let params = {
       keyword: this.globalSearchItem,
@@ -291,7 +291,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
-        this.contracts = data.content.map(item => ({...item, selected: false}));
+        console.log(data);
+        this.contracts = _.map(data.content, item => ({...item, selected: false}));
         this.loading = false;
         this.paginationOption = {
           ...this.paginationOption,
@@ -299,10 +300,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           size: data.numberOfElements,
           total: data.totalElements
         };
-        if (data.totalElements == 1) {
-          if (!filter)
-            this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear)
-        }
+        if (data.totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
         this.detectChanges();
       });
   }
