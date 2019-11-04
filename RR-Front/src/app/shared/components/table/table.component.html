@@ -11,6 +11,8 @@
          [scrollHeight]="tableHeight"
          [responsive]="true"
          class="table-ngPrime"
+         scrollIndicator
+         [step]="35"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -105,6 +107,8 @@
            (onRowUnselect)="rowUnselect($event)"
            [(selection)]="selectedRow"
            [columnResizeMode]="'expand'"
+           scrollIndicator
+           [step]="35"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>

@@ -830,11 +830,21 @@ export class RiskLinkStateService {
       });
     });
 
-    console.log(results, summaries);
-
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].riskLink.results = {data: results};
       draft.content[wsIdentifier].riskLink.summaries = {data: summaries};
+    }));
+
+    ctx.dispatch(new fromWs.LoadDetailAnalysisFacAction(_.filter(_.toArray(results), (item: any) => item.typeWs === 'fac')));
+    ctx.dispatch(new fromWs.LoadLinkingDataAction({analysis: _.toArray(results), portfolios: _.toArray(summaries)}));
+  }
+
+  importRiskLinkImport(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const selectedProject: any = _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].riskLink.importPLTs[selectedProject.projectId] = true;
     }));
   }
 
@@ -1983,7 +1993,7 @@ export class RiskLinkStateService {
                   summaries: null,
                   selectedEDMOrRDM: null,
                   activeAddBasket: false,
-                  synchronize: false
+                  synchronize: false,
                 };
               }
             )
@@ -2035,10 +2045,17 @@ export class RiskLinkStateService {
   }
 
   private _isValidImport(ctx, data) {
-    const valid = _.uniq(_.map(data, item => ({regionPeril: item.regionPeril, division: item.division})));
-    const divisions = _.uniq(_.map(data, item => item.division));
-    console.log(valid, divisions);
-    return valid.length >= 2 * divisions.length;
+    let validationData = [];
+    _.forEach(data, item => {
+      _.forEach(item.division, itemDiv => {
+        validationData = [...validationData, {regionPeril: item.regionPeril, division: itemDiv}];
+      });
+    });
+    // const valid = _.uniqBy(validationData, item => item.regionPeril);
+    const validComp = _.uniqBy(validationData, item => item.division && item.regionPeril);
+    console.log(validationData, validComp);
+    // const divisions = _.uniq(_.flatten(_.map(data, item => item.division)));
+    return validComp.length >= validationData.length;
   }
 
 }

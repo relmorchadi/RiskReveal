@@ -38,61 +38,61 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    this.activeSubTitle= 0;
-    this.cloningToItem= true;
-    this.searchWorkSpaceModal= false;
-    this.data= [
+    this.activeSubTitle = 0;
+    this.cloningToItem = true;
+    this.searchWorkSpaceModal = false;
+    this.data = [
       {
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },{
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },{
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },{
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },{
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },{
-      id: 77897,
-      year: 2019,
-      wsContext: "02PY376",
-      cedantName: "A.M.M.A",
-      cedant: 87989,
-      country: "Belgium"
-    },];
-    this.browesing= false;
-    this.multiSteps= true;
-    this.stepConfig= {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      }, {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      }, {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      }, {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      }, {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      }, {
+        id: 77897,
+        year: 2019,
+        wsContext: "02PY376",
+        cedantName: "A.M.M.A",
+        cedant: 87989,
+        country: "Belgium"
+      },];
+    this.browesing = false;
+    this.multiSteps = true;
+    this.stepConfig = {
       wsId: '',
       uwYear: '',
       plts: []
     }
-    this.cloneConfig= {
+    this.cloneConfig = {
       currentSourceOfItems: 'to',
       summary: {
         'Pre-Inured PLTs': {
@@ -118,11 +118,11 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       }
     };
     this.initProjectForm();
-    this.listOfProjects= [];
+    this.listOfProjects = [];
   }
 
   initProjectForm() {
-    this.projectsForm= this._fb.group({
+    this.projectsForm = this._fb.group({
       projectStep: [-1],
       projectName: [''],
       projectDescription: [''],
@@ -139,29 +139,29 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         uwYear: '',
         wsId: ''
       }
-    })
+    });
   }
 
   patchProjectForm(key, value) {
     this.projectsForm.patchValue({
       [key]: value
-    })
+    });
   }
 
-  getFormValueByKey(key){
+  getFormValueByKey(key) {
     return this.projectsForm.get(key).value;
   }
 
   loadProjects(wsId, uwYear) {
     forkJoin(
-      this.wsApi.searchWorkspace(wsId,uwYear)
-    ).subscribe( ([{projects}]: any) => {
-      this.listOfProjects =projects;
+      this.wsApi.searchWorkspace(wsId, uwYear)
+    ).subscribe(([{projects}]: any) => {
+      this.listOfProjects = projects;
       this.detectChanges();
-    })
+    });
   }
 
-  subTitle= {
+  subTitle = {
     0: 'Clone Workspaces Assets',
     1: 'Source Workspace Selection',
     2: 'Target Workspace Selection'
@@ -177,7 +177,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   showDeleted: boolean;
   workspaceId: string;
   uwy: number;
-  subs: any[]= [];
+  subs: any[] = [];
   cloneConfig: {
     currentSourceOfItems: string,
     summary: any;
@@ -193,7 +193,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   ngOnInit() {
 
-    this._to.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe( (from) => {
+    this._to.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe((from) => {
       const {
         detail,
         plts,
@@ -201,16 +201,16 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         wsId
       } = from;
 
-      if(wsId && uwYear) {
+      if (wsId && uwYear) {
         this.loadProjects(wsId, uwYear);
         this.detectChanges();
-      }else {
-        this.listOfProjects= [];
+      } else {
+        this.listOfProjects = [];
         this.detectChanges();
       }
     });
 
-    this._projectStep.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe( step => {
+    this._projectStep.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe(step => {
       switch (step) {
         case -1:
         case 1:
@@ -218,9 +218,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           this._projectName.reset();
           this._projectDescription.clearValidators();
           this._projectDescription.reset();
-          if(step == 1) {
+          if (step === 1) {
             this._selectedProjectIndex.setValidators([this.selectedProjectValidator()]);
-          }else{
+          } else {
             this._selectedProjectIndex.clearValidators();
           }
           break;
@@ -230,7 +230,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           this._selectedProjectIndex.clearValidators();
           break;
         default:
-          console.log("form group")
+          console.log("form group");
       }
       this.detectChanges();
     });
@@ -239,125 +239,125 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       .pipe(
         ofActionDispatched(SetCurrentTab)
       ).subscribe(({payload}) => {
+        console.log('data clone')
       if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
     });
 
-      combineLatest(
-        this.select(WorkspaceState.getCloneConfig),
-        this.route$.params,
-        this.select(WorkspaceState.getCurrentWS)
-      ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
-        this.workspaceId = wsId;
-        this.uwy = year;
-        let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
-        let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
-        console.log({
-          navigationPayload,
-          wsId,
-          year
-        });
-        if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
-          if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
-            this.patchProjectForm('from', {
-              wsId: '',
-              uwYear: '',
-              plts: [],
-              detail: ''
-            });
-            this.patchProjectForm('to', {
-              wsId: wsId,
-              uwYear: year,
-              plts: [],
-              detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
-            });
-            this.setCloneConfig('currentSourceOfItems', 'from');
-            this.multiSteps = true;
-          } else {
-            this.patchProjectForm('from', {
-              ...navigationPayload.payload,
-              detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
-            });
-            this.patchProjectForm('to', {
-              wsId: '',
-              uwYear: '',
-              plts: [],
-              detail: ''
-            });
-            this.setCloneConfig('currentSourceOfItems', 'to');
-            this.multiSteps = false;
-          }
-
-          this.stepConfig = {
+    combineLatest(
+      this.select(WorkspaceState.getCloneConfig),
+      this.route$.params,
+      this.select(WorkspaceState.getCurrentWS)
+    ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
+      this.workspaceId = wsId;
+      this.uwy = year;
+      let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
+      let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
+      console.log({
+        navigationPayload,
+        wsId,
+        year
+      });
+      if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
+        if (_.get(navigationPayload, 'type', null) == 'cloneFrom') {
+          this.patchProjectForm('from', {
             wsId: '',
             uwYear: '',
-            plts: []
-          };
-          this.searchWorkSpaceModal = true;
-
-        } else {
+            plts: [],
+            detail: ''
+          });
           this.patchProjectForm('to', {
             wsId: wsId,
             uwYear: year,
             plts: [],
             detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
           });
+          this.setCloneConfig('currentSourceOfItems', 'from');
+          this.multiSteps = true;
+        } else {
           this.patchProjectForm('from', {
-            detail: '',
-            plts: [],
-            wsId: '',
-            uwYear: ''
+            ...navigationPayload.payload,
+            detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
           });
+          this.patchProjectForm('to', {
+            wsId: '',
+            uwYear: '',
+            plts: [],
+            detail: ''
+          });
+          this.setCloneConfig('currentSourceOfItems', 'to');
+          this.multiSteps = false;
         }
 
-        if (this.getFormValueByKey('from').plts.length > 0) {
-          this.cloneConfig = {
-            ...this.cloneConfig,
-            summary: {...this.summaryCache}
-          }
-        }
-        else {
-          const k = {};
+        this.stepConfig = {
+          wsId: '',
+          uwYear: '',
+          plts: []
+        };
+        this.searchWorkSpaceModal = true;
 
-          _.forEach(this.cloneConfig.summary, (v, key) => {
-            k[key] = {...v, value: 0};
-          })
+      } else {
+        this.patchProjectForm('to', {
+          wsId: wsId,
+          uwYear: year,
+          plts: [],
+          detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
+        });
+        this.patchProjectForm('from', {
+          detail: '',
+          plts: [],
+          wsId: '',
+          uwYear: ''
+        });
+      }
 
-          this.cloneConfig = {
-            ...this.cloneConfig,
-            summary: {...k}
-          }
+      if (this.getFormValueByKey('from').plts.length > 0) {
+        this.cloneConfig = {
+          ...this.cloneConfig,
+          summary: {...this.summaryCache}
         }
-        this.fromCache = {...this.getFormValueByKey('from')};
-        this.toCache = {...this.getFormValueByKey('to')};
-        this.detectChanges();
-      })
+      } else {
+        const k = {};
+
+        _.forEach(this.cloneConfig.summary, (v, key) => {
+          k[key] = {...v, value: 0};
+        })
+
+        this.cloneConfig = {
+          ...this.cloneConfig,
+          summary: {...k}
+        }
+      }
+      this.fromCache = {...this.getFormValueByKey('from')};
+      this.toCache = {...this.getFormValueByKey('to')};
+      this.detectChanges();
+    })
   }
 
   setSubTitle(number: number) {
-    this.activeSubTitle= number;
+    this.activeSubTitle = number;
   }
 
   handleModalClick() {
-    if(!this.browesing) {
-      this.browesing= true;
-    }else {
-      this.searchWorkSpaceModal= false;
-      this.browesing= false;
+    if (!this.browesing) {
+      this.browesing = true;
+    } else {
+      this.searchWorkSpaceModal = false;
+      this.browesing = false;
     }
   }
 
   goToSearchWorkspace() {
-    this.searchWorkSpaceModal=true;
-    this.browesing= false;
+    this.searchWorkSpaceModal = true;
+    this.browesing = false;
   }
 
   cancelModal() {
-    this.browesing= false;
-    this.searchWorkSpaceModal= false;
+    this.browesing = false;
+    this.searchWorkSpaceModal = false;
   }
 
   getPlts() {
-    this.browesing=true;
+    this.browesing = true;
   }
 
   ngOnDestroy(): void {
@@ -369,16 +369,24 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     console.log("destory clone")
   }
 
-  setSelectedWs(currentSourceOfItems: string,$event: any) {
-    if(currentSourceOfItems == 'from') {
-      this.patchProjectForm('from', {wsId: $event.workSpaceId, uwYear: $event.uwYear, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId})
+  setSelectedWs(currentSourceOfItems: string, $event: any) {
+    if (currentSourceOfItems == 'from') {
+      this.patchProjectForm('from', {
+        wsId: $event.workSpaceId,
+        uwYear: $event.uwYear,
+        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workSpaceId
+      })
     }
-    if(currentSourceOfItems == 'to') {
-      this.patchProjectForm('to', { wsId: $event.workSpaceId, uwYear: $event.uwYear, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId})
+    if (currentSourceOfItems == 'to') {
+      this.patchProjectForm('to', {
+        wsId: $event.workSpaceId,
+        uwYear: $event.uwYear,
+        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workSpaceId
+      })
     }
   }
 
-  summaryCache= {
+  summaryCache = {
     'Pre-Inured PLTs': {
       'icon': 'icon-assignment_24px',
       'color': '#c38fff',
@@ -402,23 +410,23 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   swapCloneItems() {
-    const t= {...this.getFormValueByKey('from')};
-    this.patchProjectForm('from',this.getFormValueByKey('to'));
+    const t = {...this.getFormValueByKey('from')};
+    this.patchProjectForm('from', this.getFormValueByKey('to'));
     this.patchProjectForm('to', t);
 
-    if(this.getFormValueByKey('from').plts.length > 0) {
-      this.cloneConfig= {
+    if (this.getFormValueByKey('from').plts.length > 0) {
+      this.cloneConfig = {
         ...this.cloneConfig,
         summary: {...this.summaryCache}
       }
-    }else {
-      const k= {};
+    } else {
+      const k = {};
 
-      _.forEach(this.cloneConfig.summary, (v,key) => {
+      _.forEach(this.cloneConfig.summary, (v, key) => {
         k[key] = {...v, value: 0};
       })
 
-      this.cloneConfig= {
+      this.cloneConfig = {
         ...this.cloneConfig,
         summary: {...k}
       }
@@ -426,27 +434,26 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    if(currentSourceOfItems == 'from') {
+    if (currentSourceOfItems == 'from') {
       this.patchProjectForm('from', {...this._from.value, plts: $event});
     }
-    if(currentSourceOfItems == 'to') {
+    if (currentSourceOfItems == 'to') {
       this.patchProjectForm('to', {...this._to.value, plts: $event});
     }
 
-    if(this.getFormValueByKey('from').plts.length > 0) {
-      this.cloneConfig= {
+    if (this.getFormValueByKey('from').plts.length > 0) {
+      this.cloneConfig = {
         ...this.cloneConfig,
         summary: {...this.summaryCache}
       }
-    }
-    else {
-      const k= {};
+    } else {
+      const k = {};
 
-      _.forEach(this.cloneConfig.summary, (v,key) => {
+      _.forEach(this.cloneConfig.summary, (v, key) => {
         k[key] = {...v, value: 0};
       })
 
-      this.cloneConfig= {
+      this.cloneConfig = {
         ...this.cloneConfig,
         summary: {...k}
       }
@@ -454,18 +461,18 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   openSearchPopUp(destination: string = 'from') {
-    this.multiSteps= destination == 'from';
+    this.multiSteps = destination == 'from';
     this.stepConfig = {
       wsId: '',
       uwYear: '',
       plts: []
     };
-    this.searchWorkSpaceModal= true;
+    this.searchWorkSpaceModal = true;
     this.setCloneConfig('currentSourceOfItems', destination);
   }
 
-  setCloneConfig(key,value) {
-    this.cloneConfig= { ...this.cloneConfig, [key]: value };
+  setCloneConfig(key, value) {
+    this.cloneConfig = {...this.cloneConfig, [key]: value};
   }
 
   getCloneConfig(key) {
@@ -489,13 +496,13 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       uwYear,
       plts
     };
-    this.multiSteps= true;
+    this.multiSteps = true;
     this.setCloneConfig('currentSourceOfItems', 'from');
     this.searchWorkSpaceModal = true;
   }
 
   reset() {
-    if(this.activeSubTitle === 0) {
+    if (this.activeSubTitle === 0) {
       this.patchProjectForm('from', {
         detail: '',
         plts: [],
@@ -510,19 +517,19 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       });
 
 
-      if(this.getFormValueByKey('from').plts.length > 0) {
-        this.cloneConfig= {
+      if (this.getFormValueByKey('from').plts.length > 0) {
+        this.cloneConfig = {
           ...this.cloneConfig,
           summary: {...this.summaryCache}
         }
-      }else {
-        const k= {};
+      } else {
+        const k = {};
 
-        _.forEach(this.cloneConfig.summary, (v,key) => {
+        _.forEach(this.cloneConfig.summary, (v, key) => {
           k[key] = {...v, value: 0};
         });
 
-        this.cloneConfig= {
+        this.cloneConfig = {
           ...this.cloneConfig,
           summary: {...k}
         }
@@ -554,18 +561,19 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     return this.projectsForm.get('selectedProjectIndex');
   }
 
-  selectedProjectValidator = (): ValidatorFn => (control: AbstractControl): {[key: string]: any} | null => control.value >= 0 ? null : ({ noSelectedProject: {value: control.value}})
+  selectedProjectValidator = (): ValidatorFn => (control: AbstractControl): { [key: string]: any } | null => control.value >= 0 ? null : ({noSelectedProject: {value: control.value}})
 
 
   patchState(state: any): void {
+
   }
 
   clone() {
-    if(this._projectStep.value === 0) {
+    if (this._projectStep.value === 0) {
       this._projectName.markAsDirty();
       this._projectDescription.markAsDirty();
     }
-    if(this._projectStep.value === 1) {
+    if (this._projectStep.value === 1) {
       this._selectedProjectIndex.markAsDirty();
     }
   }
@@ -574,6 +582,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
     this.clone();
 
-    if(this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
+    if (this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
 }

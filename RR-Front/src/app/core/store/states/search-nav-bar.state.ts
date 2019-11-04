@@ -12,7 +12,7 @@ import {
   DisableExpertMode,
   EnableExpertMode,
   ExpertModeSearchAction,
-  LoadRecentSearchAction,
+  LoadRecentSearchAction, LoadShortCuts,
   PatchSearchStateAction,
   saveSearch,
   SearchAction,
@@ -27,12 +27,13 @@ import {
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
-import {catchError, switchMap} from 'rxjs/operators';
+import {catchError, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {SearchService} from '../../service';
 import {Inject} from '@angular/core';
 import produce from 'immer';
 import {BadgesService} from '../../service/badges.service';
 import {Navigate} from '@ngxs/router-plugin';
+import {ShortCut} from "../../model/shortcut.model";
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -46,30 +47,19 @@ const initiaState: SearchNavBar = {
   searchValue: '',
   searchTarget: 'treaty',
   badges: [],
-  data: [],
+  data: {},
   loading: false,
   recentSearch: [],
   showRecentSearch: [],
   emptyResult: false,
   showSavedSearch: false,
-  tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'COUNTRY', 'CEDANT_CODE'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Country', value: 'Japan'}, {key: 'Program', value: 'Prog Name'}]
   ],
-  tagShortcuts: [
-    {tag: 'Cedant Name', value: 'c:'},
-    {tag: 'Cedant Code', value: 'cid:'},
-    {tag: 'Country', value: 'ctr:'},
-    {tag: 'UW Year', value: 'uwy:'},
-    {tag: 'Workspace Name', value: 'w:'},
-    {tag: 'Workspace Code', value: 'wid:'},
-    {tag: 'Project', value: 'p:'},
-    {tag: 'PLT', value: 'plt:'},
-    {tag: 'Section Name', value: 's:'},
-    {tag: 'UW Unit', value: 'uwu:'}
-  ],
+  shortcuts: [],
+  mapTableNameToBadgeKey: {},
   sortcutFormKeysMapper: {
     c: 'Cedant Name',
     cid: 'Cedant Code',
@@ -87,15 +77,6 @@ const initiaState: SearchNavBar = {
 export class SearchNavBarState implements NgxsOnInit {
 
   ctx = null;
-  searchShortCuts = ["uwy:", "c:", "wid:", "w:", "ctr:", "cid:"];
-  shortCuts = [
-    'Year:',
-    'CedantName:',
-    'WorkspaceId:',
-    'WorkspaceName:',
-    'Country:',
-    'Cedant Code:',
-  ];
 
   constructor(@Inject(SearchService) private _searchService: SearchService,
               @Inject(BadgesService) private _badgesService: BadgesService) {
@@ -104,6 +85,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
+    ctx.dispatch(new LoadShortCuts());
     ctx.dispatch(new LoadRecentSearchAction);
   }
 
@@ -150,12 +132,36 @@ export class SearchNavBarState implements NgxsOnInit {
     return state.showSavedSearch;
   }
 
+  @Selector()
+  static getShortCuts(state: SearchNavBar) {
+    return state.shortcuts;
+  }
+
+  @Selector()
+  static getMapTableNameToBadgeKey(state: SearchNavBar) {
+    return state.mapTableNameToBadgeKey;
+  }
+
 
   /**
    * Commands
    */
+
+  @Action(LoadShortCuts)
+  loadShortCuts(ctx: StateContext<SearchNavBar>, action : LoadShortCuts) {
+    return this._searchService.loadShort()
+      .pipe(
+        tap( (shortCuts: any[]) => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["UW YEAR", "PLT", "PROJECT",  "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["UW YEAR", "PLT", "PROJECT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable)));
+          }));
+        })
+      )
+  }
+
   @Action(PatchSearchStateAction)
-  patchSearchState(ctx: StateContext<SearchNavBarState>, {payload}: PatchSearchStateAction) {
+  patchSearchState(ctx: StateContext<SearchNavBar>, {payload}: PatchSearchStateAction) {
     if (_.isArray(payload))
       payload.forEach(item => ctx.patchState({[item.key]: item.value}));
     else
@@ -165,10 +171,8 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     let expression: any = keyword;
-    console.log(keyword);
-    const checkShortCut: any = this.checkShortCut(expression);
-    console.log(checkShortCut);
-    if (checkShortCut !== null) {
+    const checkShortCut: any[] = this.checkShortCut(ctx.getState().shortcuts, expression) || [];
+    if (checkShortCut.length > 0) {
       expression = checkShortCut[1];
     }
     ctx.patchState({
@@ -176,31 +180,45 @@ export class SearchNavBarState implements NgxsOnInit {
       emptyResult: false,
       loading: true
     });
-    return forkJoin(
-      ...ctx.getState().tables.map(tableName => this.searchLoader(expression, tableName))
-    ).pipe(
-      switchMap(payload => {
-        let data = _.map(payload, 'content');
-        if (checkShortCut !== null) {
-          data = _.map(data, (row, i) => {
-            if (i !== checkShortCut[0]) {
-              return []
-            } else return row;
-          })
-        }
-        return of(ctx.patchState({
-          loading: false,
-          searchValue: expression,
-          emptyResult: _.isEmpty( _.flatten(data) ),
-          data
-        }));
-      }),
-      catchError(err => {
-        //@TODO Handle error case
-        console.error('Failed to search contracts Count');
-        return of();
-      })
-    );
+
+    return (!checkShortCut[0] ? forkJoin(
+      ...ctx.getState().shortcuts.map(shortCut => this.searchLoader(expression, shortCut.mappingTable))
+    ) : this.searchLoader(expression, checkShortCut[0]))
+      .pipe(
+        switchMap(payload => {
+          let data= {};
+          let result = _.get(payload, 'result', null);
+          let mappingTable = _.get(payload, 'mappingTable', null);
+
+          if(!checkShortCut[0]) {
+            _.forEach(payload, table => {
+              let result = _.get(table, 'result');
+              let mappingTable = _.get(table, 'mappingTable');
+
+              if(result.content.length) {
+                data[mappingTable] = result.content
+              }
+
+            });
+          } else {
+            if (checkShortCut.length > 0) {
+              data[mappingTable] = result.content
+            }
+          }
+
+          return of(ctx.patchState({
+            loading: false,
+            searchValue: expression,
+            emptyResult: checkShortCut[0] ? _.isEmpty( _.flatten(result.content) ) : _.every(data, table => _.isEmpty( _.flatten(table) )),
+            data
+          }));
+        }),
+        catchError(err => {
+          //@TODO Handle error case
+          console.error('Failed to search contracts Count');
+          return of();
+        })
+      )
   }
 
   @Action(SearchInputFocusAction)
@@ -389,37 +407,13 @@ export class SearchNavBarState implements NgxsOnInit {
     }));
   }
 
-  private checkShortCut(keyword: string) {
-    const foundShortCut = _.find(this.shortCuts, shortCut => _.includes(keyword, shortCut));
-    const index= _.findIndex(this.shortCuts, s => s == foundShortCut);
-    return index > -1 ? [_.findIndex(this.shortCuts, s => s == foundShortCut) , foundShortCut ? keyword.substring(foundShortCut.length) : keyword] : null;
-    /*const twoChars = keyword.substring(0, 2).toLowerCase();
-    const threeChars = keyword.substring(0, 4).toLowerCase();
-    let firstCheck = _.findIndex(this.searchShortCuts, row => row == twoChars);
-    let secondCheck = _.findIndex(this.searchShortCuts, row => row == threeChars);
-    if (firstCheck > -1) {
-      return [firstCheck, keyword.substring(2)]
-    } else if (secondCheck > -1) {
-      return [secondCheck, keyword.substring(4)]
-    } else return null;*/
-
+  private checkShortCut(shortCuts: ShortCut[], keyword: string) {
+    const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, shortCut.shortCutLabel));
+    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length + 1) : keyword ] : null;
   }
 
   private searchLoader(keyword, table) {
-    return this._searchService.searchByTable( this.parseAsterisk(keyword) || '', '5', table || '');
+    return this._searchService.searchByTable( this._badgesService.clearString(this._badgesService.parseAsterisk(keyword)) || '', '5', table || '');
   }
-
-  private parseAsterisk(expr: string) {
-    if(!_.includes(expr, "*")) {
-      return this.padWithLike('e', this.padWithLike('s', expr));
-    } else {
-      return _.replace(expr, '*', '%');
-    }
-  }
-
-  private padWithLike(t, expr) {
-    return (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
-  }
-
 
 }

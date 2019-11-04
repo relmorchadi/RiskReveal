@@ -184,5 +184,12 @@ export class closeSearch {
   }
 }
 
+export class LoadShortCuts {
+  static readonly type = '[Search Nav Bar] Load ShortCuts';
+
+  constructor(public payload?: any) {
+  }
+}
+
 
 

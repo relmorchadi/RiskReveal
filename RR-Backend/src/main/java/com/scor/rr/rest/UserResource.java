@@ -18,9 +18,6 @@ public class UserResource {
     @Autowired
     UserService userService;
 
-    @Autowired
-    ShortCutService shortCutService;
-
     @GetMapping("/{userName}")
     List<UserResponse> getUsers(@RequestParam String userName) {
 
@@ -35,9 +32,6 @@ public class UserResource {
         }
     }
 
-    @GetMapping
-    List<ShortCut> getShortCuts() {
-        return this.shortCutService.getShortCuts();
-    }
+
 
 }

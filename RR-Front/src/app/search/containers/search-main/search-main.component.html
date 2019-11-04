@@ -60,7 +60,7 @@
                 <div class="chips-cell">
                   <app-chip-tag *ngFor="let badge of search.badges"
                                 [closeStatus]="false"
-                                [key]='mapBadgeShortCutToBadgeKey[badge.key]'
+                                [key]='badge.key  | startCase'
                                 [value]="badge.value"
                                 style="padding-right: 3px">
                   </app-chip-tag>
@@ -82,7 +82,7 @@
             </div>
             <ng-container *ngIf="searchContent && searchContent?.length">
               <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
-                <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="true" [key]="mapBadgeShortCutToBadgeKey[items.key]"
+                <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="true" [key]="items.key | startCase"
                               [value]="items.value"></app-chip-tag>
               </div>
             </ng-container>
@@ -252,7 +252,7 @@
       </div>
       <div class="ui-g-7">
         <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
-          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key'
+          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key | startCase'
                         [value]="items.value"></app-chip-tag>
         </div>
       </div>

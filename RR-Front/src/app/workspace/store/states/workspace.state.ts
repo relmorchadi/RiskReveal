@@ -92,6 +92,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].workspaceType;
   }
 
+  @Selector()
+  static getSelectedProject(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -309,6 +315,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -318,6 +330,12 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  @Selector()
+  static getImportStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
@@ -895,6 +913,11 @@ export class WorkspaceState {
   @Action(fromWS.AddToBasketDefaultAction)
   addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)
