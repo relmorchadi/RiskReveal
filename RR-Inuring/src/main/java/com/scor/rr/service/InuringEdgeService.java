@@ -6,19 +6,19 @@ import com.scor.rr.enums.InuringFinancialPerspective;
 import com.scor.rr.enums.InuringNodeType;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.*;
-import com.scor.rr.repository.InuringEdgeRepository;
-import com.scor.rr.repository.InuringFinalNodeRepository;
-import com.scor.rr.repository.InuringInputNodeRepository;
-import com.scor.rr.repository.InuringPackageRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.request.InuringEdgeCreationRequest;
 import com.scor.rr.request.InuringEdgeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * Created by u004602 on 16/09/2019.
  */
 @Service
+@Transactional
 public class InuringEdgeService {
     @Autowired
     private InuringPackageRepository inuringPackageRepository;
@@ -28,6 +28,8 @@ public class InuringEdgeService {
     private InuringInputNodeRepository inuringInputNodeRepository;
     @Autowired
     private InuringFinalNodeRepository inuringFinalNodeRepository;
+    @Autowired
+    private InuringContractNodeRepository inuringContractNodeRepository;
 
     public void createInuringEdge(InuringEdgeCreationRequest request) throws RRException {
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(request.getInuringPackageId());
@@ -73,11 +75,18 @@ public class InuringEdgeService {
         inuringEdgeRepository.deleteByTargetNodeTypeAndTargetNodeId(nodeType, nodeId);
     }
 
+    public InuringEdge readInuringEdge(int inuringEdgeId) throws RRException{
+        InuringEdge inuringEdge = inuringEdgeRepository.findByInuringEdgeId(inuringEdgeId);
+        if(inuringEdge == null) throw new InuringEdgeNodeFoundException(inuringEdgeId);
+        return inuringEdge;
+    }
+
     private boolean checkInuringNodeExisting(InuringNodeType nodeType, int nodeId) {
         switch (nodeType) {
             case InputNode:
                 return inuringInputNodeRepository.findByInuringInputNodeId(nodeId) != null;
             case ContractNode:
+                return inuringContractNodeRepository.findByInuringContractNodeId(nodeId) != null;
             case FinalNode:
                 return inuringFinalNodeRepository.findByInuringFinalNodeId(nodeId) != null;
             default:

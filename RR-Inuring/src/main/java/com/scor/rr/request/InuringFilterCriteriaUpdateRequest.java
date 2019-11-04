@@ -1,6 +1,8 @@
 package com.scor.rr.request;
 
 import com.scor.rr.enums.InuringElementType;
+import lombok.Data;
+
 
 public class InuringFilterCriteriaUpdateRequest {
 

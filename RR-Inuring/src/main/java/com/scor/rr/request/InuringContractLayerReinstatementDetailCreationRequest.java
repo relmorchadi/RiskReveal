@@ -1,6 +1,9 @@
 package com.scor.rr.request;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
+
 
 public class InuringContractLayerReinstatementDetailCreationRequest {
 
@@ -37,6 +40,4 @@ public class InuringContractLayerReinstatementDetailCreationRequest {
     public BigDecimal getReinstatatementsCharge() {
         return reinstatatementsCharge;
     }
-
-
 }

@@ -1,8 +1,10 @@
 package com.scor.rr.request;
 
 import com.scor.rr.dto.InuringContractLayerDto;
+import lombok.Data;
 
 import java.util.List;
+
 
 public class InuringContractLayerCreationRequest {
 

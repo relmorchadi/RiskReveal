@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class InuringContractLayer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractLayerId", nullable = false)
     private int inuringContractLayerId;
 

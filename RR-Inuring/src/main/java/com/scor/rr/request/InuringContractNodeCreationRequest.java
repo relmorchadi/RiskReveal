@@ -1,32 +1,33 @@
 package com.scor.rr.request;
 
+import lombok.Data;
+
 import java.util.Date;
+
 
 public class InuringContractNodeCreationRequest {
 
     private int inuringPackageId;
-    private String inuringContractNodeType;
     private String contractTypeCode;
     private Date inceptionDate;
     private Date expiationDate;
 
-    public InuringContractNodeCreationRequest(int inuringPackageId,String contractTypeCode, String inuringContractNodeType,Date inceptionDate,Date expirationDate) {
+    public InuringContractNodeCreationRequest(int inuringPackageId, String contractTypeCode, Date inceptionDate, Date expiationDate) {
         this.inuringPackageId = inuringPackageId;
         this.contractTypeCode = contractTypeCode;
-        this.inuringContractNodeType = inuringContractNodeType;
-        this.expiationDate = expirationDate;
         this.inceptionDate = inceptionDate;
+        this.expiationDate = expiationDate;
     }
 
     public InuringContractNodeCreationRequest() {
     }
 
-    public String getContractTypeCode() {
-        return contractTypeCode;
-    }
-
     public int getInuringPackageId() {
         return inuringPackageId;
+    }
+
+    public String getContractTypeCode() {
+        return contractTypeCode;
     }
 
     public Date getInceptionDate() {
@@ -35,9 +36,5 @@ public class InuringContractNodeCreationRequest {
 
     public Date getExpiationDate() {
         return expiationDate;
-    }
-
-    public String getInuringContractNodeType() {
-        return inuringContractNodeType;
     }
 }

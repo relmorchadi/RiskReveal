@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class InuringContractLayerPerilLimit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
     private int inuringContractLayerPerilLimitId;
 
