@@ -1,12 +1,15 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.TargetBuild.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
+import com.scor.rr.service.TargetBuild.ShortCutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,9 @@ public class SearchResource {
 
     @Autowired
     private SearchService searchService;
+
+    @Autowired
+    ShortCutService shortCutService;
 
     @GetMapping("treaty")
     Page<Treaty> searchTreaty(@RequestParam String keyword, int size) {
@@ -53,7 +59,7 @@ public class SearchResource {
 //    }
 
     @GetMapping("searchcount")
-    Page<?> countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
+    SearchCountResult countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
         return searchService.countInWorkspace(table, keyword, size);
     }
 
@@ -71,4 +77,15 @@ public class SearchResource {
     Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request){
         return searchService.expertModeSearch(request);
     }
+
+    @GetMapping("shortcuts")
+    List<ShortCut> getShortCuts() {
+        return this.shortCutService.getShortCuts();
+    }
+
+    @GetMapping("tesst")
+    public void test(@PageableDefault Pageable pageable){
+
+    }
+
 }

@@ -95,9 +95,9 @@
 </p-table>
 
 <!--virtual scroll-->
-<!--nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700"> </-->
+<nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
-           [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+           [value]="listOfData | tableSortAndFilter : [sortData, FilterData]" #dt [columns]="tableColumn" [resizableColumns]="true"
            [scrollable]="true" [scrollHeight]="tableHeight"
            [rows]="rows"
            [totalRecords]="totalRecords"
@@ -202,4 +202,4 @@
       </tr>
     </ng-template>
   </p-table>
-<!--/nz-spin> </-->
+</nz-spin>
