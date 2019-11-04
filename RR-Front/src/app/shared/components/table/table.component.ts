@@ -72,7 +72,8 @@ export class TableComponent implements OnInit {
       command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
     },
   ];
-
+  @Input()
+  rows;
   @Input()
   totalRecords;
   @Input()
