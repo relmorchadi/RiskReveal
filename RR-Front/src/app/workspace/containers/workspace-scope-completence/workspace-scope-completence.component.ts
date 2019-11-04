@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {tap} from "rxjs/operators";
+import {SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-scope-completence',
@@ -36,11 +37,11 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     "Note": "Information about why those modifications were applied"
   };
   selectionForOverride = [];
-  filterBy: string ='All';
+  filterBy: string = 'All';
   selectionForCancelOverride = [];
   overrideReason: string;
   showPendingOption: boolean = false;
-  accumulationStatus: string = "Scope Only"
+  accumulationStatus: string = 'Scope Only';
   overrideReasonExplained: string = '';
   attachArray: any;
   deleteArray: any;
@@ -52,7 +53,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   workspaceId: any;
   keys: any = {};
   uwy: any;
-  grains = {}
+  grains = {};
   regionCodes = {};
   selectedSortBy: string = 'Minimum Grain / RAP';
 
@@ -60,39 +61,89 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   workspaceInfo: any;
   serviceSubscription: any;
+
   @Select(WorkspaceState.getScopeCompletenessData) state$;
   state: any;
+
+  @Select(WorkspaceState.getWorkspaces) ws$;
+  ws: any;
+  currentWsIdentifier: any;
+
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  selectedProject: any;
+  tabStatus: any;
+
+  @Select(WorkspaceState.getImportStatus) importStatus$;
+  importStatus: any;
 
   workspace: any;
   index: any;
   workspaceUrl: any;
   rowInformation: any;
 
-  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  wsType: any;
+
+  constructor(private route: ActivatedRoute, private actions$: Actions, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
 
   ngOnInit() {
-    this.observeRouteParams().pipe(
-      this.unsubscribeOnDestroy
-    ).subscribe(() => {
-      this.dispatch(new fromWs.LoadScopeCompletenessDataSuccess({
-        params: {
-          workspaceId: this.workspaceId, uwy: this.uwy
-        },
-        wsIdentifier: this.workspaceId + '-' + this.uwy
-      }));
+    this.treatySections = _.toArray(trestySections);
+
+    this.dispatch(new fromWs.LoadScopeCompletenessDataSuccess({
+      params: {workspaceId: this.workspaceId, uwy: this.uwy},
+      wsIdentifier: this.workspaceId + '-' + this.uwy
+    }));
+
+    this.select(WorkspaceState.getCurrentTab)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(curTab => {
+        this.currentWsIdentifier = curTab.wsIdentifier;
+        this.detectChanges();
+      });
+
+    this.importStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.importStatus = value;
+      this.detectChanges();
     });
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.state = value;
+      this.state = _.get(value, 'data', null);
+      this.wsType = _.get(value, 'wsType', null);
       this.listOfPltsData = this.getSortedPlts(this.state);
-      this.treatySections = _.toArray(trestySections);
-      this.dataSource = this.getData(this.treatySections[0]);
       this.detectChanges();
     });
-    this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+
+    this.selectedProject$.pipe().subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.selectedProject = value;
+      if (this.tabStatus === 'treaty' || this.tabStatus === null) {
+        this.dataSource = this.getData(this.treatySections[0]);
+        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+      } else {
+        if (this.importStatus[this.selectedProject.projectId]) {
+          this.dataSource = this.getData(this.treatySections[1]);
+          this.treatySectionContainer = _.cloneDeep(this.treatySections[1]);
+        } else {
+          this.dataSource = this.getData(this.treatySections[0]);
+          this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+        }
+      }
+    });
+
+    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws = _.merge({}, value);
+      this.detectChanges();
+    });
+
+/*    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+      if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+      this.detectChanges();
+    });*/
 
     combineLatest(
       this.route.params
@@ -101,30 +152,20 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         const {wsId, year} = dt[0];
         this.workspaceUrl = {wsId, uwYear: year};
       });
-
-
-
   }
-
-
 
   showPackage() {
     let check = false;
-    if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length != 0) {
-      this.showPendingOption = true;
-      if (!this.showRemoveOverrideButton() && !this.showOverrideButton()) {
-        check = true;
-      } else{
+    if (this.treatySections !== undefined) {
+      if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length !== 0) {
+        this.showPendingOption = true;
+        check = !this.showRemoveOverrideButton() && !this.showOverrideButton();
+      } else {
         check = false;
+        this.showPendingOption = false;
       }
-
-    } else {
-      check = false;
-      this.showPendingOption = false;
-
+      check ? this.accumulationStatus = 'Pending' : this.accumulationStatus = 'Scope Only';
     }
-    if(check) {this.accumulationStatus = 'Pending'}
-    else{this.accumulationStatus = 'Scope Only'}
     return check;
   }
 
@@ -132,7 +173,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     return this.route.params.pipe(tap(({wsId, year}) => {
       this.workspaceId = wsId;
       this.uwy = year;
-    }))
+    }));
   }
 
   ngOnDestroy(): void {
@@ -144,7 +185,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.wsIdentifier = wsIdentifier;
   }
 
-  /** Pin and unpin the workspace**/
+  /** Pin and unpin the workspace **/
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
     this.dispatch([
@@ -166,12 +207,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   getData(treatySections) {
-    let res = [];
-    let treatySectionsClone = _.cloneDeep(treatySections);
+    const res = [];
+    const treatySectionsClone = _.cloneDeep(treatySections);
 
     _.forEach(treatySectionsClone, treatySection => {
       _.forEach(treatySection.regionPerils, regionPeril => {
-        let object = {
+        const object = {
           id: regionPeril.id,
           description: regionPeril.description,
           override: false,
@@ -179,36 +220,36 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           child: _.sortBy(this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps), item => item.id)
         };
         const index = _.findIndex(res, row => row.id == object.id);
-        if (index == -1) {
-          res.push(object)
+        if (index === -1) {
+          res.push(object);
         } else {
           res[index] = object;
         }
-      })
+      });
     });
     return _.sortBy(_.cloneDeep(res), item => item.id);
   }
 
   getDataTwo(treatySections) {
-    let res = [];
-    let treatySectionsClone = _.cloneDeep(treatySections);
+    const res = [];
+    const treatySectionsClone = _.cloneDeep(treatySections);
 
     _.forEach(treatySectionsClone, treatySection => {
       _.forEach(treatySection.targetRaps, targetRap => {
-        let object = {
+        const object = {
           id: targetRap.id,
           description: targetRap.description,
           override: false,
           selected: false,
           child: _.sortBy(this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || {child: []}).child, targetRap.regionPerils), item => item.id)
         };
-        const index = _.findIndex(res, row => row.id == object.id);
-        if (index == -1) {
-          res.push(object)
+        const index = _.findIndex(res, row => row.id === object.id);
+        if (index === -1) {
+          res.push(object);
         } else {
           res[index] = object;
         }
-      })
+      });
     });
     return _.sortBy(_.cloneDeep(res), item => item.id);
 
@@ -219,7 +260,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     let SortConfig = {
       grain: ['regionPerilCode', 'grain'],
       regionPerilCode: ['grain', 'regionPerilCode']
-    }
+    };
     let res = {};
     _.forEach(_.groupBy(data, e => e[SortConfig[type][0]]), (e, k) => res[k] = _.groupBy(e, dt => dt[SortConfig[type][1]]));
     return res;
@@ -250,58 +291,57 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     return this.grains[grain.id + rowData.id];
   }
 
-  expandAllRows(){
-
-    let regions = []
-    _.forEach(this.dataSource, data =>{
-      this.keys[data.id] = true ;
+  expandAllRows() {
+    const regions = [];
+    _.forEach(this.dataSource, data => {
+      this.keys[data.id] = true;
       regions[data.id] = true;
-    })
-    if(_.keys(this.pTable.expandedRowKeys).length < _.keys(this.keys).length ){
-      this.pTable.expandedRowKeys = {...this.keys}
-      this.regionCodes = regions
-
-    }else {
+    });
+    if (_.keys(this.pTable.expandedRowKeys).length < _.keys(this.keys).length) {
+      this.pTable.expandedRowKeys = {...this.keys};
+      this.regionCodes = regions;
+    } else {
       _.forEach(this.dataSource, row => {
-        row.child.forEach( item =>{
+        row.child.forEach(item => {
           this.grains[item.id + row.id] = true;
-        })
-      })
+        });
+      });
     }
     // }this.grains[item.id + rowData.id]
 
   }
-  closeAllRows(){
+
+  closeAllRows() {
     let check = false;
-    _.forEach(this.grains, item =>{
-      if(item == true){
+    _.forEach(this.grains, item => {
+      if (item) {
         check = true;
       }
-    })
-
-    if(check){
+    });
+    if (check) {
       _.forEach(this.dataSource, row => {
-        row.child.forEach( item =>{
+        row.child.forEach(item => {
           this.grains[item.id + row.id] = false;
-        })
-      })
-    }else {
-      this.pTable.expandedRowKeys = {}
-      this.regionCodes = []
+        });
+      });
+    } else {
+      this.pTable.expandedRowKeys = {};
+      this.regionCodes = [];
     }
   }
+
   /** expending the child**/
   toggleParentExpand(item: any) {
     this.regionCodes[item.id] = !this.regionCodes[item.id];
   }
 
-  overrideRow(rowData){
+  overrideRow(rowData) {
     rowData.override = true;
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      let holder = {}
+    if (this.selectedSortBy === 'Minimum Grain / RAP') {
+      let holder = {};
       this.treatySections[0].forEach(ts => {
         ts.regionPerils.forEach(rp => {
-          if (rp.id == rowData.id) {
+          if (rp.id === rowData.id) {
             rp.targetRaps.forEach(tr => {
               if (!tr.attached && !tr.overridden) {
                 holder = {
@@ -311,17 +351,17 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 };
                 this.selectionForOverride.push(holder);
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
     }
 
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      let holder = {}
+    if (this.selectedSortBy === 'RAP / Minimum Grain') {
+      let holder = {};
       this.treatySections[0].forEach(ts => {
         ts.targetRaps.forEach(rp => {
-          if (rp.id == rowData.id) {
+          if (rp.id === rowData.id) {
             rp.regionPerils.forEach(tr => {
               if (!tr.attached && !tr.overridden) {
                 holder = {
@@ -331,10 +371,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 };
                 this.selectionForOverride.push(holder);
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
     }
   }
 
@@ -346,21 +386,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.cancelOverride();
     this.cancelRemoveOverride();
     this.regionCodes = {};
-    if (item == 'Minimum Grain / RAP') {
+    if (item === 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
       this.dataSource.forEach(res => {
         res.override = false;
-      })
+      });
     }
-    if (item == 'RAP / Minimum Grain') {
+    if (item === 'RAP / Minimum Grain') {
       this.dataSource = this.getDataTwo(this.treatySections[0]);
       this.dataSource.forEach(res => {
         res.override = false;
-      })
-
+      });
     }
-
-
   }
 
   /** stocking the override reason for a that's gonna be shown later on hovering the override icon**/
@@ -374,32 +411,30 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (des.id == grain.id) {
                 if (des.overridden) {
                   rr = des.reason;
-                  rd = des.resonDescribed
+                  rd = des.resonDescribed;
                 }
-
               }
-            })
+            });
           }
         }
-      )
+      );
     }
 
 
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    if (this.selectedSortBy === 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
-        if (reg.id == rowData.id) {
+        if (reg.id === rowData.id) {
           reg.regionPerils.forEach(des => {
-              if (des.id == grain.id) {
+              if (des.id === grain.id) {
                 if (des.overridden) {
                   rr = des.reason;
-                  rd = des.resonDescribed
+                  rd = des.resonDescribed;
                 }
               }
             }
-          )
+          );
         }
-
-      })
+      });
     }
 
     return {rr, rd};
@@ -412,73 +447,62 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     let holder = [];
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
-          if (reg.id == rowData.id) {
+        if (reg.id == rowData.id) {
 
-            reg.targetRaps.forEach(res => {
-              rowData.child.forEach(des => {
-                if (des.id == res.id) {
-                  if (res.attached) {
-                    holder.push('attached');
-                  }
-                  if (res.overridden) {
-                    holder.push('overridden')
-                  }
-                  if (!res.attached && !res.overridden) {
-                    // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
-                    // const check = this.listOfPltsData[rowData.id][des.id]
-                    // if (check != null) {
-                      if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
-                        if (this.listOfPltsData[rowData.id][des.id].length) {
-                          holder.push('dispoWs');
-                        }
-
-
-                    } else {
-                      holder.push('checked');
+          reg.targetRaps.forEach(res => {
+            rowData.child.forEach(des => {
+              if (des.id == res.id) {
+                if (res.attached) {
+                  holder.push('attached');
+                }
+                if (res.overridden) {
+                  holder.push('overridden');
+                }
+                if (!res.attached && !res.overridden) {
+                  // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
+                  // const check = this.listOfPltsData[rowData.id][des.id]
+                  // if (check != null) {
+                  if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
+                    if (this.listOfPltsData[rowData.id][des.id].length) {
+                      holder.push('dispoWs');
                     }
-
+                  } else {
+                    holder.push('checked');
                   }
                 }
-              })
-
-            })
-
-          }
+              }
+            });
+          });
         }
-      )
+      });
     }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    if (this.selectedSortBy === 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
-          if (reg.id == rowData.id) {
+        if (reg.id === rowData.id) {
 
-            reg.regionPerils.forEach(res => {
-              rowData.child.forEach(des => {
-                if (des.id == res.id) {
-                  if (res.attached) {
-                    holder.push('attached');
-                  }
-                  if (res.overridden) {
-                    holder.push('overridden')
-                  }
-                  if (!res.attached && !res.overridden) {
-                      if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
-                        if (this.listOfPltsData[des.id][rowData.id].length) {
-                          holder.push('dispoWs');
-                        }
-
-
-                    } else {
-                      holder.push('checked');
+          reg.regionPerils.forEach(res => {
+            rowData.child.forEach(des => {
+              if (des.id === res.id) {
+                if (res.attached) {
+                  holder.push('attached');
+                }
+                if (res.overridden) {
+                  holder.push('overridden');
+                }
+                if (!res.attached && !res.overridden) {
+                  if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
+                    if (this.listOfPltsData[des.id][rowData.id].length) {
+                      holder.push('dispoWs');
                     }
+                  } else {
+                    holder.push('checked');
                   }
                 }
-              })
-
-            })
-
-          }
+              }
+            });
+          });
         }
-      )
+      });
     }
 
     if (_.includes(holder, 'dispoWs')) {
@@ -492,7 +516,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
     if (rowData.override) {
       if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override'
+        checked = 'override';
       }
     }
     if (checked == 'attached') {
@@ -502,16 +526,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (rg.id == rowData.id) {
               rg.attached = true;
             }
-          })
+          });
           ts.targetRaps.forEach(tr => {
             if (tr.id == rowData.id) {
               tr.attached = true;
             }
-          })
+          });
         }
-      })
-
-
+      });
     } else {
       this.treatySections[0].forEach(ts => {
         if (ts.id == item.id) {
@@ -519,14 +541,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (rg.id == rowData.id) {
               rg.attached = false;
             }
-          })
+          });
           ts.targetRaps.forEach(tr => {
             if (tr.id == rowData.id) {
               tr.attached = false;
             }
-          })
+          });
         }
-      })
+      });
     }
 
     if (checked == 'overridden') {
@@ -536,16 +558,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (rg.id == rowData.id) {
               rg.overridden = true;
             }
-          })
+          });
           ts.targetRaps.forEach(tr => {
             if (tr.id == rowData.id) {
               tr.overridden = true;
             }
-          })
+          });
         }
-      })
-
-
+      });
     } else {
       this.treatySections[0].forEach(ts => {
         if (ts.id == item.id) {
@@ -553,18 +573,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (rg.id == rowData.id) {
               rg.overridden = false;
             }
-          })
+          });
           ts.targetRaps.forEach(tr => {
             if (tr.id == rowData.id) {
               tr.overridden = false;
             }
-          })
+          });
         }
-      })
+      });
     }
 
     if (checked == 'overridden' && this.removeOverride) {
-      checked = 'cancelOverride'
+      checked = 'cancelOverride';
     }
     return checked;
   }
@@ -591,17 +611,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     if (this.listOfPltsData[rowData.id][grain.id].length) {
                       checked = 'dispoWs';
                     }
-
                   }
                 } else {
-                  checked = 'checked'
+                  checked = 'checked';
                 }
               }
             }
-          })
-
+          });
         }
-      })
+      });
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
@@ -619,24 +637,22 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 if (check != null) {
                   if (this.listOfPltsData[grain.id][rowData.id]) {
                     if (this.listOfPltsData[grain.id][rowData.id].length) {
-
                       checked = 'dispoWs';
                     }
-
                   }
                 } else {
-                  checked = 'checked'
+                  checked = 'checked';
                 }
               }
             }
-          })
+          });
         }
-      })
+      });
     }
 
     if (rowData.override || grain.override) {
       if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override'
+        checked = 'override';
       }
     }
 
@@ -660,14 +676,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   if (plts.pltId == plt.pltId) {
                     checked = "attached";
                   }
-                })
-
+                });
               }
             }
-          })
-
+          });
         }
-      })
+      });
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
@@ -677,16 +691,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (des.attached) {
                 des.pltsAttached.forEach(plts => {
                   if (plts.pltId == plt.pltId) {
-                    checked = "attached";
+                    checked = 'attached';
                   }
-                })
-
+                });
               }
-
             }
-          })
+          });
         }
-      })
+      });
     }
     return checked;
   }
@@ -695,7 +707,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   overrideChildMode(rowData, grain) {
     grain.override = true;
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      let holder = {}
+      let holder = {};
       this.treatySections[0].forEach(ts => {
         ts.regionPerils.forEach(rp => {
           if (rp.id == rowData.id) {
@@ -708,14 +720,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 };
                 this.selectionForOverride.push(holder);
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
     }
 
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      let holder = {}
+      let holder = {};
       this.treatySections[0].forEach(ts => {
         ts.targetRaps.forEach(rp => {
           if (rp.id == rowData.id) {
@@ -728,10 +740,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 };
                 this.selectionForOverride.push(holder);
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
     }
 
 
@@ -792,60 +804,37 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
 
-      if (count == const1) {
-
-        rowData.child.forEach(chi => {
-          item.regionPerils.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.targetRaps.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let holder = {
-                      "treatySection": item.id,
-                      "parent": rowData.id,
-                      "child": chi.id
-                    };
+      rowData.child.forEach(chi => {
+        item.regionPerils.forEach(reg => {
+          if (reg.id === rowData.id) {
+            reg.targetRaps.forEach(des => {
+              if (des.id === chi.id) {
+                if (!des.attached && !des.overridden) {
+                  const holder = {
+                    "treatySection": item.id,
+                    "parent": rowData.id,
+                    "child": chi.id
+                  };
+                  if (count === const1) {
                     this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
-                  }
-                }
-              })
-            }
-          })
-        })
-
-
-      } else {
-        rowData.child.forEach(chi => {
-          item.regionPerils.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.targetRaps.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let Holder = {
-                      "treatySection": item.id,
-                      "parent": rowData.id,
-                      "child": chi.id
-                    };
-                    if (_.findIndex(this.selectionForOverride, Holder) == -1) {
-                      this.selectionForOverride.push(Holder);
+                  } else {
+                    if (_.findIndex(this.selectionForOverride, holder) === -1) {
+                      this.selectionForOverride.push(holder);
                     }
-
-
                   }
-
                 }
-              })
-            }
-          })
-        })
-      }
+              }
+            });
+          }
+        });
+      });
     }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    if (this.selectedSortBy === 'RAP / Minimum Grain') {
       const count = _.filter(this.selectionForOverride, res => res.child == rowData.id && res.treatySection == item.id).length;
 
       let const1 = 0;
@@ -858,54 +847,35 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
-      if (count == const1) {
+        });
+      });
 
-        rowData.child.forEach(chi => {
-          item.targetRaps.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.regionPerils.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let holder = {
-                      "treatySection": item.id,
-                      "parent": chi.id,
-                      "child": rowData.id
-                    };
+      rowData.child.forEach(chi => {
+        item.targetRaps.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.regionPerils.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && !des.overridden) {
+                  let holder = {
+                    "treatySection": item.id,
+                    "parent": chi.id,
+                    "child": rowData.id
+                  };
+                  if (count == const1) {
                     this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
-                  }
-                }
-              })
-            }
-          })
-        })
-
-      } else {
-
-        rowData.child.forEach(chi => {
-          item.targetRaps.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.regionPerils.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let Holder = {
-                      "treatySection": item.id,
-                      "parent": chi.id,
-                      "child": rowData.id
-                    };
-                    if (_.findIndex(this.selectionForOverride, Holder) == -1) {
-                      this.selectionForOverride.push(Holder);
+                  } else {
+                    if (_.findIndex(this.selectionForOverride, holder) == -1) {
+                      this.selectionForOverride.push(holder);
                     }
                   }
                 }
-              })
-            }
-          })
-        })
-      }
+              }
+            });
+          }
+        });
+      });
     }
   }
 
@@ -924,10 +894,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
 
       if (count == const1) {
 
@@ -945,10 +915,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
                   }
                 }
-              })
+              });
             }
-          })
-        })
+          });
+        });
 
 
       } else {
@@ -966,15 +936,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     if (_.findIndex(this.selectionForOverride, Holder) == -1) {
                       this.selectionForOverride.push(Holder);
                     }
-
-
                   }
-
                 }
-              })
+              });
             }
-          })
-        })
+          });
+        });
       }
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
@@ -990,10 +957,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
       if (count == const1) {
 
         rowData.child.forEach(chi => {
@@ -1010,10 +977,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
                   }
                 }
-              })
+              });
             }
-          })
-        })
+          });
+        });
 
       } else {
 
@@ -1033,10 +1000,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     }
                   }
                 }
-              })
+              });
             }
-          })
-        })
+          });
+        });
       }
     }
 
@@ -1058,10 +1025,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
 
       if (count == const1) {
         return true;
@@ -1080,10 +1047,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
       if (count == const1) {
         return true;
       }
@@ -1103,10 +1070,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
 
       if (count == const1) {
         return true;
@@ -1125,10 +1092,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   const1++;
                 }
               }
-            })
+            });
           }
-        })
-      })
+        });
+      });
       if (count == const1) {
         return true;
       }
@@ -1161,12 +1128,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   overrideAll() {
     this.dataSource.forEach(res => {
       res.override = true;
-    })
+    });
   }
 
   RemoveOverrideAll() {
     this.removeOverride = true;
-    let holder = {}
+    let holder = {};
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       this.treatySections[0].forEach(ts => {
         ts.regionPerils.forEach(rp => {
@@ -1179,9 +1146,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               };
               this.selectionForOverride.push(holder);
             }
-          })
-        })
-      })
+          });
+        });
+      });
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       this.treatySections[0].forEach(ts => {
@@ -1195,9 +1162,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               };
               this.selectionForOverride.push(holder);
             }
-          })
-        })
-      })
+          });
+        });
+      });
     }
 
     this.selectionForCancelOverride = _.merge([], this.selectionForOverride);
@@ -1221,11 +1188,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     tr.overridden = false;
                     tr.reason = null;
                     tr.resonDescribed = null;
-
                   }
-                })
+                });
               }
-            })
+            });
             section.targetRaps.forEach(tr => {
               if (tr.id == item.child) {
                 tr.regionPerils.forEach(rp => {
@@ -1233,18 +1199,16 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     rp.overridden = false;
                     rp.reason = null;
                     rp.resonDescribed = null;
-
                   }
-                })
+                });
               }
-
-            })
+            });
           }
-        })
+        });
       }
-    })
+    });
     this.selectionForCancelOverride = [];
-    this.selectionForOverride = []
+    this.selectionForOverride = [];
     this.removeOverride = false;
     this.detectChanges();
 
@@ -1265,9 +1229,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   tr.resonDescribed = this.overrideReasonExplained;
 
                 }
-              })
+              });
             }
-          })
+          });
           section.targetRaps.forEach(tr => {
             if (tr.id == ove.child) {
               tr.regionPerils.forEach(rp => {
@@ -1277,13 +1241,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   rp.resonDescribed = this.overrideReasonExplained;
 
                 }
-              })
+              });
             }
 
-          })
+          });
         }
-      })
-    })
+      });
+    });
 
     this.cancelOverride();
 
@@ -1298,8 +1262,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       res.override = false;
       res.child.forEach(child => {
         child.override = false;
-      })
-    })
+      });
+    });
 
   }
 
@@ -1311,16 +1275,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   /** showing the override checkbox for the child selected, when the conditions of override are available**/
   showOverrideButton() {
     let checked = false;
-    this.dataSource.forEach(res => {
-      if (res.override == true) {
-        checked = true;
-      }
-      res.child.forEach(child => {
-        if (child.override) {
+    if (this.dataSource !== undefined) {
+      this.dataSource.forEach(res => {
+        if (res.override == true) {
           checked = true;
         }
-      })
-    })
+        res.child.forEach(child => {
+          if (child.override) {
+            checked = true;
+          }
+        });
+      });
+    }
     return checked;
   }
 
@@ -1351,9 +1317,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                       tr.attached = false;
                     }
                   }
-                })
+                });
               }
-            })
+            });
           }
 
 
@@ -1366,13 +1332,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     tr.attached = false;
                   }
                 }
-              })
+              });
             }
-          })
+          });
 
-        })
+        });
       }
-    )
+    );
 
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       this.dataSource = this.getDataTwo(this.treatySections[0]);
@@ -1399,9 +1365,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   tr.attached = true;
                   tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
                 }
-              })
+              });
             }
-          })
+          });
 
           _.forEach(ts.targetRaps, rg => {
             if (rg.id == att.targetRap) {
@@ -1410,17 +1376,16 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   tr.attached = true;
                   tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
                 }
-              })
+              });
             }
-          })
+          });
         }
-      })
-
-    })
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      });
+    });
+    if (this.selectedSortBy === 'RAP / Minimum Grain') {
       this.dataSource = this.getDataTwo(this.treatySections[0]);
     }
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+    if (this.selectedSortBy === 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
     }
     this.detectChanges();
@@ -1433,8 +1398,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       const targetRaps = [];
       rowData.child.forEach(tr => {
-        targetRaps.push(tr.id)
-      })
+        targetRaps.push(tr.id);
+      });
       this.rowInformation = {
         "sort": "1",
         "rowData": rowData.id,
@@ -1444,8 +1409,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       const targetRaps = [];
       rowData.child.forEach(tr => {
-        targetRaps.push(tr.id)
-      })
+        targetRaps.push(tr.id);
+      });
       this.rowInformation = {
         "sort": "2",
         "rowData": rowData.id,
@@ -1466,17 +1431,17 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (!rg.attached && !rg.overridden) {
               checked = false;
             }
-          })
+          });
         }
         if (this.selectedSortBy == 'RAP / Minimum Grain') {
           ts.targetRaps.forEach(tr => {
             if (!tr.attached && !tr.overridden) {
               checked = false;
             }
-          })
+          });
         }
       }
-    })
+    });
     return checked;
   }
 
@@ -1491,7 +1456,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               }
             }
           }
-        )
+        );
       }
       if (this.selectedSortBy == 'RAP / Minimum Grain') {
         ts.targetRaps.forEach(tr => {
@@ -1501,10 +1466,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               }
             }
           }
-        )
+        );
       }
 
-    })
+    });
     return checked;
   }
 
@@ -1520,10 +1485,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     checked = false;
                   }
                 }
-              })
+              });
             }
           }
-        )
+        );
       }
       if (this.selectedSortBy == 'RAP / Minimum Grain') {
         ts.targetRaps.forEach(tr => {
@@ -1534,13 +1499,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     checked = false;
                   }
                 }
-              })
+              });
             }
           }
-        )
+        );
       }
 
-    })
+    });
     return checked;
   }
 
@@ -1570,7 +1535,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       if (item.pltsAttached.length != 0) {
         item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
       }
-    })
+    });
     return newData;
   }
 
@@ -1592,14 +1557,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       if (item.pltsAttached.length != 0) {
         item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
       }
-    })
+    });
     return newData;
   }
 
-  showIncompleteOnly(){
+  showIncompleteOnly() {
     this.filterBy = 'Incomplete Only';
   }
-  showAll(){
+
+  showAll() {
     this.filterBy = 'All';
   }
 

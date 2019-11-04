@@ -234,7 +234,7 @@
           }
 
           .action-icon-wrapper {
-            margin-right: 10px;
+            margin: 0 15px;
             display: flex;
             align-items: center;
 
@@ -265,6 +265,12 @@
             font-size: 25px;
             cursor: pointer;
             display: flex;
+          }
+
+          .icon-link_24px {
+            font-size: 25px;
+            margin-right: 15px;
+            cursor: pointer;
           }
         }
 

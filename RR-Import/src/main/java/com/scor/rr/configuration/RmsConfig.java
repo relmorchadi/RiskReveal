@@ -6,7 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -14,13 +16,12 @@ import javax.sql.DataSource;
 @Configuration
 public class RmsConfig {
 
-//    @Bean(name = "dbRr")
-//    @ConfigurationProperties(prefix = "spring.datasource")
-//    @Primary
-//    public DataSource createProductServiceDataSource() {
-//        return DataSourceBuilder.create().build();
-//    }
-
+    @Primary
+    @Bean(name = "dataSource")
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
 
     @Bean(name = "dbRms")
     @ConfigurationProperties(prefix = "rms.datasource")
@@ -28,19 +29,18 @@ public class RmsConfig {
         return DataSourceBuilder.create().build();
     }
 
-
+    @Bean(name="rmsTransactionManager")
+    public DataSourceTransactionManager getRmsTransactionManager(){
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(createRmsDataSource());
+        dataSourceTransactionManager.setEnforceReadOnly(true);
+        return dataSourceTransactionManager;
+    }
 
     @Bean(name = "jdbcRms")
     @Autowired
     public JdbcTemplate createJdbcTemplateRms(@Qualifier("dbRms") DataSource rmsDS) {
         return new JdbcTemplate(rmsDS);
     }
-
-//    @Bean(name = "jdbcRr")
-//    @Autowired
-//    public JdbcTemplate createJdbcTemplateRr(@Qualifier("dbRr") DataSource rrDS) {
-//        return new JdbcTemplate(rrDS);
-//    }
-
 
 }

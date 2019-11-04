@@ -53,6 +53,7 @@ export class WorkspaceService {
       inceptionDate: 1546297200000,
       expiryDate: 1577746800000,
       subsidiaryLedgerId: '2',
+      contractSource: 'ForeWriter',
       treatySections: [
         'CFS-SCOR REASS.-MADRID RCC000022/ 1'
       ],
@@ -186,10 +187,12 @@ export class WorkspaceService {
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,
-            activeAddBasket: false
+            activeAddBasket: false,
+            importPLTs: {},
           },
           scopeOfCompletence: {
             data: {},
+            wsType: null,
           },
           fileBaseImport: {
             folders: null,
@@ -220,8 +223,8 @@ export class WorkspaceService {
             ...item,
             workspaceId: item.uwanalysisContractFacNumber,
             uwy: item.uwanalysisContractYear,
-            projectId: item.id,
-            name: 'Fac Project',
+            projectId: item.uwAnalysisProjectId,
+            name: item.id,
             description: null,
             assignedTo: null,
             createdBy: item.requestedByFullName,
@@ -239,7 +242,8 @@ export class WorkspaceService {
             sourceWsId: null,
             sourceWsName: null,
             locking: null,
-            selected: false
+            selected: false,
+            projectType: 'fac'
           };
         });
         draft.content[wsIdentifier].projects[0].selected = true;
@@ -442,6 +446,14 @@ export class WorkspaceService {
       }));
   }
 
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
+    }));
+  }
+
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {project, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
@@ -456,6 +468,21 @@ export class WorkspaceService {
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });
+  }
+
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (selected.length > 0) {
+        draft.content[wsIdentifier].projects = this._selectProject(
+          _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id), 0
+        );
+      } else {
+        draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id);
+      }
+    }));
   }
 
   private _selectProject(projects: any, projectIndex: number): Array<any> {

@@ -1,10 +1,12 @@
 package com.scor.rr.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
+@NoArgsConstructor
 public class AnalysisEpCurves {
 
     private int analysisId;
@@ -13,43 +15,17 @@ public class AnalysisEpCurves {
     private double loss;
     private BigDecimal execeedanceProb;
 
-    public int getAnalysisId() {
-        return analysisId;
-    }
 
-    public void setAnalysisId(int analysisId) {
-        this.analysisId = analysisId;
-    }
-
-    public String getFinPerspCode() {
-        return finPerspCode;
-    }
-
-    public void setFinPerspCode(String finPerspCode) {
-        this.finPerspCode = finPerspCode;
-    }
-
-    public int getEpTypeCode() {
-        return epTypeCode;
-    }
-
-    public void setEpTypeCode(int epTypeCode) {
-        this.epTypeCode = epTypeCode;
-    }
-
-    public double getLoss() {
-        return loss;
-    }
-
-    public void setLoss(double loss) {
+    public AnalysisEpCurves(BigDecimal execeedanceProb, double loss) {
         this.loss = loss;
-    }
-
-    public BigDecimal getExeceedanceProb() {
-        return execeedanceProb;
-    }
-
-    public void setExeceedanceProb(BigDecimal execeedanceProb) {
         this.execeedanceProb = execeedanceProb;
+    }
+
+    public AnalysisEpCurves(AnalysisEpCurves curves) {
+        this.analysisId= curves.getAnalysisId();
+        this.finPerspCode= curves.getFinPerspCode();
+        this.epTypeCode= curves.getEpTypeCode();
+        this.loss = curves.getLoss();
+        this.execeedanceProb = curves.getExeceedanceProb();
     }
 }

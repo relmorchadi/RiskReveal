@@ -16,7 +16,7 @@ import java.util.Date;
 public class InuringPackageProcessingExchangeRate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringPackageProcessingExchangeRateId", nullable = false)
     private int inuringPackageProcessingExchangeRateId;
 

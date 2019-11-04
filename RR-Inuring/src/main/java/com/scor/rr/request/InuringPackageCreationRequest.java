@@ -2,9 +2,12 @@ package com.scor.rr.request;
 
 import com.scor.rr.enums.InuringPackageStatus;
 
+import lombok.Data;
+
 /**
  * Created by u004602 on 16/09/2019.
  */
+
 public class InuringPackageCreationRequest {
     private String packageName;
     private String packageDescription;

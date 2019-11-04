@@ -11,10 +11,13 @@ import com.scor.rr.request.InuringFinalNodeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 /**
  * Created by u004602 on 16/09/2019.
  */
 @Service
+@Transactional
 public class InuringFinalNodeService {
     @Autowired
     private InuringPackageRepository inuringPackageRepository;
@@ -34,11 +37,15 @@ public class InuringFinalNodeService {
     }
 
     public void updateInuringFinalNode(InuringFinalNodeUpdateRequest request) throws RRException {
-        InuringFinalNode inuringFinalNode = inuringFinalNodeRepository.findByInuringPackageId(request.getInuringFinalNodeId());
+        InuringFinalNode inuringFinalNode = inuringFinalNodeRepository.findByInuringFinalNodeId(request.getInuringFinalNodeId());
         if (inuringFinalNode == null) throw new InuringFinalNodeNotFoundException(request.getInuringFinalNodeId());
-        InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringFinalNode.getInuringPackageId());
-        if (inuringPackage == null) throw new InuringPackageNotFoundException(inuringFinalNode.getInuringPackageId());
         inuringFinalNode.setInuringOutputGrain(request.getInuringOutputGrain());
         inuringFinalNodeRepository.save(inuringFinalNode);
+    }
+
+    public InuringFinalNode readInuringFinalNodeByPackageId(int id) throws RRException{
+        InuringFinalNode inuringFinalNode =  inuringFinalNodeRepository.findByInuringPackageId(id);
+        if(inuringFinalNode == null) throw new InuringFinalNodeNotFoundException(id);
+        return inuringFinalNode;
     }
 }

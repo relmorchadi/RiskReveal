@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 @Getter
 public class InuringContractNode {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractNodeId", nullable = false)
     private int inuringContractNodeId;
 

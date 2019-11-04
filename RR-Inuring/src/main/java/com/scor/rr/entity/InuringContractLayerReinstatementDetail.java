@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class InuringContractLayerReinstatementDetail {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
     private int inuringContractLayerReinstatementDetailId;
 

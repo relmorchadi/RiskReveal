@@ -17,15 +17,11 @@ const frozenColsTreaty = [
 ];
 
 const scrollableColsFac = [
-  {field: 'principal', header: 'Is Principal', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
+  {field: 'divisionNo', header: 'Division No', width: '120px', display: true, filtered: true, type: 'text', indicator: true, color: '#FFAA06'},
+  {field: 'principal', header: 'Primary Division', width: '120px', type: 'select', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'lob', header: 'LOB', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'coverage', header: 'Coverage', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'currency', header: 'Currency', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
-];
-
-const frozenColsFac = [
-  {field: 'selected', header: 'selected', width: '20px', display: false, filtered: false, type: 'select', indicator: false, color: null},
-  {field: 'divisionNo', header: 'Division No', width: '120px', display: true, filtered: true, type: 'text', indicator: true, color: '#FFAA06'},
 ];
 
 const colsReinstatement = [
@@ -41,7 +37,7 @@ const colsReinstatement = [
 const colsRegionPeril = [
   {field: 'regionPerilCode', header: 'Region Peril Code', width: '60px', type: 'text', display: true, filtered: false, indicator: false, color: null},
   {field: 'regionPerilDesc', header: 'Region Peril Description', width: '150px', type: 'text', display: true, filtered: false, indicator: false, color: null},
-  {field: 'reinstLabel', header: 'Reinst. Label', width: '100px', type: 'text', display: true, filtered: false, indicator: false, color: null},
+  {field: 'isValidMinimumGrain', header: 'Is Valid', width: '100px', type: 'text', display: true, filtered: false, indicator: false, color: null},
 ];
 
 const treatyData = [
@@ -233,7 +229,6 @@ export const ContractData = {
   scrollableColsTreaty,
   frozenColsTreaty,
   scrollableColsFac,
-  frozenColsFac,
   colsReinstatement,
   colsRegionPeril,
   treatyData,

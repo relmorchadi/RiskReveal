@@ -17,7 +17,6 @@ import {EChartOption} from 'echarts';
   styleUrls: ['./fac-chart-widget.component.scss']
 })
 export class FacChartWidgetComponent implements OnInit {
-
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -44,7 +43,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['new', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
+      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
       align: 'left',
       left: 10
     },
@@ -67,31 +66,9 @@ export class FacChartWidgetComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
-    visualMap: {
-      type: 'continuous',
-      dimension: 1,
-      text: ['High', 'Low'],
-      itemHeight: 200,
-      calculable: true,
-      min: 0,
-      max: 10,
-      top: 60,
-      left: 10,
-      inRange: {
-        colorLightness: [0.4, 0.8]
-      },
-      outOfRange: {
-        color: '#bbb'
-      },
-      controller: {
-        inRange: {
-          color: '#2f4554'
-        }
-      }
-    },
     series: [
       {
-        name: 'new',
+        name: 'New',
         data: [],
         type: 'bar',
         stack: 'one',
@@ -162,19 +139,6 @@ export class FacChartWidgetComponent implements OnInit {
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef,
               private wsApi: WsApi) {
-    this.mockData = dashData.mockData;
-
-    this.mockDataCache = this.mockData = _.map(this.mockData,
-      (e, i) => ({
-        ...e,
-        assignedTo: 'Rim BENABBES',
-        lastModifiedBy: 'Rim BENABBES',
-        lastModifiedDate: moment(Date.now()).format('MM/DD/YYYY'),
-        country: this.Countries[i].COUNTRYSHORTNAME,
-        visible: true,
-        cedant: this.cedants[i].CLIENTSHORTNAME
-      }));
-
     this.uwyUnits = _.uniqBy(this.mockData, 'UNDERWRITINGUNITCODE');
   }
 
@@ -202,7 +166,6 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   openFacItem(event) {
-    console.log(event);
     this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
       uwYear: event.uwAnalysisContractDate, route: 'Project', type: 'fac', item: event}));
     this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
@@ -258,16 +221,26 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   setValues() {
-    this.chartOption.series[0].data = _.map(_.groupBy(_.filter(this.filteredData, item => item.carStatus === 'New'),
-        item => item.assignedAnalyst), item => item.length);
-    this.chartOption.series[1].data = _.map(_.groupBy(_.filter(this.filteredData, item => item.carStatus === 'In Progress'),
-      item => item.assignedAnalyst), item => item.length);
-    this.chartOption.series[2].data = _.map(_.groupBy(_.filter(this.filteredData, item => item.carStatus === 'Canceled'),
-      item => item.assignedAnalyst), item => item.length);
-    this.chartOption.series[3].data = _.map(_.groupBy(_.filter(this.filteredData, item => item.carStatus === 'Superseded'),
-      item => item.assignedAnalyst), item => item.length);
-    this.chartOption.series[4].data = _.map(_.groupBy(_.filter(this.filteredData, item => item.carStatus === 'Completed'),
-      item => item.assignedAnalyst), item => item.length);
+    _.forEach(this.chartOption.xAxis.data,
+        item => this.chartOption.series[0].data =
+          [...this.chartOption.series[0].data, _.filter(this.filteredData, fac =>
+            fac.assignedAnalyst === item && fac.carStatus === 'New').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[1].data =
+        [...this.chartOption.series[1].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'In Progress').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[2].data =
+        [...this.chartOption.series[2].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Canceled').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[3].data =
+        [...this.chartOption.series[3].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Superseded').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[4].data =
+        [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {

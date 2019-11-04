@@ -1,4 +1,5 @@
 import {Pipe, PipeTransform, Sanitizer, SecurityContext} from '@angular/core';
+import * as _ from 'lodash'
 
 @Pipe({
   name: 'boldSpan'
@@ -14,10 +15,14 @@ export class BoldSpanPipe implements PipeTransform {
   }
 
   replace(str, regex) {
-    return str.replace(new RegExp(`(${regex})`, 'gi'), '<b>$1</b>');
+    return str.replace(new RegExp(`(${this.escapeAsterisk(regex)})`, 'gi'), '<b>$1</b>');
   }
 
   sanitize(str) {
     return this.sanitizer.sanitize(SecurityContext.HTML, str);
+  }
+
+  escapeAsterisk(s) {
+    return _.replace(s, "*", '')
   }
 }

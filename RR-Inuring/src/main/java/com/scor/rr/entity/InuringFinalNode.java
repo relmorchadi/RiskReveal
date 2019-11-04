@@ -3,10 +3,8 @@ package com.scor.rr.entity;
 import com.scor.rr.enums.InuringNodeStatus;
 import com.scor.rr.enums.InuringOutputGrain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Created by u004602 on 16/09/2019.
@@ -27,7 +25,11 @@ public class InuringFinalNode {
         this.inuringOutputGrain = InuringOutputGrain.MinimunRegionPeril;
     }
 
+    public InuringFinalNode(){
+    }
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringFinalNodeId", nullable = false)
     public int getInuringFinalNodeId() {
         return inuringFinalNodeId;
@@ -71,5 +73,22 @@ public class InuringFinalNode {
 
     public void setInuringOutputGrain(InuringOutputGrain inuringOutputGrain) {
         this.inuringOutputGrain = inuringOutputGrain;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InuringFinalNode that = (InuringFinalNode) o;
+        return inuringFinalNodeId == that.inuringFinalNodeId &&
+                entity == that.entity &&
+                inuringPackageId == that.inuringPackageId &&
+                finalNodeStatus == that.finalNodeStatus &&
+                inuringOutputGrain == that.inuringOutputGrain;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inuringFinalNodeId, entity, inuringPackageId, finalNodeStatus, inuringOutputGrain);
     }
 }

@@ -1,6 +1,8 @@
 package com.scor.rr.request;
 
 import com.scor.rr.enums.InuringElementType;
+import lombok.Data;
+
 
 public class InuringFilterCriteriaCreationRequest {
 
@@ -23,6 +25,9 @@ public class InuringFilterCriteriaCreationRequest {
         this.filterKey = filterKey;
         this.filterValue = filterValue;
         this.including = including;
+    }
+
+    public InuringFilterCriteriaCreationRequest() {
     }
 
     public int getInuringPackageId() {

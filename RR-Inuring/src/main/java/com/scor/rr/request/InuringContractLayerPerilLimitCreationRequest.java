@@ -1,6 +1,9 @@
 package com.scor.rr.request;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
+
 
 public class InuringContractLayerPerilLimitCreationRequest {
 
@@ -16,6 +19,9 @@ public class InuringContractLayerPerilLimitCreationRequest {
         this.limit = limit;
     }
 
+    public InuringContractLayerPerilLimitCreationRequest() {
+    }
+
     public int getInuringContractLayerId() {
         return inuringContractLayerId;
     }
@@ -26,8 +32,5 @@ public class InuringContractLayerPerilLimitCreationRequest {
 
     public BigDecimal getLimit() {
         return limit;
-    }
-
-    public InuringContractLayerPerilLimitCreationRequest() {
     }
 }

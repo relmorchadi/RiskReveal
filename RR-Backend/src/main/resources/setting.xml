@@ -9,8 +9,8 @@
     <mapping class="com.scor.rr.domain.Contract"/>
       <mapping class="com.scor.rr.domain.Country"/>
       <mapping class="com.scor.rr.domain.OmegaCedant"/>
-      <mapping class="com.scor.rr.domain.Project"/>
-      <mapping class="com.scor.rr.domain.Workspace"/>
+      <mapping class="com.scor.rr.domain.riskReveal.Project"/>
+      <mapping class="com.scor.rr.domain.riskReveal.Workspace"/>
       <mapping class="com.scor.rr.domain.Users"/>
       <mapping class="com.scor.rr.domain.WorkspaceProjectMapping"/>
       <mapping class="com.scor.rr.domain.Reinstatement"/>
