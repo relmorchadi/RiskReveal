@@ -54,28 +54,28 @@
             <div class="body-w-b-l-list-item border-bottom-custom">
               <div class="body-w-b-l-item">
                 <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
-                <span class="body-1">{{facData.contractName}}</span>
+                <span class="body-1">{{facData?.contractName}}</span>
               </div>
-              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData.carStatus}}</span></div>
+              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData?.carStatus}}</span></div>
             </div>
           </div>
           <div class="body-wrap-border-standard">
             <ul>
               <li>
                 <span class="span-left">UW Analysis</span>
-                <span class="span-right">{{facData.uwAnalysis}}</span>
+                <span class="span-right">{{facData?.uwAnalysis}}</span>
               </li>
               <li>
                 <span class="span-left">UW Year</span>
-                <span class="span-right">{{facData.uwanalysisContractYear}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractYear}}</span>
               </li>
               <li>
                 <span class="span-left">Contract Label</span>
-                <span class="span-right">{{facData.uwanalysisContractLabel}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractLabel}}</span>
               </li>
               <li>
                 <span class="span-left">Business Type</span>
-                <span class="span-right">{{facData.uwanalysisContractBusinessType}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractBusinessType}}</span>
               </li>
             </ul>
           </div>
@@ -83,19 +83,19 @@
             <ul>
               <li>
                 <span class="span-left">Sector</span>
-                <span class="span-right">{{facData.uwanalysisContractSector}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractSector}}</span>
               </li>
               <li>
                 <span class="span-left">Contract ID</span>
-                <span class="span-right">{{facData.uwanalysisContractContractId}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractContractId}}</span>
               </li>
               <li>
                 <span class="span-left">Insured</span>
-                <span class="span-right">{{facData.uwanalysisContractInsured}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractInsured}}</span>
               </li>
               <li>
                 <span class="span-left">Subsidiary</span>
-                <span class="span-right">{{facData.uwanalysisContractSubsidiary}}</span>
+                <span class="span-right">{{facData?.uwanalysisContractSubsidiary}}</span>
               </li>
             </ul>
           </div>
@@ -142,7 +142,7 @@
           </ng-template>
         </p-table>
         <ng-container *ngIf="facData !== null">
-          <p-table #dt [columns]="scrollableColsFac" [value]="facData.division" [scrollable]="true"
+          <p-table #dt [columns]="scrollableColsFac" [value]="facData?.division" [scrollable]="true"
                    scrollHeight="340px" *ngIf="tabStatus === 'fac'">
             <ng-template pTemplate="colgroup" let-columns>
               <colgroup>

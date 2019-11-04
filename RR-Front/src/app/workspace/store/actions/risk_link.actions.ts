@@ -103,6 +103,11 @@ export class AddToBasketDefaultAction {
   constructor() {}
 }
 
+export class ImportRiskLinkMainAction {
+  static readonly type = '[Risk Link] Import PLT Risk Link Import';
+  constructor(public payload?: any) {}
+}
+
 export class DeleteFromBasketAction {
   static readonly type = '[Risk Link] Delete From Basket';
   constructor(public payload: any) {}

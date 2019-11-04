@@ -53,6 +53,7 @@ export class WorkspaceService {
       inceptionDate: 1546297200000,
       expiryDate: 1577746800000,
       subsidiaryLedgerId: '2',
+      contractSource: 'ForeWriter',
       treatySections: [
         'CFS-SCOR REASS.-MADRID RCC000022/ 1'
       ],
@@ -186,7 +187,8 @@ export class WorkspaceService {
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,
-            activeAddBasket: false
+            activeAddBasket: false,
+            importPLTs: {},
           },
           scopeOfCompletence: {
             data: {},
@@ -449,7 +451,6 @@ export class WorkspaceService {
     const wsIdentifier = state.currentTab.wsIdentifier;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
-      draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
 
@@ -473,7 +474,6 @@ export class WorkspaceService {
     const state = ctx.getState();
     const wsIdentifier = state.currentTab.wsIdentifier;
     const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
-    console.log(selected);
     ctx.patchState(produce(ctx.getState(), draft => {
       if (selected.length > 0) {
         draft.content[wsIdentifier].projects = this._selectProject(
