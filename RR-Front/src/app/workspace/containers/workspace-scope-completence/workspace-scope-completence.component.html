@@ -8,6 +8,7 @@
     >
     </app-pin>
   </div>
+  <!--
   <div class="a-app-body">
     <div class="header-divider">
       <div class="divider-left">
@@ -26,7 +27,6 @@
           <ul nz-menu>
             <li nz-menu-item (click)="changeSortBy('Minimum Grain / RAP')">Minimum Grain / RAP</li>
             <li nz-menu-item (click)="changeSortBy('RAP / Minimum Grain')">RAP / Minimum Grain</li>
-            <!--<li nz-menu-item>Peak Peril Tier</li>-->
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
@@ -143,10 +143,6 @@
                   <i class="icon-plus-square" style="font-size: 25px;cursor: pointer;" (click)="expandAllRows()"></i>
                   <i class="icon-minus-square" style="font-size: 25px;cursor: pointer;" (click)="closeAllRows()"></i>
                 </div>
-
-                <!--<button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button-->
-                        <!--nzType="default">Attach PLTs-->
-                <!--</button>-->
                   <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="wsType !== 'fac'"
                           (click)="addRemoveModal=true; rowInformation= null">Attach PLTs</button>
               </div>
@@ -180,24 +176,6 @@
             <th style="height: 54px;">
               <div style="display: flex; justify-content: space-between;">
                 <div class="info-rp" (click)="toggleParentExpand(rowData)" [pRowToggler]="rowData">
-
-                  <!--<ng-container *ngIf="selectedSortBy == 'Minimum Grain / RAP'">-->
-                    <!--<div style="width: 20px;">-->
-                      <!--<div *ngIf="checkRowAttached(rowData)">-->
-                        <!--<ng-container>-->
-                          <!--<i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>-->
-                        <!--</ng-container>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                    <!--<i *ngIf="!regionCodes[rowData.id]" style="margin-top: 5px;"-->
-                       <!--class="icon-keyboard_arrow_down_24px"></i>-->
-                    <!--<i *ngIf="regionCodes[rowData.id]" style="margin-top: 5px;" class="icon-keyboard_arrow_up_24px"></i>-->
-                    <!--<i class="icon-map-marker-alt"></i>-->
-                    <!--<span class="code-rp">-->
-                <!--{{rowData.id}}-->
-              <!--</span><span style="font-weight: 400">{{rowData.description}}</span>-->
-                  <!--</ng-container>-->
-
                   <ng-container>
                     <div style="width: 33px;margin-top: 5px;">
                       <div *ngIf="checkRowAttached(rowData)">
@@ -239,20 +217,6 @@
                   </nz-dropdown>
 
                 </div>
-                <!--<div *ngIf="selectedSortBy == 'Minimum Grain / RAP'">-->
-
-                  <!--<nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">-->
-                    <!--<a nz-dropdown>-->
-                      <!--<i class="icon-menu_24px"-->
-                         <!--[ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}"></i>-->
-                    <!--</a>-->
-                    <!--<ul nz-menu style="font-size: 12px">-->
-                      <!--<li nz-menu-item (click)="rowData.override = true">Override</li>-->
-                      <!--<li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>-->
-                    <!--</ul>-->
-                  <!--</nz-dropdown>-->
-
-                <!--</div>-->
               </div>
 
             </th>
@@ -437,7 +401,6 @@
                     </div>
                     <span class="plt-info">{{plt.pltId | textLength}}</span>
                     <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName }}</span>
-                    <!--<label nz-checkbox></label>-->
                     <div class="plt-info peril-indicator"
                          [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>
                     <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
@@ -460,6 +423,10 @@
         </ng-template>
       </p-table>
     </div>
+
+  </div>
+  -->
+  <div class="app-body">
 
   </div>
 </div>
