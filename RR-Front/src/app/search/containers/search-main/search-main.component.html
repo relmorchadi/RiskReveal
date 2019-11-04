@@ -95,12 +95,20 @@
 
 
         </div>
-        <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
-                   [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
-                   [tableWidth]="'1000px'" [tableHeight]="'560px'" (loadMore)="loadMore($event)"
+        <app-table [tableColumn]="columns" [sortable]="false"
+                   [rows]="paginationOption?.size"
+                   [totalRecords]="paginationOption?.total"
+                   #dt
+                   [listOfData]="contracts"
+                   [virtualScroll]="true"
+                   (selectOne)="openWorkspaceInSlider($event)"
+                   [tableWidth]="'1000px'"
+                   [tableHeight]="'560px'"
+                   (loadMore)="loadMore($event)"
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
-                   [activateContextMenu]="true" [loading]="loading">
+                   [activateContextMenu]="true"
+                   [loading]="loading">
         </app-table>
       </div>
 
