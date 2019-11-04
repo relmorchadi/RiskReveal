@@ -443,7 +443,7 @@
             <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>-->
           </div>
           <div class="body-wrap-footer-right">
-            <button style="padding: 6px 20px 7px" class="a-buttons-contained-mini">IMPORT</button>
+            <button style="padding: 6px 20px 7px" (click)="importMainAction()" class="a-buttons-contained-mini">IMPORT</button>
           </div>
         </div>
       </div>
@@ -551,10 +551,12 @@
       <i style="cursor: pointer" (click)="showPopUp = false" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div>You are attempting to import multiple analysis for the following region peril/division</div>
+  <div style="padding: 15px 0;font-size: 16px;font-weight: 500;">
+    You are attempting to import multiple analysis for the following region peril/division
+  </div>
   <p-footer>
-    <div class="modal-footer-wrapper">
-      <button class="a-buttons-contained">Yes</button>
+    <div style="padding: 2px 0" class="modal-footer-wrapper">
+      <button (click)="showPopUp = false" class="a-buttons-contained">Yes</button>
     </div>
   </p-footer>
 </p-dialog>

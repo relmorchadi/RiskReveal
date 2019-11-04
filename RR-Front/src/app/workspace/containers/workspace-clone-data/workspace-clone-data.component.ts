@@ -239,6 +239,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       .pipe(
         ofActionDispatched(SetCurrentTab)
       ).subscribe(({payload}) => {
+        console.log('data clone')
       if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
     });
 
@@ -564,6 +565,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
 
   patchState(state: any): void {
+
   }
 
   clone() {

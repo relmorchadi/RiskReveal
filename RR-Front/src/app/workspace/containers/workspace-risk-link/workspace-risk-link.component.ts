@@ -92,11 +92,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getCurrentWorkspaces) ws$;
   ws: any;
 
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  selectedProject: any;
+
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
-
-  @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
   tabStatus: any;
+  wsStatus: any;
 
   @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
   listEdmRdm: any;
@@ -142,39 +144,47 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
   ngOnInit() {
     this.serviceSubscription = [
-      this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.state$.pipe().subscribe(value => {
         this.state = _.merge({}, value);
         this.detectChanges();
       }),
-      this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.listEdmRdm$.pipe().subscribe(value => {
         this.listEdmRdm = _.merge({}, value);
         this.detectChanges();
       }),
-      this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws$.pipe().subscribe(value => {
+        this.ws = _.merge({}, value);
+        this.wsStatus = this.ws.workspaceType;
+        this.detectChanges();
+      }),
+      this.analysis$.pipe().subscribe(value => {
         this.analysis = _.merge({}, value);
         this.detectChanges();
       }),
-      this.tabStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.tabStatus = value;
-        this.detectChanges();
-      }),
-      this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.portfolios$.pipe().subscribe(value => {
         this.portfolios = _.merge({}, value);
         this.detectChanges();
       }),
-      this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.ws = _.merge({}, value);
-      }),
-      this.validate$.pipe().subscribe(value => {
-        if (value !== undefined && value !== null) {
-          this.showPopUp = !value;
+      this.selectedProject$.pipe().subscribe(value => {
+        this.tabStatus = _.get(value, 'projectType', null);
+        this.detectChanges();
+        if (this.wsStatus === 'fac') {
+          if (this.tabStatus === 'fac') {
+            this.dispatch([new fromWs.LoadFacDataAction()]);
+          } else if (this.tabStatus === 'treaty') {
+            this.dispatch(new fromWs.LoadRiskLinkDataAction());
+          }
         }
       }),
-      this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+      this.route.params.pipe().subscribe(({wsId, year}) => {
         this.hyperLinksConfig = {wsId, uwYear: year};
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
-        if (this.tabStatus === 'fac') {
-          this.dispatch([new fromWs.LoadFacDataAction()]);
+        if (this.wsStatus === 'fac') {
+          if (this.tabStatus === 'fac') {
+            this.dispatch([new fromWs.LoadFacDataAction()]);
+          } else if (this.tabStatus === 'treaty') {
+            this.dispatch(new fromWs.LoadRiskLinkDataAction());
+          }
         }
         this.detectChanges();
       }),
@@ -182,22 +192,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         .pipe(
           ofActionDispatched(SetCurrentTab)
         ).subscribe(({payload}) => {
-          console.log(payload, this.ws.wsId, this.ws.uwYear);
-        if (payload.wsIdentifier != this.ws.wsId + '-' + this.ws.uwYear) this.destroy();
-        this.detectChanges();
-      })
+          if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+          this.detectChanges();
+        })
     ];
 
-/*
-
-    this.actions$
-      .pipe(
-        ofActionDispatched(SetCurrentTab)
-      ).subscribe(({payload}) => {
-      console.log(payload);
-      if (payload.wsIdentifier !== this.ws.wsId + '-' + this.ws.uwYear) this.destroy();
-    });
-*/
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
@@ -213,6 +212,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   autoLinkAnalysis() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketDefaultAction());
+    this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      if (value !== undefined && value !== null) {
+        this.showPopUp = !value;
+      }
+    });
   }
 
   setFilterDivision() {
@@ -395,6 +399,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   displayImported() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketAction());
+    this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      if (value !== undefined && value !== null) {
+        this.showPopUp = !value;
+      }
+    });
   }
 
   getScrollableCols() {
@@ -656,5 +665,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   ngOnDestroy(): void {
     this.destroy();
+  }
+
+  importMainAction() {
+    this.dispatch(new fromWs.ImportRiskLinkMainAction());
   }
 }

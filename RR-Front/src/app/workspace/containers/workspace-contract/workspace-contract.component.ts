@@ -53,13 +53,14 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
 
   coveragesElement;
 
-  @Select(WorkspaceState.getWorkspaces) ws$;
+  @Select(WorkspaceState.getCurrentWorkspaces) ws$;
   ws: any;
 
   @Select(WorkspaceState.getContract) currentContract$;
   facDataInfo: any;
   treatyDataInfo: any;
   tabStatus: any;
+  wsStatus: any;
   facData = null;
 
   contracts: any[];
@@ -87,9 +88,14 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     });
     this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.ws = _.merge({}, value);
-      this.selectedProject = _.filter(this.ws[this.currentWsIdentifier].projects, item => item.selected)[0];
-      this.tabStatus = _.get(this.selectedProject, 'projectType', null);
-      this.selectDataScope();
+      this.wsStatus = this.ws.workspaceType;
+      if (this.wsStatus === 'fac') {
+        this.selectedProject = _.filter(this.ws.projects, item => item.selected)[0];
+        this.tabStatus = _.get(this.selectedProject, 'projectType', null);
+        this.selectDataScope();
+      } else {
+        this.tabStatus = 'treaty';
+      }
       this.detectChanges();
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {

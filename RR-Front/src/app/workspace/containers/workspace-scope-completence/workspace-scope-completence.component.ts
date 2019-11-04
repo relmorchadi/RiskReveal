@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {tap} from "rxjs/operators";
+import {SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-scope-completence',
@@ -60,8 +61,20 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   workspaceInfo: any;
   serviceSubscription: any;
+
   @Select(WorkspaceState.getScopeCompletenessData) state$;
   state: any;
+
+  @Select(WorkspaceState.getWorkspaces) ws$;
+  ws: any;
+  currentWsIdentifier: any;
+
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  selectedProject: any;
+  tabStatus: any;
+
+  @Select(WorkspaceState.getImportStatus) importStatus$;
+  importStatus: any;
 
   workspace: any;
   index: any;
@@ -70,26 +83,67 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   wsType: any;
 
-  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, private actions$: Actions, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
 
   ngOnInit() {
+    this.treatySections = _.toArray(trestySections);
+
     this.dispatch(new fromWs.LoadScopeCompletenessDataSuccess({
       params: {workspaceId: this.workspaceId, uwy: this.uwy},
       wsIdentifier: this.workspaceId + '-' + this.uwy
     }));
 
+    this.select(WorkspaceState.getCurrentTab)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(curTab => {
+        this.currentWsIdentifier = curTab.wsIdentifier;
+        this.detectChanges();
+      });
+
+    this.importStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.importStatus = value;
+      this.detectChanges();
+    });
+
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = _.get(value, 'data', null);
       this.wsType = _.get(value, 'wsType', null);
       this.listOfPltsData = this.getSortedPlts(this.state);
-      this.treatySections = _.toArray(trestySections);
-      this.dataSource = this.getData(this.treatySections[0]);
       this.detectChanges();
     });
-    this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+
+    this.selectedProject$.pipe().subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.selectedProject = value;
+      if (this.tabStatus === 'treaty' || this.tabStatus === null) {
+        this.dataSource = this.getData(this.treatySections[0]);
+        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+      } else {
+        if (this.importStatus[this.selectedProject.projectId]) {
+          this.dataSource = this.getData(this.treatySections[1]);
+          this.treatySectionContainer = _.cloneDeep(this.treatySections[1]);
+        } else {
+          this.dataSource = this.getData(this.treatySections[0]);
+          this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+        }
+      }
+    });
+
+    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws = _.merge({}, value);
+      this.detectChanges();
+    });
+
+/*    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+      if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+      this.detectChanges();
+    });*/
 
     combineLatest(
       this.route.params
@@ -100,20 +154,17 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       });
   }
 
-
   showPackage() {
     let check = false;
-    if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length !== 0) {
-      this.showPendingOption = true;
-      check = !this.showRemoveOverrideButton() && !this.showOverrideButton();
-    } else {
-      check = false;
-      this.showPendingOption = false;
-    }
-    if (check) {
-      this.accumulationStatus = 'Pending';
-    } else {
-      this.accumulationStatus = 'Scope Only';
+    if (this.treatySections !== undefined) {
+      if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length !== 0) {
+        this.showPendingOption = true;
+        check = !this.showRemoveOverrideButton() && !this.showOverrideButton();
+      } else {
+        check = false;
+        this.showPendingOption = false;
+      }
+      check ? this.accumulationStatus = 'Pending' : this.accumulationStatus = 'Scope Only';
     }
     return check;
   }
@@ -601,7 +652,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     if (rowData.override || grain.override) {
       if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override'
+        checked = 'override';
       }
     }
 
@@ -656,7 +707,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   overrideChildMode(rowData, grain) {
     grain.override = true;
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      let holder = {}
+      let holder = {};
       this.treatySections[0].forEach(ts => {
         ts.regionPerils.forEach(rp => {
           if (rp.id == rowData.id) {
@@ -800,50 +851,31 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           }
         });
       });
-      if (count == const1) {
 
-        rowData.child.forEach(chi => {
-          item.targetRaps.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.regionPerils.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let holder = {
-                      "treatySection": item.id,
-                      "parent": chi.id,
-                      "child": rowData.id
-                    };
+      rowData.child.forEach(chi => {
+        item.targetRaps.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.regionPerils.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && !des.overridden) {
+                  let holder = {
+                    "treatySection": item.id,
+                    "parent": chi.id,
+                    "child": rowData.id
+                  };
+                  if (count == const1) {
                     this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
-                  }
-                }
-              });
-            }
-          });
-        });
-
-      } else {
-
-        rowData.child.forEach(chi => {
-          item.targetRaps.forEach(reg => {
-            if (reg.id == rowData.id) {
-              reg.regionPerils.forEach(des => {
-                if (des.id == chi.id) {
-                  if (!des.attached && !des.overridden) {
-                    let Holder = {
-                      "treatySection": item.id,
-                      "parent": chi.id,
-                      "child": rowData.id
-                    };
-                    if (_.findIndex(this.selectionForOverride, Holder) == -1) {
-                      this.selectionForOverride.push(Holder);
+                  } else {
+                    if (_.findIndex(this.selectionForOverride, holder) == -1) {
+                      this.selectionForOverride.push(holder);
                     }
                   }
                 }
-              });
-            }
-          });
+              }
+            });
+          }
         });
-      }
+      });
     }
   }
 
@@ -1243,16 +1275,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   /** showing the override checkbox for the child selected, when the conditions of override are available**/
   showOverrideButton() {
     let checked = false;
-    this.dataSource.forEach(res => {
-      if (res.override == true) {
-        checked = true;
-      }
-      res.child.forEach(child => {
-        if (child.override) {
+    if (this.dataSource !== undefined) {
+      this.dataSource.forEach(res => {
+        if (res.override == true) {
           checked = true;
         }
+        res.child.forEach(child => {
+          if (child.override) {
+            checked = true;
+          }
+        });
       });
-    });
+    }
     return checked;
   }
 
@@ -1375,8 +1409,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       const targetRaps = [];
       rowData.child.forEach(tr => {
-        targetRaps.push(tr.id)
-      })
+        targetRaps.push(tr.id);
+      });
       this.rowInformation = {
         "sort": "2",
         "rowData": rowData.id,
@@ -1523,7 +1557,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       if (item.pltsAttached.length != 0) {
         item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
       }
-    })
+    });
     return newData;
   }
 

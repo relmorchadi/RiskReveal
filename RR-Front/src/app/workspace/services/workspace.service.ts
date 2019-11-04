@@ -188,7 +188,7 @@ export class WorkspaceService {
             summaries: null,
             selectedEDMOrRDM: null,
             activeAddBasket: false,
-            importPLTs: false,
+            importPLTs: {},
           },
           scopeOfCompletence: {
             data: {},
