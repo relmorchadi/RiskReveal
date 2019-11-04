@@ -261,4 +261,7 @@ export class TableComponent implements OnInit {
 
   }
 
+  log(dt: HTMLElement) {
+    console.log(dt);
+  }
 }

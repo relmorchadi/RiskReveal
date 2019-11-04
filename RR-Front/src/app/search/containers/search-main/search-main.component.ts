@@ -48,7 +48,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {currentPage: 0, page: 0, size: 100, total: '-'};
+  paginationOption = {
+    offset: 0,
+    pageNumber: 0,
+    pageSize: 100,
+    size: 100,
+    totalPages: 0,
+    total: '-'
+  };
   selectedWorkspace: any;
   sliceValidator = true;
   globalSearchItem = '';
@@ -274,9 +281,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   loadMore(event: LazyLoadEvent) {
-    console.log(event);
-    this.paginationOption.currentPage = event.first;
-    this._loadData(event.rows);
+    this._loadData(event.first, event.rows);
   }
 
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
@@ -285,7 +290,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       keyword: this.globalSearchItem,
       filter: this.filter,
       offset,
-      size
+      size: size
     };
     console.log('EXPERT');
     this._searchService.expertModeSearch(params)
@@ -294,13 +299,27 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         console.log(data);
         this.contracts = _.map(data.content, item => ({...item, selected: false}));
         this.loading = false;
+        const {
+          pageable: {
+            offset,
+            pageNumber,
+            pageSize
+          },
+          size,
+          totalElements,
+          totalPages
+        } = data;
+
         this.paginationOption = {
-          ...this.paginationOption,
-          page: data.number,
-          size: data.numberOfElements,
-          total: data.totalElements
+          offset,
+          pageNumber: pageNumber + 1,
+          pageSize,
+          size,
+          total: totalElements,
+          totalPages: totalPages
         };
-        if (data.totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+
+        if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
         this.detectChanges();
       });
   }
