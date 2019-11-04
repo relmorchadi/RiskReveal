@@ -3,13 +3,10 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import {Data} from '../../../core/model/data';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../../workspace/store/states';
-import {WsApi} from '../../../workspace/services/workspace.api';
-import {dashData} from '../../../shared/data/dashboard-data';
+import {WsApi} from '../../../workspace/services/api/workspace.api';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import {GeneralConfigState} from '../../../core/store/states';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {EChartOption} from 'echarts';
 
 @Component({
   selector: 'app-fac-chart-widget',

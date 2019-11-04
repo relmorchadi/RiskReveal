@@ -1,9 +1,9 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
-import {Data} from '../../../core/model/data';
-import {Select, Store} from '@ngxs/store';
-import {WorkspaceState} from '../../../workspace/store/states';
-import {WsApi} from '../../../workspace/services/workspace.api';
+import {Data} from "../../../core/model/data";
+import {Select, Store} from "@ngxs/store";
+import {WorkspaceState} from "../../../workspace/store/states";
+import {WsApi} from "../../../workspace/services/api/workspace.api";
 import * as _ from 'lodash';
 import {GeneralConfigState} from "../../../core/store/states";
 import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
@@ -59,7 +59,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
         myCostumeTool: {
           show: true,
           title: 'rate',
-          icon: `image://https://image.flaticon.com/icons/svg/263/263135.svg`,
+          icon: 'image://http://echarts.baidu.com/images/favicon.png',
           onclick: () => {
             this.switchData();
           }
@@ -74,12 +74,32 @@ export class FacSubsidiaryChartComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
+    visualMap: {
+      type: 'continuous',
+      dimension: 1,
+      text: ['High', 'Low'],
+      itemHeight: 200,
+      calculable: true,
+      min: 0,
+      max: 10,
+      top: 60,
+      left: 10,
+      inRange: {
+        colorLightness: [0.4, 0.8]
+      },
+      outOfRange: {
+        color: '#bbb'
+      },
+      controller: {
+        inRange: {
+          color: '#2f4554'
+        }
+      }
+    },
     series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
   };
-  seriesDataPercentage: any;
-  seriesDataNumber: any;
-  activeSwitch = false;
+  alternateSeriesData: any;
 
   @ViewChild('chart') chart;
 
@@ -204,17 +224,16 @@ export class FacSubsidiaryChartComponent implements OnInit {
       let trad = [];
       let part = [];
       _.forEach(this.subsidiaryList, subsItem => {
-        const percentage = (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length /
-          _.filter(this.data, dt => dt.uwanalysisContractSubsidiary === subsItem).length) * 100;
         trad = [...trad, _.filter(this.data, dt =>
           dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length];
-        part = [...part, percentage.toFixed(2)];
+        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length /
+        _.filter(this.data, dt => dt.uwanalysisContractSubsidiary === subsItem).length) * 100];
       });
       series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
       alternateSeries = [...alternateSeries, {name: item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
-    this.seriesDataPercentage = alternateSeries;
-    this.seriesDataNumber = series;
+    this.alternateSeriesData = alternateSeries;
+    console.log(alternateSeries);
     this.chartOption.series = series;
   }
 
@@ -223,28 +242,113 @@ export class FacSubsidiaryChartComponent implements OnInit {
   }
 
   switchData() {
-    if (!this.activeSwitch) {
-      this.myChart.setOption({
-        tooltip: {
-          formatter: (params, ticket) => {
-            const numberContract = _.filter(this.data,
-                item => item.assignedAnalyst === params.seriesName && item.uwanalysisContractSubsidiary === params.name).length;
-            return `<span style="display: flex; align-items: center">Assigned Analyst: <span
-                style="display:flex; border-radius: 20px; width:10px; height: 10px; margin: 0 2px; background: ${params.color}">
-                </span>${params.seriesName}</span>
-                Percentage: ${params.data} %
-                </br>Number: ${numberContract}`;
+    // console.log('switch data');
+    const switchedSeries = this.chartOption.series;
+    this.myChart.setOption({
+      series: this.alternateSeriesData
+    });
+    this.alternateSeriesData = switchedSeries;
+  }
+
+  drawBarChart(divId: string, data, data2, data3, data4) {
+    const dom: any = document.getElementById(divId);
+    const myChart = echarts.init(dom);
+    let option = null;
+    option = {
+      title: {
+        text: ''
+      },
+      tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          label: {
+            backgroundColor: '#6495ED'
           }
         },
-        series: this.seriesDataPercentage
-      });
-    } else {
-      this.myChart.setOption({
-        tooltip: {},
-        series: this.seriesDataNumber
-      });
+/*        formatter: (params) => {
+          const colorSpan = color => {
+            return '<span style="display:inline-block;border-radius:10px;width:9px;height:9px;background-color:' + color + '"></span>';
+          };
+          let rez = params[0].axisValue + '</br>';
+          // console.log(params); //quite useful for debug
+          params.forEach(item => {
+            // console.log(item); //quite useful for debug
+            const xx = colorSpan(item.color) + ' ' + item.seriesName + ': ' + item.data + 's' + '</br>';
+            rez += xx;
+          });
+          return rez;
+        },*/
+      },
+      legend: {
+        data: []
+      },
+      dataZoom: [{
+        type: 'inside'
+      }, {
+        type: 'slider'
+      }],
+      toolbox: {
+        show: true,
+        orient: 'horizontal',
+        left: 'right',
+        top: 'center',
+        itemSize: 25,
+        itemGap: 15,
+        feature: {
+          saveAsImage: {show: true, title: 'Save'},
+        }
+      },
+      grid: {
+        bottom: 60
+      },
+      xAxis : [
+        {
+          type : 'category',
+          boundaryGap : false,
+          data : data,
+        }
+      ],
+      yAxis: [{
+        type: 'value',
+        axisLabel: {
+          formatter: '{value} s'
+        }
+      }],
+      series : [
+        {
+          name: 'Max Time',
+          type: 'line',
+          color: '#4682B4',
+          areaStyle: {color: '#4682B4'},
+          label: {
+            normal: {
+              show: true
+              //     position: 'top'
+            }
+          },
+          data: data2,
+        },
+        {
+          name: 'Average Time',
+          type: 'line',
+          color: '#008080',
+          areaStyle: {color: '#008080' },
+          data: data3,
+        },
+        {
+          name: 'Min Time',
+          type: 'line',
+          color: '#FFD700',
+          areaStyle: {color: '#FFD700'},
+          zlevel: 2,
+          data: data4,
+        }
+      ]
+    };
+    if (option && typeof option === 'object') {
+      myChart.setOption(option, true);
     }
-    this.activeSwitch = !this.activeSwitch;
   }
 
   setFilter(col: string, $event: {}) {
