@@ -31,26 +31,69 @@
           </div>
 
           <div class="search-actions-container">
-            <button class="search-opt-btn" nz-button>Advanced Search &nbsp; <i
-              class="icon-keyboard_arrow_down_24px"></i></button>
-            <button class="search-opt-btn" nz-button>Saved Search &nbsp; <i class="icon-keyboard_arrow_down_24px"></i>
+            <button class="search-opt-btn" nz-button>
+              Advanced Search &nbsp;
+              <i class="icon-keyboard_arrow_down_24px"></i>
             </button>
-            <button class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
+            <button (click)="toggleSavedSearch()"
+                    [ngStyle]="{'background-color': savedSearchVisibility ? 'white':'transparent','border': savedSearchVisibility ? '1px solid #3900EF':''}"
+                    class="search-opt-btn" nz-button>
+              Saved Search &nbsp;
+              <i
+                [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
+            </button>
+            <button (click)="openSavedSearch()" class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
           </div>
         </div>
-
-        <div class="chips-wrapper">
-          <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
-            <app-chip-tag key='Global Search' (onclick)="closeGlobalSearch()"
-                          [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
-          </div>
-          <ng-container *ngIf="searchContent && searchContent?.length">
-            <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
-              <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i, items.key)" [value]="items.value"
-                            [closeStatus]="true"></app-chip-tag>
-            </div>
+        <div *ngIf="savedSearchVisibility" class="saved-search-arrow"></div>
+        <div *ngIf="savedSearchVisibility" class="saved-search">
+          <ng-container *ngIf="savedSearch.length > 0; else noSearchDataFound">
+            <ng-container *ngFor="let search of savedSearch; let index = index">
+              <div (dblclick)="applySearch(search)" [ngStyle]="{'border-top':index == 0 ?' .5px solid #dee2e6':'none'}"
+                   class="search-cell-container">
+                <div class="date-cell">
+                  {{search.date}}
+                </div>
+                <div class="label-cell">
+                  {{search.label}}
+                </div>
+                <div class="chips-cell">
+                  <app-chip-tag *ngFor="let badge of search.badges"
+                                [closeStatus]="false"
+                                [key]='badge.key  | startCase'
+                                [value]="badge.value"
+                                style="padding-right: 3px">
+                  </app-chip-tag>
+                </div>
+              </div>
+            </ng-container>
           </ng-container>
-          <span (click)="clearChips()" *ngIf="searchContent?.length > 0">Clear All</span>
+          <ng-template #noSearchDataFound>
+            <div class="no-search-data-found">
+              No Saved Search Found!
+            </div>
+          </ng-template>
+        </div>
+        <div class="chips-wrapper" style="justify-content: space-between">
+          <div style="display: flex;">
+            <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
+              <app-chip-tag (onclick)="closeGlobalSearch()" [closeStatus]="true"
+                            [value]="globalSearchItem" key='Global Search'></app-chip-tag>
+            </div>
+            <ng-container *ngIf="searchContent && searchContent?.length">
+              <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
+                <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="true" [key]="items.key | startCase"
+                              [value]="items.value"></app-chip-tag>
+              </div>
+            </ng-container>
+            <span (click)="clearChips()" *ngIf="searchContent?.length > 0">Clear All</span>
+          </div>
+          <div style="align-items: center; display: flex;">
+            <i (click)="manageColumns = true" class="icon-settings_24px" nz-tooltip="Manage columns"
+               style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
+          </div>
+
+
         </div>
         <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                    [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
@@ -72,3 +115,155 @@
 
   </div>
 </nz-layout>
+<p-dialog
+  [visible]="manageColumns"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Manage Columns</h6>
+      <i style="cursor: pointer" (click)="closeManageColumns()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="content">
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
+        [cdkDropListData]="extraColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="toolkit" style="display: flex;align-items: center;padding: 8px;">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
+        [cdkDropListData]="columnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of columnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeManageColumns()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="saveSearchPopup"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Save Search</h6>
+      <i style="cursor: pointer" (click)="closeSaveSearchPup()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: flex;flex-direction: column; width: 400px;height: 300px;">
+    <div class="ui-g">
+      <div class="ui-g-5">
+        <label style="margin-top: 15px;"> Search Label: </label>
+      </div>
+      <div class="ui-g-7">
+        <input [(ngModel)]="searchLabel" class="a-textfield-mini" style="width: 200px">
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-5">
+        <label style="margin-top: 15px;"> Search Criteria: </label>
+      </div>
+      <div class="ui-g-7">
+        <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
+          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key | startCase'
+                        [value]="items.value"></app-chip-tag>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveSearchPup()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveSearch()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

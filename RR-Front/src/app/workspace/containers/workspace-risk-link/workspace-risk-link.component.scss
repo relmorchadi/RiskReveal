@@ -218,6 +218,35 @@
           }
         }
 
+        .body-wrap-menu-header {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+
+          span {
+            display: flex;
+            color: rgba(0, 0, 0, 0.87);
+            font-size: 16.26px;
+            letter-spacing: 0.5px;
+            line-height: 20px;
+            padding: 15px 20px;
+            font-weight: 500;
+          }
+
+          .action-icon-wrapper {
+            margin: 0 15px;
+            display: flex;
+            align-items: center;
+
+            i {
+              cursor: pointer;
+              font-size: 20px;
+              margin-right: 6px;
+              color: rgba(0,0,0,0.7);
+            }
+          }
+        }
+
         .body-wrapper-header-middle {
           display: flex;
           align-items: center;
@@ -236,6 +265,12 @@
             font-size: 25px;
             cursor: pointer;
             display: flex;
+          }
+
+          .icon-link_24px {
+            font-size: 25px;
+            margin-right: 15px;
+            cursor: pointer;
           }
         }
 

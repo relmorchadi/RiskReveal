@@ -7,8 +7,8 @@ import * as _ from 'lodash';
 export class ReFormatPIDPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    const str= _.split(value,'-');
-    return _.join([str[0],_.trimStart(str[1],'0')],'-');
+    const str = _.split(value, '-');
+    return _.join([str[0], _.trimStart(str[1], '0')], '-');
   }
 
 }

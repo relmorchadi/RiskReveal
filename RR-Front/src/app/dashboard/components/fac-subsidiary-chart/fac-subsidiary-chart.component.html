@@ -1,0 +1,57 @@
+<i style="position: absolute; right: 0; top:5px; cursor: grab;  z-index: 9999999;color: black; font-size: 1.5em;"
+   class="icon-drag_indicator_24px drag-handler"></i>
+<ng-container *ngTemplateOutlet="title"></ng-container>
+
+<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" #chart></div>
+
+<div class="widget-footer">
+  <div class="filter-div">
+    <span class="filter-label">User</span>
+    <nz-select class="a-dropdown-small" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
+      <nz-option *ngFor="let item of subsidiaryList" [nzValue]="item" [nzLabel]="item"></nz-option>
+    </nz-select>
+  </div>
+  <div class="filter-div">
+    <span class="filter-label">From</span>
+    <p-calendar [(ngModel)]="dateFrom" [showIcon]="true"></p-calendar>
+  </div>
+  <div class="filter-div">
+    <span class="filter-label">To</span>
+    <p-calendar [(ngModel)]="dateTo" [showIcon]="true"></p-calendar>
+  </div>
+</div>
+
+<ng-template #title>
+  <div style="display: flex">
+    <div class="title-wrapper">
+      <span *ngIf="!editName" (click)="activeEdit()" class="title-wrapper-name">{{itemName}}</span>
+      <div *ngIf="editName" class="edit-dashboard-section">
+        <input class="hover-input" placeholder="" (keydown)="validateName($event, identifier)" [(ngModel)]="itemName">
+      </div>
+      <nz-dropdown [nzTrigger]="'click'">
+        <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
+        <ul nz-menu nzSelectable>
+          <li (click)="duplicateItem(itemName)" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+          <li (click)="deleteItem(identifier)" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
+        </ul>
+      </nz-dropdown>
+
+      <div style="position: absolute;top: 10px; right: 25px" >
+        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+          <a style="max-height: 28px;display: flex;" nz-dropdown>
+            <i class="icon-settings_24px"></i>
+          </a>
+          <ul nz-menu style="font-size: 12px">
+            <li nz-menu-item>Reset Sort</li>
+            <li nz-menu-item>Reset Filters</li>
+            <li nz-menu-item>Reset Sort/Filters</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item>Manage Columns</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item>Unselect All</li>
+          </ul>
+        </nz-dropdown>
+      </div>
+    </div>
+  </div>
+</ng-template>

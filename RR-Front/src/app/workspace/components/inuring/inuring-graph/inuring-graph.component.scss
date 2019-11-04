@@ -34,9 +34,32 @@
 }
 
 ::ng-deep .edge-config-point {
-  color: #ffffff;
+  color: #ffffff !important;
   background-color: #0700cf;
   width: 40px;
   height: 40px;
   border-radius: 25px;
+  cursor: pointer;
+}
+
+::ng-deep .edge-config-point:hover {
+  background-color: #1890ff !important;
+  color: #ffffff !important;
+}
+
+::ng-deep .edge-delete-point {
+  color: #b80010 !important;
+  font-size: 25px;
+  border-radius: 25px;
+  padding: 0;
+  cursor: pointer;
+}
+
+::ng-deep .edge-delete-point:hover {
+  color: #ff0010 !important;
+}
+
+::ng-deep .jtk-surface {
+  background-image: url(./grid.png);
+  background-repeat: round;
 }

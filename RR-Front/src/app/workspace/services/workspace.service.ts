@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
-import {WorkspaceModel} from "../model";
-import * as fromWS from "../store/actions";
-import {catchError, map, mergeMap} from "rxjs/operators";
-import {WsApi} from "./api/workspace.api";
-import * as fromHeader from "../../core/store/actions/header.action";
-import produce from "immer";
-import * as _ from "lodash";
-import {Navigate} from "@ngxs/router-plugin";
+import {WorkspaceModel} from '../model';
+import * as fromWS from '../store/actions';
+import {catchError, map, mergeMap} from 'rxjs/operators';
+import {WsApi} from './workspace.api';
+import * as fromHeader from '../../core/store/actions/header.action';
+import produce from 'immer';
+import * as _ from 'lodash';
+import {Navigate} from '@ngxs/router-plugin';
 import {HeaderState} from "../../core/store/states/header.state";
-import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
-import {EMPTY} from "rxjs";
-import {WsProjectService} from "./ws-project.service";
-import {defaultInuringState} from "./inuring.service";
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
+import {EMPTY} from 'rxjs';
+import {WsProjectService} from './ws-project.service';
+import {defaultInuringState} from './inuring.service';
 
 @Injectable({
   providedIn: 'root'
@@ -105,6 +105,12 @@ export class WorkspaceService {
             cloneConfig: {},
             loading: false
           },
+          contract: {
+            treaty: {},
+            fac: {},
+            loading: false,
+            typeWs: null,
+          },
           calibration: {
             data: {},
             deleted: {},
@@ -179,7 +185,9 @@ export class WorkspaceService {
               target: 'currentSelection'
             },
             analysis: null,
+            analysisFac: null,
             portfolios: null,
+            portfolioFac: null,
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,
@@ -187,6 +195,7 @@ export class WorkspaceService {
           },
           scopeOfCompletence: {
             data: {},
+            wsType: null,
           },
           fileBaseImport: {
             folders: null,
@@ -214,10 +223,11 @@ export class WorkspaceService {
     ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].projects = projects.map(item => {
           return {
+            ...item,
             workspaceId: item.uwanalysisContractFacNumber,
             uwy: item.uwanalysisContractYear,
-            projectId: item.id,
-            name: 'Fac Project',
+            projectId: item.uwAnalysisProjectId,
+            name: item.id,
             description: null,
             assignedTo: null,
             createdBy: item.requestedByFullName,
@@ -235,7 +245,8 @@ export class WorkspaceService {
             sourceWsId: null,
             sourceWsName: null,
             locking: null,
-            selected: false
+            selected: false,
+            projectType: 'fac'
           };
         });
         draft.content[wsIdentifier].projects[0].selected = true;
@@ -438,6 +449,15 @@ export class WorkspaceService {
       }));
   }
 
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
+      draft.facWs.sequence = draft.facWs.sequence + 1;
+    }));
+  }
+
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
@@ -452,6 +472,22 @@ export class WorkspaceService {
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });
+  }
+
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
+    console.log(selected);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (selected.length > 0) {
+        draft.content[wsIdentifier].projects = this._selectProject(
+          _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id), 0
+        );
+      } else {
+        draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id);
+      }
+    }));
   }
 
   private _selectProject(projects: any, projectIndex: number): Array<any> {

@@ -6,7 +6,7 @@ import {WsProjectService} from "./ws-project.service";
 import {ExcelService} from '../../shared/services/excel.service';
 import {TagsApi} from "./api/tags.api";
 
-export const SERVICE =[
+export const SERVICE = [
   WsApi,
   PltApi,
   TagsApi,
@@ -14,4 +14,4 @@ export const SERVICE =[
   PreviousNavigationService,
   WsProjectService,
   ExcelService
-]
+];

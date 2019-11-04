@@ -2,6 +2,7 @@
   <p-contextMenu #cm [model]="tableInputs.contextMenuItems" appendTo="body"></p-contextMenu>
 </ng-container>
 <p-table
+  scrollIndicator
   [columns]="tableInputs.pltColumns"
   [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status"
   [contextMenu]="cm"

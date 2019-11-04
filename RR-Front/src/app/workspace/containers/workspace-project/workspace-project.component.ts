@@ -32,6 +32,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   wsIdentifier;
 
   newProject = false;
+  newFacProject = false;
   existingProject = false;
   mgaProject = false;
   searchWorkspace = false;
@@ -67,7 +68,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    console.log('INIT PROJECTS')
+    console.log('INIT PROJECTS');
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -77,11 +78,11 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
 
   ngOnInit() {
-
-    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess))
+    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess, fromWs.AddNewFacProject))
       .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
       .subscribe(() => {
           this.newProject = false;
+          this.newFacProject = false;
           this.detectChanges();
           this.notificationService.createNotification('Project added successfully', '',
             'success', 'topRight', 4000);
@@ -100,18 +101,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     );
   }
 
-  handleCancel(): void {
-    this.isVisible = false;
-    this.resetToMain();
-  }
-
-  resetToMain() {
-    this.newProject = false;
-    this.existingProject = false;
-    this.mgaProject = false;
-    this.searchWorkspace = false;
-  }
-
   selectProject(selectionEvent) {
     // console.log('[WsProjects] selection action --> ', selectionEvent);
     const {projectIndex} = selectionEvent;
@@ -122,6 +111,10 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.dispatch(new fromWs.DeleteProject({
       wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,
     }));
+  }
+
+  deleteFacProject(item) {
+    this.dispatch(new fromWs.DeleteFacProject(item.project));
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
@@ -165,6 +158,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   onCancelCreateProject() {
     this.newProject = false;
+    this.newFacProject = false;
   }
 
   ngOnDestroy(): void {

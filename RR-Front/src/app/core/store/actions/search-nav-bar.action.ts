@@ -70,6 +70,13 @@ export class SelectBadgeAction {
   }
 }
 
+export class UpdateBadges {
+  static readonly type = '[Search Nav Bar] Update badges';
+
+  constructor(public payload: any) {
+  }
+}
+
 
 export class DeleteLastBadgeAction {
   static readonly type = '[Search Nav Bar] Delete last badge';
@@ -116,27 +123,72 @@ export class ExpertModeSearchAction {
 
 export class SearchAction {
   static readonly type = '[Search Nav Bar] do search';
-  constructor(public bages: any[], public keyword: string) {}
+
+  constructor(public bages: any[], public keyword: string) {
+  }
 }
 
 export class CloseTagByIndexAction {
   static readonly type = '[Search Nav Bar] Close tag by index';
-  constructor(public index: number) {}
+
+  constructor(public index: number) {
+  }
 }
 
 export class CloseAllTagsAction {
   static readonly type = '[Search Nav Bar] Close all search tag';
-  constructor() {}
+
+  constructor() {
+  }
 }
 
 export class CloseGlobalSearchAction {
   static readonly type = '[Search Nav Bar] Close global search tag';
-  constructor() {}
+
+  constructor() {
+  }
 }
 
-export class CloseSearchPopIns{
+export class CloseSearchPopIns {
   static readonly type = '[Search Nav Bar] Close search Popins';
-  constructor(){}
+
+  constructor() {
+  }
+}
+
+export class saveSearch {
+  static readonly type = '[Search Nav Bar] Save Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class showSavedSearch {
+  static readonly type = '[Search Nav Bar] Show Saved Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class toggleSavedSearch {
+  static readonly type = '[Search Nav Bar] toggle Saved Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class closeSearch {
+  static readonly type = '[Search Nav Bar] Close Search DropDown';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class LoadShortCuts {
+  static readonly type = '[Search Nav Bar] Load ShortCuts';
+
+  constructor(public payload?: any) {
+  }
 }
 
 

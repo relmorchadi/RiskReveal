@@ -29,10 +29,6 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-/*  filterAssignedNew = false;
-  filterAssignedCurrent = false;
-  filterAssignedArchive = false;*/
-
   @Input()
   itemName = 'Car Widget';
   @Input()
@@ -41,6 +37,8 @@ export class FacWidgetComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  type: any;
   newDashboard: any;
   editName = false;
 
@@ -52,7 +50,7 @@ export class FacWidgetComponent implements OnInit {
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractLabel', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
@@ -107,26 +105,13 @@ export class FacWidgetComponent implements OnInit {
   }
 
   setFilters() {
-    if (this.itemName === 'New CARs') {
+    if (this.type === 'newCar') {
       this.filterNew = true;
-    } else if (this.itemName === 'In Progress CARs') {
+    } else if (this.type === 'inProgressCar') {
       this.filterCurrent = true;
-    } else if (this.itemName === 'Archived CARs') {
+    } else if (this.type === 'archivedCar') {
       this.filterArchive = true;
     }
-  }
-
-  getValueNumber(scope) {
-    return _.filter(this.data, item => item.carStatus === scope).length;
-  }
-
-  getAssignedValueNumber(scope) {
-    return _.filter(this.filterAssign(), item => item.carStatus === scope).length;
-  }
-
-  getCombinedNumber(data) {
-    return _.filter(data,
-        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'SuperSeeded').length;
   }
 
   selectTab(index) {
@@ -185,7 +170,7 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+      filteredData = _.filter(filteredData, item => item.carStatus === 'Superseded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
     }
     return filteredData;
   }
@@ -199,7 +184,7 @@ export class FacWidgetComponent implements OnInit {
   }
 
   filterAssign() {
-    return _.filter(this.data, item => item.assignedAnalyst === 'Amina Cheref');
+    return _.filter(this.data, item => item.assignedAnalyst === 'Nathalie Dulac');
   }
 
   valueFavChange(event) {
@@ -223,18 +208,9 @@ export class FacWidgetComponent implements OnInit {
   }
 
   validateName(keyboardMap, id) {
-
     if (keyboardMap.key === 'Enter') {
       this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
       this.editName = false;
-      /*  const newItem = this.newDashboard.items.filter(ds => ds.id === id);
-        const copy = Object.assign({}, newItem[0], {
-          name: this.itemName,
-          id: this.newDashboard.items.length + 1
-        });
-        this.newDashboard.items.push(copy);
-        newItem[0].selected = false;
-        this.editName = false;*/
     }
   }
 

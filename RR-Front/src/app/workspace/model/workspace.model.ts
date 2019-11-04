@@ -7,6 +7,9 @@ export class WorkspaceModel {
     wsIdentifier: string
   };
   facWs: {data: any[], sequence: any};
+  savedData: {riskLink: {
+    edmrdmSelection: any
+  }};
   favorite: any[];
   pinned: any[];
   routing: string;

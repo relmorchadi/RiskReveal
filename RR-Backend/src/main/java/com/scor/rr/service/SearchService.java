@@ -93,7 +93,7 @@ public class SearchService {
         countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.COUNTRY, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
+        countMapper.put(TableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
         countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -127,10 +127,10 @@ public class SearchService {
         return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
     }
 
-    public Page<?> countInWorkspace(TableNames table, String keyword, int size) {
-        return ofNullable(countMapper.get(table))
-                .map(callback -> callback.apply("%" + keyword + "%", PageRequest.of(0, size)))
-                .orElseThrow(() -> new RuntimeException("Table parameter not found"));
+    public SearchCountResult countInWorkspace(TableNames table, String keyword, int size) {
+        return new SearchCountResult(ofNullable(countMapper.get(table))
+                .map(callback -> callback.apply( keyword , PageRequest.of(0, size)))
+                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
 
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {

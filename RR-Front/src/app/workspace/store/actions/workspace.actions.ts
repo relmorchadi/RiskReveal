@@ -117,12 +117,14 @@ export class ToggleProjectSelection {
   }
 }
 
+export class AddNewFacProject {
+  static readonly type = '[Workspace] Add new Fac project';
+  constructor(public payload?: any) {}
+}
 
 export class AddNewProject {
   static readonly type = '[Workspace] Add new project';
-
-  constructor(public payload: { project, wsId, uwYear, id }) {
-  }
+  constructor(public payload: { project, wsId, uwYear, id }) {}
 }
 
 export class AddNewProjectSuccess {
@@ -134,24 +136,22 @@ export class AddNewProjectSuccess {
 
 export class AddNewProjectFail {
   static readonly type = '[Workspace] Add new project Fails';
-
-  constructor(public payload: any) {
-  }
+  constructor(public payload: any) {}
 }
 
+export class DeleteFacProject {
+  static readonly type = '[Workspace] Delete Fac project';
+  constructor(public payload: any) {}
+}
 
 export class DeleteProject {
   static readonly type = '[Workspace] Delete project';
-
-  constructor(public payload: any) {
-  }
+  constructor(public payload: any) {}
 }
 
 export class DeleteProjectSuccess {
   static readonly type = '[Workspace] Delete project Success';
-
-  constructor(public payload: any) {
-  }
+  constructor(public payload: any) {}
 }
 
 export class DeleteProjectFails {

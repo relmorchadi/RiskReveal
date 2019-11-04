@@ -19,7 +19,7 @@ export class InuringPackageDetailsComponent implements OnInit {
   showEditEdgePopup: boolean = false;
   private editInputNode: boolean = false;
   private editableNode: any;
-
+  collapsedCanvas: boolean = false;
 
   ngOnInit() {
     console.log('this is details', this.data);
@@ -31,21 +31,33 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   setSelectedWs = ($event) => {
   };
-  collapsedCanvas: boolean = false;
+
+  addNode(type, name, plts = null, top = 0, left = 0) {
+    let today = new Date();
+    let id = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    let node = {nodeId: id, type: type, top: top, left: left, name: name, plts: plts};
+    this._store.dispatch(new AddInputNode({
+      wsIdentifier: this.stepConfig.wsId + '-' + this.stepConfig.uwYear,
+      inuringPackage: this.data.details.id,
+      node: node
+    }));
+    this.appendedNodes.push(node);
+  }
 
   setSelectedPlts(selectedPlts) {
     if (this.editInputNode) {
-      // this.editableNode.data.plts = selectedPlts;
       let editedData = {...this.editableNode.data};
       editedData.plts = selectedPlts;
       console.log({...this.editableNode})
-      this._store.dispatch(new EditInputNode({data: editedData}));
+      this._store.dispatch(new EditInputNode({
+        wsIdentifier: this.stepConfig.wsId + '-' + this.stepConfig.uwYear,
+        inuringPackage: this.data.details.id,
+        node: editedData
+      }));
       this.editableNode = {};
     } else {
-      this.appendedNodes.push(selectedPlts);
-      this._store.dispatch(new AddInputNode({plts: selectedPlts, index: this.appendedNodes.length}));
+      this.addNode('inputNode', 'Input Node', selectedPlts)
     }
-
   }
 
   onShowCreationPopup($event: any) {
@@ -74,5 +86,9 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   collapseCanvas() {
     this.collapsedCanvas = !this.collapsedCanvas;
+  }
+
+  appendNode(node: any) {
+    this.appendedNodes.push(node);
   }
 }

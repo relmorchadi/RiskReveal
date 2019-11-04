@@ -146,6 +146,24 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     })]);
   }
 
+  filterSelected() {
+    return _.filter(this.data[this.currentWsIdentifier].projects, item => item.selected)[0];
+  }
+
+  filterSelectedDivision() {
+    return _.map(_.get(this.filterSelected(), 'division', []), item => item.divisionNo);
+  }
+
+  filterListProject() {
+    return _.filter(this.data[this.currentWsIdentifier].projects, item => !item.selected);
+  }
+
+  selectProject(selectionEvent) {
+    const projectIndex = _.findIndex(this.data[this.currentWsIdentifier].projects,
+      (item: any) => item.id === selectionEvent);
+    this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.currentWsIdentifier}));
+  }
+
   unFavorite(wsIdentifier, {wsId, uwYear}) {
     this.dispatch([new fromWs.MarkWsAsNonFavorite({wsIdentifier}), new fromHeader.DeleteWsFromFavorite({wsId, uwYear})])
   }

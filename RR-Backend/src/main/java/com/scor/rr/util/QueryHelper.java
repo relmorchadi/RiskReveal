@@ -142,7 +142,7 @@ public class QueryHelper {
                 return " c." + columnName + " = '" + escape(keyword) + "' ";
             case LIKE:
             default:
-                return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
+                return " lower(c." + columnName + ") like '" + escape(keyword.toLowerCase()) + "' ";
         }
     }
 
