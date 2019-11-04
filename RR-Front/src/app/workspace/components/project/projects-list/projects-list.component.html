@@ -27,8 +27,8 @@
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
           <div class="d-flex justify-content-between" *ngIf="project.projectType === 'fac'">
             <div class="d-flex flex-column">
-              <span>{{project?.name | trimFormat}}</span>
-              <span>{{project?.projectId | trimFormat}}</span>
+              <span>{{project?.name }}</span>
+              <span>{{project?.projectId }}</span>
             </div>
             <div class="d-flex align-items-center">
               <div class="car-status-temp">{{project?.carStatus}}</div>
@@ -36,7 +36,7 @@
           </div>
           <div class="d-flex flex-column" *ngIf="project.projectType !== 'fac'">
             <span *ngIf="!project.projectType">{{project?.name}}</span>
-            <span>{{project?.projectId | trimFormat}}</span>
+            <span>{{project?.projectId}}</span>
           </div>
         </div>
         <div class="icon-card-wrapper">
