@@ -1,6 +1,7 @@
 package com.scor.rr.util;
 
 import com.scor.rr.domain.dto.ExpertModeFilter;
+import com.scor.rr.domain.dto.ExpertModeSort;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import com.scor.rr.domain.enums.Operator;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,10 @@ public class QueryHelper {
         return Arrays.stream(groupByColumns).map(s-> "c."+s+" as " +s).collect(Collectors.joining(","));
     }
 
+    private String generateOrderClause(List<ExpertModeSort> cols){
+        return cols.stream().map(col -> col.getColumnName() + " " + col.getOrder().getOrderValue()).collect(Collectors.joining(","));
+    }
+
     private Collection<? extends String> generateSearchClause(NewWorkspaceFilter filter) {
         List<String> sc = new ArrayList<>();
         addSearchClause(filter.getWorkspaceId(),"WorkSpaceId",sc);
@@ -105,11 +110,11 @@ public class QueryHelper {
 
     public String generateCountQuery(List<ExpertModeFilter> filter,String keyword){
 
-        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter,keyword);
+        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter, null,keyword);
         return "select count(*) from ( " +sqlWithoutOffset + " ) as i";
     }
 
-    private String generateSqlQueryWithoutOffset(List<ExpertModeFilter> filter, String keyword) {
+    private String generateSqlQueryWithoutOffset(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword) {
 
         List<String> fieldsSearchClauses = generateSearchClause(filter).stream().filter(Objects::nonNull).collect(Collectors.toList());
         List<String> globalSearchClauses = new ArrayList<>(generateGlobalSearchClause(keyword));
@@ -126,13 +131,13 @@ public class QueryHelper {
         else if (!fieldsSearchCondition.trim().equals("")) whereCondition = " where " + fieldsSearchCondition;
         String groupByClause = generateGroupByClause();
         String selectClause = generateSelectClause();
+        String orderByClause = generateOrderClause(null);
         return "select " + selectClause + " from [poc].[ContractSearchResult] c " + whereCondition + " group by " + groupByClause;
     }
 
     public String generateSqlQuery(List<ExpertModeFilter> filter,String keyword, int offset, int size){
-        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter,keyword);
+        String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter, null,keyword);
         return sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc OFFSET " + offset + " ROWS FETCH NEXT " + size + " ROWS ONLY";
-
     }
 
     private String generateClause(String columnName, String keyword, Operator operator){
