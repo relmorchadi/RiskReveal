@@ -6,7 +6,6 @@ export const environment = {
   production: false,
   API_URI: 'http://localhost:8080/api/',
   hmr: false
-
 };
 
 /*

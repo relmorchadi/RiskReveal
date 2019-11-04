@@ -460,12 +460,19 @@
   }
 }
 
-.published-dataInfo {
-  width: 310px;
-  padding: 2px 5px;
+
+
+
+:host {
+  width: 100%;
+  height: max-content;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid #90EE90;
-  margin-right: 10px;
+  min-height: 100vh;
+  background-color: #F4F6FC;
+}
+
+.app-body {
+  display: flex;
+  height:500px;
+  background-color: #fff;
 }
