@@ -339,7 +339,7 @@ export class WorkspaceState {
 
   /***********************************
    *
-   * Scope And Completeness Selectors
+   * Scope And Completeness Selectors 
    *
    ***********************************/
 
