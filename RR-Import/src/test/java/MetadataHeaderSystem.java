@@ -1,5 +1,5 @@
 
-import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.ImportBackend;
 import com.scor.rr.domain.importfile.FileBasedImportProducer;
 import com.scor.rr.domain.importfile.MetadataHeaderSectionEntity;
 import com.scor.rr.repository.ImportedFileRepository;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {RiskRevealApplication.class})
+@ContextConfiguration(classes = {ImportBackend.class})
 @SpringBootTest
 @Transactional
 @PropertySource({"classpath:application.properties"})
