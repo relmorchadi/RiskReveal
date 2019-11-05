@@ -5,11 +5,13 @@
     <parent>
         <artifactId>risk-reveal-root</artifactId>
         <groupId>com.scor.rr</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${rr_version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>risk-reveal-import</artifactId>
+    <name>Risk Reveal Import</name>
+    <version>${rr_version}</version>
     <packaging>war</packaging>
 
     <properties>
@@ -224,6 +226,11 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.scor.rr</groupId>
+            <artifactId>common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
