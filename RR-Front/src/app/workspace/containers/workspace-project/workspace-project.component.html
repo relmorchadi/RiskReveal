@@ -1,6 +1,5 @@
 <div class="workspace-main-content">
   <div class="a-app-wrapper">
-    <!--
     <div class="a-app-header">
       <div class="title-project-wrapper">
         <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Projects'" [links]="hyperLinks"
@@ -44,41 +43,6 @@
         </app-pin>
       </div>
     </div>
-    -->
-    <div class="a-app-header">
-      <div style="display: flex; flex-flow: column;">
-        <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Projects'" [links]="hyperLinks"
-                         [routes]="hyperLinksRoutes"></app-hyper-links>
-        <div style="display: flex">
-          <h4>Projects</h4>
-          <!--        <div *ngIf="tabStatus === 'fac'" style="margin-left: 35px">
-                    <nz-dropdown [nzTrigger]="'click'">
-                      <div class="dropdown-wrap" nz-dropdown>
-                        <div class="dropdown-wrap-title">
-                          <span class="dropdown-title">CAR ID</span>
-                          <span class="dropdown-item-selected">{{selectedContract}}</span>
-                        </div>
-                        <div class="dropdown-icon">
-                          <i nz-icon type="down"></i>
-                        </div>
-                      </div>
-                      <ul nz-menu>
-                        <li nz-menu-item (click)="selectContract(item.id)"
-                            *ngFor="let item of contracts">{{item.id}}</li>
-                      </ul>
-                    </nz-dropdown>
-                  </div>-->
-        </div>
-
-      </div>
-      <app-pin
-        (pinWs)="pinWorkspace()"
-        (unpinWs)="unPinWorkspace()"
-        [active]="!workspace?.isPinned"
-      >
-      </app-pin>
-    </div>
-    <!--
     <div>
       <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
                      (delete)="delete($event)" *ngIf="status === 'treaty'"></projects-list>
@@ -104,10 +68,6 @@
                                   (onCancelCreateProject)="onCancelCreateProject()">
     </app-create-fac-project-popup>
   </div>
-  -->
-    <div class="app-body">
-
-    </div>
 </div>
 
 <!--<p-toast></p-toast>-->

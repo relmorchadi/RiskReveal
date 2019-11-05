@@ -1851,17 +1851,3 @@ body .ui-table .ui-table-thead > tr > th {
   overflow: auto;
   min-width: unset !important;
 }
-
-:host {
-  width: 100%;
-  height: max-content;
-  display: flex;
-  min-height: 100vh;
-  background-color: #F4F6FC;
-}
-
-.app-body {
-  display: flex;
-  height:500px;
-  background-color: #fff;
-}
