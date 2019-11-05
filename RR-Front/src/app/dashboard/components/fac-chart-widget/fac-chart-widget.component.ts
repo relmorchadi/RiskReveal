@@ -40,7 +40,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
+      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed', 'Priced'],
       align: 'left',
       left: 10
     },
@@ -98,9 +98,16 @@ export class FacChartWidgetComponent implements OnInit {
         type: 'bar',
         stack: 'one',
         itemStyle: this.itemStyle,
+      },
+      {
+        name: 'Priced',
+        data: [],
+        type: 'bar',
+        stack: 'one',
+        itemStyle: this.itemStyle,
       }
     ],
-    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
+    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', '#000000']
   };
 
   @ViewChild('chart') chart;

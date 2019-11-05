@@ -164,7 +164,9 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   filterSelection() {
     const selectedDivision: any = _.filter(this.facData.division , item => item.selected);
     if (selectedDivision.length > 0) {
-      const facDataFiltered = _.filter(this.facData.regionPeril, item => item.division == selectedDivision[0].divisionNo);
+      const facDataFiltered = _.filter(this.facData.regionPeril, item => {
+        return _.includes(item.division, selectedDivision[0].divisionNo);
+      });
       return facDataFiltered.length > 0 ? facDataFiltered : this.facData.regionPeril;
     } else {
       return this.facData.regionPeril;

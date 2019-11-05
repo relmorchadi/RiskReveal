@@ -67,6 +67,11 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   @Select(WorkspaceState.getWorkspaces) ws$;
   ws: any;
+
+  @Select(WorkspaceState.getCurrentWorkspaces) wsIndept$;
+  wsIndept: any;
+
+  wsStatus: any;
   currentWsIdentifier: any;
 
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
@@ -115,6 +120,11 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       this.detectChanges();
     });
 
+    this.wsIndept$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.wsIndept = _.merge({}, value);
+      this.wsStatus = this.wsIndept.workspaceType;
+    });
+
     this.selectedProject$.pipe().subscribe(value => {
       this.tabStatus = _.get(value, 'projectType', null);
       this.selectedProject = value;
@@ -122,9 +132,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         this.dataSource = this.getData(this.treatySections[0]);
         this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
       } else {
-        if (this.importStatus[this.selectedProject.projectId]) {
-          this.dataSource = this.getData(this.treatySections[1]);
-          this.treatySectionContainer = _.cloneDeep(this.treatySections[1]);
+        if (this.importStatus[this.selectedProject.projectId] || this.checkImport(this.selectedProject)) {
+          const facData = this.formatData(this.treatySections[1]);
+          this.dataSource = this.getData(facData);
+          this.treatySectionContainer = _.cloneDeep(facData);
         } else {
           this.dataSource = this.getData(this.treatySections[0]);
           this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
@@ -152,6 +163,32 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         const {wsId, year} = dt[0];
         this.workspaceUrl = {wsId, uwYear: year};
       });
+  }
+
+  checkImport(project) {
+    return project.carStatus === 'Completed' || project.carStatus === 'Superseded';
+  }
+
+  checkNonImport(project) {
+    return project.carStatus !== 'Completed' && project.carStatus !== 'Superseded' && project.carStatus !== 'Canceled';
+  }
+
+  publishFacToPricing() {
+    this.dispatch(new fromWs.PublishToPricingFacProject());
+  }
+
+  formatData(data) {
+    const divisions = _.get(this.selectedProject, 'division', []);
+    console.log(divisions);
+    let scopeData = [];
+    _.forEach(divisions, (item, index) => {
+      if (index < data.length) {
+        scopeData = [...scopeData, data[index]];
+      } else {
+        scopeData = [...scopeData, data[0]];
+      }
+    });
+    return scopeData;
   }
 
   showPackage() {
@@ -268,7 +305,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   /** get the icon depending on the RP**/
   perilZone(peril) {
-    if (peril === 'YY') {
+    if (peril === 'YY' || peril === 'EQ') {
       return {peril: 'EQ', color: '#E70010'};
     }
     if (peril === 'WS') {
