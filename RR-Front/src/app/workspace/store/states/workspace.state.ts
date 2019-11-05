@@ -1106,6 +1106,11 @@ export class WorkspaceState {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
   }
 
+  @Action(fromWS.PublishToPricingFacProject)
+  publishToPricingFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PublishToPricingFacProject) {
+    return this.scopService.publishToPricing(ctx, payload);
+  }
+
 
   /***********************************
    *
