@@ -1,4 +1,3 @@
-<!--
 <div class="workspace-main-content">
   <app-pin
     (pinWs)="pinWorkspace()"
@@ -11,6 +10,7 @@
     <div class="body-wrap">
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
+          <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
           <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
@@ -52,6 +52,23 @@
                 *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item}}</li>
           </ul>
         </nz-dropdown>
+        <!--        <nz-dropdown [nzTrigger]="'click'">
+                  <div class="dropdown-wrap" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                      <span class="dropdown-title">Financial Perspective EPMetrics</span>
+                      <span class="dropdown-item-selected" *ngIf="state.financialValidator.financialPerspectiveEPM.selected">
+                        {{state.financialValidator.financialPerspectiveEPM.selected}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                      <i nz-icon type="down"></i>
+                    </div>
+                  </div>
+                  <ul nz-menu>
+                    <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
+                        *ngFor="let item of state.financialValidator.financialPerspectiveEPM.data">{{item}}</li>
+                  </ul>
+                </nz-dropdown>-->
 
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
@@ -208,6 +225,7 @@
               </div>
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
+              <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
               <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'fac'"
                       class="a-buttons-outlined-mini">Auto Attach</button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -245,6 +263,7 @@
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
                           /{{getNumberElement(itemsE, 'portfolio')}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/0</span>
+                        <!--<i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="!itemsE?.scanned">
@@ -320,6 +339,8 @@
                 </div>
               </div>
               <div style="display: flex; flex-direction: column">
+                <!--                           [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)" [lazy]="true" [virtualRowHeight]="25"
+                           [rows]="20" [totalRecords]="getTableRecords()"-->
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" (selectionChange)="getSelection($event)"
                            [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]" selectionMode="multiple" [(selection)]="selectedRows"
@@ -414,6 +435,12 @@
       <div class="footer-section" *ngIf="state?.display?.displayImport">
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
+<!--            <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
+              <nz-option *ngFor="let op of state?.financialValidator?.calibration?.data" [nzLabel]="op"
+                         [nzValue]="op"></nz-option>
+            </nz-select>-->
+<!--            <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
+            <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>-->
           </div>
           <div class="body-wrap-footer-right">
             <button style="padding: 6px 20px 7px" (click)="importMainAction()" class="a-buttons-contained-mini">IMPORT</button>
@@ -421,65 +448,6 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
--->
-
-<div class="a-app-wrapper">
-  <!--
-  <div class="app-body app-body--tansparent">
-
-    <nz-tabset [(nzSelectedIndex)]="currentTabIndex" class="dashboard-content" style="width: 100%; height: fit-content">
-      <nz-tab [nzTitle]="'All Packages'">
-        <div class="a-app-header mt-2">
-          <div class="title-container">
-            <h4>Inuring Package</h4>
-            <button (click)="showAddPackagePopup()" class="a-buttons-outlined"
-                    style="color: #332ed7 ;border-color: #332ed7">
-              <i class="icon-plus"></i>
-              Add Package
-            </button>
-          </div>
-        </div>
-        <div class="all-packages-tab-content">
-
-          <div class="table-container">
-            <inuring-datatable [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"
-                               [listOfData]="packages" [virtualScroll]="false"
-                               (dbClickItem)="openInuringPackage($event)"
-                               [tableWidth]="'700px'" [tableHeight]="'500px'">
-            </inuring-datatable>
-          </div>
-        </div>
-      </nz-tab>
-      <ng-container *ngFor="let id of workspace?.inuring?.content |keys; let i=index">
-        <ng-template #titleTemplate>
-          <ng-container
-            [ngTemplateOutlet]="tabTitle"
-            [ngTemplateOutletContext]="{
-              packageId: id
-            }"
-          ></ng-container>
-        </ng-template>
-        <nz-tab [nzTitle]="titleTemplate">
-          <inuring-package-details [data]="{
-            wsId: workspace?.wsId,
-            year: workspace?.uwYear,
-            details: workspace?.inuring?.content[id]
-          }"></inuring-package-details>
-        </nz-tab>
-
-      </ng-container>
-    </nz-tabset>
-
-
-  </div>
-  -->
-  <div class="a-app-header">
-    <h4>RiskLink Import</h4>
-  </div>
-  <div class="app-body">
-
   </div>
 </div>
 

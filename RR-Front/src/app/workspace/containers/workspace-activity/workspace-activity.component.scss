@@ -1,3 +1,11 @@
+:host {
+  width: 100%;
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
+}
+
 .app-body {
 
   .active-body {
@@ -96,18 +104,4 @@
       }
     }
   }
-}
-
-:host {
-  width: 100%;
-  height: max-content;
-  display: flex;
-  min-height: 100vh;
-  background-color: #F4F6FC;
-}
-
-.app-body {
-  display: flex;
-  height:500px;
-  background-color: #fff;
 }
