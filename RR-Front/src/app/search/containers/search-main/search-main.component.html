@@ -109,6 +109,8 @@
                    [tableHeight]="'560px'"
                    (loadMore)="loadMore($event)"
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [activateContextMenu]="true"
                    [loading]="loading">

@@ -97,7 +97,7 @@
 <!--virtual scroll-->
 <nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
-           [value]="listOfData | tableSortAndFilter : [sortData, FilterData]" #dt [columns]="tableColumn" [resizableColumns]="true"
+           [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
            [scrollable]="true" [scrollHeight]="tableHeight"
            [rows]="rows"
            [totalRecords]="totalRecords"
@@ -135,9 +135,9 @@
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </ng-container>
            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
-              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+              <i *ngSwitchCase="'ASC'" class="icon-keyboard_arrow_up_24px"
                  (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+              <i *ngSwitchCase="'DSEC'" class="icon-keyboard_arrow_down_24px"
                  (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
               <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
                  style="font-size: 1.4em;"></i>
@@ -145,7 +145,7 @@
         </span>
           <div class="search-bar-table" *ngIf="col?.filtered">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-            <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
+            <input pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam)">
           </div>
         </th>
       </tr>

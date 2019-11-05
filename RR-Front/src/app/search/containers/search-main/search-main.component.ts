@@ -43,6 +43,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Select(SearchNavBarState.getShowSavedSearch)
   savedSearchVisibility$;
 
+  sortData: any;
+
   savedSearch;
   badges;
 
@@ -79,7 +81,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'countryName'
+      queryParam: 'CountryName'
     },
     {
       field: 'cedantName',
@@ -88,7 +90,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'cedantName'
+      queryParam: 'CedantName'
     },
     {
       field: 'cedantCode',
@@ -97,7 +99,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'cedantCode'
+      queryParam: 'CedantCode'
     },
     {
       field: 'uwYear',
@@ -106,7 +108,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'year'
+      queryParam: 'UwYear'
     },
     {
       field: 'workspaceName',
@@ -115,7 +117,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'workspaceName'
+      queryParam: 'WorkspaceName'
     },
     {
       field: 'workSpaceId',
@@ -124,7 +126,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       display: true,
       sorted: true,
       filtered: true,
-      filterParam: 'workspaceId'
+      queryParam: 'WorkspaceId'
     },
     {
       field: 'openInHere',
@@ -164,6 +166,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
+    this.sortData = {};
   }
 
   ngOnInit() {
@@ -284,11 +287,20 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     this._loadData(event.first, event.rows);
   }
 
+  getSortColumns(sortData) {
+    return _.map(sortData, (order, col) => ({columnName: this.mapColToQuery(col), order}))
+  }
+
+  mapColToQuery(col) {
+    return _.find(this.columns, column => column.field == col).queryParam;
+  }
+
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
     this.loading = true;
     let params = {
       keyword: this.globalSearchItem,
       filter: this.filter,
+      sort: this.getSortColumns(this.sortData),
       offset,
       size: size
     };
@@ -421,5 +433,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   closeSaveSearchPup() {
     this.saveSearchPopup = false;
     this.searchLabel = null;
+  }
+
+  sortChange(sortData) {
+    this.sortData = sortData;
+    this._loadData(this.paginationOption.offset);
   }
 }
