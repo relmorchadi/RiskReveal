@@ -27,7 +27,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     }
 
     @Id
-    @Column(name = "AdjustmentReturnPeriodBandingParameterId", nullable = false)
+    @Column(name = "AdjustmentParameterId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentReturnPeriodBandingParameterId() {
         return adjustmentReturnPeriodBandingParameterId;
@@ -48,7 +48,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     }
 
     @Basic
-    @Column(name = "Factor", nullable = true, precision = 7)
+    @Column(name = "AdjustmentFactor", nullable = true, precision = 7)
     public double getFactor() {
         return factor;
     }

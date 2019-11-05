@@ -87,7 +87,6 @@
         <class>com.scor.rr.domain.RrDboContractSearchResultEntity</class>
         <class>com.scor.rr.domain.RegionPerilEntity</class>
         <class>com.scor.rr.domain.RmsAnalysisEntity</class>
-        <class>com.scor.rr.domain.RmsAnalysisNewEntity</class>
         <class>com.scor.rr.domain.RmsEntityDataSourceEntity</class>
         <class>com.scor.rr.domain.RmsPortfolioEntity</class>
         <class>com.scor.rr.domain.RmsSourceResultEntity</class>

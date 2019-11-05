@@ -20,7 +20,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @Id
-    @Column(name = "AdjustmentScalingParameterId", nullable = false)
+    @Column(name = "AdjustmentParameterId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentScalingParameterId() {
         return adjustmentScalingParameterId;
@@ -31,7 +31,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @Basic
-    @Column(name = "factor", nullable = true, precision = 7)
+    @Column(name = "AdjustmentFactor", nullable = true, precision = 7)
     public double getFactor() {
         return factor;
     }
@@ -55,7 +55,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeScaling() {
         return adjustmentNodeByFkAdjustmentNodeScaling;
     }
