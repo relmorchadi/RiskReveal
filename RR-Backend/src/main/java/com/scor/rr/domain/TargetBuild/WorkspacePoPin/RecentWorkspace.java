@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "RecentWorkspace", schema = "tb")
+@Table(name = "RecentWorkspace", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,16 +20,13 @@ public class RecentWorkspace {
     @Column(name = "recentWorkspaceId")
     private Integer recentWorkspaceId;
 
-    @Column(name = "workspaceContextCode")
-    private String workspaceContextCode;
-
-    @Column(name = "workspaceUwYear")
-    private Integer workspaceUwYear;
+    @Column(name = "workspaceId")
+    private Long workspaceId;
 
     @Column(name = "userId")
     private Integer userId;
 
     @CreatedDate
-    @Column(name = "lastOpened", nullable = false)
+    @Column(name = "lastOpened", nullable = false, updatable = false)
     private Date lastOpened;
 }

@@ -149,7 +149,7 @@ public class SearchService {
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getKeyword(), request.getOffset(), request.getSize());
+        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(),request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
         Query countQuery = entityManager.createNativeQuery(countQueryString);

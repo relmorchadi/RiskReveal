@@ -5,10 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
-@Table(name = "FavoriteWorkspaceView", schema = "tb")
+@Table(name = "FavoriteWorkspaceView", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,22 +17,22 @@ public class FavoriteWorkspaceView {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "workspaceContextCode")
-    private String workspaceContextCode;
-
-    @Column(name = "workspaceUwYear")
-    private Integer workspaceUwYear;
+    @Column(name = "workspaceId")
+    private Long workspaceId;
 
     @Column(name = "userId")
     private Integer userId;
+
+    @Column(name = "WorkspaceContextCode")
+    private String workspaceContextCode;
+
+    @Column(name = "WorkspaceUwYear")
+    private Integer workspaceUwYear;
 
     @Column(name = "WorkspaceName")
     private String workspaceName;
 
     @Column(name = "CedantName")
     private String cedantName;
-
-    @Column(name = "createdDate")
-    private Date createdDate;
 
 }

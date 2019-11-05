@@ -5,10 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
-@Table(name = "AssignedWorkspaceView", schema = "tb")
+@Table(name = "AssignedWorkspaceView", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,6 +16,9 @@ public class AssignedWorkspaceView {
     @Id
     @Column(name = "id")
     private String id;
+
+    @Column(name = "WorkspaceId")
+    private Long workspaceId;
 
     @Column(name = "userId")
     private Integer userId;
@@ -32,7 +34,4 @@ public class AssignedWorkspaceView {
 
     @Column(name = "CedantName")
     private String cedantName;
-
-    @Column(name = "createDate")
-    private Date createDate;
 }

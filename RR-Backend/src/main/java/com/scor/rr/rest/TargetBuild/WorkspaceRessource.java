@@ -1,12 +1,12 @@
 package com.scor.rr.rest.TargetBuild;
 
 import com.scor.rr.domain.TargetBuild.Workspace;
-import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
-import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.service.TargetBuild.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -18,38 +18,8 @@ public class WorkspaceRessource {
     WorkspaceService workspaceService;
 
     @GetMapping("favorite")
-    List<Workspace> getFavoriteWorkspaces(@RequestParam(required = false, defaultValue = "") String kw,@RequestParam Integer userId, @RequestParam( defaultValue = "0" ) Integer offset, @RequestParam( defaultValue = "10" ) Integer size) {
-        return this.workspaceService.getFavoriteWorkspaces(kw, userId, offset, size);
-    }
-
-    @GetMapping("recent")
-    List<Workspace> getRecentWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getRecentWorkspaces(kw,userId, offset, size);
-    }
-
-    @GetMapping("assigned")
-    List<Workspace> getAssignedWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getAssignedWorkspaces(kw,userId, offset, size);
-    }
-
-    @GetMapping("pinned")
-    List<Workspace> getPinnedWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getPinnedWorkspaces(kw,userId, offset, size);
-    }
-
-    @GetMapping("count")
-    WorkspaceCount getWSCount(@RequestParam Integer userId) {
-        return this.workspaceService.getWSCount(userId);
-    }
-
-    @PostMapping("favorite")
-    ResponseEntity<String> toggleFavoriteWorkspace(@RequestBody WorkspaceToggleRequest request) {
-        return this.workspaceService.toggleFavoriteWorkspace(request);
-    }
-
-    @PostMapping("pinned")
-    ResponseEntity<String> togglePinnedWorkspace(@RequestBody WorkspaceToggleRequest request) {
-        return this.workspaceService.togglePinnedWorkspace(request);
+    List<Workspace> getFavoriteWorkspaces(@Param("userId") Integer userId) {
+        return this.workspaceService.getFavoriteWorkspaces(userId);
     }
 
 }
