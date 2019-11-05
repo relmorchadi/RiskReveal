@@ -121,7 +121,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'Canceled',
+    carStatus: 'In Progress',
     publishedDate: null,
     publishedBy: null,
     division: [
@@ -216,7 +216,7 @@ const facWs = [
     uwanalysisContractContractId: 'FA0024677',
     contractName: 'Domestic Locations',
     uwanalysisContractInsured: '1000490650 @ Insureds',
-    carStatus: 'Canceled',
+    carStatus: 'In Progress',
     publishedDate: null,
     publishedBy: null,
     division: [
