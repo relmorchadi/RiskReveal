@@ -41,6 +41,15 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getRecentWorkspaces(Integer userId) {
-        return this.recentWorkspaceViewRepository.findAllByUserId(userId)
+        return this.recentWorkspaceViewRepository.findAllByUserId(userId).stream()
+                .map( recentWorkspaceView -> Workspace
+                        .builder()
+                        .workspaceId(recentWorkspaceView.getWorkspaceId())
+                        .workspaceName(recentWorkspaceView.getWorkspaceName())
+                        .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
+                        .workspaceUwYear(recentWorkspaceView.getWorkspaceUwYear())
+                        .cedantName(recentWorkspaceView.getCedantName())
+                        .build()
+                ).collect(Collectors.toList());
     }
 }
