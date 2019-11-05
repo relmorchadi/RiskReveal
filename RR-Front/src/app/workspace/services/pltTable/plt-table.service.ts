@@ -10,7 +10,7 @@ export class PltTableService {
       {
         sortDir: 1,
         fields: 'selected',
-        header: '',
+        header: 'Select Box',
         sorted: true,
         filtred: true,
         resizable: false,
