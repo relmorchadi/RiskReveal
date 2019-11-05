@@ -1730,22 +1730,6 @@ const treatySections3 = [
         attached: false,
         pltsAttached: []
       }]
-    },
-      {
-        id: 'EUEQ-AD',
-        description: 'Europe (Andorra) Earthquake',
-        attached: false,
-        overridden: false,
-        targetRaps: [{
-          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-          description: 'European Earthquake, Risklink v11.0',
-          overridden: false,
-          selected: false,
-          reason: null,
-          resonDescribed: null,
-          attached: false,
-          pltsAttached: []
-        }]
       },
       {
         id: 'EUEQ-AT',
@@ -1852,7 +1836,37 @@ const treatySections3 = [
           reason: null,
           resonDescribed: null,
           attached: false,
-          pltsAttached: []
+          pltsAttached: [
+            {
+              workspaceId: '05PA753',
+              uwy: 2019,
+              pltId: 'SPLTH-000735180',
+              pltName: 'AUEQ_GR_LMF1.T2',
+              peril: 'EQ',
+              regionPerilCode: 'AUEQ',
+              regionPerilName: 'Australia',
+              grain: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+              vendorSystem: 'RMS RL',
+              targetRapCode: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+              isScorCurrent: true,
+              isScorDefault: true,
+              isScorGenerated: true,
+              project: 'FA0024677',
+              pltType: 'Thread',
+              projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+              creationDate: '18/10/2018',
+              year: 2018,
+              fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154446_RMS-RiskLink_RL17_EUEQ-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-436_N-100_P-T-2_ID-SPLTH-000735180_Job-1.bin',
+              sourceModellingVendor: 'RMS',
+              sourceModellingSystem: 'RiskLink',
+              dataSourceName: 'CG1901_DEU_FLportfolio_R',
+              analysisId: 45.0,
+              currency: null,
+              userOccurrenceBasis: null,
+              userTags: [],
+              xactPublicationDate: null
+            }
+          ]
         }]
       }],
     targetRaps: [{
@@ -1863,15 +1877,6 @@ const treatySections3 = [
       regionPerils: [{
         id: 'EUEQ-DE',
         description: 'Europe (Germany) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }, {
-        id: 'EUEQ-AD',
-        description: 'Europe (Andorra) Earthquake',
         overridden: false,
         selected: false,
         reason: null,
@@ -1919,7 +1924,37 @@ const treatySections3 = [
         attached: false,
         reason: null,
         resonDescribed: null,
-        pltsAttached: []
+        pltsAttached: [
+          {
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735180',
+            pltName: 'AUEQ_GR_LMF1.T2',
+            peril: 'EQ',
+            regionPerilCode: 'AUEQ',
+            regionPerilName: 'Australia',
+            grain: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'FA0024677',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154446_RMS-RiskLink_RL17_EUEQ-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-436_N-100_P-T-2_ID-SPLTH-000735180_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }
+        ]
       }]
     }, {
       id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
@@ -2015,22 +2050,6 @@ const treatySections3 = [
           xactPublicationDate: null
         }]
       }]
-      },
-      {
-        id: 'EUEQ-AD',
-        description: 'Europe (Andorra) Earthquake',
-        attached: false,
-        overridden: false,
-        targetRaps: [{
-          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-          description: 'European Earthquake, Risklink v11.0',
-          overridden: false,
-          selected: false,
-          reason: null,
-          resonDescribed: null,
-          attached: false,
-          pltsAttached: []
-        }]
       },
       {
         id: 'EUEQ-AT',
@@ -2152,15 +2171,6 @@ const treatySections3 = [
           xactPublicationDate: null
         }]
       }, {
-        id: 'EUEQ-AD',
-        description: 'Europe (Andorra) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }, {
         id: 'EUEQ-AT',
         description: 'Europe (Austria) Earthquake',
         overridden: false,
@@ -2231,22 +2241,7 @@ const treatySections3 = [
     divisionInfo: 'PD, BI',
     property: 'Property',
     attached: false,
-    regionPerils: [{
-      id: 'EUEQ-AD',
-      description: 'Europe (Andorra) Earthquake',
-      attached: false,
-      overridden: false,
-      targetRaps: [{
-        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-        description: 'European Earthquake, Risklink v11.0',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }]
-    },
+    regionPerils: [
       {
         id: 'EUEQ-AT',
         description: 'Europe (Austria) Earthquake',
@@ -2374,15 +2369,6 @@ const treatySections3 = [
       attached: false,
       overridden: false,
       regionPerils: [{
-        id: 'EUEQ-AD',
-        description: 'Europe (Andorra) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }, {
         id: 'EUEQ-AT',
         description: 'Europe (Austria) Earthquake',
         overridden: false,

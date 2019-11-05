@@ -192,7 +192,7 @@ export class WorkspaceService {
           },
           scopeOfCompletence: {
             data: {},
-            wsType: null,
+            wsType: null
           },
           fileBaseImport: {
             folders: null,
