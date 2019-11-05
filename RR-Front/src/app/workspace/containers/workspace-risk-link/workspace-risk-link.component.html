@@ -367,7 +367,7 @@
                           <th [ngClass]="{'select-header': col.header === 'selected'}" *ngIf="col.header === 'Imported'">
 
                           </th>
-                          <th *ngIf="col.header !== 'selected' && col.header !== 'Imported'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
+                          <th *ngIf="col.header !== 'selected'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                             <div>
                               {{col.header}}
                               <p-sortIcon style="position: absolute; float: right;"

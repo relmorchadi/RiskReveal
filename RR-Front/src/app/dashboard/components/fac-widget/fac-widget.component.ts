@@ -118,51 +118,6 @@ export class FacWidgetComponent implements OnInit {
     this.tabIndex = index;
   }
 
-/*  filterData(filter) {
-    if (filter === 'New') {
-      this.filterNew = true;
-      this.filterCurrent = false;
-      this.filterArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterNew = false;
-      this.filterCurrent = true;
-      this.filterArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterNew = false;
-      this.filterCurrent = false;
-      this.filterArchive = true;
-    }
-  }
-
-  filterAssignedData(filter) {
-    if (filter === 'New') {
-      this.filterAssignedNew = true;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = true;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = true;
-    }
-  }
-
-
-  applyFiltersAssigned(data) {
-    let filteredData = [...data];
-    if (this.filterAssignedCurrent) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
-    } else if (this.filterAssignedNew) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
-    } else if (this.filterAssignedArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
-    }
-    return filteredData;
-  }*/
-
   applyFilters(data) {
     let filteredData = [...(data || [])];
     if (this.filterCurrent) {
@@ -170,7 +125,7 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'Superseded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+      filteredData = _.filter(filteredData, item => item.carStatus !== 'In Progress' && item.carStatus !== 'New');
     }
     return filteredData;
   }

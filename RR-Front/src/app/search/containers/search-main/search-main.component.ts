@@ -171,14 +171,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
-    })
+    });
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
-    })
+    });
     this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
       this.savedSearchVisibility = savedSearchVisibility;
       this.cdRef.detectChanges();
-    })
+    });
     this.initColumns();
   }
 
