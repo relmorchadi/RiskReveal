@@ -110,7 +110,7 @@ export class FacChartWidgetComponent implements OnInit {
         itemStyle: this.itemStyle,
       }
     ],
-    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', '#000000']
+    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
   };
 
   @ViewChild('chart') chart;
@@ -248,6 +248,10 @@ export class FacChartWidgetComponent implements OnInit {
       item => this.chartOption.series[4].data =
         [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
           fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[5].data =
+        [...this.chartOption.series[5].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Priced').length]);
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {
