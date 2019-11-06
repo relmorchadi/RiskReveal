@@ -246,6 +246,7 @@ export class WorkspaceService {
             sourceWsName: null,
             locking: null,
             selected: false,
+            projectFacSource: 'specific',
             projectType: 'fac'
           };
         });
@@ -278,7 +279,14 @@ export class WorkspaceService {
   createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.facWs.data = [payload, ...draft.facWs.data];
+      const newData = [payload, ...draft.facWs.data];
+      draft.facWs.data = _.map(newData, item => {
+        if (item.uwanalysisContractContractId === payload.uwanalysisContractContractId && item.uwanalysisContractYear === payload.uwanalysisContractYear) {
+          return ((item.carStatus === 'New' || item.carStatus === 'In Progress') && item.id !== payload.id) ? {...item, carStatus: 'Canceled'} : {...item};
+        } else {
+          return {...item};
+        }
+      });
       draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
