@@ -64,7 +64,7 @@
                                   {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - {{filterSelected()?.carStatus}}
                                 </ng-container>
                                 <ng-container *ngIf="filterSelected().projectType === 'treaty'">
-                                  {{filterSelected()?.name | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}]
+                                  {{filterSelected()?.name | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - Manual
                                 </ng-container>
                               </span>
                               <span class="d-flex">
@@ -79,7 +79,7 @@
                                 {{item?.id | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - {{item?.carStatus}}
                               </ng-container>
                               <ng-container *ngIf="item.projectType === 'treaty'">
-                                {{item?.name | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}]
+                                {{item?.name | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - Manual
                               </ng-container>
                             </li>
                           </ul>
