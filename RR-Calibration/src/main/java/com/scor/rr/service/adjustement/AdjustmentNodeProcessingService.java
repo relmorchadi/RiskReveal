@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -172,9 +174,35 @@ public class AdjustmentNodeProcessingService {
 //            throw new com.scor.rr.exceptions.RRException(PLT_NOT_FOUND,1);
 //        }
 //    }
-    public AdjustmentNodeProcessingEntity adjustPLTsInThread(Integer nodeId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
+        log.info("------ begin thread processing ------");
+        AdjustmentThreadEntity thread = adjustmentThreadRepository.findById(threadId).get();
+        if (thread == null) {
+            log.info("------ thread null, wrong ------");
+            return null;
+        }
+        List<AdjustmentNodeEntity> adjustmentNodes = adjustmentNodeRepository.findByThread(thread);
+        if (adjustmentNodes == null || adjustmentNodes.isEmpty()) {
+            log.info("------ adjustmentNodes null or empty, wrong ------");
+            return null;
+        }
 
-        return null;
+        // sort adjustmentNodes by node order from 0 to n
+        adjustmentNodes.sort(
+                Comparator.comparing(this::findOrderOfNode));
+        AdjustmentNodeProcessingEntity processing = null;
+        for (AdjustmentNodeEntity node : adjustmentNodes) {
+            if (node.getAdjustmentCategory() != null) { // not take into account Pure and Final node
+                processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
+            }
+        }
+        return processing.getAdjustedPLT();
+    }
+
+    public Integer findOrderOfNode(AdjustmentNodeEntity node) {
+        log.info("------ findOrderOfNode ------");
+        AdjustmentNodeOrderEntity nodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeId(node.getAdjustmentNodeId());
+        return nodeOrder.getOrderNode();
     }
 
     public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId) throws RRException {
@@ -226,7 +254,6 @@ public class AdjustmentNodeProcessingService {
                 log.info("------ adjustmentNodeOrderParent null, no input PLT for adjustment ------");
                 return null;
             }
-
             AdjustmentNodeProcessingEntity nodeProcessingParent = adjustmentNodeProcessingRepository.findByAdjustmentNodeId(adjustmentNodeOrderParent.getAdjustmentNode().getAdjustmentNodeId());
             inputPLT = nodeProcessingParent.getAdjustedPLT();
         }
