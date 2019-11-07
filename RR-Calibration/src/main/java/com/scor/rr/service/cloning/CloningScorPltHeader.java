@@ -98,7 +98,7 @@ public class CloningScorPltHeader {
                 List<AdjustmentNodeEntity> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
                 if (nodeEntities != null) {
                     for (AdjustmentNodeEntity adjustmentNodeCloned : nodeEntities) {
-                        adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeCloned.getAdjustmentNodeId(), threadCloned.getAdjustmentThreadId(), adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(), adjustmentNodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning().getAdjustmentNodeId()).getOrderNode()));
+                        adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeCloned.getAdjustmentNodeId(), threadCloned.getAdjustmentThreadId(), adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(), adjustmentNodeCloned.getAdjustmentNodeCloning().getAdjustmentNodeId()).getOrderNode()));
                     }
                     processingService.cloneAdjustmentNodeProcessing(nodeEntities, threadParent, threadCloned);
                     return scorPltHeaderCloned;

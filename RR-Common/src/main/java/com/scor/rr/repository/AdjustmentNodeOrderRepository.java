@@ -17,10 +17,10 @@ public interface AdjustmentNodeOrderRepository extends JpaRepository<AdjustmentN
 
     AdjustmentNodeOrderEntity getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadIdAndOrderNode(int adjustmentThread_adjustmentThreadId, Integer orderNode);
 
-    @Query("select m from AdjustmentNodeOrderEntity where m.adjustmentNodeId = :adjustmentNodeId")
+    @Query("select m from AdjustmentNodeOrderEntity m where m.adjustmentNode.adjustmentNodeId = :adjustmentNodeId")
     AdjustmentNodeOrderEntity findByAdjustmentNodeId(int adjustmentNodeId);
 
-    @Query("select m from AdjustmentNodeOrderEntity where m.adjustmentThread.id = :threadId and m.order = :order")
+    @Query("select c from AdjustmentNodeOrderEntity c where c.adjustmentThread.adjustmentThreadId = :threadId and c.orderNode = :order")
     AdjustmentNodeOrderEntity findByOrderAndThreadId(@Param("threadId") Integer threadId, @Param("order") Integer order);
 
     List<AdjustmentNodeOrderEntity> getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadId(int adjustmentThreadId);

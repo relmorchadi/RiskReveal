@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.io.Serializable;
@@ -13,18 +13,18 @@ public class AdjustmentParameterRequest implements Serializable {
     private List<PEATData> peatData;
     private Integer pltHeaderInput;
     private Integer nodeId;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
 
     public AdjustmentParameterRequest() {
     }
 
-    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<AdjustmentReturnPeriodBending> returnPeriodBendings) {
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
         this.pltHeaderInput = pltHeaderInput;
         this.nodeId = adjustmentNodeId;
-        this.adjustmentReturnPeriodBendings = returnPeriodBendings;
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public double getLmf() {
@@ -67,11 +67,11 @@ public class AdjustmentParameterRequest implements Serializable {
         this.nodeId = nodeId;
     }
 
-    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
-        return adjustmentReturnPeriodBendings;
+    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandings() {
+        return adjustmentReturnPeriodBandings;
     }
 
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    public void setAdjustmentReturnPeriodBandings(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 }

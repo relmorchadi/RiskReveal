@@ -181,7 +181,7 @@ public class AdjustmentNodeProcessingService {
             log.info("------ thread null, wrong ------");
             return null;
         }
-        List<AdjustmentNodeEntity> adjustmentNodes = adjustmentNodeRepository.findByThread(thread);
+        List<AdjustmentNodeEntity> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
         if (adjustmentNodes == null || adjustmentNodes.isEmpty()) {
             log.info("------ adjustmentNodes null or empty, wrong ------");
             return null;

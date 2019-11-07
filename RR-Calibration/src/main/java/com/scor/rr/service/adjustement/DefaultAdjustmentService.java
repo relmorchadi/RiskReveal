@@ -36,7 +36,7 @@ public class DefaultAdjustmentService {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    AdjustmentnodeRepository adjustmentnodeRepository;
+    AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
     DefaultAdjustmentRegionPerilService defaultAdjustmentRegionPerilService;

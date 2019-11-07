@@ -5,7 +5,6 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
@@ -37,7 +36,7 @@ public class AdjustmentNodeService {
     private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeService.class);
 
     @Autowired
-    private AdjustmentnodeRepository adjustmentnodeRepository;
+    private AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
     private AdjustmentBasisRepository adjustmentBasisRepository;
@@ -78,15 +77,15 @@ public class AdjustmentNodeService {
     //TODO: implementation for updating node
 
     public AdjustmentNodeEntity findOne(Integer id){
-        return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
+        return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
     }
 
     public List<AdjustmentNodeEntity> findAll(){
-        return adjustmentnodeRepository.findAll();
+        return adjustmentNodeRepository.findAll();
     }
 
-    public List<AdjustmentNodeEntity> findByThread(Integer threadId){
-        return adjustmentnodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
+    public List<AdjustmentNodeEntity> findByThread(Integer threadId){ // crazy ?
+        return adjustmentNodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
                 adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
                 .collect(Collectors.toList());
     }
@@ -95,7 +94,7 @@ public class AdjustmentNodeService {
         AdjustmentNodeEntity adjustmentNodeEntity = findOne(nodeId);
         deleteParameterNode(nodeId);
         nodeOrderService.deleteByNodeId(adjustmentNodeEntity.getAdjustmentNodeId(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-        adjustmentnodeRepository.delete(adjustmentNodeEntity);
+        adjustmentNodeRepository.delete(adjustmentNodeEntity);
     }
 
     public AdjustmentNodeEntity createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
@@ -104,7 +103,7 @@ public class AdjustmentNodeService {
         Double lmf = null;
         Double rpmf = null;
         List<PEATData> peatData = null; //todo
-        List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings = null; //todo
+        List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings = null; //todo
         DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
         if (defaultRetPerBandingParamsEntity != null) {
             if (defaultRetPerBandingParamsEntity.getLmf() != null) {
@@ -125,7 +124,7 @@ public class AdjustmentNodeService {
                 rpmf,
                 peatData,
                 adjustmentThreadEntity.getFinalPLT().getPltHeaderId(),
-                adjustmentReturnPeriodBendings);
+                adjustmentReturnPeriodBandings);
         return save(adjustmentNodeRequest);
     }
 
@@ -150,7 +149,7 @@ public class AdjustmentNodeService {
                             deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
                             adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNodeId(),adjustmentNodeRequest.getSequence(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
                         }
-                        adjustmentNodeEntity = adjustmentnodeRepository.save(adjustmentNodeEntity);
+                        adjustmentNodeEntity = adjustmentNodeRepository.save(adjustmentNodeEntity);
                         log.info(" -----  Saving Parameter for Node ----------");
                         if(adjustmentNodeRequest.getAdjustmentNodeId() == 0) {
                             nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
@@ -160,7 +159,7 @@ public class AdjustmentNodeService {
                                         adjustmentNodeRequest.getPeatData(),
                                         0,
                                         0,
-                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings())) !=null ) {
+                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBandings())) !=null ) {
                             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PARAMETER_NOT_FOUND,1);
                         }
                         return adjustmentNodeEntity;
@@ -188,14 +187,14 @@ public class AdjustmentNodeService {
     }
 
     public AdjustmentNodeEntity getAdjustmentNode(Integer nodeId) {
-        return adjustmentnodeRepository.getOne(nodeId);
+        return adjustmentNodeRepository.getOne(nodeId);
     }
 
     private Supplier saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("Linear adjustment");
             if(parameterRequest.getLmf()!=0) {
-                if(parameterRequest.getRpmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                if(parameterRequest.getRpmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("Warning : Parameter redundant");
                 }
                 adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(), node));
@@ -209,7 +208,7 @@ public class AdjustmentNodeService {
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("{}",EEFFrequency.getValue());
             if(parameterRequest.getRpmf() != 0) {
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("Warning : Parameter redundant");
                 }
                 adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(), node));
@@ -221,7 +220,7 @@ public class AdjustmentNodeService {
             }
         } else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
             if(parameterRequest.getPeatData() != null) {
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("Warning : Parameter redundant");
                 }
                 log.info("{}", NonLinearEventDriven.getValue());
@@ -235,7 +234,7 @@ public class AdjustmentNodeService {
         }
         else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             if(parameterRequest.getPeatData() != null) {
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("Warning : Parameter redundant");
                 }
                 log.info("{}",NONLINEARRETURNPERIOD.getValue());
@@ -249,11 +248,11 @@ public class AdjustmentNodeService {
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("{}",NONLINEARRETURNEVENTPERIOD.getValue());
-            if(parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
-                for (AdjustmentReturnPeriodBending periodBanding : parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                    periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
+            if(parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+                for (AdjustmentReturnPeriodBandingParameterEntity periodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
+                    periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getFactor(), node));
                 }
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("Warning : Parameter redundant");
                 }
                 log.info(" ----- success  Saving Parameter for Node ----------");
@@ -281,14 +280,14 @@ public class AdjustmentNodeService {
     }
 
     public List<AdjustmentNodeEntity> cloneNode(AdjustmentThreadEntity threadClone, AdjustmentThreadEntity threadParent) {
-        List<AdjustmentNodeEntity> nodeEntities = adjustmentnodeRepository.getAdjustmentNodeEntitiesByAdjustmentThread(threadParent);
+        List<AdjustmentNodeEntity> nodeEntities = adjustmentNodeRepository.findByAdjustmentThread(threadParent);
         if(nodeEntities != null) {
             List<AdjustmentNodeEntity> nodeEntitiesCloned = new ArrayList<>();
             for (AdjustmentNodeEntity nodeParent : nodeEntities) {
                 AdjustmentNodeEntity nodeCloned = new AdjustmentNodeEntity(nodeParent);
-                nodeCloned.setAdjustmentNodeByFkAdjustmentNodeIdCloning(nodeParent);
+                nodeCloned.setAdjustmentNodeCloning(nodeParent);
                 nodeCloned.setAdjustmentThread(threadClone);
-                nodeEntitiesCloned.add(adjustmentnodeRepository.save(nodeCloned));
+                nodeEntitiesCloned.add(adjustmentNodeRepository.save(nodeCloned));
             }
             return nodeEntitiesCloned;
         }

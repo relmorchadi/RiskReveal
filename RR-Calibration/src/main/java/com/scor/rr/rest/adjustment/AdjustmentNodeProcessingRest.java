@@ -1,6 +1,7 @@
 package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.AdjustmentNodeProcessingEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.exceptions.RRException;
@@ -35,7 +36,7 @@ public class AdjustmentNodeProcessingRest {
     }
 
     @PostMapping("adjustThread")
-    public AdjustmentNodeProcessingEntity adjustPLTsInThread(@RequestBody Integer threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(@RequestBody Integer threadId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTsInThread(threadId);
 
     }
