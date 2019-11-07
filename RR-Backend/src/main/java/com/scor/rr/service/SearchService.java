@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -183,26 +184,40 @@ public class SearchService {
         ).collect(Collectors.toList());
     }
 
-    public Object saveSearch(SearchType searchType, List<SearchItem> items) {
+    public Object saveSearch(SearchType searchType, List<SearchItem> items, Integer userId) {
         /** @TODO: Make it user Specific **/
 
         if (searchType.equals(SearchType.FAC)) {
             return this.saveFacSearch(items);
         } else if (searchType.equals(SearchType.TREATY)) {
-            return this.saveTreatySearch(items);
+            return this.saveTreatySearch(items, userId);
         } else {
             throw new RuntimeException("Unsupported Search Type" + searchType);
         }
     }
 
-    private TreatySearch saveTreatySearch(List<SearchItem> items) {
-        TreatySearch treatySearch = this.treatySearchRepository.save(new TreatySearch());
-        List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
-        treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
-        return treatySearch;
+    private TreatySearch saveTreatySearch(List<SearchItem> items, Integer userId) {
+
+        if( items.isEmpty() ) {
+
+            if(userId != null) {
+
+                TreatySearch treatySearch = new TreatySearch();
+                this.treatySearchRepository.saveAndFlush(treatySearch);
+                List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
+                treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
+                return treatySearch;
+
+            } else throw new RuntimeException("No userID was Provided");
+
+        }
+
+        return null;
+
     }
 
     private FacSearch saveFacSearch(List<SearchItem> items) {
+        //TODO
         FacSearch facSearch= this.facSearchRepository.save(new FacSearch());
         List<FacSearchItem> facSearchItems= items.stream().map(item -> new FacSearchItem(item, facSearch.getId())).collect(toList());
         facSearch.setItems(this.facSearchItemRepository.saveAll(facSearchItems));
@@ -210,16 +225,18 @@ public class SearchService {
     }
 
 
-    public List<?> getSavedSearches(SearchType searchType) {
-        /** @TODO: Make it user Specific **/
+    public List<?> getSavedSearches(SearchType searchType, Integer userId) {
 
-        if(searchType.equals(SearchType.FAC))
-            return facSearchRepository.findAll();
-        else if (searchType.equals(SearchType.TREATY))
-            return treatySearchRepository.findAll();
-        else {
-            throw new RuntimeException("Unsupported Search Type" + searchType);
-        }
+        if( userId != null ) {
+            if(searchType.equals(SearchType.FAC))
+                return facSearchRepository.findAllByUserId(userId);
+            else if (searchType.equals(SearchType.TREATY))
+                return treatySearchRepository.findAllByUserId(userId);
+            else {
+                throw new RuntimeException("Unsupported Search Type" + searchType);
+            }
+        } else throw new RuntimeException("No userID was Provided");
+        
     }
 
     public void deleteSavedSearch(SearchType searchType, Long id) {
