@@ -8,11 +8,11 @@ import java.util.Objects;
 public class AdjustmentScalingParameterEntity {
     private int adjustmentScalingParameterId;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling;
+    private AdjustmentNodeEntity adjustmentNode;
 
-    public AdjustmentScalingParameterEntity(double factor, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling) {
+    public AdjustmentScalingParameterEntity(double factor, AdjustmentNodeEntity adjustmentNode) {
         this.factor = factor;
-        this.adjustmentNodeByFkAdjustmentNodeScaling = adjustmentNodeByFkAdjustmentNodeScaling;
+        this.adjustmentNode = adjustmentNode;
     }
 
     public AdjustmentScalingParameterEntity() {
@@ -56,11 +56,11 @@ public class AdjustmentScalingParameterEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeScaling() {
-        return adjustmentNodeByFkAdjustmentNodeScaling;
+    public AdjustmentNodeEntity getAdjustmentNode() {
+        return adjustmentNode;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNodeScaling(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling) {
-        this.adjustmentNodeByFkAdjustmentNodeScaling = adjustmentNodeByFkAdjustmentNodeScaling;
+    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+        this.adjustmentNode = adjustmentNode;
     }
 }

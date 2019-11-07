@@ -15,7 +15,7 @@ public class AdjustmentNodeEntity {
     private AdjustmentTypeEntity adjustmentType;
     private Boolean capped;
     private String userNarrative;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning;
+    private AdjustmentNodeEntity adjustmentNodeCloning;
 
 
     @ManyToOne
@@ -53,8 +53,6 @@ public class AdjustmentNodeEntity {
         this.adjustmentType = other.adjustmentType;
         this.adjustmentState = other.adjustmentState;
     }
-
-
 
     @Basic
     @Column(name = "Capped")
@@ -132,13 +130,13 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeIdCloning() {
-        return adjustmentNodeByFkAdjustmentNodeIdCloning;
+    @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId", insertable = false, updatable = false)
+    public AdjustmentNodeEntity getAdjustmentNodeCloning() {
+        return adjustmentNodeCloning;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNodeIdCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning) {
-        this.adjustmentNodeByFkAdjustmentNodeIdCloning = adjustmentNodeByFkAdjustmentNodeIdCloning;
+    public void setAdjustmentNodeCloning(AdjustmentNodeEntity adjustmentNodeCloning) {
+        this.adjustmentNodeCloning = adjustmentNodeCloning;
     }
 
     @ManyToOne

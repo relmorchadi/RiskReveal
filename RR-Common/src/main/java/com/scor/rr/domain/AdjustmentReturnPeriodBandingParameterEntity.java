@@ -9,12 +9,12 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     private int adjustmentReturnPeriodBandingParameterId;
     private double returnPeriod;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId;
+    private AdjustmentNodeEntity adjustmentNode;
 
-    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
+    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNodeEntity adjustmentNode) {
         this.returnPeriod = returnPeriod;
         this.factor = factor;
-        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
+        this.adjustmentNode = adjustmentNode;
     }
 
     public AdjustmentReturnPeriodBandingParameterEntity() {
@@ -74,11 +74,11 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeId() {
-        return adjustmentNodeByFkAdjustmentNodeId;
+    public AdjustmentNodeEntity getAdjustmentNode() {
+        return adjustmentNode;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
-        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
+    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+        this.adjustmentNode = adjustmentNode;
     }
 }
