@@ -16,26 +16,26 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class AdjustmentScalingParameterService {
     @Autowired
-    AdjustmentScalingParameterRepository parameterRepository;
+    AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
 
     public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Integer ideNode) {
-        return parameterRepository.getAdjustmentScalingParameterByAdjustmentNodeBy(ideNode);
+        return adjustmentScalingParameterRepository.getAdjustmentScalingParameterByAdjustmentNodeBy(ideNode);
     }
 
     public AdjustmentScalingParameterEntity save(AdjustmentScalingParameterEntity parameterEntity) {
-        return parameterRepository.save(parameterEntity);
+        return adjustmentScalingParameterRepository.save(parameterEntity);
     }
 
     public void delete(Integer id) {
-        this.parameterRepository.delete(
-                this.parameterRepository.
+        this.adjustmentScalingParameterRepository.delete(
+                this.adjustmentScalingParameterRepository.
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
 
     public void deleteByNodeId(Integer nodeId) {
-        parameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeScaling_AdjustmentNodeId(nodeId);
+        adjustmentScalingParameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeScaling_AdjustmentNodeId(nodeId);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

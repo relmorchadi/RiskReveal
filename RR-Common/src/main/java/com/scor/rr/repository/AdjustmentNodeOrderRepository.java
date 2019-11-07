@@ -10,14 +10,18 @@ import java.util.List;
 
 public interface AdjustmentNodeOrderRepository extends JpaRepository<AdjustmentNodeOrderEntity,Integer> {
     @Query("select m from AdjustmentNodeEntity p inner join AdjustmentNodeOrderEntity m on p.adjustmentNodeId = m.adjustmentNode.adjustmentNodeId inner join AdjustmentThreadEntity t on t.adjustmentThreadId = m.adjustmentThread.adjustmentThreadId where t.adjustmentThreadId = :threadId and p.adjustmentNodeId = :nodeId")
-    AdjustmentNodeOrderEntity getAdjustmentOrderByThreadIdAndNodeId(@Param("threadId") Integer threadId,@Param("nodeId") Integer nodeId);
+    AdjustmentNodeOrderEntity getAdjustmentOrderByThreadIdAndNodeId(@Param("threadId") Integer threadId, @Param("nodeId") Integer nodeId);
 
     @Query("select m from AdjustmentNodeOrderEntity m inner join AdjustmentThreadEntity t on t.adjustmentThreadId = m.adjustmentThread.adjustmentThreadId where t.adjustmentThreadId = :threadId")
     List<AdjustmentNodeOrderEntity> getAdjustmentOrderByThread(@Param("threadId") Integer threadId);
 
     AdjustmentNodeOrderEntity getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadIdAndOrderNode(int adjustmentThread_adjustmentThreadId, Integer orderNode);
 
-    AdjustmentNodeOrderEntity getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(int adjustmentNodeId);
+    @Query("select m from AdjustmentNodeOrderEntity where m.adjustmentNodeId = :adjustmentNodeId")
+    AdjustmentNodeOrderEntity findByAdjustmentNodeId(int adjustmentNodeId);
+
+    @Query("select m from AdjustmentNodeOrderEntity where m.adjustmentThread.id = :threadId and m.order = :order")
+    AdjustmentNodeOrderEntity findByOrderAndThreadId(@Param("threadId") Integer threadId, @Param("order") Integer order);
 
     List<AdjustmentNodeOrderEntity> getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadId(int adjustmentThreadId);
 

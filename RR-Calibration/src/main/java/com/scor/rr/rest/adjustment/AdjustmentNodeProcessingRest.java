@@ -12,20 +12,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
-@RequestMapping("api/nodeprocess")
+@RequestMapping("api/nodeProcessing")
 public class AdjustmentNodeProcessingRest {
 
     @Autowired
     AdjustmentNodeProcessingService adjustmentNodeProcessingService;
 
 
-    @PostMapping("input")
-    public AdjustmentNodeProcessingEntity saveByInputPlt(@RequestBody AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
-        return adjustmentNodeProcessingService.saveByInputPlt(adjustmentNodeProcessingRequest);
+//    @PostMapping("input")
+//    public AdjustmentNodeProcessingEntity saveByInputPlt(@RequestBody AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
+//        return adjustmentNodeProcessingService.saveByInputPlt(adjustmentNodeProcessingRequest);
+//    }
+//
+//    @PostMapping("adjusted")
+//    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(@RequestBody AdjustmentParameterRequest parameterRequest) throws RRException {
+//        return adjustmentNodeProcessingService.saveByAdjustedPlt(parameterRequest);
+//    }
+
+    @PostMapping("adjustNode")
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestBody Integer nodeId) throws RRException {
+        return adjustmentNodeProcessingService.adjustPLTPassingByNode(nodeId);
     }
 
-    @PostMapping("adjusted")
-    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(@RequestBody AdjustmentParameterRequest parameterRequest) throws RRException {
-        return adjustmentNodeProcessingService.saveByAdjustedPlt(parameterRequest);
+    @PostMapping("adjustThread")
+    public AdjustmentNodeProcessingEntity adjustPLTsInThread(@RequestBody Integer threadId) throws RRException {
+        return adjustmentNodeProcessingService.adjustPLTsInThread(threadId);
+
     }
 }
