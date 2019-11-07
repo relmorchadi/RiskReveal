@@ -596,6 +596,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       keyword,
       filter: this.filter,
       offset,
+      sort: [],
       size
     };
     this.searchService.expertModeSearch(params)

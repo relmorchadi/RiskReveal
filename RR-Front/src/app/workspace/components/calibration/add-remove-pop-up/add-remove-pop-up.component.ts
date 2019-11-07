@@ -811,6 +811,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       keyword,
       filter: this.filter,
       offset,
+      sort: [],
       size
     };
     this.searchService.expertModeSearch(params)

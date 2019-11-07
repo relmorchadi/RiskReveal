@@ -26,4 +26,8 @@ public class FavoriteWorkspace {
     @Column(name = "userId")
     private Integer userId;
 
+    @CreatedDate
+    @Column(name = "createdDate", nullable = false, updatable = false)
+    private Date createdDate;
+
 }
