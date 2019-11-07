@@ -3,12 +3,14 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.TargetBuild.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
 import com.scor.rr.service.TargetBuild.ShortCutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +50,8 @@ public class SearchResource {
     @GetMapping("workspace")
 //    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
     Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
+//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size) {
         return searchService.globalSearchWorkspaces(filter, offset, size);
     }
 
@@ -67,13 +71,33 @@ public class SearchResource {
         return  searchService.getWorkspaceDetails(workspaceId, uwy);
     }
 
+    @PostMapping
+    ResponseEntity<?> saveSearch(@RequestParam SearchType searchType, @RequestBody List<SearchItem> items) {
+        return ResponseEntity.ok(
+                searchService.saveSearch(searchType, items)
+        );
+    }
+
+    @GetMapping("saved-search")
+    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType) {
+        return ResponseEntity.ok(
+                searchService.getSavedSearches(searchType)
+        );
+    }
+
+    @DeleteMapping
+    ResponseEntity<?> deleteSavedSearch(@RequestParam SearchType searchType, @RequestParam Long id) {
+        searchService.deleteSavedSearch(searchType, id);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("fac-treaties")
-    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable){
+    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
         return searchService.getAllFacTreaties(filter, pageable);
     }
 
     @PostMapping("workspace/expert-mode")
-    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request){
+    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request) {
         return searchService.expertModeSearch(request);
     }
 
