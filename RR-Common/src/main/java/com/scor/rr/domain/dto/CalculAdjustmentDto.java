@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto;
 
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class CalculAdjustmentDto {
     double rpmf;
     boolean cap;
     List<PEATData> peatDatas;
-    List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
     String newFilePath;
 
     public String getPathToFile() {
@@ -65,12 +65,12 @@ public class CalculAdjustmentDto {
         this.peatDatas = peatDatas;
     }
 
-    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
-        return adjustmentReturnPeriodBendings;
+    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandings() {
+        return adjustmentReturnPeriodBandings;
     }
 
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    public void setAdjustmentReturnPeriodBandings(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public String getNewFilePath() {

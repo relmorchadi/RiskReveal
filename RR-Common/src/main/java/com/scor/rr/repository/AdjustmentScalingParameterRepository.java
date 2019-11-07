@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AdjustmentScalingParameterRepository extends JpaRepository<AdjustmentScalingParameterEntity,Integer> {
-    @Query("select p from AdjustmentScalingParameterEntity p inner join AdjustmentNodeEntity n on p.adjustmentNodeByFkAdjustmentNodeScaling = n where n.adjustmentNodeId = :id")
-    AdjustmentScalingParameterEntity findByNodeId(@Param("id") Integer id);
+    @Query("select p from AdjustmentScalingParameterEntity p inner join AdjustmentNodeEntity n on p.adjustmentNode = n where n.adjustmentNodeId = :nodeId")
+    AdjustmentScalingParameterEntity findByNodeId(@Param("nodeId") Integer nodeId);
 
-    void deleteByAdjustmentNodeByFkAdjustmentNodeScaling_AdjustmentNodeId(int adjustmentNodeId);
+    void deleteByAdjustmentNode_AdjustmentNodeId(int adjustmentNodeId);
 }

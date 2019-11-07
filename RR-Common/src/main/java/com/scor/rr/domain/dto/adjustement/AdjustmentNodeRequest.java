@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class AdjustmentNodeRequest {
     private Double rpmf;
     private List<PEATData> peatData;
     private Integer scorPltHeaderInput;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
 
     public AdjustmentNodeRequest() {
     }
@@ -36,7 +36,7 @@ public class AdjustmentNodeRequest {
                                  Double rpmf,
                                  List<PEATData> peatData,
                                  Integer scorPltHeaderInput,
-                                 List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+                                 List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.adjustmentNodeId = adjustmentNodeId;
         this.layer = layer;
         this.sequence = sequence;
@@ -48,7 +48,7 @@ public class AdjustmentNodeRequest {
         this.rpmf = rpmf;
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public AdjustmentNodeRequest(String layer,
@@ -60,7 +60,7 @@ public class AdjustmentNodeRequest {
                                  Integer adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
-                                 List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+                                 List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.layer = layer;
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
@@ -71,7 +71,7 @@ public class AdjustmentNodeRequest {
         this.rpmf = rpmf;
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public int getAdjustmentNodeId() {
@@ -162,12 +162,12 @@ public class AdjustmentNodeRequest {
         this.scorPltHeaderInput = scorPltHeaderInput;
     }
 
-    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
-        return adjustmentReturnPeriodBendings;
+    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandings() {
+        return adjustmentReturnPeriodBandings;
     }
 
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    public void setAdjustmentReturnPeriodBandings(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public Boolean getCapped() {

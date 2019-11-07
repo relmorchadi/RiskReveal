@@ -12,7 +12,7 @@ public class AdjustmentNodeOrderEntity {
     private AdjustmentNodeEntity adjustmentNode;
 
     @Id
-    @Column(name = "adjustmentNodeOrderId", nullable = false)
+    @Column(name = "AdjustmentNodeOrderId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentNodeOrderId() {
         return adjustmentNodeOrderId;

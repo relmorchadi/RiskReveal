@@ -50,7 +50,7 @@ public class AdjustmentNodeOrderService {
     }
 
     public AdjustmentNodeOrderEntity updateOrder(Integer nodeId,Integer sequence,Integer threadId) {
-        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(nodeId);
+        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeId(nodeId);
         List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
         orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getOrderNode)).collect(Collectors.toList());
         if(!orderEntities.isEmpty()) {
@@ -76,7 +76,7 @@ public class AdjustmentNodeOrderService {
     }
 
     void deleteByNodeId(Integer nodeId,Integer threadId) {
-        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(nodeId);
+        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeId(nodeId);
         List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
         for(int i=orderEntity.getOrderNode();i<orderEntities.size();i++){
             orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode()- 1);

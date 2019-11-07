@@ -19,7 +19,7 @@ public class AdjustmentScalingParameterService {
     AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
 
     public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Integer ideNode) {
-        return adjustmentScalingParameterRepository.getAdjustmentScalingParameterByAdjustmentNodeBy(ideNode);
+        return adjustmentScalingParameterRepository.findByNodeId(ideNode);
     }
 
     public AdjustmentScalingParameterEntity save(AdjustmentScalingParameterEntity parameterEntity) {
@@ -35,7 +35,7 @@ public class AdjustmentScalingParameterService {
     }
 
     public void deleteByNodeId(Integer nodeId) {
-        adjustmentScalingParameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeScaling_AdjustmentNodeId(nodeId);
+        adjustmentScalingParameterRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
