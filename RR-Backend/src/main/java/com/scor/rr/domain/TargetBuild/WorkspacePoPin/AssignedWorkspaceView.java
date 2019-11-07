@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "AssignedWorkspaceView", schema = "dr")
@@ -34,4 +35,7 @@ public class AssignedWorkspaceView {
 
     @Column(name = "CedantName")
     private String cedantName;
+
+    @Column(name = "createDate")
+    private Date createDate;
 }

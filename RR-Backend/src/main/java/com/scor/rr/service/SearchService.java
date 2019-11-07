@@ -6,6 +6,7 @@ import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
+import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
 import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import com.scor.rr.repository.counter.*;
 import com.scor.rr.repository.specification.VwFacTreatySpecification;
@@ -84,6 +85,9 @@ public class SearchService {
     @Autowired
     VwFacTreatySpecification vwFacTreatySpecification;
 
+    @Autowired
+    RecentWorkspaceRepository recentWorkspaceRepository;
+
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
 
@@ -139,7 +143,17 @@ public class SearchService {
         List<Project> projects = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy)).map(Workspace::getProjects)
                 .orElse(new ArrayList<>());
         return ofNullable(contracts.get(0))
-                .map(firstWs -> new WorkspaceDetailsDTO(firstWs, contracts, years, projects))
+                .map(firstWs -> {
+                    Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+
+                    if(wsOpt.isPresent()) {
+                     Workspace ws = wsOpt.get();
+
+                     this.recentWorkspaceRepository.setRecentWorkspace(ws.getWorkspaceId(), 1);
+                    }
+
+                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects);
+                })
                 .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
 
     }
