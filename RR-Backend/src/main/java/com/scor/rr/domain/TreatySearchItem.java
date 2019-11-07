@@ -2,15 +2,17 @@ package com.scor.rr.domain;
 
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "poc")
-@Data
+@Table(schema = "dr")
 @NoArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class TreatySearchItem extends SearchItem {
     private Long treatySearchId;
     public TreatySearchItem(SearchItem searchItem, Long treatySearchId){

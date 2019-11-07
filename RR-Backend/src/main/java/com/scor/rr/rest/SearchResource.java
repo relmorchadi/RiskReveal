@@ -49,8 +49,6 @@ public class SearchResource {
 
     @GetMapping("workspace")
 //    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
-//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
     Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size) {
         return searchService.globalSearchWorkspaces(filter, offset, size);
     }
@@ -72,16 +70,16 @@ public class SearchResource {
     }
 
     @PostMapping
-    ResponseEntity<?> saveSearch(@RequestParam SearchType searchType, @RequestBody List<SearchItem> items) {
+    ResponseEntity<?> saveSearch(@RequestParam SearchType searchType, @RequestBody List<SearchItem> items, @RequestBody Integer userId) {
         return ResponseEntity.ok(
-                searchService.saveSearch(searchType, items)
+                searchService.saveSearch(searchType, items, userId)
         );
     }
 
     @GetMapping("saved-search")
-    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType) {
+    ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
         return ResponseEntity.ok(
-                searchService.getSavedSearches(searchType)
+                searchService.getSavedSearches(searchType, userId)
         );
     }
 
