@@ -1,4 +1,4 @@
-package com.scor.rr.domain.TargetBuild;
+package com.scor.rr.domain.TargetBuild.Search;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
