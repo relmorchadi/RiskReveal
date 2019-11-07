@@ -1042,6 +1042,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       keyword,
       filter: this.filter,
       offset,
+      sort: [],
       size
     };
     this.searchService.expertModeSearch(params)

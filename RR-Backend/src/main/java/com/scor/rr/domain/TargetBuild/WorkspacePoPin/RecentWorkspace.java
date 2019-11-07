@@ -27,6 +27,6 @@ public class RecentWorkspace {
     private Integer userId;
 
     @CreatedDate
-    @Column(name = "lastOpened", nullable = false, updatable = false)
+    @Column(name = "lastOpened", nullable = false)
     private Date lastOpened;
 }
