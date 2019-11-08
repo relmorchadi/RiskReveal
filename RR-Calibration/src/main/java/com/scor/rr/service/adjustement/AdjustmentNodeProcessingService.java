@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -192,17 +191,15 @@ public class AdjustmentNodeProcessingService {
                 Comparator.comparing(this::findOrderOfNode));
         AdjustmentNodeProcessingEntity processing = null;
         for (AdjustmentNodeEntity node : adjustmentNodes) {
-            if (node.getAdjustmentCategory() != null) { // not take into account Pure and Final node
-                processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
-            }
+            processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
         }
-        return processing.getAdjustedPLT();
+        return processing != null ? processing.getAdjustedPLT() : null;
     }
 
     public Integer findOrderOfNode(AdjustmentNodeEntity node) {
         log.info("------ findOrderOfNode ------");
-        AdjustmentNodeOrderEntity nodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeId(node.getAdjustmentNodeId());
-        return nodeOrder.getOrderNode();
+        AdjustmentNodeOrderEntity nodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
+        return nodeOrder.getAdjustmentOrder();
     }
 
     public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId) throws RRException {
@@ -214,10 +211,10 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
 
-        if (adjustmentNode.getAdjustmentCategory() == null) {
-            log.info("------ adjustmentNode.getAdjustmentCategory() null, node is final or pure, no adjustment ------");
-            return null;
-        }
+//        if (adjustmentNode.getAdjustmentCategory() == null) {
+//            log.info("------ adjustmentNode.getAdjustmentCategory() null, node is final or pure, no adjustment ------");
+//            return null;
+//        }
 
         AdjustmentThreadEntity adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
         if (adjustmentThread == null) {
@@ -226,13 +223,13 @@ public class AdjustmentNodeProcessingService {
         }
 
         // kiem tra xem node co PLT input ?
-        AdjustmentNodeOrderEntity adjustmentNodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeId(nodeId);
+        AdjustmentNodeOrderEntity adjustmentNodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
         if (adjustmentNodeOrder == null) {
             log.info("------ adjustmentNodeOrder not found ------");
             return null;
         }
 
-        if (adjustmentNodeOrder.getOrderNode() == null) {
+        if (adjustmentNodeOrder.getAdjustmentOrder() == null) {
             log.info("------ node order = 0, no adjustment for pure node ------");
             return null;
         }
@@ -244,12 +241,12 @@ public class AdjustmentNodeProcessingService {
         }
 
         PltHeaderEntity inputPLT = null;
-        if (adjustmentNodeOrder.getOrderNode() == 1) {
+        if (adjustmentNodeOrder.getAdjustmentOrder() == 1) {
             inputPLT = pltPure;
         }
 
-        if (adjustmentNodeOrder.getOrderNode() > 1) {
-            AdjustmentNodeOrderEntity adjustmentNodeOrderParent = adjustmentNodeOrderRepository.findByOrderAndThreadId(adjustmentThread.getAdjustmentThreadId(), adjustmentNodeOrder.getOrderNode() - 1);
+        if (adjustmentNodeOrder.getAdjustmentOrder() > 1) {
+            AdjustmentNodeOrderEntity adjustmentNodeOrderParent = adjustmentNodeOrderRepository.findByAdjustmentOrderAndAdjustmentThreadAdjustmentThreadId(adjustmentThread.getAdjustmentThreadId(), adjustmentNodeOrder.getAdjustmentOrder() - 1);
             if (adjustmentNodeOrderParent == null) {
                 log.info("------ adjustmentNodeOrderParent null, no input PLT for adjustment ------");
                 return null;

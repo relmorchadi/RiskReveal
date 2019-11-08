@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentOrder", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeOrderEntity {
     private int adjustmentNodeOrderId;
-    private Integer orderNode;
+    private Integer adjustmentOrder;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentNodeEntity adjustmentNode;
 
@@ -24,12 +24,12 @@ public class AdjustmentNodeOrderEntity {
 
     @Basic
     @Column(name = "AdjustmentOrder")
-    public Integer getOrderNode() {
-        return orderNode;
+    public Integer getAdjustmentOrder() {
+        return adjustmentOrder;
     }
 
-    public void setOrderNode(Integer orderNode) {
-        this.orderNode = orderNode;
+    public void setAdjustmentOrder(Integer adjustmentOrder) {
+        this.adjustmentOrder = adjustmentOrder;
     }
 
     @Override
@@ -38,12 +38,12 @@ public class AdjustmentNodeOrderEntity {
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeOrderEntity that = (AdjustmentNodeOrderEntity) o;
         return adjustmentNodeOrderId == that.adjustmentNodeOrderId &&
-                Objects.equals(orderNode, that.orderNode);
+                Objects.equals(adjustmentOrder, that.adjustmentOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeOrderId, orderNode);
+        return Objects.hash(adjustmentNodeOrderId, adjustmentOrder);
     }
 
     @ManyToOne
@@ -68,6 +68,6 @@ public class AdjustmentNodeOrderEntity {
 
     @Override
     public String toString() {
-        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} orderNode= {" + orderNode+"}";
+        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} adjustmentOrder= {" + adjustmentOrder +"}";
     }
 }
