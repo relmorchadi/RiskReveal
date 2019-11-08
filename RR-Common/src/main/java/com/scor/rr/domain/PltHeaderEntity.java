@@ -88,10 +88,8 @@ public class PltHeaderEntity {
 
     }
 
-
-
     @Basic
-    @Column(name = "PLTTYPE", length = 255)
+    @Column(name = "PLTType", length = 255)
     public String getPltType() {
         return pltType;
     }
