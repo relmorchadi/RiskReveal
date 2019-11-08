@@ -330,7 +330,7 @@ public class AdjustmentNodeProcessingService {
     private List<PLTLossData> getLossFromPltInputAdjustment(PltHeaderEntity pltHeaderEntity) throws RRException {
         if(pltHeaderEntity != null) {
             if(pltHeaderEntity.getBinFileEntity() != null) {
-                File file = new File(pltHeaderEntity.getBinFileEntity().getPath());
+                File file = new File(pltHeaderEntity.getBinFileEntity().getPath(), pltHeaderEntity.getBinFileEntity().getFileName());
                 if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {
