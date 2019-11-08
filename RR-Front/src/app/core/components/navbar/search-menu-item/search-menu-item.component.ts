@@ -99,7 +99,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.contractFilterFormGroup.setValue({
       globalKeyword: '',
       expertModeToggle: true
-    });
+    })
   }
 
   private updateShortCuts = _.memoize((shortCuts) => {
@@ -165,8 +165,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    const expr = this.convertBadgeToExpression(this.state.badges);
-    this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr ? expr + " " + this.globalKeyword : this.globalKeyword));
+    this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
 
@@ -198,8 +197,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   convertBadgeToExpression(badges) {
     let globalExpression = "";
     let index;
+    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       index = this.searchShortCuts.findIndex(row => {
+        console.log(row, badge);
         return row.shortCutLabel == badge.key;
       });
       if(i == badges.length - 1) {
