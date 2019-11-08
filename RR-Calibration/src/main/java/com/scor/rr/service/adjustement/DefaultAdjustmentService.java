@@ -124,7 +124,7 @@ public class DefaultAdjustmentService {
     }
 
     public AdjustmentThreadEntity createDefaultThread(AdjustmentThreadEntity adjustmentThreadEntity) throws RRException {
-        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getFinalPLT().getPltHeaderId());
+        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getInitialPLT().getPltHeaderId());
         for (DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
             adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
         }

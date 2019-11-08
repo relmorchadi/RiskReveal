@@ -46,6 +46,7 @@ public class AdjustmentNodeRequest {
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
+        this.capped = capped;
     }
 
     public AdjustmentNodeRequest(Integer sequence,
@@ -67,6 +68,7 @@ public class AdjustmentNodeRequest {
         this.peatData = peatData;
         this.scorPltHeaderInput = scorPltHeaderInput;
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
+        this.capped = capped;
     }
 
     public int getAdjustmentNodeId() {

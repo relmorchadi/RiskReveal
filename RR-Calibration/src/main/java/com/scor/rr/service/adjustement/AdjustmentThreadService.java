@@ -61,7 +61,7 @@ public class AdjustmentThreadService {
         if(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
-                adjustmentThreadEntity.setFinalPLT(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
+                adjustmentThreadEntity.setInitialPLT(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
                 adjustmentThreadEntity = adjustmentthreadRepository.save(adjustmentThreadEntity);
                 if (adjustmentThreadCreationRequest.isGenerateDefaultThread()) {
                     adjustmentThreadEntity = defaultAdjustmentService.createDefaultThread(adjustmentThreadEntity);

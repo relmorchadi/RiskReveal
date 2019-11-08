@@ -123,7 +123,7 @@ public class AdjustmentNodeService {
                 lmf,
                 rpmf,
                 peatData,
-                adjustmentThreadEntity.getFinalPLT().getPltHeaderId(),
+                adjustmentThreadEntity.getInitialPLT().getPltHeaderId(),
                 adjustmentReturnPeriodBandings);
         return save(adjustmentNodeRequest);
     }
@@ -132,6 +132,7 @@ public class AdjustmentNodeService {
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest) throws RRException {
         log.info(" -----  Creating Node ----------");
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
+        adjustmentNodeEntity.setCapped(adjustmentNodeRequest.getCapped());
         if(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).isPresent()) {
             adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).get());
             log.info("Type : {}",adjustmentNodeEntity.getAdjustmentType().getType());
