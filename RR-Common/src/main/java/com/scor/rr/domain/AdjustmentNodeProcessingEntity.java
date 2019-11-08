@@ -36,7 +36,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentNode", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNode() {
         return adjustmentNode;
     }
@@ -46,7 +46,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustedPLT", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "AdjustedPLTId", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getAdjustedPLT() {
         return adjustedPLT;
     }
@@ -56,7 +56,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "InputPLT", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "InputPLTId", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getInputPLT() {
         return inputPLT;
     }

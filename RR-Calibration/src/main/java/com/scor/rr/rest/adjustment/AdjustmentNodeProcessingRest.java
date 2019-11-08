@@ -8,12 +8,10 @@ import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Service
+@RestController
 @RequestMapping("api/nodeProcessing")
 public class AdjustmentNodeProcessingRest {
 

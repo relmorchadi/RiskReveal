@@ -19,8 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -71,6 +73,8 @@ public class AdjustmentNodeProcessingService {
 
     @Autowired
     CloningScorPltHeader cloningScorPltHeader;
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
     private final static String pathbin = "src/main/resources/file/plt.bin";
 
@@ -267,7 +271,8 @@ public class AdjustmentNodeProcessingService {
         List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(inputPLT); // input lay ra List<PLTLossData>
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
-        BinFileEntity binFileEntity = savePLTFile(pltLossData); // luu file
+        String filename = "AdjustedPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".csv";
+        BinFileEntity binFileEntity = savePLTFile(pltLossData, inputPLT.getBinFileEntity().getPath(),  filename); // luu file
         if (binFileEntity != null) {
             log.info("success saving loss file for adjusted PLT");
             PltHeaderEntity adjustedPLT = new PltHeaderEntity(inputPLT); // tao plt moi
@@ -298,31 +303,28 @@ public class AdjustmentNodeProcessingService {
         adjustmentNodeProcessingRepository.delete(getProcessingByNode(nodeId));
     }
 
-    private BinFileEntity savePLTFile(List<PLTLossData> pltLossData) {
-        File file = new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv");
-        File fileWrite = null;
+    private BinFileEntity savePLTFile(List<PLTLossData> pltLossData, String filePath, String fileName) {
+        File file = new File(filePath, fileName);
         if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             try {
-                fileWrite = new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv");
-                csvpltFileWriter.write(pltLossData,fileWrite);
+                csvpltFileWriter.write(pltLossData, file);
             } catch (RRException e) {
                 e.printStackTrace();
             }
         } else {
             BinaryPLTFileWriter binpltFileWriter = new BinaryPLTFileWriter();
             try {
-                fileWrite = new File(pathbin);
-                binpltFileWriter.write(pltLossData,fileWrite);
+                binpltFileWriter.write(pltLossData, file);
 
             } catch (RRException e) {
                 e.printStackTrace();
             }
         }
         BinFileEntity binFileEntity = new BinFileEntity();
-        binFileEntity.setFileName(fileWrite.getName());
-        binFileEntity.setPath(fileWrite.getPath());
-        binFileEntity.setFqn(fileWrite.getAbsolutePath());
+        binFileEntity.setFileName(file.getName());
+        binFileEntity.setPath(file.getPath());
+        binFileEntity.setFqn(file.getAbsolutePath());
         return binfileRepository.save(binFileEntity);
     }
 
