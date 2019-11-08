@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Service
 @RequestMapping("api/nodeProcessing")
@@ -31,12 +32,12 @@ public class AdjustmentNodeProcessingRest {
 //    }
 
     @PostMapping("adjustNode")
-    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestBody Integer nodeId) throws RRException {
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestParam Integer nodeId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTPassingByNode(nodeId);
     }
 
     @PostMapping("adjustThread")
-    public PltHeaderEntity adjustPLTsInThread(@RequestBody Integer threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(@RequestParam Integer threadId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTsInThread(threadId);
 
     }
