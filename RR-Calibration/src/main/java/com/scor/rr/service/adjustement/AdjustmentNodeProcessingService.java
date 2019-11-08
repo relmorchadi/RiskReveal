@@ -11,6 +11,7 @@ import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.cloning.CloningScorPltHeader;
+import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,19 +186,35 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
         List<AdjustmentNodeEntity> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
-        if (adjustmentNodes == null || adjustmentNodes.isEmpty()) {
-            log.info("------ adjustmentNodes null or empty, wrong ------");
-            return null;
+        AdjustmentNodeProcessingEntity processing = null;
+        if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
+            adjustmentNodes.sort(
+                    Comparator.comparing(this::findOrderOfNode));
+            for (AdjustmentNodeEntity node : adjustmentNodes) {
+                processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
+            }
+        }
+        // sort adjustmentNodes by node order from 0 to n
+        PltHeaderEntity finalPLT = thread.getFinalPLT();
+        if (processing == null) {
+            log.info("------ processing null, create final plt from pure plt ------");
+            if (finalPLT == null) {
+                finalPLT = new PltHeaderEntity(thread.getInitialPLT());
+            }
+        } else {
+            if (finalPLT == null) {
+                finalPLT = new PltHeaderEntity(processing.getAdjustedPLT());
+            }
         }
 
-        // sort adjustmentNodes by node order from 0 to n
-        adjustmentNodes.sort(
-                Comparator.comparing(this::findOrderOfNode));
-        AdjustmentNodeProcessingEntity processing = null;
-        for (AdjustmentNodeEntity node : adjustmentNodes) {
-            processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
-        }
-        return processing != null ? processing.getAdjustedPLT() : null;
+        finalPLT.setPltType("Thread");
+        finalPLT.setCreatedDate(RRDateUtils.getDateNow());
+        // TODO set more properties for finalPLT
+        
+        pltHeaderRepository.save(finalPLT);
+        thread.setFinalPLT(finalPLT);
+        adjustmentThreadRepository.save(thread);
+        return finalPLT; // return final PLT
     }
 
     public Integer findOrderOfNode(AdjustmentNodeEntity node) {
@@ -215,10 +232,10 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
 
-//        if (adjustmentNode.getAdjustmentCategory() == null) {
-//            log.info("------ adjustmentNode.getAdjustmentCategory() null, node is final or pure, no adjustment ------");
-//            return null;
-//        }
+        if (adjustmentNode.getAdjustmentCategory() == null) {
+            log.info("------ adjustmentNode.getAdjustmentCategory() null, node is final or pure, no adjustment ------");
+            return null;
+        }
 
         AdjustmentThreadEntity adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
         if (adjustmentThread == null) {
