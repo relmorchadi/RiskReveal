@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpertModeFilter {
-
     String field;
     String value;
     Operator operator;
+    Long treatySearchId;
 }

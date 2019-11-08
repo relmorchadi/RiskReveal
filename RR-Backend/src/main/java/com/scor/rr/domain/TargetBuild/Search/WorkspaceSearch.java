@@ -1,4 +1,4 @@
-package com.scor.rr.domain;
+package com.scor.rr.domain.TargetBuild.Search;
 
 
 import lombok.Data;
@@ -11,13 +11,17 @@ import java.util.Date;
 
 @MappedSuperclass
 @Data
-@NoArgsConstructor
 public abstract class WorkspaceSearch {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userId;
+    private Integer userId;
+    private Integer count;
+    private String label;
 
-    @CreatedDate
-    Date savedDate;
+    WorkspaceSearch() {
+        this.count = 0;
+    }
+
 }

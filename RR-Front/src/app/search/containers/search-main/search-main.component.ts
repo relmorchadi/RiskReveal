@@ -9,7 +9,7 @@ import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
 import {
   CloseAllTagsAction,
-  CloseTagByIndexAction,
+  CloseTagByIndexAction, LoadMostUsedSavedSearch,
   saveSearch,
   toggleSavedSearch,
   UpdateBadges
@@ -162,11 +162,13 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   saveSearchPopup: boolean = false;
   searchLabel: any;
   mapTableNameToBadgeKey: any;
+  fromSavedSearch: boolean;
 
   constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     super(_router, cdRef, store);
     this.sortData = {};
+    this.fromSavedSearch= false;
   }
 
   ngOnInit() {
@@ -183,14 +185,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
-    })
+    });
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
-    })
+    });
     this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
       this.savedSearchVisibility = savedSearchVisibility;
       this.cdRef.detectChanges();
-    })
+    });
     this.initColumns();
   }
 
@@ -302,7 +304,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filter: this.filter,
       sort: this.getSortColumns(this.sortData),
       offset,
-      size: size
+      size: size,
+      fromSavedSearch: this.fromSavedSearch
     };
     this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
@@ -330,6 +333,10 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         };
 
         if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+        if(this.fromSavedSearch) {
+          this.dispatch(new LoadMostUsedSavedSearch());
+          this.fromSavedSearch = false;
+        }
         this.detectChanges();
       });
   }
@@ -411,9 +418,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   saveSearch() {
     if (this.searchContent.length > 0) {
       this.store.dispatch(new saveSearch({
-        date: new Date().toLocaleDateString(),
+        searchType: "TREATY",
         label: this.searchLabel,
-        badges: this.searchContent
+        items: this.searchContent
       }));
       this.searchLabel = null;
       this.saveSearchPopup = false;
@@ -426,6 +433,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   applySearch(search: any) {
+    this.fromSavedSearch = true;
     this.store.dispatch(new UpdateBadges(search.badges));
     this.store.dispatch(new SearchActions.SearchAction(search.badges, ''));
   }
