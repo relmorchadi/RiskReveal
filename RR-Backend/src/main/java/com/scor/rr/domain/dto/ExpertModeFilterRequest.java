@@ -15,4 +15,5 @@ public class ExpertModeFilterRequest {
     String keyword;
     Integer offset;
     Integer size;
+    Boolean fromSavedSearch;
 }
