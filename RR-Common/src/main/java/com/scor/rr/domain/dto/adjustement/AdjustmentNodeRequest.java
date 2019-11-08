@@ -8,7 +8,6 @@ import java.util.List;
 public class AdjustmentNodeRequest {
 
     private int adjustmentNodeId;
-    private String layer;
     private Integer sequence;
     private Boolean capped;
     private Integer adjustmentBasis;
@@ -25,7 +24,6 @@ public class AdjustmentNodeRequest {
     }
 
     public AdjustmentNodeRequest(int adjustmentNodeId,
-                                 String layer,
                                  Integer sequence,
                                  Boolean capped,
                                  Integer adjustmentBasis,
@@ -38,7 +36,6 @@ public class AdjustmentNodeRequest {
                                  Integer scorPltHeaderInput,
                                  List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.adjustmentNodeId = adjustmentNodeId;
-        this.layer = layer;
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
@@ -51,8 +48,7 @@ public class AdjustmentNodeRequest {
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
-    public AdjustmentNodeRequest(String layer,
-                                 Integer sequence,
+    public AdjustmentNodeRequest(Integer sequence,
                                  Boolean capped,
                                  Integer adjustmentBasis,
                                  Integer adjustmentType,
@@ -61,7 +57,6 @@ public class AdjustmentNodeRequest {
                                  Double lmf,
                                  Double rpmf,
                                  List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
-        this.layer = layer;
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
@@ -80,14 +75,6 @@ public class AdjustmentNodeRequest {
 
     public void setAdjustmentNodeId(int adjustmentNodeId) {
         this.adjustmentNodeId = adjustmentNodeId;
-    }
-
-    public String getLayer() {
-        return layer;
-    }
-
-    public void setLayer(String layer) {
-        this.layer = layer;
     }
 
     public Integer getSequence() {

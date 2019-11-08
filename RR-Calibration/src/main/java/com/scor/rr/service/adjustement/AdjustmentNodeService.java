@@ -113,7 +113,7 @@ public class AdjustmentNodeService {
                 rpmf = defaultRetPerBandingParamsEntity.getRpmf();
             }
         }
-        AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("Default",
+        AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest(
                 defaultAdjustmentNodeEntity.getSequence(),
                 defaultAdjustmentNodeEntity.getCappedMaxExposure(),
                 defaultAdjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisId(),
@@ -136,7 +136,9 @@ public class AdjustmentNodeService {
             adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).get());
             log.info("Type : {}",adjustmentNodeEntity.getAdjustmentType().getType());
             if(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).isPresent()) {
-                adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).get());
+                AdjustmentBasisEntity adjustmentBasis = adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).get();
+                adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasis);
+                adjustmentNodeEntity.setAdjustmentCategory(adjustmentBasis.getAdjustmentCategoryByFkCategoryId());
                 log.info("Basis : {}",adjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisName());
                 if(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).isPresent()) {
                     adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get());

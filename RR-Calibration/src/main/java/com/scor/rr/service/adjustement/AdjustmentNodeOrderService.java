@@ -34,15 +34,15 @@ public class AdjustmentNodeOrderService {
     }
 
     public AdjustmentNodeOrderEntity getAdjustmentOrderByThreadIdAndNodeId(Integer threadId,Integer nodeId){
-        return adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(threadId,nodeId);
+        return adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentNodeAdjustmentNodeId(threadId,nodeId);
     }
 
     public void saveNodeOrder(AdjustmentNodeOrderRequest orderRequest) {
         AdjustmentNodeOrderEntity orderEntity = new AdjustmentNodeOrderEntity();
-        if(adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(orderRequest.getAdjustmentThreadId(),orderRequest.getOrder()) == null) {
+        if(adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentNodeAdjustmentNodeId(orderRequest.getAdjustmentThreadId(),orderRequest.getOrder()) == null) {
             orderEntity.setAdjustmentNode(nodeService.getAdjustmentNode(orderRequest.getAdjustmentNodeId()));
             orderEntity.setAdjustmentThread(threadService.findOne(orderRequest.getAdjustmentThreadId()));
-            orderEntity.setOrderNode(orderRequest.getOrder());
+            orderEntity.setAdjustmentOrder(orderRequest.getOrder());
             adjustmentNodeOrderRepository.save(orderEntity);
         } else {
             throwException(ORDER_EXIST,HttpStatus.NOT_ACCEPTABLE);
@@ -50,43 +50,43 @@ public class AdjustmentNodeOrderService {
     }
 
     public AdjustmentNodeOrderEntity updateOrder(Integer nodeId,Integer sequence,Integer threadId) {
-        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeId(nodeId);
-        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
-        orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getOrderNode)).collect(Collectors.toList());
+        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
+        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(threadId);
+        orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getAdjustmentOrder)).collect(Collectors.toList());
         if(!orderEntities.isEmpty()) {
             if(orderEntities.size() != 1) {
-                if (sequence < orderEntity.getOrderNode()) {
-                    for (int i = sequence-1; i < orderEntity.getOrderNode()-1 ; i++) {
-                        orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode() + 1);
+                if (sequence < orderEntity.getAdjustmentOrder()) {
+                    for (int i = sequence-1; i < orderEntity.getAdjustmentOrder()-1 ; i++) {
+                        orderEntities.get(i).setAdjustmentOrder(orderEntities.get(i).getAdjustmentOrder() + 1);
                         adjustmentNodeOrderRepository.save(orderEntities.get(i));
                     }
                 } else {
-                    for(int i=orderEntity.getOrderNode();i<sequence;i++) {
-                            orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode()- 1);
+                    for(int i = orderEntity.getAdjustmentOrder(); i<sequence; i++) {
+                            orderEntities.get(i).setAdjustmentOrder(orderEntities.get(i).getAdjustmentOrder()- 1);
                             adjustmentNodeOrderRepository.save(orderEntities.get(i));
                     }
                 }
             }
-            orderEntity.setOrderNode(sequence);
+            orderEntity.setAdjustmentOrder(sequence);
             return adjustmentNodeOrderRepository.save(orderEntity);
             } else {
-                orderEntity.setOrderNode(sequence);
+                orderEntity.setAdjustmentOrder(sequence);
                 return adjustmentNodeOrderRepository.save(orderEntity);
             }
     }
 
     void deleteByNodeId(Integer nodeId,Integer threadId) {
-        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeId(nodeId);
-        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
-        for(int i=orderEntity.getOrderNode();i<orderEntities.size();i++){
-            orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode()- 1);
+        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
+        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(threadId);
+        for(int i = orderEntity.getAdjustmentOrder(); i<orderEntities.size(); i++){
+            orderEntities.get(i).setAdjustmentOrder(orderEntities.get(i).getAdjustmentOrder()- 1);
             adjustmentNodeOrderRepository.save(orderEntities.get(i));
         }
-        adjustmentNodeOrderRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
+        adjustmentNodeOrderRepository.deleteByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
     public void deleteByThread(Integer threadId) {
-        adjustmentNodeOrderRepository.deleteByAdjustmentThread_AdjustmentThreadId(threadId);
+        adjustmentNodeOrderRepository.deleteByAdjustmentThreadAdjustmentThreadId(threadId);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

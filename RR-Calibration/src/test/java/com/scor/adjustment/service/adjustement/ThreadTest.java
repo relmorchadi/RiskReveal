@@ -54,10 +54,10 @@ public class ThreadTest {
                 "",
                 false));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));
-        AdjustmentNodeEntity nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest("",1, false,
+        AdjustmentNodeEntity nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest(1, false,
                 1,
                 4,1,threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983,null));
-        AdjustmentNodeEntity nodeEntity2 = adjustmentNodeService.save(new AdjustmentNodeRequest("",1, false,
+        AdjustmentNodeEntity nodeEntity2 = adjustmentNodeService.save(new AdjustmentNodeRequest(1, false,
                 1,
                 4,1,threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983,null));
         List<AdjustmentNodeEntity> nodeEntities = adjustmentNodeService.findByThread(threadEntity.getAdjustmentThreadId());
