@@ -77,10 +77,10 @@
             <span class="search-history-header">SAVED SEARCH</span>
             <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
           </div>
-          <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
-            <li *ngFor="let items of state?.savedSearch;" (click)="appendSearchBadges(items)">
-              <div class="chip-container" *ngFor="let instance of items">
-                <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase" [value]="instance.value"></app-chip-tag>
+          <ul style="line-height: normal" *ngIf="state?.mostUsedSavedSearch && state?.mostUsedSavedSearch?.length > 0;else emptyRecent">
+            <li *ngFor="let item of state?.mostUsedSavedSearch;" (click)="appendSearchBadges(item?.badges)">
+              <div class="chip-container" *ngFor="let badge of item?.badges">
+                <app-chip-tag [closeStatus]="false" [key]="badge?.key | startCase" [value]="badge?.value"></app-chip-tag>
               </div>
             </li>
           </ul>

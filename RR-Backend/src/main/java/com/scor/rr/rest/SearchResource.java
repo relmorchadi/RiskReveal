@@ -1,8 +1,10 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.TargetBuild.Search.SearchItem;
 import com.scor.rr.domain.TargetBuild.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
@@ -70,9 +72,9 @@ public class SearchResource {
     }
 
     @PostMapping
-    ResponseEntity<?> saveSearch(@RequestParam SearchType searchType, @RequestBody List<SearchItem> items, @RequestBody Integer userId) {
+    ResponseEntity<?> saveSearch(@RequestBody SavedSearchRequest request) {
         return ResponseEntity.ok(
-                searchService.saveSearch(searchType, items, userId)
+                searchService.saveSearch(request)
         );
     }
 
@@ -80,6 +82,13 @@ public class SearchResource {
     ResponseEntity<?> getSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
         return ResponseEntity.ok(
                 searchService.getSavedSearches(searchType, userId)
+        );
+    }
+
+    @GetMapping("saved-search/most")
+    ResponseEntity<?> getMostUsedSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
+        return ResponseEntity.ok(
+                searchService.getMostUsedSavedSearch(searchType, userId)
         );
     }
 
@@ -102,11 +111,6 @@ public class SearchResource {
     @GetMapping("shortcuts")
     List<ShortCut> getShortCuts() {
         return this.shortCutService.getShortCuts();
-    }
-
-    @GetMapping("tesst")
-    public void test(@PageableDefault Pageable pageable){
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.scor.rr.domain;
+package com.scor.rr.domain.TargetBuild.Search;
 
 
 import lombok.Data;

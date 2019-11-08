@@ -17,6 +17,7 @@ export class SearchNavBar {
   recentSearch: any[];
   showRecentSearch: any[];
   savedSearch: any[];
+  mostUsedSavedSearch: any[];
   shortcuts: ShortCut[];
   mapTableNameToBadgeKey: any;
   sortcutFormKeysMapper: any;

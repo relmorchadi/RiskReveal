@@ -2,8 +2,10 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.TargetBuild.Project;
+import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -28,10 +29,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.reducing;
@@ -178,6 +176,25 @@ public class SearchService {
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+
+        if(request.getFromSavedSearch()) {
+            if(!request.getFilter().isEmpty()) {
+                Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
+
+                if(treatySearchId != null) {
+                    Optional<TreatySearch> treatySearchOpt = this.treatySearchRepository.findById(treatySearchId);
+
+                    if(treatySearchOpt.isPresent()) {
+                        TreatySearch treatySearch = treatySearchOpt.get();
+
+                        treatySearch.setCount(treatySearch.getCount() + 1);
+
+                        this.treatySearchRepository.saveAndFlush(treatySearch);
+                    }
+                }
+            }
+        }
+
         String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(),request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
@@ -194,25 +211,27 @@ public class SearchService {
         ).collect(Collectors.toList());
     }
 
-    public Object saveSearch(SearchType searchType, List<SearchItem> items, Integer userId) {
+    public Object saveSearch(SavedSearchRequest request) {
         /** @TODO: Make it user Specific **/
 
-        if (searchType.equals(SearchType.FAC)) {
-            return this.saveFacSearch(items);
-        } else if (searchType.equals(SearchType.TREATY)) {
-            return this.saveTreatySearch(items, userId);
+        if (request.getSearchType().equals(SearchType.FAC)) {
+            return this.saveFacSearch(request.getItems());
+        } else if (request.getSearchType().equals(SearchType.TREATY)) {
+            return this.saveTreatySearch(request.getItems(), request.getUserId(), request.getLabel());
         } else {
-            throw new RuntimeException("Unsupported Search Type" + searchType);
+            throw new RuntimeException("Unsupported Search Type" + request.getSearchType());
         }
     }
 
-    private TreatySearch saveTreatySearch(List<SearchItem> items, Integer userId) {
+    private TreatySearch saveTreatySearch(List<SearchItem> items, Integer userId, String label) {
 
-        if( items.isEmpty() ) {
+        if( !items.isEmpty() ) {
 
             if(userId != null) {
 
                 TreatySearch treatySearch = new TreatySearch();
+                treatySearch.setLabel(label);
+                treatySearch.setUserId(userId);
                 this.treatySearchRepository.saveAndFlush(treatySearch);
                 List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
                 treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
@@ -246,7 +265,19 @@ public class SearchService {
                 throw new RuntimeException("Unsupported Search Type" + searchType);
             }
         } else throw new RuntimeException("No userID was Provided");
-        
+
+    }
+
+    public List<?> getMostUsedSavedSearch(SearchType searchType, Integer userId) {
+        if( userId != null ) {
+            if(searchType.equals(SearchType.FAC))
+                return facSearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+            else if (searchType.equals(SearchType.TREATY))
+                return treatySearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+            else {
+                throw new RuntimeException("Unsupported Search Type" + searchType);
+            }
+        } else throw new RuntimeException("No userID was Provided");
     }
 
     public void deleteSavedSearch(SearchType searchType, Long id) {
