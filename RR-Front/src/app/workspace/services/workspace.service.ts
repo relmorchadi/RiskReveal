@@ -53,6 +53,7 @@ export class WorkspaceService {
       inceptionDate: 1546297200000,
       expiryDate: 1577746800000,
       subsidiaryLedgerId: '2',
+      contractSource: 'ForeWriter',
       treatySections: [
         'CFS-SCOR REASS.-MADRID RCC000022/ 1'
       ],
@@ -191,11 +192,12 @@ export class WorkspaceService {
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,
-            activeAddBasket: false
+            activeAddBasket: false,
+            importPLTs: {},
           },
           scopeOfCompletence: {
             data: {},
-            wsType: null,
+            wsType: null
           },
           fileBaseImport: {
             folders: null,
@@ -246,6 +248,7 @@ export class WorkspaceService {
             sourceWsName: null,
             locking: null,
             selected: false,
+            projectFacSource: 'specific',
             projectType: 'fac'
           };
         });
@@ -278,7 +281,14 @@ export class WorkspaceService {
   createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.facWs.data = [payload, ...draft.facWs.data];
+      const newData = [payload, ...draft.facWs.data];
+      draft.facWs.data = _.map(newData, item => {
+        if (item.uwanalysisContractContractId === payload.uwanalysisContractContractId && item.uwanalysisContractYear === payload.uwanalysisContractYear) {
+          return ((item.carStatus === 'New' || item.carStatus === 'In Progress') && item.id !== payload.id) ? {...item, carStatus: 'Canceled'} : {...item};
+        } else {
+          return {...item};
+        }
+      });
       draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
@@ -454,7 +464,6 @@ export class WorkspaceService {
     const wsIdentifier = state.currentTab.wsIdentifier;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
-      draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
 
@@ -478,7 +487,6 @@ export class WorkspaceService {
     const state = ctx.getState();
     const wsIdentifier = state.currentTab.wsIdentifier;
     const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
-    console.log(selected);
     ctx.patchState(produce(ctx.getState(), draft => {
       if (selected.length > 0) {
         draft.content[wsIdentifier].projects = this._selectProject(

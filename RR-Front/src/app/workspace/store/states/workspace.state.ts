@@ -92,6 +92,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].workspaceType;
   }
 
+  @Selector()
+  static getSelectedProject(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -311,6 +317,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -320,6 +332,12 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  @Selector()
+  static getImportStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
@@ -909,6 +927,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasketDefault(ctx);
   }
 
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
+  }
+
   @Action(fromWS.ApplyFinancialPerspectiveAction)
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyFinancialPerspectiveAction) {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
@@ -1081,6 +1104,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadScopeCompletenessDataSuccess)
   loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+  @Action(fromWS.PublishToPricingFacProject)
+  publishToPricingFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PublishToPricingFacProject) {
+    return this.scopService.publishToPricing(ctx, payload);
   }
 
 

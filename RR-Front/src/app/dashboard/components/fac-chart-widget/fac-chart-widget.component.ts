@@ -40,7 +40,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
+      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed', 'Priced'],
       align: 'left',
       left: 10
     },
@@ -63,31 +63,9 @@ export class FacChartWidgetComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
-    visualMap: {
-      type: 'continuous',
-      dimension: 1,
-      text: ['High', 'Low'],
-      itemHeight: 200,
-      calculable: true,
-      min: 0,
-      max: 10,
-      top: 60,
-      left: 10,
-      inRange: {
-        colorLightness: [0.4, 0.8]
-      },
-      outOfRange: {
-        color: '#bbb'
-      },
-      controller: {
-        inRange: {
-          color: '#2f4554'
-        }
-      }
-    },
     series: [
       {
-        name: 'new',
+        name: 'New',
         data: [],
         type: 'bar',
         stack: 'one',
@@ -120,9 +98,16 @@ export class FacChartWidgetComponent implements OnInit {
         type: 'bar',
         stack: 'one',
         itemStyle: this.itemStyle,
+      },
+      {
+        name: 'Priced',
+        data: [],
+        type: 'bar',
+        stack: 'one',
+        itemStyle: this.itemStyle,
       }
     ],
-    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
+    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
   };
 
   @ViewChild('chart') chart;
@@ -260,6 +245,10 @@ export class FacChartWidgetComponent implements OnInit {
       item => this.chartOption.series[4].data =
         [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
           fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[5].data =
+        [...this.chartOption.series[5].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Priced').length]);
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {

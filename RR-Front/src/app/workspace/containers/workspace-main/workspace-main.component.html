@@ -60,7 +60,12 @@
                           <a nz-dropdown>
                             <span class="d-flex align-items-center">
                               <span class="dropdown-project-style">
-                                {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}]
+                                <ng-container *ngIf="filterSelected().projectType === 'fac'">
+                                  {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - {{filterSelected()?.carStatus}}
+                                </ng-container>
+                                <ng-container *ngIf="filterSelected().projectType === 'treaty'">
+                                  {{filterSelected()?.name | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - Manual
+                                </ng-container>
                               </span>
                               <span class="d-flex">
                                  <i class="pl-3 drop-icon" *ngIf="filterListProject().length > 0"
@@ -70,7 +75,12 @@
                           </a>
                           <ul style="padding:0" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
                             <li (click)="selectProject(item.id)" *ngFor="let item of filterListProject()" nz-menu-item>
-                              {{item.id | trimFormat}} [{{item.projectId | trimSecondaryFormat}}]
+                              <ng-container *ngIf="item.projectType === 'fac'">
+                                {{item?.id | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - {{item?.carStatus}}
+                              </ng-container>
+                              <ng-container *ngIf="item.projectType === 'treaty'">
+                                {{item?.name | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - Manual
+                              </ng-container>
                             </li>
                           </ul>
                         </nz-dropdown>
@@ -132,7 +142,7 @@
                     <div class="row">
                         <span style="flex: 0 0 49.333333%;"
                               class="col-7 tab-metadata-title">Contract Source :</span>
-                      <span class="col-5 tab-metadata-value">Omega</span>
+                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.contractSource}}</span>
                     </div>
                   </div>
                   <div nz-col style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row

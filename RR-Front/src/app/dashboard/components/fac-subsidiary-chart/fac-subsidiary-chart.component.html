@@ -7,7 +7,7 @@
 <div class="widget-footer">
   <div class="filter-div">
     <span class="filter-label">User</span>
-    <nz-select class="a-dropdown-small" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
+    <nz-select class="a-dropdown-small" style="width: 150px" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
       <nz-option *ngFor="let item of subsidiaryList" [nzValue]="item" [nzLabel]="item"></nz-option>
     </nz-select>
   </div>

@@ -43,93 +43,28 @@ export class CreateFacProjectPopupComponent implements OnInit {
   createUpdateProject() {
     const projectId = 'P-000' + Math.floor(Math.random() * 100000);
     let project = {...this.newProjectForm.value,
-      projectType: 'fac',
-      id: 'CAR-00' + this.facSequence,
+      projectType: 'treaty',
+      id: projectId,
       projectId,
-      lastUpdateDate: null,
-      lastUpdatedBy: null,
+      selected: false,
       requestCreationDate: new Date(),
-      requestedByFirstName: 'Nathalie',
-      requestedByFullName: 'Nathalie Dulac',
-      requestedByLastName: 'Dulac',
-      uwAnalysis: '',
-      projectFacSource: 'manual',
-      uwanalysisContractBusinessType: 'Renewal',
-      uwanalysisContractContractId: this.workspace.wsId,
-      uwanalysisContractEndorsementNumber: 0,
-      uwanalysisContractFacNumber: this.workspace.wsId,
-      uwanalysisContractInsured: '200033218 @ Insureds',
-      uwanalysisContractLabel: 'EL1400204',
-      uwanalysisContractLob: '01 @ LOBs',
-      uwanalysisContractOrderNumber: 0,
-      uwanalysisContractSector: '610 @ Sectors',
-      uwanalysisContractSubsidiary: '20 @ Subsidiaries',
       uwAnalysisProjectId: projectId,
-      uwanalysisContractYear: 2016,
       cedantName: this.workspace.cedantName,
-      contractName: 'ENNMG1800030 /ex ENEUR2800034',
-      uwAnalysisContractDate:  this.workspace.uwYear,
-      assignedAnalyst: 'Unassigned',
-      carStatus: 'New',
-      division: [
-        {
-          selected: false,
-          divisionNo: 1,
-          principal: true,
-          lob: 'Property',
-          coverage: 'PD, BI',
-          currency: 'USD'
-        },
-        {
-          selected: false,
-          divisionNo: 2,
-          principal: false,
-          lob: 'Property',
-          coverage: 'PD, BI',
-          currency: 'USD'
-        },
-        {
-          selected: false,
-          divisionNo: 3,
-          principal: false,
-          lob: 'Property',
-          coverage: 'PD, BI',
-          currency: 'USD'
-        }
-      ],
-      regionPeril: [
-        {
-          regionPerilCode: 'ACEQ-CR',
-          regionPerilDesc: 'Central America (Costa Rica) Earthquake',
-          isValidMinimumGrain: true,
-          division: '3'
-        },
-        {
-          regionPerilCode: 'ACEQ-GT',
-          regionPerilDesc: 'Central America (Guatemala) Earthquake',
-          isValidMinimumGrain: true,
-          division: '1'
-        },
-        {
-          regionPerilCode: 'ACEQ-SV',
-          regionPerilDesc: 'Central America (El Salvador) Earthquake',
-          isValidMinimumGrain: true,
-          division: '2'
-        },
-        {
-          regionPerilCode: 'AHEQ-CL',
-          regionPerilDesc: 'South America (Chile) Earthquake',
-          isValidMinimumGrain: true,
-          division: '3'
-        },
-        {
-          regionPerilCode: 'AHEQ-CO',
-          regionPerilDesc: 'South America (Colombia) Earthquake',
-          isValidMinimumGrain: true,
-          division: '2'
-        }
-      ]
+      description: null,
+      linkFlag: false,
+      postInuredFlag: false,
+      publishFlag: false,
+      pltSum: null,
+      pltThreadSum: 0,
+      regionPerilSum: 0,
+      xactSum: 0,
+      sourceProjectId: null,
+      sourceProjectName: null,
+      sourceWsId: null,
+      sourceWsName: null,
+      locking: null
     };
+    console.log(project);
 
     if (this.newProjectForm.controls.projectId.value) {
       project = {...project, linkFlag: true,

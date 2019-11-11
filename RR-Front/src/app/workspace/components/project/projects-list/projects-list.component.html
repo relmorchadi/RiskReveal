@@ -27,16 +27,16 @@
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
           <div class="d-flex justify-content-between" *ngIf="project.projectType === 'fac'">
             <div class="d-flex flex-column">
-              <span>{{project?.name }}</span>
-              <span>{{project?.projectId }}</span>
+              <span>{{project?.name | trimFormat}}</span>
+              <span>{{project?.projectId | trimFormat}}</span>
             </div>
             <div class="d-flex align-items-center">
-              <div class="car-status-temp">{{project?.carStatus}}</div>
+              <div [ngStyle]="{'background': setBackground(project?.carStatus)}" class="car-status-temp">{{project?.carStatus}}</div>
             </div>
           </div>
           <div class="d-flex flex-column" *ngIf="project.projectType !== 'fac'">
-            <span *ngIf="!project.projectType">{{project?.name}}</span>
-            <span>{{project?.projectId}}</span>
+            <span>{{project?.name}}</span>
+            <span>{{project?.projectId | trimFormat}}</span>
           </div>
         </div>
         <div class="icon-card-wrapper">
@@ -46,7 +46,7 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-              <li nz-menu-item class="contextMenu border-bottom"
+              <li nz-menu-item class="contextMenu border-bottom" *ngIf="project.projectType === 'treaty'"
                   (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})"><i
                 class="icon-trash-alt"></i>Delete
               </li>
@@ -121,7 +121,7 @@
         </div>
       </div>
       <div class="project-kpi-details pb-3">
-        <div class="project-kpi-details-title flex-align-Ws" *ngIf="project.projectType !== 'fac'">
+        <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'fac'">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
           <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</a>
@@ -136,9 +136,9 @@
             <span class="font-weight-bold">{{project?.uwAnalysis}}</span>
           </div>
         </div>
-        <p class="project-kpi-details-title" *ngIf="!project.projectType">
+        <div class="project-kpi-details-title" *ngIf="project?.projectType === 'treaty'">
           {{project?.description}}
-        </p>
+        </div>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
           <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>

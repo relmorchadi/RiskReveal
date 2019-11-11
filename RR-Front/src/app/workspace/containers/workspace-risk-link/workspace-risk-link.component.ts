@@ -1,8 +1,8 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Actions, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -18,7 +18,8 @@ import {combineLatest} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from "../../../shared/pipes/table-sort-and-filter.pipe";
 import {NotificationService} from "../../../shared/services";
-import {debounceTime} from "rxjs/operators";
+import {debounceTime, takeUntil, withLatestFrom} from "rxjs/operators";
+import {SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -91,11 +92,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getCurrentWorkspaces) ws$;
   ws: any;
 
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  selectedProject: any;
+
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
-
-  @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
   tabStatus: any;
+  wsStatus: any;
 
   @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
   listEdmRdm: any;
@@ -109,6 +112,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   portfolios: any;
   allCheckedPortolfios: boolean;
   indeterminatePortfolio: boolean;
+
+  @Select(WorkspaceState.getValidResults) validate$;
+  showPopUp = false;
 
   filterAnalysis = {};
 
@@ -138,54 +144,59 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
   ngOnInit() {
     this.serviceSubscription = [
-      this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.state$.pipe().subscribe(value => {
         this.state = _.merge({}, value);
         this.detectChanges();
       }),
-      this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.listEdmRdm$.pipe().subscribe(value => {
         this.listEdmRdm = _.merge({}, value);
         this.detectChanges();
       }),
-      this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws$.pipe().subscribe(value => {
+        this.ws = _.merge({}, value);
+        this.wsStatus = this.ws.workspaceType;
+        this.detectChanges();
+      }),
+      this.analysis$.pipe().subscribe(value => {
         this.analysis = _.merge({}, value);
         this.detectChanges();
       }),
-      this.tabStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.tabStatus = value;
-        this.detectChanges();
-      }),
-      this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.portfolios$.pipe().subscribe(value => {
         this.portfolios = _.merge({}, value);
         this.detectChanges();
       }),
-      this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.ws = _.merge({}, value);
+      this.selectedProject$.pipe().subscribe(value => {
+        this.tabStatus = _.get(value, 'projectType', null);
+        this.detectChanges();
+        if (this.wsStatus === 'fac') {
+          if (this.tabStatus === 'fac') {
+            this.dispatch([new fromWs.LoadFacDataAction()]);
+          } else if (this.tabStatus === 'treaty') {
+            this.dispatch(new fromWs.LoadRiskLinkDataAction());
+          }
+        }
       }),
-      this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+      this.route.params.pipe().subscribe(({wsId, year}) => {
         this.hyperLinksConfig = {wsId, uwYear: year};
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
-        if (this.tabStatus === 'fac') {
-          this.dispatch([new fromWs.LoadFacDataAction()]);
+        if (this.wsStatus === 'fac') {
+          if (this.tabStatus === 'fac') {
+            this.dispatch([new fromWs.LoadFacDataAction()]);
+          } else if (this.tabStatus === 'treaty') {
+            this.dispatch(new fromWs.LoadRiskLinkDataAction());
+          }
         }
         this.detectChanges();
       }),
-      this.actions$.pipe(ofActionSuccessful(fromWs.AddToBasketAction, fromWs.LoadDetailAnalysisFacAction))
-        .pipe(this.unsubscribeOnDestroy, debounceTime(500))
-        .subscribe(() => {
-          console.log(this.state.results.isValid);
-/*          if (!this.state.results.isValid) {
-            this.confirmationService.confirm({
-              message: 'You are attempting to import multiple analysis for the following region peril/division',
-              rejectVisible: false,
-              header: 'Warning',
-              icon: 'pi pi-exclamation-triangle',
-              accept: () => {
-              }
-            });
-          }*/
+      this.actions$
+        .pipe(
+          ofActionDispatched(SetCurrentTab)
+        ).subscribe(({payload}) => {
+          if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
           this.detectChanges();
-        }),
+        })
     ];
+
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
@@ -201,16 +212,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   autoLinkAnalysis() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketDefaultAction());
-    if (this.tabStatus === 'fac') {
-      this.confirmationService.confirm({
-        message: 'You are attempting to import multiple analysis for the following region peril/division',
-        rejectVisible: false,
-        header: 'Warning',
-        icon: 'pi pi-exclamation-triangle',
-        accept: () => {
-        }
-      });
-    }
+    this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      if (value !== undefined && value !== null) {
+        this.showPopUp = !value;
+      }
+    });
   }
 
   setFilterDivision() {
@@ -393,6 +399,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   displayImported() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketAction());
+    this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      if (value !== undefined && value !== null) {
+        this.showPopUp = !value;
+      }
+    });
   }
 
   getScrollableCols() {
@@ -654,5 +665,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   ngOnDestroy(): void {
     this.destroy();
+  }
+
+  importMainAction() {
+    this.dispatch(new fromWs.ImportRiskLinkMainAction());
   }
 }
