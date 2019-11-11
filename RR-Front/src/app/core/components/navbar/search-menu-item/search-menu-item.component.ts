@@ -197,10 +197,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   convertBadgeToExpression(badges) {
     let globalExpression = "";
     let index;
-    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       index = this.searchShortCuts.findIndex(row => {
-        console.log(row, badge);
         return row.shortCutLabel == badge.key;
       });
       if(i == badges.length - 1) {
