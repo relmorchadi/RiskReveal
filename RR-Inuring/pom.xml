@@ -11,7 +11,7 @@
 
     <artifactId>risk-reveal-inuring</artifactId>
     <name>Risk Reveal Inuring</name>
-    <version>${rr_version}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>

@@ -10,7 +10,7 @@
 
     <artifactId>risk-reveal-adjustment</artifactId>
     <groupId>com.scor.rr</groupId>
-    <version>${rr_version}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>Risk Reveal Calibration</name>
     <packaging>war</packaging>
 
