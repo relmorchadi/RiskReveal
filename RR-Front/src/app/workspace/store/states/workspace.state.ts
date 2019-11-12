@@ -14,6 +14,8 @@ import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
+import {ContractService} from "../../services/contract.service";
+
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -25,8 +27,11 @@ const initialState: WorkspaceModel = {
     data: Data.facWs,
     sequence: 137
   },
-  favorite: [],
-  pinned: [],
+  savedData: {
+    riskLink: {
+      edmrdmSelection: {}
+    }
+  },
   routing: '',
   loading: false
 };
@@ -38,6 +43,7 @@ const initialState: WorkspaceModel = {
 export class WorkspaceState {
 
   constructor(private wsService: WorkspaceService,
+              private contractService: ContractService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
               private riskLinkFacade: RiskLinkStateService,
@@ -46,7 +52,6 @@ export class WorkspaceState {
               private scopService: ScopeCompletenessService,
   ) {
   }
-
 
   /***********************************
    *
@@ -85,6 +90,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].workspaceType;
   }
 
+  @Selector()
+  static getSelectedProject(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -106,21 +117,6 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static getRecentWs(state: WorkspaceModel) {
-    return _.values(state.content).map(item => ({...item, selected: false}));
-  }
-
-  @Selector()
-  static getFavorite(state: WorkspaceModel) {
-    return state.favorite;
-  }
-
-  @Selector()
-  static getPinned(state: WorkspaceModel) {
-    return state.pinned;
-  }
-
-  @Selector()
   static getLastWorkspace(state: WorkspaceModel) {
     return _.last(_.values(state.content));
   }
@@ -130,6 +126,18 @@ export class WorkspaceState {
   @Selector()
   static getCurrentWS(state: WorkspaceModel) {
     return state.content[state.currentTab.wsIdentifier];
+  }
+
+  /***********************************
+   *
+   * Contract Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getContract(state: WorkspaceModel) {
+    const wsIdentifier =  state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].contract;
   }
 
   /***********************************
@@ -180,12 +188,6 @@ export class WorkspaceState {
   static getSummary(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.pltDetails.summary);
   }
-
-  /***********************************
-   *
-   * Dashboard Selectors
-   *
-   ***********************************/
 
   /***********************************
    *
@@ -269,8 +271,7 @@ export class WorkspaceState {
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
     };
   }
 
@@ -282,8 +283,7 @@ export class WorkspaceState {
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
     };
   }
 
@@ -300,6 +300,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -309,6 +315,12 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  @Selector()
+  static getImportStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
@@ -339,22 +351,20 @@ export class WorkspaceState {
 
   /***********************************
    *
-   * Scope And Completeness Selectors 
+   * Scope And Completeness Selectors
    *
    ***********************************/
 
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence.data;
+    return state.content[wsIdentifier].scopeOfCompletence;
   }
 
   static getPltsForScopeCompleteness(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
   }
-
-
 
   /***********************************
    *
@@ -432,26 +442,6 @@ export class WorkspaceState {
     return this.wsService.markWsAsFavorite(ctx, payload);
   }
 
-  @Action(fromWS.MarkFacWsAsFavorite)
-  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkFacWsAsFavorite) {
-    this.wsService.markFacWsAsFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonFavorite)
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
-    return this.wsService.markWsAsNonFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsPinned)
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsPinned) {
-    return this.wsService.markWsAsPinned(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonPinned)
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonPinned) {
-    return this.wsService.markWsAsNonPinned(ctx, payload);
-  }
-
   @Action(fromWS.ToggleProjectSelection)
   toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection) {
     return this.wsService.toggleProjectSelection(ctx, payload);
@@ -463,11 +453,36 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
+  @Action(fromWS.AddNewFacProject)
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
+    return this.wsService.addNewFacProject(ctx, payload);
+  }
+
   @Action(fromWS.DeleteProject)
   deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
     return this.wsService.deleteProject(ctx, payload);
   }
 
+  @Action(fromWS.DeleteFacProject)
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteFacProject) {
+    return this.wsService.deleteFacProject(ctx, payload);
+  }
+
+  /***********************************
+   *
+   * Contract Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadContractAction)
+  loadContractData(ctx: StateContext<WorkspaceModel>) {
+    this.contractService.loadContractData(ctx);
+  }
+
+  @Action(fromWS.ToggleFacDivisonAction)
+  toggleFacDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFacDivisonAction) {
+    this.contractService.toggleFacDivision(ctx, payload);
+  }
 
   /***********************************
    *
@@ -543,12 +558,12 @@ export class WorkspaceState {
 
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    //return this.pltStateService.createUserTagSuccess(ctx, payload);
+    // return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    // return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -559,7 +574,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    // return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -569,18 +584,9 @@ export class WorkspaceState {
 
   @Action(fromPlt.deletePltSucess)
   deletePltSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePltSucess) {
-
-    const {
-      pltId
-    } = payload;
-
-    const {
-      // data
-    } = ctx.getState();
-
-    /*
-     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
-       .pipe()*/
+    const {pltId} = payload;
+    // const { data} = ctx.getState();
+    /*return of(JSON.parse(localStorage.getItem('deletedPlts')) || {}).pipe()*/
   }
 
   @Action(fromPlt.editTag)
@@ -628,8 +634,6 @@ export class WorkspaceState {
    * Calibration Actions
    *
    ***********************************/
-
-
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
@@ -870,6 +874,16 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasket(ctx);
   }
 
+  @Action(fromWS.AddToBasketDefaultAction)
+  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
+  }
+
   @Action(fromWS.ApplyFinancialPerspectiveAction)
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyFinancialPerspectiveAction) {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
@@ -895,6 +909,16 @@ export class WorkspaceState {
     this.riskLinkFacade.saveEditPeqt(ctx, payload);
   }
 
+  @Action(fromWS.SaveEDMAndRDMSelectionAction)
+  saveEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.saveEDMAndRDMSelection(ctx);
+  }
+
+  @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
+  synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
+    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);
@@ -905,9 +929,19 @@ export class WorkspaceState {
     this.riskLinkFacade.updateStatusLink(ctx, payload);
   }
 
+  @Action(fromWS.UpdateAnalysisAndPortfolioData)
+  updateAnalysisAndPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.UpdateAnalysisAndPortfolioData) {
+    this.riskLinkFacade.updateAnalysisAndPortfolioData(ctx, payload);
+  }
+
   @Action(fromWS.RemoveFinancialPerspectiveAction)
   removeFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFinancialPerspectiveAction) {
     this.riskLinkFacade.removeFinancialPerspective(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveEDMAndRDMSelectionAction)
+  removeEDMAndRDMSeletion(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.removeEDMAndRDMSelection(ctx);
   }
 
   @Action(fromWS.DeleteFromBasketAction)
@@ -945,6 +979,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadBasicAnalysisFac(ctx, payload);
   }
 
+  @Action(fromWS.LoadBasicAnalysisFacPerDivisionAction)
+  loadBasicAnalysisPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacPerDivisionAction) {
+    this.riskLinkFacade.loadBasicAnalysisFacPerDivision(ctx, payload);
+  }
+
   @Action(fromWS.LoadDetailAnalysisFacAction)
   loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDetailAnalysisFacAction) {
     return this.riskLinkFacade.loadDetailAnalysisFac(ctx, payload);
@@ -953,6 +992,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadPortfolioFacAction)
   loadPortfolioFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacAction) {
     return this.riskLinkFacade.loadBasicPortfolioFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadPortfolioFacPerDivisionAction)
+  loadPortfolioFacPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacPerDivisionAction) {
+    this.riskLinkFacade.loadBasicPortfolioFacPerDivision(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
@@ -964,16 +1008,6 @@ export class WorkspaceState {
   loadRiskLinkPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkPortfolioDataAction) {
     return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
-
-/*  @Action(fromWS.LoadPortfolioForLinkingAction)
-  loadPortfolioForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioForLinkingAction) {
-    return this.riskLinkFacade.loadPortfolioForLinking(ctx, payload);
-  }
-
-  @Action(fromWS.LoadAnalysisForLinkingAction)
-  loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAnalysisForLinkingAction) {
-    return this.riskLinkFacade.loadAnalysisForLinking(ctx, payload);
-  }*/
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
@@ -1087,7 +1121,7 @@ export class WorkspaceState {
     return this.inuringService.addInuringPackage(ctx, payload);
   }
 
-  /*@Action(fromInuring.AddInputNode)
+  @Action(fromInuring.AddInputNode)
   AddInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInputNode) {
     return this.inuringService.AddInputNode(ctx, payload);
   }
@@ -1098,7 +1132,7 @@ export class WorkspaceState {
   @Action(fromInuring.DeleteInputNode)
   DeleteInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInputNode) {
     return this.inuringService.DeleteInputNode(ctx, payload);
-  }*/
+  }
 
   @Action(fromInuring.EditInuringPackage)
   editInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInuringPackage) {

@@ -99,7 +99,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.contractFilterFormGroup.setValue({
       globalKeyword: '',
       expertModeToggle: true
-    })
+    });
   }
 
   private updateShortCuts = _.memoize((shortCuts) => {
