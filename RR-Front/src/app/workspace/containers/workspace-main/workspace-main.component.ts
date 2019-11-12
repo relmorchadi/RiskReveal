@@ -137,13 +137,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
-    this.dispatch([new fromWs.MarkWsAsFavorite({wsIdentifier}), new fromHeader.AddWsToFavorite({
-      wsId,
-      uwYear,
-      workspaceName,
-      programName,
-      cedantName
-    })]);
+    this.dispatch([new fromWs.MarkWsAsFavorite({wsIdentifier})]);
   }
 
   filterSelected() {
@@ -165,7 +159,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   unFavorite(wsIdentifier, {wsId, uwYear}) {
-    this.dispatch([new fromWs.MarkWsAsNonFavorite({wsIdentifier}), new fromHeader.DeleteWsFromFavorite({wsId, uwYear})])
+    // this.dispatch( new fromHeader.DeleteWsFromFavorite({wsId, uwYear}))
   }
 
   leftMenuNavigation({route}, {wsId, uwYear}) {

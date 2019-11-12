@@ -16,6 +16,7 @@ import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
 
+
 const initialState: WorkspaceModel = {
   content: {},
   currentTab: {
@@ -31,8 +32,6 @@ const initialState: WorkspaceModel = {
       edmrdmSelection: {}
     }
   },
-  favorite: [],
-  pinned: [],
   routing: '',
   loading: false
 };
@@ -53,7 +52,6 @@ export class WorkspaceState {
               private scopService: ScopeCompletenessService,
   ) {
   }
-
 
   /***********************************
    *
@@ -116,21 +114,6 @@ export class WorkspaceState {
   @Selector()
   static getLoading(state: WorkspaceModel) {
     return state.loading;
-  }
-
-  @Selector()
-  static getRecentWs(state: WorkspaceModel) {
-    return _.values(state.content).map(item => ({...item, selected: false}));
-  }
-
-  @Selector()
-  static getFavorite(state: WorkspaceModel) {
-    return state.favorite;
-  }
-
-  @Selector()
-  static getPinned(state: WorkspaceModel) {
-    return state.pinned;
   }
 
   @Selector()
@@ -368,7 +351,7 @@ export class WorkspaceState {
 
   /***********************************
    *
-   * Scope And Completeness Selectors 
+   * Scope And Completeness Selectors
    *
    ***********************************/
 
@@ -380,7 +363,7 @@ export class WorkspaceState {
 
   static getPltsForScopeCompleteness(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
   }
 
   /***********************************
@@ -457,26 +440,6 @@ export class WorkspaceState {
   @Action(fromWS.MarkWsAsFavorite)
   markWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsFavorite) {
     return this.wsService.markWsAsFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkFacWsAsFavorite)
-  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkFacWsAsFavorite) {
-    this.wsService.markFacWsAsFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonFavorite)
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
-    return this.wsService.markWsAsNonFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsPinned)
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsPinned) {
-    return this.wsService.markWsAsPinned(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonPinned)
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonPinned) {
-    return this.wsService.markWsAsNonPinned(ctx, payload);
   }
 
   @Action(fromWS.ToggleProjectSelection)
@@ -595,12 +558,12 @@ export class WorkspaceState {
 
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    //return this.pltStateService.createUserTagSuccess(ctx, payload);
+    // return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    // return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -611,7 +574,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    // return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -621,18 +584,9 @@ export class WorkspaceState {
 
   @Action(fromPlt.deletePltSucess)
   deletePltSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePltSucess) {
-
-    const {
-      pltId
-    } = payload;
-
-    const {
-      // data
-    } = ctx.getState();
-
-    /*
-     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
-       .pipe()*/
+    const {pltId} = payload;
+    // const { data} = ctx.getState();
+    /*return of(JSON.parse(localStorage.getItem('deletedPlts')) || {}).pipe()*/
   }
 
   @Action(fromPlt.editTag)
@@ -680,8 +634,6 @@ export class WorkspaceState {
    * Calibration Actions
    *
    ***********************************/
-
-
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {

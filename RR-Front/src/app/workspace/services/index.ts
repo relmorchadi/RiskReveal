@@ -1,10 +1,10 @@
 import {PltApi} from './api/plt.api';
-import {HelperService} from "./helper.service";
+import {HelperService} from './helper.service';
 import {WsApi} from './api/workspace.api';
 import {PreviousNavigationService} from './previous-navigation.service';
-import {WsProjectService} from "./ws-project.service";
+import {WsProjectService} from './ws-project.service';
 import {ExcelService} from '../../shared/services/excel.service';
-import {TagsApi} from "./api/tags.api";
+import {TagsApi} from './api/tags.api';
 
 export const SERVICE = [
   WsApi,
