@@ -13,13 +13,11 @@ import java.util.List;
 
 public interface PinnedWorkspaceViewRepository extends JpaRepository<PinnedWorkspaceView, Long> {
 
-    @Query("from PinnedWorkspaceView pwsv where " +
-            "(pwsv.cedantName like :kw or pwsv.workspaceContextCode like :kw or pwsv.workspaceName like :kw or pwsv.workspaceUwYear like :kw )" +
-            " and pwsv.userId = :userId order by pwsv.createdDate desc")
-    List<PinnedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
+    @Query("from PinnedWorkspaceView pwsv where pwsv.userId = :userId order by pwsv.createdDate desc")
+    List<PinnedWorkspaceView> findAllByUserId(@Param("userId") Integer userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "tb.COUNT_PINNED_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "dr.COUNT_PINNED_Workspace", outputParameterName = "count")
     Integer getPinnedWSCount(@Param("userId") Integer userId);
 
 }
