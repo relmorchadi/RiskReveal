@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "PinnedWorkspaceView", schema = "dr")
+@Table(name = "PinnedWorkspaceView", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
