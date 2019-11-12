@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {StateContext, Store} from '@ngxs/store';
-import {catchError, mergeMap, switchMap} from 'rxjs/operators';
+import {StateContext, Store} from "@ngxs/store";
+import {catchError, mergeMap, switchMap} from "rxjs/operators";
 import * as _ from 'lodash';
-import {PltApi} from './plt.api';
+import {PltApi} from './api/plt.api';
 import produce from 'immer';
 import {ActivatedRoute} from '@angular/router';
 import {WorkspaceModel} from '../model';

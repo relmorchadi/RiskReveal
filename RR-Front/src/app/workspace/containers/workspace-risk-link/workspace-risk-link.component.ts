@@ -12,14 +12,14 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
-import {ConfirmationService, LazyLoadEvent} from "primeng/api";
+import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
 import * as moment from 'moment';
 import {combineLatest} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
-import {TableSortAndFilterPipe} from "../../../shared/pipes/table-sort-and-filter.pipe";
-import {NotificationService} from "../../../shared/services";
-import {debounceTime, takeUntil, withLatestFrom} from "rxjs/operators";
-import {SetCurrentTab} from "../../store/actions";
+import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filter.pipe';
+import {NotificationService} from '../../../shared/services';
+import {debounceTime, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {SetCurrentTab} from '../../store/actions';
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -229,22 +229,20 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
-    this.dispatch([
+/*    this.dispatch([
       new fromHeader.PinWs({
         wsId,
         uwYear,
         workspaceName,
         programName,
         cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);*/
   }
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspaceInfo;
-    this.dispatch([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ]);
+    // this.dispatch([
+    // ]);
   }
 
   loadDataOnScroll(event) {

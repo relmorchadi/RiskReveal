@@ -45,9 +45,7 @@ export class OpenMultiWS {
 
 export class CloseWS {
   static readonly type = '[Workspace] CloseWS';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class SetCurrentTab {
@@ -85,31 +83,6 @@ export class MarkWsAsFavorite {
   constructor(public payload: { wsIdentifier: string }) {}
 }
 
-export class MarkFacWsAsFavorite {
-  static readonly type = '[Workspace] Mark Workspace Fac as Favorite';
-  constructor(public payload?: any) {}
-}
-
-export class MarkWsAsNonFavorite {
-  static readonly type = '[Workspace] Mark workspace as non favorite';
-  constructor(public payload: { wsIdentifier: string }) {}
-}
-
-
-export class MarkWsAsPinned {
-  static readonly type = '[Workspace] Mark workspace as Pinned';
-
-  constructor(public payload: { wsIdentifier: string }) {
-  }
-}
-
-export class MarkWsAsNonPinned {
-  static readonly type = '[Workspace] Mark workspace as non pinned';
-
-  constructor(public payload: { wsIdentifier: string }) {
-  }
-}
-
 export class ToggleProjectSelection {
   static readonly type = '[Workspace] Toggle project selection';
 
@@ -129,9 +102,7 @@ export class AddNewProject {
 
 export class AddNewProjectSuccess {
   static readonly type = '[Workspace] Add new project Success';
-
-  constructor(public payload: any) {
-  }
+  constructor(public payload: any) {}
 }
 
 export class AddNewProjectFail {
