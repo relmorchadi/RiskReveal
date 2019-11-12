@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "dr")
+@Table(schema = "tb")
 @Data
 @NoArgsConstructor
 public class FacSearchItem extends SearchItem {

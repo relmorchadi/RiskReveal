@@ -16,7 +16,7 @@ public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedW
     List<AssignedWorkspaceView> findAllByUserId(@Param("userId") Integer userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "dr.COUNT_ASSIGNED_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "tb.COUNT_ASSIGNED_Workspace", outputParameterName = "count")
     Integer getAssignedWSCount(@Param("userId") Integer userId);
 
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "PltManagerView", schema = "dr")
+@Table(name = "PltManagerView", schema = "tb")
 public class PLTManagerView {
 
     @Id
