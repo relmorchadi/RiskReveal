@@ -1,15 +1,8 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import produce from 'immer';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
-  AddNewProject,
-  AddNewProjectFail,
-  AddNewProjectSuccess,
   AppendNewWorkspaceMainAction,
   CloseWorkspaceMainAction,
-  DeleteProject,
-  DeleteProjectFail,
-  DeleteProjectSuccess,
   LoadWorkspacesAction,
   OpenNewWorkspacesAction,
   PatchWorkspace,
@@ -19,8 +12,6 @@ import {
   SetWsRoutingAction,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
-import {catchError} from "rxjs/operators";
-import {EMPTY} from "rxjs";
 
 const initiaState: WorkspaceMain = {
   leftNavbarIsCollapsed: false,
@@ -105,7 +96,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         ...ctx.getState().openedTabs,
         tabsIndex: payload.index
       }
-    })
+    });
   }
 
   @Action(AppendNewWorkspaceMainAction)
@@ -164,7 +155,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         projects: dt.projects.map((prj, i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
         pinged: _.get(workSpaceMenuItem[dt.workSpaceId + '-' + dt.uwYear], 'pinged', false),
         favorite: _.get(workSpaceMenuItem[dt.workSpaceId + '-' + dt.uwYear], 'favorite', false)
-      }))
+      }));
     });
     recentlyOpenedWs.unshift(...payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
@@ -255,7 +246,7 @@ export class WorkspaceMainState implements NgxsOnInit {
 
     const {
       openedTabs
-    } = ctx.getState()
+    } = ctx.getState();
 
 
     let attrs = {};

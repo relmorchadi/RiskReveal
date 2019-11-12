@@ -1,65 +1,58 @@
-export class AddWsToRecent {
-  static readonly type = '[Workspaces PopIn] Add workspace to recent';
-
-  constructor(public payload: { wsId, uwYear, workspaceName, programName, cedantName }) {
-  }
+export class ToggleRecentWsSelection {
+  static readonly type = '[Workspace Header] Toggle Recent Selection Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class ToggleWsSelection {
-  static readonly type = '[Workspaces PopIn] Toggle Ws selection';
-
-  constructor(public payload: { context: string, index: number }) {
-  }
+export class ToggleFavoriteWsSelection {
+  static readonly type = '[Workspace Header] Toggle Favorite Selection Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class ChangeWsSelection {
-  static readonly type = '[Workspaces PopIn] Change Ws selection';
-
-  constructor(public payload: { context: string, index: number, value: boolean }) {
-  }
+export class ToggleAssignedWsSelection {
+  static readonly type = '[Workspace Header] Toggle Assigned Selection Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class ApplySelectionToAll {
-  static readonly type = '[Workspaces PopIn] Apply selection to all';
-
-  constructor(public payload: { context: string, value: boolean }) {
-  }
+export class TogglePinnedWsSelection {
+  static readonly type = '[Workspace Header] Toggle Pinned Selection Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class SelectRange {
-  static readonly type = '[Workspaces PopIn] Select range';
-
-  constructor(public payload: { context: string, from: number, to: number }) {
-  }
+export class ToggleFavoriteWsState {
+  static readonly type = '[Workspace Header] Toggle State Favorite Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class AddWsToFavorite {
-  static readonly type = '[Workspaces PopIn] Add workspace to favorite';
-
-  constructor(public payload: { wsId, uwYear, workspaceName, programName, cedantName }) {
-  }
+export class TogglePinnedWsState {
+  static readonly type = '[Workspace Header] Toggle State Pinned Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class DeleteWsFromFavorite {
-  static readonly type = '[Workspaces PopIn] Delete workspace from favorite';
-
-  constructor(public payload: { wsId, uwYear }) {
-  }
+export class LoadFavoriteWorkspace {
+  static readonly type = '[Workspace Header] Load Favorite Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class PinWs {
-  static readonly type = '[Workspaces PopIn] Pin Workspace';
-
-  constructor(public payload: { wsId, uwYear, workspaceName, programName, cedantName }) {
-  }
+export class LoadAssignedWorkspace {
+  static readonly type = '[Workspace Header] Load Assigned Workspace';
+  constructor(public payload?: any) {}
 }
 
-export class UnPinWs {
-  static readonly type = '[Workspaces PopIn] UnPin Workspace';
-
-  constructor(public payload: any) {
-  }
+export class LoadRecentWorkspace {
+  static readonly type = '[Workspace Header] Load Recent Workspace';
+  constructor(public payload?: any) {}
 }
+
+export class LoadPinnedWorkspace {
+  static readonly type = '[Workspace Header] Load Pinned Workspace';
+  constructor(public payload?: any) {}
+}
+
+export class LoadWsStatusCount {
+  static readonly type = '[Workspace Header] Load Status For Workspaces';
+  constructor(public payload?: any) {}
+}
+
 
 export class DeleteTask {
   static readonly type = '[Tasks PopIn] Delete Task';

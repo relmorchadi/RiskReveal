@@ -177,7 +177,7 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   valueFavChange(event) {
-    this.store.dispatch(new workspaceActions.MarkFacWsAsFavorite(event));
+
   }
 
   duplicateItem(itemName: any): void {
