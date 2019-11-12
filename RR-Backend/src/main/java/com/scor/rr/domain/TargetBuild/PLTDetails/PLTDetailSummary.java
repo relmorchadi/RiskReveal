@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "PLTDetailSummary", schema = "dr")
+@Table(name = "PLTDetailSummary", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
