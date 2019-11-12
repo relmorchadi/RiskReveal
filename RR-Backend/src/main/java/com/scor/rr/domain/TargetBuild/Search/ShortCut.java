@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ShortCut", schema = "dr")
+@Table(name = "ShortCut", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
