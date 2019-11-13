@@ -21,9 +21,6 @@ public class PinnedWorkspaceView {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "workspaceId")
-    private Long workspaceId;
-
     @Column(name = "userId")
     private Integer userId;
 
