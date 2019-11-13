@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "FavoriteWorkspace", schema = "tb")
+@Table(name = "FavoriteWorkspace", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,8 +20,11 @@ public class FavoriteWorkspace {
     @Column(name = "favoriteWorkspaceId")
     private Integer favoriteWorkspaceId;
 
-    @Column(name = "workspaceId")
-    private Long workspaceId;
+    @Column(name = "workspaceContextCode")
+    private String workspaceContextCode;
+
+    @Column(name = "workspaceUwYear")
+    private Integer workspaceUwYear;
 
     @Column(name = "userId")
     private Integer userId;

@@ -1,7 +1,7 @@
 package com.scor.rr.service.TargetBuild;
 
 import com.scor.rr.domain.TargetBuild.Workspace;
-import com.scor.rr.domain.dto.TargetBuild.FavoriteWorkspaceRequest;
+import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import javax.xml.ws.Response;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +43,7 @@ public class WorkspaceService {
                 .stream()
                 .map( favoriteWorkspaceView -> Workspace
                         .builder()
-                        .workspaceId(favoriteWorkspaceView.getWorkspaceId())
+                        .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(favoriteWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(favoriteWorkspaceView.getWorkspaceUwYear())
@@ -58,7 +57,7 @@ public class WorkspaceService {
         return this.recentWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
                 .map( recentWorkspaceView -> Workspace
                         .builder()
-                        .workspaceId(recentWorkspaceView.getWorkspaceId())
+                        .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(recentWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(recentWorkspaceView.getWorkspaceUwYear())
@@ -72,7 +71,7 @@ public class WorkspaceService {
         return this.assignedWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
                 .map( assignedWorkspaceView -> Workspace
                         .builder()
-                        .workspaceId(assignedWorkspaceView.getWorkspaceId())
+                        .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(assignedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(assignedWorkspaceView.getWorkspaceUwYear())
@@ -97,20 +96,20 @@ public class WorkspaceService {
 
     public WorkspaceCount getWSCount(Integer userId) {
         return new WorkspaceCount(
-                this.assignedWorkspaceViewRepository.getAssignedWSCount(userId),
                 this.favoriteWorkspaceViewRepository.getFavoriteWSCount(userId),
                 this.recentWorkspaceViewRepository.getRecentWSCount(userId),
+                this.assignedWorkspaceViewRepository.getAssignedWSCount(userId),
                 this.pinnedWorkspaceViewRepository.getPinnedWSCount(userId)
         );
     }
 
-    public ResponseEntity<String> toggleFavoriteWorkspace(FavoriteWorkspaceRequest request) {
-        this.favoriteWorkspaceRepository.toggleFavoriteWorkspace(request.getWorkspaceId(), request.getUserId());
+    public ResponseEntity<String> toggleFavoriteWorkspace(WorkspaceToggleRequest request) {
+        this.favoriteWorkspaceRepository.toggleFavoriteWorkspace(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserId());
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    public ResponseEntity<String> togglePinnedWorkspace(FavoriteWorkspaceRequest request) {
-        this.pinnedWorkspaceRepository.togglePinnedWorkspace(request.getWorkspaceId(), request.getUserId());
+    public ResponseEntity<String> togglePinnedWorkspace(WorkspaceToggleRequest request) {
+        this.pinnedWorkspaceRepository.togglePinnedWorkspace(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserId());
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 

@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "tb")
+@Table(name = "Workspace", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
