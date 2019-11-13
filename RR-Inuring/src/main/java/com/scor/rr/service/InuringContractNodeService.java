@@ -73,11 +73,12 @@ public class InuringContractNodeService {
         if (listOfAttributes != null) {
 
             for (RefFMFContractAttribute attribute : listOfAttributes) {
+                if(attribute.getUISectionName() == "layer List"){
                 InuringContractLayerParam inuringContractLayerParam = new InuringContractLayerParam(inuringContractLayer.getInuringContractLayerId(), attribute.getUIAttributeName(),
                         attribute.getDataType(), attribute.getDefaultValue());
 
                 inuringContractLayerParamRepository.save(inuringContractLayerParam);
-            }
+            }}
         }
     }
 

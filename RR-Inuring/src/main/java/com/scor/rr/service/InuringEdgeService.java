@@ -81,7 +81,7 @@ public class InuringEdgeService {
         return inuringEdge;
     }
 
-    private boolean checkInuringNodeExisting(InuringNodeType nodeType, int nodeId) {
+    public boolean checkInuringNodeExisting(InuringNodeType nodeType, int nodeId) {
         switch (nodeType) {
             case InputNode:
                 return inuringInputNodeRepository.findByInuringInputNodeId(nodeId) != null;

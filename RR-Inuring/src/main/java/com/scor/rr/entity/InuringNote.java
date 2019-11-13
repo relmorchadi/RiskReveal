@@ -1,5 +1,6 @@
 package com.scor.rr.entity;
 
+import com.scor.rr.enums.InuringNodeType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,10 +18,13 @@ public class InuringNote {
     @Column(name = "Entity")
     private int entity;
 
-    @Column(name = "InuringObjectType", nullable = false)
-    private int inuringObjectType;
+    @Column(name="InuringPackageId", nullable = false)
+    private int inuringPackageId;
 
-    @Column(name = "InuringObjectId", nullable = false)
+    @Column(name = "InuringObjectType")
+    private InuringNodeType inuringObjectType;
+
+    @Column(name = "InuringObjectId")
     private int inuringObjectId;
 
     @Column(name = "NoteContent")
@@ -31,4 +35,25 @@ public class InuringNote {
 
     @Column(name = "NoteTitle")
     private String noteTitle;
+
+    public InuringNote() {
+    }
+
+    public InuringNote(int inuringPackageId, InuringNodeType inuringObjectType, int inuringObjectId, String noteContent, String noteColor, String noteTitle) {
+        this.entity=1;
+        this.inuringPackageId = inuringPackageId;
+        this.inuringObjectType = inuringObjectType;
+        this.inuringObjectId = inuringObjectId;
+        this.noteContent = noteContent;
+        this.noteColor = noteColor;
+        this.noteTitle = noteTitle;
+    }
+
+    public InuringNote(int inuringPackageId, String noteContent, String noteColor, String noteTitle) {
+        this.entity=1;
+        this.inuringPackageId = inuringPackageId;
+        this.noteContent = noteContent;
+        this.noteColor = noteColor;
+        this.noteTitle = noteTitle;
+    }
 }
