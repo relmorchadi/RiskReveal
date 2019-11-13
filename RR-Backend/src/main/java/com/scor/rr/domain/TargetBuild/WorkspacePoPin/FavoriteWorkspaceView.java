@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "FavoriteWorkspaceView", schema = "tb")
+@Table(name = "FavoriteWorkspaceView", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,17 +18,14 @@ public class FavoriteWorkspaceView {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "workspaceId")
-    private Long workspaceId;
+    @Column(name = "workspaceContextCode")
+    private String workspaceContextCode;
+
+    @Column(name = "workspaceUwYear")
+    private Integer workspaceUwYear;
 
     @Column(name = "userId")
     private Integer userId;
-
-    @Column(name = "WorkspaceContextCode")
-    private String workspaceContextCode;
-
-    @Column(name = "WorkspaceUwYear")
-    private Integer workspaceUwYear;
 
     @Column(name = "WorkspaceName")
     private String workspaceName;
