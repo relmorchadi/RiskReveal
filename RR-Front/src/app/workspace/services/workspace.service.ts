@@ -73,7 +73,6 @@ export class WorkspaceService {
     const wsIdentifier = `${wsId}-${uwYear}`;
     console.log('this are projects', projects);
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
-    ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
         [wsIdentifier]: {
@@ -408,34 +407,6 @@ export class WorkspaceService {
     }));
   }
 
-  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkFacWsAsFavorite) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const index = _.findIndex(draft.facWs.data, item => item.id === payload.id);
-      draft.facWs.data[index].favorite = !draft.facWs.data[index].favorite;
-    }));
-  }
-
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonFavorite) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: false};
-    }));
-  }
-
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: true};
-    }));
-  }
-
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: false};
-    }));
-  }
-
   toggleProjectSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleProjectSelection) {
     const {wsIdentifier, projectIndex} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
@@ -507,13 +478,15 @@ export class WorkspaceService {
   }
 
   private _isFavorite({wsId, uwYear}): boolean {
-    const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
-    return _.findIndex(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
+/*    const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
+    return _.findIndex(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;*/
+    return false;
   }
 
   private _isPinned({wsId, uwYear}): boolean {
-    const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
-    return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
+/*    const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
+    return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;*/
+    return false;
   }
 
 }

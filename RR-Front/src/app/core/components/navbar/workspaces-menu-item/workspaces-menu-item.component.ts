@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@an
 import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import * as fromHD from '../../../store/actions';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import {
@@ -14,10 +15,8 @@ import * as fromHeader from '../../../store/actions/header.action';
 import {HelperService} from '../../../../shared/helper.service';
 import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
 import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.actions';
-import {NotificationService} from "../../../../shared/notification.service";
-import {Navigate} from "@ngxs/router-plugin";
-import {WorkspaceState} from "../../../../workspace/store/states";
-import {take} from "rxjs/operators";
+import {NotificationService} from '../../../../shared/notification.service';
+import {BaseContainer} from '../../../../shared/base';
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -25,7 +24,7 @@ import {take} from "rxjs/operators";
   styleUrls: ['./workspaces-menu-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspacesMenuItemComponent implements OnInit {
+export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit {
 
   readonly componentName: string = 'workspace-pop-in';
 
@@ -42,22 +41,37 @@ export class WorkspacesMenuItemComponent implements OnInit {
   favorites: any;
   pinged: any;
 
-  constructor(private _helperService: HelperService, private router: Router, private _searchService: SearchService,
-              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService, private cdRef: ChangeDetectorRef) {
-    this.setForm();
-    this.favoriteSize = 10;
-    this.pingedSize = 10;
+  constructor(private _helperService: HelperService,
+              private router: Router, private _searchService: SearchService,
+              _baseStore: Store, _baseRouter: Router,
+              _baseCdr: ChangeDetectorRef,
+              private _fb: FormBuilder, private store: Store,
+              private notificationService: NotificationService,
+              private cdRef: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
-  @Select(HeaderState.getFavorite) favorites$;
-  @Select(HeaderState.getPinned) pinged$;
-  @Select(HeaderState.getRecent) recentWs$;
-  @Select(WorkspaceState.getLastWorkspace) lastWorkspace$;
-  favoriteSize: any;
-  pingedSize: any;
-  favoriteSearch: any;
-  pingedSearch: any;
+  @Select(HeaderState.getAssignedWs)assignedWs$;
+  @Select(HeaderState.getRecentWs)recentWs$;
+  @Select(HeaderState.getFavoriteWs)favoriteWs$;
+  @Select(HeaderState.getPinnedWs)pinnedWs$;
+  @Select(HeaderState.getStatusCountWs)countWs$;
 
+  countWs: any;
+  recentWs: any;
+  favoriteWs: any;
+  pinnedWs: any;
+  assignedWs: any;
+
+  recentSearch: any;
+  favoriteSearch: any;
+  pinnedSearch: any;
+  assignedSearch: any;
+
+  recentPageable = 10;
+  favoritePageable = 10;
+  pinnedPageable = 10;
+  assignedPageable = 10;
 
   paginationParams: [
     { id: 0, shownElement: 10, label: 'Last 10' },
@@ -68,17 +82,23 @@ export class WorkspacesMenuItemComponent implements OnInit {
   recentPagination = 0;
 
   ngOnInit() {
-    // this.recent$.subscribe(value => this.recent = _.merge({}, value));
-    this.recentWs$.subscribe(value => this.recent = _.merge([], value));
-    this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
-    this.favorites$.subscribe(fv => {
-      this.favorites = _.orderBy(fv, ['lastFModified'], ['desc']);
+    this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.countWs = _.merge({}, value));
+    this.recentWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.recentWs =  value);
+    this.favoriteWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.favoriteWs =  value);
+    this.pinnedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.pinnedWs = value);
+    this.assignedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.assignedWs = value);
+
+    // this.recentWs$.subscribe(value => this.recent = _.merge([], value));
+
+    this._searchService.infodropdown.subscribe(dt => {
+      this.visible = this._searchService.getvisibleDropdown();
+      if (this.visible) {
+        this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
+          new fromHD.LoadWsStatusCount()]);
+      }
       this.detectChanges();
     });
-    this.pinged$.subscribe(pn => {
-      this.pinged = _.orderBy(pn, ['lastPModified'], ['desc']);
-      this.detectChanges();
-    });
+
     HelperService.headerBarPopinChange$.subscribe(({from}) => {
       if (from != this.componentName) {
         this.visible = false;
@@ -96,17 +116,16 @@ export class WorkspacesMenuItemComponent implements OnInit {
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  setForm() {
-    this.contractFilterFormGroup = this._fb.group({
-      globalKeyword: [],
-      workspaceId: [],
-      workspaceName: [],
-      year: [],
-      treaty: [],
-      cedantCode: [],
-      cedant: [],
-      country: []
-    });
+  loadTabData(event) {
+    if (event === 0) {
+      this.store.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}));
+    } else if (event === 1) {
+      this.store.dispatch(new fromHD.LoadFavoriteWorkspace({offset: 0, size: 10, userId: 1}));
+    } else if (event === 2) {
+      this.store.dispatch(new fromHD.LoadAssignedWorkspace({offset: 0, size: 10, userId: 1}));
+    } else if (event === 3) {
+      this.store.dispatch(new fromHD.LoadPinnedWorkspace({offset: 0, size: 10, userId: 1}));
+    }
   }
 
   searchNewWorkspace(search) {
@@ -114,8 +133,8 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   toggleWorkspace(context: string, workspace, index) {
-    if ((window as any).event.ctrlKey) {
-      this.store.dispatch(new fromHeader.ToggleWsSelection({context, index}));
+/*    if ((window as any).event.ctrlKey) {
+/!*      this.store.dispatch(new fromHeader.ToggleWsSelection({context, index}));*!/
       // workspace.selected = !workspace.selected;
       this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
@@ -134,7 +153,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
       this.store.dispatch(new fromHeader.ApplySelectionToAll({context, value: false}));
       this.store.dispatch(new fromHeader.ToggleWsSelection({context, index}));
       // workspace.selected = !workspace.selected;
-    }
+    }*/
   }
 
   selectCheckboxChange(context, workspace, index) {
@@ -175,17 +194,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
     );
   }
 
-  // private selectSection(from, to) {
-  //   // this.state.recentWs.forEach(dt => dt.selected = false);
-  //   if (from === to) {
-  //     this.state[from].selected = true;
-  //   } else {
-  //     for (let i = from; i <= to; i++) {
-  //       this.state[i].selected = true;
-  //     }
-  //   }
-  // }
-
   async openSingleWorkspaces(ws) {
     this.searchData(ws.workSpaceId, ws.uwYear).subscribe(
       (dt: any) => {
@@ -213,7 +221,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   redirectWorkspace() {
-    this.lastWorkspace$
+/*    this.lastWorkspace$
       .pipe(take(1))
       .subscribe(data => {
         if (data) {
@@ -227,7 +235,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
             'There is no Opened Workspaces please try searching for some before!',
             'error', 'bottomRight', 4000);
         }
-      });
+      });*/
 
   }
 
@@ -262,6 +270,5 @@ export class WorkspacesMenuItemComponent implements OnInit {
   togglePopup() {
     HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
-
 
 }

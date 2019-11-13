@@ -6,29 +6,18 @@ import * as _ from 'lodash';
 
 import {DataTables} from '../../../shared/data/job-data-tables';
 import {DataTableNotif} from '../../../shared/data/notification-data-tables';
+import * as fromHD from '../actions';
+import {mergeMap} from 'rxjs/operators';
+import {of} from 'rxjs';
+import {WorkspaceHeaderApi} from '../../service/api/workspace-header.api';
 
 const initialState: HeaderStateModel = {
-  workspacePopIn: {
-    recent: {
-      keyword: '',
-      items: [],
-      pagination: 10
-    },
-    favorite: {
-      keyword: '',
-      items: [],
-      pagination: 10
-    },
-    assigned: {
-      keyword: '',
-      items: [],
-      pagination: 10
-    },
-    pinned: {
-      keyword: '',
-      items: [],
-      pagination: 10
-    }
+  workspaceHeader: {
+    favorite: {data: {}, pageable: {}},
+    assigned: {data: {}, pageable: {}},
+    recent: {data: {}, pageable: {}},
+    pinned: {data: {}, pageable: {}},
+    statusCount: {}
   },
   jobManagerPopIn: {
     active: {
@@ -76,128 +65,186 @@ export class HeaderState implements NgxsOnInit {
   ngxsOnInit(ctx?: StateContext<any>): void | any {
   }
 
+  constructor(private wsHeaderApi: WorkspaceHeaderApi) {}
+
   /**
    * Header State Selectors
    */
+
+  /***********************************
+   *
+   * Workspace Header Selectors
+   *
+   ***********************************/
+
   @Selector()
-  static getFavorite(state: HeaderStateModel) {
-    return state.workspacePopIn.favorite.items;
+  static getFavoriteWs(state: HeaderStateModel) {
+    return state.workspaceHeader.favorite.data;
   }
 
   @Selector()
-  static getRecent(state: HeaderStateModel) {
-    return state.workspacePopIn.recent.items;
+  static getRecentWs(state: HeaderStateModel) {
+    return state.workspaceHeader.recent.data;
   }
 
   @Selector()
-  static getPinned(state: HeaderStateModel) {
-    return state.workspacePopIn.pinned.items;
+  static getAssignedWs(state: HeaderStateModel) {
+    return state.workspaceHeader.assigned.data;
   }
+
+  @Selector()
+  static getPinnedWs(state: HeaderStateModel) {
+    return state.workspaceHeader.pinned.data;
+  }
+
+  @Selector()
+  static getStatusCountWs(state: HeaderStateModel) {
+    return state.workspaceHeader.statusCount;
+  }
+
+  /***********************************
+   *
+   * Job Header Selectors
+   *
+   ***********************************/
 
   @Selector()
   static getJobs(state: HeaderStateModel) {
     return state.jobManagerPopIn.active.items;
   }
 
+  /***********************************
+   *
+   * Notif Header Selectors
+   *
+   ***********************************/
+
   @Selector()
   static getNotif(state: HeaderStateModel) {
     return state.notificationPopIn.all.items;
   }
 
-  /**
-   * Header State Commands
-   */
-  @Action(fromHeader.AddWsToRecent)
-  addWsToRecent(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.AddWsToRecent) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.recent.items', this._addItem(draft, 'workspacePopIn.recent.items', payload));
-      draft.workspacePopIn.recent.items.forEach(dt => dt.selected = false);
-      draft.workspacePopIn.recent.items[0].selected = true;
-    }));
+
+  /***********************************
+   *
+   * Workspace Header Actions
+   *
+   ***********************************/
+
+  @Action(fromHD.LoadWsStatusCount)
+  getWsStatusCount(ctx: StateContext<HeaderStateModel>) {
+    const state = ctx.getState();
+    const userId = 1;
+    return this.wsHeaderApi.getCount(userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.statusCount = wsData;
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.LoadRecentWorkspace)
+  getRecentWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadRecentWorkspace) {
+    const state = ctx.getState();
+    const {offset, size, userId} = payload;
+    return this.wsHeaderApi.getRecent(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        console.log(wsData);
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.recent.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.LoadFavoriteWorkspace)
+  getFavoriteWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadFavoriteWorkspace) {
+    const state = ctx.getState();
+    const {offset, size, userId} = payload;
+    return this.wsHeaderApi.getFavorited(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.favorite.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.LoadAssignedWorkspace)
+  getAssignedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadAssignedWorkspace) {
+    const state = ctx.getState();
+    const {offset, size, userId} = payload;
+    return this.wsHeaderApi.getAssigned(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.LoadPinnedWorkspace)
+  getPinnedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadPinnedWorkspace) {
+    const state = ctx.getState();
+    const {offset, size, userId} = payload;
+    return this.wsHeaderApi.getPinned(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleStateFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+    const {offset, size, userId, data} = payload;
+    this.wsHeaderApi.toggleFavorite(data);
+    return this.wsHeaderApi.getFavorited(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleStatePinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+    const {offset, size, userId, data} = payload;
+    this.wsHeaderApi.togglePinned(data);
+    return this.wsHeaderApi.getPinned(offset, size, userId).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleSelectionRecentWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleSelectionFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleSelectionAssignedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  }
+
+  @Action(fromHD.ToggleFavoriteWsState)
+  toggleSelectionPinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
   }
 
 
-  @Action(fromHeader.AddWsToFavorite)
-  addWsToFavorite(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.AddWsToFavorite) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.workspacePopIn.favorite.items = this._addItem(draft, 'workspacePopIn.favorite.items', payload);
-      // _.set(draft, 'workspacePopIn.favorite.items', );
-    }));
-  }
-
-  @Action(fromHeader.DeleteWsFromFavorite)
-  deleteWsFromFavorite(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteWsFromFavorite) {
-    // @TODO delete workspace
-    ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.favorite.items',
-        _.get(draft, 'workspacePopIn.favorite.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
-    }));
-  }
-
-
-  @Action(fromHeader.PinWs)
-  pinWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.PinWs) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.pinned.items', this._addItem(draft, 'workspacePopIn.pinned.items', payload));
-    }));
-  }
-
-  @Action(fromHeader.UnPinWs)
-  unPinWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.UnPinWs) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.pinned.items',
-        _.get(draft, 'workspacePopIn.pinned.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
-    }));
-  }
-
-  /**
-   *  Header State Commands: Selection Behavior
-   */
-  @Action(fromHeader.ToggleWsSelection)
-  toggleRecentWsSelection(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.ToggleWsSelection) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const {context, index} = payload;
-      const item = _.get(draft, context).items[index];
-      _.get(draft, context).items[index] = {...item, selected: !item.selected};
-    }));
-  }
-
-  @Action(fromHeader.ChangeWsSelection)
-  changeRecentWsSelection(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.ChangeWsSelection) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const {context, index} = payload;
-      const item = _.get(draft, context).items[index];
-      _.get(draft, context).items[index] = {...item, selected: payload.value};
-    }));
-  }
-
-  @Action(fromHeader.ApplySelectionToAll)
-  applySelectionToAll(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.ApplySelectionToAll) {
-    let {context, value} = payload;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      let items = _.get(draft, context).items;
-      _.get(draft, context).items = items.map(item => ({...item, selected: value}));
-    }));
-  }
-
-  @Action(fromHeader.SelectRange)
-  selectRange(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.SelectRange) {
-    let {context, from, to} = payload;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      _.get(draft, context).items = _.get(draft, context).items.map(item => ({...item, selected: false}));
-      if (from == to) {
-        _.get(draft, context).items[from].selected = true;
-      } else {
-        _.range(from, to + 1).forEach(index => {
-          _.get(draft, context).items[index].selected = true;
-        });
-      }
-    }));
-  }
-
-  /**
-   * Header Task Action
-   */
+  /***********************************
+   *
+   * Workspace Header Actions
+   *
+   ***********************************/
 
   @Action(fromHeader.DeleteTask)
   deleteTask(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteTask) {
@@ -234,9 +281,11 @@ export class HeaderState implements NgxsOnInit {
     ));
   }
 
-  /**
-   * Header Notification Action
-   */
+  /***********************************
+   *
+   * Workspace Header Actions
+   *
+   ***********************************/
 
   @Action(fromHeader.DeleteNotification)
   deleteNotification(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteNotification) {
