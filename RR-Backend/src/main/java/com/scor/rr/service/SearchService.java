@@ -150,6 +150,15 @@ public class SearchService {
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
 
+    public Workspace getWorkspace(String workspaceId, String uwy) {
+        return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy))
+                .orElseGet(() ->
+                        contractSearchResultRepository.findByWorkspaceIdAndUwYear(workspaceId, Integer.valueOf(uwy))
+                                .map(targetContract -> new Workspace(targetContract))
+                                .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + workspaceId + "-" + Integer.valueOf(uwy)))
+                );
+    }
+
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
         List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
@@ -157,13 +166,11 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         return ofNullable(contracts.get(0))
                 .map(firstWs -> {
-                    Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+                    Optional<Workspace> wsOpt = Optional.of(this.getWorkspace(workspaceId, uwy));
 
-                    if(wsOpt.isPresent()) {
-                     Workspace ws = wsOpt.get();
+                    Workspace ws = wsOpt.get();
 
-                     this.recentWorkspaceRepository.setRecentWorkspace(ws.getWorkspaceId(), 1);
-                    }
+                    this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
 
                     return new WorkspaceDetailsDTO(firstWs, contracts, years, projects);
                 })
@@ -177,7 +184,7 @@ public class SearchService {
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
 
-        if(request.getFromSavedSearch()) {
+        if(request.getFromSavedSearch() != null) {
             if(!request.getFilter().isEmpty()) {
                 Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
 
@@ -306,4 +313,6 @@ public class SearchService {
         treatySearchItemRepository.deleteByTreatySearchId(id);
         treatySearchRepository.deleteById(id);
     }
+
+
 }

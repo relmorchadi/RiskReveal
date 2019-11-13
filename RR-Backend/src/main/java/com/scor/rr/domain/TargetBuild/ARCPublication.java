@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ARCPublication", schema = "tb")
+@Table(name = "ARCPublication", schema = "dr")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface FavoriteWorkspaceRepository extends JpaRepository<FavoriteWorkspace, Long> {
 
-    @Procedure("tb.toggleFavoriteWorkspace")
-    void toggleFavoriteWorkspace(@Param("workspaceId") Long workspaceId, @Param("userId") Integer userId);
+    @Procedure("dr.toggleFavoriteWorkspace")
+    void toggleFavoriteWorkspace(@Param("workspaceContextCode") String workspaceContextCode, @Param("workspaceUwYear") Integer workspaceUwYear, @Param("userId") Integer userId);
 
 }

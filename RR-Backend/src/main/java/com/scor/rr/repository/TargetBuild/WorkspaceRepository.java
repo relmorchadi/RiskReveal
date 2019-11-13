@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WorkspaceRepository extends JpaRepository<Workspace, Long> {
-    Workspace findByWorkspaceContextCodeAndWorkspaceUwYear(String workspaceContextCode, String workspaceUwYear);
-
     Optional<Workspace> findByWorkspaceContextCodeAndWorkspaceUwYear(String workspaceId, Integer workspaceUwYear);
 
 
