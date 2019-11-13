@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdjustmentNode {
+public class AccumulationPackage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
