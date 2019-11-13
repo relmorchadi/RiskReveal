@@ -22,14 +22,13 @@ export class BadgesService {
 
   }
 
-  public generateBadges(expression, shortcuts = this.shortcuts): string | Array<{ key, value, operator }> {
+  public generateBadges(expression, shortcuts = this.shortcuts) {
     if (!`${expression} `.match(this.regularExpession))
       return expression;
     let badges = [];
-    console.log(expression);
-    `${expression} `.replace(this.regularExpession, (match, shortcut, keyword) => {
+    let newExpr = expression;
+    newExpr.replace(this.regularExpession, (match, shortcut, keyword) => {
       console.log(match, shortcut, keyword);
-      //let key = shortcuts[_.toLower(_.trim(shortcut, ':'))];
       let key = _.trim(shortcut, ':');
       let badge = {
         key,
@@ -39,7 +38,10 @@ export class BadgesService {
       badges.push(badge);
       return '';
     });
-    return badges;
+    return {
+      expression: newExpr,
+      badges
+    };
   }
 
   private getOperator(str: string, field: string) {
@@ -78,6 +80,6 @@ export class BadgesService {
   }
 
   public padWithLike(t, expr) {
-    return expr && (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
+    return expr ? (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%") : expr;
   }
 }
