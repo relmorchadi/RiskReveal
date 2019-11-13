@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(schema = "tb")
+@Table(schema = "dr")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)

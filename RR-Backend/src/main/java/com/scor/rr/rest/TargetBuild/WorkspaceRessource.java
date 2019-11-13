@@ -1,11 +1,10 @@
 package com.scor.rr.rest.TargetBuild;
 
 import com.scor.rr.domain.TargetBuild.Workspace;
-import com.scor.rr.domain.dto.TargetBuild.FavoriteWorkspaceRequest;
+import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.service.TargetBuild.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,12 +43,12 @@ public class WorkspaceRessource {
     }
 
     @PostMapping("favorite")
-    ResponseEntity<String> toggleFavoriteWorkspace(@RequestBody FavoriteWorkspaceRequest request) {
+    ResponseEntity<String> toggleFavoriteWorkspace(@RequestBody WorkspaceToggleRequest request) {
         return this.workspaceService.toggleFavoriteWorkspace(request);
     }
 
     @PostMapping("pinned")
-    ResponseEntity<String> togglePinnedWorkspace(@RequestBody FavoriteWorkspaceRequest request) {
+    ResponseEntity<String> togglePinnedWorkspace(@RequestBody WorkspaceToggleRequest request) {
         return this.workspaceService.togglePinnedWorkspace(request);
     }
 
