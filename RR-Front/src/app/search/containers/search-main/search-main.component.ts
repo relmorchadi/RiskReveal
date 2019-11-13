@@ -202,7 +202,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'treaty'}));
+    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'PltBrowser', type: 'treaty'}));
   }
 
   navigateToTab(value) {
@@ -273,7 +273,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       ...item,
       value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value)),
     }));
-    let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
+    let tableFilter = _.map(this._filter, (value, key) => ({key, value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
     return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
       ...item,
       field: _.camelCase(item.key),
