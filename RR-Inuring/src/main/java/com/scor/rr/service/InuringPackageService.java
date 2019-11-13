@@ -75,7 +75,6 @@ public class InuringPackageService {
         return inuringPackageRepository.findByInuringPackageId(inuringPackageId);
     }
 
-
     public InuringPackageDetailsResponse readInuringPackageDetail(int inuringPackageId) throws RRException {
         InuringPackageDetailsResponse inuringPackageDetailsResponse = new InuringPackageDetailsResponse();
 
@@ -159,7 +158,6 @@ public class InuringPackageService {
         InuringFinalNode finalNode = inuringFinalNodeRepository.findByInuringPackageId(inuringPackageId);
         nodeIndexMap.put(InuringNodeType.FinalNode+"-"+finalNode.getInuringFinalNodeId(),nodeCounter);
     }
-
 
     private void generateMapLevel(List<InuringInputNode> inputNodes) {
            nodeLevelMap = new HashMap<>();
@@ -352,7 +350,6 @@ public class InuringPackageService {
                 selectedPLT.setPeril("ff");
                 selectedPLT.setGrain("ff");
                 selectedPLT.setPltStructureCode(0);
-//            selectedPLT.setProperties();
 
                 selectedPLTS.add(selectedPLT);
 
@@ -397,7 +394,6 @@ public class InuringPackageService {
 
         return edgeLists;
     }
-
 
     public InuringPackageJsonResponse getJSON(int id) throws RRException {
 

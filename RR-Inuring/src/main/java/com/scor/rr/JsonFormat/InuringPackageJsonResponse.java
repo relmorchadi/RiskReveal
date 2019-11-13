@@ -20,4 +20,5 @@ public class InuringPackageJsonResponse {
     private List<String> finalNodeGroupingCriteria;
     private String OutputDir;
     private InuringNetworkDefinition inuringNetworkDefinition;
+    private CurrencyDefinition currencyDefinition;
 }

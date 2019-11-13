@@ -2,6 +2,8 @@ import com.scor.rr.entity.InuringContractNode;
 import com.scor.rr.entity.InuringFinalNode;
 import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
+import com.scor.rr.enums.InuringNodeStatus;
+import com.scor.rr.enums.InuringNodeType;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.InuringContractNodeRepository;
 import com.scor.rr.repository.InuringFinalNodeRepository;
@@ -96,12 +98,30 @@ public class InuringPackageTest {
             return inuringFinalNode;
         });
 
-        when(inuringFinalNodeRepository.save(any(InuringFinalNode.class))).thenAnswer(i -> {
-            InuringFinalNode inuringFinalNode = i.getArgument(0);
-            int id = inuringFinalNode.getInuringFinalNodeId() != 0 ? inuringFinalNode.getInuringFinalNodeId() : inuringFinalNodeCounter++;
-            inuringFinalNode.setInuringFinalNodeId(id);
-            inuringFinalNodes.put(id, inuringFinalNode);
-            return inuringFinalNode;
+        when(inuringContractNodeRepository.save(any(InuringContractNode.class))).thenAnswer(i -> {
+            InuringContractNode inuringContractNode = i.getArgument(0);
+            int id = inuringContractNode.getInuringContractNodeId() != 0 ? inuringContractNode.getInuringContractNodeId() : inuringContractNodeCounter++;
+            inuringContractNode.setInuringContractNodeId(id);
+            inuringContractNodes.put(id, inuringContractNode);
+            return inuringContractNode;
+        });
+
+        when(inuringInputNodeRepository.save(any(InuringInputNode.class))).thenAnswer(i -> {
+            InuringInputNode inuringInputNode = i.getArgument(0);
+            int id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
+            inuringInputNode.setInuringInputNodeId(id);
+            inuringInputNodes.put(id, inuringInputNode);
+            return inuringInputNode;
+        });
+
+        when(inuringInputNodeRepository.findByInuringInputNodeId(anyInt())).thenAnswer(i -> {
+            int id = i.getArgument(0);
+            return inuringInputNodes.get(id);
+        });
+
+        when(inuringContractNodeRepository.findByInuringContractNodeId(anyInt())).thenAnswer(i -> {
+            int id = i.getArgument(0);
+            return inuringContractNodes.get(id);
         });
 
         when(inuringPackageRepository.findByInuringPackageId(anyInt())).thenAnswer(i -> {
@@ -142,6 +162,44 @@ public class InuringPackageTest {
             }
 
         }
+
+    @Test
+    public void testInvalidatingInputNode(){
+        try {
+            inuringInputNodeRepository.save(new InuringInputNode(1,null));
+            inuringPackageService.invalidateNode(InuringNodeType.InputNode,inuringInputNodeRepository.findByInuringInputNodeId(1).getInuringInputNodeId());
+            assertEquals(InuringNodeStatus.Invalid,inuringInputNodeRepository.findByInuringInputNodeId(1).getInputInuringNodeStatus());
+        } catch (RRException ex) {
+            fail();
+        }
+
+    }
+    @Test
+    public void testInvalidatingContractNode(){
+        try {
+            inuringContractNodeRepository.save(new InuringContractNode(1,null));
+            inuringPackageService.invalidateNode(InuringNodeType.ContractNode,inuringContractNodeRepository.findByInuringContractNodeId(1).getInuringContractNodeId());
+            assertEquals(InuringNodeStatus.Invalid,inuringContractNodeRepository.findByInuringContractNodeId(1).getContractNodeStatus());
+        } catch (RRException ex) {
+            fail();
+        }
+
+    }
+
+    @Test
+    public void testInvalidatingFinalNode(){
+        try {
+            inuringFinalNodeRepository.save(new InuringFinalNode(1));
+            inuringPackageService.invalidateNode(InuringNodeType.FinalNode,inuringFinalNodeRepository.findByInuringFinalNodeId(1).getInuringFinalNodeId());
+            assertEquals(InuringNodeStatus.Invalid,inuringFinalNodeRepository.findByInuringFinalNodeId(1).getFinalNodeStatus());
+        } catch (RRException ex) {
+            fail();
+        }
+
+    }
+
+    /**Testing the delete of the package after adjusting the code to the cascade delete**/
+
 
 
 

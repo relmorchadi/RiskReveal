@@ -1,6 +1,5 @@
 package com.scor.rr.configuration;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -10,6 +9,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import springfox.documentation.swagger2.mappers.ModelMapper;
+import springfox.documentation.swagger2.mappers.ModelMapperImpl;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,6 +60,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper getModelMapper(){
-        return new ModelMapper();
+        return new ModelMapperImpl();
     }
 }

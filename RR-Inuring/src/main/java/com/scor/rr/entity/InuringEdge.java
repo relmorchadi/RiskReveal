@@ -5,6 +5,7 @@ import com.scor.rr.enums.InuringFinancialTreatment;
 import com.scor.rr.enums.InuringNodeType;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 /**
  * Created by u004602 on 13/09/2019.
@@ -39,7 +40,7 @@ public class InuringEdge {
         this.targetNodeType = targetNodeType;
         this.outputPerspective = outputPerspective;
         this.financialTreatment = financialTreatment;
-        this.outputAtLayerLevel = outputAtLayerLevel;
+        this.outputAtLayerLevel = false;
     }
 
     @Id
@@ -133,4 +134,28 @@ public class InuringEdge {
     public void setOutputAtLayerLevel(boolean outputAtLayerLevel) {
         this.outputAtLayerLevel = outputAtLayerLevel;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InuringEdge that = (InuringEdge) o;
+        return inuringEdgeId == that.inuringEdgeId &&
+                entity == that.entity &&
+                inuringPackageId == that.inuringPackageId &&
+                sourceNodeId == that.sourceNodeId &&
+                targetNodeId == that.targetNodeId &&
+                outputAtLayerLevel == that.outputAtLayerLevel &&
+                sourceNodeType == that.sourceNodeType &&
+                targetNodeType == that.targetNodeType &&
+                outputPerspective == that.outputPerspective &&
+                financialTreatment == that.financialTreatment;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inuringEdgeId, entity, inuringPackageId, sourceNodeId, sourceNodeType, targetNodeId, targetNodeType, outputPerspective, financialTreatment, outputAtLayerLevel);
+    }
 }
+
+
