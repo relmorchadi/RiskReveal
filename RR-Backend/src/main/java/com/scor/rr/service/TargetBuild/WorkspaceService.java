@@ -85,7 +85,6 @@ public class WorkspaceService {
         return this.pinnedWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
                 .map( pinnedWorkspaceView -> Workspace
                         .builder()
-                        .workspaceId(pinnedWorkspaceView.getWorkspaceId())
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(pinnedWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(pinnedWorkspaceView.getWorkspaceUwYear())
