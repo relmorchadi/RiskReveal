@@ -46,19 +46,19 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * We use to check the route attribute from the workspace resolve the corresponding component then instantiate it
    */
   readonly componentsMapper = {
-    projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
-    Contract: {component: WorkspaceContractComponent, selector: (state) => state},
-    Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
+    //projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
+    //Contract: {component: WorkspaceContractComponent, selector: (state) => state},
+    //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
-    RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
-    FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
-    CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
-    Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
-    Results: {component: WorkspaceResultsComponent, selector: (state) => state},
-    Calibration: {component: WorkspaceCalibrationComponent, selector: (state) => state},
-    Inuring: {component: WorkspaceInuringComponent, selector: (state) => state},
-    ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
-    Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},
+    //RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
+    //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
+    //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
+    //Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
+    //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
+    //Calibration: {component: WorkspaceCalibrationComponent, selector: (state) => state},
+    //Inuring: {component: WorkspaceInuringComponent, selector: (state) => state},
+    //ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
+    //Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},
   };
 
   private currentInstance: StateSubscriber;
@@ -106,7 +106,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * @param route
    */
   private initComponent(route = this.state.data.route) {
-    const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
+    const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.PltBrowser;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
     const containerRef = this.routingTemplate.viewContainerRef;
     containerRef.clear();
