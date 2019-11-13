@@ -38,6 +38,9 @@ public class InuringFilterCriteria {
     @Column(name = "Including")
     private boolean including;
 
+    public InuringFilterCriteria() {
+    }
+
     public InuringFilterCriteria(InuringElementType inuringObjectType, int inuringObjectId, String filterKey, String filterValue, boolean including) {
         this.entity = 1;
         this.inuringObjectType = inuringObjectType;

@@ -19,5 +19,6 @@ public interface InuringEdgeRepository extends JpaRepository<InuringEdge, Intege
     void deleteByTargetNodeTypeAndTargetNodeId(InuringNodeType nodeType, int nodeId);
 
     List<InuringEdge> findAllBySourceNodeIdAndSourceNodeType(int sourceNodeId, InuringNodeType sourceNodeType);
+    List<InuringEdge> findAllByTargetNodeIdAndTargetNodeType(int targetNodeId, InuringNodeType targetNodeType);
 
 }

@@ -34,7 +34,9 @@ public enum ExceptionCodename {
         This section is delegated to Inuring Exceptions
      */
     INURING_PACKAGE_NOT_FOUND("Inuring Package not found"),
+    INURING_NOTE_NOT_FOUND("Inuring Note not found"),
     INURING_INPUT_NODE_NOT_FOUND("Inuring Input Node not found"),
+    DELETE_LAST_LAYER_IMPOSSIBLE("Impossible delete of last layer"),
     INURING_CONTRACT_NODE_NOT_FOUND("Inuring Contract Node not found"),
     INURING_ILLEGAL_REQUEST("Illegal request"),
     INURING_CONTRACT_LAYER_NOT_FOUND("Inuring Contract Layer not found"),

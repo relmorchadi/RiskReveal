@@ -31,6 +31,9 @@ public class InuringContractLayerPerilLimit {
     @Column(name = "Limit")
     private BigDecimal limit;
 
+    public InuringContractLayerPerilLimit() {
+    }
+
     public InuringContractLayerPerilLimit(int inuringContractLayerId, String peril, BigDecimal limit) {
         this.entity = 1;
         this.inuringContractLayerId = inuringContractLayerId;

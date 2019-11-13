@@ -4,6 +4,7 @@ import com.scor.rr.entity.InuringContractLayer;
 import com.scor.rr.entity.InuringContractLayerParam;
 import com.scor.rr.entity.InuringContractNode;
 import com.scor.rr.exceptions.RRException;
+import com.scor.rr.exceptions.inuring.DeleteOfLastLayerException;
 import com.scor.rr.exceptions.inuring.InuringContractLayerNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringContractNodeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringSingleLayerContractNodeException;
@@ -69,12 +70,13 @@ public class InuringContractLayerService {
 
 
     }
-/** needs to check if it's the last layer, if it is then throw an exception**/
+
     public void deleteContractLayerById(int contractLayerId, int contractNodeId) throws  RRException{
          InuringContractLayer inuringContractLayer = inuringContractLayerRepository.findByInuringContractLayerId(contractLayerId);
          if(inuringContractLayer == null) throw new InuringContractLayerNotFoundException(contractLayerId);
 
         int layerNumber = inuringContractLayer.getLayerNumber();
+        if(inuringContractLayerRepository.countInuringContractLayerByInuringContractNodeId(contractNodeId) == 1) throw new DeleteOfLastLayerException(contractLayerId);
         inuringContractLayerRepository.deleteByInuringContractLayerId( contractLayerId );
 
         reorderTheLayers(layerNumber, contractNodeId);

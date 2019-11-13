@@ -145,4 +145,9 @@ public class InuringFilterCriteriaService {
         hm.put(inuringEdge.getTargetNodeId(),inuringEdge.getTargetNodeType());
         return hm;
     }
+
+    public List<InuringFilterCriteria> readInuringFilterCriteria(int inuringObjectId,  InuringElementType inuringElementType){
+        List<InuringFilterCriteria> inuringFilterCriterias = inuringFilterCriteriaRepository.findByInuringObjectIdAndInuringObjectType(inuringObjectId,inuringElementType);
+        return inuringFilterCriterias;
+    }
 }

@@ -17,7 +17,7 @@ public class InuringContractLayerReinstatementDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "InuringContractParamId", nullable = false)
+    @Column(name = "InuringContractLayerReinstatementDetailId", nullable = false)
     private int inuringContractLayerReinstatementDetailId;
 
     @Column(name = "Entity")
@@ -26,14 +26,17 @@ public class InuringContractLayerReinstatementDetail {
     @Column(name = "InuringContractLayerId")
     private int inuringContractLayerId;
 
-    @Column(name = "ReinstatementsRank")
+    @Column(name = "ReinstatementRank")
     private int reinstatementsRank;
 
-    @Column(name = "ReinstatementsNumber")
+    @Column(name = "ReinstatementNumber")
     private int reinstatementsNumber;
 
-    @Column(name = "ReinstatementsCharge")
+    @Column(name = "ReinstatementCharge")
     private BigDecimal reinstatementsCharge;
+
+    public InuringContractLayerReinstatementDetail() {
+    }
 
     public InuringContractLayerReinstatementDetail(int inuringContractLayerId, int reinstatementsRank, int reinstatementsNumber, BigDecimal reinstatementsCharge) {
         this.entity = 1;
