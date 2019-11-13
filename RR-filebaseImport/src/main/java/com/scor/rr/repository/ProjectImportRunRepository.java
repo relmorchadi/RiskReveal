@@ -1,0 +1,11 @@
+package com.scor.rr.repository;
+
+import com.scor.rr.domain.ProjectImportRun;
+import com.scor.rr.domain.riskReveal.Project;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProjectImportRunRepository extends JpaRepository<ProjectImportRun, Long> {
+    List<ProjectImportRun> findByProject(Project project);
+}

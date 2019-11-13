@@ -33,9 +33,9 @@ public class RlSourceResult {
     @Column(name = "financialPerspective")
     private String financialPerspective;
     @Column(name = "unitMultiplier")
-    private Number unitMultiplier;
+    private Float unitMultiplier;
     @Column(name = "proportion")
-    private Number proportion;
+    private Float proportion;
     @Column(name = "targetRAPCode")
     private String targetRAPCode;
     // TODO : Review with shaun

@@ -9,8 +9,8 @@ public class SourceResultDto {
     private Integer rlAnalysisId;
     private String targetCurrency;
     private String targetRegionPeril;
-    private Number unitMultiplier;
-    private Number proportion;
+    private Float unitMultiplier;
+    private Float proportion;
     private String targetRAPCode;
     private String financialPerspective;
 }

@@ -1,0 +1,222 @@
+<beanio xmlns="http://www.beanio.org/2012/03">
+    <typeHandler name="usDoubleHandler" format="csv" class="org.beanio.types.DoubleTypeHandler" >
+        <property name="pattern" value="###############.###"/>
+        <property name="locale" value="en_US"/>
+    </typeHandler>
+
+    <!-- 'format' identifies the type of stream -->
+    <stream name="accStream" format="csv">
+        <parser>
+            <property name="delimiter" value="|" />
+            <property name="multilineEnabled" value="true"/>
+        </parser>
+        <record name="header" minOccurs="1" maxOccurs="1" >
+            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID"/>
+            <field name="DivisionNumber" type="string" trim="true" default="DivisionNumber"/>
+            <field name="ContractInceptionDate" type="string" trim="true" default="ContractInceptionDate"/>
+            <field name="PracticalCompletionDate" type="string" trim="true" default="PracticalCompletionDate"/>
+            <field name="RegionPerilCode" type="string" trim="true" default="RegionPerilCode"/>
+            <field name="CatDeductible" type="string" trim="true" default="CatDeductible"/>
+            <field name="CatLimiit" type="string" trim="true" default="CatLimiit"/>
+        </record>
+
+        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSAccRow" minOccurs="0" maxOccurs="unbounded" >
+            <field name="carID" type="string" trim="true" />
+            <field name="division" type="string" trim="true" />
+            <field name="inceptionDate" type="date" trim="true" format="dd/MM/yyyy" />
+            <field name="practicalCompletionDate" type="date" trim="true" format="dd/MM/yyyy" />
+            <field name="regionPerilCode" type="string" trim="true"  />
+            <field name="catDeductibleAmount" type="double" trim="true" typeHandler="usDoubleHandler" />
+            <field name="catSubLimit" type="double" trim="true" typeHandler="usDoubleHandler" />
+        </record>
+    </stream>
+
+    <stream name="valuesStream" format="csv">
+        <parser>
+            <property name="delimiter" value="|" />
+            <property name="multilineEnabled" value="true"/>
+        </parser>
+        <record name="header" minOccurs="1" maxOccurs="1" >
+            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID" />
+            <field name="DivisionNumber" type="string" trim="true"  default="DivisionNumber" />
+            <field name="RegionPerilCode" type="string" trim="true"  default="RegionPerilCode" />
+            <field name="ReturnPeriod" type="string" trim="true"    default="ReturnPeriod" />
+            <field name="Currencycode" type="string" trim="true"    default="Currencycode" />
+            <field name="GroundUpLoss" type="string" trim="true"    default="GroundUpLoss" />
+            <field name="GrossLoss" type="string" trim="true"    default="GrossLoss" />
+            <field name="periodBasis" type="string" trim="true"    default="periodBasis" />
+        </record>
+        <record name="object" class="com.scor.almf.ihub.processing.domain.FWValue" minOccurs="0" maxOccurs="unbounded" >
+            <field name="CatAnalysisRequestID" type="string" trim="true" />
+            <field name="DivisionNumber" type="integer" trim="true" format="###############" />
+            <field name="RegionPerilCode" type="string" trim="true" />
+            <field name="ReturnPeriod" type="integer" trim="true" format="###############" />
+            <field name="Currencycode" type="string" trim="true"   />
+            <field name="GroundUpLoss" type="double" trim="true" typeHandler="usDoubleHandler" />
+            <field name="GrossLoss" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="periodBasis" type="string" trim="true"   />
+        </record>
+    </stream>
+
+    <stream name="locStream" format="csv">
+        <parser>
+            <property name="delimiter" value="|" />
+            <property name="multilineEnabled" value="true"/>
+        </parser>
+        <record name="header" minOccurs="1" maxOccurs="1" >
+            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID" />
+            <field name="DivisionNumber" type="string" trim="true" default="DivisionNumber" />
+            <field name="RegionPerilCode" type="string" trim="true" default="RegionPerilCode" />
+            <field name="LocationID" type="string" trim="true" default="LocationID" />
+            <field name="LocationName" type="string" trim="true" default="LocationName" />
+            <field name="StreetAddress" type="string" trim="true" default="StreetAddress" />
+            <field name="CityName" type="string" trim="true" default="CityName" />
+            <field name="County" type="string" trim="true" default="County" />
+            <field name="State" type="string" trim="true" default="State" />
+            <field name="PostalZipCode" type="string" trim="true" default="PostalZipCode" />
+            <field name="ConstructionScheme" type="string" trim="true" default="ConstructionScheme" />
+            <field name="ConstructionCode" type="string" trim="true" default="ConstructionCode" />
+            <field name="ConstructionLabel" type="string" trim="true" default="ConstructionLabel" />
+            <field name="OccupancyScheme" type="string" trim="true" default="OccupancyScheme" />
+            <field name="OccupancyCode" type="string" trim="true" default="OccupancyCode" />
+            <field name="OccupancyLabel" type="string" trim="true" default="OccupancyLabel" />
+            <field name="WindStormZone" type="string" trim="true" nillable="true" default="WindStormZone" />
+            <field name="ExposedValue" type="string" trim="true" default="ExposedValue" />
+            <field name="ExpectedLoss" type="string" trim="true" default="ExpectedLoss" />
+            <field name="CurrencyCode" type="string" trim="true" default="CurrencyCode" />
+            <field name="BuildingTIV" type="string" trim="true" default="BuildingTIV" />
+            <field name="ContentTIV" type="string" trim="true" default="ContentTIV" />
+            <field name="BITIV" type="string" trim="true" default="BITIV" />
+            <field name="TIV" type="string" trim="true" default="TIV" />
+            <field name="AccuracyLevel" type="string" trim="true" default="AccuracyLevel" />
+            <field name="PrimaryFloodZone" type="string" nillable="true" default="PrimaryFloodZone" />
+            <field name="NeighboringFloodZones" type="string" nillable="true" default="NeighboringFloodZones" />
+            <field name="AnnualProbabilityofFlooding" type="string" nillable="true" default="AnnualProbabilityofFlooding" />
+            <field name="DistCoast" type="string" nillable="true" default="DistCoast" />
+            <field name="Elevation" type="string" nillable="true" default="Elevation" />
+            <field name="SoilTypeName" type="string" nillable="true" default="SoilTypeName" />
+            <field name="SoilMatchLevel" type="string" nillable="true" default="SoilMatchLevel" />
+            <field name="LiquefactionName" type="string" nillable="true" default="LiquefactionName" />
+            <field name="LiquefactionMatchLevel" type="string" nillable="true" default="LiquefactionMatchLevel" />
+            <field name="LandslideName" type="string" nillable="true" default="LandslideName" />
+            <field name="LandslideMatchLevel" type="string" nillable="true" default="LandslideMatchLevel" />
+        </record>
+
+        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSLocRow" minOccurs="0" maxOccurs="unbounded" >
+            <field name="carID" type="string" trim="true" />
+            <field name="division" type="string" trim="true" />
+            <field name="regionPerilCode" type="string" trim="true" />
+            <field name="locationNum" type="integer" trim="true" format="###############" />
+            <field name="locationName" type="string" trim="true" default="LocationName" />
+            <field name="streetAddress" type="string" trim="true" default="StreetAddress" />
+            <field name="cityName" type="string" trim="true" default="CityName" />
+            <field name="county" type="string" trim="true" default="County" />
+            <field name="state" type="string" trim="true" default="State" />
+            <field name="postalZipCode" type="string" trim="true" default="PostalZipCode" />
+            <field name="bldgScheme" type="string" trim="true" />
+            <field name="bldgClass" type="string" trim="true" />
+            <field name="consName" type="string" trim="true" />
+            <field name="occScheme" type="string" trim="true" />
+            <field name="occType" type="integer" trim="true" format="###############" />
+            <field name="occName" type="string" trim="true" />
+            <field name="windZone" type="string" trim="true" nillable="true" />
+            <field name="tivValue" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="purePremiumGU" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="currencyCode" type="string" trim="true" />
+            <field name="tivBuildings" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="tivContents" type="double" trim="true"  typeHandler="usDoubleHandler"  />
+            <field name="tivBI" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="tivCombined" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="accuracyLevel" type="string" trim="true" />
+            <field name="primaryFloodZone" type="string" nillable="true" default="PrimaryFloodZone" />
+            <field name="neighboringFloodZones" type="string" nillable="true" default="NeighboringFloodZones" />
+            <field name="annualProbabilityofFlooding" type="string" nillable="true" default="AnnualProbabilityofFlooding" />
+            <field name="distCoast" type="double" typeHandler="usDoubleHandler" />
+            <field name="elevation" type="double" typeHandler="usDoubleHandler" />
+            <field name="soilTypeName" type="string" nillable="true" default="SoilTypeName" />
+            <field name="soilMatchLevel" type="string" nillable="true" default="SoilMatchLevel" />
+            <field name="liquefactionName" type="string" nillable="true" default="LiquefactionName" />
+            <field name="liquefactionMatchLevel" type="string" nillable="true" default="LiquefactionMatchLevel" />
+            <field name="landslideName" type="string" nillable="true" default="LandslideName" />
+            <field name="landslideMatchLevel" type="string" nillable="true" default="LandslideMatchLevel" />
+        </record>
+    </stream>
+    <stream name="locStreamFW" format="csv">
+        <parser>
+            <property name="delimiter" value="|" />
+            <property name="multilineEnabled" value="true"/>
+        </parser>
+        <record name="header" minOccurs="1" maxOccurs="1" >
+            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID" />
+            <field name="DivisionNumber" type="string" trim="true" default="DivisionNumber" />
+            <field name="RegionPerilCode" type="string" trim="true" default="RegionPerilCode" />
+            <field name="LocationID" type="string" trim="true" default="LocationID" />
+            <field name="ConstructionScheme" type="string" trim="true" default="ConstructionScheme" />
+            <field name="ConstructionCode" type="string" trim="true" default="ConstructionCode" />
+            <field name="ConstructionLabel" type="string" trim="true" default="ConstructionLabel" />
+            <field name="OccupancyScheme" type="string" trim="true" default="OccupancyScheme" />
+            <field name="OccupancyCode" type="string" trim="true" default="OccupancyCode" />
+            <field name="OccupancyLabel" type="string" trim="true" default="OccupancyLabel" />
+            <field name="WindStormZone" type="string" trim="true" nillable="true" default="WindStormZone" />
+            <field name="ExposedValue" type="string" trim="true" default="ExposedValue" />
+            <field name="ExpectedLoss" type="string" trim="true" default="ExpectedLoss" />
+            <field name="CurrencyCode" type="string" trim="true" default="CurrencyCode" />
+            <field name="BuildingTIV" type="string" trim="true" default="BuildingTIV" />
+            <field name="ContentTIV" type="string" trim="true" default="ContentTIV" />
+            <field name="BITIV" type="string" trim="true" default="BITIV" />
+            <field name="TIV" type="string" trim="true" default="TIV" />
+            <field name="AccuracyLevel" type="string" trim="true" default="AccuracyLevel" />
+            <field name="PrimaryFloodZone" type="string" nillable="true" default="PrimaryFloodZone" />
+            <field name="NeighboringFloodZones" type="string" nillable="true" default="NeighboringFloodZones" />
+            <field name="AnnualProbabilityofFlooding" type="string" nillable="true" default="AnnualProbabilityofFlooding" />
+        </record>
+
+        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSLocRow" minOccurs="0" maxOccurs="unbounded" >
+            <field name="carID" type="string" trim="true" />
+            <field name="division" type="string" trim="true" />
+            <field name="regionPerilCode" type="string" trim="true" />
+            <field name="locationNum" type="integer" trim="true" format="###############" />
+            <field name="bldgScheme" type="string" trim="true" />
+            <field name="bldgClass" type="string" trim="true" />
+            <field name="consName" type="string" trim="true" />
+            <field name="occScheme" type="string" trim="true" />
+            <field name="occType" type="integer" trim="true" format="###############" />
+            <field name="occName" type="string" trim="true" />
+            <field name="windZone" type="string" trim="true" nillable="true" />
+            <field name="tivValue" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="purePremiumGU" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="currencyCode" type="string" trim="true" />
+            <field name="tivBuildings" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="tivContents" type="double" trim="true"  typeHandler="usDoubleHandler"  />
+            <field name="tivBI" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="tivCombined" type="double" trim="true"  typeHandler="usDoubleHandler" />
+            <field name="accuracyLevel" type="string" trim="true" />
+            <field name="primaryFloodZone" type="string" nillable="true" default="PrimaryFloodZone" />
+            <field name="neighboringFloodZones" type="string" nillable="true" default="NeighboringFloodZones" />
+            <field name="annualProbabilityofFlooding" type="string" nillable="true" default="AnnualProbabilityofFlooding" />
+        </record>
+    </stream>
+
+</beanio>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

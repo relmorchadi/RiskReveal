@@ -41,7 +41,7 @@ public class RmsRessource {
     }
 
     @PostMapping("analysis-detail-scan")
-    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Integer projectId) {
+    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Long projectId) {
         rmsService.scanAnalysisDetail(rlAnalysisList, projectId);
         return ResponseEntity.ok().build();
     }

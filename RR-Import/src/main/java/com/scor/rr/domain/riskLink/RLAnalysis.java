@@ -74,7 +74,7 @@ public class RLAnalysis {
         this.entity=1;
         this.rlModelDataSourceId= rdm.getRlModelDataSourceId();
         this.projectId= rdm.getProjectId();
-        this.rdmId= rdm.getRlModelDataSourceId().longValue();
+        this.rdmId= Long.valueOf(rdm.getRlId());
         this.rdmName=rdm.getName();
         this.analysisId= rdmAnalysisBasic.getAnalysisId();
         this.analysisName= rdmAnalysisBasic.getAnalysisName();

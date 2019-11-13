@@ -9,15 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal-import</artifactId>
-    <name>Risk Reveal Import</name>
-    <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
         <java.version>1.8</java.version>
-        <rr_version>0.0.1-SNAPSHOT</rr_version>
     </properties>
 
     <dependencies>
@@ -228,11 +224,6 @@
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
             <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.scor.rr</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
