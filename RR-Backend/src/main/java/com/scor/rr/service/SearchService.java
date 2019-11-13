@@ -166,9 +166,6 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         return ofNullable(contracts.get(0))
                 .map(firstWs -> {
-                    Optional<Workspace> wsOpt = Optional.of(this.getWorkspace(workspaceId, uwy));
-
-                    Workspace ws = wsOpt.get();
 
                     this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
 
