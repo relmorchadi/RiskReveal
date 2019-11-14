@@ -21,8 +21,6 @@ public class RLPortfolio {
     private Long rlAnalysisId;
     @Column(name = "ProjectId")
     private Long projectId;
-    @Column(name = "RlModelDataSourceId")
-    private Long rlModelDataSourceId;
     @Column(name = "EdmId")
     private Long edmId;
     @Column(name = "EdmName")
@@ -52,4 +50,8 @@ public class RLPortfolio {
 
     @OneToMany
     private List<RlPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
+
+    @ManyToOne
+    @JoinColumn(name = "RlModelDataSourceId")
+    private RlModelDataSource rlModelDataSource;
 }

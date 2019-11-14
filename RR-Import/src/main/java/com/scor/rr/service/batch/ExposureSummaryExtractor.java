@@ -39,6 +39,7 @@ public class ExposureSummaryExtractor {
             List<ProjectImportRun> projectImportRunList = projectImportRunRepository.findByProjectProjectId(Long.valueOf(projectId));
             ProjectImportRun projectImportRun = projectImportRunRepository.findByProjectProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
 
+
             return RepeatStatus.FINISHED;
         } catch (Exception ex) {
             ex.printStackTrace();

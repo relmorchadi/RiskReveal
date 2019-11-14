@@ -198,6 +198,7 @@ public class ImportLossDataJob {
     public Step getPltWriterStep() {
         return stepBuilderFactory.get("pltWriter").tasklet(pltWriterTasklet()).build();
     }
+
     @Bean
     public Step conformEPCurvesStep() {
         return stepBuilderFactory.get("conformEpCurves").tasklet(conformEPCurvesTasklet()).build();
