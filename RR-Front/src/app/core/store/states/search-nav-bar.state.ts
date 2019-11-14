@@ -334,7 +334,6 @@ export class SearchNavBarState implements NgxsOnInit {
         draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
       }
       draft.visibleSearch = false;
-      localStorage.setItem('items', JSON.stringify(draft.recentSearch));
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
