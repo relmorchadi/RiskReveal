@@ -7,8 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfRegionPerils", schema = "dr")
+@Table(name = "NumberOfRegionPerils", schema = "tb")
 @AllArgsConstructor
-@NoArgsConstructor
 public class NumberOfRegionPerils extends NumberOfEntityForProject {
 }
