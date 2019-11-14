@@ -188,6 +188,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     });
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
+      this.detectChanges();
     });
     this.savedSearchVisibility$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearchVisibility => {
       this.savedSearchVisibility = savedSearchVisibility;
