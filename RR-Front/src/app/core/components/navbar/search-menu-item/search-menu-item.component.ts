@@ -165,7 +165,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword));
+    const expr = this.convertBadgeToExpression(this.state.badges);
+    this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr ? expr + " " + this.globalKeyword : this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
 
