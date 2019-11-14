@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.TargetBuild.Project;
+import com.scor.rr.domain.TargetBuild.Project.Project;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
