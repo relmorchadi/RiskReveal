@@ -1,5 +1,6 @@
 package com.scor.rr.service.state;
 
+import com.scor.rr.domain.ModelPortfolio;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -24,4 +25,5 @@ public class TransformationPackage {
     }
 
     Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds;
+    List<ModelPortfolio> modelPortfolios;
 }

@@ -111,6 +111,7 @@ public class RegionPerilExtractor {
         // build RRAnalysis ------------------------------------------------------------
         Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds = new HashMap<>();
         Map<String, Long> fpRRAnalysis = new HashMap<>();
+        List<ModelPortfolio> modelPortfolios = new ArrayList<>();
 
         if (sourceResultIdsInput != null) {
             String[] sourceResultIds = sourceResultIdsInput.split(";");
@@ -293,8 +294,9 @@ public class RegionPerilExtractor {
                         rlPortfolioSelection.getRlPortfolio().getType()
                 );
 
-                modelPortfolioRepository.save(modelPortfolio);
+                modelPortfolios.add(modelPortfolioRepository.save(modelPortfolio));
             }
+            transformationPackage.setModelPortfolios(modelPortfolios);
         }
     }
 
