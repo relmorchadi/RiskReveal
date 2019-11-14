@@ -40,7 +40,7 @@ public class QueryHelper {
         return gsc;
     }
     private String generateLikeClause(String columnName, String keyword){
-        return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
+        return " lower(c." + columnName + ") like '" + escape(keyword.toLowerCase()) + "' " ;
     }
     private String generateYearEqualClause(String columnName, String keyword){
         Integer year;

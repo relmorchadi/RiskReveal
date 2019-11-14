@@ -7,8 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfPLTPublishedToAccumulation", schema = "dr")
+@Table(name = "NumberOfPLTPublishedToAccumulation", schema = "tb")
 @AllArgsConstructor
-@NoArgsConstructor
 public class NumberOfPLTPublishedToAccumulation extends NumberOfEntityForProject {
 }
