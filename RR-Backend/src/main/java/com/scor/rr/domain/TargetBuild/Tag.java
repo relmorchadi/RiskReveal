@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "Tag", schema = "dr")
+@Table(name = "Tag", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
