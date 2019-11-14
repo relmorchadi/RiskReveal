@@ -1,7 +1,7 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project;
+import com.scor.rr.domain.TargetBuild.Project.Project;
 import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
