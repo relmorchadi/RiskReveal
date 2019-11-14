@@ -27,7 +27,7 @@ public class ProjectConfigurationForeWriter {
     private Integer entity;
 
     @Column(name = "ProjectId")
-    private Long projectId;
+    private Integer projectId;
 
     @Column(name = "CARequestId", length = 30)
     private String caRequestId;

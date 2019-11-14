@@ -10,8 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfPLTsPricedInForeWriter", schema = "tb")
+@Table(name = "NumberOfPLTsPricedInForeWriter", schema = "dr")
 @AllArgsConstructor
+@NoArgsConstructor
 public class NumberOfPLTsPricedInForeWriter extends NumberOfEntityForProject {
 
 }

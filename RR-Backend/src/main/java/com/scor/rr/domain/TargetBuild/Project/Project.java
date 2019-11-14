@@ -24,7 +24,7 @@ public class Project {
     private Integer entity;
 
     @Column(name = "WorkspaceId")
-    private Integer workspaceId;
+    private Long workspaceId;
 
     @Column(name = "ProjectImportRunId")
     private Integer projectImportRunId;
