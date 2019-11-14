@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ProjectImportRunRepository extends JpaRepository<ProjectImportRun, Long> {
     List<ProjectImportRun> findByProject(Project project);
+    List<ProjectImportRun> findByProjectProjectId(Long projectId);
+    ProjectImportRun findByProjectProjectIdAndRunId(Long projectId, Integer runId);
 }

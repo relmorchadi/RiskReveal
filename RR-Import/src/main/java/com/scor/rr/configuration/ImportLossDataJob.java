@@ -57,7 +57,8 @@ public class ImportLossDataJob {
     @Autowired
     private ModellingOptionsExtractor modellingOptionsExtractor;
 
-
+    @Autowired
+    private ExposureSummaryExtractor exposureSummaryExtractor;
 
 
     /** Tasklet */
@@ -125,6 +126,11 @@ public class ImportLossDataJob {
     @Bean
     public Tasklet conformEPCurvesTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> epCurveExtractor.extractConformedEpCurves();
+    }
+
+    @Bean
+    public Tasklet extractExposureSummaryTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> exposureSummaryExtractor.extract();
     }
 
 
@@ -197,6 +203,12 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("conformEpCurves").tasklet(conformEPCurvesTasklet()).build();
     }
 
+    @Bean
+    public Step extractExposureSummaryStep() {
+        return stepBuilderFactory.get("extractExposureSummary").tasklet(extractExposureSummaryTasklet()).build();
+    }
+
+
 
     /** Job */
 
@@ -215,6 +227,7 @@ public class ImportLossDataJob {
                 .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
                 .next(getPltWriterStep())
+                .next(extractExposureSummaryStep())
                 .build();
     }
 
