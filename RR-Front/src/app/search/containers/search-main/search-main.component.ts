@@ -301,7 +301,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
     this.loading = true;
     let params = {
-      keyword: this.globalSearchItem,
+      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(this.globalSearchItem)),
       filter: this.filter,
       sort: this.getSortColumns(this.sortData),
       offset,
