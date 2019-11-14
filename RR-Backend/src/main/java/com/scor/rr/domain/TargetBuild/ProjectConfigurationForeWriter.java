@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectConfigurationForeWriter", schema = "dr")
+@Table(name = "ProjectConfigurationForeWriter", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "InuringPackage", schema = "dr")
+@Table(name = "InuringPackage", schema = "tb")
 @Data
 @AllArgsConstructor
 public class InuringPackage {

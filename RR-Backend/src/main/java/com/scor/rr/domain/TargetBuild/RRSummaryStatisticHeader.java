@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "RRSummaryStatisticHeader", schema = "dr")
+@Table(name = "RRSummaryStatisticHeader", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
