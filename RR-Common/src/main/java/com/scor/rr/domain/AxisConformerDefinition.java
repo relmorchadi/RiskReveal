@@ -26,6 +26,7 @@ public class AxisConformerDefinition {
     @Column(name = "AxisConformerAlias")
     private String axisConformerAlias;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exposureViewDefinitionId")
     private ExposureViewDefinition exposureViewDefinition;
 }

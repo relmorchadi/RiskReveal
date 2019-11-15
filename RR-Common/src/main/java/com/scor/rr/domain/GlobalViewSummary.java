@@ -21,7 +21,6 @@ public class GlobalViewSummary {
     private String summaryTitle;
     @Column(name = "SummaryOrder")
     private Integer summaryOrder;
-
     @Column(name = "InstanceId")
     private String instanceId;
     @Column(name = "EdmId")

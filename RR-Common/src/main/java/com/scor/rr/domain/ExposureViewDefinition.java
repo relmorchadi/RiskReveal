@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,4 +23,7 @@ public class ExposureViewDefinition {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ExposureViewId")
     private ExposureView exposureView;
+
+    @OneToMany(mappedBy = "exposureViewDefinition", fetch = FetchType.EAGER)
+    private List<AxisConformerDefinition> axisConformerDefinitions;
 }
