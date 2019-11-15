@@ -6,11 +6,11 @@ import lombok.Data;
 
 public class InuringFilterCriteriaUpdateRequest {
 
-    private int inuringFilterCriteriaId;
+    private long inuringFilterCriteriaId;
 
     private InuringElementType inuringObjectType;
 
-    private int inuringObjectId;
+    private long inuringObjectId;
 
     private String filterKey;
 
@@ -18,7 +18,7 @@ public class InuringFilterCriteriaUpdateRequest {
 
     private boolean including;
 
-    public InuringFilterCriteriaUpdateRequest(int inuringFilterCriteriaId, InuringElementType inuringObjectType, int inuringObjectId, String filterKey, String filterValue, boolean including) {
+    public InuringFilterCriteriaUpdateRequest(long inuringFilterCriteriaId, InuringElementType inuringObjectType, long inuringObjectId, String filterKey, String filterValue, boolean including) {
         this.inuringFilterCriteriaId = inuringFilterCriteriaId;
         this.inuringObjectType = inuringObjectType;
         this.inuringObjectId = inuringObjectId;
@@ -30,7 +30,7 @@ public class InuringFilterCriteriaUpdateRequest {
     public InuringFilterCriteriaUpdateRequest() {
     }
 
-    public int getInuringFilterCriteriaId() {
+    public long getInuringFilterCriteriaId() {
         return inuringFilterCriteriaId;
     }
 
@@ -38,7 +38,7 @@ public class InuringFilterCriteriaUpdateRequest {
         return inuringObjectType;
     }
 
-    public int getInuringObjectId() {
+    public long getInuringObjectId() {
         return inuringObjectId;
     }
 

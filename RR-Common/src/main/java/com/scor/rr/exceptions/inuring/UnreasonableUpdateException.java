@@ -4,7 +4,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 
 public class UnreasonableUpdateException extends RRException {
-    public UnreasonableUpdateException(int id) {
+    public UnreasonableUpdateException(long id) {
         super(ExceptionCodename.UNREASONABLE_CHANGE, "Inuring Edge id " + id );
     }
 }

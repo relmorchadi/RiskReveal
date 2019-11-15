@@ -13,17 +13,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "InuringInputNode", schema = "dbo", catalog = "RiskReveal")
 public class InuringInputNode {
-    private int inuringInputNodeId;
+    private long inuringInputNodeId;
     private int entity;
-    private int inuringPackageId;
+    private long inuringPackageId;
     private InuringNodeStatus inputInuringNodeStatus;
     private String inputNodeName;
 
-    public InuringInputNode(int inuringPackageId) {
+    public InuringInputNode(long inuringPackageId) {
         this(inuringPackageId, "Input Node");
     }
 
-    public InuringInputNode(int inuringPackageId, String inputNodeName) {
+    public InuringInputNode(long inuringPackageId, String inputNodeName) {
         this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.inputInuringNodeStatus = InuringNodeStatus.Valid;
@@ -36,11 +36,11 @@ public class InuringInputNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringInputNodeId", nullable = false)
-    public int getInuringInputNodeId() {
+    public long getInuringInputNodeId() {
         return inuringInputNodeId;
     }
 
-    public void setInuringInputNodeId(int inuringInputNodeId) {
+    public void setInuringInputNodeId(long inuringInputNodeId) {
         this.inuringInputNodeId = inuringInputNodeId;
     }
 
@@ -54,11 +54,11 @@ public class InuringInputNode {
     }
 
     @Column(name = "InuringPackageId", nullable = false)
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public void setInuringPackageId(int inuringPackageId) {
+    public void setInuringPackageId(long inuringPackageId) {
         this.inuringPackageId = inuringPackageId;
     }
 

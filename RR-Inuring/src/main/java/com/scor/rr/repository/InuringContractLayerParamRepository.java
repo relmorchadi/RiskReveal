@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringContractLayerParamRepository extends JpaRepository<InuringContractLayerParam, Integer> {
+public interface InuringContractLayerParamRepository extends JpaRepository<InuringContractLayerParam, Long> {
 
-    List<InuringContractLayerParam> findByInuringContractLayerId(int inuringContractLayerId);
+    List<InuringContractLayerParam> findByInuringContractLayerId(long inuringContractLayerId);
 }

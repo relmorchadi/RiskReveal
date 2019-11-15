@@ -8,12 +8,12 @@ import javax.persistence.*;
 @Entity
 @Table(name = "InuringInputAttachedPLT", schema = "dbo", catalog = "RiskReveal")
 public class InuringInputAttachedPLT {
-    private int inuringInputAttachedPLTId;
+    private long inuringInputAttachedPLTId;
     private int entity;
-    private int inuringInputNodeId;
+    private long inuringInputNodeId;
     private int pltHeaderId;
 
-    public InuringInputAttachedPLT(int inuringInputNodeId, int pltHeaderId) {
+    public InuringInputAttachedPLT(long inuringInputNodeId, int pltHeaderId) {
         this.entity = 1;
         this.inuringInputNodeId = inuringInputNodeId;
         this.pltHeaderId = pltHeaderId;
@@ -25,11 +25,11 @@ public class InuringInputAttachedPLT {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringInputAttachedPLTId", nullable = false)
-    public int getInuringInputAttachedPLTId() {
+    public long getInuringInputAttachedPLTId() {
         return inuringInputAttachedPLTId;
     }
 
-    public void setInuringInputAttachedPLTId(int inuringInputAttachedPLTId) {
+    public void setInuringInputAttachedPLTId(long inuringInputAttachedPLTId) {
         this.inuringInputAttachedPLTId = inuringInputAttachedPLTId;
     }
 
@@ -43,11 +43,11 @@ public class InuringInputAttachedPLT {
     }
 
     @Column(name = "InuringInputNodeId", nullable = false)
-    public int getInuringInputNodeId() {
+    public long getInuringInputNodeId() {
         return inuringInputNodeId;
     }
 
-    public void setInuringInputNodeId(int inuringInputNodeId) {
+    public void setInuringInputNodeId(long inuringInputNodeId) {
         this.inuringInputNodeId = inuringInputNodeId;
     }
 

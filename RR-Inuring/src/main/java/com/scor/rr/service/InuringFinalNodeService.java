@@ -25,14 +25,14 @@ public class InuringFinalNodeService {
     @Autowired
     private InuringFinalNodeRepository inuringFinalNodeRepository;
 
-    public void createInuringFinalNodeForPackage(int inuringPackageId) throws RRException {
+    public void createInuringFinalNodeForPackage(long inuringPackageId) throws RRException {
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringPackageId);
         if (inuringPackage == null) throw new InuringPackageNotFoundException(inuringPackageId);
         InuringFinalNode finalNode = new InuringFinalNode(inuringPackageId);
         inuringFinalNodeRepository.save(finalNode);
     }
 
-    public void deleteByInuringPackageId(int inuringPackageId) {
+    public void deleteByInuringPackageId(long inuringPackageId) {
         inuringFinalNodeRepository.deleteByInuringPackageId(inuringPackageId);
     }
 
@@ -43,7 +43,7 @@ public class InuringFinalNodeService {
         inuringFinalNodeRepository.save(inuringFinalNode);
     }
 
-    public InuringFinalNode readInuringFinalNodeByPackageId(int id) throws RRException{
+    public InuringFinalNode readInuringFinalNodeByPackageId(long id) throws RRException{
         InuringFinalNode inuringFinalNode =  inuringFinalNodeRepository.findByInuringPackageId(id);
         if(inuringFinalNode == null) throw new InuringFinalNodeNotFoundException(id);
         return inuringFinalNode;

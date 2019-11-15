@@ -8,7 +8,7 @@ import java.util.List;
 public class InputNodeList {
 
     private int index;
-    private int id;
+    private long id;
     private String sign;
     private int nbSelectedPLT;
     private List<SelectedPLT> selectedPLT;

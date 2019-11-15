@@ -51,11 +51,11 @@ public class InuringNoteService {
         }
     }
 
-    public List<InuringNote> readInuringNotes(int inuringPackageId){
+    public List<InuringNote> readInuringNotes(long inuringPackageId){
         return inuringNoteRepository.findByInuringPackageId(inuringPackageId);
     }
 
-    public void deleteInuringNote(int inuringNoteId){
+    public void deleteInuringNote(long inuringNoteId){
         inuringNoteRepository.deleteById(inuringNoteId);
     }
 

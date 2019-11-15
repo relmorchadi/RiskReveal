@@ -13,19 +13,19 @@ public class InuringNote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringNoteId", nullable = false)
-    private int inuringNoteId;
+    private long inuringNoteId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name="InuringPackageId", nullable = false)
-    private int inuringPackageId;
+    private long inuringPackageId;
 
     @Column(name = "InuringObjectType")
     private InuringNodeType inuringObjectType;
 
     @Column(name = "InuringObjectId")
-    private int inuringObjectId;
+    private long inuringObjectId;
 
     @Column(name = "NoteContent")
     private String noteContent;
@@ -39,7 +39,7 @@ public class InuringNote {
     public InuringNote() {
     }
 
-    public InuringNote(int inuringPackageId, InuringNodeType inuringObjectType, int inuringObjectId, String noteContent, String noteColor, String noteTitle) {
+    public InuringNote(long inuringPackageId, InuringNodeType inuringObjectType, long inuringObjectId, String noteContent, String noteColor, String noteTitle) {
         this.entity=1;
         this.inuringPackageId = inuringPackageId;
         this.inuringObjectType = inuringObjectType;
@@ -49,7 +49,7 @@ public class InuringNote {
         this.noteTitle = noteTitle;
     }
 
-    public InuringNote(int inuringPackageId, String noteContent, String noteColor, String noteTitle) {
+    public InuringNote(long inuringPackageId, String noteContent, String noteColor, String noteTitle) {
         this.entity=1;
         this.inuringPackageId = inuringPackageId;
         this.noteContent = noteContent;

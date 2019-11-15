@@ -9,12 +9,12 @@ import lombok.Data;
  */
 
 public class InuringEdgeUpdateRequest {
-    private int inuringEdgeId;
+    private long inuringEdgeId;
     private InuringFinancialPerspective outputPerspective;
     private InuringFinancialTreatment financialTreatment;
     private boolean outputAtLayerLevel;
 
-    public InuringEdgeUpdateRequest(int inuringEdgeId, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment, boolean outputAtLayerLevel) {
+    public InuringEdgeUpdateRequest(long inuringEdgeId, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment, boolean outputAtLayerLevel) {
         this.inuringEdgeId = inuringEdgeId;
         this.outputPerspective = outputPerspective;
         this.financialTreatment = financialTreatment;
@@ -24,7 +24,7 @@ public class InuringEdgeUpdateRequest {
     public InuringEdgeUpdateRequest() {
     }
 
-    public int getInuringEdgeId() {
+    public long getInuringEdgeId() {
         return inuringEdgeId;
     }
 

@@ -37,7 +37,7 @@ public class InuringContractLayerReinstatementDetailService {
         inuringContractLayerReinstatementDetailRepository.save(inuringContractLayerReinstatementDetail);
     }
 
-    public void deleteInuringContractLayerReinstatementDetailById(int inuringContractLayerReinstatementDetailId  ){
+    public void deleteInuringContractLayerReinstatementDetailById(long inuringContractLayerReinstatementDetailId  ){
         inuringContractLayerReinstatementDetailRepository.deleteByInuringContractLayerReinstatementDetailId( inuringContractLayerReinstatementDetailId);
     }
 

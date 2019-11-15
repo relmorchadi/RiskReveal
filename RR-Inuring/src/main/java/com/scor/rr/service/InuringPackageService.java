@@ -64,18 +64,18 @@ public class InuringPackageService {
         inuringFinalNodeService.createInuringFinalNodeForPackage(inuringPackage.getInuringPackageId());
     }
 
-    public void deleteInuringPackage(int inuringPackageId) throws RRException {
+    public void deleteInuringPackage(long inuringPackageId) throws RRException {
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringPackageId);
         if (inuringPackage == null) throw new InuringPackageNotFoundException(inuringPackageId);
         if (inuringPackage.isLocked()) throw new InuringIllegalModificationException(inuringPackageId);
         inuringPackageRepository.deleteById(inuringPackageId);
     }
 
-    public InuringPackage findByInuringPackageId(int inuringPackageId) {
+    public InuringPackage findByInuringPackageId(long inuringPackageId) {
         return inuringPackageRepository.findByInuringPackageId(inuringPackageId);
     }
 
-    public InuringPackageDetailsResponse readInuringPackageDetail(int inuringPackageId) throws RRException {
+    public InuringPackageDetailsResponse readInuringPackageDetail(long inuringPackageId) throws RRException {
         InuringPackageDetailsResponse inuringPackageDetailsResponse = new InuringPackageDetailsResponse();
 
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringPackageId);
@@ -103,7 +103,7 @@ public class InuringPackageService {
 
     }
 
-    public void invalidateNode(InuringNodeType nodeType, int nodeId) throws RRException {
+    public void invalidateNode(InuringNodeType nodeType, long nodeId) throws RRException {
         switch (nodeType) {
             case InputNode:
                 InuringInputNode inputNode = inuringInputNodeRepository.findByInuringInputNodeId(nodeId);
@@ -128,7 +128,7 @@ public class InuringPackageService {
         }
     }
 
-    private void generateIndexMap(int inuringPackageId) {
+    private void generateIndexMap(long inuringPackageId) {
 
         nodeIndexMap = new HashMap<>();
         int nodeCounter = 1;
@@ -170,7 +170,7 @@ public class InuringPackageService {
         }
     }
 
-    private void findNodeLevel(Map<String, Integer> nodeLevelMap, int sourceNodeId, InuringNodeType nodeType) {
+    private void findNodeLevel(Map<String, Integer> nodeLevelMap, long sourceNodeId, InuringNodeType nodeType) {
         List<InuringEdge> edgesFromSourceNode = inuringEdgeRepository.findAllBySourceNodeIdAndSourceNodeType(sourceNodeId,nodeType);
         if (edgesFromSourceNode != null && !edgesFromSourceNode.isEmpty()) {
             for (InuringEdge inuringObjectEdge : edgesFromSourceNode) {
@@ -186,7 +186,7 @@ public class InuringPackageService {
         }
     }
 
-    private List<ContractNodeList> generateContractNodeList(int inuringPackageId, int inuringFinalNodeId) {
+    private List<ContractNodeList> generateContractNodeList(long inuringPackageId, long inuringFinalNodeId) {
         List<ContractNodeList> contractNodeLists = new ArrayList<ContractNodeList>();
         List<InuringContractNode> inuringContractNodes = inuringContractNodeRepository.findByInuringPackageId(inuringPackageId);
 
@@ -319,7 +319,7 @@ public class InuringPackageService {
         return contractNodeLists;
     }
 
-    private List<InputNodeList> generateInputNodeList(int inuringPackageId) {
+    private List<InputNodeList> generateInputNodeList(long inuringPackageId) {
         List<InuringInputNode> inuringInputNodes = inuringInputNodeRepository.findByInuringPackageId(inuringPackageId);
         generateMapLevel(inuringInputNodes);
 
@@ -364,7 +364,7 @@ public class InuringPackageService {
         return inputNodeLists;
     }
 
-    private List<EdgeList> generateEdgeList(int inuringPackageId) {
+    private List<EdgeList> generateEdgeList(long inuringPackageId) {
         List<EdgeList> edgeLists = new ArrayList<EdgeList>();
         List<InuringEdge> inuringEdges = inuringEdgeRepository.findByInuringPackageId(inuringPackageId);
         if (inuringEdges != null && !inuringEdges.isEmpty()) {
@@ -395,7 +395,7 @@ public class InuringPackageService {
         return edgeLists;
     }
 
-    public InuringPackageJsonResponse getJSON(int id) throws RRException {
+    public InuringPackageJsonResponse getJSON(long id) throws RRException {
 
         InuringPackageJsonResponse inuringPackageJsonResponse = new InuringPackageJsonResponse();
         generateIndexMap(id);
