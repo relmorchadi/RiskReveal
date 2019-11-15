@@ -18,9 +18,16 @@ public class GlobalViewSummary {
     @Column(name = "GlobalViewSummaryId")
     private Long globalViewSummaryId;
     @Column(name = "SummaryTitle")
-    private Long summaryTitle;
+    private String summaryTitle;
     @Column(name = "SummaryOrder")
-    private Long summaryOrder;
+    private Integer summaryOrder;
+
+    @Column(name = "InstanceId")
+    private String instanceId;
+    @Column(name = "EdmId")
+    private Long edmId;
+    @Column(name = "EdmName")
+    private String edmName;
 
     @ManyToOne
     @JoinColumn(name = "GlobalExposureViewId")
