@@ -12,11 +12,11 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringFilterCriteriaRepository extends JpaRepository<InuringFilterCriteria, Integer> {
+public interface InuringFilterCriteriaRepository extends JpaRepository<InuringFilterCriteria, Long> {
 
-    void deleteByInuringFilterCriteriaId(int inuringFilterCriteriaId);
+    void deleteByInuringFilterCriteriaId(long inuringFilterCriteriaId);
 
-    InuringFilterCriteria findByInuringFilterCriteriaId(int inuringFilterCriteriaId);
+    InuringFilterCriteria findByInuringFilterCriteriaId(long inuringFilterCriteriaId);
 
-    List<InuringFilterCriteria> findByInuringObjectIdAndInuringObjectType(int inuringObjectId, InuringElementType inuringElementType);
+    List<InuringFilterCriteria> findByInuringObjectIdAndInuringObjectType(long inuringObjectId, InuringElementType inuringElementType);
 }

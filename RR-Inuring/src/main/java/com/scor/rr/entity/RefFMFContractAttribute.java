@@ -11,13 +11,13 @@ public class RefFMFContractAttribute {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AttributeID", nullable = false)
-    private int contractAttributeId;
+    @Column(name = "ContractAttributeID", nullable = false)
+    private long contractAttributeId;
 
     @Column(name = "Entity")
     private int entity;
 
-    @Column(name = "AttributeName")
+    @Column(name = "UIAttributeName")
     private String uIAttributeName;
 
     @Column(name = "AttributeDescription")
@@ -64,6 +64,9 @@ public class RefFMFContractAttribute {
 
     @Column(name = "DefaultValueNotes")
     private String defaultValueNotes;
+
+    public RefFMFContractAttribute() {
+    }
 
     public RefFMFContractAttribute(String uIAttributeName, String dataType, String defaultValue) {
         this.uIAttributeName = uIAttributeName;

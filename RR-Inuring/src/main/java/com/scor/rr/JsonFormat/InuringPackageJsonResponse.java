@@ -10,7 +10,7 @@ import java.util.List;
 public class InuringPackageJsonResponse {
 
     private int FormatCode;
-    private int InuringPackageId;
+    private long InuringPackageId;
     private Date CreationDate;
     private String Creator;
     private Date LastModificationDate;

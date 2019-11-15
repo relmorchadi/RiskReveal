@@ -8,13 +8,13 @@ import lombok.Data;
  */
 
 public class InuringEdgeCreationRequest {
-    private int inuringPackageId;
-    private int sourceNodeId;
+    private long inuringPackageId;
+    private long sourceNodeId;
     private InuringNodeType sourceNodeType;
-    private int targetNodeId;
+    private long targetNodeId;
     private InuringNodeType targetNodeType;
 
-    public InuringEdgeCreationRequest(int inuringPackageId, int sourceNodeId, InuringNodeType sourceNodeType, int targetNodeId, InuringNodeType targetNodeType) {
+    public InuringEdgeCreationRequest(long inuringPackageId, long sourceNodeId, InuringNodeType sourceNodeType, long targetNodeId, InuringNodeType targetNodeType) {
         this.inuringPackageId = inuringPackageId;
         this.sourceNodeId = sourceNodeId;
         this.sourceNodeType = sourceNodeType;
@@ -25,11 +25,11 @@ public class InuringEdgeCreationRequest {
     public InuringEdgeCreationRequest() {
     }
 
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public int getSourceNodeId() {
+    public long getSourceNodeId() {
         return sourceNodeId;
     }
 
@@ -37,7 +37,7 @@ public class InuringEdgeCreationRequest {
         return sourceNodeType;
     }
 
-    public int getTargetNodeId() {
+    public long getTargetNodeId() {
         return targetNodeId;
     }
 

@@ -29,13 +29,13 @@ public class InuringEdgeController {
     }
 
     @PostMapping("read")
-    public InuringEdge readInuringEdge(@RequestParam("id") int id) throws RRException{
+    public InuringEdge readInuringEdge(@RequestParam("id") long id) throws RRException{
         return inuringEdgeService.readInuringEdge(id);
     }
 
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteInuringEdge(@RequestParam("id") int id){
+    public ResponseEntity<?> deleteInuringEdge(@RequestParam("id") long id){
         inuringEdgeService.deleteInuringEdgeById(id);
         return ResponseEntity.ok("Deleted successfully");
     }

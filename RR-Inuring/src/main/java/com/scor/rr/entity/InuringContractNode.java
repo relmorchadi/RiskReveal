@@ -19,13 +19,13 @@ public class InuringContractNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractNodeId", nullable = false)
-    private int inuringContractNodeId;
+    private long inuringContractNodeId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)
-    private int inuringPackageId;
+    private long inuringPackageId;
 
     @Column(name = "ContractNodeStatus", nullable = false)
     private InuringNodeStatus contractNodeStatus;
@@ -51,7 +51,7 @@ public class InuringContractNode {
     public InuringContractNode() {
     }
 
-    public InuringContractNode(int inuringPackageId,String contractTypeCode) {
+    public InuringContractNode(long inuringPackageId,String contractTypeCode) {
         this.inuringPackageId = inuringPackageId;
         this.entity = 1;
         this.contractNodeStatus = InuringNodeStatus.Invalid;

@@ -9,10 +9,10 @@ import lombok.Data;
 public class InuringPackageCreationRequest {
     private String packageName;
     private String packageDescription;
-    private int workspaceId;
-    private int createdBy;
+    private long workspaceId;
+    private long createdBy;
 
-    public InuringPackageCreationRequest(String packageName, String packageDescription, int workspaceId, int createdBy) {
+    public InuringPackageCreationRequest(String packageName, String packageDescription, long workspaceId, long createdBy) {
         this.packageName = packageName;
         this.packageDescription = packageDescription;
         this.workspaceId = workspaceId;
@@ -30,11 +30,11 @@ public class InuringPackageCreationRequest {
         return packageDescription;
     }
 
-    public int getWorkspaceId() {
+    public long getWorkspaceId() {
         return workspaceId;
     }
 
-    public int getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 }

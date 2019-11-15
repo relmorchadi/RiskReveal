@@ -13,25 +13,25 @@ import java.util.Objects;
 @Entity
 @Table(name = "InuringEdge", schema = "dbo", catalog = "RiskReveal")
 public class InuringEdge {
-    private int inuringEdgeId;
+    private long inuringEdgeId;
     private int entity;
-    private int inuringPackageId;
-    private int sourceNodeId;
+    private long inuringPackageId;
+    private long sourceNodeId;
     private InuringNodeType sourceNodeType;
-    private int targetNodeId;
+    private long targetNodeId;
     private InuringNodeType targetNodeType;
     private InuringFinancialPerspective outputPerspective;
     private InuringFinancialTreatment financialTreatment;
     private boolean outputAtLayerLevel;
 
-    public InuringEdge(int inuringPackageId, int sourceNodeId, InuringNodeType sourceNodeType, int targetNodeId, InuringNodeType targetNodeType) {
+    public InuringEdge(long inuringPackageId, long sourceNodeId, InuringNodeType sourceNodeType, long targetNodeId, InuringNodeType targetNodeType) {
         this(inuringPackageId, sourceNodeId, sourceNodeType, targetNodeId, targetNodeType, InuringFinancialPerspective.Net, InuringFinancialTreatment.Positive);
     }
 
     public InuringEdge() {
     }
 
-    public InuringEdge(int inuringPackageId, int sourceNodeId, InuringNodeType sourceNodeType, int targetNodeId, InuringNodeType targetNodeType, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment) {
+    public InuringEdge(long inuringPackageId, long sourceNodeId, InuringNodeType sourceNodeType, long targetNodeId, InuringNodeType targetNodeType, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment) {
         this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.sourceNodeId = sourceNodeId;
@@ -46,11 +46,11 @@ public class InuringEdge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringEdgeId", nullable = false)
-    public int getInuringEdgeId() {
+    public long getInuringEdgeId() {
         return inuringEdgeId;
     }
 
-    public void setInuringEdgeId(int inuringEdgeId) {
+    public void setInuringEdgeId(long inuringEdgeId) {
         this.inuringEdgeId = inuringEdgeId;
     }
 
@@ -64,20 +64,20 @@ public class InuringEdge {
     }
 
     @Column(name = "InuringPackageId", nullable = false)
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public void setInuringPackageId(int inuringPackageId) {
+    public void setInuringPackageId(long inuringPackageId) {
         this.inuringPackageId = inuringPackageId;
     }
 
     @Column(name = "SourceNodeId", nullable = false)
-    public int getSourceNodeId() {
+    public long getSourceNodeId() {
         return sourceNodeId;
     }
 
-    public void setSourceNodeId(int sourceNodeId) {
+    public void setSourceNodeId(long sourceNodeId) {
         this.sourceNodeId = sourceNodeId;
     }
 
@@ -91,11 +91,11 @@ public class InuringEdge {
     }
 
     @Column(name = "TargetNodeId", nullable = false)
-    public int getTargetNodeId() {
+    public long getTargetNodeId() {
         return targetNodeId;
     }
 
-    public void setTargetNodeId(int targetNodeId) {
+    public void setTargetNodeId(long targetNodeId) {
         this.targetNodeId = targetNodeId;
     }
 

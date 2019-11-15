@@ -73,16 +73,16 @@ public class InuringContractNodeService {
         if (listOfAttributes != null) {
 
             for (RefFMFContractAttribute attribute : listOfAttributes) {
-                if(attribute.getUISectionName() == "layer List"){
+//                if(attribute.getUISectionName() == "layer List"){
                 InuringContractLayerParam inuringContractLayerParam = new InuringContractLayerParam(inuringContractLayer.getInuringContractLayerId(), attribute.getUIAttributeName(),
                         attribute.getDataType(), attribute.getDefaultValue());
 
                 inuringContractLayerParamRepository.save(inuringContractLayerParam);
-            }}
+            }
         }
     }
 
-    public void deleteInuringContractNode(int inuringContractNodeId) {
+    public void deleteInuringContractNode(long inuringContractNodeId) {
         inuringContractNodeRepository.deleteById(inuringContractNodeId);
     }
 
@@ -93,7 +93,7 @@ public class InuringContractNodeService {
         /**Still have to test if the Cascade delete works**/
     }
 
-    public InuringContractNodeDetailsResponse readInuringContractNode(int inuringContractNodeId) throws RRException {
+    public InuringContractNodeDetailsResponse readInuringContractNode(long inuringContractNodeId) throws RRException {
         InuringContractNode inuringContractNode = inuringContractNodeRepository.findByInuringContractNodeId(inuringContractNodeId);
         if (inuringContractNode == null) throw new InuringContractNodeNotFoundException(inuringContractNodeId);
 

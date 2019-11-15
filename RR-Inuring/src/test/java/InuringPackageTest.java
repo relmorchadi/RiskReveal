@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Matchers.any;
 
 import static org.mockito.Mockito.doAnswer;
@@ -47,13 +48,13 @@ public class InuringPackageTest {
     private InuringFinalNodeService inuringFinalNodeService;
 
 
-    private Map<Integer, InuringPackage> inuringPackages;
-    private Map<Integer, InuringFinalNode> inuringFinalNodes;
-    private Map<Integer, InuringContractNode> inuringContractNodes;
-    private Map<Integer, InuringInputNode> inuringInputNodes;
+    private Map<Long, InuringPackage> inuringPackages;
+    private Map<Long, InuringFinalNode> inuringFinalNodes;
+    private Map<Long, InuringContractNode> inuringContractNodes;
+    private Map<Long, InuringInputNode> inuringInputNodes;
 
-    private static int WORKSPACE_ID = 1;
-    private static int USER_ID = 1;
+    private static long WORKSPACE_ID = 1;
+    private static long USER_ID = 1;
     private static String NAME = "PackageName";
     private static String DESCRIPTION = "PackageDescription";
 
@@ -81,7 +82,7 @@ public class InuringPackageTest {
 
         when(inuringPackageRepository.saveAndFlush(any(InuringPackage.class))).thenAnswer(i -> {
             InuringPackage inuringPackage = i.getArgument(0);
-            int id = inuringPackage.getInuringPackageId() != 0 ? inuringPackage.getInuringPackageId() : inuringPackageCounter++;
+            long id = inuringPackage.getInuringPackageId() != 0 ? inuringPackage.getInuringPackageId() : inuringPackageCounter++;
             inuringPackage.setInuringPackageId(id);
             inuringPackages.put(id, inuringPackage);
             InuringFinalNode inuringFinalNode = new InuringFinalNode();
@@ -92,7 +93,7 @@ public class InuringPackageTest {
 
         when(inuringFinalNodeRepository.save(any(InuringFinalNode.class))).thenAnswer(i -> {
             InuringFinalNode inuringFinalNode = i.getArgument(0);
-            int id = inuringFinalNode.getInuringFinalNodeId() != 0 ? inuringFinalNode.getInuringFinalNodeId() : inuringFinalNodeCounter++;
+            long id = inuringFinalNode.getInuringFinalNodeId() != 0 ? inuringFinalNode.getInuringFinalNodeId() : inuringFinalNodeCounter++;
             inuringFinalNode.setInuringFinalNodeId(id);
             inuringFinalNodes.put(id, inuringFinalNode);
             return inuringFinalNode;
@@ -100,7 +101,7 @@ public class InuringPackageTest {
 
         when(inuringContractNodeRepository.save(any(InuringContractNode.class))).thenAnswer(i -> {
             InuringContractNode inuringContractNode = i.getArgument(0);
-            int id = inuringContractNode.getInuringContractNodeId() != 0 ? inuringContractNode.getInuringContractNodeId() : inuringContractNodeCounter++;
+            long id = inuringContractNode.getInuringContractNodeId() != 0 ? inuringContractNode.getInuringContractNodeId() : inuringContractNodeCounter++;
             inuringContractNode.setInuringContractNodeId(id);
             inuringContractNodes.put(id, inuringContractNode);
             return inuringContractNode;
@@ -108,44 +109,44 @@ public class InuringPackageTest {
 
         when(inuringInputNodeRepository.save(any(InuringInputNode.class))).thenAnswer(i -> {
             InuringInputNode inuringInputNode = i.getArgument(0);
-            int id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
+            long id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
             inuringInputNode.setInuringInputNodeId(id);
             inuringInputNodes.put(id, inuringInputNode);
             return inuringInputNode;
         });
 
-        when(inuringInputNodeRepository.findByInuringInputNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringInputNodeRepository.findByInuringInputNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringInputNodes.get(id);
         });
 
-        when(inuringContractNodeRepository.findByInuringContractNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringContractNodeRepository.findByInuringContractNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringContractNodes.get(id);
         });
 
-        when(inuringPackageRepository.findByInuringPackageId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringPackageRepository.findByInuringPackageId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringPackages.get(id);
         });
 
-        when(inuringFinalNodeRepository.findByInuringFinalNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringFinalNodeRepository.findByInuringFinalNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringFinalNodes.get(id);
         });
 
-        when(inuringFinalNodeRepository.findByInuringPackageId(anyInt())).thenAnswer(node -> {
-            int id = node.getArgument(0);
+        when(inuringFinalNodeRepository.findByInuringPackageId(anyLong())).thenAnswer(node -> {
+            long id = node.getArgument(0);
             return inuringFinalNodes.values().stream().filter(i -> i.getInuringPackageId() == id).collect(Collectors.toList());
         });
 
         doAnswer(node -> {
-            int id = node.getArgument(0);
+            long id = node.getArgument(0);
             inuringPackages.remove(id);
-            int finalNodeId = inuringFinalNodeRepository.findByInuringPackageId(id).getInuringFinalNodeId();
+            long finalNodeId = inuringFinalNodeRepository.findByInuringPackageId(id).getInuringFinalNodeId();
             inuringFinalNodes.remove(finalNodeId);
             return null;
-        }).when(inuringPackageRepository).deleteById(anyInt());
+        }).when(inuringPackageRepository).deleteById(anyLong());
     }
 
 

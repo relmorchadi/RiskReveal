@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface InuringPackageProcessingExchangeRateRepository extends JpaRepository<InuringPackageProcessingExchangeRate, Integer> {
+public interface InuringPackageProcessingExchangeRateRepository extends JpaRepository<InuringPackageProcessingExchangeRate, Long> {
 }

@@ -11,8 +11,8 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringContractLayerReinstatementDetailRepository extends JpaRepository<InuringContractLayerReinstatementDetail, Integer> {
+public interface InuringContractLayerReinstatementDetailRepository extends JpaRepository<InuringContractLayerReinstatementDetail, Long> {
 
-    void deleteByInuringContractLayerReinstatementDetailId(int inuringContractLayerReinstatementDetailId);
-    List<InuringContractLayerReinstatementDetail> findByInuringContractLayerId(int inuringContractLayerId);
+    void deleteByInuringContractLayerReinstatementDetailId(long inuringContractLayerReinstatementDetailId);
+    List<InuringContractLayerReinstatementDetail> findByInuringContractLayerId(long inuringContractLayerId);
 }

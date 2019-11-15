@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface InuringPackageProcessingRepository extends JpaRepository<InuringPackageProcessing,Integer > {
+public interface InuringPackageProcessingRepository extends JpaRepository<InuringPackageProcessing,Long > {
 }

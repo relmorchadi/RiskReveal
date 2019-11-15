@@ -24,8 +24,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class InuringFinalNodeTest {
@@ -37,12 +36,12 @@ public class InuringFinalNodeTest {
     @Mock
     private InuringFinalNodeRepository inuringFinalNodeRepository;
 
-    private Map<Integer, InuringPackage> inuringPackages;
-    private Map<Integer, InuringFinalNode> inuringFinalNodes;
+    private Map<Long, InuringPackage> inuringPackages;
+    private Map<Long, InuringFinalNode> inuringFinalNodes;
 
-    private static int INURING_PACKAGE_ID = 1;
-    private static int USER_ID = 1;
-    private static int NON_EXISTING_FINAL_NODE_ID = 1;
+    private static long INURING_PACKAGE_ID = 1;
+    private static long USER_ID = 1;
+    private static long NON_EXISTING_FINAL_NODE_ID = 1;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -62,27 +61,27 @@ public class InuringFinalNodeTest {
 
         when(inuringPackageRepository.saveAndFlush(any(InuringPackage.class))).thenAnswer(i -> {
             InuringPackage inuringPackage = i.getArgument(0);
-            int id = inuringPackage.getInuringPackageId() != 0 ? inuringPackage.getInuringPackageId() : inuringPackageCounter++;
+            long id = inuringPackage.getInuringPackageId() != 0 ? inuringPackage.getInuringPackageId() : inuringPackageCounter++;
             inuringPackage.setInuringPackageId(id);
             inuringPackages.put(id, inuringPackage);
             return inuringPackage;
         });
 
-        when(inuringPackageRepository.findByInuringPackageId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringPackageRepository.findByInuringPackageId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringPackages.get(id);
         });
 
         when(inuringFinalNodeRepository.save(any(InuringFinalNode.class))).thenAnswer(i -> {
             InuringFinalNode inuringFinalNode = i.getArgument(0);
-            int id = inuringFinalNode.getInuringFinalNodeId() != 0 ? inuringFinalNode.getInuringFinalNodeId() : inuringFinalNodeCounter++;
+            long id = inuringFinalNode.getInuringFinalNodeId() != 0 ? inuringFinalNode.getInuringFinalNodeId() : inuringFinalNodeCounter++;
             inuringFinalNode.setInuringFinalNodeId(id);
             inuringFinalNodes.put(id, inuringFinalNode);
             return inuringFinalNode;
         });
 
-        when(inuringFinalNodeRepository.findByInuringFinalNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringFinalNodeRepository.findByInuringFinalNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringFinalNodes.get(id);
         });
     }

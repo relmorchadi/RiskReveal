@@ -16,13 +16,13 @@ public class InuringContractLayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractLayerId", nullable = false)
-    private int inuringContractLayerId;
+    private long inuringContractLayerId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractNodeId", nullable = false)
-    private int inuringContractNodeId;
+    private long inuringContractNodeId;
 
     @Column(name = "LayerNumber")
     private int layerNumber;
@@ -41,7 +41,7 @@ public class InuringContractLayer {
 
     public InuringContractLayer() {
     }
-    public InuringContractLayer( int layerNumber,int inuringContractNodeId, int layerSequence, String layerCode, String layerDescription){
+    public InuringContractLayer( int layerNumber,long inuringContractNodeId, int layerSequence, String layerCode, String layerDescription){
 
         this.entity = 1;
         this.inuringContractNodeId = inuringContractNodeId;

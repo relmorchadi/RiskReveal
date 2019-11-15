@@ -18,8 +18,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class InuringContractNodeTest {
@@ -53,17 +52,17 @@ public class InuringContractNodeTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private static int CONTRACT_ID = 1;
+    private static long CONTRACT_ID = 1;
 
     private static int inuringContractCounter;
     private static int inuringContractLayerCounter;
     private static int inuringContractLayerParamCounter;
 
-    private Map<Integer, InuringContractNode> inuringContractNodes;
-    private Map<Integer, InuringContractLayer> inuringContractLayers;
-    private Map<Integer, InuringContractLayerParam> inuringContractLayerParams;
+    private Map<Long, InuringContractNode> inuringContractNodes;
+    private Map<Long, InuringContractLayer> inuringContractLayers;
+    private Map<Long, InuringContractLayerParam> inuringContractLayerParams;
 
-    private static int INURING_PACKAGE_ID = 1;
+    private static long INURING_PACKAGE_ID = 1;
 
     private static String CONTRACT_TYPE = "XOL_EVT";
     private static Date INCEPTION_DATE = new Date();
@@ -88,7 +87,7 @@ public class InuringContractNodeTest {
 
         when(inuringContractNodeRepository.saveAndFlush(any(InuringContractNode.class))).thenAnswer(i -> {
             InuringContractNode inuringContractNode = i.getArgument(0);
-            int id = inuringContractNode.getInuringContractNodeId() != 0 ? inuringContractNode.getInuringContractNodeId() : inuringContractCounter++;
+            long id = inuringContractNode.getInuringContractNodeId() != 0 ? inuringContractNode.getInuringContractNodeId() : inuringContractCounter++;
             inuringContractNode.setInuringContractNodeId(id);
             inuringContractNodes.put(id, inuringContractNode);
             return inuringContractNode;
@@ -96,7 +95,7 @@ public class InuringContractNodeTest {
 
         when(inuringContractLayerRepository.saveAndFlush(any(InuringContractLayer.class))).thenAnswer(i -> {
             InuringContractLayer inuringContractLayer = i.getArgument(0);
-            int layerId = inuringContractLayer.getInuringContractLayerId() != 0 ? inuringContractLayer.getInuringContractLayerId() : inuringContractLayerCounter++;
+            long layerId = inuringContractLayer.getInuringContractLayerId() != 0 ? inuringContractLayer.getInuringContractLayerId() : inuringContractLayerCounter++;
             inuringContractLayer.setInuringContractLayerId(layerId);
             inuringContractLayers.put(layerId,inuringContractLayer);
             return inuringContractLayer;
@@ -104,29 +103,29 @@ public class InuringContractNodeTest {
 
         when(inuringContractLayerParamRepository.save(any(InuringContractLayerParam.class))).thenAnswer(i -> {
             InuringContractLayerParam inuringContractLayerParam = i.getArgument(0);
-            int id = inuringContractLayerParam.getInuringContractParamId() != 0 ? inuringContractLayerParam.getInuringContractParamId() : inuringContractLayerParamCounter++;
+            long id = inuringContractLayerParam.getInuringContractParamId() != 0 ? inuringContractLayerParam.getInuringContractParamId() : inuringContractLayerParamCounter++;
             inuringContractLayerParam.setInuringContractParamId(id);
             inuringContractLayerParams.put(id,inuringContractLayerParam);
             return inuringContractLayerParam;
         });
 
-        when(inuringContractNodeRepository.findByInuringContractNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringContractNodeRepository.findByInuringContractNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringContractNodes.get(id);
         });
 
-        when(inuringContractLayerRepository.findByInuringContractLayerId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringContractLayerRepository.findByInuringContractLayerId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringContractLayers.get(id);
         });
 
-        when(inuringContractLayerParamRepository.findByInuringContractLayerId(anyInt())).thenAnswer(inuringContractLayerId -> {
-            int id = inuringContractLayerId.getArgument(0);
+        when(inuringContractLayerParamRepository.findByInuringContractLayerId(anyLong())).thenAnswer(inuringContractLayerId -> {
+            long id = inuringContractLayerId.getArgument(0);
             return inuringContractLayerParams.values().stream().filter(i -> i.getInuringContractLayerId() == id).collect(Collectors.toList());
         });
 
-        when(inuringContractLayerRepository.findByInuringContractNodeId(anyInt())).thenAnswer(inuringContractNodeId -> {
-            int id = inuringContractNodeId.getArgument(0);
+        when(inuringContractLayerRepository.findByInuringContractNodeId(anyLong())).thenAnswer(inuringContractNodeId -> {
+            long id = inuringContractNodeId.getArgument(0);
             return inuringContractLayers.values().stream().filter(i -> i.getInuringContractNodeId() == id).collect(Collectors.toList());
         });
         when(refFMFContractAttributeRepository.getAttributesForContract(CONTRACT_TYPE)).thenAnswer(inuringContractNodeId -> {
@@ -163,7 +162,7 @@ public class InuringContractNodeTest {
             assertEquals(expectedInuringContractLayer, inuringContractLayerRepository.findByInuringContractLayerId(1));
 
 
-           assertEquals( 1,inuringContractLayerParamRepository.findByInuringContractLayerId(1).size());
+           assertEquals( 0,inuringContractLayerParamRepository.findByInuringContractLayerId(1).size());
             for (InuringContractLayerParam inuringContractLayerParam : inuringContractLayerParamRepository.findByInuringContractLayerId(1)) {
                 assertEquals(1, inuringContractLayerParam.getInuringContractLayerId());
            }

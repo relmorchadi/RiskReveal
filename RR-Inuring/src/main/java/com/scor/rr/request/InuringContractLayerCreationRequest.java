@@ -8,12 +8,12 @@ import java.util.List;
 
 public class InuringContractLayerCreationRequest {
 
-    private int inuringContractNodeId;
+    private long inuringContractNodeId;
     private int contractTypeCode;
 
     private List<InuringContractLayerDto> listOfLayers;
 
-    public InuringContractLayerCreationRequest(int inuringContractNodeId, int contractTypeCode, List<InuringContractLayerDto> listOfLayers) {
+    public InuringContractLayerCreationRequest(long inuringContractNodeId, int contractTypeCode, List<InuringContractLayerDto> listOfLayers) {
         this.inuringContractNodeId = inuringContractNodeId;
         this.contractTypeCode = contractTypeCode;
         this.listOfLayers = listOfLayers;
@@ -22,7 +22,7 @@ public class InuringContractLayerCreationRequest {
     public InuringContractLayerCreationRequest() {
     }
 
-    public int getInuringContractNodeId() {
+    public long getInuringContractNodeId() {
         return inuringContractNodeId;
     }
 

@@ -17,13 +17,13 @@ public class InuringContractLayerPerilLimit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
-    private int inuringContractLayerPerilLimitId;
+    private long inuringContractLayerPerilLimitId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractLayerId", nullable = false)
-    private int inuringContractLayerId;
+    private long inuringContractLayerId;
 
     @Column(name = "Peril")
     private String peril;
@@ -34,7 +34,7 @@ public class InuringContractLayerPerilLimit {
     public InuringContractLayerPerilLimit() {
     }
 
-    public InuringContractLayerPerilLimit(int inuringContractLayerId, String peril, BigDecimal limit) {
+    public InuringContractLayerPerilLimit(long inuringContractLayerId, String peril, BigDecimal limit) {
         this.entity = 1;
         this.inuringContractLayerId = inuringContractLayerId;
         this.peril = peril;

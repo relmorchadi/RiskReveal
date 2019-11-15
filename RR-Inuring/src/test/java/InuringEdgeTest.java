@@ -23,8 +23,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -47,24 +46,24 @@ public class InuringEdgeTest {
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
 
-    private static int NOT_EXISTING_INURING_PACKAGE_ID = 2;
-    private static int INURING_PACKAGE_ID = 1;
+    private static long NOT_EXISTING_INURING_PACKAGE_ID = 2;
+    private static long INURING_PACKAGE_ID = 1;
 
-    private static int NOT_EXISTING_INURING_EDGE_ID = 2;
-    private static int INURING_EDGE_ID = 1;
+    private static long NOT_EXISTING_INURING_EDGE_ID = 2;
+    private static long INURING_EDGE_ID = 1;
 
-    private static int NOT_EXISTING_INPUT_NODE_ID = 2;
-    private static int INPUT_NODE_ID = 1;
+    private static long NOT_EXISTING_INPUT_NODE_ID = 2;
+    private static long INPUT_NODE_ID = 1;
 
-    private static int NOT_EXISTING_CONTRACT_NODE_ID = 2;
-    private static int CONTRACT_NODE_ID = 1;
+    private static long NOT_EXISTING_CONTRACT_NODE_ID = 2;
+    private static long CONTRACT_NODE_ID = 1;
 
-    private static int NOT_EXISTING_FINAL_NODE_ID = 2;
-    private static int FINAL_NODE_ID = 1;
+    private static long NOT_EXISTING_FINAL_NODE_ID = 2;
+    private static long FINAL_NODE_ID = 1;
 
 
 
-    private Map<Integer, InuringEdge> inuringEdges;
+    private Map<Long, InuringEdge> inuringEdges;
 
     private static int inuringEdgeCounter;
 
@@ -90,14 +89,14 @@ public class InuringEdgeTest {
         when(inuringFinalNodeRepository.findByInuringFinalNodeId(FINAL_NODE_ID)).thenReturn(new InuringFinalNode());
         when(inuringFinalNodeRepository.findByInuringFinalNodeId(NOT_EXISTING_FINAL_NODE_ID)).thenReturn(null);
 
-        when(inuringEdgeRepository.findByInuringEdgeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringEdgeRepository.findByInuringEdgeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringEdges.get(id);
         });
 
         when(inuringEdgeRepository.save(any(InuringEdge.class))).thenAnswer(i -> {
             InuringEdge inuringEdge = i.getArgument(0);
-            int id = inuringEdge.getInuringEdgeId() != 0 ? inuringEdge.getInuringEdgeId() : inuringEdgeCounter++;
+            long id = inuringEdge.getInuringEdgeId() != 0 ? inuringEdge.getInuringEdgeId() : inuringEdgeCounter++;
             inuringEdge.setInuringEdgeId(id);
             inuringEdges.put(id, inuringEdge);
             return inuringEdge;
