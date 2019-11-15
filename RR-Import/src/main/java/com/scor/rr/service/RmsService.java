@@ -28,7 +28,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
-import javax.xml.crypto.Data;
 import java.math.BigInteger;
 import java.sql.Types;
 import java.util.*;
@@ -59,6 +58,11 @@ public class RmsService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    @Qualifier(value = "dataSource")
+    private javax.sql.DataSource rlDataSource;
+
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
@@ -529,8 +533,7 @@ public class RmsService {
 
     public NamedParameterJdbcTemplate createTemplate(String dataSource) {
         //@TODO
-        javax.sql.DataSource ds = null;
-        return new NamedParameterJdbcTemplate(ds);
+        return new NamedParameterJdbcTemplate(rlDataSource);
     }
 
     private class CreateEdmSummaryStoredProc extends StoredProcedure
