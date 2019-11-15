@@ -19,7 +19,7 @@ public class ExposureViewDefinition {
     @Column(name = "Order")
     private Integer Order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ExposureViewId")
     private ExposureView exposureView;
 }

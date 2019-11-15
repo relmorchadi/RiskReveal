@@ -14,6 +14,7 @@ import com.scor.rr.repository.RlAnalysisScanStatusRepository;
 import com.scor.rr.repository.RlModelDataSourceRepository;
 import com.scor.rr.repository.RlSourceResultRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +22,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
+import javax.xml.crypto.Data;
 import java.math.BigInteger;
+import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -55,6 +62,12 @@ public class RmsService {
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
+
+    @Value("${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryPrep]")
+    private String createEDMPortfolioContextSQL;
+
+    @Value("exec ${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryClear] @RunID=:RunID")
+    private String removeEDMPortfolioContextSQL;
 
 
     public List<DataSource> listAvailableDataSources() {
@@ -482,5 +495,71 @@ public class RmsService {
             LIST = LIST.substring(0, LIST.length() - 1);
         }
         return LIST;
+    }
+
+    public Integer createEDMPortfolioContext(String dataSource,Long edmId,String edmName,List<String> portfolioList,List<String> portfolioExcludedRegionPeril) {
+        // @TODO Implement the Datasource Logic
+        CreateEdmSummaryStoredProc proc=new CreateEdmSummaryStoredProc(rmsJdbcTemplate,createEDMPortfolioContextSQL);
+        String portfolioIdParam="";
+        String portfolioExcludedRegionPerilParam="";
+
+        if(portfolioList!=null&&!portfolioList.isEmpty())
+        {
+            portfolioIdParam= StringUtils.join(portfolioList, ',');
+        }
+        if(portfolioExcludedRegionPeril!=null&&!portfolioExcludedRegionPeril.isEmpty())
+        {
+            portfolioExcludedRegionPerilParam=StringUtils.join(portfolioExcludedRegionPeril, ',');
+        }
+        long time=System.currentTimeMillis();
+        Map<String, Object> result=proc.execute(edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam);
+        Integer runId=(Integer) result.get("RunID");
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} and Portfolio ID(s) '{}' with portfolioExcludedRegionPeril(s) '{}'", new Object[] { runId, edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam });
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} took {} ms",new Object[]{runId, edmId, edmName,(System.currentTimeMillis()-time)});
+        return runId;
+    }
+
+    public void removeEDMPortfolioContext(String dataSource,Integer runId) {
+        // @TODO Implement the Datasource Logic
+        Map<String, Object> params=new HashMap<>();
+        params.put("RunID", runId);
+        logger.debug("removeEDMPortfolioContextSQL: {}, params: {}, runId: {}", removeEDMPortfolioContextSQL, params, runId);
+        rmsJdbcTemplate.update(removeEDMPortfolioContextSQL, params);
+    }
+
+    public NamedParameterJdbcTemplate createTemplate(String dataSource) {
+        //@TODO
+        javax.sql.DataSource ds = null;
+        return new NamedParameterJdbcTemplate(ds);
+    }
+
+    private class CreateEdmSummaryStoredProc extends StoredProcedure
+    {
+        private String sqlProc;
+
+        public String getSqlProc() {
+            return sqlProc;
+        }
+
+//		public void setSqlProc(String sqlProc) {
+//			this.sqlProc = sqlProc;
+//		}
+
+        public CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate,String sqlProc)
+        {
+            // NOTA : regionPerilExclude maybe an DEV schema artifact
+            super(jdbcTemplate, sqlProc);
+            this.sqlProc = sqlProc;
+            //
+            setFunction(false);
+            SqlParameter edmID=new SqlParameter("Edm_ID", Types.INTEGER);
+            SqlParameter edmName=new SqlParameter("Edm_Name", Types.VARCHAR);
+            SqlParameter edmPortList=new SqlParameter("PortfolioList", Types.VARCHAR);
+            SqlParameter regionPerilExclude=new SqlParameter("RegionPerilExclude", Types.VARCHAR);
+            SqlOutParameter runID=new SqlOutParameter("RunID", Types.INTEGER);
+            SqlParameter[] paramArray= { edmID, edmName, edmPortList, regionPerilExclude, runID };
+            super.setParameters(paramArray);
+            super.compile();
+        }
     }
 }
