@@ -51,14 +51,14 @@
     <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px">
       <!-- List Of Shortcuts -->
 
-      <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
+      <div scrollManager class="search-history" *ngIf="state?.showLastSearch; else basicTable">
         <div class="search-history-component" style="position: relative;">
           <div class="header-wrapper">
             <span class="search-history-header">RECENT SEARCH</span>
             <!--                <span class="search-history-viewAll">See All</span>-->
           </div>
           <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
-            <li *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)"
+            <li scrollItem *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)"
                 (dblclick)="selectSearchAndRedirect(items)">
               <div class="chip-container" *ngFor="let instance of items">
                 <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase" [value]="instance.value"></app-chip-tag>
@@ -78,7 +78,7 @@
             <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
           </div>
           <ul style="line-height: normal" *ngIf="state?.mostUsedSavedSearch && state?.mostUsedSavedSearch?.length > 0;else emptyRecent">
-            <li *ngFor="let item of state?.mostUsedSavedSearch;" (click)="appendSearchBadges(item?.badges)">
+            <li scrollItem *ngFor="let item of state?.mostUsedSavedSearch;" (click)="appendSearchBadges(item?.badges)">
               <div class="chip-container" *ngFor="let badge of item?.badges">
                 <app-chip-tag [closeStatus]="false" [key]="badge?.key | startCase" [value]="badge?.value"></app-chip-tag>
               </div>
