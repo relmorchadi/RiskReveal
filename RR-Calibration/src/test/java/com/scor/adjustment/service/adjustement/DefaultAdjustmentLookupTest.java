@@ -1,8 +1,6 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentNodeEntity;
-import com.scor.rr.domain.AdjustmentTypeEntity;
 import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;

@@ -79,7 +79,7 @@ public class AdjustmentNodeProcessingService {
 
     private final static String pathbin = "src/main/resources/file/plt.bin";
 
-    public AdjustmentNodeProcessingEntity findOne(Integer id) {
+    public AdjustmentNodeProcessingEntity findOne(Long id) {
         return adjustmentNodeProcessingRepository.getOne(id);
     }
 
@@ -87,8 +87,8 @@ public class AdjustmentNodeProcessingService {
         return adjustmentNodeProcessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity findByNode(int nodeId) {
-        return adjustmentNodeProcessingRepository.findByAdjustmentNodeId(nodeId);
+    public AdjustmentNodeProcessingEntity findByNode(Long nodeId) {
+        return adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
     //NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
@@ -178,19 +178,19 @@ public class AdjustmentNodeProcessingService {
 //            throw new com.scor.rr.exceptions.RRException(PLT_NOT_FOUND,1);
 //        }
 //    }
-    public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(Long threadId) throws RRException {
         log.info("------ begin thread processing ------");
         AdjustmentThreadEntity thread = adjustmentThreadRepository.findById(threadId).get();
         if (thread == null) {
             log.info("------ thread null, wrong ------");
             return null;
         }
-        List<AdjustmentNodeEntity> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
+        List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
         AdjustmentNodeProcessingEntity processing = null;
         if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
             adjustmentNodes.sort(
                     Comparator.comparing(this::findOrderOfNode));
-            for (AdjustmentNodeEntity node : adjustmentNodes) {
+            for (AdjustmentNode node : adjustmentNodes) {
                 processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
             }
         }
@@ -209,24 +209,24 @@ public class AdjustmentNodeProcessingService {
 
         finalPLT.setPltType("Thread");
         finalPLT.setCreatedDate(RRDateUtils.getDateNow());
-        // TODO set more properties for finalPLT
-        
+        // TODO set more properties for finalPLT : binfile need create new ?
+
         pltHeaderRepository.save(finalPLT);
         thread.setFinalPLT(finalPLT);
         adjustmentThreadRepository.save(thread);
         return finalPLT; // return final PLT
     }
 
-    public Integer findOrderOfNode(AdjustmentNodeEntity node) {
+    public Integer findOrderOfNode(AdjustmentNode node) {
         log.info("------ findOrderOfNode ------");
-        AdjustmentNodeOrderEntity nodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
+        AdjustmentNodeOrder nodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
         return nodeOrder.getAdjustmentOrder();
     }
 
-    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId) throws RRException {
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Long nodeId) throws RRException {
         log.info("------ begin adjusting PLT processing ------");
 
-        AdjustmentNodeEntity adjustmentNode = adjustmentNodeRepository.findById(nodeId).get();
+        AdjustmentNode adjustmentNode = adjustmentNodeRepository.findById(nodeId).get();
         if (adjustmentNode == null) {
             log.info("------ node not found ------");
             return null;
@@ -244,7 +244,7 @@ public class AdjustmentNodeProcessingService {
         }
 
         // kiem tra xem node co PLT input ?
-        AdjustmentNodeOrderEntity adjustmentNodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
+        AdjustmentNodeOrder adjustmentNodeOrder = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
         if (adjustmentNodeOrder == null) {
             log.info("------ adjustmentNodeOrder not found ------");
             return null;
@@ -267,16 +267,16 @@ public class AdjustmentNodeProcessingService {
         }
 
         if (adjustmentNodeOrder.getAdjustmentOrder() > 1) {
-            AdjustmentNodeOrderEntity adjustmentNodeOrderParent = adjustmentNodeOrderRepository.findByAdjustmentOrderAndAdjustmentThreadAdjustmentThreadId(adjustmentThread.getAdjustmentThreadId(), adjustmentNodeOrder.getAdjustmentOrder() - 1);
+            AdjustmentNodeOrder adjustmentNodeOrderParent = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentOrder(adjustmentThread.getAdjustmentThreadId(), adjustmentNodeOrder.getAdjustmentOrder() - 1);
             if (adjustmentNodeOrderParent == null) {
                 log.info("------ adjustmentNodeOrderParent null, no input PLT for adjustment ------");
                 return null;
             }
-            AdjustmentNodeProcessingEntity nodeProcessingParent = adjustmentNodeProcessingRepository.findByAdjustmentNodeId(adjustmentNodeOrderParent.getAdjustmentNode().getAdjustmentNodeId());
+            AdjustmentNodeProcessingEntity nodeProcessingParent = adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(adjustmentNodeOrderParent.getAdjustmentNode().getAdjustmentNodeId());
             inputPLT = nodeProcessingParent.getAdjustedPLT();
         }
 
-        AdjustmentNodeProcessingEntity nodeProcessing = adjustmentNodeProcessingRepository.findByAdjustmentNodeId(nodeId);
+        AdjustmentNodeProcessingEntity nodeProcessing = adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
         if (nodeProcessing == null) {
             log.info("create node processing");
             nodeProcessing = new AdjustmentNodeProcessingEntity();
@@ -308,15 +308,15 @@ public class AdjustmentNodeProcessingService {
         }
     }
 
-    public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
+    public AdjustmentNodeProcessingEntity getProcessingByNode(Long nodeId) {
         return adjustmentNodeProcessingRepository.findAll()
                 .stream()
-                .filter(ape -> ape.getAdjustmentNode().getAdjustmentNodeId()== nodeId)
+                .filter(ape -> ape.getAdjustmentNode().getAdjustmentNodeId() == nodeId)
                 .findAny()
                 .orElseThrow(throwException(PLT_NOT_FOUND, NOT_FOUND));
     }
 
-    public void deleteProcessingByNode(Integer nodeId){
+    public void deleteProcessingByNode(Long nodeId){
         adjustmentNodeProcessingRepository.delete(getProcessingByNode(nodeId));
     }
 
@@ -374,7 +374,7 @@ public class AdjustmentNodeProcessingService {
         return null;
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         this.adjustmentNodeProcessingRepository.delete(
                 this.adjustmentNodeProcessingRepository.
                         findById(id)
@@ -401,15 +401,15 @@ public class AdjustmentNodeProcessingService {
 //        }
 //
 
-    private List<PLTLossData> calculateProcessing(AdjustmentNodeEntity node, List<PLTLossData> pltLossData) throws RRException {
+    private List<PLTLossData> calculateProcessing(AdjustmentNode node, List<PLTLossData> pltLossData) throws RRException {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
-            AdjustmentScalingParameterEntity adjustmentScalingParameter = adjustmentScalingParameterRepository.findByNodeId(node.getAdjustmentNodeId());
+            AdjustmentScalingParameterEntity adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.linearAdjustement(pltLossData, adjustmentScalingParameter.getFactor(), node.getCapped());
         } else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
-            AdjustmentScalingParameterEntity adjustmentScalingParameter = adjustmentScalingParameterRepository.findByNodeId(node.getAdjustmentNodeId());
+            AdjustmentScalingParameterEntity adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getFactor()); // getRpmf() la gi
         } else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
-            List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByNodeId(node.getAdjustmentNodeId());
+            List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
             // TODO getPeatData
 //        } else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
@@ -417,7 +417,7 @@ public class AdjustmentNodeProcessingService {
 //         } else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
 //            return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
         } else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByNodeId(node.getAdjustmentNodeId());
+            List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
         } else {
             throw new com.scor.rr.exceptions.RRException(TYPE_NOT_FOUND, 1);
@@ -446,11 +446,11 @@ public class AdjustmentNodeProcessingService {
 //        }
 //    }
 
-    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) throws RRException {
+    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNode> nodeClones, AdjustmentThreadEntity threadInitial, AdjustmentThreadEntity threadCloned) throws RRException {
         if(nodeClones != null) {
             PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();
-            for (AdjustmentNodeEntity nodeCloned : nodeClones) {
+            for (AdjustmentNode nodeCloned : nodeClones) {
                 AdjustmentNodeProcessingEntity processingEntityPure = adjustmentNodeProcessingRepository.findByAdjustmentNode(nodeCloned.getAdjustmentNodeCloning());
                 AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
                 processingEntityCloned.setAdjustmentNode(nodeCloned);

@@ -1,7 +1,7 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
@@ -50,17 +50,17 @@ public class ThreadTest {
 
     @Test
     public void createPurePltThread() throws RRException {
-        AdjustmentThreadEntity threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
+        AdjustmentThreadEntity threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
                 "",
                 false));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));
-        AdjustmentNodeEntity nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest(1, false,
-                1,
-                4,1,threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983,null));
-        AdjustmentNodeEntity nodeEntity2 = adjustmentNodeService.save(new AdjustmentNodeRequest(1, false,
-                1,
-                4,1,threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983,null));
-        List<AdjustmentNodeEntity> nodeEntities = adjustmentNodeService.findByThread(threadEntity.getAdjustmentThreadId());
+        AdjustmentNode nodeEntity1 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(1, false,
+                1L,
+                4L,1L, threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+        AdjustmentNode nodeEntity2 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(2, false,
+                1L,
+                4L,1L, threadEntity.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+        List<AdjustmentNode> nodeEntities = adjustmentNodeService.findByThread(threadEntity.getAdjustmentThreadId());
         Assert.assertEquals(2,nodeEntities.size());
         Assert.assertEquals(nodeEntities.get(0),nodeEntity1);
         Assert.assertEquals(nodeEntities.get(1),nodeEntity2);

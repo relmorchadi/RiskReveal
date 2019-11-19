@@ -26,7 +26,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AdjustmentThreadService {
 
     @Autowired
-    private AdjustmentThreadRepository adjustmentthreadRepository;
+    private AdjustmentThreadRepository adjustmentThreadRepository;
 
     @Autowired
     private AdjustmentNodeService nodeService;
@@ -40,12 +40,12 @@ public class AdjustmentThreadService {
     @Autowired
     private DefaultAdjustmentService defaultAdjustmentService;
 
-    public AdjustmentThreadEntity findOne(Integer id){
-        return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREAD_NOT_FOUND,NOT_FOUND));
+    public AdjustmentThreadEntity findOne(Long id){
+        return adjustmentThreadRepository.findById(id).orElseThrow(throwException(THREAD_NOT_FOUND,NOT_FOUND));
     }
 
     public List<AdjustmentThreadEntity> findAll(){
-        return adjustmentthreadRepository.findAll();
+        return adjustmentThreadRepository.findAll();
     }
 
     //NOTE: thread is used to group a list of in-order nodes. How the implementation is done for persisting a thread with these nodes ?
@@ -62,7 +62,7 @@ public class AdjustmentThreadService {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
                 adjustmentThreadEntity.setInitialPLT(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
-                adjustmentThreadEntity = adjustmentthreadRepository.save(adjustmentThreadEntity);
+                adjustmentThreadEntity = adjustmentThreadRepository.save(adjustmentThreadEntity);
                 if (adjustmentThreadCreationRequest.isGenerateDefaultThread()) {
                     adjustmentThreadEntity = defaultAdjustmentService.createDefaultThread(adjustmentThreadEntity);
                 }
@@ -75,38 +75,38 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity getByPltHeader(int pltHeaderId){
-        return adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
+    public AdjustmentThreadEntity getByPltHeader(Long pltHeaderId){
+        return adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
     public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest request) throws RRException {
-        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(request.getAdjustmentThreadId());
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentThreadRepository.getOne(request.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
             adjustmentThreadEntity.setFinalPLT(pltHeaderRepository.getOne(request.getPltFinalId()));
             adjustmentThreadEntity.setLocked(request.isLocked());
-            return adjustmentthreadRepository.save(adjustmentThreadEntity);
+            return adjustmentThreadRepository.save(adjustmentThreadEntity);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
         }
     }
 
-    public AdjustmentThreadEntity cloneThread(Integer initialPlt,PltHeaderEntity clonedPlt) throws RRException {
-       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
+    public AdjustmentThreadEntity cloneThread(Long initialPlt,PltHeaderEntity clonedPlt) throws RRException {
+       AdjustmentThreadEntity thread =  adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
            threadClone.setLocked(thread.getLocked());
            threadClone.setInitialPLT(clonedPlt);
            threadClone.setFinalPLT(cloningScorPltHeader.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
-           return adjustmentthreadRepository.save(threadClone);
+           return adjustmentThreadRepository.save(threadClone);
 
        } else {
            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
        }
     }
 
-    public void delete(Integer id) {
-        this.adjustmentthreadRepository.delete(
-                this.adjustmentthreadRepository.
+    public void delete(Long id) {
+        this.adjustmentThreadRepository.delete(
+                this.adjustmentThreadRepository.
                         findById(id)
                         .orElseThrow(throwException(THREAD_NOT_FOUND, NOT_FOUND))
         );

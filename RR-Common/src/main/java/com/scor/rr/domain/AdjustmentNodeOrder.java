@@ -5,11 +5,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentOrder", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentNodeOrderEntity {
+public class AdjustmentNodeOrder {
     private int adjustmentNodeOrderId;
     private Integer adjustmentOrder;
     private AdjustmentThreadEntity adjustmentThread;
-    private AdjustmentNodeEntity adjustmentNode;
+    private AdjustmentNode adjustmentNode;
 
     @Id
     @Column(name = "AdjustmentNodeOrderId", nullable = false)
@@ -36,7 +36,7 @@ public class AdjustmentNodeOrderEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentNodeOrderEntity that = (AdjustmentNodeOrderEntity) o;
+        AdjustmentNodeOrder that = (AdjustmentNodeOrder) o;
         return adjustmentNodeOrderId == that.adjustmentNodeOrderId &&
                 Objects.equals(adjustmentOrder, that.adjustmentOrder);
     }
@@ -58,11 +58,11 @@ public class AdjustmentNodeOrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
+    public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
 
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
 

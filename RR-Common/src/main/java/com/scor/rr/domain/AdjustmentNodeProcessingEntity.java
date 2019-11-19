@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentNodeProcessing", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeProcessingEntity {
     private int adjustmentNodeProcessingId;
-    private AdjustmentNodeEntity adjustmentNode;
+    private AdjustmentNode adjustmentNode;
     private PltHeaderEntity adjustedPLT;
     private PltHeaderEntity inputPLT;
 
@@ -37,11 +37,11 @@ public class AdjustmentNodeProcessingEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
+    public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
 
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
 

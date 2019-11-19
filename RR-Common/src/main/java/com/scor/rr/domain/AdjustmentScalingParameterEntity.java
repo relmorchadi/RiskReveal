@@ -8,9 +8,9 @@ import java.util.Objects;
 public class AdjustmentScalingParameterEntity {
     private int adjustmentScalingParameterId;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNode;
+    private AdjustmentNode adjustmentNode;
 
-    public AdjustmentScalingParameterEntity(double factor, AdjustmentNodeEntity adjustmentNode) {
+    public AdjustmentScalingParameterEntity(double factor, AdjustmentNode adjustmentNode) {
         this.factor = factor;
         this.adjustmentNode = adjustmentNode;
     }
@@ -56,11 +56,11 @@ public class AdjustmentScalingParameterEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
+    public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
 
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
 }

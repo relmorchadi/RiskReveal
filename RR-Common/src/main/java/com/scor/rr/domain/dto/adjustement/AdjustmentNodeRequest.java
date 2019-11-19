@@ -7,33 +7,33 @@ import java.util.List;
 
 public class AdjustmentNodeRequest {
 
-    private int adjustmentNodeId;
+    private Long adjustmentNodeId;
     private Integer sequence;
     private Boolean capped;
-    private Integer adjustmentBasis;
-    private Integer adjustmentType;
-    private Integer adjustmentState;
-    private Integer adjustmentThreadId;
+    private Long adjustmentBasis;
+    private Long adjustmentType;
+    private Long adjustmentState;
+    private Long adjustmentThreadId;
     private Double lmf;
     private Double rpmf;
     private List<PEATData> peatData;
-    private Integer scorPltHeaderInput;
+    private Long scorPltHeaderInput;
     private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
 
     public AdjustmentNodeRequest() {
     }
 
-    public AdjustmentNodeRequest(int adjustmentNodeId,
+    public AdjustmentNodeRequest(Long adjustmentNodeId,
                                  Integer sequence,
                                  Boolean capped,
-                                 Integer adjustmentBasis,
-                                 Integer adjustmentType,
-                                 Integer adjustmentState,
-                                 Integer adjustmentThreadId,
+                                 Long adjustmentBasis,
+                                 Long adjustmentType,
+                                 Long adjustmentState,
+                                 Long adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
                                  List<PEATData> peatData,
-                                 Integer scorPltHeaderInput,
+                                 Long scorPltHeaderInput,
                                  List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.adjustmentNodeId = adjustmentNodeId;
         this.sequence = sequence;
@@ -51,13 +51,14 @@ public class AdjustmentNodeRequest {
 
     public AdjustmentNodeRequest(Integer sequence,
                                  Boolean capped,
-                                 Integer adjustmentBasis,
-                                 Integer adjustmentType,
-                                 Integer adjustmentState,
-                                 Integer adjustmentThreadId,
+                                 Long adjustmentBasis,
+                                 Long adjustmentType,
+                                 Long adjustmentState,
+                                 Long adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
-                                 List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+                                 List<PEATData> peatData,
+                                 Long scorPltHeaderInput, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
@@ -71,11 +72,11 @@ public class AdjustmentNodeRequest {
         this.capped = capped;
     }
 
-    public int getAdjustmentNodeId() {
+    public Long getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
 
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
+    public void setAdjustmentNodeId(Long adjustmentNodeId) {
         this.adjustmentNodeId = adjustmentNodeId;
     }
 
@@ -87,35 +88,35 @@ public class AdjustmentNodeRequest {
         this.sequence = sequence;
     }
 
-    public Integer getAdjustmentBasis() {
+    public Long getAdjustmentBasis() {
         return adjustmentBasis;
     }
 
-    public void setAdjustmentBasis(Integer adjustmentBasis) {
+    public void setAdjustmentBasis(Long adjustmentBasis) {
         this.adjustmentBasis = adjustmentBasis;
     }
 
-    public Integer getAdjustmentType() {
+    public Long getAdjustmentType() {
         return adjustmentType;
     }
 
-    public void setAdjustmentType(Integer adjustmentType) {
+    public void setAdjustmentType(Long adjustmentType) {
         this.adjustmentType = adjustmentType;
     }
 
-    public Integer getAdjustmentState() {
+    public Long getAdjustmentState() {
         return adjustmentState;
     }
 
-    public void setAdjustmentState(Integer adjustmentState) {
+    public void setAdjustmentState(Long adjustmentState) {
         this.adjustmentState = adjustmentState;
     }
 
-    public Integer getAdjustmentThreadId() {
+    public Long getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
+    public void setAdjustmentThreadId(Long adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 
@@ -143,11 +144,11 @@ public class AdjustmentNodeRequest {
         this.peatData = peatData;
     }
 
-    public Integer getScorPltHeaderInput() {
+    public Long getScorPltHeaderInput() {
         return scorPltHeaderInput;
     }
 
-    public void setScorPltHeaderInput(Integer scorPltHeaderInput) {
+    public void setScorPltHeaderInput(Long scorPltHeaderInput) {
         this.scorPltHeaderInput = scorPltHeaderInput;
     }
 

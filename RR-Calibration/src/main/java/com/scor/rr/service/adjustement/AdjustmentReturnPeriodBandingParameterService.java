@@ -20,8 +20,8 @@ public class AdjustmentReturnPeriodBandingParameterService {
     @Autowired
     AdjustmentReturnPeriodBandingParameterRepository parameterRepository;
 
-    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandingParameterByNode(Integer ideNode) {
-        return parameterRepository.findByNodeId(ideNode);
+    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandingParameterByNode(Long ideNode) {
+        return parameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);
     }
 
     public AdjustmentReturnPeriodBandingParameterEntity save(AdjustmentReturnPeriodBandingParameterEntity parameterEntity) {
@@ -36,7 +36,7 @@ public class AdjustmentReturnPeriodBandingParameterService {
         );
     }
 
-    public void deleteByNodeId(Integer nodeId) {
+    public void deleteByNodeId(Long nodeId) {
         parameterRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
     }
 

@@ -5,19 +5,19 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentState", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentStateEntity {
-    private int adjustmentStateId;
+public class AdjustmentState {
+    private Long adjustmentStateId;
     private String code;
     private String stateName;
     private String stateDesc;
 
     @Id
     @Column(name = "AdjustmentStateId", nullable = false)
-    public int getAdjustmentStateId() {
+    public Long getAdjustmentStateId() {
         return adjustmentStateId;
     }
 
-    public void setAdjustmentStateId(int adjustmentStateId) {
+    public void setAdjustmentStateId(Long adjustmentStateId) {
         this.adjustmentStateId = adjustmentStateId;
     }
 
@@ -55,7 +55,7 @@ public class AdjustmentStateEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentStateEntity that = (AdjustmentStateEntity) o;
+        AdjustmentState that = (AdjustmentState) o;
         return adjustmentStateId == that.adjustmentStateId &&
                 Objects.equals(code, that.code) &&
                 Objects.equals(stateName, that.stateName) &&
