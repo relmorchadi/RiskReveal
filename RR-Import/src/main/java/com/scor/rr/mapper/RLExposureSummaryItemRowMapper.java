@@ -1,5 +1,6 @@
 package com.scor.rr.mapper;
 
+import com.scor.rr.domain.GlobalViewSummary;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -9,11 +10,11 @@ import java.sql.SQLException;
 import java.util.Date;
 
 public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSummaryItem> {
-    private Long globalViewSummaryId;
+    private GlobalViewSummary globalViewSummary;
 
-    public RLExposureSummaryItemRowMapper(Long globalViewSummaryId)
+    public RLExposureSummaryItemRowMapper(GlobalViewSummary globalViewSummaryId)
     {
-        this.globalViewSummaryId = globalViewSummaryId;
+        this.globalViewSummary = globalViewSummaryId;
     }
 
     @Override
@@ -22,7 +23,7 @@ public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSumma
         // FIXME : is the "Analysis Region" is to be used at all or is it a specification artifact no longer used ?
         RLExposureSummaryItem tmp=new RLExposureSummaryItem();
         //
-        tmp.setGlobalViewSummaryId(globalViewSummaryId);
+        tmp.setGlobalViewSummary(globalViewSummary);
         tmp.setPortfolioId(rs.getLong("port_id"));
         tmp.setPortfolioType(rs.getString("port_type"));
         tmp.setSummaryName(rs.getString("SummaryName"));

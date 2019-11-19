@@ -64,6 +64,12 @@ public class ExposureSummaryExtractor {
     private RlModelDataSourceRepository rlModelDataSourceRepository;
 
     @Autowired
+    private ExposureSummaryDataRepository exposureSummaryDataRepository;
+
+    @Autowired
+    private RLExposureSummaryItemRepository exposureSummaryItemRepository;
+
+    @Autowired
     private RmsService rmsService;
 
     @Value("#{jobParameters['projectId']}")
@@ -130,10 +136,14 @@ public class ExposureSummaryExtractor {
                                 null);
                         if (runId != null) {
 
+                            List<ExposureSummaryData> allRRExposureSummaries = new ArrayList<>();
+                            List<RLExposureSummaryItem> allRLExposureSummaries = new ArrayList<>();
                             Map<String, Object> params = new HashMap<>();
+
                             params.put("edm_id", edmId);
                             params.put("edm_name", edmName);
                             params.put("run_id", runId);
+
                             exposureViewDefinitions.forEach(exposureViewDefinition -> {
                                 ExposureViewVersion exposureViewVersion = exposureViewVersionRepository.findByExposureViewDefinitionAndCurrent(exposureViewDefinition, true);
                                 if (exposureViewVersion != null) {
@@ -149,10 +159,21 @@ public class ExposureSummaryExtractor {
                                     List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
                                             exposureViewQuery.getQuery(),
                                             params,
-                                            new RLExposureSummaryItemRowMapper(globalViewSummary.getGlobalViewSummaryId()));
+                                            new RLExposureSummaryItemRowMapper(globalViewSummary));
+
+                                    allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems));
+                                    allRLExposureSummaries.addAll(rlExposureSummaryItems);
                                 }
                             });
                             rmsService.removeEDMPortfolioContext(instance, runId);
+
+                            log.info("Info: Start saving risk link exposure summaries");
+                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
+                            log.info("Info: Saving risk link exposure summaries has ended");
+
+                            log.info("Info: Start saving risk reveal exposure summaries");
+                            exposureSummaryDataRepository.saveAll(allRRExposureSummaries);
+                            log.info("Info: Saving risk reveal exposure summaries has ended");
                         } else {
                             log.error("Error: runId is null");
                         }
@@ -185,15 +206,15 @@ public class ExposureSummaryExtractor {
             exposureSummaryData.setCountryCode(rlExposureSummaryItem.getCountryCode());
             exposureSummaryData.setAdmin1Code(rlExposureSummaryItem.getAdmin1Code());
             exposureSummaryData.setGlobalViewSummary(rlExposureSummaryItem.getGlobalViewSummary());
-//        exposureSummaryData.setAnalysisRegionCode(rlExposureSummaryItem.getAnalysisRegionCode());
-//        exposureSummaryData.setConformedCurrency(rlExposureSummaryItem.getConformedCurrency());
-//        exposureSummaryData.setExposureCurrency(rlExposureSummaryItem.getExposureCurrency());
-//        exposureSummaryData.setConformedCurrencyUSDRate(rlExposureSummaryItem.getConformedCurrencyUSDRate());
-//        exposureSummaryData.setExposureCurrencyUSDRate(rlExposureSummaryItem.getExposureCurrencyUSDRate());
-//        exposureSummaryData.setRateDate(rlExposureSummaryItem.getRateDate());
-//        exposureSummaryData.setPortfolioId(rlExposureSummaryItem.getPortfolioId());
-//        exposureSummaryData.setPortfolioType(rlExposureSummaryItem.getPortfolioType());
-//        exposureSummaryData.setFinancialPerspective(rlExposureSummaryItem.getFinancialPerspective());
+            exposureSummaryData.setAnalysisRegionCode(rlExposureSummaryItem.getAnalysisRegionCode());
+            exposureSummaryData.setConformedCurrency(rlExposureSummaryItem.getConformedCurrency());
+            exposureSummaryData.setExposureCurrency(rlExposureSummaryItem.getExposureCurrency());
+            exposureSummaryData.setConformedCurrencyUSDRate(rlExposureSummaryItem.getConformedCurrencyUSDRate());
+            exposureSummaryData.setExposureCurrencyUSDRate(rlExposureSummaryItem.getExposureCurrencyUSDRate());
+            exposureSummaryData.setRateDate(rlExposureSummaryItem.getRateDate());
+            exposureSummaryData.setPortfolioId(rlExposureSummaryItem.getPortfolioId());
+            exposureSummaryData.setPortfolioType(rlExposureSummaryItem.getPortfolioType());
+            exposureSummaryData.setFinancialPerspective(rlExposureSummaryItem.getFinancialPerspective());
             //
             if (StringUtils.equalsIgnoreCase(rlExposureSummaryItem.getPeril(), "Total")) {
                 exposureSummaryData.setPerilCode(rlExposureSummaryItem.getPeril());
@@ -364,7 +385,7 @@ public class ExposureSummaryExtractor {
             case FUNCTION:
                 RlModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
                 if (rlModelDataSource != null)
-                    value = resolveFunctionnalMapping(axisConformerDefinition.getAxisConformerAlias(), Long.valueOf(rlModelDataSource.getRlId()), itemIn);
+                    value = resolveFunctionalMapping(axisConformerDefinition.getAxisConformerAlias(), Long.valueOf(rlModelDataSource.getRlId()), itemIn);
                 break;
             case COPY:
                 // do nothing to alter buffer value, this is a copy after all :) (y) ;)
@@ -425,7 +446,7 @@ public class ExposureSummaryExtractor {
         }
     }
 
-    private String resolveFunctionnalMapping(String functionAlias, Long edmRLId, RLExposureSummaryItem itemIn) {
+    private String resolveFunctionalMapping(String functionAlias, Long edmRLId, RLExposureSummaryItem itemIn) {
 
         if (StringUtils.equalsIgnoreCase("PortfolioFunction", functionAlias)) {
             return "EDM " + edmRLId + " : " + edmRLId + " | " + itemIn.getPortfolioId() + ":" + itemIn.getPortfolioType();
