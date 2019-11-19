@@ -1,12 +1,13 @@
 package com.scor.rr.domain.TargetBuild.Project;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "AccumulatedProject", schema = "tb")
+@Table(name = "NumberOfRegionPerils", schema = "tb")
 @AllArgsConstructor
-public class AccumulatedProject extends NumberOfEntityForProject {
+public class NumberOfRegionPerils extends NumberOfEntityForProject {
 }
