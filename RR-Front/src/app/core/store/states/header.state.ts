@@ -7,9 +7,10 @@ import * as _ from 'lodash';
 import {DataTables} from '../../../shared/data/job-data-tables';
 import {DataTableNotif} from '../../../shared/data/notification-data-tables';
 import * as fromHD from '../actions';
-import {mergeMap} from 'rxjs/operators';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs';
 import {WorkspaceHeaderApi} from '../../service/api/workspace-header.api';
+import {tap} from "rxjs/internal/operators/tap";
 
 const initialState: HeaderStateModel = {
   workspaceHeader: {
@@ -147,12 +148,16 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHD.LoadRecentWorkspace)
   getRecentWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadRecentWorkspace) {
     const state = ctx.getState();
-    const {offset, size, userId} = payload;
+    const {offset, size, userId, option} = payload;
     return this.wsHeaderApi.getRecent(offset, size, userId).pipe(
       mergeMap(wsData => {
-        console.log(wsData);
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.recent.data = _.map(wsData, item => ({...item, selected: false}));
+          if (option === 'append') {
+            draft.workspaceHeader.recent.data = [...draft.workspaceHeader.recent.data,
+              ..._.map(wsData, item => ({...item, selected: false}))];
+          } else {
+            draft.workspaceHeader.recent.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+          }
         })));
       })
     );
@@ -161,11 +166,16 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHD.LoadFavoriteWorkspace)
   getFavoriteWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadFavoriteWorkspace) {
     const state = ctx.getState();
-    const {offset, size, userId} = payload;
+    const {offset, size, userId, option} = payload;
     return this.wsHeaderApi.getFavorited(offset, size, userId).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.favorite.data = _.map(wsData, item => ({...item, selected: false}));
+          if (option === 'append') {
+            draft.workspaceHeader.favorite.data = [...draft.workspaceHeader.favorite.data,
+              ..._.map(wsData, item => ({...item, selected: false}))];
+          } else {
+            draft.workspaceHeader.favorite.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+          }
         })));
       })
     );
@@ -174,11 +184,16 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHD.LoadAssignedWorkspace)
   getAssignedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadAssignedWorkspace) {
     const state = ctx.getState();
-    const {offset, size, userId} = payload;
+    const {offset, size, userId, option} = payload;
     return this.wsHeaderApi.getAssigned(offset, size, userId).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+          if (option === 'append') {
+            draft.workspaceHeader.assigned.data = [...draft.workspaceHeader.assigned.data,
+              ..._.map(wsData, item => ({...item, selected: false}))];
+          } else {
+            draft.workspaceHeader.assigned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+          }
         })));
       })
     );
@@ -187,11 +202,17 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHD.LoadPinnedWorkspace)
   getPinnedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadPinnedWorkspace) {
     const state = ctx.getState();
-    const {offset, size, userId} = payload;
+    const {offset, size, userId, option} = payload;
     return this.wsHeaderApi.getPinned(offset, size, userId).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
+          if (option === 'append') {
+            draft.workspaceHeader.pinned.data = [...draft.workspaceHeader.pinned.data,
+              ..._.map(wsData, item => ({...item, selected: false}))
+            ];
+          } else {
+            draft.workspaceHeader.pinned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+          }
         })));
       })
     );
@@ -199,44 +220,136 @@ export class HeaderState implements NgxsOnInit {
 
   @Action(fromHD.ToggleFavoriteWsState)
   toggleStateFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
-    const {offset, size, userId, data} = payload;
-    this.wsHeaderApi.toggleFavorite(data);
-    return this.wsHeaderApi.getFavorited(offset, size, userId).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
-        })));
-      })
-    );
+    return this.wsHeaderApi.toggleFavorite(payload);
   }
 
-  @Action(fromHD.ToggleFavoriteWsState)
-  toggleStatePinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
-    const {offset, size, userId, data} = payload;
-    this.wsHeaderApi.togglePinned(data);
-    return this.wsHeaderApi.getPinned(offset, size, userId).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.assigned.data = _.map(wsData, item => ({...item, selected: false}));
-        })));
-      })
-    );
+  @Action(fromHD.TogglePinnedWsState)
+  toggleStatePinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.TogglePinnedWsState) {
+    return this.wsHeaderApi.togglePinned(payload);
   }
 
-  @Action(fromHD.ToggleFavoriteWsState)
-  toggleSelectionRecentWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  @Action(fromHD.ToggleRecentWsSelection)
+  toggleSelectionRecentWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleRecentWsSelection) {
+    const {item, selection, value} = payload;
+    if (selection === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.recent.data = _.map(draft.workspaceHeader.recent.data, itemR => {
+          if (itemR.workspaceContextCode === item.workspaceContextCode && itemR.workspaceUwYear === item.workspaceUwYear) {
+            return {...itemR, selected: value};
+          } else {return {...itemR};
+          }
+        });
+      }));
+    } else if (selection === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.recent.data = _.map(draft.workspaceHeader.recent.data, itemR => ({...itemR, selected: value}));
+      }));
+    } else if (selection === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.recent.data = _.map(draft.workspaceHeader.recent.data, itemR => {
+          const workspaceCode = _.map(item, ws => ws.workspaceContextCode);
+          const wsUwYear = _.map(item, ws => ws.workspaceUwYear);
+          if (_.includes(workspaceCode, itemR.workspaceContextCode) && _.includes(wsUwYear, itemR.workspaceUwYear)) {
+            return {...itemR, selected: true};
+          } else {
+            return {...itemR, selected: false};
+          }
+        });
+      }));
+    }
   }
 
-  @Action(fromHD.ToggleFavoriteWsState)
-  toggleSelectionFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  @Action(fromHD.ToggleFavoriteWsSelection)
+  toggleSelectionFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsSelection) {
+    const {item, selection, value} = payload;
+    if (selection === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.favorite.data = _.map(draft.workspaceHeader.favorite.data, itemR => {
+          if (itemR.workspaceContextCode === item.workspaceContextCode && itemR.workspaceUwYear === item.workspaceUwYear) {
+            return {...itemR, selected: value};
+          } else {return {...itemR};
+          }
+        });
+      }));
+    } else if (selection === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.favorite.data = _.map(draft.workspaceHeader.favorite.data, itemR => ({...itemR, selected: value}));
+      }));
+    } else if (selection === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.favorite.data = _.map(draft.workspaceHeader.favorite.data, itemR => {
+          const workspaceCode = _.map(item, ws => ws.workspaceContextCode);
+          const wsUwYear = _.map(item, ws => ws.workspaceUwYear);
+          if (_.includes(workspaceCode, itemR.workspaceContextCode) && _.includes(wsUwYear, itemR.workspaceUwYear)) {
+            return {...itemR, selected: true};
+          } else {
+            return {...itemR, selected: false};
+          }
+        });
+      }));
+    }
   }
 
-  @Action(fromHD.ToggleFavoriteWsState)
-  toggleSelectionAssignedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  @Action(fromHD.ToggleAssignedWsSelection)
+  toggleSelectionAssignedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleAssignedWsSelection) {
+    const {item, selection, value} = payload;
+    if (selection === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.assigned.data = _.map(draft.workspaceHeader.assigned.data, itemR => {
+          if (itemR.workspaceContextCode === item.workspaceContextCode && itemR.workspaceUwYear === item.workspaceUwYear) {
+            return {...itemR, selected: value};
+          } else {return {...itemR};
+          }
+        });
+      }));
+    } else if (selection === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.assigned.data = _.map(draft.workspaceHeader.assigned.data, itemR => ({...itemR, selected: value}));
+      }));
+    } else if (selection === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.assigned.data = _.map(draft.workspaceHeader.assigned.data, itemR => {
+          const workspaceCode = _.map(item, ws => ws.workspaceContextCode);
+          const wsUwYear = _.map(item, ws => ws.workspaceUwYear);
+          if (_.includes(workspaceCode, itemR.workspaceContextCode) && _.includes(wsUwYear, itemR.workspaceUwYear)) {
+            return {...itemR, selected: true};
+          } else {
+            return {...itemR, selected: false};
+          }
+        });
+      }));
+    }
   }
 
-  @Action(fromHD.ToggleFavoriteWsState)
-  toggleSelectionPinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+  @Action(fromHD.TogglePinnedWsSelection)
+  toggleSelectionPinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.TogglePinnedWsSelection) {
+    const {item, selection, value} = payload;
+    if (selection === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.pinned.data = _.map(draft.workspaceHeader.pinned.data, itemR => {
+          if (itemR.workspaceContextCode === item.workspaceContextCode && itemR.workspaceUwYear === item.workspaceUwYear) {
+            return {...itemR, selected: value};
+          } else {return {...itemR};
+          }
+        });
+      }));
+    } else if (selection === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.pinned.data = _.map(draft.workspaceHeader.pinned.data, itemR => ({...itemR, selected: value}));
+      }));
+    } else if (selection === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.workspaceHeader.pinned.data = _.map(draft.workspaceHeader.pinned.data, itemR => {
+          const workspaceCode = _.map(item, ws => ws.workspaceContextCode);
+          const wsUwYear = _.map(item, ws => ws.workspaceUwYear);
+          if (_.includes(workspaceCode, itemR.workspaceContextCode) && _.includes(wsUwYear, itemR.workspaceUwYear)) {
+            return {...itemR, selected: true};
+          } else {
+            return {...itemR, selected: false};
+          }
+        });
+      }));
+    }
   }
 
 

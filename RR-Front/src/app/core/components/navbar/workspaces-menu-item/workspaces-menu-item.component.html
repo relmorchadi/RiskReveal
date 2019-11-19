@@ -10,42 +10,38 @@
     <nz-tabset (nzSelectedIndexChange)="loadTabData($event)" class="a-tab-minitab">
       <nz-tab [nzTitle]="RecentHeaderContent">
         <div class="popup-tab-content popover-menu">
-          <!--          <nz-alert-->
-          <!--            nzType="info"-->
-          <!--            nzCloseable-->
-          <!--            nzShowIcon-->
-          <!--            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"-->
-          <!--          ></nz-alert>-->
+          <!--          <nz-alert nzType="info" nzCloseable nzShowIcon
+                              nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
+                    ></nz-alert>-->
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" [(ngModel)]="recentSearch" (input)="searchNewWorkspace($event)"/>
           </div>
           <ul>
-            <ng-container *ngFor="let workspace of recentWs; let i = index">
-              <li (click)="toggleWorkspace('workspacePopIn.recent',workspace, i)"
-                  (dblclick)="openSingleWorkspaces(workspace)"
-                  [ngClass]="{'a-active-item': workspace.selected}">
-                <div class="items-popover-wrapper">
-                  <label class="item-checkbox" nz-checkbox [ngModel]="workspace.selected"
-                         (ngModelChange)="toggleWorkspace('workspacePopIn.recent', workspace,i)"></label>
-
-                  <!--                  <i class="icon-window-section"></i>-->
-                  <div class="item-popover-context">
-                    <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
-                    <span
-                      class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
-                      - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
-                  </div>
+            <li *ngFor="let workspace of recentWs | showLast: [recentPageable] | inputSearch: [recentSearch]; let i = index"
+                (dblclick)="openSingleWorkspace(workspace)"
+                [ngClass]="{'a-active-item': workspace.selected}">
+              <div class="items-popover-wrapper">
+                <label class="item-checkbox" nz-checkbox (ngModelChange)="singleLineSelect('recent', workspace, $event)"
+                       [ngModel]="workspace.selected"></label>
+                <!--                  <i class="icon-window-section"></i>-->
+                <div (click)="toggleWorkspace('recent',workspace, i)" class="item-popover-context">
+                  <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
+                  <span
+                    class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
+                    - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                 </div>
-                <div class="items-popover-info">
-                  {{workspace?.workspaceContextCode}}
-                </div>
-              </li>
-            </ng-container>
+              </div>
+              <div (click)="toggleWorkspace('recent',workspace, i)"
+                   class="items-popover-info">
+                {{workspace?.workspaceContextCode}}
+              </div>
+            </li>
           </ul>
 
           <div class="mt-2">
-            <nz-select [(ngModel)]="recentPageable" [nzAllowClear]="false" class="a-dropdown-label last-label"
+            <nz-select [ngModel]="recentPageable" [nzAllowClear]="false"
+                       class="a-dropdown-label last-label" (ngModelChange)="pageableChange($event ,'recent')"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
@@ -54,7 +50,7 @@
             </nz-select>
             <div class="float-right">
               <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
-              <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>
+              <button (click)="openWorkspaces('recent')" class="a-button-text">OPEN</button>
             </div>
           </div>
         </div>
@@ -68,27 +64,30 @@
           <ul>
             <ng-container
               *ngFor="let workspace of favoriteWs | showLast: [favoritePageable] | inputSearch: [favoriteSearch]; let i = index">
-              <li (click)="toggle(workspace, 'favorite', workspace?.selected)"
+              <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
-                <div class="items-popover-wrapper">
-                  <label class="item-checkbox" nz-checkbox [(ngModel)]="workspace.selected"></label>
+                <div class="items-popover-wrapper" >
+                  <label class="item-checkbox" nz-checkbox (ngModelChange)="singleLineSelect('favorite', workspace, $event)"
+                         [ngModel]="workspace.selected"></label>
 
                   <!--                  <i class="icon-window-section"></i>-->
-                  <div class="item-popover-context">
+                  <div (click)="toggleWorkspace('favorite', workspace, workspace?.selected)"
+                       class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
                     <span
                       class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
                       - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
-                <div class="items-popover-info">
+                <div class="items-popover-info" (click)="toggleWorkspace('favorite', workspace, workspace?.selected)">
                   {{workspace?.workspaceContextCode}}
                 </div>
               </li>
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="favoritePageable" [nzAllowClear]="false" class="a-dropdown-label last-label"
+            <nz-select [ngModel]="favoritePageable" [nzAllowClear]="false" (ngModelChange)="pageableChange($event ,'favorite')"
+                       class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
@@ -98,7 +97,7 @@
 
             <div class="float-right">
               <button class="a-button-text" nz-button nzType="default">POP OUT</button>
-              <button class="a-button-text" nz-button nzType="default">OPEN</button>
+              <button class="a-button-text" (click)="openWorkspaces('favorite')" nz-button nzType="default">OPEN</button>
             </div>
           </div>
         </div>
@@ -112,13 +111,14 @@
           <ul>
             <ng-container
               *ngFor="let workspace of assignedWs | showLast: [assignedPageable] | inputSearch: [assignedSearch]; let i = index">
-              <li (click)="toggle(workspace, 'favorite', workspace?.selected)"
+              <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
-                  <label class="item-checkbox" nz-checkbox [(ngModel)]="workspace.selected"></label>
+                  <label class="item-checkbox" nz-checkbox (ngModelChange)="singleLineSelect('assigned', workspace, $event)"
+                         [ngModel]="workspace.selected"></label>
 
                   <!--                  <i class="icon-window-section"></i>-->
-                  <div class="item-popover-context">
+                  <div (click)="toggleWorkspace('assigned', workspace, workspace?.selected)" class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
                     <span
                       class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
@@ -132,7 +132,8 @@
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="assignedPageable" [nzAllowClear]="false" class="a-dropdown-label last-label"
+            <nz-select [ngModel]="assignedPageable" (ngModelChange)="pageableChange($event ,'assigned')"
+                       [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -142,7 +143,8 @@
 
             <div class="float-right">
               <button class="a-button-text" nz-button nzType="default">POP OUT</button>
-              <button class="a-button-text" nz-button nzType="default">OPEN</button>
+              <button class="a-button-text" (click)="openWorkspaces('recent')"
+                      nz-button nzType="default">OPEN</button>
             </div>
           </div>
         </div>
@@ -155,28 +157,30 @@
           </div>
           <ul>
             <ng-container
-              *ngFor="let workspace of pinged | showLast: [pinnedPageable] | inputSearch: [pinnedSearch]; let i = index">
-              <li (click)="toggle(workspace, 'pinged', workspace?.selected)"
+              *ngFor="let workspace of pinnedWs | showLast: [pinnedPageable] | inputSearch: [pinnedSearch]; let i = index">
+              <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
-                  <label class="item-checkbox" nz-checkbox [(ngModel)]="workspace.selected"></label>
-
+                  <label class="item-checkbox" nz-checkbox (ngModelChange)="singleLineSelect('pinned', workspace, $event)"
+                         [ngModel]="workspace.selected"></label>
                   <!--                  <i class="icon-window-section"></i>-->
-                  <div class="item-popover-context">
+                  <div (click)="toggleWorkspace('pinned', workspace, workspace?.selected)"
+                       class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
                     <span
                       class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
                       - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
-                <div class="items-popover-info">
+                <div (click)="toggleWorkspace('pinned', workspace, workspace?.selected)"
+                     class="items-popover-info">
                   {{workspace?.workspaceContextCode}}
                 </div>
               </li>
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="pinnedPageable" [nzAllowClear]="false" class="a-dropdown-label last-label"
+            <nz-select [ngModel]="pinnedPageable" (ngModelChange)="pageableChange($event ,'pinned')" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
@@ -186,7 +190,8 @@
 
             <div class="float-right">
               <button class="a-button-text" nz-button nzType="default">POP OUT</button>
-              <button class="a-button-text" nz-button nzType="default">OPEN</button>
+              <button class="a-button-text" (click)="openWorkspaces('pinned')"
+                      nz-button nzType="default">OPEN</button>
             </div>
           </div>
         </div>
