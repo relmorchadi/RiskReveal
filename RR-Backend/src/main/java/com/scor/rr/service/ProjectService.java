@@ -1,9 +1,11 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.TargetBuild.Project.NumberOfEntityForProject;
 import com.scor.rr.domain.TargetBuild.Project.Project;
 import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.repository.ContractSearchResultRepository;
-import com.scor.rr.repository.TargetBuild.Project.ProjectRepository;
+import com.scor.rr.repository.TargetBuild.Project.*;
 import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,34 @@ public class ProjectService {
     @Autowired
     private WorkspaceRepository workspaceRepository;
 
+    @Autowired
+    private NumberOfPLTPublishedToAccumulationRepository numberOfPLTPublishedToAccumulationRepository;
+
+    @Autowired
+    private NumberOfPLTsPricedInForeWriterRepository numberOfPLTsPricedInForeWriterRepository;
+
+    @Autowired
+    private NumberOfPLTsPricedInxActRepository numberOfPLTsPricedInxActRepository;
+
+    @Autowired
+    private NumberOfPLTsPublishedForPricingRepository numberOfPLTsPublishedForPricingRepository;
+
+    @Autowired
+    private NumberOfPLTThreadEndOrPostInuredRepository numberOfPLTThreadEndOrPostInuredRepository;
+
+    @Autowired
+    private NumberOfRegionPerilsRepository numberOfRegionPerilsRepository;
+
+    @Autowired
+    private ImportedProjectRepository importedProjectRepository;
+
+    @Autowired
+    private AccumulatedProjectRepository accumulatedProjectRepository;
+
+    @Autowired
+    private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
+
+
     public Project addNewProject(String wsId, Integer uwy, Project p) {
         return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
                 .map(ws -> projectRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
@@ -35,7 +65,7 @@ public class ProjectService {
                 );
     }
 
-    private Project prePersistProject(Project p, Long wsId) {
+    private Project prePersistProject(Project p, Integer wsId) {
         p.setProjectId(null);
         p.setWorkspaceId(wsId);
         return p;
@@ -53,6 +83,41 @@ public class ProjectService {
             projectRepository.deleteById(projectId);
         else
             throw new RuntimeException("No available Project with ID : " + projectId);
+    }
+
+    public ProjectStatistics getProjetStatistics(Long projectId) {
+        Integer regionPerils = numberOfRegionPerilsRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        Integer accumulatedPlts = numberOfPLTPublishedToAccumulationRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        Integer finalPricing;
+        Integer publishedForPricingCount;
+        Integer plts = numberOfPLTThreadEndOrPostInuredRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+
+        if(projectConfigurationForeWriterRepository.existsByProjectId(projectId)) {
+            publishedForPricingCount = numberOfPLTsPublishedForPricingRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+            finalPricing = numberOfPLTsPricedInForeWriterRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        } else {
+            publishedForPricingCount = numberOfPLTsPublishedForPricingRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+            finalPricing = numberOfPLTsPricedInxActRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        }
+
+        Boolean importedFlag = importedProjectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount() > 0;
+        Boolean accumulated = accumulatedProjectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount() > 0;
+        Boolean publishedForPricingFlag;
+
+        publishedForPricingFlag = publishedForPricingCount > 0;
+
+
+        return ProjectStatistics
+                .builder()
+                .regionPerils(regionPerils)
+                .accumulatedPlts(accumulatedPlts)
+                .finalPricing(finalPricing)
+                .plts(plts)
+                .publishedForPricingCount(publishedForPricingCount)
+                .importedFlag(importedFlag)
+                .accumulatedFlag(accumulated)
+                .publishedForPricingFlag(publishedForPricingFlag)
+                .build();
     }
 
 }
