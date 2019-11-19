@@ -5,8 +5,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentBasis", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentBasisEntity {
-    private int adjustmentBasisId;
+public class AdjustmentBasis {
+    private Long adjustmentBasisId;
     private String adjustmentBasisName;
     private String basisShortName;
     private String description;
@@ -19,11 +19,11 @@ public class AdjustmentBasisEntity {
 
     @Id
     @Column(name = "AdjustmentBasisId", nullable = false)
-    public int getAdjustmentBasisId() {
+    public Long getAdjustmentBasisId() {
         return adjustmentBasisId;
     }
 
-    public void setAdjustmentBasisId(int adjustmentBasisId) {
+    public void setAdjustmentBasisId(Long adjustmentBasisId) {
         this.adjustmentBasisId = adjustmentBasisId;
     }
 
@@ -111,7 +111,7 @@ public class AdjustmentBasisEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentBasisEntity that = (AdjustmentBasisEntity) o;
+        AdjustmentBasis that = (AdjustmentBasis) o;
         return adjustmentBasisId == that.adjustmentBasisId &&
                 Objects.equals(adjustmentBasisName, that.adjustmentBasisName) &&
                 Objects.equals(basisShortName, that.basisShortName) &&
@@ -130,11 +130,11 @@ public class AdjustmentBasisEntity {
 
     @ManyToOne
     @JoinColumn(name = "CategoryId", referencedColumnName = "AdjustmentCategoryId")
-    public AdjustmentCategoryEntity getAdjustmentCategoryByFkCategoryId() {
+    public AdjustmentCategoryEntity getAdjustmentCategory() {
         return adjustmentCategory;
     }
 
-    public void setAdjustmentCategoryByFkCategoryId(AdjustmentCategoryEntity adjustmentCategoryByFkCategoryId) {
-        this.adjustmentCategory = adjustmentCategoryByFkCategoryId;
+    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
+        this.adjustmentCategory = adjustmentCategory;
     }
 }

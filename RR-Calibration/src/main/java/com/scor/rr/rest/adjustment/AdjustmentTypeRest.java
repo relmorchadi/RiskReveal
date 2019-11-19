@@ -1,6 +1,6 @@
 package com.scor.rr.rest.adjustment;
 
-import com.scor.rr.domain.AdjustmentTypeEntity;
+import com.scor.rr.domain.AdjustmentType;
 import com.scor.rr.service.adjustement.AdjustmentTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +18,12 @@ public class AdjustmentTypeRest {
 
 
     @GetMapping("all")
-    public List<AdjustmentTypeEntity> findAll(){
+    public List<AdjustmentType> findAll(){
         return adjustmentTypeService.findAll();
     }
 
     @GetMapping("one")
-    public AdjustmentTypeEntity findOne(Integer id){
+    public AdjustmentType findOne(Long id){
         return adjustmentTypeService.findOne(id);
     }
 

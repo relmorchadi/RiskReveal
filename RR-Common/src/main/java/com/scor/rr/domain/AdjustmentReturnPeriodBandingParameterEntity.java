@@ -9,9 +9,9 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     private int adjustmentReturnPeriodBandingParameterId;
     private double returnPeriod;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNode;
+    private AdjustmentNode adjustmentNode;
 
-    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNodeEntity adjustmentNode) {
+    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNode adjustmentNode) {
         this.returnPeriod = returnPeriod;
         this.factor = factor;
         this.adjustmentNode = adjustmentNode;
@@ -74,11 +74,11 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
+    public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
 
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
 }

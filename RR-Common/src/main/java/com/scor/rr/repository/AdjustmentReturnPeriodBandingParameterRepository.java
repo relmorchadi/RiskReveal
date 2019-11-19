@@ -8,8 +8,8 @@ import java.util.List;
 
 
 public interface AdjustmentReturnPeriodBandingParameterRepository extends JpaRepository<AdjustmentReturnPeriodBandingParameterEntity,Integer> {
-    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNode = n and n.adjustmentNodeId = :id")
-    List<AdjustmentReturnPeriodBandingParameterEntity> findByNodeId(@Param("id") Integer id);
+//    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNode = n and n.adjustmentNodeId = :id")
+    List<AdjustmentReturnPeriodBandingParameterEntity> findByAdjustmentNodeAdjustmentNodeId(Long id);
 
-    void deleteByAdjustmentNode_AdjustmentNodeId(int adjustmentNode_adjustmentNodeId); // TODO framework ?
+    void deleteByAdjustmentNode_AdjustmentNodeId(Long adjustmentNode_adjustmentNodeId); // TODO framework ?
 }

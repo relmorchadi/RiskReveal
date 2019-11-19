@@ -27,7 +27,7 @@ public class AdjustmentThreadRest {
     }
 
     @GetMapping
-    public AdjustmentThreadEntity findById(Integer id){
+    public AdjustmentThreadEntity findById(Long id){
         return adjustmentThreadService.findOne(id);
     }
 

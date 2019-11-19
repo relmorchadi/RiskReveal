@@ -1,6 +1,6 @@
 package com.scor.rr.rest.adjustment;
 
-import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
@@ -18,22 +18,32 @@ public class AdjustmentNodeRest {
 
 
     @GetMapping("all")
-    public List<AdjustmentNodeEntity> findAll() {
+    public List<AdjustmentNode> findAll() {
         return adjustmentNodeService.findAll();
     }
 
-    @PostMapping
-    public AdjustmentNodeEntity save(@RequestBody AdjustmentNodeRequest request) throws RRException {
-        return adjustmentNodeService.save(request);
+//    @PostMapping
+//    public AdjustmentNode save(@RequestBody AdjustmentNodeRequest request) throws RRException {
+//        return adjustmentNodeService.save(request);
+//    }
+
+    @PostMapping("create")
+    public AdjustmentNode createAdjustmentNode(@RequestBody AdjustmentNodeRequest request) throws RRException {
+        return adjustmentNodeService.createAdjustmentNode(request);
+    }
+
+    @PostMapping("update")
+    public AdjustmentNode updateAdjustmentNode(@RequestBody AdjustmentNodeRequest request) throws RRException {
+        return adjustmentNodeService.updateAdjustmentNode(request);
     }
 
     @GetMapping("thread")
-    public List<AdjustmentNodeEntity> findByThread(Integer threadId){
+    public List<AdjustmentNode> findByThread(Long threadId){
         return adjustmentNodeService.findByThread(threadId);
     }
 
     @PostMapping("delete")
-    public void deleteNode(Integer id){
+    public void deleteNode(Long id){
         adjustmentNodeService.deleteNode(id);
 
     }

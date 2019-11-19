@@ -14,7 +14,7 @@ public class AdjustmentThreadEntity {
     private Timestamp lastModifiedOn;
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
-    private int adjustmentThreadId;
+    private Long adjustmentThreadId;
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
@@ -114,11 +114,11 @@ public class AdjustmentThreadEntity {
     @Id
     @Column(name = "AdjustmentThreadId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getAdjustmentThreadId() {
+    public Long getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(int adjustmentThreadId) {
+    public void setAdjustmentThreadId(Long adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 

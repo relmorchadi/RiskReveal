@@ -4,34 +4,34 @@ package com.scor.rr.domain.dto.adjustement;
  * Created by u004602 on 08/10/2019.
  */
 public class AdjustmentThreadUpdateRequest {
-    private int adjustmentThreadId;
-    private int pltFinalId;
+    private Long adjustmentThreadId;
+    private Long pltFinalId;
     private boolean locked;
     private String lastModifiedBy;
 
     public AdjustmentThreadUpdateRequest() {
     }
 
-    public AdjustmentThreadUpdateRequest(int adjustmentThreadId, int pltFinalId, boolean locked, String lastModifiedBy) {
+    public AdjustmentThreadUpdateRequest(Long adjustmentThreadId, Long pltFinalId, boolean locked, String lastModifiedBy) {
         this.adjustmentThreadId = adjustmentThreadId;
         this.pltFinalId = pltFinalId;
         this.locked = locked;
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public int getAdjustmentThreadId() {
+    public Long getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(int adjustmentThreadId) {
+    public void setAdjustmentThreadId(Long adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 
-    public int getPltFinalId() {
+    public Long getPltFinalId() {
         return pltFinalId;
     }
 
-    public void setPltFinalId(int pltFinalId) {
+    public void setPltFinalId(Long pltFinalId) {
         this.pltFinalId = pltFinalId;
     }
 

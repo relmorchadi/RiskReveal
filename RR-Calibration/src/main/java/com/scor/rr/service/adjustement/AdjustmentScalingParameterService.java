@@ -18,15 +18,15 @@ public class AdjustmentScalingParameterService {
     @Autowired
     AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
 
-    public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Integer ideNode) {
-        return adjustmentScalingParameterRepository.findByNodeId(ideNode);
+    public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Long ideNode) {
+        return adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);
     }
 
     public AdjustmentScalingParameterEntity save(AdjustmentScalingParameterEntity parameterEntity) {
         return adjustmentScalingParameterRepository.save(parameterEntity);
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         this.adjustmentScalingParameterRepository.delete(
                 this.adjustmentScalingParameterRepository.
                         findById(id)
@@ -34,7 +34,7 @@ public class AdjustmentScalingParameterService {
         );
     }
 
-    public void deleteByNodeId(Integer nodeId) {
+    public void deleteByNodeId(Long nodeId) {
         adjustmentScalingParameterRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
     }
 

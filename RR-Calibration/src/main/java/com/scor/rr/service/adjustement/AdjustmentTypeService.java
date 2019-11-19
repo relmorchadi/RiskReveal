@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentTypeEntity;
+import com.scor.rr.domain.AdjustmentType;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentTypeRepository;
@@ -21,15 +21,15 @@ public class AdjustmentTypeService {
     @Autowired
     AdjustmentTypeRepository adjustmentTypeRepository;
 
-    public List<AdjustmentTypeEntity> findAll(){
+    public List<AdjustmentType> findAll(){
         return adjustmentTypeRepository.findAll();
     }
 
-    public AdjustmentTypeEntity findOne(Integer id){
+    public AdjustmentType findOne(Long id){
         return adjustmentTypeRepository.findById(id).orElseThrow(throwException(TYPE_NOT_FOUND,NOT_FOUND));
     }
 
-    public void delete(Integer id) {
+    public void delete(Long id) {
         this.adjustmentTypeRepository.delete(
                 this.adjustmentTypeRepository.
                         findById(id)

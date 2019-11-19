@@ -3,24 +3,24 @@ package com.scor.rr.domain.dto.adjustement;
 import java.sql.Timestamp;
 
 public class AdjustmentThreadCreationRequest {
-    private Integer pltPureId;
+    private Long pltPureId;
     private String createdBy;
     private boolean generateDefaultThread;
 
     public AdjustmentThreadCreationRequest() {
     }
 
-    public AdjustmentThreadCreationRequest(Integer pltPureId, String createdBy, boolean generateDefaultThread) {
+    public AdjustmentThreadCreationRequest(Long pltPureId, String createdBy, boolean generateDefaultThread) {
         this.pltPureId = pltPureId;
         this.createdBy = createdBy;
         this.generateDefaultThread = generateDefaultThread;
     }
 
-    public Integer getPltPureId() {
+    public Long getPltPureId() {
         return pltPureId;
     }
 
-    public void setPltPureId(Integer pltPureId) {
+    public void setPltPureId(Long pltPureId) {
         this.pltPureId = pltPureId;
     }
 

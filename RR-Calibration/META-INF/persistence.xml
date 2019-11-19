@@ -2,12 +2,12 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
 
     <persistence-unit name="persistenceUnit">
-        <class>com.scor.rr.domain.AdjustmentBasisEntity</class>
-        <class>com.scor.rr.domain.AdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentBasis</class>
+        <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
-        <class>com.scor.rr.domain.AdjustmentBasisEntity</class>
-        <class>com.scor.rr.domain.AdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentBasis</class>
+        <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.BinFileEntity</class>
@@ -104,9 +104,9 @@
         <class>com.scor.rr.domain.UserRrEntity</class>
         <class>com.scor.rr.domain.XActPublicationEntity</class>
         <class>com.scor.rr.domain.CatRequestsEntity</class>
-        <class>com.scor.rr.domain.AdjustmentTypeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentType</class>
         <class>com.scor.rr.domain.AdjustmentCategoryEntity</class>
-        <class>com.scor.rr.domain.AdjustmentStateEntity</class>
+        <class>com.scor.rr.domain.AdjustmentState</class>
         <class>com.scor.rr.domain.DefaultAdjustmentEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentNodeEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentThreadEntity</class>
