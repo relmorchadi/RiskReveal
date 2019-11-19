@@ -22,7 +22,7 @@ public class Workspace implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WorkspaceId")
-    private Long workspaceId;
+    private Integer workspaceId;
 
     @Column(name = "Entity")
     private Integer entity;
