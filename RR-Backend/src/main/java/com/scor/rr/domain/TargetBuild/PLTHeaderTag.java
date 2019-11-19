@@ -27,7 +27,7 @@ public class PLTHeaderTag {
     private Integer pltHeaderId;
 
     @Column(name = "WorkspaceId")
-    private Long workspaceId;
+    private Integer workspaceId;
 
     @Column(name = "TagId")
     private Integer tagId;

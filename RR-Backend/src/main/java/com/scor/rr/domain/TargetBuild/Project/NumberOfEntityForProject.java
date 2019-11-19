@@ -1,12 +1,14 @@
 package com.scor.rr.domain.TargetBuild.Project;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @MappedSuperclass
 @Data
-public abstract class NumberOfEntityForProject {
+@NoArgsConstructor
+public class NumberOfEntityForProject {
 
     @Id
     @Column(name = "ProjectId")
@@ -14,5 +16,10 @@ public abstract class NumberOfEntityForProject {
 
     @Column(name = "count")
     private Integer count;
+
+    public NumberOfEntityForProject(Long projectId, Integer count) {
+        this.projectId = projectId;
+        this.count = count;
+    }
 
 }
