@@ -4,6 +4,7 @@ import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.*;
+import com.scor.rr.util.OffsetPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -38,8 +39,7 @@ public class WorkspaceService {
     PinnedWorkspaceViewRepository pinnedWorkspaceViewRepository;
 
     public List<Workspace> getFavoriteWorkspaces(Integer userId, Integer offset, Integer size) {
-        int page = offset / size;
-        return this.favoriteWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size))
+        return this.favoriteWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size))
                 .stream()
                 .map( favoriteWorkspaceView -> Workspace
                         .builder()
@@ -53,8 +53,7 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getRecentWorkspaces(Integer userId, Integer offset, Integer size) {
-        int page = offset / size;
-        return this.recentWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
+        return this.recentWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
                 .map( recentWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
@@ -67,8 +66,7 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getAssignedWorkspaces(Integer userId, Integer offset, Integer size) {
-        int page = offset / size;
-        return this.assignedWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
+        return this.assignedWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
                 .map( assignedWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
@@ -81,8 +79,7 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getPinnedWorkspaces(Integer userId, Integer offset, Integer size) {
-        int page = offset / size;
-        return this.pinnedWorkspaceViewRepository.findAllByUserId(userId, PageRequest.of(page, size)).stream()
+        return this.pinnedWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
                 .map( pinnedWorkspaceView -> Workspace
                         .builder()
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())
