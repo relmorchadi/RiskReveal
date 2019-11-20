@@ -49,18 +49,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   }
 
   routerNavigate(route) {
-    this.navigationEmitter.emit({route});
-
-  /*    let patchRouting;
-    if (routerLink) {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
-      patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
-    } else {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
-      patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
-    }
-    this._store.dispatch(new SetWsRoutingAction(patchRouting));
-    this._helper.updateWorkspaceItems();*/
+    this.navigationEmitter.emit({route: null})
+    // this.navigationEmitter.emit({route});
   }
 
   riskLinkImportNavigation() {

@@ -16,12 +16,11 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   unSubscribe$: Subject<void>;
   @Output('onCancelCreateProject')
   onCancelCreateProject: EventEmitter<any> = new EventEmitter();
-  @Input('workspace')
-  workspace: any;
-  @Input('isVisible')
-  isVisible;
-  @Input('newProject')
-  newProject: any;
+  @Input('workspace') workspace: any;
+  @Input('isVisible') isVisible;
+  @Input('newProject') newProject: any;
+  @Input('edit') editOption: any;
+  @Input('editForm') projectForm: any;
   newProjectForm: FormGroup;
 
   constructor(private store: Store) {
@@ -39,7 +38,6 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   createUpdateProject() {
     let project = {...this.newProjectForm.value, projectId: null};
-    console.log('This is data', this);
     if (this.newProjectForm.controls.projectId.value) {
       project = {
         ...project,
@@ -47,12 +45,16 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
         cloneSourceProjectId: this.newProjectForm.value.projectId,
       };
     }
-    this.store.dispatch(new fromWS.AddNewProject({
-      id: _.get(this.workspace, 'id', null),
-      wsId: this.workspace.wsId,
-      uwYear: this.workspace.uwYear,
-      project
-    }));
+    if (this.editOption) {
+
+    } else {
+      this.store.dispatch(new fromWS.AddNewProject({
+        id: _.get(this.workspace, 'id', null),
+        wsId: this.workspace.wsId,
+        uwYear: this.workspace.uwYear,
+        project
+      }));
+    }
   }
 
   cancelCreateProject() {
@@ -65,7 +67,6 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   initNewProjectForm() {
-    console.log(this.workspace)
     this.newProjectForm = new FormGroup({
       assignedTo: new FormControl(null),
       cloneSourceProjectId: new FormControl(null),
@@ -83,7 +84,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       masterFlag: new FormControl(false),
       mgaFlag: new FormControl(false),
       postInuredFlag: new FormControl(false),
-      projectDescription: new FormControl(null, Validators.required),
+      projectDescription: new FormControl(null),
       projectId: new FormControl(null),
       projectImportRunId: new FormControl(null),
       projectName: new FormControl(null, Validators.required),

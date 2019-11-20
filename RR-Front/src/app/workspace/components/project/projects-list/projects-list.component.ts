@@ -9,9 +9,11 @@ import * as _ from 'lodash';
 export class ProjectsListComponent implements OnInit {
 
   @Input('projects') projects;
+  @Input('status') status;
 
   @Output('select') selectEmitter;
   @Output('delete') deleteEmitter;
+  @Output('edit') editEmitter;
 
   backgroundPalet = {
     "New": 'lightblue',
@@ -26,6 +28,7 @@ export class ProjectsListComponent implements OnInit {
   constructor() {
     this.selectEmitter = new EventEmitter();
     this.deleteEmitter = new EventEmitter();
+    this.editEmitter = new EventEmitter();
   }
 
   ngOnInit() {
@@ -33,6 +36,7 @@ export class ProjectsListComponent implements OnInit {
 
   select = (project) => this.selectEmitter.emit(project);
   delete = (project) => this.deleteEmitter.emit(project);
+  edit = (project) => this.editEmitter.emit(project);
 
   setBackground(scope) {
     return _.get(this.backgroundPalet, `${scope}`, 'lightblue');
