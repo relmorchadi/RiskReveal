@@ -10,4 +10,7 @@ import javax.persistence.Table;
 @Table(name = "NumberOfPLTThreadEndOrPostInured", schema = "tb")
 @AllArgsConstructor
 public class NumberOfPLTThreadEndOrPostInured extends NumberOfEntityForProject {
+    public NumberOfPLTThreadEndOrPostInured(Long projectId, int count) {
+        super(projectId, count);
+    }
 }

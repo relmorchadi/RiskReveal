@@ -41,6 +41,9 @@ public class ProjectConfigurationForeWriter {
     @Column(name = "CARName")
     private String carName;
 
+    @Column(name = "UwAnalysis")
+    private String uwAnalysis;
+
     @Column(name = "AssignedTo")
     private Integer assignedTo;
 

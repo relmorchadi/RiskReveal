@@ -9,4 +9,7 @@ import javax.persistence.Table;
 @Table(name = "AccumulatedProject", schema = "tb")
 @AllArgsConstructor
 public class AccumulatedProject extends NumberOfEntityForProject {
+    public AccumulatedProject(Long projectId, int count) {
+        super(projectId, count);
+    }
 }

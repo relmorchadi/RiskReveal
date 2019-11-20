@@ -1,16 +1,19 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.TargetBuild.Project.NumberOfEntityForProject;
-import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.TargetBuild.Project.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.repository.ContractSearchResultRepository;
 import com.scor.rr.repository.TargetBuild.Project.*;
 import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Service
@@ -36,7 +39,7 @@ public class ProjectService {
     private NumberOfPLTsPricedInxActRepository numberOfPLTsPricedInxActRepository;
 
     @Autowired
-    private NumberOfPLTsPublishedForPricingRepository numberOfPLTsPublishedForPricingRepository;
+    private NumberOfPLTsPublishedInxActRepository numberOfPLTsPublishedInxActRepository;
 
     @Autowired
     private NumberOfPLTThreadEndOrPostInuredRepository numberOfPLTThreadEndOrPostInuredRepository;
@@ -66,16 +69,28 @@ public class ProjectService {
     }
 
     private Project prePersistProject(Project p, Integer wsId) {
-        p.setProjectId(null);
-        p.setWorkspaceId(wsId);
+        p.initProject(wsId);
         return p;
     }
 
-    public Project updateProject(Long projectId, Project project) {
-        if (!projectRepository.existsById(projectId))
-            throw new RuntimeException("No available Project with ID : " + projectId);
-        project.setProjectId(projectId);
-        return projectRepository.save(project);
+    public ResponseEntity updateProject(ProjectEditRequest request) {
+
+        if(request.getProjectId() != null) {
+            Optional<Project> prjOpt = projectRepository.findById(request.getProjectId());
+            if(prjOpt.isPresent()) {
+                Project prj = prjOpt.get();
+
+                prj.setAssignedTo(request.getAssignedTo());
+                prj.setProjectName(request.getProjectName());
+                prj.setProjectDescription(request.getProjectDescription());
+
+                return new ResponseEntity<>(projectRepository.save(prj), HttpStatus.OK);
+            }
+        } else{
+            return new ResponseEntity<>("No available Project with ID : " + request.getProjectId(), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("No available Project with ID : " + request.getProjectId(), HttpStatus.BAD_REQUEST);
     }
 
     public void deleteProject(Long projectId) {
@@ -86,22 +101,22 @@ public class ProjectService {
     }
 
     public ProjectStatistics getProjetStatistics(Long projectId) {
-        Integer regionPerils = numberOfRegionPerilsRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
-        Integer accumulatedPlts = numberOfPLTPublishedToAccumulationRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        Integer regionPerils = numberOfRegionPerilsRepository.findById(projectId).orElse(new NumberOfRegionPerils(projectId, 0)).getCount();
+        Integer accumulatedPlts = numberOfPLTPublishedToAccumulationRepository.findById(projectId).orElse(new NumberOfPLTPublishedToAccumulation(projectId, 0)).getCount();
         Integer finalPricing;
         Integer publishedForPricingCount;
-        Integer plts = numberOfPLTThreadEndOrPostInuredRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+        Integer plts = numberOfPLTThreadEndOrPostInuredRepository.findById(projectId).orElse(new NumberOfPLTThreadEndOrPostInured(projectId, 0)).getCount();
 
         if(projectConfigurationForeWriterRepository.existsByProjectId(projectId)) {
-            publishedForPricingCount = numberOfPLTsPublishedForPricingRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
-            finalPricing = numberOfPLTsPricedInForeWriterRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+            publishedForPricingCount = numberOfPLTsPublishedInxActRepository.findById(projectId).orElse(new NumberOfPLTsPublishedInxAct(projectId, 0)).getCount();
+            finalPricing = numberOfPLTsPricedInForeWriterRepository.findById(projectId).orElse(new NumberOfPLTsPricedInForeWriter(projectId, 0)).getCount();
         } else {
-            publishedForPricingCount = numberOfPLTsPublishedForPricingRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
-            finalPricing = numberOfPLTsPricedInxActRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount();
+            publishedForPricingCount = numberOfPLTsPublishedInxActRepository.findById(projectId).orElse(new NumberOfPLTsPublishedInxAct(projectId, 0)).getCount();
+            finalPricing = numberOfPLTsPricedInxActRepository.findById(projectId).orElse(new NumberOfPLTsPricedInxAct(projectId, 0)).getCount();
         }
 
-        Boolean importedFlag = importedProjectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount() > 0;
-        Boolean accumulated = accumulatedProjectRepository.findById(projectId).orElseThrow(() -> new RuntimeException("Couldnt Find project " + projectId)).getCount() > 0;
+        Boolean importedFlag = importedProjectRepository.findById(projectId).orElse(new ImportedProject(projectId, 0)).getCount() > 0;
+        Boolean accumulated = accumulatedProjectRepository.findById(projectId).orElse(new AccumulatedProject(projectId, 0)).getCount() > 0;
         Boolean publishedForPricingFlag;
 
         publishedForPricingFlag = publishedForPricingCount > 0;
@@ -119,5 +134,21 @@ public class ProjectService {
                 .publishedForPricingFlag(publishedForPricingFlag)
                 .build();
     }
+
+//    public ProjectCardView appendProjectStats(ProjectCardView project) {
+//        ProjectStatistics statistics = this.getProjetStatistics(project.getProjectId());
+//
+//        project.setRegionPerils(statistics.getRegionPerils());
+//        project.setAccumulatedPlts(statistics.getAccumulatedPlts());
+//        project.setFinalPricing(statistics.getFinalPricing());
+//        project.setPublishedForPricingCount(statistics.getPublishedForPricingCount());
+//        project.setPlts(statistics.getPlts());
+//
+//        project.setImportedFlag(statistics.getImportedFlag());
+//        project.setAccumulatedFlag(statistics.getAccumulatedFlag());
+//        project.setPublishedForPricingFlag(statistics.getPublishedForPricingFlag());
+//
+//        return project;
+//    }
 
 }

@@ -17,7 +17,7 @@ public class NumberOfEntityForProject {
     @Column(name = "count")
     private Integer count;
 
-    public NumberOfEntityForProject(Long projectId, Integer count) {
+    protected NumberOfEntityForProject(Long projectId, Integer count) {
         this.projectId = projectId;
         this.count = count;
     }

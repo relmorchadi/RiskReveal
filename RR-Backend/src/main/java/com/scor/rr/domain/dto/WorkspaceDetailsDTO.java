@@ -2,6 +2,7 @@ package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -26,13 +27,15 @@ public class WorkspaceDetailsDTO {
     private Date inceptionDate;
     private Date expiryDate;
     private String subsidiaryLedgerId;
+    private Boolean isFavorite;
+    private Boolean isPinned;
     private String contractDatasource;
     private List<String> treatySections;
     private List<Integer> years;
-    private List<Project> projects;
+    private List<ProjectCardView> projects;
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult first, List<ContractSearchResult> items, List<Integer> years, List<Project> projects) {
+    public WorkspaceDetailsDTO(ContractSearchResult first, List<ContractSearchResult> items, List<Integer> years, List<ProjectCardView> projects, Boolean isFavorite, Boolean isPinned) {
         this.id = first.getId();
         this.workspaceName = first.getWorkspaceName();
         this.cedantCode = first.getCedantCode();
@@ -48,6 +51,8 @@ public class WorkspaceDetailsDTO {
         this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
         this.contractDatasource= first.getContractSourceTypeName();
         this.projects= projects;
+        this.isFavorite = isFavorite;
+        this.isPinned = isPinned;
     }
 
 }

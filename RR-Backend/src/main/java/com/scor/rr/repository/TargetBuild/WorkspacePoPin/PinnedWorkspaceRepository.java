@@ -10,5 +10,4 @@ public interface PinnedWorkspaceRepository extends JpaRepository<PinnedWorkspace
 
     @Procedure("tb.togglePinnedWorkspace")
     void togglePinnedWorkspace(@Param("workspaceContextCode") String workspaceContextCode, @Param("workspaceUwYear") Integer workspaceUwYear, @Param("userId") Integer userId);
-
 }

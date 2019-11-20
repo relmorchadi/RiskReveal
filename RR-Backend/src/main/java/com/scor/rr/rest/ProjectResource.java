@@ -1,9 +1,11 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,8 +22,8 @@ public class ProjectResource {
     }
 
     @PutMapping()
-    public Project updateProject(@RequestParam Long projectId, @RequestBody Project project) {
-        return projectService.updateProject(projectId, project);
+    public ResponseEntity updateProject(ProjectEditRequest request) {
+        return projectService.updateProject(request);
     }
 
     @DeleteMapping("delete")

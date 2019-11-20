@@ -10,4 +10,7 @@ import javax.persistence.Table;
 @Table(name = "NumberOfPLTPublishedToAccumulation", schema = "tb")
 @AllArgsConstructor
 public class NumberOfPLTPublishedToAccumulation extends NumberOfEntityForProject {
+    public NumberOfPLTPublishedToAccumulation(Long projectId, int count) {
+        super(projectId, count);
+    }
 }
