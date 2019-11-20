@@ -188,7 +188,7 @@ public class SearchService {
 
                     this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
 
-                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects, this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(ws.getWorkspaceContextCode(), ws.getWorkspaceUwYear(), 1), true);
+                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects, this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1), true);
                 })
                 .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
 
