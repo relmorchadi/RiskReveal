@@ -89,4 +89,18 @@ public class Project {
     @Column(name = "DeletedBy")
     private String deletedBy;
 
+
+    public void initProject(Integer workspaceId) {
+        this.projectId = null;
+        this.workspaceId = workspaceId;
+        this.masterFlag = false;
+        this.linkFlag = false;
+        this.publishFlag = false;
+        this.clonedFlag = false;
+        this.postInuredFlag = false;
+        this.mgaFlag= false;
+        this.assignedTo = this.createdBy;
+        this.deleted= false;
+    }
+
 }

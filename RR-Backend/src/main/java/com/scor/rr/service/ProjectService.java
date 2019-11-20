@@ -2,14 +2,18 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.TargetBuild.Project.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.repository.ContractSearchResultRepository;
 import com.scor.rr.repository.TargetBuild.Project.*;
 import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Service
@@ -65,16 +69,28 @@ public class ProjectService {
     }
 
     private Project prePersistProject(Project p, Integer wsId) {
-        p.setProjectId(null);
-        p.setWorkspaceId(wsId);
+        p.initProject(wsId);
         return p;
     }
 
-    public Project updateProject(Long projectId, Project project) {
-        if (!projectRepository.existsById(projectId))
-            throw new RuntimeException("No available Project with ID : " + projectId);
-        project.setProjectId(projectId);
-        return projectRepository.save(project);
+    public ResponseEntity updateProject(ProjectEditRequest request) {
+
+        if(request.getProjectId() != null) {
+            Optional<Project> prjOpt = projectRepository.findById(request.getProjectId());
+            if(prjOpt.isPresent()) {
+                Project prj = prjOpt.get();
+
+                prj.setAssignedTo(request.getAssignedTo());
+                prj.setProjectName(request.getProjectName());
+                prj.setProjectDescription(request.getProjectDescription());
+
+                return new ResponseEntity<>(projectRepository.save(prj), HttpStatus.OK);
+            }
+        } else{
+            return new ResponseEntity<>("No available Project with ID : " + request.getProjectId(), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("No available Project with ID : " + request.getProjectId(), HttpStatus.BAD_REQUEST);
     }
 
     public void deleteProject(Long projectId) {
