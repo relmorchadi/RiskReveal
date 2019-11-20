@@ -126,21 +126,11 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-/*    this.dispatch([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);*/
-  }
-
-  unPinWorkspace() {
-    const {wsId, uwYear} = this.workspace;
-/*    this.dispatch([
-    ]);*/
+    this.dispatch([new fromHeader.TogglePinnedWsState({
+      "userId": 1,
+      "workspaceContextCode": this.workspace.wsId,
+      "workspaceUwYear": this.workspace.uwYear
+    })]);
   }
 
   changeCollapse() {

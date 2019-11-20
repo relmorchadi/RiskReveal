@@ -136,8 +136,12 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     }));
   }
 
-  addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
-    this.dispatch([new fromWs.MarkWsAsFavorite({wsIdentifier})]);
+  toggleFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
+    this.dispatch([new fromHeader.ToggleFavoriteWsState({
+      userId: 1,
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear
+    })]);
   }
 
   filterSelected() {
@@ -156,10 +160,6 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     const projectIndex = _.findIndex(this.data[this.currentWsIdentifier].projects,
       (item: any) => item.id === selectionEvent);
     this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.currentWsIdentifier}));
-  }
-
-  unFavorite(wsIdentifier, {wsId, uwYear}) {
-    // this.dispatch( new fromHeader.DeleteWsFromFavorite({wsId, uwYear}))
   }
 
   leftMenuNavigation({route}, {wsId, uwYear}) {

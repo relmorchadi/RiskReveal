@@ -20,7 +20,7 @@ export class WorkspaceHeaderApi {
     return this.http.get(`${this.URL}favorite`, {params: {offset, size, userId}});
   }
 
-  getAssigned(offset, size, userId) {
+  getAssigned(offset: any, size: any, userId: any) {
     return this.http.get(`${this.URL}assigned`, {params: {offset, size, userId}});
   }
 
@@ -33,11 +33,11 @@ export class WorkspaceHeaderApi {
   }
 
   toggleFavorite(data) {
-    return this.http.post(`${this.URL}favorite`, data);
+    return this.http.post(`${this.URL}favorite`, data, {responseType: 'text' as 'json'});
   }
 
   togglePinned(data) {
-    return this.http.post(`${this.URL}pinned`, data);
+    return this.http.post(`${this.URL}pinned`, data, {responseType: 'text' as 'json'});
   }
 
 }

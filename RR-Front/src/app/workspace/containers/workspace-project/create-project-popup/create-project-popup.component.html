@@ -46,7 +46,8 @@
 
     <div class="a-form-input-wrapper">
       <label class="label-input">Created By</label>
-      <input class="a-textfield-standard a-textfield-label" [attr.disabled]="true" placeholder="Insert Name" formControlName="createdBy"/>
+      <input class="a-textfield-standard a-textfield-label a-textfield-disabled"
+             [attr.disabled]="true" placeholder="Insert Name" formControlName="createdBy"/>
     </div>
 
     <div class="a-form-date-control a-datepicker-standard">
@@ -80,8 +81,9 @@
 
     <div class="a-form-input-wrapper">
       <label class="label-input">Assigned To</label>
-      <input class="a-textfield-standard a-textfield-label" [attr.disabled]="true"
-             placeholder="Insert Name" [(ngModel)]="projectForm.assignedTo"/>
+      <nz-select class="a-dropdown-label" [(ngModel)]="editValue">
+        <nz-option nzLabel="Nathalie Dulac" nzValue="Nathalie Dulac"></nz-option>
+      </nz-select>
     </div>
 
     <div class="a-form-date-control a-datepicker-standard">
@@ -102,8 +104,8 @@
   <p-footer>
     <div class="a-control-buttons">
       <button class="a-button-text-cancel" (click)="cancelCreateProject()">CANCEL</button>
-      <button [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}"
-              *ngIf="editOption" [disabled]="!newProjectForm.valid" (click)="createUpdateProject()">EDIT</button>
+      <button [ngClass]="{'a-buttons-contained-disabled' : !checkValid(), 'a-buttons-contained': checkValid()}"
+              *ngIf="editOption" [disabled]="!checkValid()" (click)="updateProject()">EDIT</button>
       <button [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}" *ngIf="!editOption"
               [disabled]="!newProjectForm.valid" (click)="createUpdateProject()">CREATE</button>
     </div>

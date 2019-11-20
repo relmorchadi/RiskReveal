@@ -7,10 +7,11 @@ import * as _ from 'lodash';
 import {DataTables} from '../../../shared/data/job-data-tables';
 import {DataTableNotif} from '../../../shared/data/notification-data-tables';
 import * as fromHD from '../actions';
-import {catchError, mergeMap} from 'rxjs/operators';
-import {of} from 'rxjs';
+import {catchError, map, mergeMap} from 'rxjs/operators';
+import {EMPTY, of} from 'rxjs';
 import {WorkspaceHeaderApi} from '../../service/api/workspace-header.api';
-import {tap} from "rxjs/internal/operators/tap";
+import {WorkspaceModel} from "../../../workspace/model";
+import * as fromWs from "../../../workspace/store/actions";
 
 const initialState: HeaderStateModel = {
   workspaceHeader: {
@@ -219,13 +220,25 @@ export class HeaderState implements NgxsOnInit {
   }
 
   @Action(fromHD.ToggleFavoriteWsState)
-  toggleStateFavoriteWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.ToggleFavoriteWsState) {
-    return this.wsHeaderApi.toggleFavorite(payload);
+  toggleStateFavoriteWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromHD.ToggleFavoriteWsState) {
+    const state = ctx.getState();
+    console.log(state);
+    return this.wsHeaderApi.toggleFavorite(payload).pipe(
+      map(prj => ctx.dispatch(new fromWs.ToggleFavorite())),
+      catchError(err => {
+        console.log(err);
+        return EMPTY;
+      })
+    );
   }
 
   @Action(fromHD.TogglePinnedWsState)
-  toggleStatePinnedWorkspace(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.TogglePinnedWsState) {
-    return this.wsHeaderApi.togglePinned(payload);
+  toggleStatePinnedWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromHD.TogglePinnedWsState) {
+    return this.wsHeaderApi.togglePinned(payload).pipe(
+      map(ws => ctx.dispatch(new fromWs.TogglePinned())), catchError(err => {
+        return EMPTY;
+      })
+    );
   }
 
   @Action(fromHD.ToggleRecentWsSelection)
