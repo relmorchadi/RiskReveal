@@ -8,7 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "PLTHeader", schema = "dbo", catalog = "RiskReveal")
 public class PltHeaderEntity {
-    private Long pltHeaderId;
+    private Integer pltHeaderId;
     private EntityEntity entity;
     private String pltType;
     private RrAnalysisEntity rrAnalysisEntity;
@@ -432,11 +432,11 @@ public class PltHeaderEntity {
     @Id
     @Column(name = "PltHeaderId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getPltHeaderId() {
+    public Integer getPltHeaderId() {
         return pltHeaderId;
     }
 
-    public void setPltHeaderId(Long pltHeaderId) {
+    public void setPltHeaderId(Integer pltHeaderId) {
         this.pltHeaderId = pltHeaderId;
     }
 

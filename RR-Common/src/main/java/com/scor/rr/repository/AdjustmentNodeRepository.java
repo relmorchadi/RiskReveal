@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AdjustmentNodeRepository extends JpaRepository<AdjustmentNode, Long> {
+public interface AdjustmentNodeRepository extends JpaRepository<AdjustmentNode, Integer> {
     List<AdjustmentNode> findByAdjustmentThread(AdjustmentThreadEntity adjustmentThread);
 }

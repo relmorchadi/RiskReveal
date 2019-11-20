@@ -4,6 +4,7 @@ import com.scor.rr.domain.AdjustmentType;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentTypeRepository;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,11 @@ public class AdjustmentTypeService {
         return adjustmentTypeRepository.findAll();
     }
 
-    public AdjustmentType findOne(Long id){
+    public AdjustmentType findOne(Integer id){
         return adjustmentTypeRepository.findById(id).orElseThrow(throwException(TYPE_NOT_FOUND,NOT_FOUND));
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentTypeRepository.delete(
                 this.adjustmentTypeRepository.
                         findById(id)

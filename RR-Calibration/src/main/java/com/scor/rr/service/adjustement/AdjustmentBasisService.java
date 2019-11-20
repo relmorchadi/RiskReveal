@@ -25,11 +25,11 @@ public class AdjustmentBasisService {
         return adjustmentBasisRepository.findAll();
     }
 
-    public AdjustmentBasis findOne(Long id){
+    public AdjustmentBasis findOne(Integer id){
             return adjustmentBasisRepository.findById(id).orElseThrow(throwException(BASIS_NOT_FOUND,NOT_FOUND));
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentBasisRepository.delete(
                 this.adjustmentBasisRepository.
                         findById(id)

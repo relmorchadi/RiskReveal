@@ -22,7 +22,7 @@ public class AdjustmentStateRest {
     }
 
     @GetMapping("one")
-    public AdjustmentState findOne(Long id) {
+    public AdjustmentState findOne(Integer id) {
         return adjustmentStateService.findOne(id);
     }
 }

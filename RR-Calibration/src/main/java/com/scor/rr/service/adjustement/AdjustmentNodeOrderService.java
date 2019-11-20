@@ -1,21 +1,22 @@
 package com.scor.rr.service.adjustement;
 
 
+import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.AdjustmentNodeOrder;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentNodeOrderRepository;
+import io.swagger.models.auth.In;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static com.scor.rr.exceptions.ExceptionCodename.ORDER_EXIST;
 
@@ -36,8 +37,12 @@ public class AdjustmentNodeOrderService {
         return adjustmentNodeOrderRepository.findAll();
     }
 
-    public AdjustmentNodeOrder getAdjustmentOrderByThreadIdAndNodeId(Long threadId, Long nodeId){
+    public AdjustmentNodeOrder getAdjustmentOrderByThreadIdAndNodeId(Integer threadId, Integer nodeId){
         return adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentNodeAdjustmentNodeId(threadId, nodeId);
+    }
+
+    public AdjustmentNodeOrder findByAdjustmentNode(AdjustmentNode node){
+        return adjustmentNodeOrderRepository.findByAdjustmentNode(node);
     }
 
     public void saveNodeOrder(AdjustmentNodeOrderRequest orderRequest) {
@@ -78,8 +83,39 @@ public class AdjustmentNodeOrderService {
 //        }
 //    }
 
+    public AdjustmentNodeOrder createNodeOrder(AdjustmentNode node, Integer sequence) {
+        log.info("---------- start createNodeOrder ----------");
 
-    public AdjustmentNodeOrder updateNodeOrder(Long nodeId, Integer sequence, Long threadId) {
+        AdjustmentNodeOrder order = new AdjustmentNodeOrder();
+        order.setAdjustmentNode(node);
+        order.setAdjustmentThread(node.getAdjustmentThread());
+        if (sequence == null) {
+            throw new IllegalStateException("---------- createNodeOrder, sequence null, wrong ----------");
+        }
+
+        List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(node.getAdjustmentThread().getAdjustmentThreadId());
+        if (orderEntities == null || orderEntities.isEmpty()) {
+            order.setAdjustmentOrder(sequence);
+        } else  {
+            if (sequence > orderEntities.size() + 1) {
+                throw new IllegalStateException("---------- updateNodeOrder, sequence greater than list nodes size + 1, wrong ----------");
+            } else {
+                order.setAdjustmentOrder(sequence);
+                for (AdjustmentNodeOrder nodeOrder : orderEntities) {
+                    if (nodeOrder.getAdjustmentOrder() >= sequence) {
+                        nodeOrder.setAdjustmentOrder(nodeOrder.getAdjustmentOrder() + 1);
+                        adjustmentNodeOrderRepository.save(nodeOrder);
+                    }
+                }
+            }
+        }
+
+        adjustmentNodeOrderRepository.save(order);
+        return order;
+    }
+
+
+    public AdjustmentNodeOrder updateNodeOrder(Integer nodeId, Integer sequence, Integer threadId) {
         log.info("---------- start updateNodeOrder ----------");
 
         AdjustmentNodeOrder order = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
@@ -119,16 +155,18 @@ public class AdjustmentNodeOrderService {
         return order;
     }
 
-    void deleteByNodeIdAndReorder(Long nodeId, Long threadId) {
+    void deleteByNodeIdAndReorder(Integer nodeId, Integer threadId) {
         AdjustmentNodeOrder orderEntity = adjustmentNodeOrderRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
-        List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(threadId);
-        for (AdjustmentNodeOrder adjustmentNodeOrder : orderEntities){
-            if (adjustmentNodeOrder.getAdjustmentOrder() > orderEntity.getAdjustmentOrder()) {
-                adjustmentNodeOrder.setAdjustmentOrder(adjustmentNodeOrder.getAdjustmentOrder() - 1);
-                adjustmentNodeOrderRepository.save(adjustmentNodeOrder);
+        if (orderEntity != null) {
+            List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(threadId);
+            for (AdjustmentNodeOrder adjustmentNodeOrder : orderEntities){
+                if (adjustmentNodeOrder.getAdjustmentOrder() > orderEntity.getAdjustmentOrder()) {
+                    adjustmentNodeOrder.setAdjustmentOrder(adjustmentNodeOrder.getAdjustmentOrder() - 1);
+                    adjustmentNodeOrderRepository.save(adjustmentNodeOrder);
+                }
             }
+            adjustmentNodeOrderRepository.deleteByAdjustmentNodeAdjustmentNodeId(nodeId);
         }
-        adjustmentNodeOrderRepository.deleteByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
     public void deleteByThread(Long threadId) {

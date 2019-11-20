@@ -40,7 +40,7 @@ public class AdjustmentThreadService {
     @Autowired
     private DefaultAdjustmentService defaultAdjustmentService;
 
-    public AdjustmentThreadEntity findOne(Long id){
+    public AdjustmentThreadEntity findOne(Integer id){
         return adjustmentThreadRepository.findById(id).orElseThrow(throwException(THREAD_NOT_FOUND,NOT_FOUND));
     }
 
@@ -76,7 +76,7 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity getByPltHeader(Long pltHeaderId){
+    public AdjustmentThreadEntity getByPltHeader(Integer pltHeaderId){
         return adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
@@ -91,7 +91,7 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity cloneThread(Long initialPlt,PltHeaderEntity clonedPlt) throws RRException {
+    public AdjustmentThreadEntity cloneThread(Integer initialPlt, PltHeaderEntity clonedPlt) throws RRException {
        AdjustmentThreadEntity thread =  adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
@@ -105,7 +105,7 @@ public class AdjustmentThreadService {
        }
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentThreadRepository.delete(
                 this.adjustmentThreadRepository.
                         findById(id)

@@ -79,7 +79,7 @@ public class AdjustmentNodeProcessingService {
 
     private final static String pathbin = "src/main/resources/file/plt.bin";
 
-    public AdjustmentNodeProcessingEntity findOne(Long id) {
+    public AdjustmentNodeProcessingEntity findOne(Integer id) {
         return adjustmentNodeProcessingRepository.getOne(id);
     }
 
@@ -87,7 +87,7 @@ public class AdjustmentNodeProcessingService {
         return adjustmentNodeProcessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity findByNode(Long nodeId) {
+    public AdjustmentNodeProcessingEntity findByNode(Integer nodeId) {
         return adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
@@ -178,7 +178,7 @@ public class AdjustmentNodeProcessingService {
 //            throw new com.scor.rr.exceptions.RRException(PLT_NOT_FOUND,1);
 //        }
 //    }
-    public PltHeaderEntity adjustPLTsInThread(Long threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
         log.info("------ begin thread processing ------");
         AdjustmentThreadEntity thread = adjustmentThreadRepository.findById(threadId).get();
         if (thread == null) {
@@ -223,7 +223,7 @@ public class AdjustmentNodeProcessingService {
         return nodeOrder.getAdjustmentOrder();
     }
 
-    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Long nodeId) throws RRException {
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId) throws RRException {
         log.info("------ begin adjusting PLT processing ------");
 
         AdjustmentNode adjustmentNode = adjustmentNodeRepository.findById(nodeId).get();
@@ -308,16 +308,23 @@ public class AdjustmentNodeProcessingService {
         }
     }
 
-    public AdjustmentNodeProcessingEntity getProcessingByNode(Long nodeId) {
-        return adjustmentNodeProcessingRepository.findAll()
-                .stream()
-                .filter(ape -> ape.getAdjustmentNode().getAdjustmentNodeId() == nodeId)
-                .findAny()
-                .orElseThrow(throwException(PLT_NOT_FOUND, NOT_FOUND));
+//    public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
+//        return adjustmentNodeProcessingRepository.findAll()
+//                .stream()
+//                .filter(ape -> ape.getAdjustmentNode().getAdjustmentNodeId() == nodeId)
+//                .findAny()
+//                .orElseThrow(throwException(PLT_NOT_FOUND, NOT_FOUND));
+//    }
+
+    public AdjustmentNodeProcessingEntity findByNodeId(Integer nodeId) {
+        return adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
-    public void deleteProcessingByNode(Long nodeId){
-        adjustmentNodeProcessingRepository.delete(getProcessingByNode(nodeId));
+    public void deleteProcessingByNode(Integer nodeId){
+        AdjustmentNodeProcessingEntity processing = adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
+        if (processing != null) {
+            adjustmentNodeProcessingRepository.delete(processing);
+        }
     }
 
     private BinFileEntity savePLTFile(List<PLTLossData> pltLossData, String filePath, String fileName) {
@@ -374,7 +381,7 @@ public class AdjustmentNodeProcessingService {
         return null;
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentNodeProcessingRepository.delete(
                 this.adjustmentNodeProcessingRepository.
                         findById(id)

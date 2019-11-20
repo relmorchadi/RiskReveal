@@ -61,33 +61,33 @@ public class NodeTest {
 
     @Before
     public void setUp() throws RRException {
-        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
+        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
                 "",
                 false));
 
         nodeTest = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(1, false,
-                1L,
-                4L,1L, threadTest.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+                1,
+                4,1, threadTest.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
-        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
+        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
                 "",
                 false));
 
         nodeEntity1 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(1, false,
-                1L,
-                4L,1L,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+                1,
+                4,1,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
         nodeEntity2 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(2, false,
-                1L,
-                4L,1L,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+                1,
+                4,1,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
         nodeEntity3 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(3, false,
-                1L,
-                4L,1L,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+                1,
+                4,1,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
         nodeEntity4 = adjustmentNodeService.createAdjustmentNode(new AdjustmentNodeRequest(4, false,
-                1L,
-                4L,1L,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983L,null));
+                1,
+                4,1,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983,null));
 
 
     }
@@ -106,21 +106,21 @@ public class NodeTest {
     public void missingParam() throws RRException {
         //Linear with lmf null
         AdjustmentNodeRequest adjustmentNodeRequestLinear = new AdjustmentNodeRequest(1, false,
-                1L,
-                1L,1L, threadTest.getAdjustmentThreadId(),null,1.1,null,983L,null);
+                1,
+                1,1, threadTest.getAdjustmentThreadId(),null,1.1,null,983,null);
         adjustmentNodeService.createAdjustmentNode(adjustmentNodeRequestLinear);
         //return period banding with parameter null
         AdjustmentNodeRequest adjustmentNodeRequestReturnPeriodBanding = new AdjustmentNodeRequest(1, false,
-                1L,
-                2L,1L, threadTest.getAdjustmentThreadId(),null,1.1,null,983L,null);
+                1,
+                2,1, threadTest.getAdjustmentThreadId(),null,1.1,null,983,null);
         adjustmentNodeService.createAdjustmentNode(adjustmentNodeRequestReturnPeriodBanding);
     }
 
     @Test
     public void createNode() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest(1, false,
-                1L,
-                4L,1L, threadTest.getAdjustmentThreadId(),1.7,1.1,null,983L,null);
+                1,
+                4,1, threadTest.getAdjustmentThreadId(),1.7,1.1,null,983,null);
         AdjustmentNode adjustmentNodeEntity = adjustmentNodeService.createAdjustmentNode(adjustmentNodeRequest);
         Assert.assertEquals(adjustmentNodeEntity,adjustmentNodeService.findOne(adjustmentNodeEntity.getAdjustmentNodeId()));
     }
@@ -128,8 +128,8 @@ public class NodeTest {
     @Test
     public void updateOrderNode14() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest14 = new AdjustmentNodeRequest(nodeEntity1.getAdjustmentNodeId(),  4, false,
-                1L,
-                4L, 1L, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983L, null);
+                1,
+                4, 1, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983, null);
         adjustmentNodeService.updateAdjustmentNode(adjustmentNodeRequest14);
         AdjustmentNodeOrder orderentity1 = adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadEntityForUpdateOrder.getAdjustmentThreadId(),nodeEntity1.getAdjustmentNodeId());
         AdjustmentNodeOrder orderentity2 = adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadEntityForUpdateOrder.getAdjustmentThreadId(),nodeEntity2.getAdjustmentNodeId());
@@ -143,8 +143,8 @@ public class NodeTest {
     @Test
     public void updateOrderNode41() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest41 = new AdjustmentNodeRequest(nodeEntity4.getAdjustmentNodeId(),  1, false,
-                1L,
-                4L, 1L, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983L, null);
+                1,
+                4, 1, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983, null);
         adjustmentNodeService.updateAdjustmentNode(adjustmentNodeRequest41);
         log.info("adjustment order 1,2,3,4 -> 2,3,4,1 ");
         AdjustmentNodeOrder orderentity1 = adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadEntityForUpdateOrder.getAdjustmentThreadId(),nodeEntity1.getAdjustmentNodeId());
@@ -159,8 +159,8 @@ public class NodeTest {
     @Test
     public void updateOrderNode32() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest32 = new AdjustmentNodeRequest(nodeEntity3.getAdjustmentNodeId(),  2, false,
-                1L,
-                4L, 1L, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983L, null);
+                1,
+                4, 1, threadEntityForUpdateOrder.getAdjustmentThreadId(), 1.7, 1.1, null, 983, null);
         adjustmentNodeService.updateAdjustmentNode(adjustmentNodeRequest32);
         log.info("adjustment order 1,2,3,4 -> 1,3,2,4 ");
         AdjustmentNodeOrder orderentity1 = adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadEntityForUpdateOrder.getAdjustmentThreadId(),nodeEntity1.getAdjustmentNodeId());
@@ -176,8 +176,8 @@ public class NodeTest {
     @Test
     public void updateOrderNode23() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest23 = new AdjustmentNodeRequest(nodeEntity2.getAdjustmentNodeId(),3, false,
-                1L,
-                4L,1L,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983L,null);
+                1,
+                4,1,threadEntityForUpdateOrder.getAdjustmentThreadId(),1.7,1.1,null,983,null);
         adjustmentNodeService.updateAdjustmentNode(adjustmentNodeRequest23);
         log.info("adjustment order 1,2,3,4 -> 1,3,2,4 ");
         AdjustmentNodeOrder orderentity1 = adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadEntityForUpdateOrder.getAdjustmentThreadId(),nodeEntity1.getAdjustmentNodeId());

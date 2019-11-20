@@ -30,12 +30,12 @@ public class AdjustmentNodeProcessingRest {
 //    }
 
     @PostMapping("adjustNode")
-    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestParam Long nodeId) throws RRException {
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestParam Integer nodeId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTPassingByNode(nodeId);
     }
 
     @PostMapping("adjustThread")
-    public PltHeaderEntity adjustPLTsInThread(@RequestParam Long threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(@RequestParam Integer threadId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTsInThread(threadId);
 
     }

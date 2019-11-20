@@ -6,18 +6,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentState", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentState {
-    private Long adjustmentStateId;
+    private Integer adjustmentStateId;
     private String code;
     private String stateName;
     private String stateDesc;
 
     @Id
     @Column(name = "AdjustmentStateId", nullable = false)
-    public Long getAdjustmentStateId() {
+    public Integer getAdjustmentStateId() {
         return adjustmentStateId;
     }
 
-    public void setAdjustmentStateId(Long adjustmentStateId) {
+    public void setAdjustmentStateId(Integer adjustmentStateId) {
         this.adjustmentStateId = adjustmentStateId;
     }
 

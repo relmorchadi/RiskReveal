@@ -6,7 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentBasis", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentBasis {
-    private Long adjustmentBasisId;
+    private Integer adjustmentBasisId;
     private String adjustmentBasisName;
     private String basisShortName;
     private String description;
@@ -19,11 +19,11 @@ public class AdjustmentBasis {
 
     @Id
     @Column(name = "AdjustmentBasisId", nullable = false)
-    public Long getAdjustmentBasisId() {
+    public Integer getAdjustmentBasisId() {
         return adjustmentBasisId;
     }
 
-    public void setAdjustmentBasisId(Long adjustmentBasisId) {
+    public void setAdjustmentBasisId(Integer adjustmentBasisId) {
         this.adjustmentBasisId = adjustmentBasisId;
     }
 

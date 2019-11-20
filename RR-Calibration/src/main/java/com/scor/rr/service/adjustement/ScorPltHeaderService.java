@@ -95,7 +95,7 @@ public class ScorPltHeaderService {
         return new MultiExtentionReadPltFile().read(new File(path));
     }
 
-    public PltHeaderEntity findOne(Long scorPltHeader) {
+    public PltHeaderEntity findOne(Integer scorPltHeader) {
         return pltHeaderRepository.findByPltHeaderId(scorPltHeader);
     }
 

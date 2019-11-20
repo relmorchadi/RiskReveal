@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class AdjustmentNodeService {
 
     //TODO: implementation for updating node
 
-    public AdjustmentNode findOne(Long id){
+    public AdjustmentNode findOne(Integer id){
         return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
     }
 
@@ -83,13 +84,13 @@ public class AdjustmentNodeService {
         return adjustmentNodeRepository.findAll();
     }
 
-    public List<AdjustmentNode> findByThread(Long threadId){ // crazy ?
+    public List<AdjustmentNode> findByThread(Integer threadId){ // crazy ?
         return adjustmentNodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
                 adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
                 .collect(Collectors.toList());
     }
 
-    public void deleteNode(Long nodeId) {
+    public void deleteNode(Integer nodeId) {
         AdjustmentNode adjustmentNodeEntity = findOne(nodeId);
         deleteParameterNode(nodeId);
         processingService.deleteProcessingByNode(nodeId);
@@ -103,7 +104,7 @@ public class AdjustmentNodeService {
         Double lmf = null;
         Double rpmf = null;
         List<PEATData> peatData = null; //todo
-        List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings = null; //todo
+        List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings = null; //todo
         DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
         if (defaultRetPerBandingParamsEntity != null) {
             if (defaultRetPerBandingParamsEntity.getLmf() != null) {
@@ -204,15 +205,22 @@ public class AdjustmentNodeService {
             }
         }
 
-        if (adjustmentNodeRequest.getAdjustmentState() == null) {
-            throw new IllegalStateException("---------- createAdjustmentNode, state id null, wrong ----------");
+//        if (adjustmentNodeRequest.getAdjustmentState() == null) {
+//            throw new IllegalStateException("---------- createAdjustmentNode, state id null, wrong ----------");
+//        } else {
+//            AdjustmentState state = adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get();
+//            if (state == null) {
+//                throw new IllegalStateException("---------- createAdjustmentNode, state null, wrong ----------");
+//            } else {
+//                node.setAdjustmentState(state);
+//            }
+//        }
+
+        AdjustmentState state = adjustmentStateRepository.getAdjustmentStateEntityByCodeInvalid();
+        if (state == null) {
+            throw new IllegalStateException("---------- createAdjustmentNode, state null, wrong ----------");
         } else {
-            AdjustmentState state = adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get();
-            if (state == null) {
-                throw new IllegalStateException("---------- createAdjustmentNode, state null, wrong ----------");
-            } else {
-                node.setAdjustmentState(state);
-            }
+            node.setAdjustmentState(state);
         }
 
         if (adjustmentNodeRequest.getAdjustmentBasis() == null) {
@@ -248,14 +256,19 @@ public class AdjustmentNodeService {
             node.setCapped(adjustmentNodeRequest.getCapped());
         }
 
+        // save node before creating dependencies
+        node = adjustmentNodeRepository.save(node);
+
         // create node order
         log.info("---------- create node order ----------");
-        nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(node.getAdjustmentNodeId(), node.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
+        // todo
+        if (adjustmentNodeRequest.getSequence() == null) {
+            throw new IllegalStateException("---------- createAdjustmentNode, node sequence null, wrong ----------");
+        }
+        nodeOrderService.createNodeOrder(node, adjustmentNodeRequest.getSequence());
 
         log.info("---------- save parameter for node ----------");
         saveParameterNode(node, adjustmentNodeRequest);
-
-        node = adjustmentNodeRepository.save(node);
 
         return node;
     }
@@ -349,13 +362,13 @@ public class AdjustmentNodeService {
 //        }
 //    }
 
-    private void deleteParameterNode(Long nodeId) {
+    private void deleteParameterNode(Integer nodeId) {
         adjustmentScalingParameterService.deleteByNodeId(nodeId);
         periodBandingParameterService.deleteByNodeId(nodeId);
         eventBasedParameterService.deleteByNodeId(nodeId);
     }
 
-    public AdjustmentNode getAdjustmentNode(Long nodeId) {
+    public AdjustmentNode getAdjustmentNode(Integer nodeId) {
         return adjustmentNodeRepository.getOne(nodeId);
     }
 
@@ -437,8 +450,8 @@ public class AdjustmentNodeService {
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("saveParameterNode, linear adjustment");
-            if (parameterRequest.getLmf() != 0) {
-                if (parameterRequest.getRpmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+            if (parameterRequest.getLmf() != null) {
+                if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf()");
                 }
                 adjustmentScalingParameterService.save(new ScalingAdjustmentParameter(parameterRequest.getLmf(), node));
@@ -449,8 +462,8 @@ public class AdjustmentNodeService {
         }
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("saveParameterNode, {}",EEFFrequency.getValue());
-            if (parameterRequest.getRpmf() != 0) {
-                if (parameterRequest.getLmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+            if (parameterRequest.getRpmf() != null) {
+                if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getRpmf()");
                 }
                 adjustmentScalingParameterService.save(new ScalingAdjustmentParameter(parameterRequest.getRpmf(), node));
@@ -461,7 +474,7 @@ public class AdjustmentNodeService {
         }
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
             if (parameterRequest.getPeatData() != null) {
-                if (parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+                if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
                 }
                 log.info("saveParameterNode, {}", NonLinearEventDriven.getValue());
@@ -473,7 +486,7 @@ public class AdjustmentNodeService {
         }
         else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             if (parameterRequest.getPeatData() != null) {
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+                if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
                 log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
@@ -485,11 +498,12 @@ public class AdjustmentNodeService {
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("saveParameterNode, {}",NONLINEARRETURNEVENTPERIOD.getValue());
-            if(parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
-                for (ReturnPeriodBandingAdjustmentParameter periodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
-                    periodBandingParameterService.save(new ReturnPeriodBandingAdjustmentParameter(periodBanding.getReturnPeriod(), periodBanding.getAdjustmentFactor(), node));
+            if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+                for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
+                    periodBandingParameterService.save(new ReturnPeriodBandingAdjustmentParameter(adjustmentReturnPeriodBanding.getReturnPeriod(), adjustmentReturnPeriodBanding.getAdjustmentFactor(), node));
                 }
-                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
+
+                if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
