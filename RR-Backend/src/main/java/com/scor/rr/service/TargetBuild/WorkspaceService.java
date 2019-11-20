@@ -4,6 +4,7 @@ import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.*;
+import com.scor.rr.util.OffsetBasedPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;

@@ -13,5 +13,8 @@ import javax.persistence.Table;
 @Table(name = "NumberOfPLTsPricedInForeWriter", schema = "tb")
 @AllArgsConstructor
 public class NumberOfPLTsPricedInForeWriter extends NumberOfEntityForProject {
+    public NumberOfPLTsPricedInForeWriter(Long projectId, int count) {
+        super(projectId, count);
+    }
 
 }
