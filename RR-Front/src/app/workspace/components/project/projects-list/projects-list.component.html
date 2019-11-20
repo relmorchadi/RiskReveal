@@ -46,14 +46,14 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-              <li nz-menu-item class="contextMenu border-bottom" *ngIf="project.projectType === 'treaty'"
+              <li nz-menu-item class="contextMenu border-bottom" *ngIf="project.projectType === 'treaty' || status === 'treaty'"
                   (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})"><i
                 class="icon-trash-alt"></i>Delete
               </li>
-              <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
+              <li nz-menu-item (click)="edit({project: project})" class="contextMenu"><i class="icon-edit"></i>Edit Project Properties</li>
             </ul>
           </nz-dropdown>
-          <!--              <i class="icon-ellipsis-h"></i>
+<!--                        <i class="icon-ellipsis-h"></i>
                         <i *ngIf="project?.selected" class="icon-check_24px"></i>
                         <span *ngIf="!project?.selected"></span>-->
         </div>

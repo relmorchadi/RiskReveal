@@ -13,13 +13,17 @@ import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibr
 import {EMPTY} from 'rxjs';
 import {WsProjectService} from './ws-project.service';
 import {defaultInuringState} from './inuring.service';
+import {ProjectApi} from "./api/project.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
 
-  constructor(private wsApi: WsApi, private store: Store, private wsProjectService: WsProjectService) {
+  constructor(private wsApi: WsApi,
+              private projectApi: ProjectApi,
+              private store: Store,
+              private wsProjectService: WsProjectService) {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
@@ -414,9 +418,9 @@ export class WorkspaceService {
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
-    const {wsId, uwYear, id, project} = payload;
+    const {wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.addNewProject(project, wsId, uwYear, id)
+    return this.projectApi.createProject(project, wsId, uwYear)
       .pipe(map(p => {
         ctx.patchState(produce(ctx.getState(), draft => {
           p ? draft.content[wsIdentifier].projects.unshift(p) : null
@@ -440,7 +444,7 @@ export class WorkspaceService {
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.deleteProject(projectId)
+    return this.projectApi.deleteProject(projectId)
       .pipe(catchError(err => {
         ctx.dispatch(new fromWS.DeleteProjectFails({}));
         return EMPTY;
