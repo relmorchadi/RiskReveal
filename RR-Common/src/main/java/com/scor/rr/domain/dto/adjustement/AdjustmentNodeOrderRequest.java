@@ -1,29 +1,29 @@
 package com.scor.rr.domain.dto.adjustement;
 
 public class AdjustmentNodeOrderRequest {
-    private Long adjustmentNodeId;
-    private Long adjustmentThreadId;
+    private Integer adjustmentNodeId;
+    private Integer adjustmentThreadId;
     private int order;
 
-    public AdjustmentNodeOrderRequest(Long adjustmentNodeId, Long adjustmentThreadId, int order) {
+    public AdjustmentNodeOrderRequest(Integer adjustmentNodeId, Integer adjustmentThreadId, int order) {
         this.adjustmentNodeId = adjustmentNodeId;
         this.adjustmentThreadId = adjustmentThreadId;
         this.order = order;
     }
 
-    public Long getAdjustmentNodeId() {
+    public Integer getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
 
-    public void setAdjustmentNodeId(Long adjustmentNodeId) {
+    public void setAdjustmentNodeId(Integer adjustmentNodeId) {
         this.adjustmentNodeId = adjustmentNodeId;
     }
 
-    public Long getAdjustmentThreadId() {
+    public Integer getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(Long adjustmentThreadId) {
+    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 

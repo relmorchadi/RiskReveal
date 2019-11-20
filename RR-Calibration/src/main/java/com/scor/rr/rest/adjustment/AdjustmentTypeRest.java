@@ -23,7 +23,7 @@ public class AdjustmentTypeRest {
     }
 
     @GetMapping("one")
-    public AdjustmentType findOne(Long id){
+    public AdjustmentType findOne(Integer id){
         return adjustmentTypeService.findOne(id);
     }
 

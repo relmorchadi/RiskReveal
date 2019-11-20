@@ -22,7 +22,7 @@ public class AdjustmentStateService {
     AdjustmentStateRepository adjustmentStateRepository;
 
 
-    public AdjustmentState findOne(Long id){
+    public AdjustmentState findOne(Integer id){
         return adjustmentStateRepository.findById(id).orElseThrow(throwException(STATE_NOT_FOUND,NOT_FOUND));
     }
 
@@ -34,7 +34,7 @@ public class AdjustmentStateService {
         return adjustmentStateRepository.save(adjustmentnodeModel);
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentStateRepository.delete(
                 this.adjustmentStateRepository.
                         findById(id)

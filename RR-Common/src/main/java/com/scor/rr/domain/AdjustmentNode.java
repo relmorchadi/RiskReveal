@@ -6,7 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNode {
-    private Long adjustmentNodeId;
+    private Integer adjustmentNodeId;
     private EntityEntity entity;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentState adjustmentState;
@@ -67,11 +67,11 @@ public class AdjustmentNode {
     @Id
     @Column(name = "AdjustmentNodeId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getAdjustmentNodeId() {
+    public Integer getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
 
-    public void setAdjustmentNodeId(Long adjustmentNodeId) {
+    public void setAdjustmentNodeId(Integer adjustmentNodeId) {
         this.adjustmentNodeId = adjustmentNodeId;
     }
 

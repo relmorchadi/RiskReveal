@@ -38,14 +38,13 @@ public class AdjustmentNodeRest {
     }
 
     @GetMapping("thread")
-    public List<AdjustmentNode> findByThread(Long threadId){
+    public List<AdjustmentNode> findByThread(Integer threadId){
         return adjustmentNodeService.findByThread(threadId);
     }
 
     @PostMapping("delete")
-    public void deleteNode(Long id){
+    public void deleteNode(Integer id){
         adjustmentNodeService.deleteNode(id);
-
     }
 
 }

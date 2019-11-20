@@ -1,12 +1,13 @@
 package com.scor.rr.repository;
 
+import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.AdjustmentNodeOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 
-public interface AdjustmentNodeOrderRepository extends JpaRepository<AdjustmentNodeOrder, Long> {
+public interface AdjustmentNodeOrderRepository extends JpaRepository<AdjustmentNodeOrder, Integer> {
 //    @Query("select m from AdjustmentNodeEntity p inner join AdjustmentNodeOrderEntity m on p.adjustmentNodeId = m.adjustmentNode.adjustmentNodeId inner join AdjustmentThreadEntity t on t.adjustmentThreadId = m.adjustmentThread.adjustmentThreadId where t.adjustmentThreadId = :threadId and p.adjustmentNodeId = :nodeId")
 //    AdjustmentNodeOrderEntity getAdjustmentOrderByThreadIdAndNodeId(@Param("threadId") Integer threadId, @Param("nodeId") Integer nodeId);
 
@@ -15,17 +16,21 @@ public interface AdjustmentNodeOrderRepository extends JpaRepository<AdjustmentN
 
 //    AdjustmentNodeOrderEntity getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadIdAndOrderNode(int adjustmentThread_adjustmentThreadId, Integer orderNode);
 
-    AdjustmentNodeOrder findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentOrder(Long threadId, Integer order);
+    AdjustmentNodeOrder findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentOrder(Integer threadId, Integer order);
 
-    AdjustmentNodeOrder findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentNodeAdjustmentNodeId(Long threadId, Long nodeId);
+    AdjustmentNodeOrder findByAdjustmentThreadAdjustmentThreadIdAndAdjustmentNodeAdjustmentNodeId(Integer threadId, Integer nodeId);
 
-    AdjustmentNodeOrder findByAdjustmentNodeAdjustmentNodeId(Long adjustmentNodeId);
+    AdjustmentNodeOrder findByAdjustmentNodeAdjustmentNodeId(Integer adjustmentNodeId);
 
-    List<AdjustmentNodeOrder> findByAdjustmentThreadAdjustmentThreadId(Long adjustmentThreadId);
+    List<AdjustmentNodeOrder> findByAdjustmentThreadAdjustmentThreadId(Integer adjustmentThreadId);
 
 //    List<AdjustmentNodeOrderEntity> getAdjustmentNodeOrderEntityByAdjustmentThread_AdjustmentThreadIdAndAdjustmentNodeOrderIdGreaterThanEqual(int adjustmentThread_adjustmentThreadId, int adjustmentNodeOrderId);
 
-    void deleteByAdjustmentNodeAdjustmentNodeId(Long adjustmentNodeId);
+    void deleteByAdjustmentNodeAdjustmentNodeId(Integer adjustmentNodeId);
 
     void deleteByAdjustmentThreadAdjustmentThreadId(Long adjustmentThreadId);
+
+    AdjustmentNodeOrder findByAdjustmentNode(AdjustmentNode node);
+
+
 }

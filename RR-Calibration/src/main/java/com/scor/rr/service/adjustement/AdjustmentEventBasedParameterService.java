@@ -27,7 +27,7 @@ public class AdjustmentEventBasedParameterService {
         return eventBasedParameterRepository.save(parameterEntity);
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.eventBasedParameterRepository.delete(
                 this.eventBasedParameterRepository.
                         findById(id)
@@ -35,7 +35,7 @@ public class AdjustmentEventBasedParameterService {
         );
     }
 
-    public void deleteByNodeId(Long nodeId) {
+    public void deleteByNodeId(Integer nodeId) {
         eventBasedParameterRepository.deleteByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 

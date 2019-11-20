@@ -109,7 +109,7 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Long scorPltHeaderId) throws RRException {
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();

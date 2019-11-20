@@ -14,13 +14,12 @@ public class AdjustmentThreadEntity {
     private Timestamp lastModifiedOn;
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
-    private Long adjustmentThreadId;
+    private Integer adjustmentThreadId;
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
     private EntityEntity entity;
     private String threadStatus;
-
 
     @ManyToOne
     @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
@@ -125,11 +124,11 @@ public class AdjustmentThreadEntity {
     @Id
     @Column(name = "AdjustmentThreadId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getAdjustmentThreadId() {
+    public Integer getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(Long adjustmentThreadId) {
+    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 
