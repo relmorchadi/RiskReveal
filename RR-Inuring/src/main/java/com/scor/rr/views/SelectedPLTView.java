@@ -14,29 +14,31 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "selectedpltView", schema = "dbo")
+@Table(name = "selectedPlt", schema = "dbo", catalog = "RiskReveal")
 public class SelectedPLTView {
-
     @Id
-    @Column(name = "sourceName")
-    private int sourceName;
-
-    @Column(name = "fileName")
-    private String fileName;
+    @Column(name = "pltId", nullable = false)
+    private int pltId;
 
     @Column(name = "pltName")
-    private String path;
+    private String pltName;
+
+    @Column(name = "grain")
+    private String grain;
+
+    @Column(name = "filePath")
+    private String filePath;
+
+    @Column(name = "sourceFileName")
+    private String fileName;
 
     @Column(name = "currency")
     private String currency;
 
-    @Column(name = "targetCurrency")
-    private String targetCurrency;
-
-    @Column(name = "targetRapId")
+    @Column(name = "targetRAPId")
     private int targetRapId;
 
-    @Column(name = "targetRapCode")
+    @Column(name = "targetRAPCode")
     private String targetRapCode;
 
     @Column(name = "regionPeril")
@@ -45,10 +47,7 @@ public class SelectedPLTView {
     @Column(name = "peril")
     private String peril;
 
-    @Column(name = "grain")
-    private String grain;
-
-    @Column(name = "pltStructureCode")
-    private int pltStructureCode;
+    @Column(name = "projectId")
+    private int projectId;
 
 }
