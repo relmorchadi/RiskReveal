@@ -40,10 +40,6 @@ public class Workspace implements Serializable {
     private String cedantName;
 
 
-    @OneToMany
-    @JoinColumn(name = "workspaceId")
-    private List<Project> projects;
-
     public Workspace(ContractSearchResult c) {
         this.entity = 1;
         this.workspaceContextCode = c.getWorkSpaceId();

@@ -1,6 +1,7 @@
 package com.scor.rr.repository.TargetBuild.WorkspacePoPin;
 
 import com.scor.rr.domain.TargetBuild.WorkspacePoPin.RecentWorkspaceView;
+import com.scor.rr.util.OffsetBasedPageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

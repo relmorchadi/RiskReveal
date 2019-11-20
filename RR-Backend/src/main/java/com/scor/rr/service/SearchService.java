@@ -2,6 +2,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
@@ -9,11 +10,14 @@ import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
+import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
+import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
 import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import com.scor.rr.repository.counter.*;
 import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
+import com.scor.rr.util.SearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -85,6 +89,8 @@ public class SearchService {
     @Autowired
     QueryHelper queryHelper;
     @Autowired
+    SearchQuery searchQuery;
+    @Autowired
     VwFacTreatyRepository vwFacTreatyRepository;
     @Autowired
     VwFacTreatySpecification vwFacTreatySpecification;
@@ -100,6 +106,15 @@ public class SearchService {
 
     @Autowired
     RecentWorkspaceRepository recentWorkspaceRepository;
+
+    @Autowired
+    ProjectCardViewRepository projectCardViewRepository;
+
+    @Autowired
+    ProjectService projectService;
+
+    @Autowired
+    FavoriteWorkspaceRepository favoriteWorkspaceRepository;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -162,14 +177,18 @@ public class SearchService {
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
         List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
-        List<Project> projects = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy)).map(Workspace::getProjects)
+        Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+        Workspace ws = wsOpt.orElse(new Workspace());
+        List<ProjectCardView> projects = wsOpt
+                .map(workspace ->  projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
                 .orElse(new ArrayList<>());
+
         return ofNullable(contracts.get(0))
                 .map(firstWs -> {
 
                     this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
 
-                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects);
+                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects, this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(ws.getWorkspaceContextCode(), ws.getWorkspaceUwYear(), 1), true);
                 })
                 .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
 

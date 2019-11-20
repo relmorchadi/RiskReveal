@@ -9,4 +9,7 @@ import javax.persistence.Table;
 @Table(name = "ImportedProject", schema = "tb")
 @AllArgsConstructor
 public class ImportedProject extends NumberOfEntityForProject {
+    public ImportedProject(Long projectId, int count) {
+        super(projectId, count);
+    }
 }
