@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentReturnPeriodBandingParameterRepository;
@@ -20,11 +20,11 @@ public class AdjustmentReturnPeriodBandingParameterService {
     @Autowired
     AdjustmentReturnPeriodBandingParameterRepository parameterRepository;
 
-    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandingParameterByNode(Long ideNode) {
+    public List<ReturnPeriodBandingAdjustmentParameter> getAdjustmentReturnPeriodBandingParameterByNode(Long ideNode) {
         return parameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);
     }
 
-    public AdjustmentReturnPeriodBandingParameterEntity save(AdjustmentReturnPeriodBandingParameterEntity parameterEntity) {
+    public ReturnPeriodBandingAdjustmentParameter save(ReturnPeriodBandingAdjustmentParameter parameterEntity) {
         return parameterRepository.save(parameterEntity);
     }
 

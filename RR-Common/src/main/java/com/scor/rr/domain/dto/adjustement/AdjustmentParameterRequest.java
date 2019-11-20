@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.io.Serializable;
@@ -13,12 +13,12 @@ public class AdjustmentParameterRequest implements Serializable {
     private List<PEATData> peatData;
     private Integer pltHeaderInput;
     private Integer nodeId;
-    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
+    private List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings;
 
     public AdjustmentParameterRequest() {
     }
 
-    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
@@ -67,11 +67,11 @@ public class AdjustmentParameterRequest implements Serializable {
         this.nodeId = nodeId;
     }
 
-    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandings() {
+    public List<ReturnPeriodBandingAdjustmentParameter> getAdjustmentReturnPeriodBandings() {
         return adjustmentReturnPeriodBandings;
     }
 
-    public void setAdjustmentReturnPeriodBandings(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings) {
+    public void setAdjustmentReturnPeriodBandings(List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 }

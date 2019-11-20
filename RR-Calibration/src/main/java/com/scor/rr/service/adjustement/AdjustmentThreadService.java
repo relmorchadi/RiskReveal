@@ -58,6 +58,7 @@ public class AdjustmentThreadService {
         adjustmentThreadEntity.setLastModifiedOn(adjustmentThreadEntity.getCreatedOn());
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(false);
+        adjustmentThreadEntity.setThreadStatus("Initialized");
         if(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
@@ -68,10 +69,10 @@ public class AdjustmentThreadService {
                 }
                 return adjustmentThreadEntity;
             } else {
-                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_TYPE_NOT_CORRECT,1);
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_TYPE_NOT_CORRECT, 1);
             }
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND, 1);
         }
     }
 

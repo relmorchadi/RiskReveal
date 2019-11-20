@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentScalingParameterEntity;
+import com.scor.rr.domain.ScalingAdjustmentParameter;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentScalingParameterRepository;
@@ -18,11 +18,11 @@ public class AdjustmentScalingParameterService {
     @Autowired
     AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
 
-    public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Long ideNode) {
+    public ScalingAdjustmentParameter getAdjustmentScalingParameterParameterByNode(Long ideNode) {
         return adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);
     }
 
-    public AdjustmentScalingParameterEntity save(AdjustmentScalingParameterEntity parameterEntity) {
+    public ScalingAdjustmentParameter save(ScalingAdjustmentParameter parameterEntity) {
         return adjustmentScalingParameterRepository.save(parameterEntity);
     }
 

@@ -1,17 +1,11 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentNodeProcessingEntity;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
-import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
-import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
-import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +26,7 @@ public class AdjustmentNodeProcessingTest {
 
     @Autowired
     AdjustmentNodeProcessingService adjustmentNodeProcessingService;
-    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
+    private List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings;
     private List<PEATData> adjustmentReturnPeriod;
     private double lmf;
     private double rpmf;
@@ -46,11 +40,11 @@ public class AdjustmentNodeProcessingTest {
             add(new PEATData(94,8443621,1,1.5));
         }};
 
-        adjustmentReturnPeriodBandings = new ArrayList<AdjustmentReturnPeriodBandingParameterEntity>(){{
-            add(new AdjustmentReturnPeriodBandingParameterEntity(500d,0.87));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(750d,0.9));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(10000d,0.93));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(20000d,0.97));
+        adjustmentReturnPeriodBandings = new ArrayList<ReturnPeriodBandingAdjustmentParameter>(){{
+            add(new ReturnPeriodBandingAdjustmentParameter(500d,0.87));
+            add(new ReturnPeriodBandingAdjustmentParameter(750d,0.9));
+            add(new ReturnPeriodBandingAdjustmentParameter(10000d,0.93));
+            add(new ReturnPeriodBandingAdjustmentParameter(20000d,0.97));
 
         }};
 

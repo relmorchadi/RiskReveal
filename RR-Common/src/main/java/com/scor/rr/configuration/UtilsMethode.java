@@ -1,7 +1,7 @@
 package com.scor.rr.configuration;
 
 import com.scor.rr.configuration.file.CSVPLTFileReader;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.exceptions.RRException;
 
@@ -29,7 +29,7 @@ public class UtilsMethode {
         return null;
     }
 
-    public static List<AdjustmentReturnPeriodBandingParameterEntity> getReturnPeriodBendings(String path) {
+    public static List<ReturnPeriodBandingAdjustmentParameter> getReturnPeriodBendings(String path) {
         if (path != null) {
             File file = new File(path);
             CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();

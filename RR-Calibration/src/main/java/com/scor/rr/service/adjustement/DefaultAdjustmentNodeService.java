@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
+import com.scor.rr.domain.DefaultAdjustmentNode;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.DefaultAdjustmentNodeRepository;
@@ -20,11 +20,11 @@ public class DefaultAdjustmentNodeService {
     @Autowired
     DefaultAdjustmentNodeRepository defaultAdjustmentNodeRepository;
 
-    public List<DefaultAdjustmentNodeEntity> findAll(){
+    public List<DefaultAdjustmentNode> findAll(){
         return defaultAdjustmentNodeRepository.findAll();
     }
 
-    public DefaultAdjustmentNodeEntity findOne(Integer id){
+    public DefaultAdjustmentNode findOne(Integer id){
         return defaultAdjustmentNodeRepository.getOne(id);
     }
 
