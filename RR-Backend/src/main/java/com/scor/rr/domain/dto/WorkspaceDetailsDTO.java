@@ -26,6 +26,7 @@ public class WorkspaceDetailsDTO {
     private Date inceptionDate;
     private Date expiryDate;
     private String subsidiaryLedgerId;
+    private String contractDatasource;
     private List<String> treatySections;
     private List<Integer> years;
     private List<Project> projects;
@@ -45,6 +46,7 @@ public class WorkspaceDetailsDTO {
         this.inceptionDate= first.getInceptionDate();
         this.expiryDate = first.getExpiryDate();
         this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
+        this.contractDatasource= first.getContractSourceTypeName();
         this.projects= projects;
     }
 
