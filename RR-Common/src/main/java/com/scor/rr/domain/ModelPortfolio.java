@@ -44,6 +44,10 @@ public class ModelPortfolio {
     private Long portfolioId;
     @Column(name = "PortfolioName")
     private String portfolioName;
+    // TODO: Review
+    @Column(name = "PortfolioType")
+    private String portfolioType;
+    //
     @Column(name = "ExposedLocationPerils")
     private String exposedLocationPerils;
     @Column(name = "Currency")
@@ -58,6 +62,7 @@ public class ModelPortfolio {
     private String description;
     @Column(name = "ExposureLevel")
     private String exposureLevel;
-
+    @Column(name = "ImportLocationLevel")
+    private boolean importLocationLevel;
 
 }

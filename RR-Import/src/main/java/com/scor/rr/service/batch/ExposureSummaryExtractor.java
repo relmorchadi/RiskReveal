@@ -1,6 +1,8 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
@@ -9,8 +11,10 @@ import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RegionPerilService;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.batch.writer.ExposureWriter;
 import com.scor.rr.service.state.TransformationPackage;
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -22,7 +26,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 @StepScope
@@ -72,6 +82,9 @@ public class ExposureSummaryExtractor {
     @Autowired
     private RmsService rmsService;
 
+    @Autowired
+    private ExposureWriter exposureWriter;
+
     @Value("#{jobParameters['projectId']}")
     protected String projectId;
 
@@ -97,16 +110,16 @@ public class ExposureSummaryExtractor {
             List<ModelPortfolio> modelPortfolios = transformationPackage.getModelPortfolios();
 
             if (modelPortfolios != null && !modelPortfolios.isEmpty()) {
-                Map<MultiKey, List<String>> portfoliosPerEdm = new HashMap<>();
+                Map<MultiKey, List<ModelPortfolio>> portfoliosPerEdm = new HashMap<>();
 
                 modelPortfolios.forEach(modelPortfolio -> {
                     MultiKey edmKey = createEdmKey(modelPortfolio.getSourceModellingSystemInstance(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
                     Long portfolioId = modelPortfolio.getPortfolioId();
                     String conformedCcy = modelPortfolio.getCurrency();
                     if (portfoliosPerEdm.get(edmKey) != null)
-                        portfoliosPerEdm.get(edmKey).add(portfolioId + "~" + conformedCcy);
+                        portfoliosPerEdm.get(edmKey).add(modelPortfolio);
                     else
-                        portfoliosPerEdm.put(edmKey, new ArrayList<>(Collections.singleton(portfolioId + "~" + conformedCcy)));
+                        portfoliosPerEdm.put(edmKey, new ArrayList<>(Collections.singleton(modelPortfolio)));
                 });
 
                 ExposureView defaultExposureView = exposureViewRepository.findByDefaultView(true);
@@ -114,6 +127,7 @@ public class ExposureSummaryExtractor {
                     GlobalExposureView globalExposureView = new GlobalExposureView();
                     globalExposureView.setProjectId(Long.valueOf(projectId));
                     globalExposureView.setName(defaultExposureView.getName());
+
                     if (division != null)
                         globalExposureView.setDivisionNumber(Integer.valueOf(division));
                     //TODO : FIX ME LATER
@@ -124,16 +138,22 @@ public class ExposureSummaryExtractor {
                     globalExposureViewRepository.save(globalExposureView);
                     List<ExposureViewDefinition> exposureViewDefinitions = exposureViewDefinitionRepository.findByExposureView(defaultExposureView);
 
-                    for (Map.Entry<MultiKey, List<String>> entry : portfoliosPerEdm.entrySet()) {
+                    for (Map.Entry<MultiKey, List<ModelPortfolio>> entry : portfoliosPerEdm.entrySet()) {
+
                         MultiKey edm = entry.getKey();
                         String instance = (String) edm.getKey(0);
                         Long edmId = (Long) edm.getKey(1);
                         String edmName = (String) edm.getKey(2);
+                        List<String> portfolioAndConformedCurrencyList =
+                                entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getCurrency())
+                                .collect(Collectors.toList());
+
                         Integer runId = rmsService.createEDMPortfolioContext(instance,
                                 edmId,
                                 edmName,
-                                entry.getValue(),
+                                portfolioAndConformedCurrencyList,
                                 null);
+
                         if (runId != null) {
 
                             List<ExposureSummaryData> allRRExposureSummaries = new ArrayList<>();
@@ -148,6 +168,7 @@ public class ExposureSummaryExtractor {
                                 ExposureViewVersion exposureViewVersion = exposureViewVersionRepository.findByExposureViewDefinitionAndCurrent(exposureViewDefinition, true);
                                 if (exposureViewVersion != null) {
                                     ExposureViewQuery exposureViewQuery = exposureViewQueryRepository.findByExposureViewVersion(exposureViewVersion);
+
                                     GlobalViewSummary globalViewSummary = new GlobalViewSummary();
                                     globalViewSummary.setInstanceId(instance);
                                     globalViewSummary.setEdmId(edmId);
@@ -155,6 +176,7 @@ public class ExposureSummaryExtractor {
                                     globalViewSummary.setSummaryTitle(exposureViewDefinition.getName());
                                     globalViewSummary.setSummaryOrder(exposureViewDefinition.getOrder());
                                     globalViewSummary = globalViewSummaryRepository.save(globalViewSummary);
+
                                     NamedParameterJdbcTemplate template = rmsService.createTemplate(instance);
                                     List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
                                             exposureViewQuery.getQuery(),
@@ -165,7 +187,7 @@ public class ExposureSummaryExtractor {
                                     allRLExposureSummaries.addAll(rlExposureSummaryItems);
                                 }
                             });
-                            rmsService.removeEDMPortfolioContext(instance, runId);
+                            //rmsService.removeEDMPortfolioContext(instance, runId);
 
                             log.info("Info: Start saving risk link exposure summaries");
                             exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
@@ -174,11 +196,57 @@ public class ExposureSummaryExtractor {
                             log.info("Info: Start saving risk reveal exposure summaries");
                             exposureSummaryDataRepository.saveAll(allRRExposureSummaries);
                             log.info("Info: Saving risk reveal exposure summaries has ended");
+
+
+                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
+                            String extractName = "RR_RL_GetEdmDetailSummary";
+
+                            //RmsPortfolio pf = pesei.portfolio.getRmsPortfolio();
+                            File f = exposureWriter.makeDetailExposureFile(edmName, /*pf.getPortfolioId()*/null);
+                            if (f == null) {
+                                log.error("Error while creating detail exposure file !");
+                            } else {
+                                log.debug("Export to file: {}}", f.getAbsolutePath());
+                                //rmsService.extractDetailedExposure(f, edm, extractName, entry.getValue(), null, runId, pf.getPortfolioId(), pf.getType());
+
+                                // dh modified
+                                byte[] buffer = new byte[1024];
+                                String zipPath = f.getParent();
+                                String zipfile = f.getName().replace("txt", "zip");
+
+                                FileOutputStream fos = new FileOutputStream((zipPath + "/" + zipfile));
+                                ZipOutputStream zos = new ZipOutputStream(fos);
+                                ZipEntry ze = new ZipEntry(f.getName());
+                                zos.putNextEntry(ze);
+                                FileInputStream in = new FileInputStream(f.getAbsolutePath());
+
+                                int len;
+                                while ((len = in.read(buffer)) > 0) {
+                                    zos.write(buffer, 0, len);
+                                }
+                                in.close();
+                                zos.closeEntry();
+                                f.delete();
+                                zos.close();
+
+                                log.debug("zip file name {}", zipfile);
+                                log.debug("zip file path {}", zipPath);
+
+                                List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
+                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(zipfile, zipPath, null), "Detailed"));
+                                //String rrPortfolioId = mapPortfolioRRPortfolioIds.get(pesei.portfolio.getId());
+                                //RRPortfolio rrPortfolio = rrPortfolioRepository.findOne(rrPortfolioId);
+                                //exposureWriter.writeExposureSummaryHeader(project, edm, pesei.portfolio, rrPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
+                            }
+
+                            rmsService.removeEDMPortfolioContext(instance, runId);
+                            log.debug("Extract EDM Detail Summary completed");
+
+
                         } else {
                             log.error("Error: runId is null");
                         }
                     }
-
 
                 } else {
                     log.warn("No default view was found");

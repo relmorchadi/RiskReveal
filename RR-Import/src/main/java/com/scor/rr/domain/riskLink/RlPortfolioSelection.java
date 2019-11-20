@@ -28,6 +28,14 @@ public class RlPortfolioSelection {
     @Column(name = "Proportion")
     private Double proportion;
 
+    // TODO : Review with Viet later
+    @Column(name = "ImportLocationLevel")
+    private boolean importLocationLevel;
+
+    // TODO : Review with Viet later
+    @Column(name = "AnalysisRegions")
+    private String analysisRegions;
+
     @ManyToOne
     @JoinColumn(name = "RLPortfolioId")
     private RLPortfolio rlPortfolio;

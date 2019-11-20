@@ -285,13 +285,15 @@ public class RegionPerilExtractor {
                         rlPortfolioSelection.getRlPortfolio().getEdmName(),
                         rlPortfolioSelection.getRlPortfolio().getPortfolioId(),
                         rlPortfolioSelection.getRlPortfolio().getName(),
+                        rlPortfolioSelection.getRlPortfolio().getType(),
                         "ALL",
                         rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
                         1.0d,
                         rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
                         rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
                         rlPortfolioSelection.getRlPortfolio().getDescription(),
-                        rlPortfolioSelection.getRlPortfolio().getType()
+                        rlPortfolioSelection.getRlPortfolio().getType(),
+                        rlPortfolioSelection.isImportLocationLevel()
                 );
 
                 modelPortfolios.add(modelPortfolioRepository.save(modelPortfolio));

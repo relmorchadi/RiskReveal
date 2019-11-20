@@ -2,14 +2,21 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.util.PathUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 @Component
 @StepScope
+@Slf4j
 public abstract class AbstractWriter {
 
     @Value("#{jobParameters['projectId']}")
@@ -47,6 +54,13 @@ public abstract class AbstractWriter {
 
     @Value("#{jobParameters['importSequence']}")
     protected Long importSequence;
+
+    private Path ihubPath;
+
+    @Value("${ihub.treaty.out.path}")
+    private void setIhubPath(String path){
+        this.ihubPath= Paths.get(path);
+    }
 
     protected synchronized String makeELTFileName(
             Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId,String fileExtension) {
@@ -150,5 +164,50 @@ public abstract class AbstractWriter {
                 null,
                 null
         );
+    }
+
+    protected synchronized String makeExposureFileName(XLTSubType subType, Date date, String regionPeril, String fp, String currency, XLTOT currencySource, String edmName, Long portfolioId, String fileNature, String fileExtension) {
+        return PathUtils.makeTTFileName(reinsuranceType,
+                prefix,
+                clientName,
+                contractId,
+                division,
+                uwYear,
+                XLTAssetType.EXP,
+                date,
+                sourceVendor,
+                modelSystemVersion,
+                regionPeril,
+                fp,
+                currency,
+                null,
+                periodBasis,
+                XLTOrigin.INTERNAL,
+                subType,
+                currencySource,
+                null,
+                null,
+                null,
+                null,
+                null,
+                importSequence,
+                edmName,
+                portfolioId,
+                fileNature,
+                fileExtension);
+    }
+
+    protected File makeFullFile(String prefixDirectory, String filename) {
+        final Path fullPath = ihubPath.resolve(prefixDirectory);
+        try {
+            Files.createDirectories(fullPath);
+        } catch (IOException e) {
+            log.error("Exception: ", e);
+            throw new RuntimeException("error creating paths "+fullPath, e);
+        }
+        final File parent = fullPath.toFile();
+
+        File file = new File(parent, filename);
+        return file;
     }
 }
