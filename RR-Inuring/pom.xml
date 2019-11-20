@@ -5,7 +5,7 @@
     <parent>
         <artifactId>risk-reveal-root</artifactId>
         <groupId>com.scor.rr</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${rr_version}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,6 +16,7 @@
     <packaging>war</packaging>
 
     <properties>
+        <rr_version>0.0.1-SNAPSHOT</rr_version>
         <java.version>1.8</java.version>
         <maven.test.skip>true</maven.test.skip>
     </properties>
