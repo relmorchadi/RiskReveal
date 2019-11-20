@@ -22,7 +22,6 @@ import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
-import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -212,7 +211,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         pltHeader.getPltHeaderId(),
                         ".bin"
                         );
-                File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+                File file = makeFullFile(prefix, filename);
                 BinFile binFile= new BinFile(file);
                 pltHeader.setPltLossDataFilePath(binFile.getPath());
                 pltHeader.setPltLossDataFileName(binFile.getFileName());

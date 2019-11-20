@@ -3,10 +3,8 @@ package com.scor.rr.service.batch.writer;
 import com.scor.rr.domain.AnalysisEpCurves;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.StatisticMetric;
-import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
@@ -31,8 +29,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-@StepScope
-public class EpCurveWriter extends AbstractWriter{
+public class EpCurveWriter {
 
     private Path ihubPath;
 
@@ -40,6 +37,9 @@ public class EpCurveWriter extends AbstractWriter{
     private void setIhubPath(String path){
         this.ihubPath= Paths.get(path);
     }
+
+    @Value("${ihub.prefix.directory}")
+    private String prefixDirectory;
 
     public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
 //        Map<StatisticMetric, List<AnalysisEpCurves>> metricToPLTEPCurve = new HashMap<>();
@@ -53,7 +53,7 @@ public class EpCurveWriter extends AbstractWriter{
     }
 
     private BinFile writePLTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+        File file = makeFullFile(prefixDirectory, filename);
         return writePLTEPCurves(metricToEPCurve, file);
     }
 

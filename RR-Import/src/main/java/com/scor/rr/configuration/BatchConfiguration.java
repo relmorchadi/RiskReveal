@@ -1,6 +1,7 @@
 package com.scor.rr.configuration;
 
 import com.google.gson.Gson;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
@@ -13,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import javax.sql.DataSource;
 
 @Configuration
+@EnableBatchProcessing
 public class BatchConfiguration {
 
 
@@ -20,7 +22,7 @@ public class BatchConfiguration {
     @Qualifier(value = "dbRms")
     private DataSource dataSource;
 
-    @Bean
+    @Bean(name = "rrTransactionManager")
     public DataSourceTransactionManager getDataSourceTransactionManager(){
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);

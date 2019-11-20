@@ -22,15 +22,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Component
-//@Transactional(transactionManager = "rmsTransactionManager")
 public class RmsService {
 
     private final Logger logger = LoggerFactory.getLogger(RmsService.class);
@@ -86,9 +85,10 @@ public class RmsService {
             if (rlModelDataSource == null) {
                 rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
                 rlModelDataSourcesRepository.save(rlModelDataSource);
-                if ("RDM".equals(rlModelDataSource.getType())) {
-                    scanAnalysisBasicForRdm(rlModelDataSource);
-                }
+            }
+
+            if ("RDM".equals(rlModelDataSource.getType())) {
+                scanAnalysisBasicForRdm(rlModelDataSource);
             }
         }
 
@@ -123,6 +123,7 @@ public class RmsService {
     }
 
     public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
+        rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
@@ -133,7 +134,7 @@ public class RmsService {
         }
     }
 
-    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
+    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Long projectId) {
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
 
         rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
@@ -145,7 +146,10 @@ public class RmsService {
             String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
             this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue())
-                    .forEach(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis));
+                    .stream()
+                    .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis))
+                    .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis) )
+                    .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
 
         }
 
@@ -460,5 +464,23 @@ public class RmsService {
                     sourceResult = rlSourceResultRepository.save(sourceResult);
                     return sourceResult.getRlSourceResultId();
                 }).collect(toList());
+    }
+
+    /* TODO Implement */
+
+    private String convertList(List<String> list){
+        return list.stream().collect(Collectors.joining(","));
+    }
+
+    private String convertListOldImpl(List<String> finPerspList){
+        String LIST = "";
+        if (finPerspList != null) {
+            for (String s : finPerspList) {
+
+                LIST += s + ",";
+            }
+            LIST = LIST.substring(0, LIST.length() - 1);
+        }
+        return LIST;
     }
 }

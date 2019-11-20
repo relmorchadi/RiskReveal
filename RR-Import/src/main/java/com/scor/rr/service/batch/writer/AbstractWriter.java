@@ -145,78 +145,10 @@ public abstract class AbstractWriter {
                 threadNum, // 0 for pure PLT
                 uniqueId,
                 importSequence,
+                fileExtension,
                 null,
                 null,
-                null,
-                fileExtension
-                );
-    }
-
-    protected synchronized String makeELTEPCurveFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
-        return PathUtils.makeTTFileName(
-                reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear,
-                XLTAssetType.ELT,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency,
-                projectId,
-                periodBasis,
-                XLTOrigin.MODEL,
-                XLTSubType.EPC,
-                xltot,
-                null,
-                null,
-                null,
-                null,
-                uniqueId,
-                importSequence,
-                null,
-                null,
-                null,
-                fileExtension
-        );
-    }
-
-    protected synchronized String makeELTSummaryStatFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
-        return PathUtils.makeTTFileName(
-                reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear,
-                XLTAssetType.ELT,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency,
-                projectId,
-                periodBasis,
-                XLTOrigin.MODEL,
-                XLTSubType.EPS,
-                xltot,
-                null,
-                null,
-                null,
-                null,
-                uniqueId,
-                importSequence,
-                null,
-                null,
-                null,
-                fileExtension
+                null
         );
     }
 }

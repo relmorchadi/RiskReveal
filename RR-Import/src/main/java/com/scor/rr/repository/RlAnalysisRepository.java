@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 
 public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
@@ -13,6 +14,7 @@ public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
 
     // @TODO : Check Instance ID Param
     @Modifying()
+    @Transactional(transactionManager = "rrTransactionManager")
     @Query("update RLAnalysis ra " +
             "set ra.defaultGrain = :#{#analysis.defaultGrain}, " +
             " ra.exposureType = :#{#analysis.exposureType}, " +
@@ -35,6 +37,20 @@ public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " ra.rdmName= :#{#analysis.rdmName} and " +
             " ra.analysisId= :#{#analysis.analysisId} and " +
             " ra.analysisName= :#{#analysis.analysisName} ")
-    void updateAnalysiById(@Param("projectId") Integer projectId,
+    void updateAnalysiById(@Param("projectId") Long projectId,
                            @Param("analysis") RdmAnalysis analysis);
+
+    @Modifying
+    @Transactional(transactionManager = "rrTransactionManager")
+    @Query("delete from RLAnalysis rla where rla.rlModelDataSourceId= :rlModelDatasourceId")
+    void deleteByRlModelDataSourceId(@Param("rlModelDatasourceId") Long rlModelDatasourceId);
+
+    @Query("select rla from RLAnalysis rla " +
+            " where rla.projectId= :projectId and " +
+            " rla.rdmId= :#{#analysis.rdmId} and " +
+            " rla.rdmName= :#{#analysis.rdmName} and " +
+            " rla.analysisId= :#{#analysis.analysisId} and " +
+            " rla.analysisName= :#{#analysis.analysisName} ")
+    RLAnalysis findByProjectIdAndAnalysis(@Param("projectId") Long projectId,
+                                          @Param("analysis") RdmAnalysis analysis);
 }

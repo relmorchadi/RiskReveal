@@ -3,10 +3,8 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.AnalysisSummaryStats;
 import com.scor.rr.domain.dto.BinFile;
-import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
@@ -27,8 +25,8 @@ import java.security.PrivilegedAction;
 
 @Slf4j
 @Service
-@StepScope
-public class EpSummaryStatWriter extends AbstractWriter {
+public class EpSummaryStatWriter {
+
 
     private Path ihubPath;
 
@@ -37,8 +35,11 @@ public class EpSummaryStatWriter extends AbstractWriter {
         this.ihubPath= Paths.get(path);
     }
 
+    @Value("${ihub.prefix.directory}")
+    private String prefixDirectory;
+
     public BinFile writePLTSummaryStatistics(AnalysisSummaryStats summaryStatisticHeaders, String filename) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)),filename);
+        File file = makeFullFile(filename);
         return writePLTSummaryStatistics(summaryStatisticHeaders, file);
     }
 
@@ -65,7 +66,7 @@ public class EpSummaryStatWriter extends AbstractWriter {
         }
     }
 
-    private File makeFullFile(String prefixDirectory, String filename) {
+    private File makeFullFile(String filename) {
         final Path fullPath = ihubPath.resolve(prefixDirectory);
         try {
             Files.createDirectories(fullPath);

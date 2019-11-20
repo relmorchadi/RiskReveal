@@ -13,11 +13,9 @@ import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import com.scor.rr.service.InuringInputNodeService;
-import javafx.beans.binding.When;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -52,7 +50,7 @@ public class InuringInputNodeTest {
     private InuringPackageRepository inuringPackageRepository;
 
     @Mock
-    private PltHeaderRepository pltHeaderRepository;
+    private PltHeaderRepository scorpltheaderRepository;
 
     private Map<Integer, InuringInputNode> inuringInputNodes;
 
@@ -120,7 +118,7 @@ public class InuringInputNodeTest {
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
-        when(pltHeaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
+        when(scorpltheaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
             int id = plt.getArgument(0);
             return id == PLT_ID_NOT_FOUND ? null : new PltHeaderEntity();
         });
