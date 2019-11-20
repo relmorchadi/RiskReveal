@@ -577,7 +577,7 @@ public class PltHeaderEntity {
         this.cloningSource = cloningSource;
     }
     @ManyToOne
-    @JoinColumn(name = "BinFileId", referencedColumnName = "BinFileId",insertable = false,updatable = false)
+    @JoinColumn(name = "BinFileId", referencedColumnName = "BinFileId")
     public BinFileEntity getBinFileEntity() {
         return binFileEntity;
     }

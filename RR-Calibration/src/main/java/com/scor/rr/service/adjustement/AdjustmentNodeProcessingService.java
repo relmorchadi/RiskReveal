@@ -18,8 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -196,25 +201,69 @@ public class AdjustmentNodeProcessingService {
         }
         // sort adjustmentNodes by node order from 0 to n
         PltHeaderEntity finalPLT = thread.getFinalPLT();
-        if (processing == null) {
-            log.info("------ processing null, create final plt from pure plt ------");
-            if (finalPLT == null) {
-                finalPLT = new PltHeaderEntity(thread.getInitialPLT());
-            }
+        BinFileEntity finalBinFile = null;
+        if (finalPLT == null) {
+            finalPLT = new PltHeaderEntity(thread.getInitialPLT());
+            finalPLT.setPltType("Thread");
+            finalBinFile = binfileRepository.save(new BinFileEntity());
         } else {
-            if (finalPLT == null) {
-                finalPLT = new PltHeaderEntity(processing.getAdjustedPLT());
-            }
+            finalBinFile = finalPLT.getBinFileEntity() != null ? finalPLT.getBinFileEntity() : binfileRepository.save(new BinFileEntity());
+        }
+        finalPLT.setBinFileEntity(finalBinFile);
+
+        File sourceFile = null;
+        if (processing == null) {
+            sourceFile = new File(thread.getInitialPLT().getBinFileEntity().getPath(), thread.getInitialPLT().getBinFileEntity().getFileName());
+        } else {
+            sourceFile = new File(processing.getAdjustedPLT().getBinFileEntity().getPath(), processing.getAdjustedPLT().getBinFileEntity().getFileName());
         }
 
-        finalPLT.setPltType("Thread");
-        finalPLT.setCreatedDate(RRDateUtils.getDateNow());
-        // TODO set more properties for finalPLT : binfile need create new ?
+        File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
+        try {
+            copyFile(sourceFile, dstFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finalBinFile.setPath(dstFile.getParent());
+        finalBinFile.setFileName(dstFile.getName());
 
+        binfileRepository.save(finalBinFile);
+        finalPLT.setCreatedDate(RRDateUtils.getDateNow());
         pltHeaderRepository.save(finalPLT);
         thread.setFinalPLT(finalPLT);
         adjustmentThreadRepository.save(thread);
         return finalPLT; // return final PLT
+    }
+    private static long copyFile(File sourceFile, File destFile) throws IOException {
+        FileChannel source = null;
+        FileChannel destination = null;
+        long size = 0;
+        try {
+            if (!destFile.exists()) {
+                destFile.createNewFile();
+            }
+            log.debug("source file {} dest file {}", sourceFile, destFile);
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            size = source.size();
+        } catch (Exception e) {
+            log.debug("Error in copyFile {}", e);
+            throw e;
+        } finally {
+            try {
+                if (source != null) {
+                    source.close();
+                }
+                if (destination != null) {
+                    destination.close();
+                }
+                log.debug("Channel closed with size {}", size);
+            } catch (Exception ex) {
+                log.debug("Closed channel exception {}", ex.getMessage());
+            }
+        }
+        return size;
     }
 
     public Integer findOrderOfNode(AdjustmentNode node) {
@@ -288,7 +337,7 @@ public class AdjustmentNodeProcessingService {
         List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(inputPLT); // input lay ra List<PLTLossData>
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
-        String filename = "AdjustedPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".csv";
+        String filename = "InterimPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".bin";
         BinFileEntity binFileEntity = savePLTFile(pltLossData, inputPLT.getBinFileEntity().getPath(),  filename); // luu file
         if (binFileEntity != null) {
             log.info("success saving loss file for adjusted PLT");
@@ -347,7 +396,7 @@ public class AdjustmentNodeProcessingService {
         }
         BinFileEntity binFileEntity = new BinFileEntity();
         binFileEntity.setFileName(file.getName());
-        binFileEntity.setPath(file.getPath());
+        binFileEntity.setPath(file.getParent());
         binFileEntity.setFqn(file.getAbsolutePath());
         return binfileRepository.save(binFileEntity);
     }
