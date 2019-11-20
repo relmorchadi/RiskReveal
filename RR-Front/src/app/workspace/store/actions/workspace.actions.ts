@@ -110,6 +110,11 @@ export class AddNewProjectFail {
   constructor(public payload: any) {}
 }
 
+export class EditProject {
+  static readonly type = '[Workspace] Edit project ';
+  constructor(public payload: any) {}
+}
+
 export class DeleteFacProject {
   static readonly type = '[Workspace] Delete Fac project';
   constructor(public payload: any) {}
