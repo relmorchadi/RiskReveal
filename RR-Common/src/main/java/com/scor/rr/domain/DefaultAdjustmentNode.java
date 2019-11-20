@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
-public class DefaultAdjustmentNodeEntity {
+public class DefaultAdjustmentNode {
     private Integer sequence;
     private int defaultAdjustmentNodeId;
     private Boolean isCappedMaxExposure;
@@ -47,7 +47,7 @@ public class DefaultAdjustmentNodeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DefaultAdjustmentNodeEntity that = (DefaultAdjustmentNodeEntity) o;
+        DefaultAdjustmentNode that = (DefaultAdjustmentNode) o;
         return defaultAdjustmentNodeId == that.defaultAdjustmentNodeId &&
                 Objects.equals(sequence, that.sequence) &&
                 Objects.equals(isCappedMaxExposure, that.isCappedMaxExposure);

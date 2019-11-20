@@ -1,7 +1,7 @@
 package com.scor.rr.configuration.file;
 
 import com.scor.rr.configuration.utils.Constant;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
@@ -49,7 +49,7 @@ public class CSVPLTFileWriter implements PLTFileWriter {
         }
     }
 
-    public void writeReturnPeriodBending(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings, File file) throws RRException {
+    public void writeReturnPeriodBending(List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, File file) throws RRException {
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
         if (adjustmentReturnPeriodBandings == null) {
@@ -60,10 +60,10 @@ public class CSVPLTFileWriter implements PLTFileWriter {
             BufferedWriter bw = new BufferedWriter(fw);
             bw.write("returnPeriod;lmf");
             bw.newLine();
-            for (AdjustmentReturnPeriodBandingParameterEntity periodBanding : adjustmentReturnPeriodBandings) {
+            for (ReturnPeriodBandingAdjustmentParameter periodBanding : adjustmentReturnPeriodBandings) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(periodBanding.getReturnPeriod()).append(";").
-                        append(periodBanding.getFactor());
+                        append(periodBanding.getAdjustmentFactor());
                 bw.write(sb.toString());
                 bw.newLine();
             }

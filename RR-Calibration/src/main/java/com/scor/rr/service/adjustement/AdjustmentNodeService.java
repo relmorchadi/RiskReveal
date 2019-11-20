@@ -4,7 +4,6 @@ import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
-import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
@@ -99,12 +98,12 @@ public class AdjustmentNodeService {
     }
 
     public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
-                                                                             DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity) throws RRException {
+                                                                             DefaultAdjustmentNode defaultAdjustmentNodeEntity) throws RRException {
 
         Double lmf = null;
         Double rpmf = null;
         List<PEATData> peatData = null; //todo
-        List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings = null; //todo
+        List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings = null; //todo
         DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
         if (defaultRetPerBandingParamsEntity != null) {
             if (defaultRetPerBandingParamsEntity.getLmf() != null) {
@@ -442,7 +441,7 @@ public class AdjustmentNodeService {
                 if (parameterRequest.getRpmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf()");
                 }
-                adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(), node));
+                adjustmentScalingParameterService.save(new ScalingAdjustmentParameter(parameterRequest.getLmf(), node));
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
@@ -454,7 +453,7 @@ public class AdjustmentNodeService {
                 if (parameterRequest.getLmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getRpmf()");
                 }
-                adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(), node));
+                adjustmentScalingParameterService.save(new ScalingAdjustmentParameter(parameterRequest.getRpmf(), node));
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
@@ -487,8 +486,8 @@ public class AdjustmentNodeService {
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("saveParameterNode, {}",NONLINEARRETURNEVENTPERIOD.getValue());
             if(parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
-                for (AdjustmentReturnPeriodBandingParameterEntity periodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
-                    periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getFactor(), node));
+                for (ReturnPeriodBandingAdjustmentParameter periodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
+                    periodBandingParameterService.save(new ReturnPeriodBandingAdjustmentParameter(periodBanding.getReturnPeriod(), periodBanding.getAdjustmentFactor(), node));
                 }
                 if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");

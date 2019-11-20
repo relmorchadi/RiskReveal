@@ -19,6 +19,7 @@ public class AdjustmentThreadEntity {
     private PltHeaderEntity finalPLT;
     private int threadIndex;
     private EntityEntity entity;
+    private String threadStatus;
 
 
     @ManyToOne
@@ -49,6 +50,16 @@ public class AdjustmentThreadEntity {
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
+    }
+
+    @Basic
+    @Column(name = "ThreadStatus", length = 100)
+    public String getThreadStatus() {
+        return threadStatus;
+    }
+
+    public void setThreadStatus(String threadStatus) {
+        this.threadStatus = threadStatus;
     }
 
     @Basic

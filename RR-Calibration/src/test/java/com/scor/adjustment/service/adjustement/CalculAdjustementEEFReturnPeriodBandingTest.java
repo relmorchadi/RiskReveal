@@ -4,7 +4,7 @@ import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.EventDateFormatException;
@@ -29,7 +29,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustementEEFReturnPeriodBandingTest.class);
 
     private List<PLTLossData> pltLossDataList;
-    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBandings;
+    private List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings;
     private double periodConstante;
     private boolean cap;
     @Before
@@ -44,11 +44,11 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         }};
         cap = true;
         periodConstante = 100000;
-        adjustmentReturnPeriodBandings = new ArrayList<AdjustmentReturnPeriodBandingParameterEntity>(){{
-            add(new AdjustmentReturnPeriodBandingParameterEntity(500d,0.87));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(750d,0.9));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(10000d,0.93));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(20000d,0.97));
+        adjustmentReturnPeriodBandings = new ArrayList<ReturnPeriodBandingAdjustmentParameter>(){{
+            add(new ReturnPeriodBandingAdjustmentParameter(500d,0.87));
+            add(new ReturnPeriodBandingAdjustmentParameter(750d,0.9));
+            add(new ReturnPeriodBandingAdjustmentParameter(10000d,0.93));
+            add(new ReturnPeriodBandingAdjustmentParameter(20000d,0.97));
 
         }};
     }
