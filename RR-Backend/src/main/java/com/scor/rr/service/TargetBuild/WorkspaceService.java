@@ -53,7 +53,7 @@ public class WorkspaceService {
     }
 
     public List<Workspace> getRecentWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
-        return this.recentWorkspaceViewRepository.findAllByUserId(kw, userId, new OffsetPageRequest(offset, size)).stream()
+        return this.recentWorkspaceViewRepository.findAllByUserId("%"+kw+"%", userId, new OffsetPageRequest(offset, size)).stream()
                 .map(recentWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
