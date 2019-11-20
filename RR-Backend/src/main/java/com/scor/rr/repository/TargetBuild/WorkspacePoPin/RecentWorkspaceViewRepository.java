@@ -12,8 +12,10 @@ import java.util.List;
 
 public interface RecentWorkspaceViewRepository extends JpaRepository<RecentWorkspaceView, Long> {
 
-    @Query("from RecentWorkspaceView rws where rws.userId = :userId order by rws.lastOpened desc")
-    List<RecentWorkspaceView> findAllByUserId(@Param("userId") Integer userId, Pageable page);
+    @Query("from RecentWorkspaceView rws where" +
+            " (rws.cedantName like :kw or rws.workspaceContextCode like :kw or rws.workspaceName like :kw or rws.workspaceUwYear like :kw ) " +
+            " and rws.userId = :userId order by rws.lastOpened desc")
+    List<RecentWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
     @Procedure(procedureName = "tb.COUNT_RECENT_Workspace", outputParameterName = "count")

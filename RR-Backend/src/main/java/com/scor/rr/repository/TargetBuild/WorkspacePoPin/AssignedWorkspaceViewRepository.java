@@ -12,8 +12,10 @@ import java.util.List;
 
 public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedWorkspaceView, String> {
 
-    @Query("from AssignedWorkspaceView aws where aws.userId = :userId order by aws.createDate desc")
-    List<AssignedWorkspaceView> findAllByUserId(@Param("userId") Integer userId, Pageable page);
+    @Query("from AssignedWorkspaceView aws where" +
+            " (aws.cedantName like :kw or aws.workspaceContextCode like :kw or aws.workspaceName like :kw or aws.workspaceUwYear like :kw ) " +
+            " and aws.userId = :userId order by aws.createDate desc")
+    List<AssignedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
     @Procedure(procedureName = "tb.COUNT_ASSIGNED_Workspace", outputParameterName = "count")
