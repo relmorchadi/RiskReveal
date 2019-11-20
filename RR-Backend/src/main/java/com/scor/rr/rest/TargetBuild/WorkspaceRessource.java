@@ -18,23 +18,23 @@ public class WorkspaceRessource {
     WorkspaceService workspaceService;
 
     @GetMapping("favorite")
-    List<Workspace> getFavoriteWorkspaces(@RequestParam Integer userId, @RequestParam( defaultValue = "0" ) Integer offset, @RequestParam( defaultValue = "10" ) Integer size) {
-        return this.workspaceService.getFavoriteWorkspaces(userId, offset, size);
+    List<Workspace> getFavoriteWorkspaces(@RequestParam(required = false, defaultValue = "") String kw,@RequestParam Integer userId, @RequestParam( defaultValue = "0" ) Integer offset, @RequestParam( defaultValue = "10" ) Integer size) {
+        return this.workspaceService.getFavoriteWorkspaces(kw, userId, offset, size);
     }
 
     @GetMapping("recent")
-    List<Workspace> getRecentWorkspaces(@RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getRecentWorkspaces(userId, offset, size);
+    List<Workspace> getRecentWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
+        return this.workspaceService.getRecentWorkspaces(kw,userId, offset, size);
     }
 
     @GetMapping("assigned")
-    List<Workspace> getAssignedWorkspaces(@RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getAssignedWorkspaces(userId, offset, size);
+    List<Workspace> getAssignedWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
+        return this.workspaceService.getAssignedWorkspaces(kw,userId, offset, size);
     }
 
     @GetMapping("pinned")
-    List<Workspace> getPinnedWorkspaces(@RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
-        return this.workspaceService.getPinnedWorkspaces(userId, offset, size);
+    List<Workspace> getPinnedWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam Integer offset, @RequestParam Integer size) {
+        return this.workspaceService.getPinnedWorkspaces(kw,userId, offset, size);
     }
 
     @GetMapping("count")

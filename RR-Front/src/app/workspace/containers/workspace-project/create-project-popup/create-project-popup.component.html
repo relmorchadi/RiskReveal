@@ -26,7 +26,7 @@
       <div class="a-info-data-right"><span class="a-info-caption">{{workspace?.workSpaceId}}</span></div>
     </div>
   </div>
-  <div class="a-form-control" [formGroup]="newProjectForm" style="margin-top: 16px;">
+  <div class="a-form-control" *ngIf="!editOption" [formGroup]="newProjectForm" style="margin-top: 16px;">
     <div *ngIf="newProjectForm.controls['projectId'].value" class="a-form-input-wrapper">
       <label class="label-input">Project ID</label>
       <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" [attr.disabled]="true"
@@ -62,10 +62,49 @@
 
   </div>
 
+  <div class="a-form-control" *ngIf="editOption" style="margin-top: 16px;">
+    <div *ngIf="newProjectForm.controls['projectId'].value" class="a-form-input-wrapper">
+      <label class="label-input">Project ID</label>
+      <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" [attr.disabled]="true"
+             placeholder="Project ID" [(ngModel)]="projectForm.projectId"/>
+    </div>
+    <div class="a-form-input-wrapper">
+      <label class="label-input">Project Name</label>
+      <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" placeholder="Insert Name" [(ngModel)]="projectForm.projectName" />
+    </div>
+
+    <div class="a-form-input-wrapper">
+      <label class="textarea-label">Description</label>
+      <textarea style="margin-bottom:15px; background-color: #f4f6fc;" rows="4" nz-input placeholder="Insert Description" [(ngModel)]="projectForm.projectDescription"></textarea>
+    </div>
+
+    <div class="a-form-input-wrapper">
+      <label class="label-input">Assigned To</label>
+      <input class="a-textfield-standard a-textfield-label" [attr.disabled]="true"
+             placeholder="Insert Name" [(ngModel)]="projectForm.assignedTo"/>
+    </div>
+
+    <div class="a-form-date-control a-datepicker-standard">
+      <div class="a-form-input-wrapper">
+        <label class="label-input">Reception Date</label>
+        <p-calendar [(ngModel)]="projectForm.receptionDate" appendTo="body"
+                    placeholder="Select Date" [showIcon]="true"></p-calendar>
+      </div>
+      <div class="a-form-input-wrapper">
+        <label class="label-input">Due Date</label>
+        <p-calendar [(ngModel)]="projectForm.dueDate" appendTo="body"
+                    placeholder="Select Date" [showIcon]="true"></p-calendar>
+      </div>
+    </div>
+
+  </div>
+
   <p-footer>
     <div class="a-control-buttons">
       <button class="a-button-text-cancel" (click)="cancelCreateProject()">CANCEL</button>
       <button [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}"
+              *ngIf="editOption" [disabled]="!newProjectForm.valid" (click)="createUpdateProject()">EDIT</button>
+      <button [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}" *ngIf="!editOption"
               [disabled]="!newProjectForm.valid" (click)="createUpdateProject()">CREATE</button>
     </div>
   </p-footer>

@@ -11,15 +11,17 @@ import {Navigate} from '@ngxs/router-plugin';
 import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
 import {EMPTY} from 'rxjs';
-import {WsProjectService} from './ws-project.service';
 import {defaultInuringState} from './inuring.service';
+import {ProjectApi} from "./api/project.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
 
-  constructor(private wsApi: WsApi, private store: Store, private wsProjectService: WsProjectService) {
+  constructor(private wsApi: WsApi,
+              private projectApi: ProjectApi,
+              private store: Store) {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
@@ -416,9 +418,9 @@ export class WorkspaceService {
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
-    const {wsId, uwYear, id, project} = payload;
+    const {wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.addNewProject(project, wsId, uwYear, id)
+    return this.projectApi.createProject(project, wsId, uwYear)
       .pipe(map(p => {
         ctx.patchState(produce(ctx.getState(), draft => {
           p ? draft.content[wsIdentifier].projects.unshift(p) : null
@@ -438,10 +440,23 @@ export class WorkspaceService {
     }));
   }
 
+  updateProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {data, projectId} = payload;
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return this.projectApi.updateProject(data, projectId).pipe(
+      map( prj => ctx.patchState(produce(ctx.getState(), draft => {
+        prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
+          return item.projectId === projectId ? prj : {...item};
+        }) : null;
+      }))
+    ))
+  }
+
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear, id} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.deleteProject(projectId)
+    return this.projectApi.deleteProject(projectId)
       .pipe(catchError(err => {
         ctx.dispatch(new fromWS.DeleteProjectFails({}));
         return EMPTY;

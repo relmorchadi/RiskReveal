@@ -33,11 +33,13 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   newProject = false;
   newFacProject = false;
+  editOption = false;
   existingProject = false;
   mgaProject = false;
   searchWorkspace = false;
 
   selectedWs: any;
+  projectForm: any;
 
   receptionDate: any;
   dueDate: any;
@@ -115,6 +117,13 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   deleteFacProject(item) {
     this.dispatch(new fromWs.DeleteFacProject(item.project));
+  }
+
+  edit(project$) {
+    this.editOption = true;
+    this.newProject = true;
+    this.projectForm = {...project$.project, dueDate: new Date(project$.project.dueDate),
+      receptionDate: new Date(project$.project.receptionDate)};
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {

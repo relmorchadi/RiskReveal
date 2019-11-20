@@ -2,7 +2,6 @@ package com.scor.rr.repository;
 
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.WorkspaceProjection;
-import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

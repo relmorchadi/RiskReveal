@@ -13,8 +13,10 @@ import java.util.List;
 
 public interface FavoriteWorkspaceViewRepository extends JpaRepository<FavoriteWorkspaceView, Long> {
 
-    @Query("from FavoriteWorkspaceView fwsv where fwsv.userId = :userId order by fwsv.createdDate desc")
-    List<FavoriteWorkspaceView> findAllByUserId(@Param("userId") Integer userId, Pageable page);
+    @Query("from FavoriteWorkspaceView fwsv where" +
+            " (fwsv.cedantName like :kw or fwsv.workspaceContextCode like :kw or fwsv.workspaceName like :kw or fwsv.workspaceUwYear like :kw ) " +
+            " and fwsv.userId = :userId order by fwsv.createdDate desc")
+    List<FavoriteWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
     @Procedure(procedureName = "tb.COUNT_FAVORITE_Workspace", outputParameterName = "count")
