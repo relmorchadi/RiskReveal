@@ -28,21 +28,11 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
-/*    this.dispatch([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);*/
-  }
-
-  unPinWorkspace() {
-    const {wsId, uwYear} = this.workspaceInfo;
-/*    this.dispatch([
-    ]);*/
+    this.dispatch([new fromHeader.TogglePinnedWsState({
+      "userId": 1,
+      "workspaceContextCode": this.workspaceInfo.wsId,
+      "workspaceUwYear": this.workspaceInfo.uwYear
+    })]);
   }
 
   ngOnDestroy(): void {

@@ -78,9 +78,14 @@ export class UpdateWsRouting {
   constructor(public wsId: string, public route: string) {}
 }
 
-export class MarkWsAsFavorite {
-  static readonly type = '[Workspace] Mark workspace as Favorite';
-  constructor(public payload: { wsIdentifier: string }) {}
+export class ToggleFavorite {
+  static readonly type = '[Workspace] Toggle Workspace Favorite State';
+  constructor(public payload?: any) {}
+}
+
+export class TogglePinned {
+  static readonly type = '[Workspace] Toggle Workspace Pinned State';
+  constructor(public payload?: any) {}
 }
 
 export class ToggleProjectSelection {

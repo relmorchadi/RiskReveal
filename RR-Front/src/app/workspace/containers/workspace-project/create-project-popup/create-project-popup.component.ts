@@ -21,6 +21,8 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   @Input('newProject') newProject: any;
   @Input('edit') editOption: any;
   @Input('editForm') projectForm: any;
+
+  editValue = 'Nathalie Dulac';
   newProjectForm: FormGroup;
 
   constructor(private store: Store) {
@@ -45,16 +47,23 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
         cloneSourceProjectId: this.newProjectForm.value.projectId,
       };
     }
-    if (this.editOption) {
+    this.store.dispatch(new fromWS.AddNewProject({
+      id: _.get(this.workspace, 'id', null),
+      wsId: this.workspace.wsId,
+      uwYear: this.workspace.uwYear,
+      project
+    }));
+  }
 
-    } else {
-      this.store.dispatch(new fromWS.AddNewProject({
-        id: _.get(this.workspace, 'id', null),
-        wsId: this.workspace.wsId,
-        uwYear: this.workspace.uwYear,
-        project
-      }));
-    }
+  updateProject() {
+    this.store.dispatch(new fromWS.EditProject({
+      data: this.projectForm,
+      projectId: this.projectForm.projectId
+    }))
+  }
+
+  checkValid() {
+    return this.projectForm.projectName !== '' && this.projectForm.assignedTo !== '';
   }
 
   cancelCreateProject() {
@@ -77,7 +86,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       deletedBy: new FormControl(null),
       deletedDue: new FormControl(null),
       deletedOn: new FormControl(null),
-      dueDate: new FormControl(null),
+      dueDate: new FormControl(new Date(), Validators.required),
       entity: new FormControl(0),
       linkFlag: new FormControl(false),
       linkedSourceProjectId: new FormControl(null),
@@ -89,7 +98,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       projectImportRunId: new FormControl(null),
       projectName: new FormControl(null, Validators.required),
       publishFlag: new FormControl(null),
-      receptionDate: new FormControl(null),
+      receptionDate: new FormControl(new Date(), Validators.required),
       rmsModelDataSourceId: new FormControl(null),
       workspaceId: new FormControl(null)
     })

@@ -437,9 +437,14 @@ export class WorkspaceState {
     return this.wsService.updateWsRouting(ctx, payload);
   }
 
-  @Action(fromWS.MarkWsAsFavorite)
-  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsFavorite) {
-    return this.wsService.markWsAsFavorite(ctx, payload);
+  @Action(fromWS.ToggleFavorite)
+  toggleFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleFavorite) {
+    return this.wsService.toggleFavorite(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePinned)
+  togglePinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.TogglePinned) {
+    return this.wsService.togglePinned(ctx, payload);
   }
 
   @Action(fromWS.ToggleProjectSelection)
@@ -456,6 +461,11 @@ export class WorkspaceState {
   @Action(fromWS.AddNewFacProject)
   addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
     return this.wsService.addNewFacProject(ctx, payload);
+  }
+
+  @Action(fromWS.EditProject)
+  editProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.EditProject) {
+    return this.wsService.updateProject(ctx, payload);
   }
 
   @Action(fromWS.DeleteProject)
