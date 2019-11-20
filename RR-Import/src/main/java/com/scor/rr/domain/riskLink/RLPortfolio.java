@@ -18,7 +18,7 @@ public class RLPortfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RlAnalysisId")
-    private Long rlAnalysisId;
+    private Long rlPortfolioId;
     @Column(name = "ProjectId")
     private Long projectId;
     @Column(name = "EdmId")
@@ -49,7 +49,7 @@ public class RLPortfolio {
     private BigDecimal tiv;
 
     @OneToMany
-    private List<RlPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
+    private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
     @ManyToOne
     @JoinColumn(name = "RlModelDataSourceId")

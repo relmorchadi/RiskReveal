@@ -2,7 +2,7 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.domain.enums.XLTSubType;
-import com.scor.rr.domain.model.ExposureSummaryExtractFile;
+import com.scor.rr.domain.riskLink.RLPortfolioAnalysisRegion;
 import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -64,4 +64,44 @@ public class ExposureWriter extends AbstractWriter {
 //        }
 //    }
 
+    public File makeLocLevelExposureFile(String edmName, Long rlPortfolioId, String extractType, List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions) {
+        String path = PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)) + "/" + "Exposures";
+        try {
+            Date now = new Date();
+            String regionPeril = "YYYY";
+            String fp = "GU";
+            XLTOT currencySource = XLTOT.ORIGINAL;
+            String currency = exposureCurrencyImportData(rlPortfolioAnalysisRegions);
+            return makeFullFile(path, makeExposureFileName(XLTSubType.LOC, now, regionPeril, fp, currency, currencySource, edmName, rlPortfolioId, extractType, ".csv"));
+        } catch (Throwable th) {
+            th.printStackTrace();
+            return null;
+        }
+    }
+
+    private String exposureCurrencyImportData(List<RLPortfolioAnalysisRegion> rpar) {
+
+        String currencyCode = null;
+        String exposureCurrency = null;
+
+        for (RLPortfolioAnalysisRegion rmsPortfolioAnalysisRegion : rpar) {
+            //log.info("{}", rmsPortfolioAnalysisRegion.getExposureCurrency());
+            if (currencyCode == null) {
+                currencyCode = rmsPortfolioAnalysisRegion.getExposureCurrency();
+            }
+
+            if (!rmsPortfolioAnalysisRegion.getExposureCurrency().equals(currencyCode)) {
+                //exposureCurrency = SelectDatasourcesUtils.ExposureCurrency.MULTIPLE;
+                exposureCurrency = "MULTIPLE";
+                break;
+            }
+        }
+
+        if (exposureCurrency == null) {
+            //exposureCurrency = SelectDatasourcesUtils.ExposureCurrency.SINGLE;
+            exposureCurrency = currencyCode;
+        }
+
+        return exposureCurrency;
+    }
 }

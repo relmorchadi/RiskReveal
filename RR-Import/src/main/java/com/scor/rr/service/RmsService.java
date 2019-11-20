@@ -4,10 +4,8 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.dto.SourceResultDto;
-import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
-import com.scor.rr.domain.riskLink.RlSourceResult;
+import com.scor.rr.domain.enums.ModelDataSourceType;
+import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.RlAnalysisRepository;
 import com.scor.rr.repository.RlAnalysisScanStatusRepository;
@@ -28,6 +26,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.sql.Types;
 import java.util.*;
@@ -63,7 +62,6 @@ public class RmsService {
     @Qualifier(value = "dataSource")
     private javax.sql.DataSource rlDataSource;
 
-
     @Value("${rms.ds.dbname}")
     private String DATABASE;
 
@@ -72,6 +70,9 @@ public class RmsService {
 
     @Value("exec ${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryClear] @RunID=:RunID")
     private String removeEDMPortfolioContextSQL;
+
+    @Value(value = "extractLocationLevelSchemaQuery")
+    private String extractLocationLevelSchemaQuery;
 
 
     public List<DataSource> listAvailableDataSources() {
@@ -155,17 +156,17 @@ public class RmsService {
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
 
         rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
-                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm(BigInteger.valueOf((int)key.getKey(0)), (String) key.getKey(1), rlAnalysisList)));
+                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm(BigInteger.valueOf((int) key.getKey(0)), (String) key.getKey(1), rlAnalysisList)));
 
         for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
 
-            Long rdmId = ((Integer)multiKeyListEntry.getKey().getKey(0)).longValue();
+            Long rdmId = ((Integer) multiKeyListEntry.getKey().getKey(0)).longValue();
             String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
             this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue())
                     .stream()
                     .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis))
-                    .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis) )
+                    .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
                     .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
 
         }
@@ -173,7 +174,7 @@ public class RmsService {
     }
 
     private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
-        return rlAnalysisList.stream().filter(item -> item.getRdmId().intValue()==rdmId.intValue() && item.getRdmName().equals(rdmName))
+        return rlAnalysisList.stream().filter(item -> item.getRdmId().intValue() == rdmId.intValue() && item.getRdmName().equals(rdmName))
                 .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
     }
 
@@ -355,7 +356,7 @@ public class RmsService {
         return rdmAllAnalysisProfileRegions;
     }
 
-    public RLAnalysisELT getAnalysisElt(String instanceId,Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
+    public RLAnalysisELT getAnalysisElt(String instanceId, Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue()
                 + ", @fin_persp_code=" + finPerspCode;
         List<RlEltLoss> rlEltLoss = new ArrayList<>();
@@ -471,10 +472,10 @@ public class RmsService {
     }
 
     /**
-     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
      * @param sourceResultDtoList
+     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
      */
-    public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList){
+    public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList) {
 
         return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
                 .map(sourceResult -> {
@@ -485,11 +486,11 @@ public class RmsService {
 
     /* TODO Implement */
 
-    private String convertList(List<String> list){
+    private String convertList(List<String> list) {
         return list.stream().collect(Collectors.joining(","));
     }
 
-    private String convertListOldImpl(List<String> finPerspList){
+    private String convertListOldImpl(List<String> finPerspList) {
         String LIST = "";
         if (finPerspList != null) {
             for (String s : finPerspList) {
@@ -501,31 +502,29 @@ public class RmsService {
         return LIST;
     }
 
-    public Integer createEDMPortfolioContext(String dataSource,Long edmId,String edmName,List<String> portfolioList,List<String> portfolioExcludedRegionPeril) {
+    public Integer createEDMPortfolioContext(String dataSource, Long edmId, String edmName, List<String> portfolioList, List<String> portfolioExcludedRegionPeril) {
         // @TODO Implement the Datasource Logic
-        CreateEdmSummaryStoredProc proc=new CreateEdmSummaryStoredProc(rmsJdbcTemplate,createEDMPortfolioContextSQL);
-        String portfolioIdParam="";
-        String portfolioExcludedRegionPerilParam="";
+        CreateEdmSummaryStoredProc proc = new CreateEdmSummaryStoredProc(rmsJdbcTemplate, createEDMPortfolioContextSQL);
+        String portfolioIdParam = "";
+        String portfolioExcludedRegionPerilParam = "";
 
-        if(portfolioList!=null&&!portfolioList.isEmpty())
-        {
-            portfolioIdParam= StringUtils.join(portfolioList, ',');
+        if (portfolioList != null && !portfolioList.isEmpty()) {
+            portfolioIdParam = StringUtils.join(portfolioList, ',');
         }
-        if(portfolioExcludedRegionPeril!=null&&!portfolioExcludedRegionPeril.isEmpty())
-        {
-            portfolioExcludedRegionPerilParam=StringUtils.join(portfolioExcludedRegionPeril, ',');
+        if (portfolioExcludedRegionPeril != null && !portfolioExcludedRegionPeril.isEmpty()) {
+            portfolioExcludedRegionPerilParam = StringUtils.join(portfolioExcludedRegionPeril, ',');
         }
-        long time=System.currentTimeMillis();
-        Map<String, Object> result=proc.execute(edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam);
-        Integer runId=(Integer) result.get("RunID");
-        logger.debug("created EDM Portfolio context #{} for EDM {}:{} and Portfolio ID(s) '{}' with portfolioExcludedRegionPeril(s) '{}'", new Object[] { runId, edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam });
-        logger.debug("created EDM Portfolio context #{} for EDM {}:{} took {} ms",new Object[]{runId, edmId, edmName,(System.currentTimeMillis()-time)});
+        long time = System.currentTimeMillis();
+        Map<String, Object> result = proc.execute(edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam);
+        Integer runId = (Integer) result.get("RunID");
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} and Portfolio ID(s) '{}' with portfolioExcludedRegionPeril(s) '{}'", new Object[]{runId, edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam});
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} took {} ms", new Object[]{runId, edmId, edmName, (System.currentTimeMillis() - time)});
         return runId;
     }
 
-    public void removeEDMPortfolioContext(String dataSource,Integer runId) {
+    public void removeEDMPortfolioContext(String dataSource, Integer runId) {
         // @TODO Implement the Datasource Logic
-        Map<String, Object> params=new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("RunID", runId);
         logger.debug("removeEDMPortfolioContextSQL: {}, params: {}, runId: {}", removeEDMPortfolioContextSQL, params, runId);
         rmsJdbcTemplate.update(removeEDMPortfolioContextSQL, params);
@@ -536,31 +535,73 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(rlDataSource);
     }
 
-    private class CreateEdmSummaryStoredProc extends StoredProcedure
-    {
+    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
+        if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
+            return false;
+
+        //TODO : Review this method with Viet
+        Map<String, Object> dataQueryParams = new HashMap<>();
+        dataQueryParams.put("Edm_id", edm.getRlId());
+        dataQueryParams.put("Edm_name", edm.getName());
+        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
+        dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
+
+        if (LocationLevelExposure.EXTRACT_PORT.equals(extractName)) {
+            dataQueryParams.put("ProjectID_RR", projectId);
+        } else if ((LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL_CVG.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_LOC_CVG.equals(extractName))) {
+            dataQueryParams.put("ConformedCcy", modelPortfolio.getCurrency());
+        }
+
+        List<GenericDescriptor> descriptors = extractSchema(edm.getInstanceId(), extractName);
+
+        if (descriptors.isEmpty()) {
+            logger.error("Error: retrieve no descriptors");
+            return false;
+        }
+        extractExposureToFile(edm.getInstanceId(), sqlQuery, dataQueryParams, descriptors, file);
+
+        return true;
+    }
+
+    private List<GenericDescriptor> extractSchema(String instanceId, String extractName) {
+        logger.debug("extractSchema");
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        Map<String, Object> schemaQueryParams = new HashMap<>();
+        schemaQueryParams.put("extract_name", extractName);
+        logger.debug("extractSchema | schemaSqlQuery: {}, params: {}", extractLocationLevelSchemaQuery, schemaQueryParams);
+        List<GenericDescriptor> descriptors = namedParameterJdbcTemplate.query(extractLocationLevelSchemaQuery, schemaQueryParams, new GenericDescriptorMapper());
+
+        return descriptors;
+    }
+
+    private void extractExposureToFile(String instanceId, String sqlQuery, Map<String, Object> dataQueryParams, List<GenericDescriptor> descriptors, File file) {
+        logger.debug("run query {} with params {}", sqlQuery, dataQueryParams);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
+        namedParameterJdbcTemplate.query(sqlQuery, dataQueryParams, extractor);
+    }
+
+    private class CreateEdmSummaryStoredProc extends StoredProcedure {
         private String sqlProc;
 
         public String getSqlProc() {
             return sqlProc;
         }
 
-//		public void setSqlProc(String sqlProc) {
-//			this.sqlProc = sqlProc;
-//		}
-
-        public CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate,String sqlProc)
-        {
+        public CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate, String sqlProc) {
             // NOTA : regionPerilExclude maybe an DEV schema artifact
             super(jdbcTemplate, sqlProc);
             this.sqlProc = sqlProc;
             //
             setFunction(false);
-            SqlParameter edmID=new SqlParameter("Edm_ID", Types.INTEGER);
-            SqlParameter edmName=new SqlParameter("Edm_Name", Types.VARCHAR);
-            SqlParameter edmPortList=new SqlParameter("PortfolioList", Types.VARCHAR);
-            SqlParameter regionPerilExclude=new SqlParameter("RegionPerilExclude", Types.VARCHAR);
-            SqlOutParameter runID=new SqlOutParameter("RunID", Types.INTEGER);
-            SqlParameter[] paramArray= { edmID, edmName, edmPortList, regionPerilExclude, runID };
+            SqlParameter edmID = new SqlParameter("Edm_ID", Types.INTEGER);
+            SqlParameter edmName = new SqlParameter("Edm_Name", Types.VARCHAR);
+            SqlParameter edmPortList = new SqlParameter("PortfolioList", Types.VARCHAR);
+            SqlParameter regionPerilExclude = new SqlParameter("RegionPerilExclude", Types.VARCHAR);
+            SqlOutParameter runID = new SqlOutParameter("RunID", Types.INTEGER);
+            SqlParameter[] paramArray = {edmID, edmName, edmPortList, regionPerilExclude, runID};
             super.setParameters(paramArray);
             super.compile();
         }

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlPortfolioAnalysisRegion {
+public class RLPortfolioAnalysisRegion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

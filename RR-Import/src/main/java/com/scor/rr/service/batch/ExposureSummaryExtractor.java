@@ -2,19 +2,21 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
+import com.scor.rr.domain.riskLink.RLPortfolio;
 import com.scor.rr.domain.riskLink.RlModelDataSource;
 import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.LocationLevelExposure;
 import com.scor.rr.service.RegionPerilService;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.ExposureWriter;
 import com.scor.rr.service.state.TransformationPackage;
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
@@ -27,12 +29,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Service
 @StepScope
@@ -85,6 +83,12 @@ public class ExposureSummaryExtractor {
     @Autowired
     private ExposureWriter exposureWriter;
 
+    @Autowired
+    private LocationLevelExposure locationLevelExposure;
+
+    @Autowired
+    private RLPortfolioRepository rlPortfolioRepository;
+
     @Value("#{jobParameters['projectId']}")
     protected String projectId;
 
@@ -114,8 +118,6 @@ public class ExposureSummaryExtractor {
 
                 modelPortfolios.forEach(modelPortfolio -> {
                     MultiKey edmKey = createEdmKey(modelPortfolio.getSourceModellingSystemInstance(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
-                    Long portfolioId = modelPortfolio.getPortfolioId();
-                    String conformedCcy = modelPortfolio.getCurrency();
                     if (portfoliosPerEdm.get(edmKey) != null)
                         portfoliosPerEdm.get(edmKey).add(modelPortfolio);
                     else
@@ -146,7 +148,7 @@ public class ExposureSummaryExtractor {
                         String edmName = (String) edm.getKey(2);
                         List<String> portfolioAndConformedCurrencyList =
                                 entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getCurrency())
-                                .collect(Collectors.toList());
+                                        .collect(Collectors.toList());
 
                         Integer runId = rmsService.createEDMPortfolioContext(instance,
                                 edmId,
@@ -198,51 +200,93 @@ public class ExposureSummaryExtractor {
                             log.info("Info: Saving risk reveal exposure summaries has ended");
 
 
-                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
-                            String extractName = "RR_RL_GetEdmDetailSummary";
+//                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
+//                            String extractName = "RR_RL_GetEdmDetailSummary";
+//
+//                            //RmsPortfolio pf = pesei.portfolio.getRmsPortfolio();
+//                            File f = exposureWriter.makeDetailExposureFile(edmName, /*pf.getPortfolioId()*/null);
+//                            if (f == null) {
+//                                log.error("Error while creating detail exposure file !");
+//                            } else {
+//                                log.debug("Export to file: {}}", f.getAbsolutePath());
+//                                //rmsService.extractDetailedExposure(f, edm, extractName, entry.getValue(), null, runId, pf.getPortfolioId(), pf.getType());
+//
+//                                // dh modified
+//                                byte[] buffer = new byte[1024];
+//                                String zipPath = f.getParent();
+//                                String zipfile = f.getName().replace("txt", "zip");
+//
+//                                FileOutputStream fos = new FileOutputStream((zipPath + "/" + zipfile));
+//                                ZipOutputStream zos = new ZipOutputStream(fos);
+//                                ZipEntry ze = new ZipEntry(f.getName());
+//                                zos.putNextEntry(ze);
+//                                FileInputStream in = new FileInputStream(f.getAbsolutePath());
+//
+//                                int len;
+//                                while ((len = in.read(buffer)) > 0) {
+//                                    zos.write(buffer, 0, len);
+//                                }
+//                                in.close();
+//                                zos.closeEntry();
+//                                f.delete();
+//                                zos.close();
+//
+//                                log.debug("zip file name {}", zipfile);
+//                                log.debug("zip file path {}", zipPath);
+//
+//                                List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
+//                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(zipfile, zipPath, null), "Detailed"));
+//                                //String rrPortfolioId = mapPortfolioRRPortfolioIds.get(pesei.portfolio.getId());
+//                                //RRPortfolio rrPortfolio = rrPortfolioRepository.findOne(rrPortfolioId);
+//                                //exposureWriter.writeExposureSummaryHeader(project, edm, pesei.portfolio, rrPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
+//                            }
+//
+//                            log.debug("Extract EDM Detail Summary completed");
 
-                            //RmsPortfolio pf = pesei.portfolio.getRmsPortfolio();
-                            File f = exposureWriter.makeDetailExposureFile(edmName, /*pf.getPortfolioId()*/null);
-                            if (f == null) {
-                                log.error("Error while creating detail exposure file !");
-                            } else {
-                                log.debug("Export to file: {}}", f.getAbsolutePath());
-                                //rmsService.extractDetailedExposure(f, edm, extractName, entry.getValue(), null, runId, pf.getPortfolioId(), pf.getType());
+                            entry.getValue().forEach(modelPortfolio -> {
 
-                                // dh modified
-                                byte[] buffer = new byte[1024];
-                                String zipPath = f.getParent();
-                                String zipfile = f.getName().replace("txt", "zip");
+                                if (modelPortfolio.isImportLocationLevel()) {
 
-                                FileOutputStream fos = new FileOutputStream((zipPath + "/" + zipfile));
-                                ZipOutputStream zos = new ZipOutputStream(fos);
-                                ZipEntry ze = new ZipEntry(f.getName());
-                                zos.putNextEntry(ze);
-                                FileInputStream in = new FileInputStream(f.getAbsolutePath());
+                                    RLPortfolio rLPortfolio = rlPortfolioRepository.findByPortfolioId(modelPortfolio.getPortfolioId());
+                                    List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
+                                    for (String schema : locationLevelExposure.getAllExtractNames()) {
+                                        String extractFileType = locationLevelExposure.getExtractFileType(schema);
+                                        if (extractFileType == null) {
+                                            log.error("Extract file type for {} not found !", schema);
+                                            continue;
+                                        }
+                                        File file = null;
+                                        if (rLPortfolio != null)
+                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, rLPortfolio.getRlPortfolioAnalysisRegions());
+                                        else
+                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, null);
 
-                                int len;
-                                while ((len = in.read(buffer)) > 0) {
-                                    zos.write(buffer, 0, len);
+                                        if (file == null) {
+                                            log.error("Error while creating location level exposure details file for {}!", schema);
+                                        } else {
+                                            String query = locationLevelExposure.getQuery(schema);
+                                            if (query == null) {
+                                                log.error("Query for {} not found !", schema);
+                                                continue;
+                                            }
+                                            log.debug("Export to file: {}}", file.getAbsolutePath());
+                                            RlModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
+                                            if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
+                                                log.debug("==> success");
+                                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
+                                            } else {
+                                                log.debug("==> failed");
+                                            }
+                                        }
+                                    }
+                                    if (!extractFiles.isEmpty()) {
+                                        //TODO : Check the missing table RRPortfolioStorage with Viet
+                                        //exposureWriter.writeExposureSummaryHeader(project, edm, pesei.portfolio, modelPortfolio, ExposureSummaryExtractType.LOCATION_LEVEL_EXPOSURE_DETAILS, extractFiles);
+                                    }
                                 }
-                                in.close();
-                                zos.closeEntry();
-                                f.delete();
-                                zos.close();
-
-                                log.debug("zip file name {}", zipfile);
-                                log.debug("zip file path {}", zipPath);
-
-                                List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
-                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(zipfile, zipPath, null), "Detailed"));
-                                //String rrPortfolioId = mapPortfolioRRPortfolioIds.get(pesei.portfolio.getId());
-                                //RRPortfolio rrPortfolio = rrPortfolioRepository.findOne(rrPortfolioId);
-                                //exposureWriter.writeExposureSummaryHeader(project, edm, pesei.portfolio, rrPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
-                            }
+                            });
 
                             rmsService.removeEDMPortfolioContext(instance, runId);
-                            log.debug("Extract EDM Detail Summary completed");
-
-
                         } else {
                             log.error("Error: runId is null");
                         }
