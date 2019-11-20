@@ -38,10 +38,10 @@ public class WorkspaceService {
     @Autowired
     PinnedWorkspaceViewRepository pinnedWorkspaceViewRepository;
 
-    public List<Workspace> getFavoriteWorkspaces(Integer userId, Integer offset, Integer size) {
-        return this.favoriteWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size))
+    public List<Workspace> getFavoriteWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+        return this.favoriteWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size))
                 .stream()
-                .map( favoriteWorkspaceView -> Workspace
+                .map(favoriteWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(favoriteWorkspaceView.getWorkspaceName())
@@ -52,9 +52,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getRecentWorkspaces(Integer userId, Integer offset, Integer size) {
-        return this.recentWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
-                .map( recentWorkspaceView -> Workspace
+    public List<Workspace> getRecentWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+        return this.recentWorkspaceViewRepository.findAllByUserId(kw, userId, new OffsetPageRequest(offset, size)).stream()
+                .map(recentWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(recentWorkspaceView.getWorkspaceName())
@@ -65,9 +65,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getAssignedWorkspaces(Integer userId, Integer offset, Integer size) {
-        return this.assignedWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
-                .map( assignedWorkspaceView -> Workspace
+    public List<Workspace> getAssignedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+        return this.assignedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
+                .map(assignedWorkspaceView -> Workspace
                         .builder()
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(assignedWorkspaceView.getWorkspaceName())
@@ -78,9 +78,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getPinnedWorkspaces(Integer userId, Integer offset, Integer size) {
-        return this.pinnedWorkspaceViewRepository.findAllByUserId(userId, new OffsetPageRequest(offset, size)).stream()
-                .map( pinnedWorkspaceView -> Workspace
+    public List<Workspace> getPinnedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+        return this.pinnedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
+                .map(pinnedWorkspaceView -> Workspace
                         .builder()
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(pinnedWorkspaceView.getWorkspaceContextCode())
