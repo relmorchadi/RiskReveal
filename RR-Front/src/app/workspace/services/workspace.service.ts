@@ -31,9 +31,11 @@ export class WorkspaceService {
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
-        mergeMap(ws => ctx.dispatch(new fromWS.LoadWsSuccess({
+        mergeMap(ws => {
+          console.log(ws);
+          return ctx.dispatch(new fromWS.LoadWsSuccess({
           wsId, uwYear, ws, route, type
-        }))),
+        }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
@@ -73,7 +75,6 @@ export class WorkspaceService {
     const {wsId, uwYear, ws, route, type} = payload;
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    console.log('this are projects', projects);
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
@@ -82,11 +83,11 @@ export class WorkspaceService {
           uwYear,
           ...ws,
           projects,
+          isPinned: false,
           workspaceType: type,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
-          isFavorite: false,
           plts: {},
           pltManager: {
             data: {},
@@ -339,7 +340,6 @@ export class WorkspaceService {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
       draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      draft.content[wsIdentifier] = {...ws, isFavorite: this._isFavorite(ws), isPinned: this._isPinned(ws)};
       ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
     }));
   }
@@ -402,10 +402,19 @@ export class WorkspaceService {
     }));
   }
 
-  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsFavorite) {
-    const {wsIdentifier} = payload;
+  toggleFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFavorite) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: true};
+      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: !draft.content[wsIdentifier].isFavorite};
+    }));
+  }
+
+  togglePinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePinned) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: !draft.content[wsIdentifier].isPinned};
     }));
   }
 
@@ -450,7 +459,10 @@ export class WorkspaceService {
           return item.projectId === projectId ? prj : {...item};
         }) : null;
       }))
-    ))
+    ), catchError(err => {
+        console.log('an error has occurred: ', err);
+        return EMPTY;
+      }))
   }
 
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
