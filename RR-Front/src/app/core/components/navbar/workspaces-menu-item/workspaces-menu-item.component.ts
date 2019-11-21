@@ -257,11 +257,25 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     event.preventDefault();
   }
 
-  popOutWorkspaces() {
+  popOutWorkspaces(scope) {
     this.visible = false;
-    this.recent.filter(ws => ws.selected).forEach(ws => {
-      window.open(`/workspace/${ws.wsId}/${ws.uwYear}/projects`);
-    });
+    if (scope === 'recent') {
+      this.recentWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'favorite') {
+      this.favoriteWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'assigned') {
+      this.assignedWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'pinned') {
+      this.pinnedWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    }
   }
 
   openWorkspaces(scope) {

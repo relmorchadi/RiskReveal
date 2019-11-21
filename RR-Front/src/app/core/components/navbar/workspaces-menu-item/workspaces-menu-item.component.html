@@ -48,7 +48,7 @@
               <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
             </nz-select>
             <div class="float-right">
-              <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
+              <button (click)="popOutWorkspaces('recent')" class="a-button-text">POP OUT</button>
               <button (click)="openWorkspaces('recent')" class="a-button-text">OPEN</button>
             </div>
           </div>
@@ -94,7 +94,7 @@
             </nz-select>
 
             <div class="float-right">
-              <button class="a-button-text" nz-button nzType="default">POP OUT</button>
+              <button class="a-button-text" (click)="popOutWorkspaces('favorite')" nz-button nzType="default">POP OUT</button>
               <button class="a-button-text" (click)="openWorkspaces('favorite')" nz-button nzType="default">OPEN</button>
             </div>
           </div>
@@ -139,8 +139,8 @@
             </nz-select>
 
             <div class="float-right">
-              <button class="a-button-text" nz-button nzType="default">POP OUT</button>
-              <button class="a-button-text" (click)="openWorkspaces('recent')"
+              <button class="a-button-text" (click)="popOutWorkspaces('assigned')" nz-button nzType="default">POP OUT</button>
+              <button class="a-button-text" (click)="openWorkspaces('assigned')"
                       nz-button nzType="default">OPEN</button>
             </div>
           </div>
@@ -185,7 +185,7 @@
             </nz-select>
 
             <div class="float-right">
-              <button class="a-button-text" nz-button nzType="default">POP OUT</button>
+              <button class="a-button-text" (click)="popOutWorkspaces('pinned')" nz-button nzType="default">POP OUT</button>
               <button class="a-button-text" (click)="openWorkspaces('pinned')"
                       nz-button nzType="default">OPEN</button>
             </div>
