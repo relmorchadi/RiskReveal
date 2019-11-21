@@ -132,10 +132,10 @@
             <nz-select [(ngModel)]="assignedPageable" (ngModelChange)="pageableChange($event ,'assigned')"
                        [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
-              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
-              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
-              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
             </nz-select>
 
             <div class="float-right">
