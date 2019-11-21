@@ -41,7 +41,7 @@ public class BinaryPLTFileWriter implements PLTFileWriter {
             for (PLTLossData lossData : pltLossDataList) {
                 buffer.putInt(lossData.getSimPeriod());
                 buffer.putInt(lossData.getEventId());
-                buffer.putDouble(lossData.getEventDate());
+                buffer.putLong(lossData.getEventDate());
                 buffer.putShort((short) lossData.getSeq());
                 buffer.putFloat((float) lossData.getMaxExposure());
                 buffer.putFloat((float) lossData.getLoss());
