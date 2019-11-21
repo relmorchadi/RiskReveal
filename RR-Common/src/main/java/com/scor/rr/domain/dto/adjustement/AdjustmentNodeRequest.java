@@ -16,7 +16,6 @@ public class AdjustmentNodeRequest {
     private Double lmf;
     private Double rpmf;
     private List<PEATData> peatData;
-    private Integer pltHeaderInput;
     private List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings;
 
     public AdjustmentNodeRequest() {
@@ -30,7 +29,7 @@ public class AdjustmentNodeRequest {
                                  Double lmf,
                                  Double rpmf,
                                  List<PEATData> peatData,
-                                 Integer pltHeaderInput, List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
+                                 List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
@@ -38,7 +37,6 @@ public class AdjustmentNodeRequest {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
-        this.pltHeaderInput = pltHeaderInput;
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
         this.capped = capped;
     }
@@ -98,14 +96,6 @@ public class AdjustmentNodeRequest {
 
     public void setPeatData(List<PEATData> peatData) {
         this.peatData = peatData;
-    }
-
-    public Integer getPltHeaderInput() {
-        return pltHeaderInput;
-    }
-
-    public void setPltHeaderInput(Integer pltHeaderInput) {
-        this.pltHeaderInput = pltHeaderInput;
     }
 
     public List<ReturnPeriodBandingAdjustmentParameterRequest> getAdjustmentReturnPeriodBandings() {

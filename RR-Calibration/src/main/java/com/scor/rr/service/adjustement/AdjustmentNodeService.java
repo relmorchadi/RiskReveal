@@ -124,7 +124,6 @@ public class AdjustmentNodeService {
                 lmf,
                 rpmf,
                 peatData,
-                adjustmentThreadEntity.getInitialPLT().getPltHeaderId(),
                 adjustmentReturnPeriodBandings);
         return createAdjustmentNode(adjustmentNodeRequest);
     }
