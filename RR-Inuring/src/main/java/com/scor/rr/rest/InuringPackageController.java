@@ -24,17 +24,17 @@ public class InuringPackageController {
     }
 
     @PostMapping("read")
-    public InuringPackageDetailsResponse readInuringPackageDetails(@RequestParam("id") int id ) throws RRException {
+    public InuringPackageDetailsResponse readInuringPackageDetails(@RequestParam("id") long id ) throws RRException {
         return inuringPackageService.readInuringPackageDetail(id);
     }
 
     @PostMapping("getJSON")
-    public InuringPackageJsonResponse getJSON(@RequestParam("id") int id ) throws RRException {
+    public InuringPackageJsonResponse getJSON(@RequestParam("id") long id ) throws RRException {
         return inuringPackageService.getJSON(id);
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteInuringPackage(@RequestParam("id") int id) throws RRException{
+    public ResponseEntity<?> deleteInuringPackage(@RequestParam("id") long id) throws RRException{
         inuringPackageService.deleteInuringPackage(id);
         return ResponseEntity.ok("it has been successfully deleted");
     }

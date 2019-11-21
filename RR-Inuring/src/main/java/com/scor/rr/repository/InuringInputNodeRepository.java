@@ -10,8 +10,8 @@ import java.util.List;
  * Created by u004602 on 10/09/2019.
  */
 @Repository
-public interface InuringInputNodeRepository extends JpaRepository<InuringInputNode, Integer> {
-    InuringInputNode findByInuringInputNodeId(int inuringInputNodeId);
-    List<InuringInputNode> findByInuringPackageId(int inuringPackageId);
-    void deleteByInuringInputNodeId(int inuringInputNodeId);
+public interface InuringInputNodeRepository extends JpaRepository<InuringInputNode, Long> {
+    InuringInputNode findByInuringInputNodeId(long inuringInputNodeId);
+    List<InuringInputNode> findByInuringPackageId(long inuringPackageId);
+    void deleteByInuringInputNodeId(long inuringInputNodeId);
 }

@@ -23,12 +23,12 @@ public class InuringContractNodeController {
     }
 
     @PostMapping("read")
-    public InuringContractNodeDetailsResponse readInuringContract(@RequestParam("id") int id) throws RRException{
+    public InuringContractNodeDetailsResponse readInuringContract(@RequestParam("id") long id) throws RRException{
         return inuringContractNodeService.readInuringContractNode(id);
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteInuringContract(@RequestParam("id") int id){
+    public ResponseEntity<?> deleteInuringContract(@RequestParam("id") long id){
         inuringContractNodeService.deleteInuringContractNode(id);
         return ResponseEntity.ok("it's working");
     }

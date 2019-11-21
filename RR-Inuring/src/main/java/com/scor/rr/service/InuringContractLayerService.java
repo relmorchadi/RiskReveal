@@ -71,7 +71,7 @@ public class InuringContractLayerService {
 
     }
 
-    public void deleteContractLayerById(int contractLayerId, int contractNodeId) throws  RRException{
+    public void deleteContractLayerById(long contractLayerId, long contractNodeId) throws  RRException{
          InuringContractLayer inuringContractLayer = inuringContractLayerRepository.findByInuringContractLayerId(contractLayerId);
          if(inuringContractLayer == null) throw new InuringContractLayerNotFoundException(contractLayerId);
 
@@ -83,7 +83,7 @@ public class InuringContractLayerService {
     }
 
 
-    private void reorderTheLayers(int layerNumber, int contractNodeId){
+    private void reorderTheLayers(int layerNumber, long contractNodeId){
         inuringContractLayerRepository.reorderTheLayers(layerNumber,contractNodeId);
     }
 

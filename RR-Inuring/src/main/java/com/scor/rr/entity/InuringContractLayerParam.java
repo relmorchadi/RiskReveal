@@ -17,13 +17,13 @@ public class InuringContractLayerParam {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
-    private int inuringContractParamId;
+    private long inuringContractParamId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractLayerId", nullable = false)
-    private int inuringContractLayerId;
+    private long inuringContractLayerId;
 
     @Column(name = "ParamName")
     private String paramName;
@@ -37,7 +37,7 @@ public class InuringContractLayerParam {
     public InuringContractLayerParam() {
     }
 
-    public InuringContractLayerParam(int inuringContractLayerId, String paramName, String paramType, String paramValue) {
+    public InuringContractLayerParam(long inuringContractLayerId, String paramName, String paramType, String paramValue) {
         this.entity = 1;
         this.inuringContractLayerId = inuringContractLayerId;
         this.paramName = paramName;

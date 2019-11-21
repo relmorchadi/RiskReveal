@@ -4,11 +4,11 @@ import com.scor.rr.enums.InuringNodeType;
 
 public class InuringNoteCreationRequest {
 
-    private int inuringPackageId;
+    private long inuringPackageId;
 
     private InuringNodeType inuringObjectType;
 
-    private int inuringObjectId;
+    private long inuringObjectId;
 
     private String noteContent;
 
@@ -19,7 +19,7 @@ public class InuringNoteCreationRequest {
     public InuringNoteCreationRequest() {
     }
 
-    public InuringNoteCreationRequest(int inuringPackageId, InuringNodeType inuringObjectType, int inuringObjectId, String noteContent, String noteColor, String noteTitle) {
+    public InuringNoteCreationRequest(long inuringPackageId, InuringNodeType inuringObjectType, long inuringObjectId, String noteContent, String noteColor, String noteTitle) {
         this.inuringPackageId = inuringPackageId;
         this.inuringObjectType = inuringObjectType;
         this.inuringObjectId = inuringObjectId;
@@ -28,7 +28,7 @@ public class InuringNoteCreationRequest {
         this.noteTitle = noteTitle;
     }
 
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
@@ -36,7 +36,7 @@ public class InuringNoteCreationRequest {
         return inuringObjectType;
     }
 
-    public int getInuringObjectId() {
+    public long getInuringObjectId() {
         return inuringObjectId;
     }
 

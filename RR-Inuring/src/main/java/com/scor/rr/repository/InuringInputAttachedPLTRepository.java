@@ -10,9 +10,9 @@ import java.util.List;
  * Created by u004602 on 10/09/2019.
  */
 @Repository
-public interface InuringInputAttachedPLTRepository extends JpaRepository<InuringInputAttachedPLT, Integer> {
-    InuringInputAttachedPLT findByInuringInputAttachedPLTId(int inuringInputAttachedPLT);
-    List<InuringInputAttachedPLT> findByInuringInputNodeId(int inuringInputNodeId);
-    void deleteByInuringInputNodeId(int inuringInputNodeId);
-    void deleteByInuringInputAttachedPLTId(int inuringInputAttachedPLT);
+public interface InuringInputAttachedPLTRepository extends JpaRepository<InuringInputAttachedPLT, Long> {
+    InuringInputAttachedPLT findByInuringInputAttachedPLTId(long inuringInputAttachedPLT);
+    List<InuringInputAttachedPLT> findByInuringInputNodeId(long inuringInputNodeId);
+    void deleteByInuringInputNodeId(long inuringInputNodeId);
+    void deleteByInuringInputAttachedPLTId(long inuringInputAttachedPLT);
 }

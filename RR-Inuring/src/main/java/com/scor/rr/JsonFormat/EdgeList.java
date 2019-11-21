@@ -10,7 +10,7 @@ import java.util.List;
 public class EdgeList {
 
     private int index;
-    private int id;
+    private long id;
     private String sign;
     private InuringFinancialPerspective perspective;
     private int sourceNodeIndex;

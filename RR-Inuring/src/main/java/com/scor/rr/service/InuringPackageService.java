@@ -11,6 +11,7 @@ import com.scor.rr.exceptions.inuring.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.request.InuringPackageCreationRequest;
 import com.scor.rr.response.InuringPackageDetailsResponse;
+import com.scor.rr.views.SelectedPLTView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Service;
@@ -49,9 +50,13 @@ public class InuringPackageService {
     @Autowired
     private InuringContractLayerParamRepository inuringContractLayerParamRepository;
     @Autowired
+    private InuringInputAttachedPLTRepository inuringInputAttachedPLTRepository;
+    @Autowired
     private InuringContractLayerReinstatementDetailRepository inuringContractLayerReinstatementDetailRepository;
     @Autowired
     private InuringContractLayerPerilLimitRepository inuringContractLayerPerilLimitRepository;
+    @Autowired
+    private SelectedPltRepository selectedPltRepository;
 
     private static  Map<String, Integer> nodeLevelMap;
     private static  Map<String, Integer> nodeIndexMap;
@@ -64,18 +69,18 @@ public class InuringPackageService {
         inuringFinalNodeService.createInuringFinalNodeForPackage(inuringPackage.getInuringPackageId());
     }
 
-    public void deleteInuringPackage(int inuringPackageId) throws RRException {
+    public void deleteInuringPackage(long inuringPackageId) throws RRException {
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringPackageId);
         if (inuringPackage == null) throw new InuringPackageNotFoundException(inuringPackageId);
         if (inuringPackage.isLocked()) throw new InuringIllegalModificationException(inuringPackageId);
         inuringPackageRepository.deleteById(inuringPackageId);
     }
 
-    public InuringPackage findByInuringPackageId(int inuringPackageId) {
+    public InuringPackage findByInuringPackageId(long inuringPackageId) {
         return inuringPackageRepository.findByInuringPackageId(inuringPackageId);
     }
 
-    public InuringPackageDetailsResponse readInuringPackageDetail(int inuringPackageId) throws RRException {
+    public InuringPackageDetailsResponse readInuringPackageDetail(long inuringPackageId) throws RRException {
         InuringPackageDetailsResponse inuringPackageDetailsResponse = new InuringPackageDetailsResponse();
 
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(inuringPackageId);
@@ -103,7 +108,7 @@ public class InuringPackageService {
 
     }
 
-    public void invalidateNode(InuringNodeType nodeType, int nodeId) throws RRException {
+    public void invalidateNode(InuringNodeType nodeType, long nodeId) throws RRException {
         switch (nodeType) {
             case InputNode:
                 InuringInputNode inputNode = inuringInputNodeRepository.findByInuringInputNodeId(nodeId);
@@ -128,7 +133,7 @@ public class InuringPackageService {
         }
     }
 
-    private void generateIndexMap(int inuringPackageId) {
+    private void generateIndexMap(long inuringPackageId) {
 
         nodeIndexMap = new HashMap<>();
         int nodeCounter = 1;
@@ -170,7 +175,7 @@ public class InuringPackageService {
         }
     }
 
-    private void findNodeLevel(Map<String, Integer> nodeLevelMap, int sourceNodeId, InuringNodeType nodeType) {
+    private void findNodeLevel(Map<String, Integer> nodeLevelMap, long sourceNodeId, InuringNodeType nodeType) {
         List<InuringEdge> edgesFromSourceNode = inuringEdgeRepository.findAllBySourceNodeIdAndSourceNodeType(sourceNodeId,nodeType);
         if (edgesFromSourceNode != null && !edgesFromSourceNode.isEmpty()) {
             for (InuringEdge inuringObjectEdge : edgesFromSourceNode) {
@@ -186,7 +191,7 @@ public class InuringPackageService {
         }
     }
 
-    private List<ContractNodeList> generateContractNodeList(int inuringPackageId, int inuringFinalNodeId) {
+    private List<ContractNodeList> generateContractNodeList(long inuringPackageId, long inuringFinalNodeId) {
         List<ContractNodeList> contractNodeLists = new ArrayList<ContractNodeList>();
         List<InuringContractNode> inuringContractNodes = inuringContractNodeRepository.findByInuringPackageId(inuringPackageId);
 
@@ -319,7 +324,7 @@ public class InuringPackageService {
         return contractNodeLists;
     }
 
-    private List<InputNodeList> generateInputNodeList(int inuringPackageId) {
+    private List<InputNodeList> generateInputNodeList(long inuringPackageId) {
         List<InuringInputNode> inuringInputNodes = inuringInputNodeRepository.findByInuringPackageId(inuringPackageId);
         generateMapLevel(inuringInputNodes);
 
@@ -334,27 +339,53 @@ public class InuringPackageService {
 
                 inputNodeList.setId(inuringInputNode.getInuringInputNodeId());
                 inputNodeList.setSign("+");
-                inputNodeList.setNbSelectedPLT(1);
+
+                List<InuringInputAttachedPLT> listOfPltIds = inuringInputAttachedPLTRepository.findByInuringInputNodeId(inuringInputNode.getInuringInputNodeId());
 
                 List<SelectedPLT> selectedPLTS = new ArrayList<SelectedPLT>();
 
-                SelectedPLT selectedPLT = new SelectedPLT();
-                selectedPLT.setFilename("ff");
-                selectedPLT.setPath("ff");
-                selectedPLT.setCurrency("ff");
-                selectedPLT.setTargetCurrency("ff");
-                selectedPLT.setSourceName("ff");
-                selectedPLT.setTargetRapId(1);
-                selectedPLT.setTargetRapCode("ff");
-                selectedPLT.setRegionPeril("ff");
-                selectedPLT.setPeril("ff");
-                selectedPLT.setGrain("ff");
-                selectedPLT.setPltStructureCode(0);
+                if(listOfPltIds != null && !listOfPltIds.isEmpty()){
+                    inputNodeList.setNbSelectedPLT(listOfPltIds.size());
+                    for (InuringInputAttachedPLT inuringAttachedPlt: listOfPltIds
+                    ) {
+                        SelectedPLTView plt = selectedPltRepository.findByPltId(inuringAttachedPlt.getPltHeaderId());
 
-                selectedPLTS.add(selectedPLT);
+                        if(plt != null){
+                            SelectedPLT selectedPLT = new SelectedPLT();
+                            selectedPLT.setFilename(plt.getFileName());
+                            selectedPLT.setPath(plt.getFilePath());
+                            selectedPLT.setCurrency(plt.getCurrency());
+                            selectedPLT.setTargetCurrency(plt.getCurrency());
+                            selectedPLT.setSourceName(plt.getPltId());
+                            selectedPLT.setTargetRapId(plt.getTargetRapId());
+                            selectedPLT.setTargetRapCode(plt.getTargetRapCode());
+                            selectedPLT.setRegionPeril(plt.getRegionPeril());
+                            selectedPLT.setPeril(plt.getPeril());
+                            selectedPLT.setGrain(plt.getGrain());
+                            selectedPLT.setPltStructureCode(0);
+
+                            List<String> properties = new ArrayList<>();
+                            properties.add("Peril."+plt.getPeril());
+                            properties.add("Region Peril."+plt.getRegionPeril());
+                            properties.add("Grain."+plt.getGrain());
+                            properties.add("MinimumGrainRegionPeril."+plt.getRegionPeril());
+                            properties.add("TargetRap."+plt.getTargetRapId());
+                            properties.add("Project."+plt.getProjectId());
+                            selectedPLT.setProperties(properties);
+
+                            selectedPLTS.add(selectedPLT);
+                        }
 
 
-                inputNodeList.setSelectedPLT(selectedPLTS);
+                    }
+                        inputNodeList.setSelectedPLT(selectedPLTS);
+
+                }else{
+                    inputNodeList.setNbSelectedPLT(0);
+                    inputNodeList.setSelectedPLT(selectedPLTS);
+                }
+
+
 
                 inputNodeLists.add(inputNodeList);
             }
@@ -364,7 +395,7 @@ public class InuringPackageService {
         return inputNodeLists;
     }
 
-    private List<EdgeList> generateEdgeList(int inuringPackageId) {
+    private List<EdgeList> generateEdgeList(long inuringPackageId) {
         List<EdgeList> edgeLists = new ArrayList<EdgeList>();
         List<InuringEdge> inuringEdges = inuringEdgeRepository.findByInuringPackageId(inuringPackageId);
         if (inuringEdges != null && !inuringEdges.isEmpty()) {
@@ -395,7 +426,7 @@ public class InuringPackageService {
         return edgeLists;
     }
 
-    public InuringPackageJsonResponse getJSON(int id) throws RRException {
+    public InuringPackageJsonResponse getJSON(long id) throws RRException {
 
         InuringPackageJsonResponse inuringPackageJsonResponse = new InuringPackageJsonResponse();
         generateIndexMap(id);

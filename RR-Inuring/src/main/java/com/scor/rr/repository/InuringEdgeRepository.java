@@ -11,14 +11,14 @@ import java.util.List;
  * Created by u004602 on 13/09/2019.
  */
 @Repository
-public interface InuringEdgeRepository extends JpaRepository<InuringEdge, Integer> {
-    List<InuringEdge> findByInuringPackageId(int inuringPackageId);
-    InuringEdge findByInuringEdgeId(int inuringEdgeId);
-    void deleteByInuringEdgeId(int inuringEdgeId);
-    void deleteBySourceNodeTypeAndSourceNodeId(InuringNodeType nodeType, int nodeId);
-    void deleteByTargetNodeTypeAndTargetNodeId(InuringNodeType nodeType, int nodeId);
+public interface InuringEdgeRepository extends JpaRepository<InuringEdge, Long> {
+    List<InuringEdge> findByInuringPackageId(long inuringPackageId);
+    InuringEdge findByInuringEdgeId(long inuringEdgeId);
+    void deleteByInuringEdgeId(long inuringEdgeId);
+    void deleteBySourceNodeTypeAndSourceNodeId(InuringNodeType nodeType, long nodeId);
+    void deleteByTargetNodeTypeAndTargetNodeId(InuringNodeType nodeType, long nodeId);
 
-    List<InuringEdge> findAllBySourceNodeIdAndSourceNodeType(int sourceNodeId, InuringNodeType sourceNodeType);
-    List<InuringEdge> findAllByTargetNodeIdAndTargetNodeType(int targetNodeId, InuringNodeType targetNodeType);
+    List<InuringEdge> findAllBySourceNodeIdAndSourceNodeType(long sourceNodeId, InuringNodeType sourceNodeType);
+    List<InuringEdge> findAllByTargetNodeIdAndTargetNodeType(long targetNodeId, InuringNodeType targetNodeType);
 
 }

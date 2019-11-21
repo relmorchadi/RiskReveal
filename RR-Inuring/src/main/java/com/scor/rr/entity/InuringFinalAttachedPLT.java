@@ -12,17 +12,17 @@ public class InuringFinalAttachedPLT {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inuringFinalAttachedPLT", nullable = false)
-    private int inuringFinalAttachedPLT;
+    private long inuringFinalAttachedPLT;
 
     @Column(name = "Entity")
     private int Entity;
 
     @Column(name = "inuringFinalNodeId")
-    private int inuringFinalNodeId;
+    private long inuringFinalNodeId;
 
     @Column(name = "PLTCcy")
     private String PLTCcy;
 
     @Column(name = "PLTHeaderId")
-    private int PLTHeaderId;
+    private long PLTHeaderId;
 }

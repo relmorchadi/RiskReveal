@@ -15,7 +15,7 @@ public class InuringContractLayerController {
     private InuringContractLayerService inuringContractLayerService;
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteLayerById(@RequestParam("layerId") int layerId,@RequestParam("contractNodeId") int contractNodeId) throws RRException {
+    public ResponseEntity<?> deleteLayerById(@RequestParam("layerId") int layerId,@RequestParam("contractNodeId") long contractNodeId) throws RRException {
         inuringContractLayerService.deleteContractLayerById(layerId,contractNodeId);
         return ResponseEntity.ok("it has been deleted successfully");
     }

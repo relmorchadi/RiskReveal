@@ -11,8 +11,8 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringContractLayerPerilLimitRepository extends JpaRepository<InuringContractLayerPerilLimit, Integer> {
+public interface InuringContractLayerPerilLimitRepository extends JpaRepository<InuringContractLayerPerilLimit, Long> {
 
-    void deleteByInuringContractLayerPerilLimitId(int inuringContractLayerPerilLimitId);
-    List<InuringContractLayerPerilLimit> findByInuringContractLayerId(int inuringContractLayerId);
+    void deleteByInuringContractLayerPerilLimitId(long inuringContractLayerPerilLimitId);
+    List<InuringContractLayerPerilLimit> findByInuringContractLayerId(long inuringContractLayerId);
 }
