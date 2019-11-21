@@ -122,7 +122,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   edit(project$) {
     this.editOption = true;
     this.newProject = true;
-    this.projectForm = project$.project;
+    this.projectForm = {...project$.project, dueDate: new Date(project$.project.dueDate),
+      receptionDate: new Date(project$.project.receptionDate)};
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {

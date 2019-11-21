@@ -29,6 +29,7 @@ public class WorkspaceDetailsDTO {
     private String subsidiaryLedgerId;
     private Boolean isFavorite;
     private Boolean isPinned;
+    private String contractDatasource;
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
@@ -48,6 +49,7 @@ public class WorkspaceDetailsDTO {
         this.inceptionDate= first.getInceptionDate();
         this.expiryDate = first.getExpiryDate();
         this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
+        this.contractDatasource= first.getContractSourceTypeName();
         this.projects= projects;
         this.isFavorite = isFavorite;
         this.isPinned = isPinned;

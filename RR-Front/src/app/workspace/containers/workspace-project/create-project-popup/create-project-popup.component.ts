@@ -27,6 +27,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store) {
     this.unSubscribe$ = new Subject<void>();
+    console.log('test');
   }
 
   ngOnInit() {
@@ -76,6 +77,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   initNewProjectForm() {
+    console.log(this.projectForm);
     this.newProjectForm = new FormGroup({
       assignedTo: new FormControl(null),
       cloneSourceProjectId: new FormControl(null),
