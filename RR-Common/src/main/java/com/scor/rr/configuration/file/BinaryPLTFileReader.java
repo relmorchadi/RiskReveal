@@ -40,7 +40,7 @@ public class BinaryPLTFileReader implements PLTFileReader {
                 short seq = ib.getShort();
                 float exposure = ib.getFloat();
                 float loss = ib.getFloat();
-                PLTLossData lossData = new PLTLossData(eventId, eventDate, period, seq, exposure, loss);
+                PLTLossData lossData = new PLTLossData(period, eventId, eventDate, seq, exposure, loss);
                 pltLossDatas.add(lossData);
             }
 

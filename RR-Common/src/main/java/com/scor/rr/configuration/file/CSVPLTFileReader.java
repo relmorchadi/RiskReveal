@@ -44,9 +44,9 @@ public class CSVPLTFileReader implements PLTFileReader {
                 double exp = Double.parseDouble(sc.next().replace(" ","")); //Loss
                 double loss = Double.parseDouble(sc.next().replace(" ","")); //Loss
 
-                pltLossDatas.add(new PLTLossData(eventId,
+                pltLossDatas.add(new PLTLossData(periodIdx,
+                        eventId,
                         eventDate.getTime(),
-                        periodIdx,
                         seq,
                         exp,
                         loss));

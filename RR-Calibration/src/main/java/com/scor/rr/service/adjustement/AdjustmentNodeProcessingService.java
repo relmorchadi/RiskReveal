@@ -228,6 +228,7 @@ public class AdjustmentNodeProcessingService {
         finalBinFile.setFileName(dstFile.getName());
 
         binfileRepository.save(finalBinFile);
+        finalPLT.setLocked(false);
         finalPLT.setCreatedDate(RRDateUtils.getDateNow());
         pltHeaderRepository.save(finalPLT);
         thread.setFinalPLT(finalPLT);
