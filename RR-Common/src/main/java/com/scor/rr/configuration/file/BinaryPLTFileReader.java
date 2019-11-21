@@ -7,6 +7,7 @@ import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,6 +21,7 @@ import java.util.List;
 /**
  * Created by u004602 on 24/06/2019.
  */
+@Component
 public class BinaryPLTFileReader implements PLTFileReader {
     public List<PLTLossData> read(File file) throws RRException {
         if (file == null || !file.exists())
