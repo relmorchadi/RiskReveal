@@ -16,7 +16,7 @@ public class AssignedWorkspaceView {
 
     @Id
     @Column(name = "id")
-    private String id;
+    private Integer id;
 
     @Column(name = "userId")
     private Integer userId;

@@ -43,6 +43,7 @@ public class WorkspaceService {
                 .stream()
                 .map(favoriteWorkspaceView -> Workspace
                         .builder()
+                        .workspaceId(favoriteWorkspaceView.getId())
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(favoriteWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
@@ -56,6 +57,7 @@ public class WorkspaceService {
         return this.recentWorkspaceViewRepository.findAllByUserId("%"+kw+"%", userId, new OffsetPageRequest(offset, size)).stream()
                 .map(recentWorkspaceView -> Workspace
                         .builder()
+                        .workspaceId(recentWorkspaceView.getId())
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(recentWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
@@ -69,6 +71,7 @@ public class WorkspaceService {
         return this.assignedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
                 .map(assignedWorkspaceView -> Workspace
                         .builder()
+                        .workspaceId(assignedWorkspaceView.getId())
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
                         .workspaceName(assignedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
@@ -82,6 +85,7 @@ public class WorkspaceService {
         return this.pinnedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
                 .map(pinnedWorkspaceView -> Workspace
                         .builder()
+                        .workspaceId(pinnedWorkspaceView.getId())
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(pinnedWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(pinnedWorkspaceView.getWorkspaceUwYear())
