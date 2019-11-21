@@ -362,7 +362,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         return Integer.parseInt(StringUtils.split(uwYear, '-')[0]);
     }
 
-    private File makeFullFile(String prefixDirectory, String filename) {
+    protected File makeFullFile(String prefixDirectory, String filename) {
         final Path fullPath = ihubPath.resolve(prefixDirectory);
         try {
             Files.createDirectories(fullPath);
