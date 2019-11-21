@@ -8,13 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 public class AdjustmentNodeRequest {
-
-    private Integer adjustmentNodeId;
     private Integer sequence;
     private Boolean capped;
     private Integer adjustmentBasis;
     private Integer adjustmentType;
-    private Integer adjustmentState;
     private Integer adjustmentThreadId;
     private Double lmf;
     private Double rpmf;
@@ -25,37 +22,10 @@ public class AdjustmentNodeRequest {
     public AdjustmentNodeRequest() {
     }
 
-    public AdjustmentNodeRequest(Integer adjustmentNodeId,
-                                 Integer sequence,
+        public AdjustmentNodeRequest(Integer sequence,
                                  Boolean capped,
                                  Integer adjustmentBasis,
                                  Integer adjustmentType,
-                                 Integer adjustmentState,
-                                 Integer adjustmentThreadId,
-                                 Double lmf,
-                                 Double rpmf,
-                                 List<PEATData> peatData,
-                                 Integer pltHeaderInput,
-                                 List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
-        this.adjustmentNodeId = adjustmentNodeId;
-        this.sequence = sequence;
-        this.adjustmentBasis = adjustmentBasis;
-        this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentState;
-        this.adjustmentThreadId = adjustmentThreadId;
-        this.lmf = lmf;
-        this.rpmf = rpmf;
-        this.peatData = peatData;
-        this.pltHeaderInput = pltHeaderInput;
-        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
-        this.capped = capped;
-    }
-
-    public AdjustmentNodeRequest(Integer sequence,
-                                 Boolean capped,
-                                 Integer adjustmentBasis,
-                                 Integer adjustmentType,
-                                 Integer adjustmentState,
                                  Integer adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
@@ -64,7 +34,6 @@ public class AdjustmentNodeRequest {
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentState;
         this.adjustmentThreadId = adjustmentThreadId;
         this.lmf = lmf;
         this.rpmf = rpmf;
@@ -72,14 +41,6 @@ public class AdjustmentNodeRequest {
         this.pltHeaderInput = pltHeaderInput;
         this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
         this.capped = capped;
-    }
-
-    public Integer getAdjustmentNodeId() {
-        return adjustmentNodeId;
-    }
-
-    public void setAdjustmentNodeId(Integer adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
     }
 
     public Integer getSequence() {
@@ -106,13 +67,6 @@ public class AdjustmentNodeRequest {
         this.adjustmentType = adjustmentType;
     }
 
-    public Integer getAdjustmentState() {
-        return adjustmentState;
-    }
-
-    public void setAdjustmentState(Integer adjustmentState) {
-        this.adjustmentState = adjustmentState;
-    }
 
     public Integer getAdjustmentThreadId() {
         return adjustmentThreadId;

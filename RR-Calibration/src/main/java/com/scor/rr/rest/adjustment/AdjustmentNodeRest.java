@@ -2,6 +2,7 @@ package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class AdjustmentNodeRest {
     }
 
     @PostMapping("update")
-    public AdjustmentNode updateAdjustmentNode(@RequestBody AdjustmentNodeRequest request) throws RRException {
+    public AdjustmentNode updateAdjustmentNode(@RequestBody AdjustmentNodeUpdateRequest request) throws RRException {
         return adjustmentNodeService.updateAdjustmentNode(request);
     }
 

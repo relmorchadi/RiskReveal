@@ -4,6 +4,7 @@ import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
@@ -119,7 +120,6 @@ public class AdjustmentNodeService {
                 defaultAdjustmentNodeEntity.getCappedMaxExposure(),
                 defaultAdjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisId(),
                 defaultAdjustmentNodeEntity.getAdjustmentType().getAdjustmentTypeId(),
-                adjustmentStateRepository.getAdjustmentStateEntityByCodeInvalid().getAdjustmentStateId(),
                 adjustmentThreadEntity.getAdjustmentThreadId(),
                 lmf,
                 rpmf,
@@ -186,11 +186,6 @@ public class AdjustmentNodeService {
     @Transactional
     public AdjustmentNode createAdjustmentNode(AdjustmentNodeRequest adjustmentNodeRequest) throws RRException {
         log.info("---------- start createAdjustmentNode ----------");
-
-        // check info request
-        if (adjustmentNodeRequest.getAdjustmentNodeId() != null) {
-            throw new IllegalStateException("---------- createAdjustmentNode, node id not null, wrong ----------");
-        }
 
         AdjustmentNode node = new AdjustmentNode();
 
@@ -274,7 +269,7 @@ public class AdjustmentNodeService {
     }
 
     @Transactional
-    public AdjustmentNode updateAdjustmentNode(AdjustmentNodeRequest adjustmentNodeRequest) throws RRException {
+    public AdjustmentNode updateAdjustmentNode(AdjustmentNodeUpdateRequest adjustmentNodeRequest) throws RRException {
         log.info("---------- start updateAdjustmentNode ----------");
 
         // check info request
