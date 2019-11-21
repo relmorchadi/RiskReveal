@@ -83,6 +83,12 @@
   }
 }
 
+.text-wrap-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .a-form-control {
   display: flex;
   flex-direction: column;

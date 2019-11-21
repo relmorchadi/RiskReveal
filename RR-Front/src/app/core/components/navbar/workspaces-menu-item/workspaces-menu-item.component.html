@@ -27,8 +27,7 @@
                 <!--                  <i class="icon-window-section"></i>-->
                 <div (click)="toggleWorkspace('recent',workspace, i)" class="item-popover-context">
                   <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
-                  <span
-                    class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
+                  <span class="item-popover-context-footer text-wrap-ellipsis">{{workspace?.workspaceUwYear}}
                     - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                 </div>
               </div>
@@ -40,7 +39,7 @@
           </ul>
 
           <div class="mt-2">
-            <nz-select [ngModel]="recentPageable" [nzAllowClear]="false"
+            <nz-select [(ngModel)]="recentPageable" [nzAllowClear]="false"
                        class="a-dropdown-label last-label" (ngModelChange)="pageableChange($event ,'recent')"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
@@ -74,8 +73,7 @@
                   <div (click)="toggleWorkspace('favorite', workspace, workspace?.selected)"
                        class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
-                    <span
-                      class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
+                    <span class="item-popover-context-footer text-wrap-ellipsis">{{workspace?.workspaceUwYear}}
                       - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
@@ -86,7 +84,7 @@
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [ngModel]="favoritePageable" [nzAllowClear]="false" (ngModelChange)="pageableChange($event ,'favorite')"
+            <nz-select [(ngModel)]="favoritePageable" [nzAllowClear]="false" (ngModelChange)="pageableChange($event ,'favorite')"
                        class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
@@ -120,8 +118,7 @@
                   <!--                  <i class="icon-window-section"></i>-->
                   <div (click)="toggleWorkspace('assigned', workspace, workspace?.selected)" class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
-                    <span
-                      class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
+                    <span class="item-popover-context-footer text-wrap-ellipsis">{{workspace?.workspaceUwYear}}
                       - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
@@ -132,7 +129,7 @@
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [ngModel]="assignedPageable" (ngModelChange)="pageableChange($event ,'assigned')"
+            <nz-select [(ngModel)]="assignedPageable" (ngModelChange)="pageableChange($event ,'assigned')"
                        [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
@@ -167,8 +164,7 @@
                   <div (click)="toggleWorkspace('pinned', workspace, workspace?.selected)"
                        class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
-                    <span
-                      class="item-popover-context-footer">{{workspace?.workspaceUwYear}}
+                    <span class="item-popover-context-footer text-wrap-ellipsis">{{workspace?.workspaceUwYear}}
                       - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
@@ -180,7 +176,7 @@
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [ngModel]="pinnedPageable" (ngModelChange)="pageableChange($event ,'pinned')" [nzAllowClear]="false" class="a-dropdown-label last-label"
+            <nz-select [(ngModel)]="pinnedPageable" (ngModelChange)="pageableChange($event ,'pinned')" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>

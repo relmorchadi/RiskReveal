@@ -56,11 +56,11 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
-  @Select(HeaderState.getAssignedWs)assignedWs$;
-  @Select(HeaderState.getRecentWs)recentWs$;
-  @Select(HeaderState.getFavoriteWs)favoriteWs$;
-  @Select(HeaderState.getPinnedWs)pinnedWs$;
-  @Select(HeaderState.getStatusCountWs)countWs$;
+  @Select(HeaderState.getAssignedWs) assignedWs$;
+  @Select(HeaderState.getRecentWs) recentWs$;
+  @Select(HeaderState.getFavoriteWs) favoriteWs$;
+  @Select(HeaderState.getPinnedWs) pinnedWs$;
+  @Select(HeaderState.getStatusCountWs) countWs$;
   @Select(WorkspaceState.getLastWorkspace) lastWorkspace$;
 
   countWs: any;
@@ -84,6 +84,11 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   pinnedPageable = 10;
   assignedPageable = 10;
 
+  LoadedRecent = 10;
+  LoadedFavorite = 10;
+  LoadedAssigned = 10;
+  LoadedPinned = 10;
+
   paginationParams: [
     { id: 0, shownElement: 10, label: 'Last 10' },
     { id: 1, shownElement: 50, label: 'Last 50' },
@@ -96,10 +101,22 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
       new fromHD.LoadWsStatusCount()]);
     this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.countWs = _.merge({}, value));
-    this.recentWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {this.recentWs =  value; this.detectChanges(); });
-    this.favoriteWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {this.favoriteWs =  value; this.detectChanges(); });
-    this.pinnedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {this.pinnedWs = value; this.detectChanges(); });
-    this.assignedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {this.assignedWs = value; this.detectChanges(); });
+    this.recentWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.recentWs = value;
+      this.detectChanges();
+    });
+    this.favoriteWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.favoriteWs = value;
+      this.detectChanges();
+    });
+    this.pinnedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.pinnedWs = value;
+      this.detectChanges();
+    });
+    this.assignedWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.assignedWs = value;
+      this.detectChanges();
+    });
 
     // this.recentWs$.subscribe(value => this.recent = _.merge([], value));
 
@@ -143,21 +160,41 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
 
   pageableChange($event, scope) {
     if (scope === 'recent') {
-      const size =  $event - this.recentPageable;
-      this.store.dispatch(new fromHD.LoadRecentWorkspace({offset: this.recentPageable,
-        size, userId: 1, option: 'append'}));
+      const size = $event - this.LoadedRecent;
+      if (size > 0) {
+        this.store.dispatch(new fromHD.LoadRecentWorkspace({
+          offset: this.LoadedRecent,
+          size, userId: 1, option: 'append'
+        }));
+        this.LoadedRecent = $event;
+      }
     } else if (scope === 'favorite') {
-      const size =  $event - this.favoritePageable;
-      this.store.dispatch(new fromHD.LoadFavoriteWorkspace({offset: this.favoritePageable,
-        size, userId: 1, option: 'append'}));
+      const size = $event - this.LoadedFavorite;
+      if (size > 0) {
+        this.store.dispatch(new fromHD.LoadFavoriteWorkspace({
+          offset: this.LoadedFavorite,
+          size, userId: 1, option: 'append'
+        }));
+        this.LoadedFavorite = $event;
+      }
     } else if (scope === 'assigned') {
-      const size =  $event - this.assignedPageable;
-      this.store.dispatch(new fromHD.LoadAssignedWorkspace({offset: this.assignedPageable,
-        size, userId: 1, option: 'append'}));
+      const size = $event - this.LoadedAssigned;
+      if (size > 0) {
+        this.store.dispatch(new fromHD.LoadAssignedWorkspace({
+          offset: this.LoadedAssigned,
+          size, userId: 1, option: 'append'
+        }));
+      }
+      this.assignedPageable = $event;
     } else if (scope === 'pinned') {
-      const size =  $event - this.pinnedPageable;
-      this.store.dispatch(new fromHD.LoadPinnedWorkspace({offset: this.pinnedPageable,
-        size, userId: 1, option: 'append'}));
+      const size = $event - this.LoadedPinned;
+      if (size > 0) {
+        this.store.dispatch(new fromHD.LoadPinnedWorkspace({
+          offset: this.LoadedPinned,
+          size, userId: 1, option: 'append'
+        }));
+        this.LoadedPinned = $event;
+      }
     }
   }
 
@@ -205,7 +242,8 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         } else if (scope === 'pinned') {
           this.dispatch(new fromHD.TogglePinnedWsSelection({selection: 'all', value: false}));
           this.dispatch(new fromHD.TogglePinnedWsSelection({item: workspace, selection: 'single', value: true}));
-        }}, 200);
+        }
+      }, 200);
     }
   }
 
@@ -248,8 +286,10 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
               selected: false,
               ...dt
             };
-            this.store.dispatch(new workspaceActions.OpenWS({wsId: ws.workspaceContextCode,
-              uwYear: ws.workspaceUwYear, route: 'projects', type: 'treaty'}));
+            this.store.dispatch(new workspaceActions.OpenWS({
+              wsId: ws.workspaceContextCode,
+              uwYear: ws.workspaceUwYear, route: 'projects', type: 'treaty'
+            }));
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
               this.visible = false;
@@ -319,7 +359,10 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   togglePopup() {
     this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
       new fromHD.LoadWsStatusCount()]);
-    this.loadPinned = false; this.loadFavorite = false; this.loadAssigned = false; this.loadRecent = true;
+    this.loadPinned = false;
+    this.loadFavorite = false;
+    this.loadAssigned = false;
+    this.loadRecent = true;
     HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 

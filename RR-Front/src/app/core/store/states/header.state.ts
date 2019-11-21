@@ -219,6 +219,59 @@ export class HeaderState implements NgxsOnInit {
     );
   }
 
+  @Action(fromHD.SearchRecentWsAction)
+  searchRecentWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchRecentWsAction) {
+    const state = ctx.getState();
+    const {offset, size, userId, search} = payload;
+    return this.wsHeaderApi.getRecent(offset, size, userId, search).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          const selectedData = _.filter(draft.workspaceHeader.recent.data, items => items.selected);
+          draft.workspaceHeader.recent.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.SearchFavoriteWsAction)
+  searchFavoriteWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchFavoriteWsAction) {
+    const state = ctx.getState();
+    const {offset, size, userId, search} = payload;
+    return this.wsHeaderApi.getFavorited(offset, size, userId, search).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.favorite.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.SearchAssignedWsAction)
+  searchAssignedWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchAssignedWsAction) {
+    const state = ctx.getState();
+    const {offset, size, userId, search} = payload;
+    return this.wsHeaderApi.getAssigned(offset, size, userId, search).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.assigned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+        })));
+      })
+    );
+  }
+
+  @Action(fromHD.SearchPinnedWsAction)
+  searchPinnedWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchPinnedWsAction) {
+    const state = ctx.getState();
+    const {offset, size, userId, search} = payload;
+    return this.wsHeaderApi.getPinned(offset, size, userId, search).pipe(
+      mergeMap(wsData => {
+        return of(ctx.patchState(produce(ctx.getState(), draft => {
+          draft.workspaceHeader.pinned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
+        })));
+      })
+    );
+  }
+
   @Action(fromHD.ToggleFavoriteWsState)
   toggleStateFavoriteWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromHD.ToggleFavoriteWsState) {
     const state = ctx.getState();
@@ -252,10 +305,12 @@ export class HeaderState implements NgxsOnInit {
           } else {return {...itemR};
           }
         });
+        draft.workspaceHeader.recent.pageable.selected = _.filter(draft.workspaceHeader.recent.data, items => items.selected);
       }));
     } else if (selection === 'all') {
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.workspaceHeader.recent.data = _.map(draft.workspaceHeader.recent.data, itemR => ({...itemR, selected: value}));
+        draft.workspaceHeader.recent.pageable.selected = _.filter(draft.workspaceHeader.recent.data, items => items.selected);
       }));
     } else if (selection === 'chunk') {
       ctx.patchState(produce(ctx.getState(), draft => {
@@ -268,6 +323,7 @@ export class HeaderState implements NgxsOnInit {
             return {...itemR, selected: false};
           }
         });
+        draft.workspaceHeader.recent.pageable.selected = _.filter(draft.workspaceHeader.recent.data, items => items.selected);
       }));
     }
   }
@@ -283,10 +339,12 @@ export class HeaderState implements NgxsOnInit {
           } else {return {...itemR};
           }
         });
+        draft.workspaceHeader.favorite.pageable.selected = _.filter(draft.workspaceHeader.favorite.data, items => items.selected);
       }));
     } else if (selection === 'all') {
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.workspaceHeader.favorite.data = _.map(draft.workspaceHeader.favorite.data, itemR => ({...itemR, selected: value}));
+        draft.workspaceHeader.favorite.pageable.selected = _.filter(draft.workspaceHeader.favorite.data, items => items.selected);
       }));
     } else if (selection === 'chunk') {
       ctx.patchState(produce(ctx.getState(), draft => {
@@ -299,6 +357,7 @@ export class HeaderState implements NgxsOnInit {
             return {...itemR, selected: false};
           }
         });
+        draft.workspaceHeader.favorite.pageable.selected = _.filter(draft.workspaceHeader.favorite.data, items => items.selected);
       }));
     }
   }
@@ -314,10 +373,12 @@ export class HeaderState implements NgxsOnInit {
           } else {return {...itemR};
           }
         });
+        draft.workspaceHeader.assigned.pageable.selected = _.filter(draft.workspaceHeader.assigned.data, items => items.selected);
       }));
     } else if (selection === 'all') {
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.workspaceHeader.assigned.data = _.map(draft.workspaceHeader.assigned.data, itemR => ({...itemR, selected: value}));
+        draft.workspaceHeader.assigned.pageable.selected = _.filter(draft.workspaceHeader.assigned.data, items => items.selected);
       }));
     } else if (selection === 'chunk') {
       ctx.patchState(produce(ctx.getState(), draft => {
@@ -330,6 +391,7 @@ export class HeaderState implements NgxsOnInit {
             return {...itemR, selected: false};
           }
         });
+        draft.workspaceHeader.assigned.pageable.selected = _.filter(draft.workspaceHeader.assigned.data, items => items.selected);
       }));
     }
   }
@@ -345,10 +407,12 @@ export class HeaderState implements NgxsOnInit {
           } else {return {...itemR};
           }
         });
+        draft.workspaceHeader.pinned.pageable.selected = _.filter(draft.workspaceHeader.pinned.data, items => items.selected);
       }));
     } else if (selection === 'all') {
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.workspaceHeader.pinned.data = _.map(draft.workspaceHeader.pinned.data, itemR => ({...itemR, selected: value}));
+        draft.workspaceHeader.pinned.pageable.selected = _.filter(draft.workspaceHeader.pinned.data, items => items.selected);
       }));
     } else if (selection === 'chunk') {
       ctx.patchState(produce(ctx.getState(), draft => {
@@ -361,6 +425,7 @@ export class HeaderState implements NgxsOnInit {
             return {...itemR, selected: false};
           }
         });
+        draft.workspaceHeader.pinned.pageable.selected = _.filter(draft.workspaceHeader.pinned.data, items => items.selected);
       }));
     }
   }

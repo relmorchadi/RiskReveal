@@ -16,12 +16,12 @@ export class ProjectApi {
     return this.http.post(`${this.api}`, data, {params: {wsId, uwy}});
   }
 
-  updateProject(data, projectId) {
-    return this.http.put(`${this.api}`, data,{params: {projectId}})
+  updateProject(assignedTo, projectId, projectName, projectDescription) {
+    return this.http.put(`${this.api}`, null,{params: {assignedTo, projectId, projectName, projectDescription}})
   }
 
-  deleteProject(Id) {
-    return this.http.delete(`${this.api}/delete`, {params: {Id}})
+  deleteProject(id) {
+    return this.http.delete(`${this.api}/delete`, {params: {id}})
   }
 
 }

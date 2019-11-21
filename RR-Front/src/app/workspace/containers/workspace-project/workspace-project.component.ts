@@ -91,6 +91,18 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
           // this.detectChanges()
         }
       );
+    this.actions$.pipe(ofActionSuccessful(fromWs.EditProject))
+      .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
+      .subscribe(() => {
+          this.newProject = false;
+          this.newFacProject = false;
+          this.editOption = false;
+          this.detectChanges();
+          this.notificationService.createNotification('Project Edit successful', '',
+            'success', 'topRight', 4000);
+          // this.detectChanges()
+        }
+      );
     this.status$.subscribe(value => this.status = value);
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',

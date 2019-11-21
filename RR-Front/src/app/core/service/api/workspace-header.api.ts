@@ -12,20 +12,20 @@ export class WorkspaceHeaderApi {
   constructor(private http: HttpClient) {
   }
 
-  getRecent(offset, size, userId) {
-    return this.http.get(`${this.URL}recent`, {params: {offset, size, userId}});
+  getRecent(offset, size, userId, kw = '') {
+    return this.http.get(`${this.URL}recent`, {params: {offset, size, userId, kw}});
   }
 
-  getFavorited(offset, size, userId) {
-    return this.http.get(`${this.URL}favorite`, {params: {offset, size, userId}});
+  getFavorited(offset, size, userId, kw = '') {
+    return this.http.get(`${this.URL}favorite`, {params: {offset, size, userId, kw}});
   }
 
-  getAssigned(offset: any, size: any, userId: any) {
-    return this.http.get(`${this.URL}assigned`, {params: {offset, size, userId}});
+  getAssigned(offset: any, size: any, userId: any, kw = '') {
+    return this.http.get(`${this.URL}assigned`, {params: {offset, size, userId, kw}});
   }
 
-  getPinned(offset, size, userId) {
-    return this.http.get(`${this.URL}pinned`, {params: {offset, size, userId}});
+  getPinned(offset, size, userId, kw = '') {
+    return this.http.get(`${this.URL}pinned`, {params: {offset, size, userId, kw}});
   }
 
   getCount(userId) {

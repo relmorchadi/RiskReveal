@@ -451,12 +451,12 @@ export class WorkspaceService {
 
   updateProject(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {data, projectId} = payload;
+    const {assignedTo, projectId, projectName, projectDescription} = payload.data;
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return this.projectApi.updateProject(data, projectId).pipe(
+    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription).pipe(
       map( prj => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
-          return item.projectId === projectId ? prj : {...item};
+          return item.projectId === projectId ? {...prj, selected: item.selected} : {...item};
         }) : null;
       }))
     ), catchError(err => {
@@ -466,9 +466,9 @@ export class WorkspaceService {
   }
 
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
-    const {projectId, wsId, uwYear, id} = payload;
+    const {projectId, wsId, uwYear} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.projectApi.deleteProject(projectId)
+    return this.projectApi.deleteProject(projectId.projectId)
       .pipe(catchError(err => {
         ctx.dispatch(new fromWS.DeleteProjectFails({}));
         return EMPTY;

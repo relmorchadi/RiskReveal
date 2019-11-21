@@ -28,6 +28,26 @@ export class TogglePinnedWsState {
   constructor(public payload?: any) {}
 }
 
+export class SearchRecentWsAction {
+  static readonly type = '[Workspace Header] Search Recent Workspace';
+  constructor(public payload?: any) {}
+}
+
+export class SearchFavoriteWsAction {
+  static readonly type = '[Workspace Header] Search Favorite Workspace';
+  constructor(public payload?: any) {}
+}
+
+export class SearchAssignedWsAction {
+  static readonly type = '[Workspace Header] Search Assigned Workspace';
+  constructor(public payload?: any) {}
+}
+
+export class SearchPinnedWsAction {
+  static readonly type = '[Workspace Header] Search Pinned Workspace';
+  constructor(public payload?: any) {}
+}
+
 export class LoadFavoriteWorkspace {
   static readonly type = '[Workspace Header] Load Favorite Workspace';
   constructor(public payload?: any) {}
