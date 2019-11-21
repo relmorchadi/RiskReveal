@@ -5,14 +5,14 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentOrder", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentNodeOrderEntity {
+public class AdjustmentNodeOrder {
     private int adjustmentNodeOrderId;
-    private Integer orderNode;
+    private Integer adjustmentOrder;
     private AdjustmentThreadEntity adjustmentThread;
-    private AdjustmentNodeEntity adjustmentNode;
+    private AdjustmentNode adjustmentNode;
 
     @Id
-    @Column(name = "adjustmentNodeOrderId", nullable = false)
+    @Column(name = "AdjustmentNodeOrderId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentNodeOrderId() {
         return adjustmentNodeOrderId;
@@ -24,26 +24,26 @@ public class AdjustmentNodeOrderEntity {
 
     @Basic
     @Column(name = "AdjustmentOrder")
-    public Integer getOrderNode() {
-        return orderNode;
+    public Integer getAdjustmentOrder() {
+        return adjustmentOrder;
     }
 
-    public void setOrderNode(Integer orderNode) {
-        this.orderNode = orderNode;
+    public void setAdjustmentOrder(Integer adjustmentOrder) {
+        this.adjustmentOrder = adjustmentOrder;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentNodeOrderEntity that = (AdjustmentNodeOrderEntity) o;
+        AdjustmentNodeOrder that = (AdjustmentNodeOrder) o;
         return adjustmentNodeOrderId == that.adjustmentNodeOrderId &&
-                Objects.equals(orderNode, that.orderNode);
+                Objects.equals(adjustmentOrder, that.adjustmentOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeOrderId, orderNode);
+        return Objects.hash(adjustmentNodeOrderId, adjustmentOrder);
     }
 
     @ManyToOne
@@ -58,16 +58,16 @@ public class AdjustmentNodeOrderEntity {
 
     @ManyToOne
     @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNode() {
+    public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
 
-    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
 
     @Override
     public String toString() {
-        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} orderNode= {" + orderNode+"}";
+        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} adjustmentOrder= {" + adjustmentOrder +"}";
     }
 }

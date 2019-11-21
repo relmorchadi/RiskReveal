@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentStateEntity;
+import com.scor.rr.domain.AdjustmentState;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentStateRepository;
@@ -22,15 +22,15 @@ public class AdjustmentStateService {
     AdjustmentStateRepository adjustmentStateRepository;
 
 
-    public AdjustmentStateEntity findOne(Integer id){
+    public AdjustmentState findOne(Integer id){
         return adjustmentStateRepository.findById(id).orElseThrow(throwException(STATE_NOT_FOUND,NOT_FOUND));
     }
 
-    public List<AdjustmentStateEntity> findAll(){
+    public List<AdjustmentState> findAll(){
         return adjustmentStateRepository.findAll();
     }
 
-    public AdjustmentStateEntity save(AdjustmentStateEntity adjustmentnodeModel){
+    public AdjustmentState save(AdjustmentState adjustmentnodeModel){
         return adjustmentStateRepository.save(adjustmentnodeModel);
     }
 

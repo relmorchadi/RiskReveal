@@ -57,7 +57,7 @@ public class CloningPltTest {
     @Test
     public void clonePltWithAdjustment() throws RRException {
         PltHeaderEntity scorPltHeaderCloned = cloningScorPltHeader.clonePltWithAdjustment(435,"123");
-        Assert.assertEquals(scorPltHeaderCloned.getCloningSource().getPltHeaderId(),435);
+        Assert.assertEquals(scorPltHeaderCloned.getCloningSource().getPltHeaderId(), (Object) 435);
         Assert.assertEquals(scorPltHeaderCloned.getTargetRap(),scorPltHeaderCloned.getCloningSource().getTargetRap());
         Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getPath(),null);
         Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getFqn(),null);

@@ -1,9 +1,9 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
 import com.scor.rr.configuration.UtilsMethode;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.OEPMetric;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         return yMin+((yMax-yMin)*((x-xMin)/(xMax-xMin)));
     }
 
-    public static List<PLTLossData> oepReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+    public static List<PLTLossData> oepReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBendings) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if (adjustmentReturnPeriodBendings != null && !adjustmentReturnPeriodBendings.isEmpty()) {
                 List<OEPMetric> oepMetrics = CalculAdjustement.getOEPMetric(pltLossDatas);
@@ -70,15 +70,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                                 OEPMetric minRpOep = oepMetrics.stream().filter(oepMetric -> oepMetric.getLossOep() <= pltLossData.getLoss()).max(Comparator.comparingDouble(OEPMetric::getLossOep)).orElse(null);
                                 if(maxRpOep == null && minRpOep != null) {
                                     double rpSearch = minRpOep.getReturnPeriod();
-                                    AdjustmentReturnPeriodBending maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
-                                    AdjustmentReturnPeriodBending minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                                     if(maxRp == null&& minRp != null) {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getLmf() ,
-                                                cap ? Double.min(minRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getLmf()   * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getAdjustmentFactor() ,
+                                                cap ? Double.min(minRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getAdjustmentFactor()   * pltLossData.getLoss()
                                         );
                                     }
                                     if(minRp==null && maxRp!=null) {
@@ -86,8 +86,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
-                                                cap ? Double.min((( ((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (( ((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
+                                                cap ? Double.min((( ((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (( ((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                     if(maxRp.equals(minRp)) {
@@ -95,30 +95,30 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(maxRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * pltLossData.getLoss()
                                         );
                                     } else {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * pltLossData.getLoss()
                                         );
                                     }
                                 }
                                 if(minRpOep == null && maxRpOep!=null) {
                                     double rpSearch = (( ((maxRpOep.getReturnPeriod()) * ((pltLossData.getLoss()) / (maxRpOep.getLossOep())))));
-                                    AdjustmentReturnPeriodBending maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
-                                    AdjustmentReturnPeriodBending minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                                     if(maxRp == null&& minRp != null) {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getLmf() ,
-                                                cap ? Double.min(minRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getLmf()  * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getAdjustmentFactor() ,
+                                                cap ? Double.min(minRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getAdjustmentFactor()  * pltLossData.getLoss()
                                         );
                                     }
                                     if(minRp==null && maxRp!=null) {
@@ -126,8 +126,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
-                                                cap ? Double.min((( ((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
+                                                cap ? Double.min((( ((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                     if(maxRp.equals(minRp)) {
@@ -135,29 +135,29 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(maxRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * pltLossData.getLoss()
                                         );
                                     } else {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                 }
                                 if (minRpOep.equals(maxRpOep)) {
-                                    AdjustmentReturnPeriodBending maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= maxRpOep.getReturnPeriod()).min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
-                                    AdjustmentReturnPeriodBending minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= maxRpOep.getReturnPeriod()).max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= maxRpOep.getReturnPeriod()).min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= maxRpOep.getReturnPeriod()).max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                                     if(maxRp == null && minRp != null) {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getLmf(),
-                                                cap ? Double.min(minRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getLmf() * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getAdjustmentFactor(),
+                                                cap ? Double.min(minRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getAdjustmentFactor() * pltLossData.getLoss()
                                         );
                                     }
                                     if(minRp==null && maxRp != null) {
@@ -165,8 +165,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(((((maxRp.getLmf()) * ((maxRpOep.getReturnPeriod()) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((((maxRp.getLmf()) * ((maxRpOep.getReturnPeriod()) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(((((maxRp.getAdjustmentFactor()) * ((maxRpOep.getReturnPeriod()) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((((maxRp.getAdjustmentFactor()) * ((maxRpOep.getReturnPeriod()) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                     if(maxRp.equals(minRp)) {
@@ -174,29 +174,29 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(maxRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * pltLossData.getLoss()
                                         );
                                     } else {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((maxRpOep.getReturnPeriod() - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((maxRpOep.getReturnPeriod() - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((maxRpOep.getReturnPeriod() - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((maxRpOep.getReturnPeriod() - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                 } else {
                                     double rpSearch = ((minRpOep.getReturnPeriod() + ((maxRpOep.getReturnPeriod() - minRpOep.getReturnPeriod()) * ((pltLossData.getLoss() - minRpOep.getLossOep()) / (maxRpOep.getLossOep() - minRpOep.getLossOep())))));
-                                    AdjustmentReturnPeriodBending maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
-                                    AdjustmentReturnPeriodBending minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= rpSearch).min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
+                                    ReturnPeriodBandingAdjustmentParameter minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= rpSearch).max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                                     if(maxRp == null&& minRp != null) {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getLmf(),
-                                                cap ? Double.min(minRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getLmf()  * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * minRp.getAdjustmentFactor(),
+                                                cap ? Double.min(minRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : minRp.getAdjustmentFactor()  * pltLossData.getLoss()
                                         );
                                     }
                                     if(minRp==null && maxRp!=null) {
@@ -204,8 +204,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
-                                                cap ? Double.min((( ((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (( ((maxRp.getLmf()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))),
+                                                cap ? Double.min((( ((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (( ((maxRp.getAdjustmentFactor()) * ((rpSearch) / (maxRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                     if(maxRp.equals(minRp)) {
@@ -213,16 +213,16 @@ public class CalculAdjustement implements ICalculAdjustment{
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(maxRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * pltLossData.getLoss()
                                         );
                                     } else {
                                         return new PLTLossData(pltLossData.getEventId(),
                                                 pltLossData.getEventDate(),
                                                 pltLossData.getSimPeriod(),
                                                 pltLossData.getSeq(),
-                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                                cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
+                                                cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                                cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((rpSearch - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss()
                                         );
                                     }
                                 }
@@ -238,7 +238,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private static List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings, String oepEEF) {
+    private static List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, String oepEEF) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] i = {0};
             int[] finalI = i;
@@ -249,15 +249,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                     add(pltLossData.getLoss());//loss
                 }};
             }).collect(Collectors.toList());
-            if (adjustmentReturnPeriodBendings != null && !adjustmentReturnPeriodBendings.isEmpty()) {
-                AdjustmentReturnPeriodBending minRpAll = adjustmentReturnPeriodBendings.stream().min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+            if (adjustmentReturnPeriodBandings != null && !adjustmentReturnPeriodBandings.isEmpty()) {
+                ReturnPeriodBandingAdjustmentParameter minRpAll = adjustmentReturnPeriodBandings.stream().min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                 i = new int[]{-1};
                 int[] finalI1 = i;
-                AdjustmentReturnPeriodBending maxReturnPeriodBanding = adjustmentReturnPeriodBendings.stream().max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                ReturnPeriodBandingAdjustmentParameter maxReturnPeriodBanding = adjustmentReturnPeriodBandings.stream().max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                 return pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossData -> {
                             finalI1[0]++;
-                    AdjustmentReturnPeriodBending maxRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() >= returnPeriosd.get(finalI1[0]).get(0)).min(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
-                    AdjustmentReturnPeriodBending minRp = adjustmentReturnPeriodBendings.stream().filter(adjustmentReturnPeriodBending -> adjustmentReturnPeriodBending.getReturnPeriod() <= returnPeriosd.get(finalI1[0]).get(0)).max(Comparator.comparingDouble(AdjustmentReturnPeriodBending::getReturnPeriod)).orElse(null);
+                    ReturnPeriodBandingAdjustmentParameter maxRp = adjustmentReturnPeriodBandings.stream().filter(adjustmentReturnPeriodBanding -> adjustmentReturnPeriodBanding.getReturnPeriod() >= returnPeriosd.get(finalI1[0]).get(0)).min(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
+                    ReturnPeriodBandingAdjustmentParameter minRp = adjustmentReturnPeriodBandings.stream().filter(adjustmentReturnPeriodBanding -> adjustmentReturnPeriodBanding.getReturnPeriod() <= returnPeriosd.get(finalI1[0]).get(0)).max(Comparator.comparingDouble(ReturnPeriodBandingAdjustmentParameter::getReturnPeriod)).orElse(null);
                             if (minRp == null && maxRp != null) {
                                 if (oepEEF.equals("OEP")) {
                                     double loss = pltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).orElse(new PLTLossData()).getLoss();
@@ -265,15 +265,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))),
-                                            cap ? Double.min(((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss, pltLossData.getMaxExposure() ) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss));
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((minRpAll.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))),
+                                            cap ? Double.min(((minRpAll.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss, pltLossData.getMaxExposure() ) : (((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss));
                                 } else {
                                     return new PLTLossData(pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))),
-                                            cap ? Double.min(((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss()));
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))),
+                                            cap ? Double.min(((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss()));
                                 }
                             } else if (maxRp == null) {
                                 return getPltLossData(cap, oepEEF, maxReturnPeriodBanding, pltLossDatas, pltLossData);
@@ -286,15 +286,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getLmf(),
-                                            cap ? Double.min(maxRp.getLmf() * loss, pltLossData.getMaxExposure()) : maxRp.getLmf() * loss);
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
+                                            cap ? Double.min(maxRp.getAdjustmentFactor() * loss, pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * loss);
                                 } else {
                                     return new PLTLossData(pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure()*maxRp.getLmf(),
-                                            cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss());
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure()*maxRp.getAdjustmentFactor(),
+                                            cap ? Double.min(maxRp.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * pltLossData.getLoss());
 
                                 }
                             } else {
@@ -305,15 +305,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))) * pltLossData.getMaxExposure(),
-                                            cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss, pltLossData.getMaxExposure() ) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss);
+                                            cap ? pltLossData.getMaxExposure() : minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))) * pltLossData.getMaxExposure(),
+                                            cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss, pltLossData.getMaxExposure() ) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss);
                                 } else {
                                     return new PLTLossData(pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * (minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))),
-                                            cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure() ) :((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * pltLossData.getLoss());
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * (minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))),
+                                            cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure() ) :((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * pltLossData.getLoss());
                                 }
                             }
 
@@ -330,31 +330,31 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private static PLTLossData getPltLossData(boolean cap, String oepEEF, AdjustmentReturnPeriodBending maxReturnPeriodBanding, List<PLTLossData> finalPltLossDatas, PLTLossData pltLossData) {
+    private static PLTLossData getPltLossData(boolean cap, String oepEEF, ReturnPeriodBandingAdjustmentParameter maxReturnPeriodBanding, List<PLTLossData> finalPltLossDatas, PLTLossData pltLossData) {
         if (oepEEF.equals("OEP")) {
             double loss = finalPltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss();
             return new PLTLossData(pltLossData.getEventId(),
                     pltLossData.getEventDate(),
                     pltLossData.getSimPeriod(),
                     pltLossData.getSeq(),
-                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getLmf(),
-                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * loss, pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * loss);
+                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getAdjustmentFactor(),
+                    cap ? Double.min(maxReturnPeriodBanding.getAdjustmentFactor() * loss, pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getAdjustmentFactor() * loss);
         } else {
             return new PLTLossData(pltLossData.getEventId(),
                     pltLossData.getEventDate(),
                     pltLossData.getSimPeriod(),
                     pltLossData.getSeq(),
-                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getLmf(),
-                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * pltLossData.getLoss());
+                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getAdjustmentFactor(),
+                    cap ? Double.min(maxReturnPeriodBanding.getAdjustmentFactor() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getAdjustmentFactor() * pltLossData.getLoss());
         }
     }
 
-    public static List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, "OEP");
+    public static List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBandings, "OEP");
     }
 
-    public static List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, "EEF");
+    public static List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBandings, "EEF");
     }
 
     public static List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {

@@ -5,12 +5,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
-public class DefaultAdjustmentNodeEntity {
+public class DefaultAdjustmentNode {
     private Integer sequence;
     private int defaultAdjustmentNodeId;
     private Boolean isCappedMaxExposure;
-    private AdjustmentBasisEntity adjustmentBasis;
-    private AdjustmentTypeEntity adjustmentType;
+    private AdjustmentBasis adjustmentBasis;
+    private AdjustmentType adjustmentType;
     private DefaultAdjustmentThreadEntity defaultAdjustmentThread;
 
     @Basic
@@ -47,7 +47,7 @@ public class DefaultAdjustmentNodeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DefaultAdjustmentNodeEntity that = (DefaultAdjustmentNodeEntity) o;
+        DefaultAdjustmentNode that = (DefaultAdjustmentNode) o;
         return defaultAdjustmentNodeId == that.defaultAdjustmentNodeId &&
                 Objects.equals(sequence, that.sequence) &&
                 Objects.equals(isCappedMaxExposure, that.isCappedMaxExposure);
@@ -60,21 +60,21 @@ public class DefaultAdjustmentNodeEntity {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
-    public AdjustmentBasisEntity getAdjustmentBasis() {
+    public AdjustmentBasis getAdjustmentBasis() {
         return adjustmentBasis;
     }
 
-    public void setAdjustmentBasis(AdjustmentBasisEntity adjustmentBasis) {
+    public void setAdjustmentBasis(AdjustmentBasis adjustmentBasis) {
         this.adjustmentBasis = adjustmentBasis;
     }
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
-    public AdjustmentTypeEntity getAdjustmentType() {
+    public AdjustmentType getAdjustmentType() {
         return adjustmentType;
     }
 
-    public void setAdjustmentType(AdjustmentTypeEntity adjustmentType) {
+    public void setAdjustmentType(AdjustmentType adjustmentType) {
         this.adjustmentType = adjustmentType;
     }
 

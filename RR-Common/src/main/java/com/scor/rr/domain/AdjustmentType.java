@@ -5,18 +5,18 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentType", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentTypeEntity {
-    private int adjustmentTypeId;
+public class AdjustmentType {
+    private Integer adjustmentTypeId;
     private String type;
     private String description;
 
     @Id
     @Column(name = "AdjustmentTypeId", nullable = false)
-    public int getAdjustmentTypeId() {
+    public Integer getAdjustmentTypeId() {
         return adjustmentTypeId;
     }
 
-    public void setAdjustmentTypeId(int adjustmentTypeId) {
+    public void setAdjustmentTypeId(Integer adjustmentTypeId) {
         this.adjustmentTypeId = adjustmentTypeId;
     }
 
@@ -44,7 +44,7 @@ public class AdjustmentTypeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentTypeEntity that = (AdjustmentTypeEntity) o;
+        AdjustmentType that = (AdjustmentType) o;
         return adjustmentTypeId == that.adjustmentTypeId &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(description, that.description);
