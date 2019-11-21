@@ -46,7 +46,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * We use to check the route attribute from the workspace resolve the corresponding component then instantiate it
    */
   readonly componentsMapper = {
-    //projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
+    projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
     //Contract: {component: WorkspaceContractComponent, selector: (state) => state},
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
@@ -106,7 +106,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * @param route
    */
   private initComponent(route = this.state.data.route) {
-    const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.PltBrowser;
+    const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
     const containerRef = this.routingTemplate.viewContainerRef;
     containerRef.clear();

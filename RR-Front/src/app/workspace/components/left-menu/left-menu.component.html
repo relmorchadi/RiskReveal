@@ -1,9 +1,9 @@
 <ul [nzInlineCollapsed]="isCollapsed" [nzMode]="'inline'" nz-menu>
-  <!--<li (click)="collapse($event)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
+  <li (click)="collapse($event)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
           <span title>
             <i nz-icon>
               <i *ngIf="!isCollapsed" class="icon-chevron_left_24px"></i>
-              &lt;!&ndash;i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i&ndash;&gt;
+              <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
               <i *ngIf="isCollapsed" class="icon-chevron_right_24px"></i>
             </i>
           </span>
@@ -15,18 +15,17 @@
           </span>
     <ul>
       <li (click)="routerNavigate(null)" nz-menu-item>Projects</li>
-      <li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>
-      <li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>
+      <!--<li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>-->
+      <!--<li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>-->
     </ul>
   </li>
-
-  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"
-      [nzTitle]="isCollapsed ? 'Scope Of Completeness' : ''">
-          <span title>
-            <i nz-icon><i class="icon-location_searching_24px"></i></i>
-            <span>Scope & Completeness</span>
-          </span>
-  </li>-->
+  <!--<li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"-->
+      <!--[nzTitle]="isCollapsed ? 'Scope Of Completeness' : ''">-->
+          <!--<span title>-->
+            <!--<i nz-icon><i class="icon-location_searching_24px"></i></i>-->
+            <!--<span>Scope & Completeness</span>-->
+          <!--</span>-->
+  <!--</li>-->
 
   <li (click)="routerNavigate('PltBrowser')" [nzTitle]="isCollapsed ? 'PLT Manager' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
