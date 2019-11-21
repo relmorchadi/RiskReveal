@@ -9,13 +9,13 @@ public class InuringContractLayerPerilLimitCreationRequest {
 
     private String contractType;
 
-    private int inuringContractLayerId;
+    private long inuringContractLayerId;
 
     private String peril;
 
     private BigDecimal limit;
 
-    public InuringContractLayerPerilLimitCreationRequest(int inuringContractLayerId, String peril, BigDecimal limit,String contractType) {
+    public InuringContractLayerPerilLimitCreationRequest(long inuringContractLayerId, String peril, BigDecimal limit,String contractType) {
         this.inuringContractLayerId = inuringContractLayerId;
         this.peril = peril;
         this.limit = limit;
@@ -25,7 +25,7 @@ public class InuringContractLayerPerilLimitCreationRequest {
     public InuringContractLayerPerilLimitCreationRequest() {
     }
 
-    public int getInuringContractLayerId() {
+    public long getInuringContractLayerId() {
         return inuringContractLayerId;
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringCanvasLayoutRepository extends JpaRepository<InuringCanvasLayout, Integer> {
+public interface InuringCanvasLayoutRepository extends JpaRepository<InuringCanvasLayout, Long> {
 
-    List<InuringCanvasLayout> findByInuringPackageId(int inuringPackageId);
+    List<InuringCanvasLayout> findByInuringPackageId(long inuringPackageId);
 }

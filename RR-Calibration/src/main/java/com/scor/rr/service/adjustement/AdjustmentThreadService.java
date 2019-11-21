@@ -3,6 +3,7 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.EntityEntity;
 import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadBranchingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -89,6 +90,18 @@ public class AdjustmentThreadService {
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
         }
+    }
+
+    public AdjustmentThreadEntity branchNewAdjustmentThread(AdjustmentThreadBranchingRequest request) throws RRException {
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentThreadRepository.getOne(request.getAdjustmentThreadId());
+        if(adjustmentThreadEntity == null) {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
+        }
+        if (adjustmentThreadEntity.getInitialPLT() == null) {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.NODE_NOT_FOUND, 1);
+        }
+
+       return createNewAdjustmentThread(new AdjustmentThreadCreationRequest(adjustmentThreadEntity.getInitialPLT().getPltHeaderId(), request.getCreatedBy(), request.isGenerateDefaultThread()));
     }
 
     public AdjustmentThreadEntity cloneThread(Integer initialPlt, PltHeaderEntity clonedPlt) throws RRException {

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface InuringNoteRepository extends JpaRepository<InuringNote, Integer> {
-    InuringNote findByInuringNoteId(int inuringNoteId);
-    List<InuringNote> findByInuringPackageId(int inuringPackageId);
+public interface InuringNoteRepository extends JpaRepository<InuringNote, Long> {
+    InuringNote findByInuringNoteId(long inuringNoteId);
+    List<InuringNote> findByInuringPackageId(long inuringPackageId);
 }

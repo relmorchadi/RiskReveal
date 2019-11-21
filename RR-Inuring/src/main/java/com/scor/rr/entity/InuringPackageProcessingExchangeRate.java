@@ -18,13 +18,13 @@ public class InuringPackageProcessingExchangeRate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringPackageProcessingExchangeRateId", nullable = false)
-    private int inuringPackageProcessingExchangeRateId;
+    private long inuringPackageProcessingExchangeRateId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageProcessingId")
-    private int inuringPackageProcessingId;
+    private long inuringPackageProcessingId;
 
     @Column(name = "SourceCcy")
     private String sourceCcy;

@@ -34,7 +34,7 @@ public class InuringContractLayerPerilLimitService {
         inuringContractLayerPerilLimitRepository.save(inuringContractLayerPerilLimit);
     }
 
-    public void deleteInuringContractLayerPerilLimitById(int inuringContractLayerPerilLimit){
+    public void deleteInuringContractLayerPerilLimitById(long inuringContractLayerPerilLimit){
         inuringContractLayerPerilLimitRepository.deleteByInuringContractLayerPerilLimitId(inuringContractLayerPerilLimit);
     }
 
