@@ -2,9 +2,8 @@
   <p-contextMenu #cm [model]="tableInputs.contextMenuItems" appendTo="body"></p-contextMenu>
 </ng-container>
 <p-table
-  scrollIndicator
   [columns]="tableInputs.pltColumns"
-  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
+  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status"
   [contextMenu]="cm"
   [scrollable]="true"
   [resizableColumns]="true"
@@ -14,7 +13,7 @@
   [scrollHeight]="tableInputs?.scrollHeight ? tableInputs?.scrollHeight : 'calc(' + tableInputs?.scrollConfig?.containerHeight + 'px' + ' - ' + getElHeight() + ' - ' +  tableInputs?.scrollConfig?.containerGap + ')'"
   (onColResize)="onColResize($event)"
   #dt
-  [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
+  [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] | falselyFilter: tableInputs.status )?.length ? 'activate-header-scroll' : ''"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -22,7 +21,7 @@
     </colgroup>
   </ng-template>
   <ng-template pTemplate="header" let-columns>
-    <tr>
+    <tr (click)="log(dt)">
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
           <th *ngIf="col?.type == 'checkbox'"  class="checkBoxHead" [ngStyle]="{'width': col?.width + col?.unit }">
@@ -30,9 +29,13 @@
                    [nzChecked]="!tableInputs.showDeleted ? tableInputs.selectAll : tableInputs.selectAllDeletedPlts"
                    (nzCheckedChange)="checkAll($event)"
                    [nzIndeterminate]="!tableInputs.showDeleted ? tableInputs.someItemsAreSelected : tableInputs.someDeletedItemsAreSelected"></label>
-            <i (click)="checkBoxSort()" style="cursor: pointer;position: relative;left: 3px;" nz-icon nzType="down" nzTheme="outline"></i>
+            <ng-container [ngSwitch]="tableInputs.sortData[col?.fields]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+            </ng-container>
           </th>
-          <th *ngIf="col?.type == 'checkbox-scope'"   [ngStyle]="{'width': col?.width + col?.unit }">
+          <th *ngIf="col?.type == 'checkbox-scope'"  [ngStyle]="{'width': col?.width + col?.unit }">
             <label nz-checkbox style="padding-left: 8px;"
                    [nzChecked]="checkSelectedRows()"
                    (nzCheckedChange)="checkAllScope($event)"
@@ -48,19 +51,33 @@
           </th>
           <ng-container *ngIf="col?.resizable">
             <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' && col?.type !== 'checkbox-scope' ) " [ngStyle]="{'width': col?.width + col?.unit }" pResizableColumn>
-          <span style="display:flex;justify-content: space-between;">
-            {{col?.header}} <br> {{col?.subHeader}}
-            <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
-              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-            </ng-container>
-          </span>
+              <span style="display:flex;justify-content: space-between;">
+                {{col?.header}} <br> {{col?.subHeader}}
+                <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
+                  <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                  <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                  <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                </ng-container>
+              </span>
               <i *ngIf="col?.icon" style="font-size: 1.6em" [ngClass]="col?.icon"></i>
             </th>
           </ng-container>
           <ng-container *ngIf="!col?.resizable">
-            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' && col?.type !== 'checkbox-scope' ) " [ngStyle]="{'width': col?.width + col?.unit }">
+            <th *ngIf="col?.type === 'icon'" [ngStyle]="{'width': col?.width + col?.unit }">
+                <div style="display: flex">
+                  <i [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 20px;" [ngClass]="col?.icon" [ngStyle]="{'color': tableInputs.status[col.highlight]?.selected ? '#0700e4' : '#434343'}">
+                    <ng-template #tooltipInfo>
+                      {{ col?.tooltip }}
+                    </ng-template>
+                  </i>
+                  <ng-container [ngSwitch]="tableInputs.sortData[col?.fields]">
+                    <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                    <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                    <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                  </ng-container>
+                </div>
+            </th>
+            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' && col?.type !== 'checkbox-scope' && col?.type !== 'icon' ) " [ngStyle]="{'width': col?.width + col?.unit }">
               <span style="display:flex;justify-content: space-between;">
                             {{col?.header}}
                 <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
@@ -69,6 +86,7 @@
                   <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
                 </ng-container>
               </span>
+              <span class="ui-column-resizer" style="cursor: default !important;"></span>
             </th>
           </ng-container>
         </ng-container>
@@ -78,27 +96,12 @@
       <ng-container *ngFor="let col of columns;let i=index;">
         <ng-container *ngIf="col?.active">
           <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
-            <th [ngClass]="{'icon-header': col?.icon}">
-              <ng-container *ngIf="!col?.icon">
-                <div class="filter-input"
-                     [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
-                  <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                  <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
-                </div>
-              </ng-container>
-              <ng-container *ngIf="col?.icon">
-                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'" [nzClickHide]="false">
-                  <i nz-dropdown [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 20px;" [ngClass]="col?.icon" [ngStyle]="{'color': tableInputs.status[col.highlight]?.selected ? '#0700e4' : '#434343'}">
-                    <ng-template #tooltipInfo>
-                      {{ col?.tooltip }}
-                    </ng-template>
-                  </i>
-                  <ul nz-menu>
-                    <li nz-menu-item *ngFor="let statue of tableInputs.status | keys">
-                      <label nz-checkbox [ngModel]="tableInputs.status[statue]?.selected" (ngModelChange)="filterByStatus(statue)">{{statue}}</label>
-                    </li>
-                  </ul>
-                </nz-dropdown>
+            <th class="filter-head" [ngClass]="{'icon-header': col?.icon}">
+              <app-input *ngIf="!col?.icon && col?.type != 'indicator'" [visible]="col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' )" (onInput)="filter(col?.fields, $event)" [value]="tableInputs.filterData[col?.fields]"></app-input>
+              <ng-container *ngIf="col?.icon ||  col?.type == 'indicator'">
+                <label nz-checkbox
+                       [ngModel]="tableInputs.status[col?.field]?.selected" (ngModelChange)="filterByFalsely(col?.fields)"
+                ></label>
               </ng-container>
             </th>
           </ng-container>
@@ -149,24 +152,24 @@
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + col?.unit }">
             <div class="td-wrapper-tags">
-              <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
-                <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
-                <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData.userTags.length - 1)" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
+              <ng-container *ngFor="let tag of rowData[col?.fields];let i= index;">
+                <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength" [ngStyle]="{ 'background-color': tag.defaultColor}">&nbsp;</span>
+                <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData[col?.fields].length - 1)" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
               </ng-container>
 
             </div>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
-            <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
+            <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields != 'peril' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
-              <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ rowData[col.fields] }}</div>
+              <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
-          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && col?.fields == 'peril' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
+          <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
             <ng-container>
-              <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData.peril]}">{{ rowData[col.fields] }}</div>
+              <div class="text-elipsice peril-container" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'background-color': perilColors[rowData[col?.fields]]}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
@@ -174,15 +177,10 @@
               <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
             </ng-container>
           </td>
-          <td *ngIf="col?.type == 'icon'" [ngStyle]="{'width': col?.width + col?.unit }">
-            <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
-              <i nz-dropdown [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
-              <ul nz-menu>
-                <li nz-menu-item (click)="log('1st menu item')">1st menu item</li>
-                <li nz-menu-item (click)="log('2nd menu item')">2nd menu item</li>
-                <li nz-menu-item (click)="log('3rd menu item')">3rd menu item</li>
-              </ul>
-            </nz-dropdown>
+          <td *ngIf="col?.type == 'icon' ||  col?.type == 'indicator'" [ngStyle]="{ 'width': col?.width + col?.unit }">
+            <div style="text-align: center;">
+              <i class="icon-check" *ngIf="rowData[col?.fields]"></i>
+            </div>
           </td>
         </ng-container>
       </ng-container>

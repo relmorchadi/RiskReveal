@@ -2,12 +2,12 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
 
     <persistence-unit name="persistenceUnit">
-        <class>com.scor.rr.domain.AdjustmentBasisEntity</class>
-        <class>com.scor.rr.domain.AdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentBasis</class>
+        <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
-        <class>com.scor.rr.domain.AdjustmentBasisEntity</class>
-        <class>com.scor.rr.domain.AdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentBasis</class>
+        <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.BinFileEntity</class>
@@ -87,7 +87,6 @@
         <class>com.scor.rr.domain.RrDboContractSearchResultEntity</class>
         <class>com.scor.rr.domain.RegionPerilEntity</class>
         <class>com.scor.rr.domain.RmsAnalysisEntity</class>
-        <class>com.scor.rr.domain.RmsAnalysisNewEntity</class>
         <class>com.scor.rr.domain.RmsEntityDataSourceEntity</class>
         <class>com.scor.rr.domain.RmsPortfolioEntity</class>
         <class>com.scor.rr.domain.RmsSourceResultEntity</class>
@@ -105,11 +104,11 @@
         <class>com.scor.rr.domain.UserRrEntity</class>
         <class>com.scor.rr.domain.XActPublicationEntity</class>
         <class>com.scor.rr.domain.CatRequestsEntity</class>
-        <class>com.scor.rr.domain.AdjustmentTypeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentType</class>
         <class>com.scor.rr.domain.AdjustmentCategoryEntity</class>
-        <class>com.scor.rr.domain.AdjustmentStateEntity</class>
+        <class>com.scor.rr.domain.AdjustmentState</class>
         <class>com.scor.rr.domain.DefaultAdjustmentEntity</class>
-        <class>com.scor.rr.domain.DefaultAdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.DefaultAdjustmentNode</class>
         <class>com.scor.rr.domain.DefaultAdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentVersionEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentRegionPerilEntity</class>
@@ -117,8 +116,8 @@
         <class>com.scor.rr.domain.EntityEntity</class>
         <class>com.scor.rr.domain.MarketChannelEntity</class>
         <class>com.scor.rr.domain.AdjustmentEventBasedParameterEntity</class>
-        <class>com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity</class>
-        <class>com.scor.rr.domain.AdjustmentScalingParameterEntity</class>
+        <class>com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter</class>
+        <class>com.scor.rr.domain.ScalingAdjustmentParameter</class>
         <properties>
             <property name="hibernate.connection.url"
                       value="jdbc:jtds:sqlserver://DCVDEVSQL10:53713/RiskReveal;instance=SDGEN01"/>

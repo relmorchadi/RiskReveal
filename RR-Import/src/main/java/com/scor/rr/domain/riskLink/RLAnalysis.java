@@ -53,7 +53,7 @@ public class RLAnalysis {
     private String engineVersionMajor;
     private String profileName;
     private String profileKey;
-    private Double  purePremium;
+    private Double purePremium;
     private Double exposureTIV;
     //TODO : review with shaun
     private String description;
@@ -64,45 +64,48 @@ public class RLAnalysis {
     @JoinColumn(name = "analysisScanStatus")
     private RlAnalysisScanStatus rlAnalysisScanStatus;
 
-    @OneToMany(mappedBy = "rlAnalysis",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rlAnalysis", fetch = FetchType.LAZY)
     private List<RlSourceResult> rlSourceResult;
 
     @OneToMany(mappedBy = "rLAnalysisId")
-    List<RlSourceEpHeader> rlSourceEpHeaders;
+    private List<RlSourceEpHeader> rlSourceEpHeaders;
+
+    @OneToMany(mappedBy = "rlAnalysis")
+    private List<RlAnalysisProfileRegion> rlAnalysisProfileRegions;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
-        this.entity=1;
-        this.rlModelDataSourceId= rdm.getRlModelDataSourceId();
-        this.projectId= rdm.getProjectId();
-        this.rdmId= Long.valueOf(rdm.getRlId());
-        this.rdmName=rdm.getName();
-        this.analysisId= rdmAnalysisBasic.getAnalysisId();
-        this.analysisName= rdmAnalysisBasic.getAnalysisName();
-        this.analysisDescription= rdmAnalysisBasic.getDescription();
-        this.defaultGrain= null; // TO Check
-        this.exposureType= null;
-        this.exposureTypeCode= null;
-        this.edmNameSourceLink= null;
-        this.exposureId= null;
+        this.entity = 1;
+        this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
+        this.projectId = rdm.getProjectId();
+        this.rdmId = Long.valueOf(rdm.getRlId());
+        this.rdmName = rdm.getName();
+        this.analysisId = rdmAnalysisBasic.getAnalysisId();
+        this.analysisName = rdmAnalysisBasic.getAnalysisName();
+        this.analysisDescription = rdmAnalysisBasic.getDescription();
+        this.defaultGrain = null; // TO Check
+        this.exposureType = null;
+        this.exposureTypeCode = null;
+        this.edmNameSourceLink = null;
+        this.exposureId = null;
         this.analysisCurrency = rdmAnalysisBasic.getAnalysisCurrency();
-        this.rlExchangeRate= null;
-        this.typeCode=null;
-        this.analysisType=rdmAnalysisBasic.getTypeName(); // Not sure
-        this.runDate= new Date();
+        this.rlExchangeRate = null;
+        this.typeCode = null;
+        this.analysisType = rdmAnalysisBasic.getTypeName(); // Not sure
+        this.runDate = new Date();
         this.region = rdmAnalysisBasic.getRegion();
         this.peril = rdmAnalysisBasic.getPeril();
         this.subPeril = rdmAnalysisBasic.getSubPeril();
         this.lossAmplification = rdmAnalysisBasic.getLossAmplification();
 //        this.rlAnalysisStatus = rdmAnalysisBasic.getStatusDescription();
-        this.analysisMode= null;
-        this.engineTypeCode=null;
+        this.analysisMode = null;
+        this.engineTypeCode = null;
         this.engineType = rdmAnalysisBasic.getEngineType();
         this.engineVersion = rdmAnalysisBasic.getEngineVersion();
-        this.engineVersionMajor= null;
-        this.profileName= null;
-        this.profileKey= null;
-        this.purePremium= null;
-        this.exposureTIV= null;
+        this.engineVersionMajor = null;
+        this.profileName = null;
+        this.profileKey = null;
+        this.purePremium = null;
+        this.exposureTIV = null;
 
     }
 }

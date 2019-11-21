@@ -124,7 +124,7 @@ export class ExpertModeSearchAction {
 export class SearchAction {
   static readonly type = '[Search Nav Bar] do search';
 
-  constructor(public bages: any[], public keyword: string) {
+  constructor(public badges: any[], public keyword: string) {
   }
 }
 
@@ -153,6 +153,22 @@ export class CloseSearchPopIns {
   static readonly type = '[Search Nav Bar] Close search Popins';
 
   constructor() {
+  }
+}
+
+export class LoadSavedSearch {
+  static readonly type = '[Search Nav Bar] Load Saved Search';
+
+  constructor(public payload?: any) {
+
+  }
+}
+
+export class LoadMostUsedSavedSearch {
+  static readonly type = '[Search Nav Bar] Load Saved Search';
+
+  constructor(public payload?: any) {
+
   }
 }
 

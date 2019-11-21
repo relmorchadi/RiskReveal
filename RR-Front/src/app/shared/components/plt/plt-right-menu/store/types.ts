@@ -4,3 +4,4 @@ export const updateKey = "[Drawer] update key";
 export const openDrawer = "[Drawer] open drawer";
 export const closeDrawer = "[Drawer] close drawer";
 export const unselectPlt = "[Drawer] unselect plt";
+export const loadTab = "[Drawer] load tab";

@@ -4,7 +4,6 @@ package com.scor.rr.service.batch;
 import com.codahale.metrics.Timer;
 import com.scor.rr.domain.PLTHeader;
 import com.scor.rr.domain.RRFile;
-import com.scor.rr.domain.RRFinancialPerspective;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
@@ -37,7 +36,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -49,7 +47,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.scor.rr.util.PathUtils.makePLTFileName;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -69,13 +66,13 @@ public class ELTToPLTConverter extends AbstractWriter {
     RlAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RRAnalysisRepository rrAnalysisRepository;
+    RranalysisRepository rrAnalysisRepository;
 
     @Autowired
     AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
 
     @Autowired
-    TargetRAPRepository targetRAPRepository;
+    TargetrapRepository targetRAPRepository;
 
     @Autowired
     PETRepository petRepository;
@@ -362,7 +359,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         return Integer.parseInt(StringUtils.split(uwYear, '-')[0]);
     }
 
-    private File makeFullFile(String prefixDirectory, String filename) {
+    public File makeFullFile(String prefixDirectory, String filename) {
         final Path fullPath = ihubPath.resolve(prefixDirectory);
         try {
             Files.createDirectories(fullPath);

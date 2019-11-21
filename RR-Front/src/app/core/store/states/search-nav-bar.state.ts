@@ -11,8 +11,8 @@ import {
   DeleteLastBadgeAction,
   DisableExpertMode,
   EnableExpertMode,
-  ExpertModeSearchAction,
-  LoadRecentSearchAction, LoadShortCuts,
+  ExpertModeSearchAction, LoadMostUsedSavedSearch,
+  LoadRecentSearchAction, LoadSavedSearch, LoadShortCuts,
   PatchSearchStateAction,
   saveSearch,
   SearchAction,
@@ -53,11 +53,8 @@ const initiaState: SearchNavBar = {
   showRecentSearch: [],
   emptyResult: false,
   showSavedSearch: false,
-  savedSearch: [
-    // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
-    // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
-    // [{key: 'Country', value: 'Japan'}, {key: 'Program', value: 'Prog Name'}]
-  ],
+  savedSearch: [],
+  mostUsedSavedSearch: [],
   shortcuts: [],
   mapTableNameToBadgeKey: {},
   sortcutFormKeysMapper: {
@@ -87,6 +84,8 @@ export class SearchNavBarState implements NgxsOnInit {
     this.ctx = ctx;
     ctx.dispatch(new LoadShortCuts());
     ctx.dispatch(new LoadRecentSearchAction);
+    ctx.dispatch(new LoadSavedSearch());
+    ctx.dispatch(new LoadMostUsedSavedSearch());
   }
 
   /**
@@ -341,13 +340,13 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(SearchAction)
-  doSearch(ctx: StateContext<SearchNavBar>, {bages, keyword}) {
-    if (_.isEmpty(bages) && _.isEmpty(keyword)) {
+  doSearch(ctx: StateContext<SearchNavBar>, {badges, keyword}) {
+    if (_.isEmpty(badges) && _.isEmpty(keyword)) {
       ctx.dispatch(new Navigate(['/search']));
       throw new Error('Search without keyword or value');
     }
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
+      draft.searchContent = {value: _.isEmpty(badges) ? keyword : badges};
       draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
       draft.visibleSearch = false;
@@ -383,12 +382,52 @@ export class SearchNavBarState implements NgxsOnInit {
     }));
   }
 
+  @Action(LoadSavedSearch)
+  loadSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadSavedSearch) {
+    return this._searchService.getSavedSearch({
+      searchType: "TREATY",
+      userId: 1
+    })
+      .pipe(
+        tap( savedSearch => {
+          ctx.patchState({
+            savedSearch:  _.map(savedSearch, item => ({..._.pick(item, ['label', 'userId', 'id']), badges: item.items}))
+          })
+        })
+      )
+  }
+
+  @Action(LoadMostUsedSavedSearch)
+  loadMostUsedSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadMostUsedSavedSearch) {
+    return this._searchService.getMostUsedSavedSearch({
+      searchType: "TREATY",
+      userId: 1
+    })
+      .pipe(
+        tap( mostUsedSavedSearch => {
+          ctx.patchState({
+            mostUsedSavedSearch:  _.map(mostUsedSavedSearch, item => ({..._.pick(item, ['label', 'userId', 'id']), badges: item.items}))
+          })
+        })
+      )
+  }
+
   @Action(saveSearch)
   saveSearchList(ctx: StateContext<SearchNavBar>, {payload}: saveSearch) {
-    const search = payload;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.savedSearch = [...draft.savedSearch, search];
-    }));
+    const {
+      searchType,
+      items,
+      label
+    } = payload;
+
+    return this._searchService.saveSearch({...payload, userId: 1})
+      .pipe(
+        tap( searchItem => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.savedSearch = [...draft.savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
+          }))
+        })
+      )
   }
 
   @Action(toggleSavedSearch)

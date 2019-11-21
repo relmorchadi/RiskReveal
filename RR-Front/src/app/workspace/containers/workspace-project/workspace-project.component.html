@@ -14,7 +14,7 @@
               Add New
             </button>
             <ul nz-menu nzSelectable>
-              <li (click)="newProject = true; searchWorkspace = false;" nz-menu-item> Project</li>
+              <li (click)="newProject = true; searchWorkspace = false; editOption = false" nz-menu-item> Project</li>
               <li (click)="searchWorkspace = true; newProject = false;" nz-menu-item> Linked Project</li>
             </ul>
           </nz-dropdown>
@@ -38,14 +38,13 @@
         <app-pin
           [active]="!workspace?.isPinned"
           (pinWs)="pinWorkspace()"
-          (unpinWs)="unPinWorkspace()"
         >
         </app-pin>
       </div>
     </div>
     <div>
-      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
-                     (delete)="delete($event)" *ngIf="status === 'treaty'"></projects-list>
+      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects" [status]="status"
+                     (edit)="edit($event)" (delete)="delete($event)" *ngIf="status === 'treaty'"></projects-list>
       <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
                      (delete)="deleteFacProject($event)" *ngIf="status === 'fac'"></projects-list>
     </div>
@@ -57,6 +56,8 @@
     </app-workspace-project-popup>
 
     <app-create-project-popup [isVisible]="newProject"
+                              [edit]="editOption"
+                              [editForm]="projectForm"
                               [workspace]="workspace"
                               [newProject]="selectedProject"
                               (onCancelCreateProject)="onCancelCreateProject()">

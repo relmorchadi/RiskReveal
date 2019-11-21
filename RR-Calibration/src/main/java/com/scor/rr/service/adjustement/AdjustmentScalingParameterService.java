@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentScalingParameterEntity;
+import com.scor.rr.domain.ScalingAdjustmentParameter;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentScalingParameterRepository;
@@ -16,26 +16,26 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class AdjustmentScalingParameterService {
     @Autowired
-    AdjustmentScalingParameterRepository parameterRepository;
+    AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
 
-    public AdjustmentScalingParameterEntity getAdjustmentScalingParameterParameterByNode(Integer ideNode) {
-        return parameterRepository.getAdjustmentScalingParameterByAdjustmentNodeBy(ideNode);
+    public ScalingAdjustmentParameter getAdjustmentScalingParameterParameterByNode(Integer ideNode) {
+        return adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);
     }
 
-    public AdjustmentScalingParameterEntity save(AdjustmentScalingParameterEntity parameterEntity) {
-        return parameterRepository.save(parameterEntity);
+    public ScalingAdjustmentParameter save(ScalingAdjustmentParameter parameterEntity) {
+        return adjustmentScalingParameterRepository.save(parameterEntity);
     }
 
     public void delete(Integer id) {
-        this.parameterRepository.delete(
-                this.parameterRepository.
+        this.adjustmentScalingParameterRepository.delete(
+                this.adjustmentScalingParameterRepository.
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
 
     public void deleteByNodeId(Integer nodeId) {
-        parameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeScaling_AdjustmentNodeId(nodeId);
+        adjustmentScalingParameterRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

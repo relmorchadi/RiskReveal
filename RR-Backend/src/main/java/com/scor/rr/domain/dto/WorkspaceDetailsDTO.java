@@ -1,7 +1,10 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.ProjectView;
+import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +13,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
+@Data
+@NoArgsConstructor
 public class WorkspaceDetailsDTO {
 
     private String id;
@@ -22,15 +27,15 @@ public class WorkspaceDetailsDTO {
     private Date inceptionDate;
     private Date expiryDate;
     private String subsidiaryLedgerId;
-    List<String> treatySections;
-    List<String> years;
-    List<ProjectView> projects;
+    private Boolean isFavorite;
+    private Boolean isPinned;
+    private String contractDatasource;
+    private List<String> treatySections;
+    private List<Integer> years;
+    private List<ProjectCardView> projects;
 
-    public WorkspaceDetailsDTO() {
-    }
 
-    public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years, List<ProjectView> projects) {
-        ContractSearchResult first = items.get(0);
+    public WorkspaceDetailsDTO(ContractSearchResult first, List<ContractSearchResult> items, List<Integer> years, List<ProjectCardView> projects, Boolean isFavorite, Boolean isPinned) {
         this.id = first.getId();
         this.workspaceName = first.getWorkspaceName();
         this.cedantCode = first.getCedantCode();
@@ -44,110 +49,10 @@ public class WorkspaceDetailsDTO {
         this.inceptionDate= first.getInceptionDate();
         this.expiryDate = first.getExpiryDate();
         this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
+        this.contractDatasource= first.getContractSourceTypeName();
         this.projects= projects;
+        this.isFavorite = isFavorite;
+        this.isPinned = isPinned;
     }
 
-    public String getWorkspaceName() {
-        return workspaceName;
-    }
-
-    public void setWorkspaceName(String workspaceName) {
-        this.workspaceName = workspaceName;
-    }
-
-    public String getCedantCode() {
-        return cedantCode;
-    }
-
-    public void setCedantCode(String cedantCode) {
-        this.cedantCode = cedantCode;
-    }
-
-    public String getCedantName() {
-        return cedantName;
-    }
-
-    public void setCedantName(String cedantName) {
-        this.cedantName = cedantName;
-    }
-
-    public String getSubsidiaryId() {
-        return subsidiaryId;
-    }
-
-    public void setSubsidiaryId(String subsidiaryId) {
-        this.subsidiaryId = subsidiaryId;
-    }
-
-    public String getSubsidiaryName() {
-        return subsidiaryName;
-    }
-
-    public void setSubsidiaryName(String subsidiaryName) {
-        this.subsidiaryName = subsidiaryName;
-    }
-
-    public String getLedgerName() {
-        return ledgerName;
-    }
-
-    public void setLedgerName(String ledgerName) {
-        this.ledgerName = ledgerName;
-    }
-
-    public Date getInceptionDate() {
-        return inceptionDate;
-    }
-
-    public void setInceptionDate(Date inceptionDate) {
-        this.inceptionDate = inceptionDate;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public String getSubsidiaryLedgerId() {
-        return subsidiaryLedgerId;
-    }
-
-    public void setSubsidiaryLedgerId(String subsidiaryLedgerId) {
-        this.subsidiaryLedgerId = subsidiaryLedgerId;
-    }
-
-    public List<String> getTreatySections() {
-        return treatySections;
-    }
-
-    public void setTreatySections(List<String> treatySections) {
-        this.treatySections = treatySections;
-    }
-
-    public List<String> getYears() {
-        return years;
-    }
-
-    public void setYears(List<String> years) {
-        this.years = years;
-    }
-
-    public List<ProjectView> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<ProjectView> projects) {
-        this.projects = projects;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 }

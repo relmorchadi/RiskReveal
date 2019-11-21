@@ -1,6 +1,6 @@
 <!--<cdk-virtual-scroll-viewport class="card-holder-wrap" [itemSize]="420/3">-->
-  <!--      <div *cdkVirtualFor="let project of projects$ | async" class="card-holder">-->
-  <!--  <div *cdkVirtualFor="let project of projects; let i=index" class="card-holder">-->
+<!--      <div *cdkVirtualFor="let project of projects$ | async" class="card-holder">-->
+<!--  <div *cdkVirtualFor="let project of projects; let i=index" class="card-holder">-->
 <div class="card-holder-wrap">
   <div *ngFor="let project of projects; let i=index" class="card-holder">
     <div class="project-card mx-1" (click)="select({projectId: project?.projectId ,projectIndex: i})"
@@ -31,12 +31,13 @@
               <span>{{project?.projectId | trimFormat}}</span>
             </div>
             <div class="d-flex align-items-center">
-              <div [ngStyle]="{'background': setBackground(project?.carStatus)}" class="car-status-temp">{{project?.carStatus}}</div>
+              <div [ngStyle]="{'background': setBackground(project?.carStatus)}"
+                   class="car-status-temp">{{project?.carStatus}}</div>
             </div>
           </div>
           <div class="d-flex flex-column" *ngIf="project.projectType !== 'fac'">
-            <span>{{project?.name}}</span>
-            <span>{{project?.projectId | trimFormat}}</span>
+            <span>{{project?.projectName}}</span>
+            <span>{{project?.projectId}}</span>
           </div>
         </div>
         <div class="icon-card-wrapper">
@@ -46,16 +47,19 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-              <li nz-menu-item class="contextMenu border-bottom" *ngIf="project.projectType === 'treaty'"
+              <li nz-menu-item class="contextMenu border-bottom"
+                  *ngIf="project.projectType === 'treaty' || status === 'treaty'"
                   (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})"><i
                 class="icon-trash-alt"></i>Delete
               </li>
-              <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
+              <li nz-menu-item (click)="edit({project: project})" class="contextMenu"><i class="icon-edit"></i>Edit
+                Project Properties
+              </li>
             </ul>
           </nz-dropdown>
-          <!--              <i class="icon-ellipsis-h"></i>
-                        <i *ngIf="project?.selected" class="icon-check_24px"></i>
-                        <span *ngIf="!project?.selected"></span>-->
+          <!--                        <i class="icon-ellipsis-h"></i>
+                                  <i *ngIf="project?.selected" class="icon-check_24px"></i>
+                                  <span *ngIf="!project?.selected"></span>-->
         </div>
       </div>
       <div class="project-progress d-flex justify-content-center align-items-center">
@@ -124,9 +128,11 @@
         <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'fac'">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
-          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</a>
+          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
+            [{{project?.sourceProjectId}}]</a>
         </div>
-        <div style="height: 65px; padding: 0" class="d-flex flex-column project-kpi-details-title" *ngIf="project.projectType === 'fac'">
+        <div style="height: 65px; padding: 0" class="d-flex flex-column project-kpi-details-title"
+             *ngIf="project.projectType === 'fac'">
           <div style="padding: 6px 0;" class="d-flex border-bottom">
             <span class="field-car-status">CAR ID :</span>
             <span class="font-weight-bold">{{project?.id | parseId}}</span>
@@ -136,8 +142,8 @@
             <span class="font-weight-bold">{{project?.uwAnalysis}}</span>
           </div>
         </div>
-        <div class="project-kpi-details-title" *ngIf="project?.projectType === 'treaty'">
-          {{project?.description}}
+        <div class="project-kpi-details-title" *ngIf="status === 'treaty'">
+          {{project?.projectDescription}}
         </div>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
@@ -151,12 +157,17 @@
           <span class="text-center dt-11"
                 style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
         </div>
+        <div *ngIf="status === 'treaty'" class="border-top d-flex project-kpi-details-content">
+          <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Assigned Analyst</span>
+          <span class="pr-4 dt-11 project-kpi-creat-wrap">Nathalie Dulac</span>
+          <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;"></span>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 
-  <!--  </div>-->
+<!--  </div>-->
 
 <!--</cdk-virtual-scroll-viewport>-->

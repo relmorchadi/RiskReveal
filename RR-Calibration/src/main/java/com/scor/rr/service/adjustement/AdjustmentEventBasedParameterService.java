@@ -19,8 +19,8 @@ public class AdjustmentEventBasedParameterService {
     @Autowired
     AdjustmentEventBasedParameterRepository eventBasedParameterRepository;
 
-    public AdjustmentEventBasedParameterEntity getAdjustmentEventBasedParameterByNode(Integer ideNode) {
-        return eventBasedParameterRepository.findAdjustmentEventBasedParameterByAdjustmentNode(ideNode);
+    public AdjustmentEventBasedParameterEntity getAdjustmentEventBasedParameterByNode(Long idNode) {
+        return eventBasedParameterRepository.findByAdjustmentNodeAdjustmentNodeId(idNode);
     }
 
     public AdjustmentEventBasedParameterEntity save(AdjustmentEventBasedParameterEntity parameterEntity) {
@@ -36,7 +36,7 @@ public class AdjustmentEventBasedParameterService {
     }
 
     public void deleteByNodeId(Integer nodeId) {
-        eventBasedParameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeId_AdjustmentNodeId(nodeId);
+        eventBasedParameterRepository.deleteByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

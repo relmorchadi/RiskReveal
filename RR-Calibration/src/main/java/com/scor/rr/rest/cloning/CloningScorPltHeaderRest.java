@@ -16,7 +16,7 @@ public class CloningScorPltHeaderRest {
 
 
     @GetMapping("clone-plt")
-    public PltHeaderEntity clonePltWithAdjustment(int pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity clonePltWithAdjustment(Integer pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
         return cloningScorPltHeader.clonePltWithAdjustment(pltHeaderEntityInitialId,workspaceId);
     }
 }

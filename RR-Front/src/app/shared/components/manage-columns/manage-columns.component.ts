@@ -50,16 +50,16 @@ export class ManageColumnsComponent implements OnInit {
       if (container.id === 'usedListOfColumns') {
         moveItemInArray(
           this.listOfUsedColumns,
-          event.previousIndex + 1,
-          event.currentIndex + 1
+          event.previousIndex,
+          event.currentIndex
         );
       }
     } else {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        event.previousContainer.id === 'usedListOfColumns' ? event.previousIndex + 1 : event.previousIndex,
-        event.container.id === 'availableListOfColumns' ? event.currentIndex : event.currentIndex + 1
+        event.previousIndex,
+        event.currentIndex
       );
     }
   }

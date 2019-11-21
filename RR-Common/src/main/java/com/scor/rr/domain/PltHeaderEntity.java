@@ -8,7 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "PLTHeader", schema = "dbo", catalog = "RiskReveal")
 public class PltHeaderEntity {
-    private int pltHeaderId;
+    private Integer pltHeaderId;
     private EntityEntity entity;
     private String pltType;
     private RrAnalysisEntity rrAnalysisEntity;
@@ -88,10 +88,8 @@ public class PltHeaderEntity {
 
     }
 
-
-
     @Basic
-    @Column(name = "PLTTYPE", length = 255)
+    @Column(name = "PLTType", length = 255)
     public String getPltType() {
         return pltType;
     }
@@ -434,11 +432,11 @@ public class PltHeaderEntity {
     @Id
     @Column(name = "PltHeaderId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getPltHeaderId() {
+    public Integer getPltHeaderId() {
         return pltHeaderId;
     }
 
-    public void setPltHeaderId(int pltHeaderId) {
+    public void setPltHeaderId(Integer pltHeaderId) {
         this.pltHeaderId = pltHeaderId;
     }
 
@@ -579,7 +577,7 @@ public class PltHeaderEntity {
         this.cloningSource = cloningSource;
     }
     @ManyToOne
-    @JoinColumn(name = "BinFileId", referencedColumnName = "BinFileId",insertable = false,updatable = false)
+    @JoinColumn(name = "BinFileId", referencedColumnName = "BinFileId")
     public BinFileEntity getBinFileEntity() {
         return binFileEntity;
     }

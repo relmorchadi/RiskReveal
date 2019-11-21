@@ -4,8 +4,7 @@ import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
-import com.scor.rr.repository.RRAnalysisRepository;
+import com.scor.rr.repository.RranalysisRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.XMLWriter;
@@ -34,7 +33,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
     private static final Logger log = LoggerFactory.getLogger(ModellingOptionsExtractor.class);
 
     @Autowired
-    RRAnalysisRepository rrAnalysisRepository;
+    RranalysisRepository rrAnalysisRepository;
 
     @Autowired
     private TransformationPackage transformationPackage;

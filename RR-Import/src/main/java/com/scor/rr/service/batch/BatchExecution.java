@@ -42,11 +42,12 @@ public class BatchExecution {
                     .addLong("importSequence", 1l)
                     .addString("userId", importLossDataParams.getUserId())
                     .addString("projectId", importLossDataParams.getProjectId())
-                    .addString("sourceResultIdsInput", importLossDataParams.getSourceResultInputIds())
+                    .addString("sourceResultIdsInput", importLossDataParams.getRlImportSelectionIds())
+                    .addString("rlPortfolioSelectionIds", importLossDataParams.getRlPortfolioSelectionIds())
                     .addString("instanceId", importLossDataParams.getInstanceId())
                     .addDate("runDate", new Date());
 
-            log.info("Starting import batch: userId {}, projectId {}, sourceResultIds {}", importLossDataParams.getUserId(), importLossDataParams.getProjectId(), importLossDataParams.getSourceResultInputIds());
+            log.info("Starting import batch: userId {}, projectId {}, sourceResultIds {}", importLossDataParams.getUserId(), importLossDataParams.getProjectId(), importLossDataParams.getRlImportSelectionIds());
 
             JobExecution execution = jobLauncher.run(importLossData, builder.toJobParameters());
             return execution.getId();

@@ -36,7 +36,7 @@ public class DefaultAdjustmentService {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    AdjustmentnodeRepository adjustmentnodeRepository;
+    AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
     DefaultAdjustmentRegionPerilService defaultAdjustmentRegionPerilService;
@@ -61,13 +61,13 @@ public class DefaultAdjustmentService {
     // - one take DefaultAdjustmentNodeEntity as input and return a Adjustment Node
     // We could have a global function that calls these two methods to take as input Pure PLT ID and return a Default Adjustment Thread / Nodes for it if any
 
-    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(int targetRapId,
-                                                                                                int regionPerilId,
-                                                                                                int marketChannelId,
-                                                                                                String engineType,
-                                                                                                int pltEntityId
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(int targetRapId,
+                                                                                          int regionPerilId,
+                                                                                          int marketChannelId,
+                                                                                          String engineType,
+                                                                                          int pltEntityId
                                                                                                  ) throws RRException {
-        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = new ArrayList<>();
+        List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEntityIdEquals(
                 targetRapId,
                 marketChannelId,
@@ -96,7 +96,7 @@ public class DefaultAdjustmentService {
                                 .collect(Collectors.toList());
                         if (!defaultAdjustmentThreadEntities.isEmpty()) {
                             for (DefaultAdjustmentThreadEntity defaultAdjustmentThreadEntity : defaultAdjustmentThreadEntities) {
-                                List<DefaultAdjustmentNodeEntity> defaultAdjustmentNode = defaultAdjustmentNodeRepository.findAll().stream().filter(defaultAdjustmentNodeEntity -> defaultAdjustmentNodeEntity.getDefaultAdjustmentThread().getDefaultAdjustmentThreadId() == defaultAdjustmentThreadEntity.getDefaultAdjustmentThreadId()).collect(Collectors.toList());
+                                List<DefaultAdjustmentNode> defaultAdjustmentNode = defaultAdjustmentNodeRepository.findAll().stream().filter(defaultAdjustmentNodeEntity -> defaultAdjustmentNodeEntity.getDefaultAdjustmentThread().getDefaultAdjustmentThreadId() == defaultAdjustmentThreadEntity.getDefaultAdjustmentThreadId()).collect(Collectors.toList());
                                 if (!defaultAdjustmentNode.isEmpty()) {
                                     defaultAdjustmentNodeEntities.addAll(defaultAdjustmentNode);
                                 }
@@ -109,8 +109,8 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
-        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = new ArrayList<>();
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
+        List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
             return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
@@ -124,8 +124,8 @@ public class DefaultAdjustmentService {
     }
 
     public AdjustmentThreadEntity createDefaultThread(AdjustmentThreadEntity adjustmentThreadEntity) throws RRException {
-        List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getFinalPLT().getPltHeaderId());
-        for (DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
+        List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getInitialPLT().getPltHeaderId());
+        for (DefaultAdjustmentNode defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
             adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
         }
         return adjustmentThreadEntity;

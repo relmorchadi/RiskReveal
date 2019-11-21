@@ -10,8 +10,6 @@ export class WorkspaceModel {
   savedData: {riskLink: {
     edmrdmSelection: any
   }};
-  favorite: any[];
-  pinned: any[];
   routing: string;
   loading: boolean;
   // paginationParams:any[];
