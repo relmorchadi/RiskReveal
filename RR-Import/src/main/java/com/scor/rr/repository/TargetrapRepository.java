@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface TargetRAPRepository extends JpaRepository<TargetRAP, Long> {
+public interface TargetrapRepository extends JpaRepository<TargetRAP, Long> {
 
     Optional<TargetRAP> findByTargetRAPCode(String code);
 }

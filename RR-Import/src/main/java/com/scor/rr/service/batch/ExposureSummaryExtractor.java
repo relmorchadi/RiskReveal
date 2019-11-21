@@ -2,7 +2,6 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
-import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
 import com.scor.rr.domain.reference.RegionPeril;
@@ -51,7 +50,7 @@ public class ExposureSummaryExtractor {
     private GlobalExposureViewRepository globalExposureViewRepository;
 
     @Autowired
-    private ProjectImportRunRepository projectImportRunRepository;
+    private ProjectimportrunRepository projectImportRunRepository;
 
     @Autowired
     private ExposureViewRepository exposureViewRepository;

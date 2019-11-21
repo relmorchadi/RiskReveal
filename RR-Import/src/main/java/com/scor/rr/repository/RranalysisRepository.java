@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface RRAnalysisRepository extends JpaRepository<RRAnalysis, Long> {
+public interface RranalysisRepository extends JpaRepository<RRAnalysis, Long> {
 
     @Modifying
     @Query("update RRAnalysis rra set rra.exchangeRate=:exRate where rra.analysisId=:analysisId")
