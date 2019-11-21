@@ -8,7 +8,6 @@ import {Store} from '@ngxs/store';
 })
 export class PinComponent implements OnInit {
   @Output('pinWs') pinWorkspaceAction: any = new EventEmitter<any>();
-  @Output('unpinWs') unpinWorkspaceAction: any = new EventEmitter<any>();
   @Input('active') active;
 
   constructor(private store: Store) {
@@ -18,11 +17,7 @@ export class PinComponent implements OnInit {
   }
 
   pinWorkspace() {
-    if (!this.active) {
-      this.unpinWorkspaceAction.emit();
-    } else {
-      this.pinWorkspaceAction.emit();
-    }
+    this.pinWorkspaceAction.emit();
   }
 
 }

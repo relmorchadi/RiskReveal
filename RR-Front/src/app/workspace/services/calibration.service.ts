@@ -4,7 +4,7 @@ import * as fromPlt from "../store/actions";
 import {applyAdjustment} from "../store/actions";
 import {map} from "rxjs/operators";
 import * as _ from "lodash";
-import {PltApi} from "./plt.api";
+import {PltApi} from "./api/plt.api";
 import {
   ADJUSTMENT_APPLICATION,
   ADJUSTMENT_TYPE,

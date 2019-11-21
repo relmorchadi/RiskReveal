@@ -136,13 +136,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     }));
   }
 
-  addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
-    this.dispatch([new fromWs.MarkWsAsFavorite({wsIdentifier}), new fromHeader.AddWsToFavorite({
-      wsId,
-      uwYear,
-      workspaceName,
-      programName,
-      cedantName
+  toggleFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
+    this.dispatch([new fromHeader.ToggleFavoriteWsState({
+      userId: 1,
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear
     })]);
   }
 
@@ -162,10 +160,6 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     const projectIndex = _.findIndex(this.data[this.currentWsIdentifier].projects,
       (item: any) => item.id === selectionEvent);
     this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.currentWsIdentifier}));
-  }
-
-  unFavorite(wsIdentifier, {wsId, uwYear}) {
-    this.dispatch([new fromWs.MarkWsAsNonFavorite({wsIdentifier}), new fromHeader.DeleteWsFromFavorite({wsId, uwYear})])
   }
 
   leftMenuNavigation({route}, {wsId, uwYear}) {

@@ -1,7 +1,7 @@
 package com.scor.rr.repository.specification;
 
-import com.scor.rr.domain.PltManagerView;
-import com.scor.rr.domain.PltManagerView_;
+import com.scor.rr.domain.TargetBuild.PLTManagerView;
+import com.scor.rr.domain.TargetBuild.PLTManagerView_;
 import com.scor.rr.domain.dto.PltFilter;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -14,30 +14,25 @@ import javax.persistence.metamodel.SingularAttribute;
 import static java.util.Optional.ofNullable;
 
 @Component
-public class PltTableSpecification extends BaseSpecification<PltManagerView,PltFilter> {
+public class PltTableSpecification extends BaseSpecification<PLTManagerView,PltFilter> {
 
-    public Specification<PltManagerView> getFilter(PltFilter pltFilter) {
+    public Specification<PLTManagerView> getFilter(PltFilter pltFilter) {
         return Specification
-                .where(ofNullable(pltFilter.getPltId()).map(id -> assertIsLike(PltManagerView_.pltId, id)).orElse(null))
-                .and(ofNullable(pltFilter.getPltName()).map(name -> assertIsLike(PltManagerView_.pltName, name)).orElse(null))
-                .and(ofNullable(pltFilter.getPeril()).map(peril -> assertIsLike(PltManagerView_.peril, peril)).orElse(null))
-                .and(ofNullable(pltFilter.getRegionPerilCode()).map(rpCode -> assertIsLike(PltManagerView_.regionPerilCode, rpCode)).orElse(null))
-                .and(ofNullable(pltFilter.getRegionPerilName()).map(rpName -> assertIsLike(PltManagerView_.regionPerilName, rpName)).orElse(null))
-                .and(ofNullable(pltFilter.getGrain()).map(grain -> assertIsLike(PltManagerView_.grain, grain)).orElse(null))
-                .and(ofNullable(pltFilter.getVendorSystem()).map(vendorSystem -> assertIsLike(PltManagerView_.vendorSystem, vendorSystem)).orElse(null))
-                .and(AttributeEquals(PltManagerView_.workspaceId, pltFilter.getWorkspaceId()))
-                .and(AttributeEquals(PltManagerView_.uwy, pltFilter.getUwy()))
-                .and(AttributeEquals(PltManagerView_.project, pltFilter.getProject()));
+                .where(ofNullable(pltFilter.getPltId()).map(id -> assertIsLike(PLTManagerView_.pltId, id)).orElse(null))
+                .and(ofNullable(pltFilter.getPltName()).map(name -> assertIsLike(PLTManagerView_.pltName, name)).orElse(null))
+                .and(ofNullable(pltFilter.getRegionPerilCode()).map(rpCode -> assertIsLike(PLTManagerView_.regionPerilCode, rpCode)).orElse(null))
+                .and(ofNullable(pltFilter.getGrain()).map(grain -> assertIsLike(PLTManagerView_.grain, grain)).orElse(null))
+                .and(ofNullable(pltFilter.getVendorSystem()).map(vendorSystem -> assertIsLike(PLTManagerView_.vendorSystem, vendorSystem)).orElse(null));
     }
 
-    private static Specification<PltManagerView> assertIsLike(SingularAttribute<PltManagerView, ?> attr, String keyword) {
-        return (Root<PltManagerView> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+    private static Specification<PLTManagerView> assertIsLike(SingularAttribute<PLTManagerView, ?> attr, String keyword) {
+        return (Root<PLTManagerView> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             return cb.like(root.get(attr).as(String.class), "%" + keyword + "%");
         };
     }
 
-    private static Specification<PltManagerView> assertIsEqual(SingularAttribute<PltManagerView, ?> attr, String keyword) {
-        return (Root<PltManagerView> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+    private static Specification<PLTManagerView> assertIsEqual(SingularAttribute<PLTManagerView, ?> attr, String keyword) {
+        return (Root<PLTManagerView> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             return cb.equal(root.get(attr).as(String.class), keyword);
         };
     }

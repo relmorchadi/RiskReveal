@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto;
 
-import com.scor.rr.domain.UserTag;
+import com.scor.rr.domain.TargetBuild.UserTag;
 
 import java.util.List;
 

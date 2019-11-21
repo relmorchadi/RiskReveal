@@ -23,7 +23,10 @@
                   {{dt?.selectedRows?.length}} of {{paginationOption?.total}} selected
                 </div>
                 <ng-template #noSelects>
-                  Showing {{paginationOption?.currentPage + 1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
+                  Showing
+                  {{paginationOption?.offset + 1 + ' to '}}
+                  {{paginationOption?.total > paginationOption?.offset + paginationOption?.pageSize ? paginationOption?.offset + paginationOption?.pageSize : paginationOption?.total}}
+                  {{' of ' + paginationOption?.total}}
                   Results
                 </ng-template>
               </ng-template>
@@ -95,12 +98,22 @@
 
 
         </div>
-        <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
-                   [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
-                   [tableWidth]="'1000px'" [tableHeight]="'560px'" (loadMore)="loadMore($event)"
+        <app-table [tableColumn]="columns" [sortable]="false"
+                   [rows]="100"
+                   [totalRecords]="paginationOption?.total"
+                   #dt
+                   [listOfData]="contracts"
+                   [virtualScroll]="true"
+                   (selectOne)="openWorkspaceInSlider($event)"
+                   [tableWidth]="'1000px'"
+                   [tableHeight]="'560px'"
+                   (loadMore)="loadMore($event)"
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
-                   [activateContextMenu]="true" [loading]="loading">
+                   [activateContextMenu]="true"
+                   [loading]="loading">
         </app-table>
       </div>
 

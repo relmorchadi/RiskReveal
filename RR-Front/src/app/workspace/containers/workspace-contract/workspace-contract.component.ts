@@ -126,23 +126,11 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-    this.dispatch([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
-  }
-
-  unPinWorkspace() {
-    const {wsId, uwYear} = this.workspace;
-    this.dispatch([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ]);
+    this.dispatch([new fromHeader.TogglePinnedWsState({
+      "userId": 1,
+      "workspaceContextCode": this.workspace.wsId,
+      "workspaceUwYear": this.workspace.uwYear
+    })]);
   }
 
   changeCollapse() {
@@ -164,7 +152,9 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   filterSelection() {
     const selectedDivision: any = _.filter(this.facData.division , item => item.selected);
     if (selectedDivision.length > 0) {
-      const facDataFiltered = _.filter(this.facData.regionPeril, item => item.division == selectedDivision[0].divisionNo);
+      const facDataFiltered = _.filter(this.facData.regionPeril, item => {
+        return _.includes(item.division, selectedDivision[0].divisionNo);
+      });
       return facDataFiltered.length > 0 ? facDataFiltered : this.facData.regionPeril;
     } else {
       return this.facData.regionPeril;

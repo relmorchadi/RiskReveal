@@ -8,5 +8,8 @@ public class ImportLossDataParams {
     private String projectId;
     private String userId;
     private String instanceId;
-    private String sourceResultInputIds;
+    // String contains rlImportSelectionIds separated by ';'
+    private String rlImportSelectionIds;
+    // String contains rlPortfolioSelectionIds separated by ';'
+    private String rlPortfolioSelectionIds;
 }
