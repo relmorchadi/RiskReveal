@@ -5,7 +5,7 @@
     <parent>
         <artifactId>risk-reveal-root</artifactId>
         <groupId>com.scor.rr</groupId>
-        <version>${rr_version}</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -218,7 +218,7 @@
         <dependency>
             <groupId>com.scor.rr</groupId>
             <artifactId>common</artifactId>
-            <version>${rr_version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
