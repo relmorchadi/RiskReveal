@@ -1,8 +1,8 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.UserTag;
+import com.scor.rr.domain.TargetBuild.UserTag;
 import com.scor.rr.domain.dto.UserResponse;
-import com.scor.rr.repository.UserRepository;
+import com.scor.rr.repository.TargetBuild.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

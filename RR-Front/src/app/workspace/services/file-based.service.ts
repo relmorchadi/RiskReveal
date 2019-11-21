@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {FileBaseApi} from './fileBase.api';
+import {FileBaseApi} from './api/fileBase.api';
 import * as fromWs from '../store/actions';
 import * as _ from 'lodash';
 import produce from 'immer';

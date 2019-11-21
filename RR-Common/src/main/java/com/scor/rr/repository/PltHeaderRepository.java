@@ -4,6 +4,6 @@ import com.scor.rr.domain.PltHeaderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PltHeaderRepository extends JpaRepository<PltHeaderEntity, Integer> {
-    PltHeaderEntity findByPltHeaderId(int pkScorPltHeaderId);
+    PltHeaderEntity findByPltHeaderId(Integer pkScorPltHeaderId);
 }
 

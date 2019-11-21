@@ -1,9 +1,10 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentTypeEntity;
+import com.scor.rr.domain.AdjustmentType;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentTypeRepository;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,11 @@ public class AdjustmentTypeService {
     @Autowired
     AdjustmentTypeRepository adjustmentTypeRepository;
 
-    public List<AdjustmentTypeEntity> findAll(){
+    public List<AdjustmentType> findAll(){
         return adjustmentTypeRepository.findAll();
     }
 
-    public AdjustmentTypeEntity findOne(Integer id){
+    public AdjustmentType findOne(Integer id){
         return adjustmentTypeRepository.findById(id).orElseThrow(throwException(TYPE_NOT_FOUND,NOT_FOUND));
     }
 

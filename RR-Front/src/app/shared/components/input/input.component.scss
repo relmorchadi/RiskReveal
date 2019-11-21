@@ -1,0 +1,22 @@
+.filter-input {
+  width: 100%;
+  background-color: #F5F5F5;
+  display: flex;
+
+  i {
+    max-width: 10%;
+    margin-left: 5px;
+    background-color: #F5F5F5;
+  }
+
+  input {
+    padding: 0px 1px 0px 1px;
+    background-color: #F5F5F5;
+    border: none;
+    height: 25px;
+
+    &:focus {
+      outline: 0;
+    }
+  }
+}

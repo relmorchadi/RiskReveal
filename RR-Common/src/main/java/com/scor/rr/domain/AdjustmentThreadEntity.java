@@ -14,12 +14,12 @@ public class AdjustmentThreadEntity {
     private Timestamp lastModifiedOn;
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
-    private int adjustmentThreadId;
+    private Integer adjustmentThreadId;
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
     private EntityEntity entity;
-
+    private String threadStatus;
 
     @ManyToOne
     @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
@@ -49,6 +49,16 @@ public class AdjustmentThreadEntity {
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
+    }
+
+    @Basic
+    @Column(name = "ThreadStatus", length = 100)
+    public String getThreadStatus() {
+        return threadStatus;
+    }
+
+    public void setThreadStatus(String threadStatus) {
+        this.threadStatus = threadStatus;
     }
 
     @Basic
@@ -114,11 +124,11 @@ public class AdjustmentThreadEntity {
     @Id
     @Column(name = "AdjustmentThreadId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getAdjustmentThreadId() {
+    public Integer getAdjustmentThreadId() {
         return adjustmentThreadId;
     }
 
-    public void setAdjustmentThreadId(int adjustmentThreadId) {
+    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 
@@ -143,7 +153,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FinalPLT", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "InitialPLT", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getInitialPLT() {
         return initialPLT;
     }
@@ -153,7 +163,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "InitialPLT", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "FinalPLT", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getFinalPLT() {
         return finalPLT;
     }

@@ -10,7 +10,7 @@ import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.repository.RRAnalysisRepository;
+import com.scor.rr.repository.RranalysisRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ import static java.util.Optional.ofNullable;
 public class ELTConformer {
 
     @Autowired
-    RRAnalysisRepository rrAnalysisRepository;
+    RranalysisRepository rrAnalysisRepository;
 
     @Autowired
     TransformationPackage transformationPackage;

@@ -1,0 +1,5 @@
+<div class="filter-input"
+     [ngStyle]="{ 'visibility': visible ? 'visible' : 'hidden'}">
+  <i *ngIf="!focused" class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+  <input pInputText type="text" (focusin)="setFocus(true)" (focusout)="setFocus(false)" (input)="filter($event.target.value)" [ngModel]="value">
+</div>

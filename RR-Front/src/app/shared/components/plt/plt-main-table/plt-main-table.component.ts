@@ -316,10 +316,10 @@ export class PltMainTableComponent implements OnInit {
     return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
   }
 
-  filterByStatus(statue: string) {
+  filterByFalsely(bool: string) {
     this.actionDispatcher.emit({
-      type: tableStore.filterByStatus,
-      payload: statue
+      type: tableStore.filterByFalesely,
+      payload: bool
     })
   }
 
@@ -369,5 +369,9 @@ export class PltMainTableComponent implements OnInit {
   getElHeight() {
     const els = document.getElementsByClassName('ui-table-scrollable-header');
     return els.length ?  document.getElementsByClassName('ui-table-scrollable-header')[0].clientHeight + 'px' : 0;
+  }
+
+  log($event: FocusEvent) {
+    console.log($event)
   }
 }

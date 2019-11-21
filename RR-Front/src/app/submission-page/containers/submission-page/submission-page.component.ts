@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
-import {WsApi} from '../../../workspace/services/workspace.api';
+import {WsApi} from '../../../workspace/services/api/workspace.api';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';

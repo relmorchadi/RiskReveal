@@ -76,7 +76,7 @@ public class ScorPltHeaderService {
             return CalculAdjustement.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());
         }
         if (NONLINEAROEP.getValue().equals(parameterProcess.getType())) {
-            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBendings());
+            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         if (NonLinearEventDriven.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
@@ -85,7 +85,7 @@ public class ScorPltHeaderService {
             return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
         if (NONLINEARRETURNEVENTPERIOD.getValue().equals(parameterProcess.getType())) {
-            return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBendings());
+            return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         throwException(TYPE_NOT_FOUND, NOT_FOUND);
         return null;
@@ -95,7 +95,7 @@ public class ScorPltHeaderService {
         return new MultiExtentionReadPltFile().read(new File(path));
     }
 
-    public PltHeaderEntity findOne(int scorPltHeader) {
+    public PltHeaderEntity findOne(Integer scorPltHeader) {
         return pltHeaderRepository.findByPltHeaderId(scorPltHeader);
     }
 

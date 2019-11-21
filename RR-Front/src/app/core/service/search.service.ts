@@ -46,11 +46,24 @@ export class SearchService {
   }
 
   expertModeSearch(filter) {
+    console.log(filter);
     return this._http.post(`${this.api}workspace/expert-mode`, filter);
   }
 
   loadShort(): Observable<any> {
     return this._http.get(`${this.api}shortcuts`);
+  }
+
+  getSavedSearch(payload) : Observable<any> {
+    return this._http.get(`${this.api}saved-search`, { params: payload })
+  }
+
+  getMostUsedSavedSearch(payload) : Observable<any> {
+    return this._http.get(`${this.api}saved-search/most`, { params: payload })
+  }
+
+  saveSearch(payload): Observable<any> {
+    return this._http.post(this.api, payload);
   }
 
   affectItems(item) {

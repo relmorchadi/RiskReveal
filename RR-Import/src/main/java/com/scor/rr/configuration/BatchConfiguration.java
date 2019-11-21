@@ -30,7 +30,7 @@ public class BatchConfiguration {
     }
 
 
-    @Bean
+    @Bean(name = "rrJobRepository")
     public JobRepository getJobRepository() throws Exception{
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setTransactionManager(getDataSourceTransactionManager());

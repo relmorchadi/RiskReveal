@@ -1,5 +1,6 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.domain.ModelPortfolio;
 import com.scor.rr.domain.ProjectImportRun;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
@@ -7,10 +8,11 @@ import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
 import com.scor.rr.domain.model.LossDataHeader;
 import com.scor.rr.domain.reference.Currency;
 import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.riskLink.ModellingSystemInstance;
+import com.scor.rr.domain.riskLink.RlPortfolioSelection;
 import com.scor.rr.domain.riskLink.RlSourceResult;
 import com.scor.rr.domain.riskReveal.Project;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -35,7 +37,7 @@ public class RegionPerilExtractor {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private ProjectImportRunRepository projectImportRunRepository;
+    private ProjectimportrunRepository projectImportRunRepository;
 
     @Autowired
     private RlSourceResultRepository rlSourceResultRepository;
@@ -50,7 +52,7 @@ public class RegionPerilExtractor {
     private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
 
     @Autowired
-    private RRAnalysisRepository rrAnalysisRepository;
+    private RranalysisRepository rrAnalysisRepository;
 
     @Autowired
     private CurrencyRepository currencyRepository;
@@ -59,16 +61,25 @@ public class RegionPerilExtractor {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private TargetRAPRepository targetRAPRepository;
+    private TargetrapRepository targetRAPRepository;
 
     @Autowired
     private AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
+
+    @Autowired
+    private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
+
+    @Autowired
+    private ModelPortfolioRepository modelPortfolioRepository;
 
     @Value("#{jobParameters['projectId']}")
     private Long projectId;
 
     @Value("#{jobParameters['sourceResultIdsInput']}")
     private String sourceResultIdsInput;
+
+    @Value("#{jobParameters['rlPortfolioSelectionIds']}")
+    private String rlPortfolioSelectionIds;
 
     @Value("#{jobParameters['instanceId']}")
     private String instanceId;
@@ -100,6 +111,7 @@ public class RegionPerilExtractor {
         // build RRAnalysis ------------------------------------------------------------
         Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds = new HashMap<>();
         Map<String, Long> fpRRAnalysis = new HashMap<>();
+        List<ModelPortfolio> modelPortfolios = new ArrayList<>();
 
         if (sourceResultIdsInput != null) {
             String[] sourceResultIds = sourceResultIdsInput.split(";");
@@ -237,6 +249,56 @@ public class RegionPerilExtractor {
             log.info(">>>> Step 1 : load region peril completed");
         } else {
             log.warn(">>>> no source result ids were received");
+        }
+
+        if (rlPortfolioSelectionIds != null) {
+            String[] portfolioSelectionIds = rlPortfolioSelectionIds.split(";");
+
+            for (String portfolioSelectionId : portfolioSelectionIds) {
+                RlPortfolioSelection rlPortfolioSelection;
+
+                if (StringUtils.isNumeric(portfolioSelectionId)) {
+                    Optional<RlPortfolioSelection> rlPortfolioSelectionOptional = rlPortfolioSelectionRepository.findById(Long.valueOf(portfolioSelectionId));
+                    if (rlPortfolioSelectionOptional.isPresent()) {
+                        rlPortfolioSelection = rlPortfolioSelectionOptional.get();
+                    } else {
+                        log.debug(">>>> Portfolio Selection was not found");
+                        continue;
+                    }
+                } else {
+                    log.debug(">>>> Portfolio Selection id is not numeric");
+                    continue;
+                }
+
+
+                ModellingSystemInstance modellingSystemInstance =
+                        modellingSystemInstanceRepository.findById(rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceId()).get();
+
+
+                ModelPortfolio modelPortfolio = new ModelPortfolio(null, rlPortfolioSelection.getProjectId(),
+                        new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRun.getProjectImportRunId(),
+                        rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
+                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),
+                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName(),
+                        modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion(),
+                        rlPortfolioSelection.getRlPortfolio().getEdmId(),
+                        rlPortfolioSelection.getRlPortfolio().getEdmName(),
+                        rlPortfolioSelection.getRlPortfolio().getPortfolioId(),
+                        rlPortfolioSelection.getRlPortfolio().getName(),
+                        rlPortfolioSelection.getRlPortfolio().getType(),
+                        "ALL",
+                        rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
+                        1.0d,
+                        rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
+                        rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
+                        rlPortfolioSelection.getRlPortfolio().getDescription(),
+                        rlPortfolioSelection.getRlPortfolio().getType(),
+                        rlPortfolioSelection.isImportLocationLevel()
+                );
+
+                modelPortfolios.add(modelPortfolioRepository.save(modelPortfolio));
+            }
+            transformationPackage.setModelPortfolios(modelPortfolios);
         }
     }
 

@@ -4,10 +4,10 @@
 
 export const environment = {
   production: true,
-  API_URI: 'http://localhost:8080/api/',
-  hmr: false
-
+  API_URI:'http://dcvdevalmf1:8880/risk-reveal/api/',
+  hmr:false
 };
+
 
 /*
  * For easier debugging in development mode, you can import the following file

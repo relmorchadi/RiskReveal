@@ -7,9 +7,9 @@ import java.util.Objects;
 @Table(name = "AdjustmentNodeProcessing", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeProcessingEntity {
     private int adjustmentNodeProcessingId;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode;
-    private PltHeaderEntity adjustedPlt;
-    private PltHeaderEntity inputPlt;
+    private AdjustmentNode adjustmentNode;
+    private PltHeaderEntity adjustedPLT;
+    private PltHeaderEntity inputPLT;
 
     @Id
     @Column(name = "AdjustmentNodeProcessingId", nullable = false)
@@ -36,32 +36,32 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "AdjustmentNode", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNode() {
-        return adjustmentNodeByFkAdjustmentNode;
+    @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNode getAdjustmentNode() {
+        return adjustmentNode;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode) {
-        this.adjustmentNodeByFkAdjustmentNode = adjustmentNodeByFkAdjustmentNode;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "AdjustedPlt", referencedColumnName = "PltHeaderId")
-    public PltHeaderEntity getAdjustedPlt() {
-        return adjustedPlt;
-    }
-
-    public void setAdjustedPlt(PltHeaderEntity adjustedPlt) {
-        this.adjustedPlt = adjustedPlt;
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
+        this.adjustmentNode = adjustmentNode;
     }
 
     @ManyToOne
-    @JoinColumn(name = "InputPlt", referencedColumnName = "PltHeaderId")
-    public PltHeaderEntity getInputPlt() {
-        return inputPlt;
+    @JoinColumn(name = "AdjustedPLTId", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getAdjustedPLT() {
+        return adjustedPLT;
     }
 
-    public void setInputPlt(PltHeaderEntity inputPlt) {
-        this.inputPlt = inputPlt;
+    public void setAdjustedPLT(PltHeaderEntity adjustedPLT) {
+        this.adjustedPLT = adjustedPLT;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "InputPLTId", referencedColumnName = "PltHeaderId")
+    public PltHeaderEntity getInputPLT() {
+        return inputPLT;
+    }
+
+    public void setInputPLT(PltHeaderEntity inputPLT) {
+        this.inputPLT = inputPLT;
     }
 }

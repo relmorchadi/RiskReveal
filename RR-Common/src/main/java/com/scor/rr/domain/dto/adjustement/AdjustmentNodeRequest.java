@@ -1,93 +1,44 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.util.List;
+import java.util.Map;
 
 public class AdjustmentNodeRequest {
-
-    private int adjustmentNodeId;
-    private String layer;
     private Integer sequence;
     private Boolean capped;
     private Integer adjustmentBasis;
     private Integer adjustmentType;
-    private Integer adjustmentState;
     private Integer adjustmentThreadId;
     private Double lmf;
     private Double rpmf;
     private List<PEATData> peatData;
-    private Integer scorPltHeaderInput;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings;
 
     public AdjustmentNodeRequest() {
     }
 
-    public AdjustmentNodeRequest(int adjustmentNodeId,
-                                 String layer,
-                                 Integer sequence,
+        public AdjustmentNodeRequest(Integer sequence,
                                  Boolean capped,
                                  Integer adjustmentBasis,
                                  Integer adjustmentType,
-                                 Integer adjustmentState,
                                  Integer adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
                                  List<PEATData> peatData,
-                                 Integer scorPltHeaderInput,
-                                 List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentNodeId = adjustmentNodeId;
-        this.layer = layer;
+                                 List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentState;
         this.adjustmentThreadId = adjustmentThreadId;
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
-        this.scorPltHeaderInput = scorPltHeaderInput;
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
-    }
-
-    public AdjustmentNodeRequest(String layer,
-                                 Integer sequence,
-                                 Boolean capped,
-                                 Integer adjustmentBasis,
-                                 Integer adjustmentType,
-                                 Integer adjustmentState,
-                                 Integer adjustmentThreadId,
-                                 Double lmf,
-                                 Double rpmf,
-                                 List<PEATData> peatData, Integer scorPltHeaderInput, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.layer = layer;
-        this.sequence = sequence;
-        this.adjustmentBasis = adjustmentBasis;
-        this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentState;
-        this.adjustmentThreadId = adjustmentThreadId;
-        this.lmf = lmf;
-        this.rpmf = rpmf;
-        this.peatData = peatData;
-        this.scorPltHeaderInput = scorPltHeaderInput;
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
-    }
-
-    public int getAdjustmentNodeId() {
-        return adjustmentNodeId;
-    }
-
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
-    }
-
-    public String getLayer() {
-        return layer;
-    }
-
-    public void setLayer(String layer) {
-        this.layer = layer;
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
+        this.capped = capped;
     }
 
     public Integer getSequence() {
@@ -114,13 +65,6 @@ public class AdjustmentNodeRequest {
         this.adjustmentType = adjustmentType;
     }
 
-    public Integer getAdjustmentState() {
-        return adjustmentState;
-    }
-
-    public void setAdjustmentState(Integer adjustmentState) {
-        this.adjustmentState = adjustmentState;
-    }
 
     public Integer getAdjustmentThreadId() {
         return adjustmentThreadId;
@@ -154,20 +98,12 @@ public class AdjustmentNodeRequest {
         this.peatData = peatData;
     }
 
-    public Integer getScorPltHeaderInput() {
-        return scorPltHeaderInput;
+    public List<ReturnPeriodBandingAdjustmentParameterRequest> getAdjustmentReturnPeriodBandings() {
+        return adjustmentReturnPeriodBandings;
     }
 
-    public void setScorPltHeaderInput(Integer scorPltHeaderInput) {
-        this.scorPltHeaderInput = scorPltHeaderInput;
-    }
-
-    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
-        return adjustmentReturnPeriodBendings;
-    }
-
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    public void setAdjustmentReturnPeriodBandings(List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public Boolean getCapped() {

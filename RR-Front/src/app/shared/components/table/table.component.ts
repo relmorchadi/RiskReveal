@@ -25,13 +25,14 @@ export class TableComponent implements OnInit {
   @Output('onRowSelect') onRowSelect: any = new EventEmitter<any>();
   @Output('onRowUnselect') onRowUnselect: any = new EventEmitter<any>();
   @Output('updateFavStatus') updateStatus: any = new EventEmitter<any>();
+  @Output('sortDataChange') sortDataChange: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
   FilterData: any = {};
-  sortData: any = {};
+  @Input('sortData') sortData;
   filterInput: any;
 
   @Input() loading: boolean;
@@ -72,7 +73,8 @@ export class TableComponent implements OnInit {
       command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
     },
   ];
-
+  @Input()
+  rows;
   @Input()
   totalRecords;
   @Input()
@@ -241,13 +243,12 @@ export class TableComponent implements OnInit {
 
   sortChange(field: any, sortCol: any) {
     if (!sortCol) {
-      this.sortData = _.merge({}, this.sortData, {[field]: 'asc'});
-    } else if (sortCol === 'asc') {
-      this.sortData = _.merge({}, this.sortData, {[field]: 'desc'});
-    } else if (sortCol === 'desc') {
-        this.sortData =  _.omit(this.sortData, `${field}`);
+      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'ASC'}));
+    } else if (sortCol === 'ASC') {
+      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'DESC'}));
+    } else if (sortCol === 'DESC') {
+        this.sortDataChange.emit(_.omit(this.sortData, `${field}`));
     }
-    console.log('this.sortData', this.sortData);
   }
 
   filter(key: string, value) {
@@ -260,4 +261,7 @@ export class TableComponent implements OnInit {
 
   }
 
+  log(dt: HTMLElement) {
+    console.log(dt);
+  }
 }

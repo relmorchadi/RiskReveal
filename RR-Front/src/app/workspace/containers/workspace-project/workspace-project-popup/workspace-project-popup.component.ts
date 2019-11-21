@@ -419,16 +419,19 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       keyword: new FormControl(null)
     });
     this.browesing= false;
+
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
-        title: 'basket',
+        title: 'pltDetail',
       },
       tabs: {'basket': true,'pltDetail': true},
       visible: false,
-      mode: "pop-up"
+      mode: "pop-up",
+      summary: {}
     };
 
     this.leftMenuInputs= {
@@ -593,6 +596,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       keyword,
       filter: this.filter,
       offset,
+      sort: [],
       size
     };
     this.searchService.expertModeSearch(params)
@@ -861,13 +865,15 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
-        title: 'basket',
+        title: 'pltDetail',
       },
       tabs: {'basket': true,'pltDetail': true},
       visible: false,
-      mode: "pop-up"
+      mode: "pop-up",
+      summary: {}
     };
     this.onVisibleChange.emit(false);
     this.destroy();

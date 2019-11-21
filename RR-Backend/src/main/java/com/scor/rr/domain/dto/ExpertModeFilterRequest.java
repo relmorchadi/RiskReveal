@@ -11,7 +11,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ExpertModeFilterRequest {
     List<ExpertModeFilter> filter;
+    List<ExpertModeSort> sort;
     String keyword;
     Integer offset;
     Integer size;
+    Boolean fromSavedSearch;
 }
