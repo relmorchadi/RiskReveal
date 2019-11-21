@@ -429,12 +429,13 @@ export class WorkspaceService {
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
     const {wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.projectApi.createProject(project, wsId, uwYear)
-      .pipe(map(p => {
+    return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
+      .pipe(map(prj => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          p ? draft.content[wsIdentifier].projects.unshift(p) : null
+          draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
+          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true}) : null
         }));
-        return ctx.dispatch(new fromWS.AddNewProjectSuccess(p));
+        return ctx.dispatch(new fromWS.AddNewProjectSuccess(prj));
       }), catchError(err => {
         ctx.dispatch(new fromWS.AddNewProjectFail({}));
         return EMPTY;
@@ -475,7 +476,7 @@ export class WorkspaceService {
       }))
       .subscribe((p) => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId)
+          draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId.projectId)
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });

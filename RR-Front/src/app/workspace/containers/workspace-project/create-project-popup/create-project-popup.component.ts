@@ -61,7 +61,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     this.store.dispatch(new fromWS.EditProject({
       data: {
         projectName: this.projectForm.projectName,
-        assignedTo: 'Nathalie Dulac',
+        assignedTo: 1,
         projectId: this.projectForm.projectId,
         projectDescription: this.projectForm.projectDescription
       },
@@ -82,13 +82,12 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   initNewProjectForm() {
-    console.log(this.projectForm);
     this.newProjectForm = new FormGroup({
       assignedTo: new FormControl(null),
       cloneSourceProjectId: new FormControl(null),
       clonedFlag: new FormControl(false),
       createdBy: new FormControl("Nathalie Dulac", Validators.required),
-      creationDate: new FormControl(null),
+      creationDate: new FormControl(new Date()),
       deleted: new FormControl(false),
       deletedBy: new FormControl(null),
       deletedDue: new FormControl(null),
