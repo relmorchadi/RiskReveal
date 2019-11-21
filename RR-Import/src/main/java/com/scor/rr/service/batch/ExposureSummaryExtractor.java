@@ -108,6 +108,7 @@ public class ExposureSummaryExtractor {
     public RepeatStatus extract() {
 
         try {
+            //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
             List<ProjectImportRun> projectImportRunList = projectImportRunRepository.findByProjectProjectId(Long.valueOf(projectId));
             ProjectImportRun projectImportRun = projectImportRunRepository.findByProjectProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
 
@@ -150,6 +151,10 @@ public class ExposureSummaryExtractor {
                                 entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getCurrency())
                                         .collect(Collectors.toList());
 
+                        //Note: add excludeRegionPerils (type varchar) into ModelPortfolio and RlPortfolioSelection.
+                        // List<String> portfolioExcludedRegionPeril will be built in a similar way as portfolioAndConformedCurrencyList (as describe in documentation) or by default null
+                        // It contains a list of excluded region perils, separated by comma.
+                        // How we can populate this field could be discussed later based on the screen design.
                         Integer runId = rmsService.createEDMPortfolioContext(instance,
                                 edmId,
                                 edmName,
@@ -157,7 +162,9 @@ public class ExposureSummaryExtractor {
                                 null);
 
                         if (runId != null) {
-
+                            // NOTE: be careful the volumetric you are keeping in memory at the same time.
+                            // It could be out of memory if user is importing too much portfolios.
+                            // Some kinds of buffering may be better.
                             List<ExposureSummaryData> allRRExposureSummaries = new ArrayList<>();
                             List<RLExposureSummaryItem> allRLExposureSummaries = new ArrayList<>();
                             Map<String, Object> params = new HashMap<>();
@@ -166,6 +173,8 @@ public class ExposureSummaryExtractor {
                             params.put("edm_name", edmName);
                             params.put("run_id", runId);
 
+                            //NOTE: we could process all ExposureViewDefinitions with type Source first, then reuse the RLExposureSummaryItem for conforming
+                            // Avoid invoking SummaryByCountry multiple times
                             exposureViewDefinitions.forEach(exposureViewDefinition -> {
                                 ExposureViewVersion exposureViewVersion = exposureViewVersionRepository.findByExposureViewDefinitionAndCurrent(exposureViewDefinition, true);
                                 if (exposureViewVersion != null) {
@@ -270,6 +279,9 @@ public class ExposureSummaryExtractor {
                                                 continue;
                                             }
                                             log.debug("Export to file: {}}", file.getAbsolutePath());
+                                            //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
+                                            // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
+                                            // Pass them as parameters for this method.
                                             RlModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
                                             if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
                                                 log.debug("==> success");
