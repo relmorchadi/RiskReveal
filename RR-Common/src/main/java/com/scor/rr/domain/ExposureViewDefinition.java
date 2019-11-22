@@ -21,6 +21,10 @@ public class ExposureViewDefinition {
     private Integer Order;
     @Column(name="ExposureSummaryType")
     private String exposureSummaryType;
+    @Column(name="ExposureSummaryAlias")
+    private String exposureSummaryAlias;
+    @Column(name="BasedOnSummaryAlias")
+    private String basedOnSummaryAlias;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ExposureViewId")

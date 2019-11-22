@@ -2,7 +2,6 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
-import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
 import com.scor.rr.domain.reference.RegionPeril;
@@ -175,30 +174,41 @@ public class ExposureSummaryExtractor {
 
                             //NOTE: we could process all ExposureViewDefinitions with type Source first, then reuse the RLExposureSummaryItem for conforming
                             // Avoid invoking SummaryByCountry multiple times
-                            exposureViewDefinitions.forEach(exposureViewDefinition -> {
-                                ExposureViewVersion exposureViewVersion = exposureViewVersionRepository.findByExposureViewDefinitionAndCurrent(exposureViewDefinition, true);
-                                if (exposureViewVersion != null) {
-                                    ExposureViewQuery exposureViewQuery = exposureViewQueryRepository.findByExposureViewVersion(exposureViewVersion);
+                            exposureViewDefinitions.stream()
+                                    .filter(exposureViewDefinition -> exposureViewDefinition.getExposureSummaryType().equalsIgnoreCase("SOURCE"))
+                                    .forEach(exposureViewDefinition -> {
 
-                                    GlobalViewSummary globalViewSummary = new GlobalViewSummary();
-                                    globalViewSummary.setInstanceId(instance);
-                                    globalViewSummary.setEdmId(edmId);
-                                    globalViewSummary.setEdmName(edmName);
-                                    globalViewSummary.setSummaryTitle(exposureViewDefinition.getName());
-                                    globalViewSummary.setSummaryOrder(exposureViewDefinition.getOrder());
-                                    globalViewSummary = globalViewSummaryRepository.save(globalViewSummary);
+                                        ExposureViewVersion exposureViewVersion = exposureViewVersionRepository.findByExposureViewDefinitionAndCurrent(exposureViewDefinition, true);
+                                        if (exposureViewVersion != null) {
+                                            ExposureViewQuery exposureViewQuery = exposureViewQueryRepository.findByExposureViewVersion(exposureViewVersion);
 
-                                    NamedParameterJdbcTemplate template = rmsService.createTemplate(instance);
-                                    List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
-                                            exposureViewQuery.getQuery(),
-                                            params,
-                                            new RLExposureSummaryItemRowMapper(globalViewSummary));
+                                            GlobalViewSummary globalViewSummary = new GlobalViewSummary();
+                                            globalViewSummary.setInstanceId(instance);
+                                            globalViewSummary.setEdmId(edmId);
+                                            globalViewSummary.setEdmName(edmName);
+                                            globalViewSummary.setSummaryTitle(exposureViewDefinition.getName());
+                                            globalViewSummary.setSummaryOrder(exposureViewDefinition.getOrder());
+                                            // TODO: review this
+                                            globalViewSummary.setGlobalExposureView(globalExposureView);
+                                            //
+                                            globalViewSummary = globalViewSummaryRepository.save(globalViewSummary);
 
-                                    allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems));
-                                    allRLExposureSummaries.addAll(rlExposureSummaryItems);
-                                }
-                            });
-                            //rmsService.removeEDMPortfolioContext(instance, runId);
+                                            NamedParameterJdbcTemplate template = rmsService.createTemplate(instance);
+
+                                            List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
+                                                    exposureViewQuery.getQuery(),
+                                                    params,
+                                                    new RLExposureSummaryItemRowMapper(globalViewSummary));
+
+                                            allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems));
+
+                                            exposureViewDefinitions.stream()
+                                                    .filter(derivedDefinition -> derivedDefinition.getBasedOnSummaryAlias().equalsIgnoreCase(exposureViewDefinition.getExposureSummaryAlias()))
+                                                    .forEach(derivedDefinition -> allRRExposureSummaries.addAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems)));
+
+                                            allRLExposureSummaries.addAll(rlExposureSummaryItems);
+                                        }
+                                    });
 
                             log.info("Info: Start saving risk link exposure summaries");
                             exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
@@ -282,8 +292,7 @@ public class ExposureSummaryExtractor {
                                             //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
                                             // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
                                             // Pass them as parameters for this method.
-                                            RlModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
-                                            if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
+                                            if (rmsService.extractLocationLevelExposureDetails(edmId, edmName, instance, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
                                                 log.debug("==> success");
                                                 extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
                                             } else {
