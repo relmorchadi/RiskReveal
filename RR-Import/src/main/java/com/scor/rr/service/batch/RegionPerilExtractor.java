@@ -37,7 +37,7 @@ public class RegionPerilExtractor {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private ProjectimportrunRepository projectImportRunRepository;
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
     private RlSourceResultRepository rlSourceResultRepository;

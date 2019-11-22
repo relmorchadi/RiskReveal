@@ -50,7 +50,7 @@ public class ExposureSummaryExtractor {
     private GlobalExposureViewRepository globalExposureViewRepository;
 
     @Autowired
-    private ProjectimportrunRepository projectImportRunRepository;
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
     private ExposureViewRepository exposureViewRepository;
