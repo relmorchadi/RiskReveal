@@ -1,6 +1,6 @@
 package com.scor.rr.domain.riskReveal;
 
-import com.scor.rr.domain.ProjectImportRun;
+import com.scor.rr.domain.ProjectImportRunEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -91,5 +91,5 @@ public class Project {
     private String deletedBy;
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-    private List<ProjectImportRun> importRuns;
+    private List<ProjectImportRunEntity> importRuns;
 }

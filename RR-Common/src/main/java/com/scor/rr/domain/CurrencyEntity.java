@@ -1,4 +1,4 @@
-package com.scor.rr.domain.reference;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.sql.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Currency {
+public class CurrencyEntity {
     @Id
     @Column(name = "CurrencyId")
     private String currencyId;
