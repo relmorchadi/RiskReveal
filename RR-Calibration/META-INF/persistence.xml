@@ -35,11 +35,11 @@
         <class>com.scor.rr.domain.AccumulationPackageStatusEntity</class>
         <class>com.scor.rr.domain.ClientEntity</class>
         <class>com.scor.rr.domain.CountryEntity</class>
-        <class>com.scor.rr.domain.CountryperilEntity</class>
+        <class>com.scor.rr.domain.CountryPerilEntity</class>
         <class>com.scor.rr.domain.CurrencyEntity</class>
         <class>com.scor.rr.domain.ClaimsBasisEntity</class>
         <class>com.scor.rr.domain.ContractSearchResultEntity</class>
-        <class>com.scor.rr.domain.ExchangerateEntity</class>
+        <class>com.scor.rr.domain.ExchangeRateEntity</class>
         <class>com.scor.rr.domain.FacEntity</class>
         <class>com.scor.rr.domain.FwPublicationEntity</class>
         <class>com.scor.rr.domain.FacContractEntity</class>
@@ -61,7 +61,7 @@
         <class>com.scor.rr.domain.InuringPltReferenceEntity</class>
         <class>com.scor.rr.domain.InuringReportEntity</class>
         <class>com.scor.rr.domain.JobEntity</class>
-        <class>com.scor.rr.domain.LineofbusinessEntity</class>
+        <class>com.scor.rr.domain.LineOfBusinessEntity</class>
         <class>com.scor.rr.domain.NatureEntity</class>
         <class>com.scor.rr.domain.PltPricingEntity</class>
         <class>com.scor.rr.domain.PltPricingLossEngineEntity</class>
@@ -113,7 +113,7 @@
         <class>com.scor.rr.domain.DefaultAdjustmentVersionEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentRegionPerilEntity</class>
         <class>com.scor.rr.domain.DefaultRetPerBandingParamsEntity</class>
-        <class>com.scor.rr.domain.EntityEntity</class>
+        <class>com.scor.rr.domain.Entity</class>
         <class>com.scor.rr.domain.MarketChannelEntity</class>
         <class>com.scor.rr.domain.AdjustmentEventBasedParameterEntity</class>
         <class>com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter</class>

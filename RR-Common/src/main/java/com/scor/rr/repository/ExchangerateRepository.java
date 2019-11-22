@@ -1,7 +1,7 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.ExchangerateEntity;
+import com.scor.rr.domain.ExchangeRateEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ExchangerateRepository extends JpaRepository<ExchangerateEntity, String> {
+public interface ExchangerateRepository extends JpaRepository<ExchangeRateEntity, String> {
 }

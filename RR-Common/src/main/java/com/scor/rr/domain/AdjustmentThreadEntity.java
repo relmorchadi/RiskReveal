@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentThreadEntity {
     private Boolean locked;
@@ -18,16 +18,16 @@ public class AdjustmentThreadEntity {
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
-    private EntityEntity entity;
+    private Entity entity;
     private String threadStatus;
 
     @ManyToOne
     @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public EntityEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
