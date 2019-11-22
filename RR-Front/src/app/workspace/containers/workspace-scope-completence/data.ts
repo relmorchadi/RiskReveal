@@ -1126,11 +1126,13 @@ const treatySections = [
       }]
   }
 ]
-
+/* tslint:disable */
 const treatySections2 = [
   {
-    id: "17T008583/ 1",
-    name: "1st Cat XL",
+    id: '17T008583/ 1',
+    name: '1st Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-DE',
@@ -1353,8 +1355,10 @@ const treatySections2 = [
     }]
   },
   {
-    id: "17T010540 / 1",
-    name: "2nd Cat XL",
+    id: '17T010540 / 1',
+    name: '2nd Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-DE',
@@ -1527,8 +1531,10 @@ const treatySections2 = [
     }]
   },
   {
-    id: "20T002794 / 1",
-    name: "Property/Engineering CAT 1st XL (All Perils)",
+    id: '20T002794 / 1',
+    name: 'Property/Engineering CAT 1st XL (All Perils)',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
     attached: false,
     regionPerils: [{
       id: 'EUEQ-AD',
@@ -1653,7 +1659,8 @@ const treatySections2 = [
         attached: false,
         pltsAttached: []
       }]
-    }, {
+      },
+      {
       id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
       description: 'Australia Earthquake, Risklink 7.0',
       attached: false,
@@ -1699,7 +1706,778 @@ const treatySections2 = [
         pltsAttached: []
       }]
     }]
-  }]
+  }];
+
+const treatySections3 = [
+  {
+    id: '17T008583/ 1',
+    name: '1st Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
+    attached: false,
+    regionPerils: [{
+      id: 'EUEQ-DE',
+      description: 'Europe (Germany) Earthquake',
+      attached: false,
+      overridden: false,
+      targetRaps: [{
+        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+        description: 'European Earthquake, Risklink v11.0',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+      },
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: [{
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735516',
+            pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+            peril: 'WS',
+            regionPerilCode: 'EUET',
+            regionPerilName: 'Europe',
+            grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'P-000007071',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }]
+        }]
+      },
+      {
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+          description: 'Australia Earthquake, Risklink 7.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: [
+            {
+              workspaceId: '05PA753',
+              uwy: 2019,
+              pltId: 'SPLTH-000735180',
+              pltName: 'AUEQ_GR_LMF1.T2',
+              peril: 'EQ',
+              regionPerilCode: 'AUEQ',
+              regionPerilName: 'Australia',
+              grain: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+              vendorSystem: 'RMS RL',
+              targetRapCode: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+              isScorCurrent: true,
+              isScorDefault: true,
+              isScorGenerated: true,
+              project: 'FA0024677',
+              pltType: 'Thread',
+              projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+              creationDate: '18/10/2018',
+              year: 2018,
+              fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154446_RMS-RiskLink_RL17_EUEQ-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-436_N-100_P-T-2_ID-SPLTH-000735180_Job-1.bin',
+              sourceModellingVendor: 'RMS',
+              sourceModellingSystem: 'RiskLink',
+              dataSourceName: 'CG1901_DEU_FLportfolio_R',
+              analysisId: 45.0,
+              currency: null,
+              userOccurrenceBasis: null,
+              userTags: [],
+              xactPublicationDate: null
+            }
+          ]
+        }]
+      }],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-DE',
+        description: 'Europe (Germany) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+      description: 'Australia Earthquake, Risklink 7.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: [
+          {
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735180',
+            pltName: 'AUEQ_GR_LMF1.T2',
+            peril: 'EQ',
+            regionPerilCode: 'AUEQ',
+            regionPerilName: 'Australia',
+            grain: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'FA0024677',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154446_RMS-RiskLink_RL17_EUEQ-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-436_N-100_P-T-2_ID-SPLTH-000735180_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }
+        ]
+      }]
+    }, {
+      id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+      description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: [{
+          workspaceId: '05PA753',
+          uwy: 2019,
+          pltId: 'SPLTH-000735516',
+          pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+          peril: 'WS',
+          regionPerilCode: 'EUET',
+          regionPerilName: 'Europe',
+          grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          vendorSystem: 'RMS RL',
+          targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          isScorCurrent: true,
+          isScorDefault: true,
+          isScorGenerated: true,
+          project: 'P-000007071',
+          pltType: 'Thread',
+          projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+          creationDate: '18/10/2018',
+          year: 2018,
+          fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+          sourceModellingVendor: 'RMS',
+          sourceModellingSystem: 'RiskLink',
+          dataSourceName: 'CG1901_DEU_FLportfolio_R',
+          analysisId: 45.0,
+          currency: null,
+          userOccurrenceBasis: null,
+          userTags: [],
+          xactPublicationDate: null
+        }]
+      }]
+    }]
+  },
+  {
+    id: '17T010540 / 1',
+    name: '2nd Cat XL',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
+    attached: false,
+    regionPerils: [{
+      id: 'EUEQ-DE',
+      description: 'Europe (Germany) Earthquake',
+      attached: false,
+      overridden: false,
+      targetRaps: [{
+        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+        description: 'European Earthquake, Risklink v11.0',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: [{
+          workspaceId: '05PA753',
+          uwy: 2019,
+          pltId: 'SPLTH-000735176',
+          pltName: 'EUCS-DE_GR_LMF1.T1',
+          peril: 'CS',
+          regionPerilCode: 'EUEQ-DE',
+          regionPerilName: 'Europe (Germany)',
+          grain: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          vendorSystem: 'RMS RL',
+          targetRapCode: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          isScorCurrent: true,
+          isScorDefault: true,
+          isScorGenerated: true,
+          project: 'P-000007071',
+          pltType: 'Thread',
+          projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+          creationDate: '18/10/2018',
+          year: 2018,
+          fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154440_RMS-RiskLink_RL17_EUCS-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-435_N-100_P-T-1_ID-SPLTH-000735176_Job-1.bin',
+          sourceModellingVendor: 'RMS',
+          sourceModellingSystem: 'RiskLink',
+          dataSourceName: 'CG1901_DEU_WSportfolio_R',
+          analysisId: 83.0,
+          currency: null,
+          userOccurrenceBasis: null,
+          userTags: [],
+          xactPublicationDate: null
+        }]
+      }]
+      },
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: [{
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735516',
+            pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+            peril: 'WS',
+            regionPerilCode: 'EUET',
+            regionPerilName: 'Europe',
+            grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'P-000007071',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }]
+        }]
+      },
+    ],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-DE',
+        description: 'Europe (Germany) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: [{
+          workspaceId: '05PA753',
+          uwy: 2019,
+          pltId: 'SPLTH-000735176',
+          pltName: 'EUCS-DE_GR_LMF1.T1',
+          peril: 'CS',
+          regionPerilCode: 'EUEQ-DE',
+          regionPerilName: 'Europe (Germany)',
+          grain: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          vendorSystem: 'RMS RL',
+          targetRapCode: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          isScorCurrent: true,
+          isScorDefault: true,
+          isScorGenerated: true,
+          project: 'P-000007071',
+          pltType: 'Thread',
+          projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+          creationDate: '18/10/2018',
+          year: 2018,
+          fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154440_RMS-RiskLink_RL17_EUCS-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-435_N-100_P-T-1_ID-SPLTH-000735176_Job-1.bin',
+          sourceModellingVendor: 'RMS',
+          sourceModellingSystem: 'RiskLink',
+          dataSourceName: 'CG1901_DEU_WSportfolio_R',
+          analysisId: 83.0,
+          currency: null,
+          userOccurrenceBasis: null,
+          userTags: [],
+          xactPublicationDate: null
+        }]
+      }, {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+      },
+      {
+      id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+      description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: [{
+          workspaceId: '05PA753',
+          uwy: 2019,
+          pltId: 'SPLTH-000735516',
+          pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+          peril: 'WS',
+          regionPerilCode: 'EUET',
+          regionPerilName: 'Europe',
+          grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          vendorSystem: 'RMS RL',
+          targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          isScorCurrent: true,
+          isScorDefault: true,
+          isScorGenerated: true,
+          project: 'P-000007071',
+          pltType: 'Thread',
+          projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+          creationDate: '18/10/2018',
+          year: 2018,
+          fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+          sourceModellingVendor: 'RMS',
+          sourceModellingSystem: 'RiskLink',
+          dataSourceName: 'CG1901_DEU_FLportfolio_R',
+          analysisId: 45.0,
+          currency: null,
+          userOccurrenceBasis: null,
+          userTags: [],
+          xactPublicationDate: null
+        }]
+      }]
+    }],
+  },
+  {
+    id: '20T002794 / 1',
+    name: 'Property/Engineering CAT 1st XL (All Perils)',
+    divisionInfo: 'PD, BI',
+    property: 'Property',
+    attached: false,
+    regionPerils: [
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: [{
+              workspaceId: '05PA753',
+              uwy: 2019,
+              pltId: 'SPLTH-000735516',
+              pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+              peril: 'WS',
+              regionPerilCode: 'EUET',
+              regionPerilName: 'Europe',
+              grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+              vendorSystem: 'RMS RL',
+              targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+              isScorCurrent: true,
+              isScorDefault: true,
+              isScorGenerated: true,
+              project: 'P-000007071',
+              pltType: 'Thread',
+              projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+              creationDate: '18/10/2018',
+              year: 2018,
+              fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+              sourceModellingVendor: 'RMS',
+              sourceModellingSystem: 'RiskLink',
+              dataSourceName: 'CG1901_DEU_FLportfolio_R',
+              analysisId: 45.0,
+              currency: null,
+              userOccurrenceBasis: null,
+              userTags: [],
+              xactPublicationDate: null
+            },
+            {
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735189',
+            pltName: 'EUET_GR_LMF1.T1',
+            peril: 'WS',
+            regionPerilCode: 'EUET',
+            regionPerilName: 'Europe',
+            grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'P-000007071',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154502_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-1_ID-SPLTH-000735189_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }]
+        }]
+      },
+      {
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+          description: 'Australia Earthquake, Risklink 7.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      }],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    },
+      {
+        id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+        description: 'Australia Earthquake, Risklink 7.0',
+        attached: false,
+        overridden: false,
+        regionPerils: [{
+          id: 'AUEQ',
+          description: 'Australia Earthquake',
+          overridden: false,
+          selected: false,
+          attached: false,
+          reason: null,
+          resonDescribed: null,
+          pltsAttached: []
+        }]
+      }, {
+        id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+        description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+        attached: false,
+        overridden: false,
+        regionPerils: [{
+          id: 'EUET',
+          description: 'Europe Extra Tropical Cyclone',
+          overridden: false,
+          selected: false,
+          attached: false,
+          reason: null,
+          resonDescribed: null,
+          pltsAttached: [{
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735516',
+            pltName: 'EUET_GR_LMF1.03_RPadj._NonEng.T3',
+            peril: 'WS',
+            regionPerilCode: 'EUET',
+            regionPerilName: 'Europe',
+            grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'P-000007071',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-180454_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-3_ID-SPLTH-000735516_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+            },
+            {
+            workspaceId: '05PA753',
+            uwy: 2019,
+            pltId: 'SPLTH-000735189',
+            pltName: 'EUET_GR_LMF1.T1',
+            peril: 'WS',
+            regionPerilCode: 'EUET',
+            regionPerilName: 'Europe',
+            grain: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            vendorSystem: 'RMS RL',
+            targetRapCode: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+            isScorCurrent: true,
+            isScorDefault: true,
+            isScorGenerated: true,
+            project: 'P-000007071',
+            pltType: 'Thread',
+            projectName: 'AXA_3rd_Event_Cover_Renewal2019',
+            creationDate: '18/10/2018',
+            year: 2018,
+            fileName: 'T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-154502_RMS-RiskLink_RL17_EUET_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-442_N-100_P-T-1_ID-SPLTH-000735189_Job-1.bin',
+            sourceModellingVendor: 'RMS',
+            sourceModellingSystem: 'RiskLink',
+            dataSourceName: 'CG1901_DEU_FLportfolio_R',
+            analysisId: 45.0,
+            currency: null,
+            userOccurrenceBasis: null,
+            userTags: [],
+            xactPublicationDate: null
+          }]
+        }]
+      }]
+  }
+  ];
 
 const plts22 = {
   "plts": [{
@@ -2458,8 +3236,8 @@ const plts22 = {
     "userOccurrenceBasis": null,
     "userTags": [],
     "xactPublicationDate": null
-  }], "userTags": []
-}
+  }]
+};
 
 const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (Germany)"}, {
   "regionPerilCode": "DEFL",
@@ -2473,7 +3251,7 @@ const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (
 }, {"regionPerilCode": "DEFL", "regionPerilName": "Germany"}, {
   "regionPerilCode": "DEFL",
   "regionPerilName": "Germany"
-}, {"regionPerilCode": "EUET", "regionPerilName": "Europe"}]
+}, {"regionPerilCode": "EUET", "regionPerilName": "Europe"}];
 
 
-export const trestySections = {treatySections2};
+export const trestySections = {treatySections2, treatySections3};

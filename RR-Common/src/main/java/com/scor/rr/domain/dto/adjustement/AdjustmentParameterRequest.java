@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.io.Serializable;
@@ -11,20 +11,20 @@ public class AdjustmentParameterRequest implements Serializable {
     private double lmf;
     private double rpmf;
     private List<PEATData> peatData;
-    private Integer scorPltHeaderInput;
+    private Integer pltHeaderInput;
     private Integer nodeId;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings;
 
     public AdjustmentParameterRequest() {
     }
 
-    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pkScorPltHeaderId, int adjustmentNodeId, List<AdjustmentReturnPeriodBending> returnPeriodBendings) {
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pltHeaderInput, int adjustmentNodeId, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
-        this.scorPltHeaderInput = pkScorPltHeaderId;
+        this.pltHeaderInput = pltHeaderInput;
         this.nodeId = adjustmentNodeId;
-        this.adjustmentReturnPeriodBendings = returnPeriodBendings;
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 
     public double getLmf() {
@@ -51,12 +51,12 @@ public class AdjustmentParameterRequest implements Serializable {
         this.peatData = peatData;
     }
 
-    public Integer getScorPltHeaderInput() {
-        return scorPltHeaderInput;
+    public Integer getPltHeaderInput() {
+        return pltHeaderInput;
     }
 
-    public void setScorPltHeaderInput(Integer scorPltHeaderInput) {
-        this.scorPltHeaderInput = scorPltHeaderInput;
+    public void setPltHeaderInput(Integer pltHeaderInput) {
+        this.pltHeaderInput = pltHeaderInput;
     }
 
     public Integer getNodeId() {
@@ -67,11 +67,11 @@ public class AdjustmentParameterRequest implements Serializable {
         this.nodeId = nodeId;
     }
 
-    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
-        return adjustmentReturnPeriodBendings;
+    public List<ReturnPeriodBandingAdjustmentParameter> getAdjustmentReturnPeriodBandings() {
+        return adjustmentReturnPeriodBandings;
     }
 
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    public void setAdjustmentReturnPeriodBandings(List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+        this.adjustmentReturnPeriodBandings = adjustmentReturnPeriodBandings;
     }
 }

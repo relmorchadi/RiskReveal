@@ -1,10 +1,10 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.AdjustmentStateEntity;
+import com.scor.rr.domain.AdjustmentState;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface AdjustmentStateRepository extends JpaRepository<AdjustmentStateEntity,Integer>{
-    @Query("select m from AdjustmentStateEntity m where m.code = 'Valid'")
-    AdjustmentStateEntity getAdjustmentStateEntityByCodeValid();
+public interface AdjustmentStateRepository extends JpaRepository<AdjustmentState, Integer>{
+    @Query("select m from AdjustmentState m where m.code = 'Invalid'")
+    AdjustmentState getAdjustmentStateEntityByCodeInvalid();
 }

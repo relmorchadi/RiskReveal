@@ -27,6 +27,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import {ExcelService} from '../../../shared/services/excel.service';
 import produce from "immer";
 import {ResizedEvent} from "angular-resize-event";
+import {PltTableService} from "../../services/pltTable/plt-table.service";
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -49,198 +50,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   params: any;
   lastSelectedId;
   managePopUp: boolean;
-  pltColumnsCache: any[] =[{
-    sortDir: 1,
-    fields: '',
-    header: '',
-    sorted: false,
-    filtred: false,
-    resizable: false,
-    width: '40',
-    unit: 'px',
-    icon: null,
-    type: 'checkbox',
-    active: true
-  },
-    {
-      sortDir: 1,
-      fields: '',
-      header: 'User Tags',
-      sorted: false,
-      filtred: false,
-      resizable: true,
-      width: '66',
-      unit: 'px',
-      icon: null,
-      type: 'tags',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltId',
-      header: 'PLT ID',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      width: '28',
-      unit: '%',
-      type: 'id',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '80',
-      unit: '%',
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      sorted: true,
-      filtred: true,
-      resizable: false,
-      width: '53',
-      unit: 'px',
-      icon: null,
-      type: 'field',
-      textAlign: 'center',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '35',
-      unit: '%',
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '60',
-      unit: '%',
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '70',
-      unit: '%',
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'deletedBy',
-      forDelete: true,
-      header: 'Deleted By',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field', active: false
-    },
-    {
-      sortDir: 1,
-      fields: 'deletedAt',
-      forDelete: true,
-      header: 'Deleted On',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'date', active: false
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '25%',
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      width: '25',
-      unit: '%',
-      icon: null,
-      type: 'field',
-      active: true
-    },{
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-note',
-      type: 'icon',
-      width: '50',
-      unit: 'px',
-      active: true,
-      tooltip: "Published for Pricing",
-      highlight: 'Published'
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-dollar-alt',
-      type: 'icon',
-      width: '50',
-      unit: 'px',
-      active: true,
-      tooltip: "Priced",
-      highlight: 'Priced'
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon',
-      width: '50',
-      unit: 'px',
-      active: true,
-      tooltip: "Published for Accumulation",
-      highlight: 'Accumulated'
-    }];
+  pltColumnsCache: any[];
   size = 'large';
   drawerIndex: any;
   contextMenuItemsCache = [
@@ -263,7 +73,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     }
   ];
 
-  generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
+  generateColumns = (showDelete) => this.updateTable('pltColumns', !showDelete ? _.toArray(_.omit(this.pltColumnsCache, this.pltColumnsCache.length - 1)) : this.pltColumnsCache);
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -273,26 +83,30 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     private systemTagService: SystemTagsService,
     private excel: ExcelService,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-    private actions$: Actions
+    private actions$: Actions,
+    private pltTableService: PltTableService
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.lastSelectedId = null;
     this.drawerIndex = 0;
     this.params = {};
     this.addTagModalPlaceholder = 'Select a Tag';
+    this.pltColumnsCache = PltTableService.pltColumns;
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
     this.generateColumns(this.getTableInputKey('showDeleted'));
     this.managePopUp = false;
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
         title: 'pltDetail',
       },
       tabs: {'pltDetail': true},
       visible: false,
-      mode: "default"
+      mode: "default",
+      summary: {}
     };
     this.tableInputs = {
       scrollConfig: {
@@ -327,200 +141,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       someItemsAreSelected: false,
       someDeletedItemsAreSelected: false,
       showDeleted: false,
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '40',
-          unit: 'px',
-          icon: null,
-          type: 'checkbox',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: 'User Tags',
-          sorted: false,
-          filtred: false,
-          resizable: true,
-          width: '66',
-          unit: 'px',
-          icon: null,
-          type: 'tags',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'pltId',
-          header: 'PLT ID',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          width: '28',
-          unit: '%',
-          type: 'id',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'pltName',
-          header: 'PLT Name',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '80',
-          unit: '%',
-          icon: null,
-          type: 'field',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'peril',
-          header: 'Peril',
-          sorted: true,
-          filtred: true,
-          resizable: false,
-          width: '53',
-          unit: 'px',
-          icon: null,
-          type: 'field',
-          textAlign: 'center',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'regionPerilCode',
-          header: 'Region Peril Code',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '35',
-          unit: '%',
-          icon: null,
-          type: 'field',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'regionPerilName',
-          header: 'Region Peril Name',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '60',
-          unit: '%',
-          icon: null,
-          type: 'field',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'grain',
-          header: 'Grain',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '70',
-          unit: '%',
-          icon: null,
-          type: 'field',
-          active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'deletedBy',
-          forDelete: true,
-          header: 'Deleted By',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          type: 'field', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'deletedAt',
-          forDelete: true,
-          header: 'Deleted On',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          type: 'date', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'vendorSystem',
-          header: 'Vendor System',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field', active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'rap',
-          header: 'RAP',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25',
-          unit: '%',
-          icon: null,
-          type: 'field',
-          active: true
-        },{
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          icon: 'icon-note',
-          type: 'icon',
-          width: '50',
-          unit: 'px',
-          active: true,
-          tooltip: "Published for Pricing",
-          highlight: 'Published'
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          icon: 'icon-dollar-alt',
-          type: 'icon',
-          width: '50',
-          unit: 'px',
-          active: true,
-          tooltip: "Priced",
-          highlight: 'Priced'
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          icon: 'icon-focus-add',
-          type: 'icon',
-          width: '50',
-          unit: 'px',
-          active: true,
-          tooltip: "Published for Accumulation",
-          highlight: 'Accumulated'
-        },
-      ],
+      pltColumns: PltTableService.pltColumns,
       filterInput: '',
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
@@ -529,15 +150,30 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       selectedListOfDeletedPlts: [],
       selectedListOfPlts: [],
       status: {
-        Published: {
+        arcPublication: {
           selected: false
         },
-        Priced: {
+        xactPublication: {
           selected: false
         },
-        Accumulated: {
+        xactPriced: {
           selected: false
         },
+        groupedPlt: {
+          selected: false
+        },
+        clonedPlt: {
+          selected: false
+        },
+        clientAdjustment: {
+          selected: false
+        },
+        defaultAdjustment: {
+          selected: false
+        },
+        baseAdjustment: {
+          selected: false
+        }
       }
     };
     this.leftMenuInputs= {
@@ -552,7 +188,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
       wsHeaderSelected: true,
-      pathTab: true
+      pathTab: true,
     };
     this.tagsInputs= {
       _tagModalVisible: false,
@@ -569,7 +205,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.setRightMenuSelectedTab('pltDetail');
   }
-
 
   generateContextMenu(toRestore) {
     const t = ['Delete', 'Manage Tags', 'Clone To'];
@@ -618,6 +253,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.select(WorkspaceState.getUserTagManager(this.workspaceId + '-' + this.uwy))
   }
 
+  getSummary() {
+    return this.select(WorkspaceState.getSummary(this.workspaceId + '-' + this.uwy));
+  }
+
   ngOnInit() {
 
     this.observeRouteParams().pipe(
@@ -633,8 +272,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
       this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
-      this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
-      this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
+      this.updateTable('listOfPltsCache', _.toArray(data));
+      this.updateTable('listOfPltsData', this.getTableInputKey('listOfPltsCache'));
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
 
       this.detectChanges();
@@ -652,9 +291,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.observeRouteParamsWithSelector(() => this.getDeletedPlts())
       .subscribe((deletedData) => {
-        this.updateTable('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
-        this.updateTable('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
+        this.updateTable('listOfDeletedPltsCache', _.toArray(deletedData));
+        this.updateTable('listOfDeletedPltsData', this.getTableInputKey('listOfDeletedPltsCache'));
         this.updateTable('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
+
+        this.updateLeftMenuInputs('deletedPltsLength', this.getTableInputKey('listOfDeletedPltsData').length);
 
         this.detectChanges();
       });
@@ -666,6 +307,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.getTableInputKey('listOfDeletedPltsData').length > 0);
 
       this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
+      this.updateTableAndLeftMenuInputs('showDeleted', !(this.getTableInputKey('listOfDeletedPltsData').length === 0) ? this.getTableInputKey('showDeleted') : false);
+      this.generateColumns(this.getTableInputKey('showDeleted'));
+      this.generateContextMenu(this.getTableInputKey('showDeleted'));
       this.detectChanges();
     });
 
@@ -680,7 +324,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
-      this.updateMenuKey('pltDetail', openedPlt);
       this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
       this.detectChanges();
@@ -692,6 +335,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateTagsInput('usedInWs', _.toArray(userTagManager.usedInWs || []));
       this.detectChanges();
     });
+
+    this.observeRouteParamsWithSelector(() => this.getSummary()).subscribe( summary => {
+      this.updateMenuKey('pltDetail', summary);
+      this.updateMenuKey('summary', summary);
+      this.detectChanges();
+    })
 
     this.actions$
       .pipe(
@@ -731,8 +380,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   deletePlt() {
     this.dispatch(new fromWorkspaceStore.deletePlt({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      pltIds: this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts').map(plt => plt.pltId) : [this.selectedItemForMenu]
+      params: {
+        workspaceId: this.workspaceId, uwy: this.uwy
+      },
+      request: {
+        pltHeaderIds: this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts').map(plt => plt.pltId) : [this.selectedItemForMenu],
+        deletedBy: "NAJIH DRISS",
+        deletedDue: "WRONG RESULT",
+        deletedOn: new Date()
+      }
     }));
   }
 
@@ -773,10 +429,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   restore() {
     this.dispatch(new fromWorkspaceStore.restorePlt({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      pltIds: this.getTableInputKey('selectedListOfDeletedPlts').length > 0 ? this.getTableInputKey('selectedListOfDeletedPlts').map(plt => plt.pltId) : [this.selectedItemForMenu]
+      params: {
+        workspaceId: this.workspaceId, uwy: this.uwy
+      },
+      pltHeaderIds: this.getTableInputKey('selectedListOfDeletedPlts').length > 0 ? this.getTableInputKey('selectedListOfDeletedPlts').map(plt => plt.pltId) : [this.selectedItemForMenu]
     }));
-    this.updateTable('showDeleted', !(this.getTableInputKey('listOfDeletedPltsData').length === 0) ? this.getTableInputKey('showDeleted') : false);
+    this.updateLeftMenuInputs('showDeleted', !(this.getTableInputKey('listOfDeletedPltsData').length === 0) ? this.getTableInputKey('showDeleted') : false);
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
   }
 
@@ -794,6 +452,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
+    this.updateMenuKey('pltHeaderId', plt);
     this.updateMenuKey('visible', true);
   }
 
@@ -813,10 +472,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
 
   toggleSelectPlts(plts: any) {
+    console.log(plts);
     this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
-      forDeleted: this.getTableInputKey('showDeleted')
+      forDelete: this.getTableInputKey('showDeleted')
     }));
   }
 
@@ -868,8 +528,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   toggleDeletePlts($event) {
-    this.updateTable('showDeleted', $event)
+    this.updateTableAndLeftMenuInputs('showDeleted', $event)
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
+    this.generateColumns(this.getTableInputKey('showDeleted'));
 
     this.updateTable('selectAll',
       (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
@@ -912,7 +573,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       systemTag: {}
     });
     this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}});
-    this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+    this.dispatch(new fromWorkspaceStore.FilterByFalesely({
       wsIdentifier: this.workspaceId+"-"+this.uwy,
       status: this.getTableInputKey('status')
     }));
@@ -932,9 +593,25 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.updateMenuKey('visible', false);
         this.closePltInDrawer();
         break;
+
+      case rightMenuStore.loadTab:
+        this.loadPLTDetailsTab(action.payload);
+        break;
       default:
         console.log('default right menu action');
     }
+  }
+
+  loadPLTDetailsTab(tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        this.loadSummaryTab(this.getRightMenuKey('pltHeaderId'))
+        break;
+    }
+  }
+
+  loadSummaryTab(pltHeaderId) {
+    this.dispatch(new fromWorkspaceStore.loadSummaryDetail(pltHeaderId));
   }
 
   setRightMenuSelectedTab(tab) {
@@ -985,8 +662,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.toggleSelectPlts(action.payload);
         break;
 
-      case tableStore.filterByStatus:
+      case tableStore.filterByFalesely:
         const status= this.getTableInputKey('status');
+
+        console.log(status, action.payload);
 
         this.updateTable('status', {
           ...status,
@@ -995,10 +674,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           }
         });
 
-        this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+        /*this.dispatch(new fromWorkspaceStore.FilterByFalesely({
           wsIdentifier: this.workspaceId+"-"+this.uwy,
           status: this.getTableInputKey('status')
-        }));
+        }));*/
         break;
 
 

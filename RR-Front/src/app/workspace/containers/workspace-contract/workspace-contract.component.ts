@@ -39,7 +39,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   frozenColsTreaty;
 
   scrollableColsFac ;
-  frozenColsFac ;
 
   colsReinstatement;
   colsRegionPeril;
@@ -54,17 +53,21 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
 
   coveragesElement;
 
-  @Select(WorkspaceState.getWorkspaces) ws$;
+  @Select(WorkspaceState.getCurrentWorkspaces) ws$;
   ws: any;
 
   @Select(WorkspaceState.getContract) currentContract$;
   facDataInfo: any;
   treatyDataInfo: any;
   tabStatus: any;
-  facData: any;
+  wsStatus: any;
+  facData = null;
 
   contracts: any[];
   selectedContract: any;
+
+  currentWsIdentifier: any;
+  selectedProject: any;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -72,18 +75,28 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
 
   ngOnInit() {
     this.dispatch(new LoadContractAction());
-    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.ws = _.merge({}, value);
+    this.select(WorkspaceState.getCurrentTab)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(curTab => {
+        this.currentWsIdentifier = curTab.wsIdentifier;
+        this.detectChanges();
+      });
+    this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.treatyDataInfo = _.get(value, 'treaty', null);
+      this.facDataInfo = _.get(value, 'fac', null);
       this.detectChanges();
     });
-    this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.tabStatus = _.get(value, 'typeWs', null);
-        this.treatyDataInfo = _.get(value, 'treaty', null);
-        this.facDataInfo = _.get(value, 'fac', []);
-        this.contracts = this.facDataInfo.map(item => { return {id: item.id}; });
-        this.selectedContract = this.contracts[0].id;
-        this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
-        this.detectChanges();
+    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws = _.merge({}, value);
+      this.wsStatus = this.ws.workspaceType;
+      if (this.wsStatus === 'fac') {
+        this.selectedProject = _.filter(this.ws.projects, item => item.selected)[0];
+        this.tabStatus = _.get(this.selectedProject, 'projectType', null);
+        this.selectDataScope();
+      } else {
+        this.tabStatus = 'treaty';
+      }
+      this.detectChanges();
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig = {
@@ -94,7 +107,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.scrollableColsTreaty = ContractData.scrollableColsTreaty;
     this.frozenColsTreaty = ContractData.frozenColsTreaty;
     this.scrollableColsFac = ContractData.scrollableColsFac;
-    this.frozenColsFac = ContractData.frozenColsFac;
     this.colsReinstatement = ContractData.colsReinstatement;
     this.colsRegionPeril = ContractData.colsRegionPeril;
     this.treatyData = ContractData.treatyData;
@@ -104,29 +116,21 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.coveragesElement = ContractData.coveragesElement;
   }
 
+  selectDataScope() {
+    this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedProject.id)[0];
+  }
+
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
     this.wsIdentifier = wsIdentifier;
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-    this.dispatch([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
-  }
-
-  unPinWorkspace() {
-    const {wsId, uwYear} = this.workspace;
-    this.dispatch([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ]);
+    this.dispatch([new fromHeader.TogglePinnedWsState({
+      "userId": 1,
+      "workspaceContextCode": this.workspace.wsId,
+      "workspaceUwYear": this.workspace.uwYear
+    })]);
   }
 
   changeCollapse() {
@@ -139,6 +143,22 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
       [new UpdateWsRouting(this.wsIdentifier, route),
         new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
     );
+  }
+
+  selectFacDivison(row) {
+    this.dispatch(new fromWs.ToggleFacDivisonAction(row));
+  }
+
+  filterSelection() {
+    const selectedDivision: any = _.filter(this.facData.division , item => item.selected);
+    if (selectedDivision.length > 0) {
+      const facDataFiltered = _.filter(this.facData.regionPeril, item => {
+        return _.includes(item.division, selectedDivision[0].divisionNo);
+      });
+      return facDataFiltered.length > 0 ? facDataFiltered : this.facData.regionPeril;
+    } else {
+      return this.facData.regionPeril;
+    }
   }
 
   selectContract(value) {

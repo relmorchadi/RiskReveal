@@ -3,7 +3,7 @@ import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
 import {catchError, map, mergeMap} from 'rxjs/operators';
-import {WsApi} from './workspace.api';
+import {WsApi} from './api/workspace.api';
 import * as fromHeader from '../../core/store/actions/header.action';
 import produce from 'immer';
 import * as _ from 'lodash';
@@ -11,15 +11,17 @@ import {Navigate} from '@ngxs/router-plugin';
 import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
 import {EMPTY} from 'rxjs';
-import {WsProjectService} from './ws-project.service';
 import {defaultInuringState} from './inuring.service';
+import {ProjectApi} from "./api/project.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
 
-  constructor(private wsApi: WsApi, private store: Store, private wsProjectService: WsProjectService) {
+  constructor(private wsApi: WsApi,
+              private projectApi: ProjectApi,
+              private store: Store) {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
@@ -29,9 +31,11 @@ export class WorkspaceService {
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
-        mergeMap(ws => ctx.dispatch(new fromWS.LoadWsSuccess({
+        mergeMap(ws => {
+          console.log(ws);
+          return ctx.dispatch(new fromWS.LoadWsSuccess({
           wsId, uwYear, ws, route, type
-        }))),
+        }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
@@ -53,6 +57,7 @@ export class WorkspaceService {
       inceptionDate: 1546297200000,
       expiryDate: 1577746800000,
       subsidiaryLedgerId: '2',
+      contractSource: 'ForeWriter',
       treatySections: [
         'CFS-SCOR REASS.-MADRID RCC000022/ 1'
       ],
@@ -70,9 +75,7 @@ export class WorkspaceService {
     const {wsId, uwYear, ws, route, type} = payload;
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    console.log('this are projects', projects);
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
-    ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
         [wsIdentifier]: {
@@ -80,14 +83,15 @@ export class WorkspaceService {
           uwYear,
           ...ws,
           projects,
+          isPinned: false,
           workspaceType: type,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
-          isFavorite: false,
           plts: {},
           pltManager: {
             data: {},
+            deleted: {},
             filters: {
               systemTag: [], userTag: []
             },
@@ -97,6 +101,9 @@ export class WorkspaceService {
               usedInWs: {},
               suggested: {},
               allTags: {}
+            },
+            pltDetails: {
+              summary: {}
             },
             cloneConfig: {},
             loading: false
@@ -109,6 +116,7 @@ export class WorkspaceService {
           },
           calibration: {
             data: {},
+            deleted: {},
             loading: false,
             filters: {
               systemTag: [],
@@ -186,10 +194,12 @@ export class WorkspaceService {
             results: null,
             summaries: null,
             selectedEDMOrRDM: null,
-            activeAddBasket: false
+            activeAddBasket: false,
+            importPLTs: {},
           },
           scopeOfCompletence: {
             data: {},
+            wsType: null
           },
           fileBaseImport: {
             folders: null,
@@ -220,8 +230,8 @@ export class WorkspaceService {
             ...item,
             workspaceId: item.uwanalysisContractFacNumber,
             uwy: item.uwanalysisContractYear,
-            projectId: item.id,
-            name: 'Fac Project',
+            projectId: item.uwAnalysisProjectId,
+            name: item.id,
             description: null,
             assignedTo: null,
             createdBy: item.requestedByFullName,
@@ -239,7 +249,9 @@ export class WorkspaceService {
             sourceWsId: null,
             sourceWsName: null,
             locking: null,
-            selected: false
+            selected: false,
+            projectFacSource: 'specific',
+            projectType: 'fac'
           };
         });
         draft.content[wsIdentifier].projects[0].selected = true;
@@ -271,7 +283,14 @@ export class WorkspaceService {
   createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.facWs.data = [payload, ...draft.facWs.data];
+      const newData = [payload, ...draft.facWs.data];
+      draft.facWs.data = _.map(newData, item => {
+        if (item.uwanalysisContractContractId === payload.uwanalysisContractContractId && item.uwanalysisContractYear === payload.uwanalysisContractYear) {
+          return ((item.carStatus === 'New' || item.carStatus === 'In Progress') && item.id !== payload.id) ? {...item, carStatus: 'Canceled'} : {...item};
+        } else {
+          return {...item};
+        }
+      });
       draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
@@ -321,7 +340,6 @@ export class WorkspaceService {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
       draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      draft.content[wsIdentifier] = {...ws, isFavorite: this._isFavorite(ws), isPinned: this._isPinned(ws)};
       ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
     }));
   }
@@ -384,38 +402,19 @@ export class WorkspaceService {
     }));
   }
 
-  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsFavorite) {
-    const {wsIdentifier} = payload;
+  toggleFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFavorite) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: true};
+      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: !draft.content[wsIdentifier].isFavorite};
     }));
   }
 
-  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkFacWsAsFavorite) {
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const index = _.findIndex(draft.facWs.data, item => item.id === payload.id);
-      draft.facWs.data[index].favorite = !draft.facWs.data[index].favorite;
-    }));
-  }
-
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonFavorite) {
-    const {wsIdentifier} = payload;
+  togglePinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePinned) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: false};
-    }));
-  }
-
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: true};
-    }));
-  }
-
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: false};
+      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: !draft.content[wsIdentifier].isPinned};
     }));
   }
 
@@ -428,34 +427,74 @@ export class WorkspaceService {
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
-    const {wsId, uwYear, id, project} = payload;
+    const {wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.addNewProject(project, wsId, uwYear, id)
-      .pipe(map(p => {
+    return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
+      .pipe(map(prj => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          p ? draft.content[wsIdentifier].projects.unshift(p) : null
+          draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
+          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true}) : null
         }));
-        return ctx.dispatch(new fromWS.AddNewProjectSuccess(p));
+        return ctx.dispatch(new fromWS.AddNewProjectSuccess(prj));
       }), catchError(err => {
         ctx.dispatch(new fromWS.AddNewProjectFail({}));
         return EMPTY;
       }));
   }
 
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
+    }));
+  }
+
+  updateProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {assignedTo, projectId, projectName, projectDescription} = payload.data;
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription).pipe(
+      map( prj => ctx.patchState(produce(ctx.getState(), draft => {
+        prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
+          return item.projectId === projectId ? {...prj, selected: item.selected} : {...item};
+        }) : null;
+      }))
+    ), catchError(err => {
+        console.log('an error has occurred: ', err);
+        return EMPTY;
+      }))
+  }
+
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
-    const {project, wsId, uwYear, id} = payload;
+    const {projectId, wsId, uwYear} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.wsProjectService.deleteProject(project, wsId, uwYear)
+    return this.projectApi.deleteProject(projectId.projectId)
       .pipe(catchError(err => {
         ctx.dispatch(new fromWS.DeleteProjectFails({}));
         return EMPTY;
       }))
       .subscribe((p) => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          p ? draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== p.projectId) : null
+          draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId.projectId)
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });
+  }
+
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const selected = _.filter(state.content[wsIdentifier].projects, item => item.selected && item.id === payload.payload.id);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (selected.length > 0) {
+        draft.content[wsIdentifier].projects = this._selectProject(
+          _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id), 0
+        );
+      } else {
+        draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, item => item.id !== payload.payload.id);
+      }
+    }));
   }
 
   private _selectProject(projects: any, projectIndex: number): Array<any> {
@@ -467,13 +506,15 @@ export class WorkspaceService {
   }
 
   private _isFavorite({wsId, uwYear}): boolean {
-    const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
-    return _.findIndex(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
+/*    const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
+    return _.findIndex(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;*/
+    return false;
   }
 
   private _isPinned({wsId, uwYear}): boolean {
-    const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
-    return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
+/*    const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
+    return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;*/
+    return false;
   }
 
 }

@@ -1,7 +1,7 @@
 package com.scor.rr.configuration.file;
 
 import com.scor.rr.configuration.utils.Constant;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 
@@ -40,13 +40,13 @@ public class CSVPLTFileReader implements PLTFileReader {
                 int periodIdx = Integer.parseInt(sc.next()); //Simulated Period ID
                 int eventId = Integer.parseInt(sc.next()); //Event ID
                 Date eventDate = Constant.getEventDateFormat().parse(sc.next());
-                int seq = Integer.parseInt(sc.next());
-                double exp = Double.parseDouble(sc.next()); //Loss
-                double loss = Double.parseDouble(sc.next()); //Loss
+                int seq = Integer.parseInt(sc.next().replace(" ",""));
+                double exp = Double.parseDouble(sc.next().replace(" ","")); //Loss
+                double loss = Double.parseDouble(sc.next().replace(" ","")); //Loss
 
-                pltLossDatas.add(new PLTLossData(eventId,
+                pltLossDatas.add(new PLTLossData(periodIdx,
+                        eventId,
                         eventDate.getTime(),
-                        periodIdx,
                         seq,
                         exp,
                         loss));
@@ -93,14 +93,14 @@ public class CSVPLTFileReader implements PLTFileReader {
         }
     }
 
-    public List<AdjustmentReturnPeriodBending> readAdjustmentReturnPeriodBanding(File file) throws RRException {
+    public List<ReturnPeriodBandingAdjustmentParameter> readAdjustmentReturnPeriodBanding(File file) throws RRException {
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
 
         try {
-            List<AdjustmentReturnPeriodBending> returnPeriodBendings = new ArrayList<>();
+            List<ReturnPeriodBandingAdjustmentParameter> returnPeriodBendings = new ArrayList<>();
             Scanner sc = new Scanner(new FileReader(file));
             sc.useDelimiter("\\r\\n|;");
             if (sc.hasNextLine()) {
@@ -110,7 +110,7 @@ public class CSVPLTFileReader implements PLTFileReader {
                 Double returnPeriod = Double.parseDouble(sc.next()); //Simulated Period ID
                 Double lmf = Double.parseDouble(sc.next()); //Lmf
 
-                returnPeriodBendings.add(new AdjustmentReturnPeriodBending(returnPeriod,
+                returnPeriodBendings.add(new ReturnPeriodBandingAdjustmentParameter(returnPeriod,
                         lmf));
             }
             return returnPeriodBendings;

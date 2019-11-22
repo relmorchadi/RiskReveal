@@ -17,18 +17,20 @@ public class RefFMFContractTypeAttributeMap {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RefFMFContractTypeAttributeMapId", nullable = false)
-    private int refFMFContractTypeAttributeMapId;
+    private long refFMFContractTypeAttributeMapId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "ContractTypeId")
-    private int contractTypeId;
+    private long contractTypeId;
 
     @Column(name = "ContractAttributeId")
-    private int contractAttributeId;
+    private long contractAttributeId;
 
     @Column(name = "Flag")
     private int flag;
 
+    public RefFMFContractTypeAttributeMap() {
+    }
 }

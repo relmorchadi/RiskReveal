@@ -107,3 +107,29 @@ body .ui-toast .ui-toast-message.ui-toast-message-success {
 .red{
   color: #D0021B;
 }
+
+.scrollIndicator {
+  position: absolute;
+  right: 8px;
+  background-color: #0700cf;
+  color: white;
+  width: max-content;
+  padding: 3px 7px;
+  z-index: 9999;
+
+  .scrollIndicatorArrow {
+    position: absolute;
+    border-right: 7px solid transparent;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-left: 7px solid #0700cf;
+    right: -14px;
+    top: 50%;
+    bottom: 50%;
+    margin: auto;
+  }
+}
+
+.highlight-scroll-item {
+  background-color: #F4F6FC !important;
+}

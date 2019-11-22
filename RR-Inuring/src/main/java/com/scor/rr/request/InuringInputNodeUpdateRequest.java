@@ -6,19 +6,19 @@ import java.util.List;
  * Created by u004602 on 12/09/2019.
  */
 public class InuringInputNodeUpdateRequest {
-    private int inuringInputNodeId;
+    private long inuringInputNodeId;
     private String inputNodeName;
     private List<Integer> attachedPLTs;
 
-    public InuringInputNodeUpdateRequest(int inuringInputNodeId, String inputNodeName) {
+    public InuringInputNodeUpdateRequest(long inuringInputNodeId, String inputNodeName) {
         this(inuringInputNodeId, inputNodeName, null);
     }
 
-    public InuringInputNodeUpdateRequest(int inuringInputNodeId, List<Integer> attachedPLTs) {
+    public InuringInputNodeUpdateRequest(long inuringInputNodeId, List<Integer> attachedPLTs) {
         this(inuringInputNodeId, null, attachedPLTs);
     }
 
-    public InuringInputNodeUpdateRequest(int inuringInputNodeId, String inputNodeName, List<Integer> attachedPLTs) {
+    public InuringInputNodeUpdateRequest(long inuringInputNodeId, String inputNodeName, List<Integer> attachedPLTs) {
         this.inuringInputNodeId = inuringInputNodeId;
         this.inputNodeName = inputNodeName;
         this.attachedPLTs = attachedPLTs;
@@ -27,7 +27,7 @@ public class InuringInputNodeUpdateRequest {
     public InuringInputNodeUpdateRequest() {
     }
 
-    public int getInuringInputNodeId() {
+    public long getInuringInputNodeId() {
         return inuringInputNodeId;
     }
 

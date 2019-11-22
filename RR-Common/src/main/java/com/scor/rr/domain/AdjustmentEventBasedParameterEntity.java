@@ -9,15 +9,15 @@ public class AdjustmentEventBasedParameterEntity {
     private int adjustmentEventBasedParameterId;
     private String inputFilePath;
     private String inputFileName;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId;
+    private AdjustmentNode adjustmentNode;
 
     public AdjustmentEventBasedParameterEntity() {
     }
 
-    public AdjustmentEventBasedParameterEntity(String inputFilePath, String inputFileName, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
+    public AdjustmentEventBasedParameterEntity(String inputFilePath, String inputFileName, AdjustmentNode adjustmentNode) {
         this.inputFilePath = inputFilePath;
         this.inputFileName = inputFileName;
-        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
+        this.adjustmentNode = adjustmentNode;
     }
 
     @Id
@@ -67,12 +67,12 @@ public class AdjustmentEventBasedParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeId() {
-        return adjustmentNodeByFkAdjustmentNodeId;
+    @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNode getAdjustmentNode() {
+        return adjustmentNode;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
-        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
+    public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
+        this.adjustmentNode = adjustmentNode;
     }
 }

@@ -27,7 +27,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "FKSubmittedByUserId", nullable = true)
+    @Column(name = "SubmittedByUserId")
     public Integer getSubmittedByUser() {
         return submittedByUser;
     }

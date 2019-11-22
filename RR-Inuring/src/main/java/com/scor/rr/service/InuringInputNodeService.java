@@ -34,7 +34,7 @@ public class InuringInputNodeService {
     @Autowired
     private InuringPackageRepository inuringPackageRepository;
     @Autowired
-    private ScorpltheaderRepository scorpltheaderRepository;
+    private PltHeaderRepository scorpltheaderRepository;
     @Autowired
     private InuringEdgeService inuringEdgeService;
 
@@ -44,7 +44,7 @@ public class InuringInputNodeService {
 
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
             for (Integer pltId : request.getAttachedPLTs()) {
-                if (scorpltheaderRepository.findByPkScorPltHeaderId(pltId) == null) throw new InputPLTNotFoundException(pltId);
+                if (scorpltheaderRepository.findByPltHeaderId(pltId) == null) throw new InputPLTNotFoundException(pltId);
             }
         }
 
@@ -62,7 +62,7 @@ public class InuringInputNodeService {
         if (request.getAttachedPLTs() != null) {
             Set<Integer> newPLTIds = new HashSet<>();
             for (Integer id : request.getAttachedPLTs()) {
-                if (scorpltheaderRepository.findByPkScorPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
+                if (scorpltheaderRepository.findByPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
                 newPLTIds.add(id);
             }
             List<InuringInputAttachedPLT> inuringInputAttachedPLTs = inuringInputAttachedPLTRepository.findByInuringInputNodeId(request.getInuringInputNodeId());
@@ -86,19 +86,19 @@ public class InuringInputNodeService {
 
     }
 
-    public InuringInputNode findByInuringInputNodeId(int inuringInputNodeId) {
+    public InuringInputNode findByInuringInputNodeId(long inuringInputNodeId) {
         return inuringInputNodeRepository.findByInuringInputNodeId(inuringInputNodeId);
     }
 
-    public List<InuringInputNode> findInputNodesByInuringPackageId(int inuringPackageId) {
+    public List<InuringInputNode> findInputNodesByInuringPackageId(long inuringPackageId) {
         return inuringInputNodeRepository.findByInuringPackageId(inuringPackageId);
     }
 
-    public List<InuringInputAttachedPLT> findAttachedPLTByInuringInputNodeId(int inuringInputNodeId) {
+    public List<InuringInputAttachedPLT> findAttachedPLTByInuringInputNodeId(long inuringInputNodeId) {
         return inuringInputAttachedPLTRepository.findByInuringInputNodeId(inuringInputNodeId);
     }
 
-    public void deleteInuringInputNode(int inuringInputNodeId) {
+    public void deleteInuringInputNode(long inuringInputNodeId) {
         inuringInputNodeRepository.deleteByInuringInputNodeId(inuringInputNodeId);
         inuringInputAttachedPLTRepository.deleteByInuringInputNodeId(inuringInputNodeId);
         inuringEdgeService.deleteByRelatedNode(InuringNodeType.InputNode, inuringInputNodeId);
@@ -112,7 +112,7 @@ public class InuringInputNodeService {
         /**Still have to test if the Cascade delete works**/
     }
 
-    public InuringInputNodeResponse readInuringInputNodeDetails(int inuringInputNodeId) throws RRException{
+    public InuringInputNodeResponse readInuringInputNodeDetails(long inuringInputNodeId) throws RRException{
         InuringInputNode inuringInputNode = inuringInputNodeRepository.findByInuringInputNodeId(inuringInputNodeId);
         if(inuringInputNode == null ) throw new InuringInputNodeNotFoundException(inuringInputNodeId);
         InuringInputNodeResponse inuringInputNodeResponse = new InuringInputNodeResponse();

@@ -1,25 +1,10 @@
 export class HeaderStateModel {
-  workspacePopIn: {
-    recent: {
-      keyword: string,
-      items: { selected, wsId, uwYear, workspaceName, programName, cedantName }[],
-      pagination: number
-    },
-    favorite: {
-      keyword: string,
-      items: any[],
-      pagination: number
-    },
-    assigned: {
-      keyword: string,
-      items: any[],
-      pagination: number
-    },
-    pinned: {
-      keyword: string,
-      items: any[],
-      pagination: number
-    }
+  workspaceHeader: {
+    favorite: {data: any, pageable: any},
+    assigned: {data: any, pageable: any},
+    recent: {data: any, pageable: any},
+    pinned: {data: any, pageable: any},
+    statusCount: any
   };
   jobManagerPopIn: {
     active: {

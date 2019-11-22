@@ -15,7 +15,9 @@ import java.util.stream.Stream;
 
 public interface ContractSearchResultRepository extends JpaRepository<ContractSearchResult, String>, JpaSpecificationExecutor<ContractSearchResult> {
 
-    Stream<ContractSearchResult> findDistinctByWorkSpaceId(String uwy);
+
+    @Query("select distinct c.uwYear from ContractSearchResult c where c.workSpaceId= :wsId order by c.uwYear asc")
+    List<Integer> findDistinctYearsByWorkSpaceId(@Param("wsId") String wsId);
 
     @Query("select c from ContractSearchResult c where c.workSpaceId= :wkspId and concat(c.uwYear,'')= :uwy order by c.workSpaceId asc, c.uwYear asc")
     List<ContractSearchResult> findByTreatyidAndUwYear(@Param("wkspId") String workspaceId,@Param("uwy") String uwy);
@@ -28,10 +30,7 @@ public interface ContractSearchResultRepository extends JpaRepository<ContractSe
             " GROUP BY  c.workSpaceId,c.workspaceName, c.uwYear, c.cedantCode, c.cedantName, c.countryName")
     Page<WorkspaceProjection> globalSearch(@Param("kw") String keyword,Pageable pageable);
 
-//    @Query(value = "EXEC filterContracts :offset,:size, :#{#f.workspaceId}, :#{#f.innerWorkspaceId}, :#{#f.workspaceName}, :#{#f.innerWorkspaceName}, :#{#f.year}, :#{#f.innerYear}, :#{#f.cedantCode}, :#{#f.innerCedantCode}, :#{#f.cedantName}, :#{#f.innerCedantName}, :#{#f.countryName}, :#{#f.innerCountryName}", nativeQuery = true)
-//    List<WorkspaceProjection> getContracts(@Param("f") NewWorkspaceFilter f, @Param("offset") int offset, @Param("size") int size);
-//
-//    @Query(value = "EXEC countFilterContracts :#{#f.workspaceId},:#{#f.innerWorkspaceId},:#{#f.workspaceName}, :#{#f.innerWorkspaceName},:#{#f.year},:#{#f.innerYear}, :#{#f.cedantCode},:#{#f.innerCedantCode}, :#{#f.cedantName},:#{#f.innerCedantName}, :#{#f.countryName}, :#{#f.innerCountryName}", nativeQuery = true)
-//    long countContracts(@Param("f") NewWorkspaceFilter f);
+    /* @ TODO Implement the Count Search logic Queries */
+
 
 }

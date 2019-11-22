@@ -30,7 +30,7 @@ public class ProjectEntity {
     private WorkspaceEntity workspaceByFkWorkspaceId;
 
     @Id
-    @Column(name = "projectId", nullable = false)
+    @Column(name = "ProjectId", nullable = false)
     public int getProjectId() {
         return projectId;
     }
@@ -40,7 +40,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "ProjectName", length = 255)
     public String getName() {
         return name;
     }
@@ -50,7 +50,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "ProjectDescription", length = 255)
     public String getDescription() {
         return description;
     }
@@ -60,7 +60,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag", nullable = true)
+    @Column(name = "MasterFlag")
     public Boolean getMasterFlag() {
         return masterFlag;
     }
@@ -70,7 +70,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag", nullable = true)
+    @Column(name = "LinkFlag")
     public Boolean getLinkFlag() {
         return linkFlag;
     }
@@ -80,7 +80,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag", nullable = true)
+    @Column(name = "PublishFlag")
     public Boolean getPublishFlag() {
         return publishFlag;
     }
@@ -170,7 +170,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "FKLinkedSourceProjectId", nullable = true)
+    @Column(name = "LinkedSourceProjectId")
     public Integer getFkLinkedSourceProjectId() {
         return fkLinkedSourceProjectId;
     }
@@ -252,7 +252,7 @@ public class ProjectEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKWorkspaceId", referencedColumnName = "workspaceId")
+    @JoinColumn(name = "WorkspaceId", referencedColumnName = "workspaceId")
     public WorkspaceEntity getWorkspaceByFkWorkspaceId() {
         return workspaceByFkWorkspaceId;
     }
@@ -262,7 +262,7 @@ public class ProjectEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKCloneSourceProjectId", referencedColumnName = "projectId")
+    @JoinColumn(name = "CloneSourceProjectId", referencedColumnName = "projectId")
     public ProjectEntity getFkCloneSourceProjectId() {
         return fkCloneSourceProjectId;
     }

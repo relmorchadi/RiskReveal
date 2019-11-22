@@ -7,8 +7,8 @@ import java.util.Objects;
 @Table(name = "AccumulationPackagePLTContractSection", schema = "dbo", catalog = "RiskReveal")
 public class AccumulationPackagePltContractSectionEntity {
     private int id;
-    private Integer fkscorpltheader;
-    private Integer fkaccumulationPackageid;
+    private Integer pltHeaderId;
+    private Integer accumulationPackageId;
 
     @Id
     @Column(name = "AccumulationPackagePLTContractSectionId", nullable = false)
@@ -21,23 +21,23 @@ public class AccumulationPackagePltContractSectionEntity {
     }
 
     @Basic
-    @Column(name = "FkScorPltHeaderId", nullable = true)
-    public Integer getFkscorpltheader() {
-        return fkscorpltheader;
+    @Column(name = "PltHeaderId", nullable = true)
+    public Integer getPltHeaderId() {
+        return pltHeaderId;
     }
 
-    public void setFkscorpltheader(Integer fkscorpltheader) {
-        this.fkscorpltheader = fkscorpltheader;
+    public void setPltHeaderId(Integer pltHeaderId) {
+        this.pltHeaderId = pltHeaderId;
     }
 
     @Basic
-    @Column(name = "FkAccumulationPackageId", nullable = true)
-    public Integer getFkaccumulationPackageid() {
-        return fkaccumulationPackageid;
+    @Column(name = "AccumulationPackageId", nullable = true)
+    public Integer getAccumulationPackageId() {
+        return accumulationPackageId;
     }
 
-    public void setFkaccumulationPackageid(Integer fkaccumulationPackageid) {
-        this.fkaccumulationPackageid = fkaccumulationPackageid;
+    public void setAccumulationPackageId(Integer accumulationPackageId) {
+        this.accumulationPackageId = accumulationPackageId;
     }
 
     @Override
@@ -46,12 +46,12 @@ public class AccumulationPackagePltContractSectionEntity {
         if (o == null || getClass() != o.getClass()) return false;
         AccumulationPackagePltContractSectionEntity that = (AccumulationPackagePltContractSectionEntity) o;
         return id == that.id &&
-                Objects.equals(fkscorpltheader, that.fkscorpltheader) &&
-                Objects.equals(fkaccumulationPackageid, that.fkaccumulationPackageid);
+                Objects.equals(pltHeaderId, that.pltHeaderId) &&
+                Objects.equals(accumulationPackageId, that.accumulationPackageId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fkscorpltheader, fkaccumulationPackageid);
+        return Objects.hash(id, pltHeaderId, accumulationPackageId);
     }
 }

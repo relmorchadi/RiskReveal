@@ -1,4 +1,4 @@
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.entity.InuringInputAttachedPLT;
 import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
@@ -9,7 +9,7 @@ import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringPackageRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import com.scor.rr.service.InuringInputNodeService;
@@ -50,18 +50,18 @@ public class InuringInputNodeTest {
     private InuringPackageRepository inuringPackageRepository;
 
     @Mock
-    private ScorpltheaderRepository scorpltheaderRepository;
+    private PltHeaderRepository scorpltheaderRepository;
 
-    private Map<Integer, InuringInputNode> inuringInputNodes;
+    private Map<Long, InuringInputNode> inuringInputNodes;
 
-    private Map<Integer, InuringInputAttachedPLT> inuringInputAttachedPLTS;
+    private Map<Long, InuringInputAttachedPLT> inuringInputAttachedPLTS;
 
     private int inuringInputNodeCounter;
     private int inuringInputAttachedPLTCounter;
 
-    private static int NOT_EXISTING_INURING_PACKAGE_ID = 0;
-    private static int INURING_PACKAGE_ZERO_PLT_ID = 1;
-    private static int INURING_PACKAGE_HAS_PLT_ID = 2;
+    private static long NOT_EXISTING_INURING_PACKAGE_ID = 0;
+    private static long INURING_PACKAGE_ZERO_PLT_ID = 1;
+    private static long INURING_PACKAGE_HAS_PLT_ID = 2;
 
     private static int PLT_ID_NOT_FOUND = 0;
     private static int PLT_ID_1 = 1;
@@ -81,7 +81,7 @@ public class InuringInputNodeTest {
 
         when(inuringInputNodeRepository.saveAndFlush(any(InuringInputNode.class))).thenAnswer(i -> {
             InuringInputNode inuringInputNode = i.getArgument(0);
-            int id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
+            long id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
             inuringInputNode.setInuringInputNodeId(id);
             inuringInputNodes.put(id, inuringInputNode);
             return inuringInputNode;
@@ -90,24 +90,24 @@ public class InuringInputNodeTest {
 
         when(inuringInputAttachedPLTRepository.saveAndFlush(any(InuringInputAttachedPLT.class))).thenAnswer(i -> {
             InuringInputAttachedPLT inuringInputAttachedPLT = i.getArgument(0);
-            int id = inuringInputAttachedPLT.getInuringInputAttachedPLTId() != 0 ? inuringInputAttachedPLT.getInuringInputAttachedPLTId() : inuringInputAttachedPLTCounter++;
+            long id = inuringInputAttachedPLT.getInuringInputAttachedPLTId() != 0 ? inuringInputAttachedPLT.getInuringInputAttachedPLTId() : inuringInputAttachedPLTCounter++;
             inuringInputAttachedPLT.setInuringInputAttachedPLTId(id);
             inuringInputAttachedPLTS.put(id, inuringInputAttachedPLT);
             return inuringInputAttachedPLT;
         });
 
-        when(inuringInputNodeRepository.findByInuringInputNodeId(anyInt())).thenAnswer(i -> {
-            int id = i.getArgument(0);
+        when(inuringInputNodeRepository.findByInuringInputNodeId(anyLong())).thenAnswer(i -> {
+            long id = i.getArgument(0);
             return inuringInputNodes.get(id);
         });
 
-        when(inuringInputNodeRepository.findByInuringPackageId(anyInt())).thenAnswer(inuringPackageId -> {
-            int id = inuringPackageId.getArgument(0);
+        when(inuringInputNodeRepository.findByInuringPackageId(anyLong())).thenAnswer(inuringPackageId -> {
+            long id = inuringPackageId.getArgument(0);
             return inuringInputNodes.values().stream().filter(i -> i.getInuringPackageId() == id).collect(Collectors.toList());
         });
 
-        when(inuringInputAttachedPLTRepository.findByInuringInputNodeId(anyInt())).thenAnswer(node -> {
-            int id = node.getArgument(0);
+        when(inuringInputAttachedPLTRepository.findByInuringInputNodeId(anyLong())).thenAnswer(node -> {
+            long id = node.getArgument(0);
             return inuringInputAttachedPLTS.values().stream().filter(i -> i.getInuringInputNodeId() == id).collect(Collectors.toList());
         });
 
@@ -118,28 +118,28 @@ public class InuringInputNodeTest {
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
-        when(scorpltheaderRepository.findByPkScorPltHeaderId(anyInt())).thenAnswer(plt -> {
+        when(scorpltheaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
             int id = plt.getArgument(0);
-            return id == PLT_ID_NOT_FOUND ? null : new ScorPltHeaderEntity();
+            return id == PLT_ID_NOT_FOUND ? null : new PltHeaderEntity();
         });
 
         doAnswer(node -> {
-            int id = node.getArgument(0);
+            long id = node.getArgument(0);
             inuringInputNodes.remove(id);
             return null;
-        }).when(inuringInputNodeRepository).deleteByInuringInputNodeId(anyInt());
+        }).when(inuringInputNodeRepository).deleteByInuringInputNodeId(anyLong());
 
         doAnswer(node -> {
-            int id = node.getArgument(0);
+            long id = node.getArgument(0);
             inuringInputAttachedPLTS.entrySet().removeIf(i -> i.getValue().getInuringInputNodeId() == id);
             return null;
-        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputNodeId(anyInt());
+        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputNodeId(anyLong());
 
         doAnswer(node -> {
-            int id = node.getArgument(0);
+            long id = node.getArgument(0);
             inuringInputAttachedPLTS.remove(id);
             return null;
-        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputAttachedPLTId(anyInt());
+        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputAttachedPLTId(anyLong());
 
         when(inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1)).thenReturn(new InuringInputAttachedPLT(1, PLT_ID_1));
         when(inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(2)).thenReturn(new InuringInputAttachedPLT(1, PLT_ID_2));

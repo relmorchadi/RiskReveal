@@ -18,7 +18,7 @@ public class InuringFilterCriteria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringFilterCriteriaId", nullable = false)
-    private int inuringFilterCriteriaId;
+    private long inuringFilterCriteriaId;
 
     @Column(name = "Entity")
     private int entity;
@@ -27,7 +27,7 @@ public class InuringFilterCriteria {
     private InuringElementType inuringObjectType;
 
     @Column(name = "InuringObjectId")
-    private int inuringObjectId;
+    private long inuringObjectId;
 
     @Column(name = "FilterKey")
     private String filterKey;
@@ -38,7 +38,10 @@ public class InuringFilterCriteria {
     @Column(name = "Including")
     private boolean including;
 
-    public InuringFilterCriteria(InuringElementType inuringObjectType, int inuringObjectId, String filterKey, String filterValue, boolean including) {
+    public InuringFilterCriteria() {
+    }
+
+    public InuringFilterCriteria(InuringElementType inuringObjectType, long inuringObjectId, String filterKey, String filterValue, boolean including) {
         this.entity = 1;
         this.inuringObjectType = inuringObjectType;
         this.inuringObjectId = inuringObjectId;

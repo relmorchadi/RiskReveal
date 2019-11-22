@@ -12,13 +12,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "InuringFinalNode", schema = "dbo", catalog = "RiskReveal")
 public class InuringFinalNode {
-    private int inuringFinalNodeId;
+    private long inuringFinalNodeId;
     private int entity;
-    private int inuringPackageId;
+    private long inuringPackageId;
     private InuringNodeStatus finalNodeStatus;
     private InuringOutputGrain  inuringOutputGrain;
 
-    public InuringFinalNode(int inuringPackageId) {
+    public InuringFinalNode(long inuringPackageId) {
         this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.finalNodeStatus = InuringNodeStatus.Invalid;
@@ -31,11 +31,11 @@ public class InuringFinalNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringFinalNodeId", nullable = false)
-    public int getInuringFinalNodeId() {
+    public long getInuringFinalNodeId() {
         return inuringFinalNodeId;
     }
 
-    public void setInuringFinalNodeId(int inuringFinalNodeId) {
+    public void setInuringFinalNodeId(long inuringFinalNodeId) {
         this.inuringFinalNodeId = inuringFinalNodeId;
     }
 
@@ -49,11 +49,11 @@ public class InuringFinalNode {
     }
 
     @Column(name = "InuringPackageId", nullable = false)
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public void setInuringPackageId(int inuringPackageId) {
+    public void setInuringPackageId(long inuringPackageId) {
         this.inuringPackageId = inuringPackageId;
     }
 

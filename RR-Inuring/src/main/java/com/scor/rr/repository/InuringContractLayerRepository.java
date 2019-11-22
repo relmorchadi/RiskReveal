@@ -13,16 +13,18 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringContractLayerRepository extends JpaRepository<InuringContractLayer, Integer> {
+public interface InuringContractLayerRepository extends JpaRepository<InuringContractLayer, Long> {
 
-    void deleteByInuringContractLayerId(int contractLayerId);
-    InuringContractLayer findByInuringContractLayerId(int inuringContractLayerId);
+    void deleteByInuringContractLayerId(long contractLayerId);
+    InuringContractLayer findByInuringContractLayerId(long inuringContractLayerId);
 
-    List<InuringContractLayer> findByInuringContractNodeId(int inuringContractNodeId);
+    int countInuringContractLayerByInuringContractNodeId(long contractNodeId);
+
+    List<InuringContractLayer> findByInuringContractNodeId(long inuringContractNodeId);
 
     @Modifying(clearAutomatically = true)
     @Query(value="UPDATE InuringContractLayer SET layerNumber = layerNumber - 1 WHERE layerNumber > ?1 AND inuringContractNodeId = ?2")
-    void reorderTheLayers(int layerNumber,int contractNodeId);
+    void reorderTheLayers(int layerNumber,long contractNodeId);
 
 
 }

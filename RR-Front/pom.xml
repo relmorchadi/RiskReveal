@@ -17,6 +17,10 @@
   <name>Risk reveal Front</name>
   <packaging>pom</packaging>
 
+  <properties>
+    <tobedeployed>false</tobedeployed>
+  </properties>
+
   <build>
     <plugins>
       <plugin>

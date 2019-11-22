@@ -136,18 +136,30 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     }));
   }
 
-  addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
-    this.dispatch([new fromWs.MarkWsAsFavorite({wsIdentifier}), new fromHeader.AddWsToFavorite({
-      wsId,
-      uwYear,
-      workspaceName,
-      programName,
-      cedantName
+  toggleFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {
+    this.dispatch([new fromHeader.ToggleFavoriteWsState({
+      userId: 1,
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear
     })]);
   }
 
-  unFavorite(wsIdentifier, {wsId, uwYear}) {
-    this.dispatch([new fromWs.MarkWsAsNonFavorite({wsIdentifier}), new fromHeader.DeleteWsFromFavorite({wsId, uwYear})])
+  filterSelected() {
+    return _.filter(this.data[this.currentWsIdentifier].projects, item => item.selected)[0];
+  }
+
+  filterSelectedDivision() {
+    return _.map(_.get(this.filterSelected(), 'division', []), item => item.divisionNo);
+  }
+
+  filterListProject() {
+    return _.filter(this.data[this.currentWsIdentifier].projects, item => !item.selected);
+  }
+
+  selectProject(selectionEvent) {
+    const projectIndex = _.findIndex(this.data[this.currentWsIdentifier].projects,
+      (item: any) => item.id === selectionEvent);
+    this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.currentWsIdentifier}));
   }
 
   leftMenuNavigation({route}, {wsId, uwYear}) {

@@ -8,10 +8,10 @@ import lombok.Data;
  */
 
 public class InuringFinalNodeUpdateRequest {
-    private int inuringFinalNodeId;
+    private long inuringFinalNodeId;
     private InuringOutputGrain inuringOutputGrain;
 
-    public InuringFinalNodeUpdateRequest(int inuringFinalNodeId, InuringOutputGrain inuringOutputGrain) {
+    public InuringFinalNodeUpdateRequest(long inuringFinalNodeId, InuringOutputGrain inuringOutputGrain) {
         this.inuringFinalNodeId = inuringFinalNodeId;
         this.inuringOutputGrain = inuringOutputGrain;
     }
@@ -19,7 +19,7 @@ public class InuringFinalNodeUpdateRequest {
     public InuringFinalNodeUpdateRequest() {
     }
 
-    public int getInuringFinalNodeId() {
+    public long getInuringFinalNodeId() {
         return inuringFinalNodeId;
     }
 

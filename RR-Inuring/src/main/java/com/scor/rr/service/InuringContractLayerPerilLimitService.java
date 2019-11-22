@@ -26,6 +26,7 @@ public class InuringContractLayerPerilLimitService {
         InuringContractLayer inuringContractLayer = inuringContractLayerRepository.findByInuringContractLayerId(request.getInuringContractLayerId());
         if(inuringContractLayer == null) throw new InuringContractLayerNotFoundException(request.getInuringContractLayerId());
 
+
         InuringContractLayerPerilLimit inuringContractLayerPerilLimit = new InuringContractLayerPerilLimit(
                 request.getInuringContractLayerId(),
                 request.getPeril(),
@@ -33,9 +34,23 @@ public class InuringContractLayerPerilLimitService {
         inuringContractLayerPerilLimitRepository.save(inuringContractLayerPerilLimit);
     }
 
-    public void deleteInuringContractLayerPerilLimitById(int inuringContractLayerPerilLimit){
+    public void deleteInuringContractLayerPerilLimitById(long inuringContractLayerPerilLimit){
         inuringContractLayerPerilLimitRepository.deleteByInuringContractLayerPerilLimitId(inuringContractLayerPerilLimit);
     }
+
+
+//
+//    public boolean checkPossibility(String type){
+//        switch (type){
+//            case "Reinstatement":
+//                break;
+//            case "PerilLimit":
+//                break;
+//            default: return false;
+//        }
+//    }
+
+
 
 
 }

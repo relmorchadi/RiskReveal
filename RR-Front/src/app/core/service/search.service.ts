@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
@@ -46,7 +46,24 @@ export class SearchService {
   }
 
   expertModeSearch(filter) {
+    console.log(filter);
     return this._http.post(`${this.api}workspace/expert-mode`, filter);
+  }
+
+  loadShort(): Observable<any> {
+    return this._http.get(`${this.api}shortcuts`);
+  }
+
+  getSavedSearch(payload) : Observable<any> {
+    return this._http.get(`${this.api}saved-search`, { params: payload })
+  }
+
+  getMostUsedSavedSearch(payload) : Observable<any> {
+    return this._http.get(`${this.api}saved-search/most`, { params: payload })
+  }
+
+  saveSearch(payload): Observable<any> {
+    return this._http.post(this.api, payload);
   }
 
   affectItems(item) {

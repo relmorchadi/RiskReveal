@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import {dashData} from '../../../shared/data/dashboard-data';
 import {OpenWS} from '../../../workspace/store/actions';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {WsApi} from '../../../workspace/services/workspace.api';
+import {WsApi} from '../../../workspace/services/api/workspace.api';
 import {WorkspaceState} from '../../../workspace/store/states';
 
 @Component({
@@ -29,10 +29,6 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-/*  filterAssignedNew = false;
-  filterAssignedCurrent = false;
-  filterAssignedArchive = false;*/
-
   @Input()
   itemName = 'Car Widget';
   @Input()
@@ -41,6 +37,8 @@ export class FacWidgetComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  type: any;
   newDashboard: any;
   editName = false;
 
@@ -52,7 +50,7 @@ export class FacWidgetComponent implements OnInit {
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractLabel', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractSector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
@@ -107,11 +105,11 @@ export class FacWidgetComponent implements OnInit {
   }
 
   setFilters() {
-    if (this.itemName === 'New CARs') {
+    if (this.type === 'newCar') {
       this.filterNew = true;
-    } else if (this.itemName === 'In Progress CARs') {
+    } else if (this.type === 'inProgressCar') {
       this.filterCurrent = true;
-    } else if (this.itemName === 'Archived CARs') {
+    } else if (this.type === 'archivedCar') {
       this.filterArchive = true;
     }
   }
@@ -120,51 +118,6 @@ export class FacWidgetComponent implements OnInit {
     this.tabIndex = index;
   }
 
-/*  filterData(filter) {
-    if (filter === 'New') {
-      this.filterNew = true;
-      this.filterCurrent = false;
-      this.filterArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterNew = false;
-      this.filterCurrent = true;
-      this.filterArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterNew = false;
-      this.filterCurrent = false;
-      this.filterArchive = true;
-    }
-  }
-
-  filterAssignedData(filter) {
-    if (filter === 'New') {
-      this.filterAssignedNew = true;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'In Progress') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = true;
-      this.filterAssignedArchive = false;
-    } else if (filter === 'Archive') {
-      this.filterAssignedNew = false;
-      this.filterAssignedCurrent = false;
-      this.filterAssignedArchive = true;
-    }
-  }
-
-
-  applyFiltersAssigned(data) {
-    let filteredData = [...data];
-    if (this.filterAssignedCurrent) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
-    } else if (this.filterAssignedNew) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
-    } else if (this.filterAssignedArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
-    }
-    return filteredData;
-  }*/
-
   applyFilters(data) {
     let filteredData = [...(data || [])];
     if (this.filterCurrent) {
@@ -172,7 +125,7 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'Superseded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+      filteredData = _.filter(filteredData, item => item.carStatus !== 'In Progress' && item.carStatus !== 'New');
     }
     return filteredData;
   }
@@ -190,7 +143,6 @@ export class FacWidgetComponent implements OnInit {
   }
 
   valueFavChange(event) {
-    this.store.dispatch(new workspaceActions.MarkFacWsAsFavorite(event));
   }
 
   duplicateItem(itemName: any): void {

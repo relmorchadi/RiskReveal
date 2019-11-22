@@ -15,18 +15,17 @@
           </span>
     <ul>
       <li (click)="routerNavigate(null)" nz-menu-item>Projects</li>
-      <li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>
-      <li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>
+      <!--<li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>-->
+      <!--<li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>-->
     </ul>
   </li>
-
-  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"
-      [nzTitle]="isCollapsed ? 'Scope Of Completeness' : ''">
-          <span title>
-            <i nz-icon><i class="icon-location_searching_24px"></i></i>
-            <span>Scope & Completeness</span>
-          </span>
-  </li>
+  <!--<li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"-->
+      <!--[nzTitle]="isCollapsed ? 'Scope Of Completeness' : ''">-->
+          <!--<span title>-->
+            <!--<i nz-icon><i class="icon-location_searching_24px"></i></i>-->
+            <!--<span>Scope & Completeness</span>-->
+          <!--</span>-->
+  <!--</li>-->
 
   <li (click)="routerNavigate('PltBrowser')" [nzTitle]="isCollapsed ? 'PLT Manager' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
@@ -41,7 +40,7 @@
             <span>Job Manager</span>
           </span>
   </li-->
-  <hr class="col-xs-12">
+  <!--<hr class="col-xs-12">
   <li [nzTitle]="isCollapsed ? 'Data sources Import' : ''" class="pr-1" nz-submenu nz-tooltip nzPlacement="right">
           <span title>
             <i style="z-index: 99" (click)="riskLinkImportNavigation()" nz-icon><i class="icon-call_merge_24px"></i></i>
@@ -50,7 +49,7 @@
     <ul>
       <li (click)="routerNavigate('RiskLink')" nz-menu-item>RiskLink Import</li>
       <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File-Based Import</li>
-      <!--      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>-->
+      &lt;!&ndash;      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>&ndash;&gt;
     </ul>
   </li>
   <hr class="col-xs-12">
@@ -96,5 +95,5 @@
             <i nz-icon><i class="icon-focus-add"></i></i>
             <span>Accumulation</span>
           </span>
-  </li>
+  </li>-->
 </ul>

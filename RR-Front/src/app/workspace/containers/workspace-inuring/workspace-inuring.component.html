@@ -1,122 +1,133 @@
-<div class="a-app-wrapper" style="margin-top: 5px;">
-  <div class="app-body app-body--tansparent">
+<div class="a-app-wrapper">
+  <div class="a-app-header">
+    <div style="display: flex;flex-direction: column;align-items: flex-start;">
+      <h4>Inuring Package</h4>
+    </div>
 
-    <nz-tabset [(nzSelectedIndex)]="currentTabIndex" class="dashboard-content" style="width: 100%; height: fit-content">
-      <nz-tab [nzTitle]="'All Packages'">
-        <div class="a-app-header mt-2">
-          <div class="title-container">
-            <h4>Inuring Package</h4>
-            <button (click)="showAddPackagePopup()" class="a-buttons-outlined"
-                    style="color: #332ed7 ;border-color: #332ed7">
-              <i class="icon-plus"></i>
-              Add Package
-            </button>
-          </div>
-<!--          <app-pin-->
-<!--            (pinWs)="pinWorkspace()"-->
-<!--            (unpinWs)="unPinWorkspace()"-->
-<!--            [active]="!workspace?.isPinned"-->
-<!--          >-->
-<!--          </app-pin>-->
-        </div>
-        <div class="all-packages-tab-content">
-
-          <div class="table-container">
-            <inuring-datatable [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"
-                               [listOfData]="packages" [virtualScroll]="false"
-                               (dbClickItem)="openInuringPackage($event)"
-                               [tableWidth]="'700px'" [tableHeight]="'500px'">
-            </inuring-datatable>
-          </div>
-        </div>
-      </nz-tab>
-      <ng-container *ngFor="let id of workspace?.inuring?.content |keys; let i=index">
-        <ng-template #titleTemplate>
-          <ng-container
-            [ngTemplateOutlet]="tabTitle"
-            [ngTemplateOutletContext]="{
-              packageId: id
-            }"
-          ></ng-container>
-        </ng-template>
-        <nz-tab [nzTitle]="titleTemplate">
-          <inuring-package-details [data]="{
-            wsId: workspace?.wsId,
-            year: workspace?.uwYear,
-            details: workspace?.inuring?.content[id]
-          }"></inuring-package-details>
-        </nz-tab>
-
-      </ng-container>
-    </nz-tabset>
-
+  </div>
+  <div class="app-body">
 
   </div>
 </div>
+<!--<div class="a-app-wrapper" style="margin-top: 5px;">-->
+  <!--<div class="app-body app-body&#45;&#45;tansparent">-->
 
-<ng-template
-  #tabTitle
-  let-packageId='packageId'>
-  <div>
-    {{packageId}}
-    <i (click)="close(packageId)" class="icon-clear_24px"></i>
-  </div>
-</ng-template>
+    <!--<nz-tabset [(nzSelectedIndex)]="currentTabIndex" class="dashboard-content" style="width: 100%; height: fit-content">-->
+      <!--<nz-tab [nzTitle]="'All Packages'">-->
+        <!--<div class="a-app-header mt-2">-->
+          <!--<div class="title-container">-->
+            <!--<h4>Inuring Package</h4>-->
+            <!--<button (click)="showAddPackagePopup()" class="a-buttons-outlined"-->
+                    <!--style="color: #332ed7 ;border-color: #332ed7">-->
+              <!--<i class="icon-plus"></i>-->
+              <!--Add Package-->
+            <!--</button>-->
+          <!--</div>-->
+<!--&lt;!&ndash;          <app-pin&ndash;&gt;-->
+<!--&lt;!&ndash;            (pinWs)="pinWorkspace()"&ndash;&gt;-->
+<!--&lt;!&ndash;            (unpinWs)="unPinWorkspace()"&ndash;&gt;-->
+<!--&lt;!&ndash;            [active]="!workspace?.isPinned"&ndash;&gt;-->
+<!--&lt;!&ndash;          >&ndash;&gt;-->
+<!--&lt;!&ndash;          </app-pin>&ndash;&gt;-->
+        <!--</div>-->
+        <!--<div class="all-packages-tab-content">-->
 
-<p-dialog
-  [visible]="addPackageVisibility"
-  [closable]="false"
-  styleClass="m-dialog-modal-sm-f"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
-  [formGroup]="inuringPackageFG"
->
-  <p-header>
-    <div class="header">
-      <h6>Add New Inuring Package</h6>
-      <i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="modal-content-div">
-    <div class="ui-g">
-      <div class="ui-g-3">
-        <label>ID :</label>
-      </div>
-      <div class="ui-g-9">
-        <input class="a-textfield-mini" *ngIf="!inuringPackageFG.get('edit').value; else packageId"
-               [(ngModel)]="newPackageId" formControlName="id"
-               placeholder="Package ID">
-        <ng-template #packageId>
-          <div>
-            {{inuringPackageFG.get('id').value}}
-          </div>
-        </ng-template>
-      </div>
-    </div>
-    <div class="ui-g">
-      <div class="ui-g-3">
-        <label>Name: </label>
-      </div>
-      <div class="ui-g-9">
-        <input class="a-textfield-mini" formControlName="name" placeholder="Package Name">
-      </div>
-    </div>
-    <div class="ui-g">
-      <div class="ui-g-3">
-        <label>Description: </label>
-      </div>
-      <div class="ui-g-9">
-        <textarea formControlName="description" placeholder="Description" cols="30" rows="7"></textarea>
-      </div>
-    </div>
-  </div>
-  <p-footer>
-    <div class="modal-footer-wrapper">
-      <button (click)="addPackageVisibility=false" class="a-button-text-cancel">CANCEL</button>
-      <button (click)="submitInuringPackageForm()" [ngClass]="{'a-buttons-contained-disabled': !inuringPackageFG.valid,
-      'a-buttons-contained': inuringPackageFG.valid}" [disabled]="!inuringPackageFG.valid" >APPLY</button>
-    </div>
-  </p-footer>
-</p-dialog>
+          <!--<div class="table-container">-->
+            <!--<inuring-datatable [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"-->
+                               <!--[listOfData]="packages" [virtualScroll]="false"-->
+                               <!--(dbClickItem)="openInuringPackage($event)"-->
+                               <!--[tableWidth]="'700px'" [tableHeight]="'500px'">-->
+            <!--</inuring-datatable>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</nz-tab>-->
+      <!--<ng-container *ngFor="let id of workspace?.inuring?.content |keys; let i=index">-->
+        <!--<ng-template #titleTemplate>-->
+          <!--<ng-container-->
+            <!--[ngTemplateOutlet]="tabTitle"-->
+            <!--[ngTemplateOutletContext]="{-->
+              <!--packageId: id-->
+            <!--}"-->
+          <!--&gt;</ng-container>-->
+        <!--</ng-template>-->
+        <!--<nz-tab [nzTitle]="titleTemplate">-->
+          <!--<inuring-package-details [data]="{-->
+            <!--wsId: workspace?.wsId,-->
+            <!--year: workspace?.uwYear,-->
+            <!--details: workspace?.inuring?.content[id]-->
+          <!--}"></inuring-package-details>-->
+        <!--</nz-tab>-->
+
+      <!--</ng-container>-->
+    <!--</nz-tabset>-->
+
+
+  <!--</div>-->
+<!--</div>-->
+
+<!--<ng-template-->
+  <!--#tabTitle-->
+  <!--let-packageId='packageId'>-->
+  <!--<div>-->
+    <!--{{packageId}}-->
+    <!--<i (click)="close(packageId)" class="icon-clear_24px"></i>-->
+  <!--</div>-->
+<!--</ng-template>-->
+
+<!--<p-dialog-->
+  <!--[visible]="addPackageVisibility"-->
+  <!--[closable]="false"-->
+  <!--styleClass="m-dialog-modal-sm-f"-->
+  <!--appendTo="body"-->
+  <!--[modal]="true"-->
+  <!--[autoZIndex]="false"-->
+  <!--[responsive]="true"-->
+  <!--[formGroup]="inuringPackageFG"-->
+<!--&gt;-->
+  <!--<p-header>-->
+    <!--<div class="header">-->
+      <!--<h6>Add New Inuring Package</h6>-->
+      <!--<i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>-->
+    <!--</div>-->
+  <!--</p-header>-->
+  <!--<div class="modal-content-div">-->
+    <!--<div class="ui-g">-->
+      <!--<div class="ui-g-3">-->
+        <!--<label>ID :</label>-->
+      <!--</div>-->
+      <!--<div class="ui-g-9">-->
+        <!--<input class="a-textfield-mini" *ngIf="!inuringPackageFG.get('edit').value; else packageId"-->
+               <!--[(ngModel)]="newPackageId" formControlName="id"-->
+               <!--placeholder="Package ID">-->
+        <!--<ng-template #packageId>-->
+          <!--<div>-->
+            <!--{{inuringPackageFG.get('id').value}}-->
+          <!--</div>-->
+        <!--</ng-template>-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<div class="ui-g">-->
+      <!--<div class="ui-g-3">-->
+        <!--<label>Name: </label>-->
+      <!--</div>-->
+      <!--<div class="ui-g-9">-->
+        <!--<input class="a-textfield-mini" formControlName="name" placeholder="Package Name">-->
+      <!--</div>-->
+    <!--</div>-->
+    <!--<div class="ui-g">-->
+      <!--<div class="ui-g-3">-->
+        <!--<label>Description: </label>-->
+      <!--</div>-->
+      <!--<div class="ui-g-9">-->
+        <!--<textarea formControlName="description" placeholder="Description" cols="30" rows="7"></textarea>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+  <!--<p-footer>-->
+    <!--<div class="modal-footer-wrapper">-->
+      <!--<button (click)="addPackageVisibility=false" class="a-button-text-cancel">CANCEL</button>-->
+      <!--<button (click)="submitInuringPackageForm()" [ngClass]="{'a-buttons-contained-disabled': !inuringPackageFG.valid,-->
+      <!--'a-buttons-contained': inuringPackageFG.valid}" [disabled]="!inuringPackageFG.valid" >APPLY</button>-->
+    <!--</div>-->
+  <!--</p-footer>-->
+<!--</p-dialog>-->

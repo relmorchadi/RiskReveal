@@ -14,14 +14,14 @@ import java.util.Objects;
 @Table(name = "InuringPackage", schema = "dbo", catalog = "RiskReveal")
 public class InuringPackage {
 
-    private int inuringPackageId;
+    private long inuringPackageId;
     private int entity;
     private String packageName;
     private String packageDescription;
-    private int workspaceId;
-    private int createdBy;
+    private long workspaceId;
+    private long createdBy;
     private Date createdOn;
-    private int lastModifiedBy;
+    private long lastModifiedBy;
     private Date lastModifiedOn;
     private boolean locked;
     private InuringPackageStatus inuringPackageStatus;
@@ -29,7 +29,7 @@ public class InuringPackage {
     public InuringPackage() {
     }
 
-    public InuringPackage(String packageName, String packageDescription, int workspaceId, int createdBy) {
+    public InuringPackage(String packageName, String packageDescription, long workspaceId, long createdBy) {
         this.entity = 1;
         this.packageName = packageName;
         this.packageDescription = packageDescription;
@@ -45,11 +45,11 @@ public class InuringPackage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringPackageId")
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public void setInuringPackageId(int inuringPackageId) {
+    public void setInuringPackageId(long inuringPackageId) {
         this.inuringPackageId = inuringPackageId;
     }
 
@@ -81,20 +81,20 @@ public class InuringPackage {
     }
 
     @Column(name = "WorkspaceId", nullable = false)
-    public int getWorkspaceId() {
+    public long getWorkspaceId() {
         return workspaceId;
     }
 
-    public void setWorkspaceId(int workspaceId) {
+    public void setWorkspaceId(long workspaceId) {
         this.workspaceId = workspaceId;
     }
 
     @Column(name = "CreatedBy", nullable = false)
-    public int getCreatedBy() {
+    public long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(long createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -108,11 +108,11 @@ public class InuringPackage {
     }
 
     @Column(name = "LastModifiedBy", nullable = false)
-    public int getLastModifiedBy() {
+    public long getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(int lastModifiedBy) {
+    public void setLastModifiedBy(long lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 

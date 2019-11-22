@@ -17,7 +17,7 @@ public class RefFMFContractType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ContractTypeId", nullable = false)
-    private int contractTypeId;
+    private long contractTypeId;
 
     @Column(name = "Entity")
     private int entity;
@@ -28,19 +28,19 @@ public class RefFMFContractType {
     @Column(name = "ContractTypeName")
     private String contractTypeName;
 
-    @Column(name = "RiskReveal")
+    @Column(name = "UsedInRR")
     private boolean usedInRR;
 
-    @Column(name = "UISequence")
+    @Column(name = "RRUISequence")
     private int rRUISequence;
 
-    @Column(name = "MainDistributionChannel")
+    @Column(name = "MainDistribution")
     private String mainDistribution;
 
     @Column(name = "ContractClass")
     private String contractClass;
 
-    @Column(name = "UIHoverName")
+    @Column(name = "RRUILongName")
     private String rRUILongName;
 
     @Column(name = "IsActive")
@@ -48,6 +48,9 @@ public class RefFMFContractType {
 
     @Column(name = "MultipleLayer")
     private boolean multipleLayer;
+
+    public RefFMFContractType() {
+    }
 
     public boolean getMultipleLayer(){
         return this.multipleLayer;

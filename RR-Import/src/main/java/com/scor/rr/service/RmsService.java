@@ -2,36 +2,42 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlAnalysisScanStatus;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.dto.RLAnalysisELT;
+import com.scor.rr.domain.dto.SourceResultDto;
+import com.scor.rr.domain.enums.ModelDataSourceType;
+import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.RlAnalysisRepository;
 import com.scor.rr.repository.RlAnalysisScanStatusRepository;
 import com.scor.rr.repository.RlModelDataSourceRepository;
-import lombok.extern.slf4j.Slf4j;
+import com.scor.rr.repository.RlSourceResultRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
+import org.apache.commons.lang.StringUtils;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlOutParameter;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
+import java.io.File;
 import java.math.BigInteger;
+import java.sql.Types;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
 @Component
-@Slf4j
-@Transactional
 public class RmsService {
+
+    private final Logger logger = LoggerFactory.getLogger(RmsService.class);
 
     @Autowired
     @Qualifier("jdbcRms")
@@ -46,10 +52,28 @@ public class RmsService {
     @Autowired
     RlAnalysisRepository rlAnalysisRepository;
 
-    @Value("${rms.database}")
+    @Autowired
+    RlSourceResultRepository rlSourceResultRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Autowired
+    @Qualifier(value = "dataSource")
+    private javax.sql.DataSource rlDataSource;
+
+    @Value("${rms.ds.dbname}")
     private String DATABASE;
 
-    private final Logger logger = LoggerFactory.getLogger(RmsService.class);
+    @Value("${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryPrep]")
+    private String createEDMPortfolioContextSQL;
+
+    @Value("exec ${rms.ds.dbname}.[dbo].[RR_RL_BaseEdmSummaryClear] @RunID=:RunID")
+    private String removeEDMPortfolioContextSQL;
+
+    @Value(value = "extractLocationLevelSchemaQuery")
+    private String extractLocationLevelSchemaQuery;
+
 
     public List<DataSource> listAvailableDataSources() {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
@@ -61,8 +85,7 @@ public class RmsService {
         return dataSources;
     }
 
-
-    public void addEdmRdms(List<DataSource> dataSources, Integer projectId, String instanceId, String instanceName) {
+    public void addEdmRdms(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
         Set<MultiKey> selectedDataSources = new HashSet<>();
         for (DataSource dataSource : dataSources) {
             selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
@@ -80,45 +103,13 @@ public class RmsService {
             if (rlModelDataSource == null) {
                 rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
                 rlModelDataSourcesRepository.save(rlModelDataSource);
-                if ("RDM".equals(rlModelDataSource.getType())) {
-                    scanAnalysisBasicForRdm(rlModelDataSource);
-                }
+            }
+
+            if ("RDM".equals(rlModelDataSource.getType())) {
+                scanAnalysisBasicForRdm(rlModelDataSource);
             }
         }
 
-    }
-
-    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
-        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
-            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
-                    new RLAnalysis(rdmAnalysisBasic, rdm)
-            );
-            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
-            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-        }
-    }
-
-    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Integer projectId) {
-        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
-
-        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
-                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((BigInteger) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
-
-        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
-            Long rdmId = ((BigInteger) multiKeyListEntry.getKey().getKey(0)).longValue();
-            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
-            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue()).forEach(rdmAnalysis -> {
-                this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis );
-            });
-        }
-
-    }
-
-
-    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
-        return rlAnalysisList.stream().filter(item -> item.getRdmId().equals(rdmId) && item.getRdmName().equals(rdmName))
-                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(Long id, String name) {
@@ -130,17 +121,6 @@ public class RmsService {
         this.logger.debug("the data returned ", rdmAnalysisBasic);
         return rdmAnalysisBasic;
     }
-
-    public List<EdmPortfolioBasic> listEdmPortfolioBasic(Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
-        this.logger.debug("Service starts executing the query ...");
-        List<EdmPortfolioBasic> edmPortfolioBasic = rmsJdbcTemplate.query(
-                sql, new EdmPortfolioBasicRowMapper()
-        );
-        this.logger.debug("the data returned ", edmPortfolioBasic);
-        return edmPortfolioBasic;
-    }
-
 
     public List<RdmAnalysis> listRdmAnalysis(Long id, String name, List<Long> analysisIdList) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_ListRdmAnalysis @rdm_id=" + id + ", @rdm_name=" + name;
@@ -158,6 +138,54 @@ public class RmsService {
         }
         this.logger.debug("the data returned ", rdmAnalysis);
         return rdmAnalysis;
+    }
+
+    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
+        rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
+        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
+        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
+                    new RLAnalysis(rdmAnalysisBasic, rdm)
+            );
+            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
+        }
+    }
+
+    public void scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Long projectId) {
+        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
+
+        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
+                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm(BigInteger.valueOf((int) key.getKey(0)), (String) key.getKey(1), rlAnalysisList)));
+
+        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
+
+            Long rdmId = ((Integer) multiKeyListEntry.getKey().getKey(0)).longValue();
+            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+            this.listRdmAnalysis(rdmId, rdmName, multiKeyListEntry.getValue())
+                    .stream()
+                    .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis))
+                    .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
+                    .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
+
+        }
+
+    }
+
+    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
+        return rlAnalysisList.stream().filter(item -> item.getRdmId().intValue() == rdmId.intValue() && item.getRdmName().equals(rdmName))
+                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
+    }
+
+    public List<EdmPortfolioBasic> listEdmPortfolioBasic(Long id, String name) {
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
+        this.logger.debug("Service starts executing the query ...");
+        List<EdmPortfolioBasic> edmPortfolioBasic = rmsJdbcTemplate.query(
+                sql, new EdmPortfolioBasicRowMapper()
+        );
+        this.logger.debug("the data returned ", edmPortfolioBasic);
+        return edmPortfolioBasic;
     }
 
     public List<EdmPortfolio> listEdmPortfolio(Long id, String name, List<String> portfolioList) {
@@ -238,7 +266,7 @@ public class RmsService {
 
         List<RdmAllAnalysisSummaryStats> rdmAllAnalysisSummaryStats = new ArrayList<>();
 
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisSummaryStats @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisSummaryStats @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the q uery ...");
         if (analysisIdList != null && !LIST.isEmpty()) {
             String sql = query + ", @fin_persp_list=" + "'" + LIST + "'" + ", @analysis_id_list=" + analysisIdList;
@@ -272,9 +300,9 @@ public class RmsService {
         return rdmAllAnalysisSummaryStats;
     }
 
-    public List<AnalysisEpCurves> getAnalysisEpCurves(int rdmID, String rdmName, int analysisId, String finPerspCode, Integer treatyLabelId) {
+    public List<AnalysisEpCurves> getAnalysisEpCurves(Long rdmID, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
         List<AnalysisEpCurves> analysisEpCurves = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisEpCurves @rdm_id=" + rdmID + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId + ", @fin_persp_code=" + finPerspCode;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisEpCurves @rdm_id=" + rdmID.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue() + ", @fin_persp_code=" + finPerspCode;
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ",@treaty_label_id=" + treatyLabelId;
@@ -292,10 +320,10 @@ public class RmsService {
         return analysisEpCurves;
     }
 
-    public List<AnalysisSummaryStats> getAnalysisSummaryStats(int rdmId, String rdmName, int analysisId, String fpCode, Integer treatyLabelId) {
+    public List<AnalysisSummaryStats> getAnalysisSummaryStats(Long rdmId, String rdmName, Long analysisId, String fpCode, Integer treatyLabelId) {
 
         List<AnalysisSummaryStats> analysisSummaryStats = new ArrayList<>();
-        String query = " execute " + DATABASE + ".dbo.RR_RL_GetAnalysisSummaryStats @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId + ", @fin_persp_code=" + fpCode;
+        String query = " execute " + DATABASE + ".dbo.RR_RL_GetAnalysisSummaryStats @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue() + ", @fin_persp_code=" + fpCode;
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ",@treaty_label_id=" + treatyLabelId;
@@ -312,10 +340,10 @@ public class RmsService {
         return analysisSummaryStats;
     }
 
-    public List<RdmAllAnalysisProfileRegions> getRdmAllAnalysisProfileRegions(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisProfileRegions> getRdmAllAnalysisProfileRegions(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisProfileRegions> rdmAllAnalysisProfileRegions = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisProfileRegions @rdm_id=" + rdmId + ",@rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisProfileRegions @rdm_id=" + rdmId.longValue() + ",@rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
         if (analysisIdList != null) {
 
@@ -328,36 +356,36 @@ public class RmsService {
         return rdmAllAnalysisProfileRegions;
     }
 
-    public List<AnalysisElt> getAnalysisElt(int rdmId, String rdmName, int analysisId, String finPerspCode, Integer treatyLabelId) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId
+    public RLAnalysisELT getAnalysisElt(String instanceId, Long rdmId, String rdmName, Long analysisId, String finPerspCode, Integer treatyLabelId) {
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetAnalysisElt @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue()
                 + ", @fin_persp_code=" + finPerspCode;
-        List<AnalysisElt> analysisElt = new ArrayList<>();
+        List<RlEltLoss> rlEltLoss = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
         if (treatyLabelId != null) {
             String sql = query + ", @treaty_label_id=" + treatyLabelId;
-            analysisElt = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(sql, new AnalysisEltRowMapper());
         } else {
-            analysisElt = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
+            rlEltLoss = rmsJdbcTemplate.query(query, new AnalysisEltRowMapper());
         }
-        this.logger.debug("the data returned ", analysisElt);
-        return analysisElt;
+        this.logger.debug("the data returned ", rlEltLoss);
+        return new RLAnalysisELT(instanceId, rdmId, rdmName, analysisId, finPerspCode, rlEltLoss);
     }
 
-    public List<EdmAllPortfolioAnalysisRegions> getEdmAllPortfolioAnalysisRegions(int edmId, String edmName, String ccy) {
+    public List<EdmAllPortfolioAnalysisRegions> getEdmAllPortfolioAnalysisRegions(Long edmId, String edmName, String ccy) {
 
         List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegions = new ArrayList<>();
 
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_GetEdmAllPortfolioAnalysisRegions @edm_id=" + edmId + ", @edm_name=" + edmName + ", @Ccy=" + ccy;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_GetEdmAllPortfolioAnalysisRegions @edm_id=" + edmId.longValue() + ", @edm_name=" + edmName + ", @Ccy=" + ccy;
         this.logger.debug("Service starts executing the query ...");
         edmAllPortfolioAnalysisRegions = rmsJdbcTemplate.query(sql, new EdmAllPortfolioAnalysisRegionsRowMapper());
         this.logger.debug("the data returned ", edmAllPortfolioAnalysisRegions);
         return edmAllPortfolioAnalysisRegions;
     }
 
-    public List<RdmAllAnalysisTreatyStructure> getRdmAllAnalysisTreatyStructure(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisTreatyStructure> getRdmAllAnalysisTreatyStructure(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructure = new ArrayList<>();
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisTreatyStructure @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisTreatyStructure @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
         if (analysisIdList != null) {
             String sql = query + ", @analysis_id_list=" + analysisIdList;
@@ -369,11 +397,11 @@ public class RmsService {
         return rdmAllAnalysisTreatyStructure;
     }
 
-    public List<RdmAllAnalysisMultiRegionPerils> getRdmAllAnalysisMultiRegionPerils(int rdmId, String rdmName, List<Integer> analysisIdList) {
+    public List<RdmAllAnalysisMultiRegionPerils> getRdmAllAnalysisMultiRegionPerils(Long rdmId, String rdmName, List<Long> analysisIdList) {
 
         List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerils = new ArrayList<>();
 
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisMultiRegionPerils @rdm_id=" + rdmId + ", @rdm_name=" + rdmName;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisMultiRegionPerils @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName;
         this.logger.debug("Service starts executing the query ...");
 
         if (analysisIdList != null) {
@@ -389,12 +417,14 @@ public class RmsService {
     }
 
     public List<RmsExchangeRate> getRmsExchangeRates(List<String> ccyy) {
+
         String ccy = ccyy.toString().replaceAll(" ", "");
         List<RmsExchangeRate> rmsExchangeRate = new ArrayList<>();
         String sql = "execute " + DATABASE + ".[dbo].[RR_RL_GetRMSExchangeRates] @ccyList=" + ccy;
         this.logger.debug("Service starts executing the query ...");
         rmsExchangeRate = rmsJdbcTemplate.query(sql, new RmsExchangeRateRowMapper());
         this.logger.debug("the data returned ", rmsExchangeRate);
+
         return rmsExchangeRate;
     }
 
@@ -412,9 +442,10 @@ public class RmsService {
         return cChkBaseCcyFxRate;
     }
 
-    public String getAnalysisModellingOptionSettings(int rdmId, String rdmName, int analysisId) {
-        String query = "execute " + DATABASE + ".[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=" + rdmId + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId;
-        String json = "";
+    public String getAnalysisModellingOptionSettings(String instanceId, Long rdmId, String rdmName, Long analysisId) {
+        String query = "execute " + DATABASE + ".[dbo].[RR_RL_GetAnalysisModellingOptionSettings] @rdm_id=" + rdmId.longValue() + ", @rdm_name=" + rdmName + ", @analysis_id=" + analysisId.longValue();
+        //String json = "";
+
         List<Map<String, Object>> result = rmsJdbcTemplate.queryForList(query);
         if (result == null) {
             return null;
@@ -429,14 +460,150 @@ public class RmsService {
                 }
             }
         }
-        try {
-            JSONObject jsonObj = XML.toJSONObject(builder.toString());
-            json = jsonObj.toString(4);
-            return json;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            this.logger.debug("Conversion failed", e);
+//        try {
+//            JSONObject jsonObj = XML.toJSONObject(builder.toString());
+//            json = jsonObj.toString(4);
+//            return json;
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            this.logger.debug("Conversion failed", e);
+//        }
+        return builder.toString();
+    }
+
+    /**
+     * @param sourceResultDtoList
+     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
+     */
+    public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList) {
+
+        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
+                .map(sourceResult -> {
+                    sourceResult = rlSourceResultRepository.save(sourceResult);
+                    return sourceResult.getRlSourceResultId();
+                }).collect(toList());
+    }
+
+    /* TODO Implement */
+
+    private String convertList(List<String> list) {
+        return list.stream().collect(Collectors.joining(","));
+    }
+
+    private String convertListOldImpl(List<String> finPerspList) {
+        String LIST = "";
+        if (finPerspList != null) {
+            for (String s : finPerspList) {
+
+                LIST += s + ",";
+            }
+            LIST = LIST.substring(0, LIST.length() - 1);
         }
-        return json;
+        return LIST;
+    }
+
+    public Integer createEDMPortfolioContext(String dataSource, Long edmId, String edmName, List<String> portfolioList, List<String> portfolioExcludedRegionPeril) {
+        // @TODO Implement the Datasource Logic
+        CreateEdmSummaryStoredProc proc = new CreateEdmSummaryStoredProc(rmsJdbcTemplate, createEDMPortfolioContextSQL);
+        String portfolioIdParam = "";
+        String portfolioExcludedRegionPerilParam = "";
+
+        if (portfolioList != null && !portfolioList.isEmpty()) {
+            portfolioIdParam = StringUtils.join(portfolioList, ',');
+        }
+        if (portfolioExcludedRegionPeril != null && !portfolioExcludedRegionPeril.isEmpty()) {
+            portfolioExcludedRegionPerilParam = StringUtils.join(portfolioExcludedRegionPeril, ',');
+        }
+        long time = System.currentTimeMillis();
+        Map<String, Object> result = proc.execute(edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam);
+        Integer runId = (Integer) result.get("RunID");
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} and Portfolio ID(s) '{}' with portfolioExcludedRegionPeril(s) '{}'", new Object[]{runId, edmId, edmName, portfolioIdParam, portfolioExcludedRegionPerilParam});
+        logger.debug("created EDM Portfolio context #{} for EDM {}:{} took {} ms", new Object[]{runId, edmId, edmName, (System.currentTimeMillis() - time)});
+        return runId;
+    }
+
+    public void removeEDMPortfolioContext(String dataSource, Integer runId) {
+        // @TODO Implement the Datasource Logic
+        Map<String, Object> params = new HashMap<>();
+        params.put("RunID", runId);
+        logger.debug("removeEDMPortfolioContextSQL: {}, params: {}, runId: {}", removeEDMPortfolioContextSQL, params, runId);
+        rmsJdbcTemplate.update(removeEDMPortfolioContextSQL, params);
+    }
+
+    public NamedParameterJdbcTemplate createTemplate(String dataSource) {
+        //@TODO
+        return new NamedParameterJdbcTemplate(rlDataSource);
+    }
+
+    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
+        if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
+            return false;
+
+        //TODO : Review this method with Viet
+        Map<String, Object> dataQueryParams = new HashMap<>();
+        dataQueryParams.put("Edm_id", edm.getRlId());
+        dataQueryParams.put("Edm_name", edm.getName());
+        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
+        dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
+
+        if (LocationLevelExposure.EXTRACT_PORT.equals(extractName)) {
+            dataQueryParams.put("ProjectID_RR", projectId);
+        } else if ((LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL_CVG.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_LOC_CVG.equals(extractName))) {
+            dataQueryParams.put("ConformedCcy", modelPortfolio.getCurrency());
+        }
+
+        List<GenericDescriptor> descriptors = extractSchema(edm.getInstanceId(), extractName);
+
+        if (descriptors.isEmpty()) {
+            logger.error("Error: retrieve no descriptors");
+            return false;
+        }
+        extractExposureToFile(edm.getInstanceId(), sqlQuery, dataQueryParams, descriptors, file);
+
+        return true;
+    }
+
+    private List<GenericDescriptor> extractSchema(String instanceId, String extractName) {
+        logger.debug("extractSchema");
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        Map<String, Object> schemaQueryParams = new HashMap<>();
+        schemaQueryParams.put("extract_name", extractName);
+        logger.debug("extractSchema | schemaSqlQuery: {}, params: {}", extractLocationLevelSchemaQuery, schemaQueryParams);
+        List<GenericDescriptor> descriptors = namedParameterJdbcTemplate.query(extractLocationLevelSchemaQuery, schemaQueryParams, new GenericDescriptorMapper());
+
+        return descriptors;
+    }
+
+    private void extractExposureToFile(String instanceId, String sqlQuery, Map<String, Object> dataQueryParams, List<GenericDescriptor> descriptors, File file) {
+        logger.debug("run query {} with params {}", sqlQuery, dataQueryParams);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
+        namedParameterJdbcTemplate.query(sqlQuery, dataQueryParams, extractor);
+    }
+
+    private class CreateEdmSummaryStoredProc extends StoredProcedure {
+        private String sqlProc;
+
+        public String getSqlProc() {
+            return sqlProc;
+        }
+
+        public CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate, String sqlProc) {
+            // NOTA : regionPerilExclude maybe an DEV schema artifact
+            super(jdbcTemplate, sqlProc);
+            this.sqlProc = sqlProc;
+            //
+            setFunction(false);
+            SqlParameter edmID = new SqlParameter("Edm_ID", Types.INTEGER);
+            SqlParameter edmName = new SqlParameter("Edm_Name", Types.VARCHAR);
+            SqlParameter edmPortList = new SqlParameter("PortfolioList", Types.VARCHAR);
+            SqlParameter regionPerilExclude = new SqlParameter("RegionPerilExclude", Types.VARCHAR);
+            SqlOutParameter runID = new SqlOutParameter("RunID", Types.INTEGER);
+            SqlParameter[] paramArray = {edmID, edmName, edmPortList, regionPerilExclude, runID};
+            super.setParameters(paramArray);
+            super.compile();
+        }
     }
 }

@@ -9,11 +9,11 @@ import java.util.List;
  */
 
 public class InuringInputNodeCreationRequest {
-    private int inuringPackageId;
+    private long inuringPackageId;
     private String inputNodeName;
     private List<Integer> attachedPLTs;
 
-    public InuringInputNodeCreationRequest(int inuringPackageId, String inputNodeName, List<Integer> attachedPLTs) {
+    public InuringInputNodeCreationRequest(long inuringPackageId, String inputNodeName, List<Integer> attachedPLTs) {
         this.inuringPackageId = inuringPackageId;
         this.inputNodeName = inputNodeName;
         this.attachedPLTs = attachedPLTs;
@@ -22,7 +22,7 @@ public class InuringInputNodeCreationRequest {
     public InuringInputNodeCreationRequest() {
     }
 
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 

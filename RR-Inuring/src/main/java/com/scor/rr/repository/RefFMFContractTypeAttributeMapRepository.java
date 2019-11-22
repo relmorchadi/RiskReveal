@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RefFMFContractTypeAttributeMapRepository extends JpaRepository<RefFMFContractTypeAttributeMap,Integer> {
+public interface RefFMFContractTypeAttributeMapRepository extends JpaRepository<RefFMFContractTypeAttributeMap,Long> {
 
 //    @Query(value="SELECT * from [RiskReveal].[dbo].[RefFMFContractAttribute] \n" +
 //            "where AttributeId in \n" +

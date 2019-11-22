@@ -324,13 +324,15 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
+      pltHeaderId: '',
       selectedTab: {
         index: 0,
-        title: 'basket',
+        title: 'pltDetail',
       },
-      tabs: {'basket': true, 'pltDetail': true},
+      tabs: {'basket': true,'pltDetail': true},
       visible: false,
-      mode: "pop-up"
+      mode: "pop-up",
+      summary: {}
     };
     this.leftMenuInputs= {
       wsId: this.workspaceId,
@@ -809,6 +811,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       keyword,
       filter: this.filter,
       offset,
+      sort: [],
       size
     };
     this.searchService.expertModeSearch(params)

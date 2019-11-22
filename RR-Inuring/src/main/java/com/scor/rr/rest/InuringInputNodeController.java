@@ -29,13 +29,13 @@ public class InuringInputNodeController {
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteInputNode(@RequestParam("id") int id){
+    public ResponseEntity<?> deleteInputNode(@RequestParam("id") long id){
         inuringInputNodeService.deleteInuringInputNode(id);
         return ResponseEntity.ok("it has been successfully deleted");
     }
 
     @PostMapping("read")
-    public InuringInputNodeResponse readInputNode(@RequestParam("id")int id) throws RRException{
+    public InuringInputNodeResponse readInputNode(@RequestParam("id")long id) throws RRException{
         return inuringInputNodeService.readInuringInputNodeDetails(id);
     }
 

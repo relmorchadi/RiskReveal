@@ -1,48 +1,64 @@
 package com.scor.rr.domain.riskLink;
 
 import com.scor.rr.domain.RdmAnalysis;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
-@Getter
-@Setter
 @Entity
 @Table(name = "RLSourceResult")
+@AllArgsConstructor
+@NoArgsConstructor
 public class RlSourceResult {
 
     @Id
-    @GeneratedValue
-    private Integer rlSourceResultId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "RlSourceResultId")
+    private Long rlSourceResultId;
+    @Column(name = "Entity")
     private Integer entity;
-    private Integer projectId;
-    private Integer rlAnalysisId;
+    @Column(name = "projectId")
+    private Long projectId;
+    @Column(name = "targetCurrency")
     private String targetCurrency;
+    @Column(name = "targetRegionPeril")
     private String targetRegionPeril;
+    @Column(name="UserSelectedGrain")
+    private String userSelectedGrain;
+    @Column(name = "overrideRegionPerilBasis")
     private String overrideRegionPerilBasis;
-//    To check from SP Result
+    @Column(name = "occurrenceBasis")
     private String occurrenceBasis;
+    @Column(name = "financialPerspective")
     private String financialPerspective;
-    private Number unitMultiplier;
-    private Number proportion;
+    @Column(name = "unitMultiplier")
+    private Float unitMultiplier;
+    @Column(name = "proportion")
+    private Float proportion;
+    @Column(name = "targetRAPCode")
     private String targetRAPCode;
+    // TODO : Review with shaun
+    @Column(name = "ProxyScalingBasis")
+    private String proxyScalingBasis;
+    @Column(name = "ProxyScalingNarrative")
+    private String proxyScalingNarrative;
+    @Column(name = "MultiplierBasis")
+    private String multiplierBasis;
+    @Column(name = "MultiplierNarrative")
+    private String multiplierNarrative;
+    //
 
-    public RlSourceResult(RdmAnalysis analysis, Integer projectId){
-        //TODO : Map data
+    @ManyToOne
+    @JoinColumn(name = "rlAnalysisId")
+    private RLAnalysis rlAnalysis;
+
+    public RlSourceResult(RdmAnalysis analysis, Long projectId){
         this.entity=1;
-        projectId = projectId;
+        this.projectId = projectId;
         this.targetCurrency = analysis.getAnalysisCurrency();
         //this.targetRegionPeril; // TODO: Calculate
         this.overrideRegionPerilBasis = null;
-//        this.occurrenceBasis = analysis.
-//        To be defaulted
-        this.financialPerspective = null;
     }
 
 

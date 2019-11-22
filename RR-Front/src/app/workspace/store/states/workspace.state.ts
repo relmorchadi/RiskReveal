@@ -9,12 +9,13 @@ import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
 import {InuringService} from '../../services/inuring.service';
 import * as fromPlt from '../actions/plt_main.actions';
-import {PltStateService} from '../../services/plt-state.service';
+import {PltStateService} from '../../services/store/plt-state.service';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
+
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -31,8 +32,6 @@ const initialState: WorkspaceModel = {
       edmrdmSelection: {}
     }
   },
-  favorite: [],
-  pinned: [],
   routing: '',
   loading: false
 };
@@ -53,7 +52,6 @@ export class WorkspaceState {
               private scopService: ScopeCompletenessService,
   ) {
   }
-
 
   /***********************************
    *
@@ -92,6 +90,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].workspaceType;
   }
 
+  @Selector()
+  static getSelectedProject(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -110,21 +114,6 @@ export class WorkspaceState {
   @Selector()
   static getLoading(state: WorkspaceModel) {
     return state.loading;
-  }
-
-  @Selector()
-  static getRecentWs(state: WorkspaceModel) {
-    return _.values(state.content).map(item => ({...item, selected: false}));
-  }
-
-  @Selector()
-  static getFavorite(state: WorkspaceModel) {
-    return state.favorite;
-  }
-
-  @Selector()
-  static getPinned(state: WorkspaceModel) {
-    return state.pinned;
   }
 
   @Selector()
@@ -173,13 +162,11 @@ export class WorkspaceState {
   }
 
   static getDeletedPltsForPlt(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => e.deleted), 'pltId'));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.deleted);
   }
 
   static getPltsForPlts(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
   }
 
   static getProjectsPlt(wsIdentifier: string) {
@@ -196,6 +183,10 @@ export class WorkspaceState {
 
   static getUserTagManager(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager);
+  }
+
+  static getSummary(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.pltDetails.summary);
   }
 
   /***********************************
@@ -280,8 +271,7 @@ export class WorkspaceState {
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
     };
   }
 
@@ -293,8 +283,7 @@ export class WorkspaceState {
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
     return {
       data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
-      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
     };
   }
 
@@ -311,6 +300,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getValidResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -320,6 +315,12 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  @Selector()
+  static getImportStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.importPLTs;
   }
 
   /***********************************
@@ -357,12 +358,12 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence.data;
+    return state.content[wsIdentifier].scopeOfCompletence;
   }
 
   static getPltsForScopeCompleteness(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
   }
 
   /***********************************
@@ -436,29 +437,14 @@ export class WorkspaceState {
     return this.wsService.updateWsRouting(ctx, payload);
   }
 
-  @Action(fromWS.MarkWsAsFavorite)
-  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsFavorite) {
-    return this.wsService.markWsAsFavorite(ctx, payload);
+  @Action(fromWS.ToggleFavorite)
+  toggleFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleFavorite) {
+    return this.wsService.toggleFavorite(ctx, payload);
   }
 
-  @Action(fromWS.MarkFacWsAsFavorite)
-  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkFacWsAsFavorite) {
-    this.wsService.markFacWsAsFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonFavorite)
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
-    return this.wsService.markWsAsNonFavorite(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsPinned)
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsPinned) {
-    return this.wsService.markWsAsPinned(ctx, payload);
-  }
-
-  @Action(fromWS.MarkWsAsNonPinned)
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonPinned) {
-    return this.wsService.markWsAsNonPinned(ctx, payload);
+  @Action(fromWS.TogglePinned)
+  togglePinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.TogglePinned) {
+    return this.wsService.togglePinned(ctx, payload);
   }
 
   @Action(fromWS.ToggleProjectSelection)
@@ -472,9 +458,24 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
+  @Action(fromWS.AddNewFacProject)
+  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
+    return this.wsService.addNewFacProject(ctx, payload);
+  }
+
+  @Action(fromWS.EditProject)
+  editProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.EditProject) {
+    return this.wsService.updateProject(ctx, payload);
+  }
+
   @Action(fromWS.DeleteProject)
   deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
     return this.wsService.deleteProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteFacProject)
+  deleteFacProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteFacProject) {
+    return this.wsService.deleteFacProject(ctx, payload);
   }
 
   /***********************************
@@ -486,6 +487,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadContractAction)
   loadContractData(ctx: StateContext<WorkspaceModel>) {
     this.contractService.loadContractData(ctx);
+  }
+
+  @Action(fromWS.ToggleFacDivisonAction)
+  toggleFacDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFacDivisonAction) {
+    this.contractService.toggleFacDivision(ctx, payload);
   }
 
   /***********************************
@@ -530,6 +536,16 @@ export class WorkspaceState {
     return this.pltStateService.closePLTinDrawer(ctx, payload);
   }
 
+  @Action(fromPlt.loadSummaryDetail)
+  LoadSummaryDetail(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadSummaryDetail) {
+    return this.pltStateService.loadSummaryDetail(ctx, payload);
+  }
+
+  @Action(fromPlt.loadSummaryDetailSuccess)
+  LoadSummaryDetailSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadSummaryDetailSuccess) {
+    return this.pltStateService.loadSummaryDetailSuccess(ctx, payload);
+  }
+
   @Action(fromPlt.setUserTagsFilters)
   pltManagerSetFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setUserTagsFilters) {
     return this.pltStateService.setFilterPlts(ctx, payload);
@@ -552,12 +568,12 @@ export class WorkspaceState {
 
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    //return this.pltStateService.createUserTagSuccess(ctx, payload);
+    // return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    // return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -568,7 +584,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    // return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -578,18 +594,9 @@ export class WorkspaceState {
 
   @Action(fromPlt.deletePltSucess)
   deletePltSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePltSucess) {
-
-    const {
-      pltId
-    } = payload;
-
-    const {
-      // data
-    } = ctx.getState();
-
-    /*
-     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
-       .pipe()*/
+    const {pltId} = payload;
+    // const { data} = ctx.getState();
+    /*return of(JSON.parse(localStorage.getItem('deletedPlts')) || {}).pipe()*/
   }
 
   @Action(fromPlt.editTag)
@@ -607,8 +614,8 @@ export class WorkspaceState {
     return this.pltStateService.restorePlt(ctx, payload);
   }
 
-  @Action(fromPlt.FilterPltsByStatus)
-  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus) {
+  @Action(fromPlt.FilterByFalesely)
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterByFalesely) {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
@@ -637,8 +644,6 @@ export class WorkspaceState {
    * Calibration Actions
    *
    ***********************************/
-
-
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
@@ -879,6 +884,16 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasket(ctx);
   }
 
+  @Action(fromWS.AddToBasketDefaultAction)
+  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.addToBasketDefault(ctx);
+  }
+
+  @Action(fromWS.ImportRiskLinkMainAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
+    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
+  }
+
   @Action(fromWS.ApplyFinancialPerspectiveAction)
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyFinancialPerspectiveAction) {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
@@ -1051,6 +1066,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadScopeCompletenessDataSuccess)
   loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+  @Action(fromWS.PublishToPricingFacProject)
+  publishToPricingFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PublishToPricingFacProject) {
+    return this.scopService.publishToPricing(ctx, payload);
   }
 
 

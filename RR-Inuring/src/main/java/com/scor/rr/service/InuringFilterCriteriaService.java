@@ -53,7 +53,7 @@ public class InuringFilterCriteriaService {
         inuringFilterCriteriaRepository.save(inuringFilterCriteria);
     }
 
-    public void deleteInuringFilterCriteriaById(int inuringFilterCriteriaId){
+    public void deleteInuringFilterCriteriaById(long inuringFilterCriteriaId){
         inuringFilterCriteriaRepository.deleteByInuringFilterCriteriaId(inuringFilterCriteriaId);
     }
 
@@ -86,7 +86,7 @@ public class InuringFilterCriteriaService {
         }
     }
 
-    private void updateTheInuringContractNode(int inuringContractNodeId) throws RRException {
+    private void updateTheInuringContractNode(long inuringContractNodeId) throws RRException {
         InuringContractNode inuringContractNode = inuringContractNodeRepository.findByInuringContractNodeId(inuringContractNodeId);
         if(inuringContractNode == null ) throw new InuringContractNodeNotFoundException(inuringContractNodeId);
 
@@ -100,13 +100,13 @@ public class InuringFilterCriteriaService {
         }
     }
 
-    private void treatTheTargetNode(int inuringEdgeId) throws RRException{
-        Map<Integer,InuringNodeType> map = getTargetNode(inuringEdgeId);
+    private void treatTheTargetNode(long inuringEdgeId) throws RRException{
+        Map<Long,InuringNodeType> map = getTargetNode(inuringEdgeId);
 
-        Set<Entry<Integer, InuringNodeType>> setHm = map.entrySet();
-        Iterator<Entry<Integer, InuringNodeType>> it = setHm.iterator();
+        Set<Entry<Long, InuringNodeType>> setHm = map.entrySet();
+        Iterator<Entry<Long, InuringNodeType>> it = setHm.iterator();
         while(it.hasNext()){
-            Entry<Integer, InuringNodeType> e = it.next();
+            Entry<Long, InuringNodeType> e = it.next();
 
             if(e.getValue() == InuringNodeType.FinalNode){
                 InuringFinalNode inuringFinalNode = inuringFinalNodeRepository.findByInuringFinalNodeId(e.getKey());
@@ -122,7 +122,7 @@ public class InuringFilterCriteriaService {
         }
     }
 
-    private boolean checkInuringElementExisting(InuringElementType elementType, int elementId) {
+    private boolean checkInuringElementExisting(InuringElementType elementType, long elementId) {
         switch (elementType) {
             case ContractLayer:
                 return inuringContractLayerRepository.findByInuringContractLayerId(elementId) != null;
@@ -134,15 +134,20 @@ public class InuringFilterCriteriaService {
 
     }
     /**the sourceNodeType should always be ContractNodeType**/
-    private List<InuringEdge> getListOfEdges(int sourceNodeId, InuringNodeType sourceNodeType){
+    private List<InuringEdge> getListOfEdges(long sourceNodeId, InuringNodeType sourceNodeType){
         return inuringEdgeRepository.findAllBySourceNodeIdAndSourceNodeType(sourceNodeId,sourceNodeType);
     }
 
-    private Map<Integer, InuringNodeType> getTargetNode(int inuringEdgeId) throws RRException{
-        Map<Integer,InuringNodeType> hm = new HashMap<>();
+    private Map<Long, InuringNodeType> getTargetNode(long inuringEdgeId) throws RRException{
+        Map<Long,InuringNodeType> hm = new HashMap<>();
         InuringEdge inuringEdge = inuringEdgeRepository.findByInuringEdgeId(inuringEdgeId);
         if(inuringEdge == null ) throw new InuringEdgeNodeFoundException(inuringEdgeId);
         hm.put(inuringEdge.getTargetNodeId(),inuringEdge.getTargetNodeType());
         return hm;
+    }
+
+    public List<InuringFilterCriteria> readInuringFilterCriteria(long inuringObjectId,  InuringElementType inuringElementType){
+        List<InuringFilterCriteria> inuringFilterCriterias = inuringFilterCriteriaRepository.findByInuringObjectIdAndInuringObjectType(inuringObjectId,inuringElementType);
+        return inuringFilterCriterias;
     }
 }

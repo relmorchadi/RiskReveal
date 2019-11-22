@@ -7,9 +7,9 @@ import lombok.Data;
 public class InvalidateNodeRequest {
 
     private InuringNodeType inuringNodeType;
-    private int nodeId;
+    private long nodeId;
 
-    public InvalidateNodeRequest(InuringNodeType inuringNodeType, int nodeId) {
+    public InvalidateNodeRequest(InuringNodeType inuringNodeType, long nodeId) {
         this.inuringNodeType = inuringNodeType;
         this.nodeId = nodeId;
     }
@@ -21,7 +21,7 @@ public class InvalidateNodeRequest {
         return inuringNodeType;
     }
 
-    public int getNodeId() {
+    public long getNodeId() {
         return nodeId;
     }
 }

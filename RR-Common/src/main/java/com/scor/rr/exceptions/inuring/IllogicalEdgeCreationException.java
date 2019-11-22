@@ -4,7 +4,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 
 public class IllogicalEdgeCreationException extends RRException {
-    public IllogicalEdgeCreationException(int id) {
+    public IllogicalEdgeCreationException(long id) {
         super(ExceptionCodename.ILLOGICAL_EDGE_CREATION,"IllogicalEdgeCreation");
     }
 }

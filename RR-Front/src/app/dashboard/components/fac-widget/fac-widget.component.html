@@ -1,34 +1,52 @@
 <i style="position: absolute;right: 0px;top:5px; cursor: grab;  z-index: 9999999;color: black;font-size: 1.5em;"
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
-<nz-tabset
-  [(nzSelectedIndex)]="tabIndex"
-  class="tabs-standard-top">
-  <nz-tab>
-    <div class="renewal-contract-table">
-      <app-table [sortable]="true"
-                 [tableColumn]="cols"
-                 [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
-                 [virtualScroll]="false"
-                 (dbClickItem)="openFacItem($event)"
-                 (updateFavStatus)="valueFavChange($event)"
-                 [totalRecords]="data?.length">
-      </app-table>
-    </div>
-  </nz-tab>
-  <nz-tab>
-    <div class="renewal-contract-table">
-      <app-table [sortable]="true"
-                 [tableColumn]="cols"
-                 [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
-                 [virtualScroll]="false"
-                 (dbClickItem)="openFacItem($event)"
-                 (updateFavStatus)="valueFavChange($event)"
-                 [totalRecords]="data?.length">
-      </app-table>
-    </div>
-  </nz-tab>
-</nz-tabset>
+<ng-container *ngIf="!filterNew">
+  <nz-tabset
+    [(nzSelectedIndex)]="tabIndex"
+    class="tabs-standard-top">
+    <nz-tab>
+      <div class="renewal-contract-table">
+        <app-table [sortable]="true"
+                   [tableColumn]="cols"
+                   [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
+                   [virtualScroll]="false"
+                   (dbClickItem)="openFacItem($event)"
+                   (updateFavStatus)="valueFavChange($event)"
+                   [sortData]="{}"
+                   [totalRecords]="data?.length">
+        </app-table>
+      </div>
+    </nz-tab>
+    <nz-tab>
+      <div class="renewal-contract-table">
+        <app-table [sortable]="true"
+                   [tableColumn]="cols"
+                   [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
+                   [virtualScroll]="false"
+                   (dbClickItem)="openFacItem($event)"
+                   (updateFavStatus)="valueFavChange($event)"
+                   [sortData]="{}"
+                   [totalRecords]="data?.length">
+        </app-table>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</ng-container>
+<ng-container *ngIf="filterNew">
+  <div class="renewal-contract-table">
+    <app-table [sortable]="true"
+               [tableColumn]="cols"
+               [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
+               [virtualScroll]="false"
+               (dbClickItem)="openFacItem($event)"
+               (updateFavStatus)="valueFavChange($event)"
+               [sortData]="{}"
+               [totalRecords]="data?.length">
+    </app-table>
+  </div>
+</ng-container>
+
 
 <ng-template #title>
   <div style="display: flex">
@@ -96,7 +114,7 @@
         </nz-dropdown>
       </div>
     </div>
-    <div style="display: flex; align-items: center">
+    <div style="display: flex; align-items: center" *ngIf="!filterNew">
       <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}"
             nz-tooltip [nzTitle]="'ALL'"
             class="tab-index">

@@ -1,13 +1,14 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-public interface AdjustmentReturnPeriodBandingParameterRepository extends JpaRepository<AdjustmentReturnPeriodBandingParameterEntity,Integer> {
-    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNodeByFkAdjustmentNodeId = n and n.adjustmentNodeId = :id")
-    java.util.List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBandingParameterByAdjustmentNodeBy(@Param("id") Integer id);
+import java.util.List;
 
-    void deleteByAdjustmentNodeByFkAdjustmentNodeId_AdjustmentNodeId(int adjustmentNodeByFkAdjustmentNodeId_adjustmentNodeId);
+
+public interface AdjustmentReturnPeriodBandingParameterRepository extends JpaRepository<ReturnPeriodBandingAdjustmentParameter, Integer> {
+//    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNode = n and n.adjustmentNodeId = :id")
+    List<ReturnPeriodBandingAdjustmentParameter> findByAdjustmentNodeAdjustmentNodeId(Integer id);
+
+    void deleteByAdjustmentNode_AdjustmentNodeId(Integer adjustmentNode_adjustmentNodeId); // TODO framework ?
 }
