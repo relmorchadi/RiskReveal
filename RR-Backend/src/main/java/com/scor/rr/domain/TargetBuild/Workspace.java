@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "tb")
+@Table(name = "Workspace")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +22,7 @@ public class Workspace implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "WorkspaceId")
-    private Integer workspaceId;
+    private Long workspaceId;
 
     @Column(name = "Entity")
     private Integer entity;
