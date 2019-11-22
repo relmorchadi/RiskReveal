@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "TargetRAP", schema = "tb")
+@Table(name = "TargetRAP")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class TargetRAP {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TargetRAPId")
-    private Integer targetRAPId;
+    private Long targetRAPId;
 
     @Column(name = "ModellingVendor")
     private String modellingVendor;
@@ -34,7 +34,7 @@ public class TargetRAP {
     private String targetRAPDesc;
 
     @Column(name = "PETId")
-    private Integer petId;
+    private Long petId;
 
     @Column(name = "SourceRAPCode")
     private String sourceRAPCode;
