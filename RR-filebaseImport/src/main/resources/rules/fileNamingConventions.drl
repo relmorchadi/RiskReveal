@@ -70,49 +70,49 @@
 //    when
 //       $businessRulesBean : BusinessRulesBean( $map:inputData["jobType"] == "PORTFOLIO" && $map2:inputData["type"] == "ELT" )
 //       $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//       $currency: String() from $businessRulesBean.inputData["currency"]
+//       $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //       $model: String() from $businessRulesBean.inputData["model"]
 //       $sfx: String() from $businessRulesBean.inputData["sfx"]
 //    then
-//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_GR_"+$currency+"_"+$model+"_"+$sfx)}
+//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_GR_"+$currencyEntity+"_"+$model+"_"+$sfx)}
 //end
 //
 //rule "suffixPtfPLT"
 //    when
 //       $businessRulesBean : BusinessRulesBean( $map:inputData["jobType"] == "PORTFOLIO" && $map2:inputData["type"] == "PLT" )
 //       $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//       $currency: String() from $businessRulesBean.inputData["currency"]
+//       $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //       $model: String() from $businessRulesBean.inputData["model"]
 //       $sfx: String() from $businessRulesBean.inputData["sfx"]
 //    then
-//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_GP_"+$currency+"_"+$model+"_"+$sfx)}
+//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_GP_"+$currencyEntity+"_"+$model+"_"+$sfx)}
 //end
 //
 //rule "suffixAccountPLT"
 //    when
 //       $businessRulesBean : BusinessRulesBean( $map:inputData["jobType"] == "ACCOUNT" && $map2:inputData["type"] == "PLT" )
 //       $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//       $currency: String() from $businessRulesBean.inputData["currency"]
+//       $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //       $carID: String() from $businessRulesBean.inputData["carID"]
 //       $periodBasisStr: String() from $businessRulesBean.inputData["periodBasisStr"]
 //       $model: String() from $businessRulesBean.inputData["model"]
 //       $sfx: String() from $businessRulesBean.inputData["sfx"]
 //    then
-//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_UP_"+$currency+"_"+$carID+"_"+$periodBasisStr+"_"+$model+"_"+$sfx)}
+//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_UP_"+$currencyEntity+"_"+$carID+"_"+$periodBasisStr+"_"+$model+"_"+$sfx)}
 //end
 //
 //rule "suffixAccountELT"
 //    when
 //       $businessRulesBean : BusinessRulesBean( $map:inputData["jobType"] == "ACCOUNT" && $map2:inputData["type"] == "ELT" )
 //       $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//       $currency: String() from $businessRulesBean.inputData["currency"]
+//       $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //       $carID: String() from $businessRulesBean.inputData["carID"]
 //       $periodBasisStr: String() from $businessRulesBean.inputData["periodBasisStr"]
 //       $model: String() from $businessRulesBean.inputData["model"]
 //       $sfx: String() from $businessRulesBean.inputData["sfx"]
 //       $fpToUse: String() from $businessRulesBean.inputData["fpToUse"]
 //    then
-//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_"+$fpToUse+"_"+$currency+"_"+$carID+"_"+$periodBasisStr+"_"+$model+"_"+$sfx)}
+//        modify ($businessRulesBean) {setOutputData("suffix","_"+$regionPeril+"_"+$fpToUse+"_"+$currencyEntity+"_"+$carID+"_"+$periodBasisStr+"_"+$model+"_"+$sfx)}
 //end
 //
 //rule "pricingAggSuffix"
@@ -120,9 +120,9 @@
 //         $businessRulesBean : BusinessRulesBean( $map:inputData.size() >= 0 )
 //         $periodBasisStr: String() from $businessRulesBean.inputData["periodBasisStr"]
 //         $carID: String() from $businessRulesBean.inputData["carID"]
-//         $currency: String() from $businessRulesBean.inputData["currency"]
+//         $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //      then
-//          modify ($businessRulesBean) {setOutputData("pricingAggSuffix","_"+"UF_"+$carID+"_"+$periodBasisStr+"_INTERNAL_COM-PE_"+$currency)}
+//          modify ($businessRulesBean) {setOutputData("pricingAggSuffix","_"+"UF_"+$carID+"_"+$periodBasisStr+"_INTERNAL_COM-PE_"+$currencyEntity)}
 //end
 //
 //rule "pricingRPSuffix"
@@ -131,18 +131,18 @@
 //            $periodBasisStr: String() from $businessRulesBean.inputData["periodBasisStr"]
 //            $carID: String() from $businessRulesBean.inputData["carID"]
 //            $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//            $currency: String() from $businessRulesBean.inputData["currency"]
+//            $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //         then
-//             modify ($businessRulesBean) {setOutputData("pricingRPSuffix","_"+"UF_"+$carID+"_"+$periodBasisStr+"_INTERNAL_DAT-PE_"+$regionPeril+"_"+$currency)}
+//             modify ($businessRulesBean) {setOutputData("pricingRPSuffix","_"+"UF_"+$carID+"_"+$periodBasisStr+"_INTERNAL_DAT-PE_"+$regionPeril+"_"+$currencyEntity)}
 //end
 //
 //rule "pricingPortfolioSuffix"
 //      when
 //         $businessRulesBean : BusinessRulesBean( $map:inputData.size() >= 0 )
 //         $regionPeril: String() from $businessRulesBean.inputData["regionPeril"]
-//         $currency: String() from $businessRulesBean.inputData["currency"]
+//         $currencyEntity: String() from $businessRulesBean.inputData["currencyEntity"]
 //      then
-//          modify ($businessRulesBean) {setOutputData("portfolioPricingSuffix","_"+"GF_INTERNAL_DAT-PE_"+$regionPeril+"_"+$currency)}
+//          modify ($businessRulesBean) {setOutputData("portfolioPricingSuffix","_"+"GF_INTERNAL_DAT-PE_"+$regionPeril+"_"+$currencyEntity)}
 //end
 //
 //rule "fwSuffix"

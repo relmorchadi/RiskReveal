@@ -1,10 +1,11 @@
-package com.scor.rr.domain.TargetBuild;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Date;
 
 @Entity
@@ -12,21 +13,22 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectImportRun {
+public class ProjectImportRunEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectImportRunId")
-    private Integer projectImportRunId;
+    private Long projectImportRunId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "RunId")
-    private Integer runId;
+    private Long runId;
 
+    // @TODO Aymane algin in import Module
     @Column(name = "ProjectId")
-    private Integer projectId;
+    private Long projectId;
 
     @Column(name = "Status")
     private String status;

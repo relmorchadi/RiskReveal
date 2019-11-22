@@ -189,14 +189,14 @@
                 </ng-template>
               </p-cellEditor>
             </td>
-            <td pEditableColumn *ngIf="col.field === 'currency'"
+            <td pEditableColumn *ngIf="col.field === 'currencyEntity'"
                 style="background-color: #FFFFFF"
                 [ngClass]="{'selected-item': rowData?.selected}">
               <p-cellEditor>
                 <ng-template pTemplate="input">
                   <nz-select
                     style="width: 100%"
-                    [(ngModel)]="rowData.currency" nzShowSearch
+                    [(ngModel)]="rowData.currencyEntity" nzShowSearch
                     class="a-dropdown-small input-wrapper"
                     nzPlaceHolder="TAG CURRENCY"
                   >
@@ -214,7 +214,7 @@
                   </nz-select>
                 </ng-template>
                 <ng-template pTemplate="output">
-                  <div class="text-data highlight-temp"><span>{{rowData.currency}}</span></div>
+                  <div class="text-data highlight-temp"><span>{{rowData.currencyEntity}}</span></div>
                 </ng-template>
               </p-cellEditor>
             </td>
