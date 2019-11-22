@@ -1,7 +1,6 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project.Project;
 import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
@@ -36,7 +35,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.reducing;
 
 
 @Service
@@ -178,20 +176,34 @@ public class SearchService {
         List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
-        Workspace ws = wsOpt.orElse(new Workspace());
         List<ProjectCardView> projects = wsOpt
                 .map(workspace ->  projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
                 .orElse(new ArrayList<>());
+        if (!CollectionUtils.isEmpty(contracts)) {
+            this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            return buildWorkspaceDetails(
+                    contracts,
+                    years,
+                    projects,
+                    workspaceId,
+                    uwy
+            );
+        } else {
+            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+        }
+    }
 
-        return ofNullable(contracts.get(0))
-                .map(firstWs -> {
 
-                    this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-
-                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects, this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1), true);
-                })
-                .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
-
+    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy) {
+        ContractSearchResult firstWs = contracts.get(0);
+        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs);
+        detailsDTO.setProjects(projects);
+        detailsDTO.setTreatySections(contracts);
+        detailsDTO.setYears(years);
+        detailsDTO.setIsPinned(true);
+        detailsDTO.setExpectedRegionPerils(workspaceRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
+        return detailsDTO;
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {

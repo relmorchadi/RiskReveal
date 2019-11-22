@@ -33,6 +33,10 @@ public class WorkspaceDetailsDTO {
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
+    private List<String> expectedRegionPerils;
+    private int publishedForAccumulationPlts;
+    private int publishedForPricingPlts;
+    private int pricedPlts;
 
 
     public WorkspaceDetailsDTO(ContractSearchResult first, List<ContractSearchResult> items, List<Integer> years, List<ProjectCardView> projects, Boolean isFavorite, Boolean isPinned) {
