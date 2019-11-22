@@ -9,7 +9,7 @@ public class MarketChannelEntity {
     private int marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
-    private EntityEntity entityByPKentityId;
+    private Entity entityByPKentityId;
 
     @Id
     @Column(name = "MarketChannelID", nullable = false)
@@ -58,11 +58,11 @@ public class MarketChannelEntity {
 
     @ManyToOne
     @JoinColumn(name = "PKentityId", referencedColumnName = "EntityId")
-    public EntityEntity getEntityByPKentityId() {
+    public Entity getEntityByPKentityId() {
         return entityByPKentityId;
     }
 
-    public void setEntityByPKentityId(EntityEntity entityByPKentityId) {
+    public void setEntityByPKentityId(Entity entityByPKentityId) {
         this.entityByPKentityId = entityByPKentityId;
     }
 }

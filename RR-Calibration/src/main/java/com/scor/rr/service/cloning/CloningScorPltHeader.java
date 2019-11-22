@@ -52,15 +52,16 @@ public class CloningScorPltHeader {
     @Autowired
     WorkspaceRepository workspaceRepository;
 
-    public PltHeaderEntity cloneScorPltHeader(Integer scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity cloneScorPltHeader(Long scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
         PltHeaderEntity pltHeaderEntityInitial = pltHeaderRepository.findByPltHeaderId(scorPltHeaderEntityInitialId);
         if (pltHeaderEntityInitial != null) {
             PltHeaderEntity pltHeaderEntityClone = new PltHeaderEntity(pltHeaderEntityInitial);
             pltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
             pltHeaderEntityClone.setLocked(false);
-            pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
+            //@Todo Review
+//            pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
 //            pltHeaderEntityClone.setWorkspaceEntity(pltHeaderEntityInitial.getWorkspaceEntity());
-            pltHeaderEntityClone.setCloningSource(pltHeaderEntityInitial);
+//            pltHeaderEntityClone.setCloningSource(pltHeaderEntityInitial);
             return pltHeaderRepository.save(pltHeaderEntityClone);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND, 1);
@@ -87,7 +88,7 @@ public class CloningScorPltHeader {
         return null;
     }
 
-    public PltHeaderEntity clonePltWithAdjustment(Integer pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity clonePltWithAdjustment(Long pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
         WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
         PltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
 //        scorPltHeaderCloned.setWorkspaceEntity(workspaceEntity);

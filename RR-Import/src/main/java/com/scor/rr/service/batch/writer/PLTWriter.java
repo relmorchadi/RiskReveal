@@ -1,6 +1,6 @@
 package com.scor.rr.service.batch.writer;
 
-import com.scor.rr.domain.PLTHeader;
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.state.TransformationBundle;
@@ -48,14 +48,14 @@ public class PLTWriter {
             return RepeatStatus.FINISHED;
     }
 
-    private void persistHeader(PLTHeader scorPLTHeader) {
+    private void persistHeader(PltHeaderEntity scorPltHeaderEntity) {
 
-        if (scorPLTHeader.getPltLossDataFilePath() == null && scorPLTHeader.getPltLossDataFileName() != null) {
+        if (scorPltHeaderEntity.getLossDataFilePath() == null && scorPltHeaderEntity.getLossDataFileName() != null) {
             throw new IllegalStateException("Write binary files and assign their names to me first");
         }
         // TODO : To review
         //scorPLTHeader.setPltStatus(PLTStatus.ValidFull);
-        pltHeaderRepository.save(scorPLTHeader);
-        if (DBG) log.info("Finish persisting ScorPLTHeader " + scorPLTHeader.getPltHeaderId());
+        pltHeaderRepository.save(scorPltHeaderEntity);
+        if (DBG) log.info("Finish persisting ScorPLTHeader " + scorPltHeaderEntity.getPltHeaderId());
     }
 }

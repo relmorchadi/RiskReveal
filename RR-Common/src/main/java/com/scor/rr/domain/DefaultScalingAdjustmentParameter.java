@@ -3,11 +3,11 @@ package com.scor.rr.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "DefaultScalingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 public class DefaultScalingAdjustmentParameter {
     private Long id;
-    private EntityEntity entity;
+    private Entity entity;
     private DefaultAdjustmentNode defaultAdjustmentNode;
     private Double adjustmentFactor; // lmf
 
@@ -23,11 +23,11 @@ public class DefaultScalingAdjustmentParameter {
 
     @ManyToOne
     @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public EntityEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 

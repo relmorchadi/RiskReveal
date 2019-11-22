@@ -3,11 +3,11 @@ package com.scor.rr.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNode {
     private Integer adjustmentNodeId;
-    private EntityEntity entity;
+    private Entity entity;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentState adjustmentState;
     private AdjustmentBasis adjustmentBasis;
@@ -20,11 +20,11 @@ public class AdjustmentNode {
 
     @ManyToOne
     @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public EntityEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(Entity entity) {
         this.entity = entity;
     }
 
