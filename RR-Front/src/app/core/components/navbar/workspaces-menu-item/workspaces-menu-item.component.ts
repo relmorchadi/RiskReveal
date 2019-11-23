@@ -24,6 +24,7 @@ import {promise} from "selenium-webdriver";
 import delayed = promise.delayed;
 import * as SearchActions from "../../../store/actions/search-nav-bar.action";
 import {Subject, Subscription} from "rxjs";
+import * as fromWs from "../../../../workspace/store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -91,6 +92,17 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   private unSubscribeFav$: Subject<void>;
   private unSubscribeAssigned$: Subject<void>;
   private unSubscribePin$: Subject<void>;
+
+  selectedRowsRecent: any;
+  selectedRowsFavorites: any;
+  selectedRowsAssigned: any;
+  selectedRowsPinned: any;
+
+  workspaceCols = [
+    { width: '15px', type: 'select'},
+    { width: '160px', type: 'multi'},
+    { width: '35px', type: 'text'}
+  ];
 
   constructor(private _helperService: HelperService,
               private router: Router, private _searchService: SearchService,
@@ -260,6 +272,21 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     }
   }
 
+  getSelection($event, scope) {
+    if ($event.length > 1) {
+      if (scope === 'recent') {
+        this.dispatch(new fromHD.ToggleRecentWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'favorite') {
+        this.dispatch(new fromHD.ToggleFavoriteWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'assigned') {
+        this.dispatch(new fromHD.ToggleAssignedWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'pinned') {
+        this.dispatch(new fromHD.TogglePinnedWsSelection({item: $event, selection: 'chunk'}));
+
+      }
+    }
+  }
+
   singleLineSelect(scope, workspace, value = null) {
     if (scope === 'recent') {
       this.dispatch(new fromHD.ToggleRecentWsSelection({item: workspace, selection: 'single', value}));
@@ -278,14 +305,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.singleLineSelect(scope, workspace, true);
       }, 200);
     } else if ((window as any).event.shiftKey) {
-      /*      if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
-              const [from, to] = [Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex)];
-              this.store.dispatch(new fromHeader.SelectRange({context, from, to}));
-            } else {
-              this.lastSelectedIndex = index;
-              this.store.dispatch(new fromHeader.ChangeWsSelection({context, index, value: true}));
-              // workspace.selected = true;
-            }*/
+
     } else {
       setTimeout(() => {
         if (scope === 'recent') {
@@ -418,25 +438,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     });
   }
 
-  /*  toggle(workspace: any, type: string, selected) {
-      switch (type) {
-        case 'favorite':
-          this.store.dispatch(new PatchWorkspace({
-            key: 'selectedF',
-            value: !selected,
-            ws: workspace,
-          }));
-          break;
-        case 'pinged':
-          this.store.dispatch(new PatchWorkspace({
-            key: 'selectedP',
-            value: !selected,
-            ws: workspace,
-          }));
-          break;
-      }
-    }*/
-
   togglePopup() {
     this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
       new fromHD.LoadWsStatusCount()]);
@@ -446,6 +447,10 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     this.loadRecent = true;
     this._subscribeRecentSearchChanges();
     HelperService.headerBarPopinChange$.next({from: this.componentName});
+  }
+
+  rowTrackBy = (index, item) => {
+    return item.workspaceId;
   }
 
 }
