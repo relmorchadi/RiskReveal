@@ -15,10 +15,10 @@
                     ></nz-alert>-->
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="input-search" [(ngModel)]="recentSearch" (input)="searchNewWorkspace($event)"/>
+            <input class="input-search" [(ngModel)]="recentSearch" (input)="searchNewWorkspace($event, 'recent')"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of recentWs | showLast: [recentPageable] | inputSearch: [recentSearch]; let i = index"
+            <li *ngFor="let workspace of recentWs | showLast: [recentPageable] ; let i = index"
                 (dblclick)="openSingleWorkspace(workspace)"
                 [ngClass]="{'a-active-item': workspace.selected}">
               <div class="items-popover-wrapper">
@@ -58,11 +58,11 @@
         <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="input-search" [(ngModel)]="favoriteSearch"/>
+            <input class="input-search" (ngModelChange)="searchNewWorkspace($event, 'favorite')" [(ngModel)]="favoriteSearch"/>
           </div>
           <ul>
             <ng-container
-              *ngFor="let workspace of favoriteWs | showLast: [favoritePageable] | inputSearch: [favoriteSearch]; let i = index">
+              *ngFor="let workspace of favoriteWs | showLast: [favoritePageable]; let i = index">
               <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper" >
@@ -104,11 +104,11 @@
         <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input [(ngModel)]="assignedSearch" class="input-search"/>
+            <input [(ngModel)]="assignedSearch" (ngModelChange)="searchNewWorkspace($event, 'assigned')" class="input-search"/>
           </div>
           <ul>
             <ng-container
-              *ngFor="let workspace of assignedWs | showLast: [assignedPageable] | inputSearch: [assignedSearch]; let i = index">
+              *ngFor="let workspace of assignedWs | showLast: [assignedPageable] ; let i = index">
               <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
@@ -150,11 +150,10 @@
         <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="input-search" [(ngModel)]="pinnedSearch"/>
+            <input class="input-search" (ngModelChange)="searchNewWorkspace($event, 'pinned')" [(ngModel)]="pinnedSearch"/>
           </div>
           <ul>
-            <ng-container
-              *ngFor="let workspace of pinnedWs | showLast: [pinnedPageable] | inputSearch: [pinnedSearch]; let i = index">
+            <ng-container *ngFor="let workspace of pinnedWs | showLast: [pinnedPageable]; let i = index">
               <li (dblclick)="openSingleWorkspace(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
