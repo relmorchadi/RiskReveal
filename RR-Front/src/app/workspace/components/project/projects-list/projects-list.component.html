@@ -66,14 +66,18 @@
         <div class="project-flag">
           <div style="margin-right: 3px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.importedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <i *ngIf="project?.importedFlag" class="icon-check_24px"></i>
+            </span>
           </div>
           <span>Imported</span>
         </div>
         <div class="project-flag">
           <div style="margin-right: 3px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.publishedForPricingFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <i *ngIf="project?.publishedForPricingFlag" class="icon-check_24px"></i>
+            </span>
           </div>
           <span>Published to Pricing</span>
         </div>
@@ -87,7 +91,9 @@
         <div class="project-flag">
           <div style="margin-right: 2px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.accumulatedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <i *ngIf="project?.accumulatedFlag" class="icon-check_24px"></i>
+            </span>
           </div>
           <span>Accumulated</span>
         </div>
@@ -96,7 +102,7 @@
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-location_searching_24px mb-1"></i>
           <span class="project-kpi-span">Region Perils</span>
-          <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.regionPerils || '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
@@ -106,22 +112,22 @@
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
           <span class="project-kpi-span">PLT</span>
-          <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.plts || '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
           <span class="project-kpi-span">Published</span>
-          <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.publishedForPricingCount|| '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
           <span class="project-kpi-span">Pricing</span>
-          <span class="project-kpi-span"><b>-</b></span>
+          <span class="project-kpi-span"><b>{{project?.finalPricing || '-'}}</b></span>
         </div>
         <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
           <span class="project-kpi-span">Accum</span>
-          <span class="project-kpi-span"><b>-</b></span>
+          <span class="project-kpi-span"><b>{{project?.accumulatedPlts || '-'}}</b></span>
         </div>
       </div>
       <div class="project-kpi-details pb-3">

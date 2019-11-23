@@ -60,10 +60,10 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     console.log(this.projectForm);
     this.store.dispatch(new fromWS.EditProject({
       data: {
-        projectName: this.projectForm.projectName,
+        projectName: this.projectForm.projectName || '',
         assignedTo: 1,
-        projectId: this.projectForm.projectId,
-        projectDescription: this.projectForm.projectDescription
+        projectId: this.projectForm.projectId || '',
+        projectDescription: this.projectForm.projectDescription || ''
       },
     }))
   }
