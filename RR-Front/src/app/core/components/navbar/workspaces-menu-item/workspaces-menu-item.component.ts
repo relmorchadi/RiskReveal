@@ -99,9 +99,9 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   selectedRowsPinned: any;
 
   workspaceCols = [
-    { width: '15px', type: 'select'},
-    { width: '160px', type: 'multi'},
-    { width: '35px', type: 'text'}
+    {width: '15px', type: 'select'},
+    {width: '160px', type: 'multi'},
+    {width: '35px', type: 'text'}
   ];
 
   constructor(private _helperService: HelperService,
@@ -119,7 +119,10 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   ngOnInit() {
-    this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.countWs = _.merge({}, value));
+    this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.countWs = _.merge({}, value);
+      this.detectChanges();
+    });
     this.recentWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.recentWs = value;
       this.detectChanges();
@@ -174,14 +177,24 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       .valueChanges
       .pipe(takeUntil(this.unSubscribeFav$), debounceTime(500))
       .subscribe((value) => {
-        this.dispatch(new fromHD.LoadFavoriteWorkspace({offset: 0, size: this.favoritePageable, userId: 1, search: value}))
+        this.dispatch(new fromHD.LoadFavoriteWorkspace({
+          offset: 0,
+          size: this.favoritePageable,
+          userId: 1,
+          search: value
+        }))
       });
 
     this.subscriptionsAssigned = this.contractFilterFormGroup.get('assignedSearch')
       .valueChanges
       .pipe(takeUntil(this.unSubscribeAssigned$), debounceTime(500))
       .subscribe((value) => {
-        this.dispatch(new fromHD.LoadAssignedWorkspace({offset: 0, size: this.assignedPageable, userId: 1, search: value}))
+        this.dispatch(new fromHD.LoadAssignedWorkspace({
+          offset: 0,
+          size: this.assignedPageable,
+          userId: 1,
+          search: value
+        }))
       });
 
     this.subscriptionsPinned = this.contractFilterFormGroup.get('pinnedSearch')

@@ -44,9 +44,7 @@
     </div>
     <div>
       <projects-list (select)="selectProject($event)" [projects]="workspace?.projects" [status]="status"
-                     (edit)="edit($event)" (delete)="delete($event)" *ngIf="status === 'treaty'"></projects-list>
-      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
-                     (delete)="deleteFacProject($event)" *ngIf="status === 'fac'"></projects-list>
+                     (edit)="edit($event)" (delete)="delete($event)"></projects-list>
     </div>
 
     <app-workspace-project-popup [isVisible]="searchWorkspace"
