@@ -67,7 +67,7 @@
           <div style="margin-right: 3px">
             <hr>
             <span [ngStyle]="{'background-color': project?.importedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
-              <i *ngIf="project?.importedFlag" class="icon-check_24px"></i>
+              <span *ngIf="project?.importedFlag" class="check-true-span"></span>
             </span>
           </div>
           <span>Imported</span>
@@ -76,7 +76,7 @@
           <div style="margin-right: 3px">
             <hr>
             <span [ngStyle]="{'background-color': project?.publishedForPricingFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
-              <i *ngIf="project?.publishedForPricingFlag" class="icon-check_24px"></i>
+              <span *ngIf="project?.publishedForPricingFlag" class="check-true-span"></span>
             </span>
           </div>
           <span>Published to Pricing</span>
@@ -92,7 +92,7 @@
           <div style="margin-right: 2px">
             <hr>
             <span [ngStyle]="{'background-color': project?.accumulatedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
-              <i *ngIf="project?.accumulatedFlag" class="icon-check_24px"></i>
+              <span *ngIf="project?.accumulatedFlag" class="check-true-span"></span>
             </span>
           </div>
           <span>Accumulated</span>

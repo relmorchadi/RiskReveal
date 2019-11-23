@@ -122,14 +122,14 @@
     }
 
     th, td {
-      padding: 0;
+      padding: 0 0 3.75px 0 !important;
       cursor: pointer;
       color: rgb(0, 0, 0);
       font-size: 12px;
       letter-spacing: 0.08px;
       height: 25px;
-      border: none;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      border: none !important;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
 
       .text-data {
         display: flex;
