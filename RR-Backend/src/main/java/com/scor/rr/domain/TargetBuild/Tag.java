@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "Tag")
+@Table(name = "Tag", schema = "tb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TagId")
     @EqualsAndHashCode.Include
-    private Long tagId;
+    private Integer tagId;
 
     @Column(name = "Entity")
     private Integer entity;
