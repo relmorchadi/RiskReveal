@@ -27,6 +27,10 @@ public class ProjectCardView {
 
     private String projectDescription;
 
+    private String carRequestId;
+
+    private String carRequestStatus;
+
     private Boolean masterFlag;
 
     private Boolean linkFlag;
