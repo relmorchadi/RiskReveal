@@ -34,11 +34,11 @@ public class ScalingAdjustmentParameter {
 
 //    @ManyToOne
 //    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-//    public EntityEntity getRREntity() {
+//    public EntityEntity getEntity() {
 //        return entity;
 //    }
 //
-//    public void setRREntity(EntityEntity entity) {
+//    public void setEntity(EntityEntity entity) {
 //        this.entity = entity;
 //    }
 

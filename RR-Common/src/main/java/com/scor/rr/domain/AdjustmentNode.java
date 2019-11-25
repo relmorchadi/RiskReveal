@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNode {
     private Integer adjustmentNodeId;
-    private RREntity RREntity;
+    private RREntity entity;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentState adjustmentState;
     private AdjustmentBasis adjustmentBasis;
@@ -19,13 +19,13 @@ public class AdjustmentNode {
 
 
     @ManyToOne
-    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public RREntity getRREntity() {
-        return RREntity;
+    @JoinColumn(name = "entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    public RREntity getEntity() {
+        return entity;
     }
 
-    public void setRREntity(RREntity RREntity) {
-        this.RREntity = RREntity;
+    public void setEntity(RREntity entity) {
+        this.entity = entity;
     }
 
     public AdjustmentNode(Boolean cappedMaxExposure,

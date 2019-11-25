@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "DefaultReturnPeriodBandingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 public class DefaultReturnPeriodBandingAdjustmentParameter {
     private Long id;
-    private RREntity RREntity;
+    private RREntity entity;
     private DefaultAdjustmentNode adjustmentNode;
     private double returnPeriod;
     private double adjustmentFactor;
@@ -23,13 +23,13 @@ public class DefaultReturnPeriodBandingAdjustmentParameter {
     }
 
     @ManyToOne
-    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public RREntity getRREntity() {
-        return RREntity;
+    @JoinColumn(name = "entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+    public RREntity getEntity() {
+        return entity;
     }
 
-    public void setRREntity(RREntity RREntity) {
-        this.RREntity = RREntity;
+    public void setEntity(RREntity entity) {
+        this.entity = entity;
     }
 
     @ManyToOne
