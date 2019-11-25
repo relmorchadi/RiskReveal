@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "DefaultScalingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 public class DefaultScalingAdjustmentParameter {
     private Long id;
-    private RREntity RREntity;
+    private RREntity entity;
     private DefaultAdjustmentNode defaultAdjustmentNode;
     private Double adjustmentFactor; // lmf
 
@@ -22,13 +22,13 @@ public class DefaultScalingAdjustmentParameter {
     }
 
     @ManyToOne
-    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public RREntity getRREntity() {
-        return RREntity;
+    @JoinColumn(name = "entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+    public RREntity getEntity() {
+        return entity;
     }
 
-    public void setRREntity(RREntity RREntity) {
-        this.RREntity = RREntity;
+    public void setEntity(RREntity entity) {
+        this.entity = entity;
     }
 
     @ManyToOne

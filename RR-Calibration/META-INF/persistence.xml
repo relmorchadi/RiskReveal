@@ -65,7 +65,7 @@
         <class>com.scor.rr.domain.DefaultAdjustmentVersionEntity</class>
         <class>com.scor.rr.domain.DefaultAdjustmentRegionPerilEntity</class>
         <class>com.scor.rr.domain.DefaultRetPerBandingParamsEntity</class>
-        <class>com.scor.rr.domain.RREntity</class>
+        <class>com.scor.rr.domain.entity</class>
         <class>com.scor.rr.domain.MarketChannelEntity</class>
         <class>com.scor.rr.domain.AdjustmentEventBasedParameterEntity</class>
         <class>com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter</class>

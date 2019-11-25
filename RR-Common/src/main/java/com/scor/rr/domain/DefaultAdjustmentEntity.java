@@ -10,7 +10,7 @@ public class DefaultAdjustmentEntity {
     private int defaultAdjustmentId;
     private MarketChannelEntity marketChannel;
     private TargetRapEntity targetRap;
-    private RREntity RREntity;
+    private RREntity entity;
 
     @Basic
     @Column(name = "EngineType", nullable = true, length = 200)
@@ -68,11 +68,11 @@ public class DefaultAdjustmentEntity {
 
     @ManyToOne
     @JoinColumn(name = "EntityId", referencedColumnName = "EntityId")
-    public RREntity getRREntity() {
-        return RREntity;
+    public RREntity getEntity() {
+        return entity;
     }
 
-    public void setRREntity(RREntity RREntity) {
-        this.RREntity = RREntity;
+    public void setEntity(RREntity entity) {
+        this.entity = entity;
     }
 }
