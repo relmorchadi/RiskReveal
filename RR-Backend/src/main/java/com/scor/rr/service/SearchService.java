@@ -1,7 +1,6 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project.Project;
 import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.TargetBuild.Workspace;
@@ -24,6 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.reducing;
 
 
 @Service
@@ -161,37 +160,42 @@ public class SearchService {
 
     public SearchCountResult countInWorkspace(TableNames table, String keyword, int size) {
         return new SearchCountResult(ofNullable(countMapper.get(table))
-                .map(callback -> callback.apply( keyword , PageRequest.of(0, size)))
+                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
-    }
-
-    public Workspace getWorkspace(String workspaceId, String uwy) {
-        return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy))
-                .orElseGet(() ->
-                        contractSearchResultRepository.findByWorkspaceIdAndUwYear(workspaceId, Integer.valueOf(uwy))
-                                .map(targetContract -> new Workspace(targetContract))
-                                .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + workspaceId + "-" + Integer.valueOf(uwy)))
-                );
     }
 
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
         List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
-        Workspace ws = wsOpt.orElse(new Workspace());
         List<ProjectCardView> projects = wsOpt
-                .map(workspace ->  projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
+                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
                 .orElse(new ArrayList<>());
+        if (!CollectionUtils.isEmpty(contracts)) {
+            this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            return buildWorkspaceDetails(
+                    contracts,
+                    years,
+                    projects,
+                    workspaceId,
+                    uwy
+            );
+        } else {
+            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+        }
+    }
 
-        return ofNullable(contracts.get(0))
-                .map(firstWs -> {
 
-                    this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-
-                    return new WorkspaceDetailsDTO(firstWs, contracts, years, projects, this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1), true);
-                })
-                .orElseThrow(() -> new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy));
-
+    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy) {
+        ContractSearchResult firstWs = contracts.get(0);
+        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs);
+        detailsDTO.setProjects(projects);
+        detailsDTO.setTreatySections(contracts);
+        detailsDTO.setYears(years);
+        detailsDTO.setIsPinned(true);
+        detailsDTO.setExpectedRegionPerils(workspaceRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
+        return detailsDTO;
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
@@ -200,14 +204,14 @@ public class SearchService {
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
 
-        if(request.getFromSavedSearch() != null) {
-            if(!request.getFilter().isEmpty()) {
+        if (request.getFromSavedSearch() != null) {
+            if (!request.getFilter().isEmpty()) {
                 Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
 
-                if(treatySearchId != null) {
+                if (treatySearchId != null) {
                     Optional<TreatySearch> treatySearchOpt = this.treatySearchRepository.findById(treatySearchId);
 
-                    if(treatySearchOpt.isPresent()) {
+                    if (treatySearchOpt.isPresent()) {
                         TreatySearch treatySearch = treatySearchOpt.get();
 
                         treatySearch.setCount(treatySearch.getCount() + 1);
@@ -218,7 +222,7 @@ public class SearchService {
             }
         }
 
-        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(),request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
+        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
         Query countQuery = entityManager.createNativeQuery(countQueryString);
@@ -247,11 +251,8 @@ public class SearchService {
     }
 
     private TreatySearch saveTreatySearch(List<SearchItem> items, Integer userId, String label) {
-
-        if( !items.isEmpty() ) {
-
-            if(userId != null) {
-
+        if (!items.isEmpty()) {
+            if (userId != null) {
                 TreatySearch treatySearch = new TreatySearch();
                 treatySearch.setLabel(label);
                 treatySearch.setUserId(userId);
@@ -259,28 +260,23 @@ public class SearchService {
                 List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
                 treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
                 return treatySearch;
-
             } else throw new RuntimeException("No userID was Provided");
-
         }
-
         return null;
-
     }
 
     private FacSearch saveFacSearch(List<SearchItem> items) {
         //TODO
-        FacSearch facSearch= this.facSearchRepository.save(new FacSearch());
-        List<FacSearchItem> facSearchItems= items.stream().map(item -> new FacSearchItem(item, facSearch.getId())).collect(toList());
+        FacSearch facSearch = this.facSearchRepository.save(new FacSearch());
+        List<FacSearchItem> facSearchItems = items.stream().map(item -> new FacSearchItem(item, facSearch.getId())).collect(toList());
         facSearch.setItems(this.facSearchItemRepository.saveAll(facSearchItems));
         return facSearch;
     }
 
 
     public List<?> getSavedSearches(SearchType searchType, Integer userId) {
-
-        if( userId != null ) {
-            if(searchType.equals(SearchType.FAC))
+        if (userId != null) {
+            if (searchType.equals(SearchType.FAC))
                 return facSearchRepository.findAllByUserId(userId);
             else if (searchType.equals(SearchType.TREATY))
                 return treatySearchRepository.findAllByUserId(userId);
@@ -292,8 +288,8 @@ public class SearchService {
     }
 
     public List<?> getMostUsedSavedSearch(SearchType searchType, Integer userId) {
-        if( userId != null ) {
-            if(searchType.equals(SearchType.FAC))
+        if (userId != null) {
+            if (searchType.equals(SearchType.FAC))
                 return facSearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
             else if (searchType.equals(SearchType.TREATY))
                 return treatySearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
@@ -304,19 +300,17 @@ public class SearchService {
     }
 
     public void deleteSavedSearch(SearchType searchType, Long id) {
-        if(searchType.equals(SearchType.FAC)){
+        if (searchType.equals(SearchType.FAC)) {
             this.deleteFacSearch(id);
-        }
-        else if (searchType.equals(SearchType.TREATY)){
+        } else if (searchType.equals(SearchType.TREATY)) {
             this.deleteTreatySearch(id);
-        }
-        else {
+        } else {
             throw new RuntimeException("Unsupported Search Type" + searchType);
         }
     }
 
     private void deleteFacSearch(Long id) {
-        if(!facSearchRepository.existsById(id))
+        if (!facSearchRepository.existsById(id))
             throw new RuntimeException("No available Fac Saved Search with ID " + id);
 
         facSearchItemRepository.deleteByFacSearchId(id);
@@ -324,7 +318,7 @@ public class SearchService {
     }
 
     private void deleteTreatySearch(Long id) {
-        if(!treatySearchRepository.existsById(id))
+        if (!treatySearchRepository.existsById(id))
             throw new RuntimeException("No available Treaty Saved Search with ID " + id);
         treatySearchItemRepository.deleteByTreatySearchId(id);
         treatySearchRepository.deleteById(id);

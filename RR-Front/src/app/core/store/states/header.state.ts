@@ -150,7 +150,8 @@ export class HeaderState implements NgxsOnInit {
   getRecentWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadRecentWorkspace) {
     const state = ctx.getState();
     const {offset, size, userId, option} = payload;
-    return this.wsHeaderApi.getRecent(offset, size, userId).pipe(
+    const search = _.get(payload, 'search', '');
+    return this.wsHeaderApi.getRecent(offset, size, userId, search).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
           if (option === 'append') {
@@ -168,7 +169,8 @@ export class HeaderState implements NgxsOnInit {
   getFavoriteWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadFavoriteWorkspace) {
     const state = ctx.getState();
     const {offset, size, userId, option} = payload;
-    return this.wsHeaderApi.getFavorited(offset, size, userId).pipe(
+    const search = _.get(payload, 'search', '');
+    return this.wsHeaderApi.getFavorited(offset, size, userId, search).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
           if (option === 'append') {
@@ -186,7 +188,8 @@ export class HeaderState implements NgxsOnInit {
   getAssignedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadAssignedWorkspace) {
     const state = ctx.getState();
     const {offset, size, userId, option} = payload;
-    return this.wsHeaderApi.getAssigned(offset, size, userId).pipe(
+    const search = _.get(payload, 'search', '');
+    return this.wsHeaderApi.getAssigned(offset, size, userId, search).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
           if (option === 'append') {
@@ -204,7 +207,8 @@ export class HeaderState implements NgxsOnInit {
   getPinnedWorkspaces(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.LoadPinnedWorkspace) {
     const state = ctx.getState();
     const {offset, size, userId, option} = payload;
-    return this.wsHeaderApi.getPinned(offset, size, userId).pipe(
+    const search = _.get(payload, 'search', '');
+    return this.wsHeaderApi.getPinned(offset, size, userId, search).pipe(
       mergeMap(wsData => {
         return of(ctx.patchState(produce(ctx.getState(), draft => {
           if (option === 'append') {
@@ -214,59 +218,6 @@ export class HeaderState implements NgxsOnInit {
           } else {
             draft.workspaceHeader.pinned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
           }
-        })));
-      })
-    );
-  }
-
-  @Action(fromHD.SearchRecentWsAction)
-  searchRecentWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchRecentWsAction) {
-    const state = ctx.getState();
-    const {offset, size, userId, search} = payload;
-    return this.wsHeaderApi.getRecent(offset, size, userId, search).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          const selectedData = _.filter(draft.workspaceHeader.recent.data, items => items.selected);
-          draft.workspaceHeader.recent.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
-        })));
-      })
-    );
-  }
-
-  @Action(fromHD.SearchFavoriteWsAction)
-  searchFavoriteWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchFavoriteWsAction) {
-    const state = ctx.getState();
-    const {offset, size, userId, search} = payload;
-    return this.wsHeaderApi.getFavorited(offset, size, userId, search).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.favorite.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
-        })));
-      })
-    );
-  }
-
-  @Action(fromHD.SearchAssignedWsAction)
-  searchAssignedWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchAssignedWsAction) {
-    const state = ctx.getState();
-    const {offset, size, userId, search} = payload;
-    return this.wsHeaderApi.getAssigned(offset, size, userId, search).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.assigned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
-        })));
-      })
-    );
-  }
-
-  @Action(fromHD.SearchPinnedWsAction)
-  searchPinnedWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHD.SearchPinnedWsAction) {
-    const state = ctx.getState();
-    const {offset, size, userId, search} = payload;
-    return this.wsHeaderApi.getPinned(offset, size, userId, search).pipe(
-      mergeMap(wsData => {
-        return of(ctx.patchState(produce(ctx.getState(), draft => {
-          draft.workspaceHeader.pinned.data = _.map(wsData, (item, key: any) => ({...item, selected: key === 0}));
         })));
       })
     );
