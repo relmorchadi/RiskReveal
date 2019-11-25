@@ -56,14 +56,17 @@ public class DefaultAdjustmentService {
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
 
+    @Autowired
+    RranalysisRepository rranalysisRepository;
+
     //NOTE: I think we should have two functions:
     // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
     // - one take DefaultAdjustmentNodeEntity as input and return a Adjustment Node
     // We could have a global function that calls these two methods to take as input Pure PLT ID and return a Default Adjustment Thread / Nodes for it if any
 
-    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(int targetRapId,
-                                                                                          int regionPerilId,
-                                                                                          int marketChannelId,
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(long targetRapId,
+                                                                                          long regionPerilId,
+                                                                                          long marketChannelId,
                                                                                           String engineType,
                                                                                           int pltEntityId
                                                                                                  ) throws RRException {
@@ -78,7 +81,7 @@ public class DefaultAdjustmentService {
                     defaultAdjustmentEntity.getTargetRap().getTargetRapId() == targetRapId &&
                             defaultAdjustmentEntity.getEngineType().equals(engineType) &&
                             defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getDefaultAdjustmentId(), regionPerilId) &&
-                            defaultAdjustmentEntity.getEntity().getEntityId() == pltEntityId
+                            defaultAdjustmentEntity.getRREntity().getEntityId() == pltEntityId
             )
                     .findAny().orElse(null);
             if (defaultAdjustment != null) {
@@ -109,16 +112,18 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Long scorPltHeaderId) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
-            return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
-                    pltHeaderEntity.getTargetRap().getTargetRapId(),
-                    pltHeaderEntity.getRegionPeril() != null ? pltHeaderEntity.getRegionPeril().getRegionPerilId() : 1,
-                    pltHeaderEntity.getMarketChannel() != null ? pltHeaderEntity.getMarketChannel().getMarketChannelId() : 1,
-                    pltHeaderEntity.getRrAnalysisEntity().getModel(),
-                    pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity().getEntityId() : 1);
+            if (rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).isPresent()) {
+                return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
+                        pltHeaderEntity.getTargetRAPId(),
+                        pltHeaderEntity.getRegionPerilId(),
+                        1, //TODO: add MarketChannelId, then replace by pltHeaderEntity.getMarketChannelId() != null ? pltHeaderEntity.getMarketChannelId() : 1,
+                        rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).get().getModel(),
+                        pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
+            }
         }
         return defaultAdjustmentNodeEntities;
     }

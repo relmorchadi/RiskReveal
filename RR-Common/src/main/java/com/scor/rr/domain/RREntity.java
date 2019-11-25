@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @javax.persistence.Entity
 @Table(name = "ENTITY", schema = "dbo", catalog = "RiskReveal")
-public class Entity {
+public class RREntity {
     private int entityId;
     private String entityCode;
     private String entityDescription;
@@ -44,7 +44,7 @@ public class Entity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Entity that = (Entity) o;
+        RREntity that = (RREntity) o;
         return entityId == that.entityId &&
                 Objects.equals(entityCode, that.entityCode) &&
                 Objects.equals(entityDescription, that.entityDescription);

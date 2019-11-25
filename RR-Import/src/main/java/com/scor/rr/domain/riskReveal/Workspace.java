@@ -20,7 +20,7 @@ public class Workspace implements Serializable {
   @Column(name = "WorkspaceId")
   private Long workspaceId;
 
-  @Column(name = "Entity")
+  @Column(name = "RREntity")
   private Integer entity;
 
   @Column(name = "WorkspaceContextCode")

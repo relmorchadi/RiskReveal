@@ -21,7 +21,7 @@ public class ProjectImportRun {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ProjectImportRun")
     private Long projectImportRunId;
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
     @Column(name = "RunId")
     private int runId;

@@ -12,30 +12,31 @@
         <div [ngClass]="{'link-flag-icon': project.linkFlag,
                 'inuring-flag-icon': project.postInuredFlag,
                 'standard-flag-icon': !project.linkFlag && !project.postInuredFlag}"
-             *ngIf="project.projectType !== 'fac'"
+             *ngIf="project.projectType !== 'FAC'"
              class="project-header-icon d-flex justify-content-center align-items-center">
           <i *ngIf="!project.postInuredFlag"
              [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
           <i *ngIf="project.postInuredFlag" class="fa fa-code-fork"></i>
         </div>
-        <div *ngIf="project.projectType === 'fac'" [ngClass]="{'standard-flag-icon': project.projectFacSource === 'manual',
-        'standard-fac-flag-icon': project.projectFacSource === 'specific'}"
-             class="project-header-icon d-flex justify-content-center align-items-center">
-          <i *ngIf="project.projectFacSource === 'manual'" class='icon-assignment_24px'></i>
-          <i *ngIf="project.projectFacSource === 'specific'" class='icon-copy'></i>
+        <div *ngIf="project.projectType === 'FAC'"
+             class="project-header-icon d-flex justify-content-center align-items-center standard-fac-flag-icon">
+          <i  class='icon-copy'></i>
         </div>
+        <!--          [ngClass]="{'standard-flag-icon': project.projectFacSource === 'manual',
+        'standard-fac-flag-icon': project.projectFacSource === 'specific'}"
+          <i *ngIf="project.projectFacSource === 'manual'" class='icon-assignment_24px'></i>-->
         <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-          <div class="d-flex justify-content-between" *ngIf="project.projectType === 'fac'">
+          <div class="d-flex justify-content-between" *ngIf="project.projectType === 'FAC'">
             <div class="d-flex flex-column">
-              <span>{{project?.name | trimFormat}}</span>
-              <span>{{project?.projectId | trimFormat}}</span>
+              <span>{{project?.projectName}}</span>
+              <span>{{project?.projectId}}</span>
             </div>
             <div class="d-flex align-items-center">
-              <div [ngStyle]="{'background': setBackground(project?.carStatus)}"
-                   class="car-status-temp">{{project?.carStatus}}</div>
+              <div [ngStyle]="{'background': setBackground(project?.carRequestStatus)}"
+                   class="car-status-temp">{{project?.carRequestStatus}}</div>
             </div>
           </div>
-          <div class="d-flex flex-column" *ngIf="project.projectType !== 'fac'">
+          <div class="d-flex flex-column" *ngIf="project.projectType !== 'FAC'">
             <span>{{project?.projectName}}</span>
             <span>{{project?.projectId}}</span>
           </div>
@@ -47,13 +48,12 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-              <li nz-menu-item class="contextMenu border-bottom"
-                  *ngIf="project.projectType === 'treaty' || status === 'treaty'"
-                  (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})"><i
-                class="icon-trash-alt"></i>Delete
+              <li nz-menu-item class="contextMenu border-bottom" *ngIf="project.projectType === 'TREATY'"
+                  (click)="delete({projectId: project?.projectId ,projectIndex: i, project: project})">
+                <i class="icon-trash-alt"></i>Delete
               </li>
-              <li nz-menu-item (click)="edit({project: project})" class="contextMenu"><i class="icon-edit"></i>Edit
-                Project Properties
+              <li nz-menu-item (click)="edit({project: project})" class="contextMenu">
+                <i class="icon-edit"></i>Edit Project Properties
               </li>
             </ul>
           </nz-dropdown>
@@ -66,14 +66,18 @@
         <div class="project-flag">
           <div style="margin-right: 3px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.importedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <span *ngIf="project?.importedFlag" class="check-true-span"></span>
+            </span>
           </div>
           <span>Imported</span>
         </div>
         <div class="project-flag">
           <div style="margin-right: 3px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.publishedForPricingFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <span *ngIf="project?.publishedForPricingFlag" class="check-true-span"></span>
+            </span>
           </div>
           <span>Published to Pricing</span>
         </div>
@@ -87,7 +91,9 @@
         <div class="project-flag">
           <div style="margin-right: 2px">
             <hr>
-            <span class="steper-icon"></span>
+            <span [ngStyle]="{'background-color': project?.accumulatedFlag ? '#03DAC4' : '#FFFFFF'}" class="steper-icon">
+              <span *ngIf="project?.accumulatedFlag" class="check-true-span"></span>
+            </span>
           </div>
           <span>Accumulated</span>
         </div>
@@ -96,7 +102,7 @@
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-location_searching_24px mb-1"></i>
           <span class="project-kpi-span">Region Perils</span>
-          <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.regionPerils || '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
@@ -106,43 +112,43 @@
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
           <span class="project-kpi-span">PLT</span>
-          <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.plts || '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
           <span class="project-kpi-span">Published</span>
-          <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
+          <span class="project-kpi-span"><b>{{project?.publishedForPricingCount|| '-'}}</b></span>
         </div>
         <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
           <span class="project-kpi-span">Pricing</span>
-          <span class="project-kpi-span"><b>-</b></span>
+          <span class="project-kpi-span"><b>{{project?.finalPricing || '-'}}</b></span>
         </div>
         <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
           <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
           <span class="project-kpi-span">Accum</span>
-          <span class="project-kpi-span"><b>-</b></span>
+          <span class="project-kpi-span"><b>{{project?.accumulatedPlts || '-'}}</b></span>
         </div>
       </div>
       <div class="project-kpi-details pb-3">
-        <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'fac'">
+        <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'FAC'">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
           <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
             [{{project?.sourceProjectId}}]</a>
         </div>
         <div style="height: 65px; padding: 0" class="d-flex flex-column project-kpi-details-title"
-             *ngIf="project.projectType === 'fac'">
+             *ngIf="project.projectType === 'FAC'">
           <div style="padding: 6px 0;" class="d-flex border-bottom">
             <span class="field-car-status">CAR ID :</span>
-            <span class="font-weight-bold">{{project?.id | parseId}}</span>
+            <span class="font-weight-bold">{{project?.carRequestId | parseId}}</span>
           </div>
           <div style="padding: 6px 0;" class="d-flex">
             <span class="field-car-status">UW Analysis :</span>
             <span class="font-weight-bold">{{project?.uwAnalysis}}</span>
           </div>
         </div>
-        <div class="project-kpi-details-title" *ngIf="status === 'treaty'">
+        <div class="project-kpi-details-title" *ngIf="project.projectType === 'TREATY'">
           {{project?.projectDescription}}
         </div>
         <div class="border-top d-flex project-kpi-details-content">
@@ -157,7 +163,7 @@
           <span class="text-center dt-11"
                 style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
         </div>
-        <div *ngIf="status === 'treaty'" class="border-top d-flex project-kpi-details-content">
+        <div class="border-top d-flex project-kpi-details-content">
           <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Assigned Analyst</span>
           <span class="pr-4 dt-11 project-kpi-creat-wrap">Nathalie Dulac</span>
           <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;"></span>

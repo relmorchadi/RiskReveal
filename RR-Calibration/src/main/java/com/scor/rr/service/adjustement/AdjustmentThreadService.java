@@ -1,7 +1,6 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.EntityEntity;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadBranchingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
@@ -77,7 +76,7 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity getByPltHeader(Integer pltHeaderId){
+    public AdjustmentThreadEntity getByPltHeader(Long pltHeaderId){
         return adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
@@ -104,7 +103,7 @@ public class AdjustmentThreadService {
        return createNewAdjustmentThread(new AdjustmentThreadCreationRequest(adjustmentThreadEntity.getInitialPLT().getPltHeaderId(), request.getCreatedBy(), request.isGenerateDefaultThread()));
     }
 
-    public AdjustmentThreadEntity cloneThread(Integer initialPlt, PltHeaderEntity clonedPlt) throws RRException {
+    public AdjustmentThreadEntity cloneThread(Long initialPlt, PltHeaderEntity clonedPlt) throws RRException {
        AdjustmentThreadEntity thread =  adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();

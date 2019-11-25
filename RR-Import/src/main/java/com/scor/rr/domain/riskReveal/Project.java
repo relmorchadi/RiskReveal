@@ -21,7 +21,7 @@ public class Project {
     @Column(name = "ProjectId")
     private Long projectId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private Integer entity;
 
     @Column(name = "WorkspaceId")

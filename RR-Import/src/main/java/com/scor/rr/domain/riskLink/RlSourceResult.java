@@ -16,7 +16,7 @@ public class RlSourceResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlSourceResultId")
     private Long rlSourceResultId;
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private Integer entity;
     @Column(name = "projectId")
     private Long projectId;

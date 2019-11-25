@@ -56,6 +56,9 @@ public class ProjectService {
     @Autowired
     private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
 
+    @Autowired
+    private ProjectCardViewRepository projectCardViewRepository;
+
 
     public Project addNewProject(String wsId, Integer uwy, Project p) {
         return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
@@ -83,8 +86,9 @@ public class ProjectService {
                 prj.setAssignedTo(request.getAssignedTo());
                 prj.setProjectName(request.getProjectName());
                 prj.setProjectDescription(request.getProjectDescription());
+                projectRepository.save(prj);
 
-                return new ResponseEntity<>(projectRepository.save(prj), HttpStatus.OK);
+                return new ResponseEntity<>(projectCardViewRepository.findByProjectId(request.getProjectId()), HttpStatus.OK);
             }
         } else{
             return new ResponseEntity<>("No available Project with ID : " + request.getProjectId(), HttpStatus.BAD_REQUEST);

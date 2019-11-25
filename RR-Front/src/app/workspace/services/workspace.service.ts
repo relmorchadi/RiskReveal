@@ -32,7 +32,6 @@ export class WorkspaceService {
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
         mergeMap(ws => {
-          console.log(ws);
           return ctx.dispatch(new fromWS.LoadWsSuccess({
           wsId, uwYear, ws, route, type
         }))}),
@@ -73,7 +72,7 @@ export class WorkspaceService {
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route, type} = payload;
-    const {workspaceName, programName, cedantName, projects} = ws;
+    const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
     return ctx.patchState(produce(ctx.getState(), draft => {
@@ -82,7 +81,9 @@ export class WorkspaceService {
           wsId,
           uwYear,
           ...ws,
-          projects,
+          projects: _.map(projects, prj => {
+            return prj.carRequestId === null ? {...prj, projectType: 'TREATY'} : {...prj, projectType: 'FAC'};
+          }),
           isPinned: false,
           workspaceType: type,
           collapseWorkspaceDetail: true,
