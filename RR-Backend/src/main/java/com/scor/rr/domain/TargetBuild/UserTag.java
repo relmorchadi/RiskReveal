@@ -19,10 +19,10 @@ public class UserTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserTagId")
-    private Integer userTagId;
+    private Long userTagId;
 
     @Column(name = "TagId")
-    private Integer tagId;
+    private Long tagId;
 
     @Column(name = "User")
     private Integer user;

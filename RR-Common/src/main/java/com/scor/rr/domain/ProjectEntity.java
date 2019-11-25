@@ -1,274 +1,103 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import javax.persistence.Entity;
-import java.sql.Timestamp;
-import java.util.Objects;
+import java.util.Date;
 
 @Entity
-@Table(name = "Project", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "Project")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectEntity {
-    private int projectId;
-    private String name;
-    private String description;
-    private Boolean masterFlag;
-    private Boolean linkFlag;
-    private Boolean publishFlag;
-    private Boolean clonedFlag;
-    private Boolean postInuredFlag;
-    private Boolean mgaFlag;
-    private String assignedTo;
-    private Timestamp creationDate;
-    private Timestamp receptionDate;
-    private Timestamp dueDate;
-    private String createdBy;
-    private Integer fkLinkedSourceProjectId;
-    private ProjectEntity fkCloneSourceProjectId;
-    private Boolean deleted;
-    private Timestamp deletedOn;
-    private String deletedDue;
-    private String deletedBy;
-    private WorkspaceEntity workspaceByFkWorkspaceId;
 
     @Id
-    @Column(name = "ProjectId", nullable = false)
-    public int getProjectId() {
-        return projectId;
-    }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ProjectId")
+    private Long projectId;
 
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
-    }
+    @Column(name = "RREntity")
+    private Integer entity;
 
-    @Basic
-    @Column(name = "ProjectName", length = 255)
-    public String getName() {
-        return name;
-    }
+    @Column(name = "WorkspaceId")
+    private Long workspaceId;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Column(name = "ProjectImportRun")
+    private Integer projectImportRunId;
 
-    @Basic
-    @Column(name = "ProjectDescription", length = 255)
-    public String getDescription() {
-        return description;
-    }
+    @Column(name = "RMSModelDataSourceId")
+    private Integer rmsModelDataSourceId;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @Column(name = "ProjectName")
+    private String projectName;
 
-    @Basic
+    @Column(name = "ProjectDescription")
+    private String projectDescription;
+
     @Column(name = "MasterFlag")
-    public Boolean getMasterFlag() {
-        return masterFlag;
-    }
+    private Boolean masterFlag;
 
-    public void setMasterFlag(Boolean masterFlag) {
-        this.masterFlag = masterFlag;
-    }
-
-    @Basic
     @Column(name = "LinkFlag")
-    public Boolean getLinkFlag() {
-        return linkFlag;
-    }
+    private Boolean linkFlag;
 
-    public void setLinkFlag(Boolean linkFlag) {
-        this.linkFlag = linkFlag;
-    }
-
-    @Basic
     @Column(name = "PublishFlag")
-    public Boolean getPublishFlag() {
-        return publishFlag;
-    }
+    private Boolean publishFlag;
 
-    public void setPublishFlag(Boolean publishFlag) {
-        this.publishFlag = publishFlag;
-    }
+    @Column(name = "ClonedFlag")
+    private Boolean clonedFlag;
 
-    @Basic
-    @Column(name = "clonedFlag", nullable = true)
-    public Boolean getClonedFlag() {
-        return clonedFlag;
-    }
+    @Column(name = "PostInuredFlag")
+    private Boolean postInuredFlag;
 
-    public void setClonedFlag(Boolean clonedFlag) {
-        this.clonedFlag = clonedFlag;
-    }
+    @Column(name = "MgaFlag")
+    private Boolean mgaFlag;
 
-    @Basic
-    @Column(name = "postInuredFlag", nullable = true)
-    public Boolean getPostInuredFlag() {
-        return postInuredFlag;
-    }
+    @Column(name = "AssignedTo")
+    private String assignedTo;
 
-    public void setPostInuredFlag(Boolean postInuredFlag) {
-        this.postInuredFlag = postInuredFlag;
-    }
+    @Column(name = "CreationDate")
+    private Date creationDate;
 
-    @Basic
-    @Column(name = "mgaFlag", nullable = true)
-    public Boolean getMgaFlag() {
-        return mgaFlag;
-    }
+    @Column(name = "ReceptionDate")
+    private Date receptionDate;
 
-    public void setMgaFlag(Boolean mgaFlag) {
-        this.mgaFlag = mgaFlag;
-    }
+    @Column(name = "DueDate")
+    private Date dueDate;
 
-    @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
-    public String getAssignedTo() {
-        return assignedTo;
-    }
+    @Column(name = "CreatedBy")
+    private String createdBy;
 
-    public void setAssignedTo(String assignedTo) {
-        this.assignedTo = assignedTo;
-    }
-
-    @Basic
-    @Column(name = "creationDate", nullable = true)
-    public Timestamp getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(Timestamp creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    @Basic
-    @Column(name = "receptionDate", nullable = true)
-    public Timestamp getReceptionDate() {
-        return receptionDate;
-    }
-
-    public void setReceptionDate(Timestamp receptionDate) {
-        this.receptionDate = receptionDate;
-    }
-
-    @Basic
-    @Column(name = "dueDate", nullable = true)
-    public Timestamp getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Timestamp dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    @Basic
-    @Column(name = "createdBy", nullable = true, length = 255)
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    @Basic
     @Column(name = "LinkedSourceProjectId")
-    public Integer getFkLinkedSourceProjectId() {
-        return fkLinkedSourceProjectId;
-    }
+    private Long linkedSourceProjectId;
 
-    public void setFkLinkedSourceProjectId(Integer fkLinkedSourceProjectId) {
-        this.fkLinkedSourceProjectId = fkLinkedSourceProjectId;
-    }
+    @Column(name = "CloneSourceProjectId")
+    private Long cloneSourceProjectId;
 
-    @Basic
-    @Column(name = "deleted", nullable = true)
-    public Boolean getDeleted() {
-        return deleted;
-    }
+    @Column(name = "Deleted")
+    private Boolean deleted;
 
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
+    @Column(name = "DeletedOn")
+    private Date deletedOn;
 
-    @Basic
-    @Column(name = "deletedOn", nullable = true)
-    public Timestamp getDeletedOn() {
-        return deletedOn;
-    }
+    @Column(name = "DeletedDue")
+    private String deletedDue;
 
-    public void setDeletedOn(Timestamp deletedOn) {
-        this.deletedOn = deletedOn;
-    }
+    @Column(name = "DeletedBy")
+    private String deletedBy;
 
-    @Basic
-    @Column(name = "deletedDue", nullable = true, length = 255)
-    public String getDeletedDue() {
-        return deletedDue;
-    }
-
-    public void setDeletedDue(String deletedDue) {
-        this.deletedDue = deletedDue;
-    }
-
-    @Basic
-    @Column(name = "deletedBy", nullable = true, length = 255)
-    public String getDeletedBy() {
-        return deletedBy;
-    }
-
-    public void setDeletedBy(String deletedBy) {
-        this.deletedBy = deletedBy;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProjectEntity that = (ProjectEntity) o;
-        return projectId == that.projectId &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(masterFlag, that.masterFlag) &&
-                Objects.equals(linkFlag, that.linkFlag) &&
-                Objects.equals(publishFlag, that.publishFlag) &&
-                Objects.equals(clonedFlag, that.clonedFlag) &&
-                Objects.equals(postInuredFlag, that.postInuredFlag) &&
-                Objects.equals(mgaFlag, that.mgaFlag) &&
-                Objects.equals(assignedTo, that.assignedTo) &&
-                Objects.equals(creationDate, that.creationDate) &&
-                Objects.equals(receptionDate, that.receptionDate) &&
-                Objects.equals(dueDate, that.dueDate) &&
-                Objects.equals(createdBy, that.createdBy) &&
-                Objects.equals(fkLinkedSourceProjectId, that.fkLinkedSourceProjectId) &&
-                Objects.equals(fkCloneSourceProjectId, that.fkCloneSourceProjectId) &&
-                Objects.equals(deleted, that.deleted) &&
-                Objects.equals(deletedOn, that.deletedOn) &&
-                Objects.equals(deletedDue, that.deletedDue) &&
-                Objects.equals(deletedBy, that.deletedBy);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(projectId, name, description, masterFlag, linkFlag, publishFlag, clonedFlag, postInuredFlag, mgaFlag, assignedTo, creationDate, receptionDate, dueDate, createdBy, fkLinkedSourceProjectId, fkCloneSourceProjectId, deleted, deletedOn, deletedDue, deletedBy);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "WorkspaceId", referencedColumnName = "workspaceId")
-    public WorkspaceEntity getWorkspaceByFkWorkspaceId() {
-        return workspaceByFkWorkspaceId;
-    }
-
-    public void setWorkspaceByFkWorkspaceId(WorkspaceEntity workspaceByFkWorkspaceId) {
-        this.workspaceByFkWorkspaceId = workspaceByFkWorkspaceId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "CloneSourceProjectId", referencedColumnName = "projectId")
-    public ProjectEntity getFkCloneSourceProjectId() {
-        return fkCloneSourceProjectId;
-    }
-
-    public void setFkCloneSourceProjectId(ProjectEntity fkCloneSourceProjectId) {
-        this.fkCloneSourceProjectId = fkCloneSourceProjectId;
+    public void initProject(Long workspaceId) {
+        this.projectId = null;
+        this.workspaceId = workspaceId;
+        this.masterFlag = false;
+        this.linkFlag = false;
+        this.publishFlag = false;
+        this.clonedFlag = false;
+        this.postInuredFlag = false;
+        this.mgaFlag= false;
+        this.assignedTo = this.createdBy;
+        this.deleted= false;
     }
 }

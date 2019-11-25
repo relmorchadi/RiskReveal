@@ -17,7 +17,7 @@ public class RecentWorkspaceView {
 
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

@@ -8,5 +8,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserTagRepository extends JpaRepository<UserTag, Integer> {
-    Optional<UserTag> findByTagIdAndUser(Integer tagId, Integer userId);
+    Optional<UserTag> findByTagIdAndUser(Long tagId, Integer userId);
 }

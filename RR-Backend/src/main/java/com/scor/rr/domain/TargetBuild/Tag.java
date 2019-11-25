@@ -21,7 +21,7 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TagId")
     @EqualsAndHashCode.Include
-    private Integer tagId;
+    private Long tagId;
 
     @Column(name = "Entity")
     private Integer entity;

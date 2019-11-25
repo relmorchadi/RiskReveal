@@ -17,7 +17,7 @@ public class PLTManagerView {
 
     @Id
     @Column(name = "pltId")
-    private Integer pltId;
+    private Long pltId;
 
     @Column(name = "pltName")
     private String pltName;

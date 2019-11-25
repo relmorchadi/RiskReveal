@@ -2,6 +2,7 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.CurrencyEntity;
 import com.scor.rr.domain.ModelPortfolio;
+import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
@@ -11,7 +12,6 @@ import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.ModellingSystemInstance;
 import com.scor.rr.domain.riskLink.RlPortfolioSelection;
 import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.domain.riskReveal.Project;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.state.TransformationBundle;
@@ -34,7 +34,7 @@ public class RegionPerilExtractor {
     private static final Logger log = LoggerFactory.getLogger(RegionPerilExtractor.class);
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Autowired
     private ProjectImportRunRepository projectImportRunRepository;
@@ -86,24 +86,24 @@ public class RegionPerilExtractor {
 
     public void loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
         log.debug("Start loading region perils");
-        Optional<Project> projectOptional = projectRepository.findById(projectId);
-        Project project;
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        ProjectEntity projectEntity;
 
         if (projectOptional.isPresent())
-            project = projectOptional.get();
+            projectEntity = projectOptional.get();
         else {
             log.debug("project not found");
             throw new IllegalArgumentException("invalid project id");
         }
 
         // build ProjectImportRun ----------------------------------------------------------------------------------
-        List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(project.getProjectId());
+        List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(projectEntity.getProjectId());
         ProjectImportRunEntity projectImportRunEntity = new ProjectImportRunEntity();
-        projectImportRunEntity.setProjectId(project.getProjectId());
+        projectImportRunEntity.setProjectId(projectEntity.getProjectId());
         projectImportRunEntity.setRunId(projectImportRunEntityList == null ? 1 : projectImportRunEntityList.size() + 1);
         projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
         projectImportRunEntity.setStartDate(new Date());
-        projectImportRunEntity.setImportedBy(project.getAssignedTo());
+        projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
         projectImportRunEntity.setSourceConfigVendor("RL");
         projectImportRunEntity = projectImportRunRepository.save(projectImportRunEntity);
 
@@ -152,7 +152,7 @@ public class RegionPerilExtractor {
 
                 rrAnalysis.setDefaultOccurrenceBasis(sourceResult.getRlAnalysis().getDefaultOccurrenceBasis());
                 rrAnalysis.setTargetCurrency(sourceResult.getTargetCurrency());
-                rrAnalysis.setProjectId(project.getProjectId());
+                rrAnalysis.setProjectId(projectEntity.getProjectId());
                 rrAnalysis.setCreationDate(new Date());
                 rrAnalysis.setRunDate(sourceResult.getRlAnalysis().getRunDate());
                 rrAnalysis.setImportStatus(TrackingStatus.INPROGRESS.toString());

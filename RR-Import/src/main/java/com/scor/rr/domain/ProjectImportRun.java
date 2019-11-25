@@ -1,7 +1,6 @@
 package com.scor.rr.domain;
 
 import com.scor.rr.domain.enums.TrackingStatus;
-import com.scor.rr.domain.riskReveal.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,5 +38,5 @@ public class ProjectImportRun {
     private String sourceConfigVendor;
 
     @ManyToOne
-    private Project project;
+    private ProjectEntity projectEntity;
 }

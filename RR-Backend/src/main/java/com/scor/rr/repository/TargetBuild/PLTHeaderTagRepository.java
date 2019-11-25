@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 import java.util.Set;
 
-public interface PLTHeaderTagRepository extends JpaRepository<PLTHeaderTag, Integer> {
-    Optional<PLTHeaderTag> findByPltHeaderIdAndTagId(Integer pltHeaderId, Integer tagId);
+public interface PLTHeaderTagRepository extends JpaRepository<PLTHeaderTag, Long> {
+    Optional<PLTHeaderTag> findByPltHeaderIdAndTagId(Long pltHeaderId, Long tagId);
 
-    Set<PLTHeaderTag> findByPltHeaderId(Integer pltHeaderId);
+    Set<PLTHeaderTag> findByPltHeaderId(Long pltHeaderId);
 
-    Set<PLTHeaderTag> findByWorkspaceId(Integer workspaceId);
+    Set<PLTHeaderTag> findByWorkspaceId(Long workspaceId);
 
 }
