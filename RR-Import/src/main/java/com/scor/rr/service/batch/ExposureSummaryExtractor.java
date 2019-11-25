@@ -107,8 +107,8 @@ public class ExposureSummaryExtractor {
     public RepeatStatus extract() {
 
         try {
-            List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectProjectId(Long.valueOf(projectId));
-            ProjectImportRunEntity projectImportRunEntity = projectImportRunRepository.findByProjectProjectIdAndRunId(Long.valueOf(projectId), projectImportRunEntityList.size());
+            List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
+            ProjectImportRunEntity projectImportRunEntity = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunEntityList.size());
 
             List<ModelPortfolio> modelPortfolios = transformationPackage.getModelPortfolios();
 

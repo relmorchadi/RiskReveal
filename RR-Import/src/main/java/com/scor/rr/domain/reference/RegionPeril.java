@@ -16,7 +16,7 @@ public class RegionPeril {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RegionPerilId")
-    private Integer regionPerilId;
+    private Long regionPerilId;
 
     @Column(name = "RegionPerilCode")
     private String regionPerilCode;
