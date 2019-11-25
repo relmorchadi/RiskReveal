@@ -97,11 +97,11 @@ public class RegionPerilExtractor {
         }
 
         // build ProjectImportRun ----------------------------------------------------------------------------------
-        List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProject(project);
+        List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(project.getProjectId());
         ProjectImportRunEntity projectImportRunEntity = new ProjectImportRunEntity();
-        projectImportRunEntity.setProject(project);
+        projectImportRunEntity.setProjectId(project.getProjectId());
         projectImportRunEntity.setRunId(projectImportRunEntityList == null ? 1 : projectImportRunEntityList.size() + 1);
-        projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS);
+        projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
         projectImportRunEntity.setStartDate(new Date());
         projectImportRunEntity.setImportedBy(project.getAssignedTo());
         projectImportRunEntity.setSourceConfigVendor("RL");
