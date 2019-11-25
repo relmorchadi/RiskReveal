@@ -90,7 +90,7 @@ public class CloningScorPltHeader {
         if (scorPltHeaderCloned.getPltType().equalsIgnoreCase("pure")) {
             AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
             if (threadCloned != null) {
-                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435); // what ???
+                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435L); // what ???
                 List<AdjustmentNode> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
                 if (nodeEntities != null) {
                     for (AdjustmentNode adjustmentNodeCloned : nodeEntities) {

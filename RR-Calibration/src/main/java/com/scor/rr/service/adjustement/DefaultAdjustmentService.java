@@ -64,9 +64,9 @@ public class DefaultAdjustmentService {
     // - one take DefaultAdjustmentNodeEntity as input and return a Adjustment Node
     // We could have a global function that calls these two methods to take as input Pure PLT ID and return a Default Adjustment Thread / Nodes for it if any
 
-    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(int targetRapId,
-                                                                                          int regionPerilId,
-                                                                                          int marketChannelId,
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(long targetRapId,
+                                                                                          long regionPerilId,
+                                                                                          long marketChannelId,
                                                                                           String engineType,
                                                                                           int pltEntityId
                                                                                                  ) throws RRException {
@@ -112,7 +112,7 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) throws RRException {
+    public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Long scorPltHeaderId) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
