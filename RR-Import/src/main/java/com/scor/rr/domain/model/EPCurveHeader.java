@@ -28,7 +28,7 @@ public class EPCurveHeader {
     private String ePCFileName;
 
 //    public EPCurveHeader(EPCurveHeader epCurveHeader){
-//        this.entity = epCurveHeader.getEntity();
+//        this.entity = epCurveHeader.getRREntity();
 //        this.lossDataType = epCurveHeader.getLossDataType();
 //        this.financialPerspective = epCurveHeader.getFinancialPerspective();
 //        this.statisticMetric = epCurveHeader.getStatisticMetric();

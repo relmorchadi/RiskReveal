@@ -14,7 +14,7 @@ public class InuringFinalAttachedPLT {
     @Column(name = "inuringFinalAttachedPLT", nullable = false)
     private long inuringFinalAttachedPLT;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int Entity;
 
     @Column(name = "inuringFinalNodeId")

@@ -33,12 +33,12 @@ public class ScalingAdjustmentParameter {
     }
 
 //    @ManyToOne
-//    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-//    public EntityEntity getEntity() {
+//    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+//    public EntityEntity getRREntity() {
 //        return entity;
 //    }
 //
-//    public void setEntity(EntityEntity entity) {
+//    public void setRREntity(EntityEntity entity) {
 //        this.entity = entity;
 //    }
 

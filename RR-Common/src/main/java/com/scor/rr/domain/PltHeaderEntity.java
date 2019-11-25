@@ -20,7 +20,7 @@ public class PltHeaderEntity {
     @Column(name = "PLTHeaderId")
     private Long pltHeaderId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private Integer entity;
 
     @Column(name = "PLTType")

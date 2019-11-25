@@ -14,7 +14,7 @@ public class RefFMFContractAttribute {
     @Column(name = "ContractAttributeID", nullable = false)
     private long contractAttributeId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
 
     @Column(name = "UIAttributeName")
