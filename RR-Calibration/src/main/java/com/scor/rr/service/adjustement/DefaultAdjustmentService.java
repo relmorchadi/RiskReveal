@@ -56,6 +56,9 @@ public class DefaultAdjustmentService {
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
 
+    @Autowired
+    RranalysisRepository rranalysisRepository;
+
     //NOTE: I think we should have two functions:
     // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
     // - one take DefaultAdjustmentNodeEntity as input and return a Adjustment Node
@@ -113,12 +116,14 @@ public class DefaultAdjustmentService {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
-            return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
-                    pltHeaderEntity.getTargetRap().getTargetRapId(),
-                    pltHeaderEntity.getRegionPeril() != null ? pltHeaderEntity.getRegionPeril().getRegionPerilId() : 1,
-                    pltHeaderEntity.getMarketChannel() != null ? pltHeaderEntity.getMarketChannel().getMarketChannelId() : 1,
-                    pltHeaderEntity.getRrAnalysisEntity().getModel(),
-                    pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity().getEntityId() : 1);
+            if (rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).isPresent()) {
+                return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
+                        pltHeaderEntity.getTargetRAPId(),
+                        pltHeaderEntity.getRegionPerilId(),
+                        1, //TODO: add MarketChannelId, then replace by pltHeaderEntity.getMarketChannelId() != null ? pltHeaderEntity.getMarketChannelId() : 1,
+                        rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).get().getModel(),
+                        pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
+            }
         }
         return defaultAdjustmentNodeEntities;
     }

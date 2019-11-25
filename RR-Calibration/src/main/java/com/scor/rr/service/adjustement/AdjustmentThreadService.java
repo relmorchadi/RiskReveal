@@ -1,7 +1,6 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.EntityEntity;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadBranchingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
