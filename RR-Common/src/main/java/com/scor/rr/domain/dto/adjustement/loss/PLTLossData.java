@@ -7,24 +7,15 @@ public class PLTLossData {
 
     private int simPeriod;
     private int eventId;
-    private double eventDate;
+    private long eventDate;
     private int seq;
     private double maxExposure;
     private double loss;
 
-    public PLTLossData(int simPeriod, int eventId, double eventDate, int seq, double maxExposure, double loss) {
+    public PLTLossData(int simPeriod, int eventId, long eventDate, int seq, double maxExposure, double loss) {
         this.simPeriod = simPeriod;
         this.eventId = eventId;
         this.eventDate = eventDate;
-        this.seq = seq;
-        this.maxExposure = maxExposure;
-        this.loss = loss;
-    }
-
-    public PLTLossData(int eventId, double eventDate, int simPeriod, int seq, double maxExposure, double loss) {
-        this.eventId = eventId;
-        this.eventDate = eventDate;
-        this.simPeriod = simPeriod;
         this.seq = seq;
         this.maxExposure = maxExposure;
         this.loss = loss;
@@ -69,11 +60,11 @@ public class PLTLossData {
         this.eventId = eventId;
     }
 
-    public double getEventDate() {
+    public long getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(double eventDate) {
+    public void setEventDate(long eventDate) {
         this.eventDate = eventDate;
     }
 

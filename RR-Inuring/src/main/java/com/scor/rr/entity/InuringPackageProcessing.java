@@ -17,13 +17,13 @@ public class InuringPackageProcessing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringContractParamId", nullable = false)
-    private int inuringPackageProcessingId;
+    private long inuringPackageProcessingId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)
-    private int inuringPackageId;
+    private long inuringPackageId;
 
     @Column(name = "SubmittedDate")
     private Date submittedDate;

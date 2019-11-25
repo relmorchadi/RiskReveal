@@ -16,16 +16,18 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   unSubscribe$: Subject<void>;
   @Output('onCancelCreateProject')
   onCancelCreateProject: EventEmitter<any> = new EventEmitter();
-  @Input('workspace')
-  workspace: any;
-  @Input('isVisible')
-  isVisible;
-  @Input('newProject')
-  newProject: any;
+  @Input('workspace') workspace: any;
+  @Input('isVisible') isVisible;
+  @Input('newProject') newProject: any;
+  @Input('edit') editOption: any;
+  @Input('editForm') projectForm: any;
+
+  editValue = 'Nathalie Dulac';
   newProjectForm: FormGroup;
 
   constructor(private store: Store) {
     this.unSubscribe$ = new Subject<void>();
+    console.log('test');
   }
 
   ngOnInit() {
@@ -39,22 +41,35 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   createUpdateProject() {
     let project = {...this.newProjectForm.value, projectId: null};
-    console.log('This is data', this);
     if (this.newProjectForm.controls.projectId.value) {
-      project = {...project, linkFlag: true,
-        sourceProjectId: this.newProjectForm.value.projectId,
-        sourceProjectName: this.newProjectForm.value.name,
-        sourceWsId: _.get(this.newProject, 'workspaceId', null),
-        sourceWsName: _.get(this.newProject, 'workspaceName', null)
+      project = {
+        ...project,
+        linkFlag: true,
+        cloneSourceProjectId: this.newProjectForm.value.projectId,
       };
     }
-    console.log(project);
     this.store.dispatch(new fromWS.AddNewProject({
       id: _.get(this.workspace, 'id', null),
       wsId: this.workspace.wsId,
       uwYear: this.workspace.uwYear,
       project
     }));
+  }
+
+  updateProject() {
+    console.log(this.projectForm);
+    this.store.dispatch(new fromWS.EditProject({
+      data: {
+        projectName: this.projectForm.projectName || '',
+        assignedTo: 1,
+        projectId: this.projectForm.projectId || '',
+        projectDescription: this.projectForm.projectDescription || ''
+      },
+    }))
+  }
+
+  checkValid() {
+    return this.projectForm.projectName !== '' && this.projectForm.assignedTo !== '';
   }
 
   cancelCreateProject() {
@@ -68,25 +83,30 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   initNewProjectForm() {
     this.newProjectForm = new FormGroup({
-      projectId: new FormControl(null),
-      name: new FormControl(null, Validators.required),
-      description: new FormControl(null),
-      createdBy: new FormControl('Nathalie Dulac', Validators.required),
-      receptionDate: new FormControl(new Date(), Validators.required),
-      dueDate: new FormControl(new Date(), Validators.required),
       assignedTo: new FormControl(null),
-      linkFlag: new FormControl(null),
-      postInuredFlag: new FormControl(null),
+      cloneSourceProjectId: new FormControl(null),
+      clonedFlag: new FormControl(false),
+      createdBy: new FormControl("Nathalie Dulac", Validators.required),
+      creationDate: new FormControl(new Date()),
+      deleted: new FormControl(false),
+      deletedBy: new FormControl(null),
+      deletedDue: new FormControl(null),
+      deletedOn: new FormControl(null),
+      dueDate: new FormControl(new Date(), Validators.required),
+      entity: new FormControl(0),
+      linkFlag: new FormControl(false),
+      linkedSourceProjectId: new FormControl(null),
+      masterFlag: new FormControl(false),
+      mgaFlag: new FormControl(false),
+      postInuredFlag: new FormControl(false),
+      projectDescription: new FormControl(null),
+      projectId: new FormControl(null),
+      projectImportRunId: new FormControl(null),
+      projectName: new FormControl(null, Validators.required),
       publishFlag: new FormControl(null),
-      pltSum: new FormControl(0),
-      pltThreadSum: new FormControl(0),
-      regionPerilSum: new FormControl(0),
-      xactSum: new FormControl(0),
-      locking: new FormControl(null),
-      sourceProjectId: new FormControl(null),
-      sourceProjectName: new FormControl(null),
-      sourceWsId: new FormControl(null),
-      sourceWsName: new FormControl(null)
-    });
+      receptionDate: new FormControl(new Date(), Validators.required),
+      rmsModelDataSourceId: new FormControl(null),
+      workspaceId: new FormControl(null)
+    })
   }
 }

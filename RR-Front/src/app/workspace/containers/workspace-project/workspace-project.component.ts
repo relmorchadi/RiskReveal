@@ -33,11 +33,10 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   newProject = false;
   newFacProject = false;
-  existingProject = false;
-  mgaProject = false;
+  editOption = false;
   searchWorkspace = false;
 
-  selectedWs: any;
+  projectForm: any;
 
   receptionDate: any;
   dueDate: any;
@@ -89,6 +88,18 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
           // this.detectChanges()
         }
       );
+    this.actions$.pipe(ofActionSuccessful(fromWs.EditProject))
+      .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
+      .subscribe(() => {
+          this.newProject = false;
+          this.newFacProject = false;
+          this.editOption = false;
+          this.detectChanges();
+          this.notificationService.createNotification('Project Edit successful', '',
+            'success', 'topRight', 4000);
+          // this.detectChanges()
+        }
+      );
     this.status$.subscribe(value => this.status = value);
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
@@ -107,14 +118,21 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.wsIdentifier}));
   }
 
-  delete(project) {
+  delete(projectId) {
     this.dispatch(new fromWs.DeleteProject({
-      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, project,
+      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,
     }));
   }
 
   deleteFacProject(item) {
     this.dispatch(new fromWs.DeleteFacProject(item.project));
+  }
+
+  edit(project$) {
+    this.editOption = true;
+    this.newProject = true;
+    this.projectForm = {...project$.project, dueDate: new Date(project$.project.dueDate),
+      receptionDate: new Date(project$.project.receptionDate)};
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
@@ -127,21 +145,11 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-    this.dispatch([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
-  }
-
-  unPinWorkspace() {
-    const {wsId, uwYear} = this.workspace;
-    this.dispatch(new fromHeader.UnPinWs({wsId, uwYear}));
-    this.dispatch(new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier}));
+    this.dispatch([new fromHeader.TogglePinnedWsState({
+      "userId": 1,
+      "workspaceContextCode": this.workspace.wsId,
+      "workspaceUwYear": this.workspace.uwYear
+    })]);
   }
 
   selectProjectNext(project) {

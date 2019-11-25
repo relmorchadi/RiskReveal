@@ -11,8 +11,9 @@ import {TextLengthPipe} from './text-length.pipe';
 import {TrimFormatPipe} from './trim-format.pipe';
 import {ReFormatPIDPipe} from './re-format-pid.pipe';
 import {PickKeysPipe} from './pull-keys.pipe';
-import {CalibratePipe} from './calibrate.pipe';
-import {FilterByStatusPipe} from './filter-by-status.pipe';
+import {CalibratePipe} from "./calibrate.pipe";
+import {FilterByStatusPipe} from "./filter-by-status.pipe";
+import {FalselyFilterPipe} from "./falsely-filter.pipe";
 import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 
@@ -34,6 +35,7 @@ export const PIPES = [
   BoldPipe,
   SystemTagFilterPipe,
   FilterByStatusPipe,
+  FalselyFilterPipe,
   StartCasePipe
 ];
 

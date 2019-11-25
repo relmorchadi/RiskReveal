@@ -8,7 +8,7 @@ import {
 import * as _ from 'lodash';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
-import {RiskApi} from './risk.api';
+import {RiskApi} from './api/risk.api';
 import {forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {WorkspaceModel} from '../model';

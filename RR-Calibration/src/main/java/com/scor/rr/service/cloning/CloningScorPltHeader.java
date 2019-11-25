@@ -52,7 +52,7 @@ public class CloningScorPltHeader {
     @Autowired
     WorkspaceRepository workspaceRepository;
 
-    public PltHeaderEntity cloneScorPltHeader(int scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity cloneScorPltHeader(Integer scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
         PltHeaderEntity pltHeaderEntityInitial = pltHeaderRepository.findByPltHeaderId(scorPltHeaderEntityInitialId);
         if (pltHeaderEntityInitial != null) {
             PltHeaderEntity pltHeaderEntityClone = new PltHeaderEntity(pltHeaderEntityInitial);
@@ -87,18 +87,19 @@ public class CloningScorPltHeader {
         return null;
     }
 
-    public PltHeaderEntity clonePltWithAdjustment(int pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity clonePltWithAdjustment(Integer pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
         WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
         PltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
 //        scorPltHeaderCloned.setWorkspaceEntity(workspaceEntity);
         if (scorPltHeaderCloned.getPltType().equalsIgnoreCase("pure")) {
             AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
             if (threadCloned != null) {
-                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435);
-                List<AdjustmentNodeEntity> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
+                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435); // what ???
+                List<AdjustmentNode> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
                 if (nodeEntities != null) {
-                    for (AdjustmentNodeEntity adjustmentNodeCloned : nodeEntities) {
-                        adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeCloned.getAdjustmentNodeId(), threadCloned.getAdjustmentThreadId(), adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(), adjustmentNodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning().getAdjustmentNodeId()).getOrderNode()));
+                    for (AdjustmentNode adjustmentNodeCloned : nodeEntities) {
+                        AdjustmentNodeOrder order = adjustmentNodeOrderService.findByAdjustmentNode(adjustmentNodeCloned);
+                        adjustmentNodeOrderService.createNodeOrder(adjustmentNodeCloned, order.getAdjustmentOrder());
                     }
                     processingService.cloneAdjustmentNodeProcessing(nodeEntities, threadParent, threadCloned);
                     return scorPltHeaderCloned;

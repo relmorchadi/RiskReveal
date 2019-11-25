@@ -57,7 +57,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   @Input('state')
   set setState(value) {
     this.state = _.clone(value);
-    this.calculateContractChoicesLength();
     this.detectChanges();
   }
 
@@ -71,7 +70,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       globalKeyword: ['']
     });
     this.subscriptions = new Subscription();
-    this.scrollParams = {scrollTo: -1, listLength: 0, position: {i: 0, j: 0}};
     this.unSubscribe$ = new Subject<void>();
     HelperService.headerBarPopinChange$.subscribe(({from}) => {
       if (from != this.componentName)
@@ -99,22 +97,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.contractFilterFormGroup.setValue({
       globalKeyword: '',
       expertModeToggle: true
-    })
+    });
   }
 
   private updateShortCuts = _.memoize((shortCuts) => {
     return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable));
   });
-
-  private calculateContractChoicesLength() {
-    if (this.state.data && this.state.data.length > 0) {
-      this.scrollParams.listLength = _.reduce(this.state.data, (sum, n) => {
-        return sum + (n.length > 5 ? 5 : n.length);
-      }, 0) + this.possibleShortCuts.length;
-    } else {
-      this.scrollParams.listLength = this.possibleShortCuts.length;
-    }
-  }
 
   private _subscribeToDistatchedEvents() {
     this.actions$
@@ -165,7 +153,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    this.store.dispatch(new SearchActions.ExpertModeSearchAction(this.convertBadgeToExpression(this.state.badges) + " " + this.globalKeyword));
+    const expr = this.convertBadgeToExpression(this.state.badges);
+    this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr ? expr + " " + this.globalKeyword : this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
 
@@ -198,8 +187,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     let globalExpression = "";
     let index;
     _.forEach(badges, (badge, i: number) => {
-      console.log(badge);
-      index = this.searchShortCuts.findIndex(row => row.shortCutLabel == badge.key);
+      index = this.searchShortCuts.findIndex(row => {
+        return row.shortCutLabel == badge.key;
+      });
       if(i == badges.length - 1) {
         globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
       } else {

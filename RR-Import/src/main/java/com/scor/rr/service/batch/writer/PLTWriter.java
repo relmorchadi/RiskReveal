@@ -2,7 +2,7 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.PLTHeader;
 import com.scor.rr.domain.dto.PLTBundle;
-import com.scor.rr.repository.PLTHeaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ public class PLTWriter {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private PLTHeaderRepository pltHeaderRepository;
+    private PltHeaderRepository pltHeaderRepository;
 
     // TODO : Review its utility with viet
     private static boolean DBG = true;

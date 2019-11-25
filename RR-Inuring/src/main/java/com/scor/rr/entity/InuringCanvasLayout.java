@@ -19,16 +19,16 @@ public class InuringCanvasLayout {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "InuringCanvasLayoutId", nullable = false)
-    private int inuringCanvasLayoutId;
+    private long inuringCanvasLayoutId;
 
     @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)
-    private int inuringPackageId;
+    private long inuringPackageId;
 
     @Column(name = "NodeId")
-    private int nodeId;
+    private long nodeId;
 
     @Column(name = "NodeType")
     private String nodeType;
@@ -46,13 +46,13 @@ public class InuringCanvasLayout {
     private BigDecimal nodeLeft;
 
     @Column(name = "CreatedBy")
-    private int createdBy;
+    private long createdBy;
 
     @Column(name = "Created")
     private Date created;
 
     @Column(name = "UpdatedBy")
-    private int updatedBy;
+    private long updatedBy;
 
     @Column(name = "Updated")
     private Date updated;

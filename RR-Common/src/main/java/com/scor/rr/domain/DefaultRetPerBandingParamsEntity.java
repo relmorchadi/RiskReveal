@@ -11,7 +11,7 @@ public class DefaultRetPerBandingParamsEntity {
     private Double rpmf;
     private String peatDataPath;
     private String adjustmentReturnPeriodPath;
-    private DefaultAdjustmentNodeEntity defaultAdjustmentNodeByFkDefaultNode;
+    private DefaultAdjustmentNode defaultAdjustmentNodeByFkDefaultNode;
 
     @Id
     @Column(name = "DefaultRetPerBandingParamsId", nullable = false)
@@ -82,11 +82,11 @@ public class DefaultRetPerBandingParamsEntity {
 
     @ManyToOne
     @JoinColumn(name = "DefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
-    public DefaultAdjustmentNodeEntity getDefaultAdjustmentNodeByFkDefaultNode() {
+    public DefaultAdjustmentNode getDefaultAdjustmentNodeByFkDefaultNode() {
         return defaultAdjustmentNodeByFkDefaultNode;
     }
 
-    public void setDefaultAdjustmentNodeByFkDefaultNode(DefaultAdjustmentNodeEntity defaultAdjustmentNodeByFkDefaultNode) {
+    public void setDefaultAdjustmentNodeByFkDefaultNode(DefaultAdjustmentNode defaultAdjustmentNodeByFkDefaultNode) {
         this.defaultAdjustmentNodeByFkDefaultNode = defaultAdjustmentNodeByFkDefaultNode;
     }
 }

@@ -1,9 +1,7 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentNodeEntity;
-import com.scor.rr.domain.AdjustmentTypeEntity;
-import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
+import com.scor.rr.domain.DefaultAdjustmentNode;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
@@ -47,7 +45,7 @@ public class DefaultAdjustmentLookupTest {
 
     @Test
     public void lookupForDefaultAdjustment() throws RRException {
-        List<DefaultAdjustmentNodeEntity> nodeEntities = defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
+        List<DefaultAdjustmentNode> nodeEntities = defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                 470,
                 1,
                 1,

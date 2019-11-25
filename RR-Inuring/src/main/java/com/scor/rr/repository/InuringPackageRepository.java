@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * Created by u004602 on 11/09/2019.
  */
 @Repository
-public interface InuringPackageRepository extends JpaRepository<InuringPackage, Integer> {
-    InuringPackage findByInuringPackageId(Integer inuringPackageId);
+public interface InuringPackageRepository extends JpaRepository<InuringPackage, Long> {
+    InuringPackage findByInuringPackageId(long inuringPackageId);
 }

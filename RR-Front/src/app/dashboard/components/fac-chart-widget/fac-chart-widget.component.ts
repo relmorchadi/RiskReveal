@@ -3,13 +3,10 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import {Data} from '../../../core/model/data';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../../workspace/store/states';
-import {WsApi} from '../../../workspace/services/workspace.api';
-import {dashData} from '../../../shared/data/dashboard-data';
+import {WsApi} from '../../../workspace/services/api/workspace.api';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import {GeneralConfigState} from '../../../core/store/states';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
-import {EChartOption} from 'echarts';
 
 @Component({
   selector: 'app-fac-chart-widget',
@@ -43,7 +40,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed'],
+      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed', 'Priced'],
       align: 'left',
       left: 10
     },
@@ -101,9 +98,16 @@ export class FacChartWidgetComponent implements OnInit {
         type: 'bar',
         stack: 'one',
         itemStyle: this.itemStyle,
+      },
+      {
+        name: 'Priced',
+        data: [],
+        type: 'bar',
+        stack: 'one',
+        itemStyle: this.itemStyle,
       }
     ],
-    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
+    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
   };
 
   @ViewChild('chart') chart;
@@ -173,7 +177,7 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   valueFavChange(event) {
-    this.store.dispatch(new workspaceActions.MarkFacWsAsFavorite(event));
+
   }
 
   duplicateItem(itemName: any): void {
@@ -241,6 +245,10 @@ export class FacChartWidgetComponent implements OnInit {
       item => this.chartOption.series[4].data =
         [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
           fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
+    _.forEach(this.chartOption.xAxis.data,
+      item => this.chartOption.series[5].data =
+        [...this.chartOption.series[5].data, _.filter(this.filteredData, fac =>
+          fac.assignedAnalyst === item && fac.carStatus === 'Priced').length]);
   }
 
   drawBarChart(divId: string, data, data2, data3, data4) {

@@ -11,7 +11,7 @@ import java.util.List;
 public class ContractNodeList {
 
     private int index;
-    private int id;
+    private long id;
     private int level;
     private String contractType;
     private boolean isFinal;

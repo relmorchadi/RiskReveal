@@ -1,8 +1,12 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.ProjectView;
+import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +14,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 
+@Data
+@NoArgsConstructor
 public class WorkspaceDetailsDTO {
 
     private String id;
@@ -22,132 +28,54 @@ public class WorkspaceDetailsDTO {
     private Date inceptionDate;
     private Date expiryDate;
     private String subsidiaryLedgerId;
-    List<String> treatySections;
-    List<String> years;
-    List<ProjectView> projects;
+    private Boolean isFavorite;
+    private Boolean isPinned;
+    private String contractDatasource;
+    private List<String> treatySections;
+    private List<Integer> years;
+    private List<ProjectCardView> projects;
+    private List<String> expectedRegionPerils;
+    private int publishedForAccumulationPlts;
+    private int publishedForPricingPlts;
+    private int pricedPlts;
 
-    public WorkspaceDetailsDTO() {
+
+    public WorkspaceDetailsDTO(ContractSearchResult contract) {
+        this.id = contract.getId();
+        this.workspaceName = contract.getWorkspaceName();
+        this.cedantCode = contract.getCedantCode();
+        this.cedantName = contract.getCedantName();
+        this.subsidiaryId = ofNullable(contract.getSubsidiaryid()).map(String::valueOf).orElse(null);
+        this.subsidiaryName = contract.getSubsidiaryName();
+        this.ledgerName = contract.getSubsidiaryLedgerName();
+        this.inceptionDate = contract.getInceptionDate();
+        this.expiryDate = contract.getExpiryDate();
+        this.subsidiaryLedgerId = contract.getSubsidiaryLedgerid();
+        this.contractDatasource = contract.getContractSourceTypeName();
     }
 
-    public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years, List<ProjectView> projects) {
-        ContractSearchResult first = items.get(0);
-        this.id = first.getId();
-        this.workspaceName = first.getWorkspaceName();
-        this.cedantCode = first.getCedantCode();
-        this.cedantName = first.getCedantName();
-        this.subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
-        this.subsidiaryName = first.getSubsidiaryName();
-        this.ledgerName = first.getSubsidiaryLedgerName();
-        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())) ) ).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid()))  )
+    public void setTreatySections(List<ContractSearchResult> items) {
+        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
         ).distinct().collect(Collectors.toList());
-        this.years= years;
-        this.inceptionDate= first.getInceptionDate();
-        this.expiryDate = first.getExpiryDate();
-        this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
-        this.projects= projects;
     }
 
-    public String getWorkspaceName() {
-        return workspaceName;
-    }
+    /**
+     * @param projects
+     * @Setter project
+     * @Desc calculate as well the {publishedForAccumulationPlts, publishedForPricingPlts, pricedPlts} Params from projects
+     */
+    public void setProjects(List<ProjectCardView> projects) {
+        if(projects != null) {
+            this.projects = projects;
+            this.publishedForAccumulationPlts = projects.stream().mapToInt(ProjectCardView::getAccumulatedPlts).sum();
+            this.publishedForPricingPlts = projects.stream().mapToInt(ProjectCardView::getPublishedForPricingCount).sum();
+            this.pricedPlts = projects.stream().mapToInt(ProjectCardView::getFinalPricing).sum();
+        }else{
+            this.projects= new ArrayList<>();
+            this.publishedForAccumulationPlts = 0;
+            this.publishedForPricingPlts = 0;
+            this.pricedPlts = 0;
+        }
 
-    public void setWorkspaceName(String workspaceName) {
-        this.workspaceName = workspaceName;
-    }
-
-    public String getCedantCode() {
-        return cedantCode;
-    }
-
-    public void setCedantCode(String cedantCode) {
-        this.cedantCode = cedantCode;
-    }
-
-    public String getCedantName() {
-        return cedantName;
-    }
-
-    public void setCedantName(String cedantName) {
-        this.cedantName = cedantName;
-    }
-
-    public String getSubsidiaryId() {
-        return subsidiaryId;
-    }
-
-    public void setSubsidiaryId(String subsidiaryId) {
-        this.subsidiaryId = subsidiaryId;
-    }
-
-    public String getSubsidiaryName() {
-        return subsidiaryName;
-    }
-
-    public void setSubsidiaryName(String subsidiaryName) {
-        this.subsidiaryName = subsidiaryName;
-    }
-
-    public String getLedgerName() {
-        return ledgerName;
-    }
-
-    public void setLedgerName(String ledgerName) {
-        this.ledgerName = ledgerName;
-    }
-
-    public Date getInceptionDate() {
-        return inceptionDate;
-    }
-
-    public void setInceptionDate(Date inceptionDate) {
-        this.inceptionDate = inceptionDate;
-    }
-
-    public Date getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Date expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-    public String getSubsidiaryLedgerId() {
-        return subsidiaryLedgerId;
-    }
-
-    public void setSubsidiaryLedgerId(String subsidiaryLedgerId) {
-        this.subsidiaryLedgerId = subsidiaryLedgerId;
-    }
-
-    public List<String> getTreatySections() {
-        return treatySections;
-    }
-
-    public void setTreatySections(List<String> treatySections) {
-        this.treatySections = treatySections;
-    }
-
-    public List<String> getYears() {
-        return years;
-    }
-
-    public void setYears(List<String> years) {
-        this.years = years;
-    }
-
-    public List<ProjectView> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(List<ProjectView> projects) {
-        this.projects = projects;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 }

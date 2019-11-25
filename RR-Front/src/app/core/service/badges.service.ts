@@ -78,6 +78,6 @@ export class BadgesService {
   }
 
   public padWithLike(t, expr) {
-    return (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
+    return expr && (t == 's' ? _.padStart : _.padEnd)(expr, expr.length + 1, "%");
   }
 }

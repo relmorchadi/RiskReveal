@@ -3,12 +3,12 @@ export interface Input {
   uwYear: number;
   projects: any[];
   showDeleted: boolean;
+  deletedPltsLength?: number;
   filterData: any;
   filters: {
     systemTag: any,
     userTag: any[]
   };
-  deletedPltsLength: number;
   userTags: any[];
   selectedListOfPlts: any[];
   systemTagsCount: any;

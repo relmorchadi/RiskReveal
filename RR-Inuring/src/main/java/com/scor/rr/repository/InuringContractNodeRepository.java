@@ -11,10 +11,10 @@ import java.util.List;
  */
 
 @Repository
-public interface InuringContractNodeRepository extends JpaRepository<InuringContractNode, Integer> {
+public interface InuringContractNodeRepository extends JpaRepository<InuringContractNode, Long> {
 
-    List<InuringContractNode> findByInuringPackageId(int inuringPackageId);
+    List<InuringContractNode> findByInuringPackageId(long inuringPackageId);
 
-    InuringContractNode findByInuringContractNodeId(int inuringContractNodeId);
+    InuringContractNode findByInuringContractNodeId(long inuringContractNodeId);
 
 }

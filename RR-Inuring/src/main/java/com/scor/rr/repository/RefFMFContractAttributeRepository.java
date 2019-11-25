@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RefFMFContractAttributeRepository extends JpaRepository<RefFMFContractAttribute, Integer> {
+public interface RefFMFContractAttributeRepository extends JpaRepository<RefFMFContractAttribute, Long> {
 
     @Query(value="from RefFMFContractAttribute \n" +
             "where contractAttributeId in \n" +

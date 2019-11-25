@@ -197,6 +197,8 @@
       border: 2px solid #03DAC4;
       border-radius: 20px;
       display: flex;
+      align-items: center;
+      justify-content: center;
       //position: absolute;
       margin-top: -24px;
       margin-left: 70px;
@@ -204,6 +206,14 @@
 
       @media screen and (min-width: 1650px) and (max-width: 2200px) {
         margin-left: 52px;
+      }
+
+      .check-true-span {
+        background: #FFFFFF;
+        display: flex;
+        width: 5px;
+        height: 5px;
+        border-radius: 20px;
       }
     }
   }

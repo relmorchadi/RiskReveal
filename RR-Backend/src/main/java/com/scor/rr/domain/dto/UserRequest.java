@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto;
 
 
-import com.scor.rr.domain.UserTag;
+import com.scor.rr.domain.TargetBuild.UserTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -37,7 +37,7 @@ public class RegionPerilExtractor {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private ProjectImportRunRepository projectImportRunRepository;
+    private ProjectimportrunRepository projectImportRunRepository;
 
     @Autowired
     private RlSourceResultRepository rlSourceResultRepository;
@@ -52,7 +52,7 @@ public class RegionPerilExtractor {
     private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
 
     @Autowired
-    private RRAnalysisRepository rrAnalysisRepository;
+    private RranalysisRepository rrAnalysisRepository;
 
     @Autowired
     private CurrencyRepository currencyRepository;
@@ -61,7 +61,7 @@ public class RegionPerilExtractor {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private TargetRAPRepository targetRAPRepository;
+    private TargetrapRepository targetRAPRepository;
 
     @Autowired
     private AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;

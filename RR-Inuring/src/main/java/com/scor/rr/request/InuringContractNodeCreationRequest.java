@@ -7,12 +7,12 @@ import java.util.Date;
 
 public class InuringContractNodeCreationRequest {
 
-    private int inuringPackageId;
+    private long inuringPackageId;
     private String contractTypeCode;
     private Date inceptionDate;
     private Date expiationDate;
 
-    public InuringContractNodeCreationRequest(int inuringPackageId, String contractTypeCode, Date inceptionDate, Date expiationDate) {
+    public InuringContractNodeCreationRequest(long inuringPackageId, String contractTypeCode, Date inceptionDate, Date expiationDate) {
         this.inuringPackageId = inuringPackageId;
         this.contractTypeCode = contractTypeCode;
         this.inceptionDate = inceptionDate;
@@ -22,7 +22,7 @@ public class InuringContractNodeCreationRequest {
     public InuringContractNodeCreationRequest() {
     }
 
-    public int getInuringPackageId() {
+    public long getInuringPackageId() {
         return inuringPackageId;
     }
 

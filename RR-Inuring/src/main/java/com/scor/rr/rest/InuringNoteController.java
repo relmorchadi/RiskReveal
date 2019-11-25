@@ -24,12 +24,12 @@ public class InuringNoteController {
     }
 
     @PostMapping("read")
-    public List<InuringNote> readInuringNote(@RequestParam("id") int id){
+    public List<InuringNote> readInuringNote(@RequestParam("id") long id){
         return inuringNoteService.readInuringNotes(id);
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity<?> deleteNote(@RequestParam("id") int id){
+    public ResponseEntity<?> deleteNote(@RequestParam("id") long id){
         inuringNoteService.deleteInuringNote(id);
         return ResponseEntity.ok("it's working");
     }

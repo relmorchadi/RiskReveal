@@ -66,22 +66,22 @@ public class InuringEdgeService {
         inuringEdgeRepository.save(inuringEdge);
     }
 
-    public void deleteInuringEdgeById(int inuringEdgeId) {
+    public void deleteInuringEdgeById(long inuringEdgeId) {
         inuringEdgeRepository.deleteByInuringEdgeId(inuringEdgeId);
     }
 
-    public void deleteByRelatedNode(InuringNodeType nodeType, int nodeId) {
+    public void deleteByRelatedNode(InuringNodeType nodeType, long nodeId) {
         inuringEdgeRepository.deleteBySourceNodeTypeAndSourceNodeId(nodeType, nodeId);
         inuringEdgeRepository.deleteByTargetNodeTypeAndTargetNodeId(nodeType, nodeId);
     }
 
-    public InuringEdge readInuringEdge(int inuringEdgeId) throws RRException{
+    public InuringEdge readInuringEdge(long inuringEdgeId) throws RRException{
         InuringEdge inuringEdge = inuringEdgeRepository.findByInuringEdgeId(inuringEdgeId);
         if(inuringEdge == null) throw new InuringEdgeNodeFoundException(inuringEdgeId);
         return inuringEdge;
     }
 
-    public boolean checkInuringNodeExisting(InuringNodeType nodeType, int nodeId) {
+    public boolean checkInuringNodeExisting(InuringNodeType nodeType, long nodeId) {
         switch (nodeType) {
             case InputNode:
                 return inuringInputNodeRepository.findByInuringInputNodeId(nodeId) != null;
