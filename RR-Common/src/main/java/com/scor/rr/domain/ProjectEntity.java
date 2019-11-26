@@ -19,7 +19,7 @@ public class ProjectEntity {
     @Column(name = "ProjectId")
     private Long projectId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "WorkspaceId")

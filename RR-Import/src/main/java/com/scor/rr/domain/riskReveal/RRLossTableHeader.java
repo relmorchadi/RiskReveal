@@ -18,7 +18,7 @@ public class RRLossTableHeader {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RRLossTableHeaderId")
     private Long rrLossTableHeaderId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
     @Column(name = "LossTableType")
     private String lossTableType;

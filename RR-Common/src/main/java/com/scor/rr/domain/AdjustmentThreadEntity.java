@@ -19,16 +19,15 @@ public class AdjustmentThreadEntity {
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
-    private RREntity entity;
+    private Integer entity;
     private String threadStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public RREntity getEntity() {
+    @Column(name = "Entity")
+    public Integer getEntity() {
         return entity;
     }
 
-    public void setEntity(RREntity entity) {
+    public void setEntity(Integer entity) {
         this.entity = entity;
     }
 

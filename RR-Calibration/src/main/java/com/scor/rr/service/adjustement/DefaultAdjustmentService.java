@@ -71,7 +71,7 @@ public class DefaultAdjustmentService {
                                                                                           int pltEntityId
                                                                                                  ) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
-        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEntityIdEquals(
+        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
                 targetRapId,
                 marketChannelId,
                 engineType,
@@ -81,7 +81,7 @@ public class DefaultAdjustmentService {
                     defaultAdjustmentEntity.getTargetRap().getTargetRapId() == targetRapId &&
                             defaultAdjustmentEntity.getEngineType().equals(engineType) &&
                             defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getDefaultAdjustmentId(), regionPerilId) &&
-                            defaultAdjustmentEntity.getEntity().getEntityId() == pltEntityId
+                            defaultAdjustmentEntity.getEntity() == pltEntityId
             )
                     .findAny().orElse(null);
             if (defaultAdjustment != null) {

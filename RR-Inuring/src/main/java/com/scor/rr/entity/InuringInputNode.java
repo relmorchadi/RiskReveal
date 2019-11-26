@@ -44,7 +44,7 @@ public class InuringInputNode {
         this.inuringInputNodeId = inuringInputNodeId;
     }
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     public int getEntity() {
         return entity;
     }
