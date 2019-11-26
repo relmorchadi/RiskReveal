@@ -8,3 +8,5 @@ public class InuringPltotFoundException extends RRException {
         super(ExceptionCodename.INURING_PLT_NOT_FOUND, "Inuring PLT with id " + id + " not found");
     }
 }
+
+
