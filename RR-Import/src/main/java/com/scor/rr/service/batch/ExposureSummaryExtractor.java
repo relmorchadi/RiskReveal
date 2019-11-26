@@ -7,7 +7,7 @@ import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLPortfolio;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.LocationLevelExposure;
@@ -269,7 +269,7 @@ public class ExposureSummaryExtractor {
                                                 continue;
                                             }
                                             log.debug("Export to file: {}}", file.getAbsolutePath());
-                                            RlModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
+                                            RLModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
                                             if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
                                                 log.debug("==> success");
                                                 extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
@@ -494,7 +494,7 @@ public class ExposureSummaryExtractor {
                 }
                 break;
             case FUNCTION:
-                RlModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
+                RLModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
                 if (rlModelDataSource != null)
                     value = resolveFunctionalMapping(axisConformerDefinition.getAxisConformerAlias(), Long.valueOf(rlModelDataSource.getRlId()), itemIn);
                 break;

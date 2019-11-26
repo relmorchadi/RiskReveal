@@ -1,11 +1,11 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
+import com.scor.rr.domain.model.AnalysisIncludedTargetRAPEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.stream.Stream;
 
-public interface AnalysisIncludedTargetRAPRepository extends JpaRepository<AnalysisIncludedTargetRAP, Long> {
+public interface AnalysisIncludedTargetRAPRepository extends JpaRepository<AnalysisIncludedTargetRAPEntity, Long> {
 
-    Stream<AnalysisIncludedTargetRAP> findByModelAnalysisId(Long modelAnalysisId);
+    Stream<AnalysisIncludedTargetRAPEntity> findByModelAnalysisId(Long modelAnalysisId);
 }

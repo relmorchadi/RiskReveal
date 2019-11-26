@@ -1,25 +1,23 @@
-package com.scor.rr.domain.riskReveal;
+package com.scor.rr.domain.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Table(name = "RRLossTableHeader")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class RRLossTableHeader {
+@Entity
+@Table(name = "LossDataHeader")
+public class LossDataHeaderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "RRLossTableHeaderId")
-    private Long rrLossTableHeaderId;
-    @Column(name = "RREntity")
-    private Integer entity;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "LossDataHeaderId")
+    private Long lossDataHeaderId;
+    @Column(name = "Entity")
+    private Long entity;
+    @Column(name = "ModelAnalysisId")
+    private Long modelAnalysisId;
     @Column(name = "LossTableType")
     private String lossTableType;
     @Column(name = "OriginalTarget")
@@ -36,8 +34,7 @@ public class RRLossTableHeader {
     private String fileDataFormat;
     @Column(name = "FileType")
     private String fileType;
+    @Column(name = "CloningSourceId")
+    private Long CloningSourceId;
 
-    @OneToOne
-    @JoinColumn(name = "RRAnalysisId")
-    private RRAnalysis rrAnalysis;
 }

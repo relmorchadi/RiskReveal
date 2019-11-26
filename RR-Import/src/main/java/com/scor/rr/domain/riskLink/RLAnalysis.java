@@ -65,7 +65,7 @@ public class RLAnalysis {
     private RlAnalysisScanStatus rlAnalysisScanStatus;
 
     @OneToMany(mappedBy = "rlAnalysis", fetch = FetchType.LAZY)
-    private List<RlSourceResult> rlSourceResult;
+    private List<RLImportSelection> RLImportSelection;
 
     @OneToMany(mappedBy = "rLAnalysisId")
     private List<RlSourceEpHeader> rlSourceEpHeaders;
@@ -73,7 +73,7 @@ public class RLAnalysis {
     @OneToMany(mappedBy = "rlAnalysis")
     private List<RlAnalysisProfileRegion> rlAnalysisProfileRegions;
 
-    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
+    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
         this.projectId = rdm.getProjectId();

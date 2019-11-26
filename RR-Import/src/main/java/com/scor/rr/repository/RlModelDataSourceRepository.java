@@ -1,14 +1,14 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.riskLink.RLModelDataSource;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 
-public interface RlModelDataSourceRepository extends JpaRepository<RlModelDataSource, Long> {
+public interface RlModelDataSourceRepository extends JpaRepository<RLModelDataSource, Long> {
 
-    List<RlModelDataSource> findByProjectId(Long projectId);
-    RlModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, String instanceId, String rrId);
+    List<RLModelDataSource> findByProjectId(Long projectId);
+    RLModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, String instanceId, String rrId);
 
 }

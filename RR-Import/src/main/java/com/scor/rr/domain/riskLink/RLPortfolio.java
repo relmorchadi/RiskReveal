@@ -53,5 +53,5 @@ public class RLPortfolio {
 
     @ManyToOne
     @JoinColumn(name = "RlModelDataSourceId")
-    private RlModelDataSource rlModelDataSource;
+    private RLModelDataSource rlModelDataSource;
 }

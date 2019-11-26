@@ -1,4 +1,4 @@
-package com.scor.rr.domain.riskReveal;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,18 +9,18 @@ import java.math.BigInteger;
 import java.util.Date;
 
 @Entity
-@Table(name = "RRAnalysis")
+@Table(name = "ModelAnalysis")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RRAnalysis {
+public class ModelAnalysisEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RRAnalysisId")
+    @Column(name = "ModelAnalysisId")
     private Long rrAnalysisId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "ProjectId")
