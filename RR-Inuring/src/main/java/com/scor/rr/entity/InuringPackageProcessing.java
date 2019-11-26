@@ -19,7 +19,7 @@ public class InuringPackageProcessing {
     @Column(name = "InuringContractParamId", nullable = false)
     private long inuringPackageProcessingId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)

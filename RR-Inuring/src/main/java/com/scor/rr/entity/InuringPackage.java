@@ -53,7 +53,7 @@ public class InuringPackage {
         this.inuringPackageId = inuringPackageId;
     }
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     public int getEntity() {
         return entity;
     }

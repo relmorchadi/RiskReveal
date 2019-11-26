@@ -16,7 +16,7 @@ public class RLImportSelection {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlSourceResultId")
     private Long rlSourceResultId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
     @Column(name = "projectId")
     private Long projectId;

@@ -19,7 +19,7 @@ public class InuringContractLayerParam {
     @Column(name = "InuringContractParamId", nullable = false)
     private long inuringContractParamId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractLayerId", nullable = false)

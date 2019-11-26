@@ -19,7 +19,7 @@ public class InuringContractLayerPerilLimit {
     @Column(name = "InuringContractParamId", nullable = false)
     private long inuringContractLayerPerilLimitId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractLayerId", nullable = false)

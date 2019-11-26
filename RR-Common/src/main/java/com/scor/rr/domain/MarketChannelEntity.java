@@ -10,7 +10,7 @@ public class MarketChannelEntity {
     private int marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
-    private RREntity entityByPKentityId;
+    private Integer entity;
 
     @Id
     @Column(name = "MarketChannelID", nullable = false)
@@ -57,13 +57,12 @@ public class MarketChannelEntity {
         return Objects.hash(marketChannelId, marketChannelCode, marketChannelDescription);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "PKentityId", referencedColumnName = "EntityId")
-    public RREntity getEntityByPKentityId() {
-        return entityByPKentityId;
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
     }
 
-    public void setEntityByPKentityId(RREntity entityByPKentityId) {
-        this.entityByPKentityId = entityByPKentityId;
+    public void setEntity(Integer entity) {
+        this.entity = entity;
     }
 }
