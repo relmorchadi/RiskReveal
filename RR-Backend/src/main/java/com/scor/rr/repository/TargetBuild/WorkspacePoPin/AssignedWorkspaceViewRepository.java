@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedWorkspaceView, String> {
+public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedWorkspaceView, Long> {
 
     @Query("from AssignedWorkspaceView aws where" +
             " (aws.cedantName like :kw or aws.workspaceContextCode like :kw or aws.workspaceName like :kw or aws.workspaceUwYear like :kw ) " +

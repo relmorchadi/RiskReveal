@@ -1,6 +1,5 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.TargetBuild.PLTHeader;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
@@ -38,7 +37,7 @@ public class PltBrowserResource {
     }
 
     @PostMapping("restore")
-    public Boolean deletePLT(@RequestBody List<Integer> pltHeaderIds) {
+    public Boolean deletePLT(@RequestBody List<Long> pltHeaderIds) {
         return pltBrowserService.restorePLTHeader(pltHeaderIds);
     }
 

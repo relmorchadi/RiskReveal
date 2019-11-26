@@ -48,9 +48,6 @@ public class AdjustmentNodeProcessingService {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    BinfileRepository binfileRepository;
-
-    @Autowired
     AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
@@ -201,21 +198,12 @@ public class AdjustmentNodeProcessingService {
         }
         // sort adjustmentNodes by node order from 0 to n
         PltHeaderEntity finalPLT = thread.getFinalPLT();
-        BinFileEntity finalBinFile = null;
-        if (finalPLT == null) {
-            finalPLT = new PltHeaderEntity(thread.getInitialPLT());
-            finalPLT.setPltType("Thread");
-            finalBinFile = binfileRepository.save(new BinFileEntity());
-        } else {
-            finalBinFile = finalPLT.getBinFileEntity() != null ? finalPLT.getBinFileEntity() : binfileRepository.save(new BinFileEntity());
-        }
-        finalPLT.setBinFileEntity(finalBinFile);
 
         File sourceFile = null;
         if (processing == null) {
-            sourceFile = new File(thread.getInitialPLT().getBinFileEntity().getPath(), thread.getInitialPLT().getBinFileEntity().getFileName());
+            sourceFile = new File(thread.getInitialPLT().getLossDataFilePath(), thread.getInitialPLT().getLossDataFileName());
         } else {
-            sourceFile = new File(processing.getAdjustedPLT().getBinFileEntity().getPath(), processing.getAdjustedPLT().getBinFileEntity().getFileName());
+            sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
         }
 
         File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
@@ -224,10 +212,9 @@ public class AdjustmentNodeProcessingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finalBinFile.setPath(dstFile.getParent());
-        finalBinFile.setFileName(dstFile.getName());
+        finalPLT.setLossDataFilePath(dstFile.getParent());
+        finalPLT.setLossDataFileName(dstFile.getName());
 
-        binfileRepository.save(finalBinFile);
         finalPLT.setLocked(false);
         finalPLT.setCreatedDate(RRDateUtils.getDateNow());
         pltHeaderRepository.save(finalPLT);
@@ -339,11 +326,12 @@ public class AdjustmentNodeProcessingService {
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
         String filename = "InterimPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".bin";
-        BinFileEntity binFileEntity = savePLTFile(pltLossData, inputPLT.getBinFileEntity().getPath(),  filename); // luu file
-        if (binFileEntity != null) {
+        File binFile = savePLTFile(pltLossData, inputPLT.getLossDataFilePath(),  filename); // luu file
+        if (binFile != null) {
             log.info("success saving loss file for adjusted PLT");
             PltHeaderEntity adjustedPLT = new PltHeaderEntity(inputPLT); // tao plt moi
-            adjustedPLT.setBinFileEntity(binFileEntity);
+            adjustedPLT.setLossDataFilePath(binFile.getParent());
+            adjustedPLT.setLossDataFileName(binFile.getName());
             adjustedPLT.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
             adjustedPLT.setPltType("Interim");
             adjustedPLT = pltHeaderRepository.save(adjustedPLT);
@@ -377,7 +365,7 @@ public class AdjustmentNodeProcessingService {
         }
     }
 
-    private BinFileEntity savePLTFile(List<PLTLossData> pltLossData, String filePath, String fileName) {
+    private File savePLTFile(List<PLTLossData> pltLossData, String filePath, String fileName) {
         File file = new File(filePath, fileName);
         if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
@@ -395,18 +383,14 @@ public class AdjustmentNodeProcessingService {
                 e.printStackTrace();
             }
         }
-        BinFileEntity binFileEntity = new BinFileEntity();
-        binFileEntity.setFileName(file.getName());
-        binFileEntity.setPath(file.getParent());
-        binFileEntity.setFqn(file.getAbsolutePath());
-        return binfileRepository.save(binFileEntity);
+        return file;
     }
 
 
     private List<PLTLossData> getLossFromPltInputAdjustment(PltHeaderEntity pltHeaderEntity) throws RRException {
         if(pltHeaderEntity != null) {
-            if(pltHeaderEntity.getBinFileEntity() != null) {
-                File file = new File(pltHeaderEntity.getBinFileEntity().getPath(), pltHeaderEntity.getBinFileEntity().getFileName());
+            if(pltHeaderEntity.getLossDataFilePath() != null && pltHeaderEntity.getLossDataFileName() != null) {
+                File file = new File(pltHeaderEntity.getLossDataFilePath(), pltHeaderEntity.getLossDataFileName());
                 if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {

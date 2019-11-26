@@ -1,11 +1,11 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.TargetBuild.Project.Project;
 import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -33,26 +33,48 @@ public class WorkspaceDetailsDTO {
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
+    private List<String> expectedRegionPerils;
+    private int publishedForAccumulationPlts;
+    private int publishedForPricingPlts;
+    private int pricedPlts;
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult first, List<ContractSearchResult> items, List<Integer> years, List<ProjectCardView> projects, Boolean isFavorite, Boolean isPinned) {
-        this.id = first.getId();
-        this.workspaceName = first.getWorkspaceName();
-        this.cedantCode = first.getCedantCode();
-        this.cedantName = first.getCedantName();
-        this.subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
-        this.subsidiaryName = first.getSubsidiaryName();
-        this.ledgerName = first.getSubsidiaryLedgerName();
-        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())) ) ).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid()))  )
-        ).distinct().collect(Collectors.toList());
-        this.years= years;
-        this.inceptionDate= first.getInceptionDate();
-        this.expiryDate = first.getExpiryDate();
-        this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
-        this.contractDatasource= first.getContractSourceTypeName();
-        this.projects= projects;
-        this.isFavorite = isFavorite;
-        this.isPinned = isPinned;
+    public WorkspaceDetailsDTO(ContractSearchResult contract) {
+        this.id = contract.getId();
+        this.workspaceName = contract.getWorkspaceName();
+        this.cedantCode = contract.getCedantCode();
+        this.cedantName = contract.getCedantName();
+        this.subsidiaryId = ofNullable(contract.getSubsidiaryid()).map(String::valueOf).orElse(null);
+        this.subsidiaryName = contract.getSubsidiaryName();
+        this.ledgerName = contract.getSubsidiaryLedgerName();
+        this.inceptionDate = contract.getInceptionDate();
+        this.expiryDate = contract.getExpiryDate();
+        this.subsidiaryLedgerId = contract.getSubsidiaryLedgerid();
+        this.contractDatasource = contract.getContractSourceTypeName();
     }
 
+    public void setTreatySections(List<ContractSearchResult> items) {
+        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
+        ).distinct().collect(Collectors.toList());
+    }
+
+    /**
+     * @param projects
+     * @Setter project
+     * @Desc calculate as well the {publishedForAccumulationPlts, publishedForPricingPlts, pricedPlts} Params from projects
+     */
+    public void setProjects(List<ProjectCardView> projects) {
+        if(projects != null) {
+            this.projects = projects;
+            this.publishedForAccumulationPlts = projects.stream().mapToInt(ProjectCardView::getAccumulatedPlts).sum();
+            this.publishedForPricingPlts = projects.stream().mapToInt(ProjectCardView::getPublishedForPricingCount).sum();
+            this.pricedPlts = projects.stream().mapToInt(ProjectCardView::getFinalPricing).sum();
+        }else{
+            this.projects= new ArrayList<>();
+            this.publishedForAccumulationPlts = 0;
+            this.publishedForPricingPlts = 0;
+            this.pricedPlts = 0;
+        }
+
+    }
 }

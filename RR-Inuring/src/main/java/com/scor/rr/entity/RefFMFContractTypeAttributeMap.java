@@ -19,7 +19,7 @@ public class RefFMFContractTypeAttributeMap {
     @Column(name = "RefFMFContractTypeAttributeMapId", nullable = false)
     private long refFMFContractTypeAttributeMapId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
 
     @Column(name = "ContractTypeId")

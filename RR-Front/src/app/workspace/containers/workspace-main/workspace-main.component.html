@@ -51,7 +51,7 @@
                     </h3>
                     <h4 class="workspace-title" [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}">
                       {{data[wsIdentifier]?.workspaceName}} | {{data[wsIdentifier]?.uwYear}} | {{data[wsIdentifier]?.wsId}}
-                      <ng-container *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">|</ng-container> </h4>
+                    </h4>
                     <span style="display: flex; align-items: center" *ngIf="data[wsIdentifier]?.workspaceType === 'fac'">
                       <span [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}"
                             class="tab-metadata-title">Selected Project:</span>

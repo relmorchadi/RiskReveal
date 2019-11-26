@@ -57,7 +57,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   @Input('state')
   set setState(value) {
     this.state = _.clone(value);
-    this.calculateContractChoicesLength();
     this.detectChanges();
   }
 
@@ -71,7 +70,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       globalKeyword: ['']
     });
     this.subscriptions = new Subscription();
-    this.scrollParams = {scrollTo: -1, listLength: 0, position: {i: 0, j: 0}};
     this.unSubscribe$ = new Subject<void>();
     HelperService.headerBarPopinChange$.subscribe(({from}) => {
       if (from != this.componentName)
@@ -105,16 +103,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   private updateShortCuts = _.memoize((shortCuts) => {
     return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable));
   });
-
-  private calculateContractChoicesLength() {
-    if (this.state.data && this.state.data.length > 0) {
-      this.scrollParams.listLength = _.reduce(this.state.data, (sum, n) => {
-        return sum + (n.length > 5 ? 5 : n.length);
-      }, 0) + this.possibleShortCuts.length;
-    } else {
-      this.scrollParams.listLength = this.possibleShortCuts.length;
-    }
-  }
 
   private _subscribeToDistatchedEvents() {
     this.actions$

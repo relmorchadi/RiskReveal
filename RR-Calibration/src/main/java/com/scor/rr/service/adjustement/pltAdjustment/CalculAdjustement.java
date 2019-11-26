@@ -261,15 +261,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                             if (minRp == null && maxRp != null) {
                                 if (oepEEF.equals("OEP")) {
                                     double loss = pltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).orElse(new PLTLossData()).getLoss();
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((minRpAll.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))),
                                             cap ? Double.min(((minRpAll.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss, pltLossData.getMaxExposure() ) : (((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss));
                                 } else {
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((maxRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))),
@@ -282,15 +282,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                             } else if (returnPeriosd.get(finalI1[0]).get(0).equals(maxRp.getReturnPeriod())) {
                                 if (oepEEF.equals("OEP")) {
                                     double loss = pltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).orElse(new PLTLossData()).getLoss();
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxRp.getAdjustmentFactor(),
                                             cap ? Double.min(maxRp.getAdjustmentFactor() * loss, pltLossData.getMaxExposure()) : maxRp.getAdjustmentFactor() * loss);
                                 } else {
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure()*maxRp.getAdjustmentFactor(),
@@ -301,15 +301,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                                 if (oepEEF.equals("OEP")) {
 
                                     double loss = pltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).orElse(new PLTLossData()).getLoss();
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))) * pltLossData.getMaxExposure(),
                                             cap ? Double.min(((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss, pltLossData.getMaxExposure() ) : ((minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))  * loss);
                                 } else {
-                                    return new PLTLossData(pltLossData.getEventId(),
-                                            pltLossData.getSimPeriod(),
+                                    return new PLTLossData(pltLossData.getSimPeriod(),
+                                            pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * (minRp.getAdjustmentFactor() + ((maxRp.getAdjustmentFactor() - minRp.getAdjustmentFactor()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))),

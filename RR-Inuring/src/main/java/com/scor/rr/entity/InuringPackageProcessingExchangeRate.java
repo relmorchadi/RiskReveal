@@ -20,7 +20,7 @@ public class InuringPackageProcessingExchangeRate {
     @Column(name = "InuringPackageProcessingExchangeRateId", nullable = false)
     private long inuringPackageProcessingExchangeRateId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
 
     @Column(name = "InuringPackageProcessingId")

@@ -1,17 +1,17 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.domain.CurrencyEntity;
 import com.scor.rr.domain.ModelPortfolio;
-import com.scor.rr.domain.ProjectImportRun;
+import com.scor.rr.domain.ProjectEntity;
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
 import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
 import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.reference.Currency;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.ModellingSystemInstance;
 import com.scor.rr.domain.riskLink.RlPortfolioSelection;
 import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.domain.riskReveal.Project;
 import com.scor.rr.domain.riskReveal.RRAnalysis;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.state.TransformationBundle;
@@ -34,10 +34,10 @@ public class RegionPerilExtractor {
     private static final Logger log = LoggerFactory.getLogger(RegionPerilExtractor.class);
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Autowired
-    private ProjectimportrunRepository projectImportRunRepository;
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
     private RlSourceResultRepository rlSourceResultRepository;
@@ -86,26 +86,26 @@ public class RegionPerilExtractor {
 
     public void loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
         log.debug("Start loading region perils");
-        Optional<Project> projectOptional = projectRepository.findById(projectId);
-        Project project;
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        ProjectEntity projectEntity;
 
         if (projectOptional.isPresent())
-            project = projectOptional.get();
+            projectEntity = projectOptional.get();
         else {
             log.debug("project not found");
             throw new IllegalArgumentException("invalid project id");
         }
 
         // build ProjectImportRun ----------------------------------------------------------------------------------
-        List<ProjectImportRun> projectImportRunList = projectImportRunRepository.findByProject(project);
-        ProjectImportRun projectImportRun = new ProjectImportRun();
-        projectImportRun.setProject(project);
-        projectImportRun.setRunId(projectImportRunList == null ? 1 : projectImportRunList.size() + 1);
-        projectImportRun.setStatus(TrackingStatus.INPROGRESS);
-        projectImportRun.setStartDate(new Date());
-        projectImportRun.setImportedBy(project.getAssignedTo());
-        projectImportRun.setSourceConfigVendor("RL");
-        projectImportRun = projectImportRunRepository.save(projectImportRun);
+        List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(projectEntity.getProjectId());
+        ProjectImportRunEntity projectImportRunEntity = new ProjectImportRunEntity();
+        projectImportRunEntity.setProjectId(projectEntity.getProjectId());
+        projectImportRunEntity.setRunId(projectImportRunEntityList == null ? 1 : projectImportRunEntityList.size() + 1);
+        projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
+        projectImportRunEntity.setStartDate(new Date());
+        projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
+        projectImportRunEntity.setSourceConfigVendor("RL");
+        projectImportRunEntity = projectImportRunRepository.save(projectImportRunEntity);
 
 
         // build RRAnalysis ------------------------------------------------------------
@@ -152,11 +152,11 @@ public class RegionPerilExtractor {
 
                 rrAnalysis.setDefaultOccurrenceBasis(sourceResult.getRlAnalysis().getDefaultOccurrenceBasis());
                 rrAnalysis.setTargetCurrency(sourceResult.getTargetCurrency());
-                rrAnalysis.setProjectId(project.getProjectId());
+                rrAnalysis.setProjectId(projectEntity.getProjectId());
                 rrAnalysis.setCreationDate(new Date());
                 rrAnalysis.setRunDate(sourceResult.getRlAnalysis().getRunDate());
                 rrAnalysis.setImportStatus(TrackingStatus.INPROGRESS.toString());
-                rrAnalysis.setProjectImportRunId(projectImportRun.getProjectImportRunId());
+                rrAnalysis.setProjectImportRunId(projectImportRunEntity.getProjectImportRunId());
 
                 TransformationBundle bundle = new TransformationBundle();
                 bundle.setInstanceId(instanceId);
@@ -207,25 +207,25 @@ public class RegionPerilExtractor {
 
                 fpRRAnalysis.put(sourceResult.getFinancialPerspective(), rrAnalysis.getRrAnalysisId());
 
-                Currency analysisCurrency;
+                CurrencyEntity analysisCurrencyEntity;
                 if (sourceResult.getRlAnalysis().getAnalysisCurrency() != null) {
-                    analysisCurrency = currencyRepository.findByCode(sourceResult.getRlAnalysis().getAnalysisCurrency());
+                    analysisCurrencyEntity = currencyRepository.findByCode(sourceResult.getRlAnalysis().getAnalysisCurrency());
                 } else {
                     log.debug("Source currency is null, use USD as source currency");
-                    analysisCurrency = currencyRepository.findByCode("USD");
+                    analysisCurrencyEntity = currencyRepository.findByCode("USD");
                 }
 
-                LossDataHeader sourceRRLT = makeSourceRRLT(rrAnalysis, sourceResult, sourceResult.getFinancialPerspective(), analysisCurrency);
+                LossDataHeader sourceRRLT = makeSourceRRLT(rrAnalysis, sourceResult, sourceResult.getFinancialPerspective(), analysisCurrencyEntity);
 
-                Currency targetCurrency;
+                CurrencyEntity targetCurrencyEntity;
                 if (sourceResult.getTargetCurrency() != null) {
-                    targetCurrency = currencyRepository.findByCode(sourceResult.getTargetCurrency());
+                    targetCurrencyEntity = currencyRepository.findByCode(sourceResult.getTargetCurrency());
                 } else {
                     log.debug("Target currency is null, use USD as target currency");
-                    targetCurrency = currencyRepository.findByCode("USD");
+                    targetCurrencyEntity = currencyRepository.findByCode("USD");
                 }
 
-                LossDataHeader conformedRRLT = makeConformedRRLT(rrAnalysis, sourceRRLT, targetCurrency);
+                LossDataHeader conformedRRLT = makeConformedRRLT(rrAnalysis, sourceRRLT, targetCurrencyEntity);
 
 
                 // TODO :  Review Later with viet
@@ -276,7 +276,7 @@ public class RegionPerilExtractor {
 
 
                 ModelPortfolio modelPortfolio = new ModelPortfolio(null, rlPortfolioSelection.getProjectId(),
-                        new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRun.getProjectImportRunId(),
+                        new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRunEntity.getProjectImportRunId(),
                         rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
                         modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),
                         modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName(),
@@ -314,7 +314,7 @@ public class RegionPerilExtractor {
         return regionPerilRepository.findByRegionPerilCode(rpCode);
     }
 
-    private LossDataHeader makeSourceRRLT(RRAnalysis rrAnalysis, RlSourceResult sourceResult, String financialPerspective, Currency analysisCurrency) {
+    private LossDataHeader makeSourceRRLT(RRAnalysis rrAnalysis, RlSourceResult sourceResult, String financialPerspective, CurrencyEntity analysisCurrencyEntity) {
 
         if (financialPerspective == null) {
             log.debug("no analysis financial perspective found for source result {}", sourceResult.getRlSourceResultId());
@@ -328,13 +328,13 @@ public class RegionPerilExtractor {
         rrLossTable.setLossTableType("ELT");
         rrLossTable.setFileDataFormat("Treaty");
         rrLossTable.setOriginalTarget(RRLossTableType.SOURCE.getCode());
-        rrLossTable.setCurrency(analysisCurrency.getCode()); // Source Currency
+        rrLossTable.setCurrency(analysisCurrencyEntity.getCode()); // Source Currency
 
         log.info("created source RRLossTable");
         return rrLossTable;
     }
 
-    private LossDataHeader makeConformedRRLT(RRAnalysis rrAnalysis, LossDataHeader sourceRRLT, Currency currency) {
+    private LossDataHeader makeConformedRRLT(RRAnalysis rrAnalysis, LossDataHeader sourceRRLT, CurrencyEntity currencyEntity) {
 
         LossDataHeader conformedRRLT = new LossDataHeader();
 //        conformedRRLT.setRrRepresentationDatasetId(sourceRRLT.getRrRepresentationDatasetId());
@@ -343,7 +343,7 @@ public class RegionPerilExtractor {
         conformedRRLT.setLossTableType("ELT");
         conformedRRLT.setFileDataFormat("Treaty");
         conformedRRLT.setOriginalTarget(RRLossTableType.CONFORMED.getCode());
-        conformedRRLT.setCurrency(currency.getCode()); //  target currency
+        conformedRRLT.setCurrency(currencyEntity.getCode()); //  target currency
         // TODO fileName, filePath later
 
         log.info("Conformed ELT Header {}", conformedRRLT.getLossDataHeaderId());

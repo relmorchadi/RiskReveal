@@ -1,10 +1,11 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentThreadEntity {
     private Boolean locked;
@@ -18,16 +19,16 @@ public class AdjustmentThreadEntity {
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
     private int threadIndex;
-    private EntityEntity entity;
+    private RREntity entity;
     private String threadStatus;
 
     @ManyToOne
-    @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public EntityEntity getEntity() {
+    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    public RREntity getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(RREntity entity) {
         this.entity = entity;
     }
 

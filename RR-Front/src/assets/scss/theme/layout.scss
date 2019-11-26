@@ -116,8 +116,18 @@
     }
 
     textarea.ant-input {
+      color: #0700CF;
       border: none;
       border-radius: 0;
+      background-color: #F4F6FC;
+    }
+
+    textarea.ant-input:hover {
+      background-color: #EDEFFA;
+    }
+
+    textarea::placeholder {
+      color: #7D7BE5;
     }
   }
 

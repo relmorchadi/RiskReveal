@@ -1,12 +1,11 @@
 package com.scor.rr.service.TargetBuild;
 
-import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.*;
 import com.scor.rr.util.OffsetPageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -38,10 +37,10 @@ public class WorkspaceService {
     @Autowired
     PinnedWorkspaceViewRepository pinnedWorkspaceViewRepository;
 
-    public List<Workspace> getFavoriteWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+    public List<WorkspaceEntity> getFavoriteWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
         return this.favoriteWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size))
                 .stream()
-                .map(favoriteWorkspaceView -> Workspace
+                .map(favoriteWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(favoriteWorkspaceView.getId())
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
@@ -53,9 +52,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getRecentWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+    public List<WorkspaceEntity> getRecentWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
         return this.recentWorkspaceViewRepository.findAllByUserId("%"+kw+"%", userId, new OffsetPageRequest(offset, size)).stream()
-                .map(recentWorkspaceView -> Workspace
+                .map(recentWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(recentWorkspaceView.getId())
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
@@ -67,9 +66,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getAssignedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+    public List<WorkspaceEntity> getAssignedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
         return this.assignedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
-                .map(assignedWorkspaceView -> Workspace
+                .map(assignedWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(assignedWorkspaceView.getId())
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
@@ -81,9 +80,9 @@ public class WorkspaceService {
                 ).collect(Collectors.toList());
     }
 
-    public List<Workspace> getPinnedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
+    public List<WorkspaceEntity> getPinnedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
         return this.pinnedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
-                .map(pinnedWorkspaceView -> Workspace
+                .map(pinnedWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(pinnedWorkspaceView.getId())
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())

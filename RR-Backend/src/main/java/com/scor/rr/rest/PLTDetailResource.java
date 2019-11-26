@@ -16,5 +16,5 @@ public class PLTDetailResource {
     PLTDetailService pltDetailService;
 
     @GetMapping("/summary")
-    public PLTDetailSummary getSummaryDetail(@RequestParam Integer pltHeaderId) { return pltDetailService.getPLTDetailSummary(pltHeaderId); }
+    public PLTDetailSummary getSummaryDetail(@RequestParam Long pltHeaderId) { return pltDetailService.getPLTDetailSummary(pltHeaderId); }
 }

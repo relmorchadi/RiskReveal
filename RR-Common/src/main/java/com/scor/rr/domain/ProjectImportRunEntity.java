@@ -1,129 +1,51 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Objects;
+import javax.persistence.Entity;
+import java.util.Date;
 
 @Entity
-@Table(name = "ProjectImportRun", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ProjectImportRun", schema = "tb")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectImportRunEntity {
-    private int projectImportRunId;
-    private Integer runId;
-    private String status;
-    private Timestamp startDate;
-    private Timestamp endDate;
-    private Timestamp lossImportEndDate;
-    private String importedBy;
-    private String sourceConfigVendor;
-    private ProjectEntity projectByFkProjectId;
 
     @Id
-    @Column(name = "ProjectImportRunId", nullable = false)
-    public int getProjectImportRunId() {
-        return projectImportRunId;
-    }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ProjectImportRunId")
+    private Long projectImportRunId;
 
-    public void setProjectImportRunId(int projectImportRunId) {
-        this.projectImportRunId = projectImportRunId;
-    }
+    @Column(name = "RREntity")
+    private Integer entity;
 
-    @Basic
-    @Column(name = "runId", nullable = true)
-    public Integer getRunId() {
-        return runId;
-    }
+    @Column(name = "RunId")
+    private Integer runId;
 
-    public void setRunId(Integer runId) {
-        this.runId = runId;
-    }
+    // @TODO Aymane algin in import Module
+    @Column(name = "ProjectId")
+    private Long projectId;
 
-    @Basic
-    @Column(name = "status", nullable = true, length = 255)
-    public String getStatus() {
-        return status;
-    }
+    @Column(name = "Status")
+    private String status;
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    @Column(name = "StartDate")
+    private Date startDate;
 
-    @Basic
-    @Column(name = "startDate", nullable = true)
-    public Timestamp getStartDate() {
-        return startDate;
-    }
+    @Column(name = "EndDate")
+    private Date endDate;
 
-    public void setStartDate(Timestamp startDate) {
-        this.startDate = startDate;
-    }
+    @Column(name = "LossImportEndDate")
+    private Date lossImportEndDate;
 
-    @Basic
-    @Column(name = "endDate", nullable = true)
-    public Timestamp getEndDate() {
-        return endDate;
-    }
+    @Column(name = "ImportedBy")
+    private String importedBy;
 
-    public void setEndDate(Timestamp endDate) {
-        this.endDate = endDate;
-    }
+    @Column(name = "SourceConfigVendor")
+    private String sourceConfigVendor;
 
-    @Basic
-    @Column(name = "lossImportEndDate", nullable = true)
-    public Timestamp getLossImportEndDate() {
-        return lossImportEndDate;
-    }
-
-    public void setLossImportEndDate(Timestamp lossImportEndDate) {
-        this.lossImportEndDate = lossImportEndDate;
-    }
-
-    @Basic
-    @Column(name = "importedBy", nullable = true, length = 255)
-    public String getImportedBy() {
-        return importedBy;
-    }
-
-    public void setImportedBy(String importedBy) {
-        this.importedBy = importedBy;
-    }
-
-    @Basic
-    @Column(name = "sourceConfigVendor", nullable = true, length = 255)
-    public String getSourceConfigVendor() {
-        return sourceConfigVendor;
-    }
-
-    public void setSourceConfigVendor(String sourceConfigVendor) {
-        this.sourceConfigVendor = sourceConfigVendor;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProjectImportRunEntity that = (ProjectImportRunEntity) o;
-        return projectImportRunId == that.projectImportRunId &&
-                Objects.equals(runId, that.runId) &&
-                Objects.equals(status, that.status) &&
-                Objects.equals(startDate, that.startDate) &&
-                Objects.equals(endDate, that.endDate) &&
-                Objects.equals(lossImportEndDate, that.lossImportEndDate) &&
-                Objects.equals(importedBy, that.importedBy) &&
-                Objects.equals(sourceConfigVendor, that.sourceConfigVendor);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(projectImportRunId, runId, status, startDate, endDate, lossImportEndDate, importedBy, sourceConfigVendor);
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "ProjectId", referencedColumnName = "projectId")
-    public ProjectEntity getProjectByFkProjectId() {
-        return projectByFkProjectId;
-    }
-
-    public void setProjectByFkProjectId(ProjectEntity projectByFkProjectId) {
-        this.projectByFkProjectId = projectByFkProjectId;
-    }
 }

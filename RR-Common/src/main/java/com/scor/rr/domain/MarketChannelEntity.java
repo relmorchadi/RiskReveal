@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
@@ -9,7 +10,7 @@ public class MarketChannelEntity {
     private int marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
-    private EntityEntity entityByPKentityId;
+    private RREntity entityByPKentityId;
 
     @Id
     @Column(name = "MarketChannelID", nullable = false)
@@ -58,11 +59,11 @@ public class MarketChannelEntity {
 
     @ManyToOne
     @JoinColumn(name = "PKentityId", referencedColumnName = "EntityId")
-    public EntityEntity getEntityByPKentityId() {
+    public RREntity getEntityByPKentityId() {
         return entityByPKentityId;
     }
 
-    public void setEntityByPKentityId(EntityEntity entityByPKentityId) {
+    public void setEntityByPKentityId(RREntity entityByPKentityId) {
         this.entityByPKentityId = entityByPKentityId;
     }
 }

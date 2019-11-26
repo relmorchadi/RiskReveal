@@ -1,8 +1,8 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.EntityEntity;
 import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadBranchingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadUpdateRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -76,7 +76,7 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity getByPltHeader(Integer pltHeaderId){
+    public AdjustmentThreadEntity getByPltHeader(Long pltHeaderId){
         return adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(pltHeaderId);
     }
 
@@ -91,7 +91,19 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThreadEntity cloneThread(Integer initialPlt, PltHeaderEntity clonedPlt) throws RRException {
+    public AdjustmentThreadEntity branchNewAdjustmentThread(AdjustmentThreadBranchingRequest request) throws RRException {
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentThreadRepository.getOne(request.getAdjustmentThreadId());
+        if(adjustmentThreadEntity == null) {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
+        }
+        if (adjustmentThreadEntity.getInitialPLT() == null) {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.NODE_NOT_FOUND, 1);
+        }
+
+       return createNewAdjustmentThread(new AdjustmentThreadCreationRequest(adjustmentThreadEntity.getInitialPLT().getPltHeaderId(), request.getCreatedBy(), request.isGenerateDefaultThread()));
+    }
+
+    public AdjustmentThreadEntity cloneThread(Long initialPlt, PltHeaderEntity clonedPlt) throws RRException {
        AdjustmentThreadEntity thread =  adjustmentThreadRepository.getAdjustmentThreadEntityByFinalPLT_PltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();

@@ -2,9 +2,9 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.TargetBuild.PLTDetails.PLTDetailSummary;
 import com.scor.rr.domain.TargetBuild.PLTManagerView;
-import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.repository.TargetBuild.PLTDetailSummaryRepository;
-import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
+import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.util.*;
@@ -16,15 +16,15 @@ public class PLTDetailService {
     PLTDetailSummaryRepository pltDetailSummaryRepository;
 
     @Autowired
-    WorkspaceRepository workspaceRepository;
+    WorkspaceEntityRepository workspaceEntityRepository;
 
     @Autowired
     PltBrowserService pltBrowserService;
 
 
-    public PLTDetailSummary getPLTDetailSummary(Integer pltHeaderId) {
-        Optional<Workspace> workspaceOpt = workspaceRepository.findWorkspaceByPltHeaderId(pltHeaderId);
-        Workspace ws;
+    public PLTDetailSummary getPLTDetailSummary(Long pltHeaderId) {
+        Optional<WorkspaceEntity> workspaceOpt = workspaceEntityRepository.findWorkspaceByPltHeaderId(pltHeaderId);
+        WorkspaceEntity ws;
         if(workspaceOpt.isPresent()) {
             ws = workspaceOpt.get();
 

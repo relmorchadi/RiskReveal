@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import * as fromHD from '../../../store/actions';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
@@ -18,10 +18,13 @@ import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.act
 import {NotificationService} from '../../../../shared/notification.service';
 import {BaseContainer} from '../../../../shared/base';
 import {WorkspaceState} from "../../../../workspace/store/states";
-import {take} from "rxjs/operators";
+import {debounceTime, take, takeUntil} from "rxjs/operators";
 import {Navigate} from "@ngxs/router-plugin";
 import {promise} from "selenium-webdriver";
 import delayed = promise.delayed;
+import * as SearchActions from "../../../store/actions/search-nav-bar.action";
+import {Subject, Subscription} from "rxjs";
+import * as fromWs from "../../../../workspace/store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -36,25 +39,11 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   contractFilterFormGroup: FormGroup;
   workspaces: any = [];
   selectedWorkspace = null;
-  numberofElement: number;
-  lastOnes = 0;
   visible: any;
   labels: any = [];
-  lastSelectedIndex = null;
 
   recent = null;
-  favorites: any;
   pinged: any;
-
-  constructor(private _helperService: HelperService,
-              private router: Router, private _searchService: SearchService,
-              _baseStore: Store, _baseRouter: Router,
-              _baseCdr: ChangeDetectorRef,
-              private _fb: FormBuilder, private store: Store,
-              private notificationService: NotificationService,
-              private cdRef: ChangeDetectorRef) {
-    super(_baseRouter, _baseCdr, _baseStore);
-  }
 
   @Select(HeaderState.getAssignedWs) assignedWs$;
   @Select(HeaderState.getRecentWs) recentWs$;
@@ -95,12 +84,45 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     { id: 2, shownElement: 100, label: 'Last 100' },
     { id: 3, shownElement: 150, label: 'Last 150' }];
 
-  recentPagination = 0;
+  subscriptionsRecent: Subscription;
+  subscriptionsFavorite: Subscription;
+  subscriptionsAssigned: Subscription;
+  subscriptionsPinned: Subscription;
+  private unSubscribeRec$: Subject<void>;
+  private unSubscribeFav$: Subject<void>;
+  private unSubscribeAssigned$: Subject<void>;
+  private unSubscribePin$: Subject<void>;
+
+  selectedRowsRecent: any;
+  selectedRowsFavorites: any;
+  selectedRowsAssigned: any;
+  selectedRowsPinned: any;
+
+  workspaceCols = [
+    {width: '15px', type: 'select'},
+    {width: '160px', type: 'multi'},
+    {width: '35px', type: 'text'}
+  ];
+
+  constructor(private _helperService: HelperService,
+              private router: Router, private _searchService: SearchService,
+              _baseStore: Store, _baseRouter: Router,
+              _baseCdr: ChangeDetectorRef,
+              private _fb: FormBuilder, private store: Store,
+              private notificationService: NotificationService,
+              private cdRef: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
+    this.unSubscribeRec$ = new Subject<void>();
+    this.unSubscribeFav$ = new Subject<void>();
+    this.unSubscribeAssigned$ = new Subject<void>();
+    this.unSubscribePin$ = new Subject<void>();
+  }
 
   ngOnInit() {
-    this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
-      new fromHD.LoadWsStatusCount()]);
-    this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => this.countWs = _.merge({}, value));
+    this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.countWs = _.merge({}, value);
+      this.detectChanges();
+    });
     this.recentWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.recentWs = value;
       this.detectChanges();
@@ -118,8 +140,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       this.detectChanges();
     });
 
-    // this.recentWs$.subscribe(value => this.recent = _.merge([], value));
-
     this._searchService.infodropdown.subscribe(dt => {
       this.visible = this._searchService.getvisibleDropdown();
       this.detectChanges();
@@ -131,6 +151,8 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.detectChanges();
       }
     });
+
+    this.initForm();
   }
 
   detectChanges() {
@@ -140,6 +162,54 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
 
   private searchData(id, year) {
     return this._searchService.searchWorkspace(id || '', year || '2019');
+  }
+
+  private _subscribeRecentSearchChanges() {
+    this._unsubscribeToFormChanges();
+    this.subscriptionsRecent = this.contractFilterFormGroup.get('recentSearch')
+      .valueChanges
+      .pipe(takeUntil(this.unSubscribeRec$), debounceTime(500))
+      .subscribe((value) => {
+        this.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: this.recentPageable, userId: 1, search: value}))
+      });
+
+    this.subscriptionsFavorite = this.contractFilterFormGroup.get('favoriteSearch')
+      .valueChanges
+      .pipe(takeUntil(this.unSubscribeFav$), debounceTime(500))
+      .subscribe((value) => {
+        this.dispatch(new fromHD.LoadFavoriteWorkspace({
+          offset: 0,
+          size: this.favoritePageable,
+          userId: 1,
+          search: value
+        }))
+      });
+
+    this.subscriptionsAssigned = this.contractFilterFormGroup.get('assignedSearch')
+      .valueChanges
+      .pipe(takeUntil(this.unSubscribeAssigned$), debounceTime(500))
+      .subscribe((value) => {
+        this.dispatch(new fromHD.LoadAssignedWorkspace({
+          offset: 0,
+          size: this.assignedPageable,
+          userId: 1,
+          search: value
+        }))
+      });
+
+    this.subscriptionsPinned = this.contractFilterFormGroup.get('pinnedSearch')
+      .valueChanges
+      .pipe(takeUntil(this.unSubscribePin$), debounceTime(500))
+      .subscribe((value) => {
+        this.dispatch(new fromHD.LoadPinnedWorkspace({offset: 0, size: this.pinnedPageable, userId: 1, search: value}))
+      });
+  }
+
+  private _unsubscribeToFormChanges() {
+    this.subscriptionsRecent ? this.subscriptionsRecent.unsubscribe() : null;
+    this.subscriptionsFavorite ? this.subscriptionsFavorite.unsubscribe() : null;
+    this.subscriptionsAssigned ? this.subscriptionsAssigned.unsubscribe() : null;
+    this.subscriptionsPinned ? this.subscriptionsPinned.unsubscribe() : null;
   }
 
   loadTabData(event) {
@@ -163,7 +233,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       const size = $event - this.LoadedRecent;
       if (size > 0) {
         this.store.dispatch(new fromHD.LoadRecentWorkspace({
-          offset: this.LoadedRecent,
+          offset: this.LoadedRecent, search: this.recentSearch,
           size, userId: 1, option: 'append'
         }));
         this.LoadedRecent = $event;
@@ -172,7 +242,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       const size = $event - this.LoadedFavorite;
       if (size > 0) {
         this.store.dispatch(new fromHD.LoadFavoriteWorkspace({
-          offset: this.LoadedFavorite,
+          offset: this.LoadedFavorite, search: this.favoriteSearch,
           size, userId: 1, option: 'append'
         }));
         this.LoadedFavorite = $event;
@@ -181,7 +251,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       const size = $event - this.LoadedAssigned;
       if (size > 0) {
         this.store.dispatch(new fromHD.LoadAssignedWorkspace({
-          offset: this.LoadedAssigned,
+          offset: this.LoadedAssigned, search: this.assignedSearch,
           size, userId: 1, option: 'append'
         }));
       }
@@ -190,7 +260,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       const size = $event - this.LoadedPinned;
       if (size > 0) {
         this.store.dispatch(new fromHD.LoadPinnedWorkspace({
-          offset: this.LoadedPinned,
+          offset: this.LoadedPinned, search: this.pinnedSearch,
           size, userId: 1, option: 'append'
         }));
         this.LoadedPinned = $event;
@@ -198,8 +268,36 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     }
   }
 
-  searchNewWorkspace(search) {
-    this.contractFilterFormGroup.patchValue({cedant: search.target.value});
+  searchNewWorkspace(search, scope) {
+    switch (scope) {
+      case 'recent' :
+        this.contractFilterFormGroup.patchValue({recentSearch: search.target.value});
+        break;
+      case 'favorite' :
+        this.contractFilterFormGroup.patchValue({favoriteSearch: search.target.value});
+        break;
+      case 'assigned' :
+        this.contractFilterFormGroup.patchValue({assignedSearch: search.target.value});
+        break;
+      case 'pinned' :
+        this.contractFilterFormGroup.patchValue({pinnedSearch: search.target.value});
+        break;
+    }
+  }
+
+  getSelection($event, scope) {
+    if ($event.length > 1) {
+      if (scope === 'recent') {
+        this.dispatch(new fromHD.ToggleRecentWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'favorite') {
+        this.dispatch(new fromHD.ToggleFavoriteWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'assigned') {
+        this.dispatch(new fromHD.ToggleAssignedWsSelection({item: $event, selection: 'chunk'}));
+      } else if (scope === 'pinned') {
+        this.dispatch(new fromHD.TogglePinnedWsSelection({item: $event, selection: 'chunk'}));
+
+      }
+    }
   }
 
   singleLineSelect(scope, workspace, value = null) {
@@ -220,14 +318,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.singleLineSelect(scope, workspace, true);
       }, 200);
     } else if ((window as any).event.shiftKey) {
-      /*      if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
-              const [from, to] = [Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex)];
-              this.store.dispatch(new fromHeader.SelectRange({context, from, to}));
-            } else {
-              this.lastSelectedIndex = index;
-              this.store.dispatch(new fromHeader.ChangeWsSelection({context, index, value: true}));
-              // workspace.selected = true;
-            }*/
+
     } else {
       setTimeout(() => {
         if (scope === 'recent') {
@@ -257,15 +348,30 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     event.preventDefault();
   }
 
-  popOutWorkspaces() {
+  popOutWorkspaces(scope) {
     this.visible = false;
-    this.recent.filter(ws => ws.selected).forEach(ws => {
-      window.open(`/workspace/${ws.wsId}/${ws.uwYear}/projects`);
-    });
+    if (scope === 'recent') {
+      this.recentWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'favorite') {
+      this.favoriteWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'assigned') {
+      this.assignedWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    } else if (scope === 'pinned') {
+      this.pinnedWs.filter(ws => ws.selected).forEach(ws => {
+        window.open(`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`);
+      });
+    }
   }
 
   openWorkspaces(scope) {
-    let selectedItems = null;
+    let selectedItems = [];
+    let workspaces = [];
     if (scope === 'recent') {
       selectedItems = this.recentWs.filter(ws => ws.selected);
     } else if (scope === 'favorite') {
@@ -275,7 +381,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     } else if (scope === 'pinned') {
       selectedItems = this.pinnedWs.filter(ws => ws.selected);
     }
-    let workspaces = [];
     selectedItems.forEach(
       (ws) => {
         this.searchData(ws.workspaceContextCode, ws.workspaceUwYear).subscribe(
@@ -337,24 +442,14 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     }));
   }
 
-  /*  toggle(workspace: any, type: string, selected) {
-      switch (type) {
-        case 'favorite':
-          this.store.dispatch(new PatchWorkspace({
-            key: 'selectedF',
-            value: !selected,
-            ws: workspace,
-          }));
-          break;
-        case 'pinged':
-          this.store.dispatch(new PatchWorkspace({
-            key: 'selectedP',
-            value: !selected,
-            ws: workspace,
-          }));
-          break;
-      }
-    }*/
+  initForm() {
+    this.contractFilterFormGroup = new FormGroup({
+      recentSearch: new FormControl(''),
+      favoriteSearch: new FormControl(''),
+      assignedSearch: new FormControl(''),
+      pinnedSearch: new FormControl(''),
+    });
+  }
 
   togglePopup() {
     this.store.dispatch([new fromHD.LoadRecentWorkspace({offset: 0, size: 10, userId: 1}),
@@ -363,7 +458,12 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
     this.loadFavorite = false;
     this.loadAssigned = false;
     this.loadRecent = true;
+    this._subscribeRecentSearchChanges();
     HelperService.headerBarPopinChange$.next({from: this.componentName});
+  }
+
+  rowTrackBy = (index, item) => {
+    return item.workspaceId;
   }
 
 }

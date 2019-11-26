@@ -1,12 +1,12 @@
 package com.scor.rr.domain;
 
 import com.scor.rr.domain.enums.TrackingStatus;
-import com.scor.rr.domain.riskReveal.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Date;
 
 @Entity
@@ -20,7 +20,7 @@ public class ProjectImportRun {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ProjectImportRun")
     private Long projectImportRunId;
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
     @Column(name = "RunId")
     private int runId;
@@ -38,5 +38,5 @@ public class ProjectImportRun {
     private String sourceConfigVendor;
 
     @ManyToOne
-    private Project project;
+    private ProjectEntity projectEntity;
 }

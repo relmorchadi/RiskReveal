@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
@@ -32,7 +33,7 @@ public class ScalingAdjustmentParameter {
     }
 
 //    @ManyToOne
-//    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+//    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
 //    public EntityEntity getEntity() {
 //        return entity;
 //    }

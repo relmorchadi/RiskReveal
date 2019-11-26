@@ -21,7 +21,7 @@ public class InuringContractNode {
     @Column(name = "InuringContractNodeId", nullable = false)
     private long inuringContractNodeId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)

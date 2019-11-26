@@ -3,14 +3,14 @@ package com.scor.rr.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
+@javax.persistence.Entity
 @Table(name = "DefaultAdjustment", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentEntity {
     private String engineType;
     private int defaultAdjustmentId;
     private MarketChannelEntity marketChannel;
     private TargetRapEntity targetRap;
-    private EntityEntity entity;
+    private RREntity entity;
 
     @Basic
     @Column(name = "EngineType", nullable = true, length = 200)
@@ -68,11 +68,11 @@ public class DefaultAdjustmentEntity {
 
     @ManyToOne
     @JoinColumn(name = "EntityId", referencedColumnName = "EntityId")
-    public EntityEntity getEntity() {
+    public RREntity getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(RREntity entity) {
         this.entity = entity;
     }
 }

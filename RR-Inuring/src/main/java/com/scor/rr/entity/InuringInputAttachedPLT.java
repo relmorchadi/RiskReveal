@@ -33,7 +33,7 @@ public class InuringInputAttachedPLT {
         this.inuringInputAttachedPLTId = inuringInputAttachedPLTId;
     }
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     public int getEntity() {
         return entity;
     }

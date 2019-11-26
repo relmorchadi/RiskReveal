@@ -1,12 +1,13 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "LINEOFBUSINESS", schema = "dbo", catalog = "RiskReveal")
-public class LineofbusinessEntity {
+public class LineOfBusinessEntity {
     private String id;
     private Boolean isactive;
     private Timestamp lastsynchronized;
@@ -67,7 +68,7 @@ public class LineofbusinessEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LineofbusinessEntity that = (LineofbusinessEntity) o;
+        LineOfBusinessEntity that = (LineOfBusinessEntity) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(isactive, that.isactive) &&
                 Objects.equals(lastsynchronized, that.lastsynchronized) &&

@@ -20,7 +20,7 @@ public class RRAnalysis {
     @Column(name = "RRAnalysisId")
     private Long rrAnalysisId;
 
-    @Column(name = "Entity")
+    @Column(name = "RREntity")
     private Integer entity;
 
     @Column(name = "ProjectId")

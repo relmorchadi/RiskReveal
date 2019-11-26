@@ -50,7 +50,7 @@ public class ExposureSummaryExtractor {
     private GlobalExposureViewRepository globalExposureViewRepository;
 
     @Autowired
-    private ProjectimportrunRepository projectImportRunRepository;
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
     private ExposureViewRepository exposureViewRepository;
@@ -107,8 +107,8 @@ public class ExposureSummaryExtractor {
     public RepeatStatus extract() {
 
         try {
-            List<ProjectImportRun> projectImportRunList = projectImportRunRepository.findByProjectProjectId(Long.valueOf(projectId));
-            ProjectImportRun projectImportRun = projectImportRunRepository.findByProjectProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
+            List<ProjectImportRunEntity> projectImportRunEntityList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
+            ProjectImportRunEntity projectImportRunEntity = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunEntityList.size());
 
             List<ModelPortfolio> modelPortfolios = transformationPackage.getModelPortfolios();
 

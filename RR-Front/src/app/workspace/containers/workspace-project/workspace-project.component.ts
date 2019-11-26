@@ -34,11 +34,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   newProject = false;
   newFacProject = false;
   editOption = false;
-  existingProject = false;
-  mgaProject = false;
   searchWorkspace = false;
 
-  selectedWs: any;
   projectForm: any;
 
   receptionDate: any;

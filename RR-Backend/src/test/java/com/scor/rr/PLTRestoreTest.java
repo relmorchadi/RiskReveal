@@ -1,8 +1,6 @@
 package com.scor.rr;
 
-import com.scor.rr.domain.TargetBuild.PLTHeader;
-import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
-import com.scor.rr.repository.TargetBuild.PLTHeaderRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.service.PltBrowserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,17 +8,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Date;
-import java.util.Optional;
-
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PLTRestoreTest {
 
     @Mock
-    PLTHeaderRepository pltHeaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     @InjectMocks
     PltBrowserService pltBrowserService;

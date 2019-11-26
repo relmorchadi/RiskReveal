@@ -49,8 +49,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   }
 
   routerNavigate(route) {
-    this.navigationEmitter.emit({route: null})
-    // this.navigationEmitter.emit({route});
+    //this.navigationEmitter.emit({route: null})
+    this.navigationEmitter.emit({route});
   }
 
   riskLinkImportNavigation() {
