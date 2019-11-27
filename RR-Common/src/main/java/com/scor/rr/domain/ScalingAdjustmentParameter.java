@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "ScalingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 public class ScalingAdjustmentParameter {
     private Long id;
-//    private EntityEntity entity;
+    private EntityEntity entity;
     private AdjustmentNode adjustmentNode;
     private Double adjustmentFactor;
 
@@ -31,15 +31,15 @@ public class ScalingAdjustmentParameter {
         this.id = id;
     }
 
-//    @ManyToOne
-//    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-//    public EntityEntity getEntity() {
-//        return entity;
-//    }
-//
-//    public void setEntity(EntityEntity entity) {
-//        this.entity = entity;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+    public EntityEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
+    }
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")

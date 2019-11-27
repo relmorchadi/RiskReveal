@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentEventBasedParameterEntity;
+import com.scor.rr.domain.EventBasedAdjustmentParameter;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentEventBasedParameterRepository;
@@ -19,11 +19,11 @@ public class AdjustmentEventBasedParameterService {
     @Autowired
     AdjustmentEventBasedParameterRepository eventBasedParameterRepository;
 
-    public AdjustmentEventBasedParameterEntity getAdjustmentEventBasedParameterByNode(Long idNode) {
+    public EventBasedAdjustmentParameter getAdjustmentEventBasedParameterByNode(Long idNode) {
         return eventBasedParameterRepository.findByAdjustmentNodeAdjustmentNodeId(idNode);
     }
 
-    public AdjustmentEventBasedParameterEntity save(AdjustmentEventBasedParameterEntity parameterEntity) {
+    public EventBasedAdjustmentParameter save(EventBasedAdjustmentParameter parameterEntity) {
         return eventBasedParameterRepository.save(parameterEntity);
     }
 
