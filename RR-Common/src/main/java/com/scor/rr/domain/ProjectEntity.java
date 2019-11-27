@@ -100,4 +100,12 @@ public class ProjectEntity {
         this.assignedTo = this.createdBy;
         this.deleted= false;
     }
+
+    public void setWorkspaceByFkWorkspaceId(WorkspaceEntity workspaceEntity) {
+        this.workspaceId = workspaceEntity.getWorkspaceId();
+    }
+
+    public void setFkCloneSourceProjectId(ProjectEntity projectEntity) {
+        this.projectId = projectEntity.getProjectId();
+    }
 }

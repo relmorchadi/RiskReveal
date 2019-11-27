@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RRAnalysisIncludedTargetRaps", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RRAnalysisIncludedTargetRaps")
 public class RrAnalysisIncludedTargetRapsEntity {
     private int id;
 

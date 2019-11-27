@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @javax.persistence.Entity
-@Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "AdjustmentThread")
 public class AdjustmentThreadEntity {
     private Boolean locked;
     private String createdBy;

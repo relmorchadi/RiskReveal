@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @javax.persistence.Entity
-@Table(name = "DefaultReturnPeriodBandingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultReturnPeriodBandingAdjustmentParameter")
 public class DefaultReturnPeriodBandingAdjustmentParameter {
     private Long id;
     private RREntity entity;

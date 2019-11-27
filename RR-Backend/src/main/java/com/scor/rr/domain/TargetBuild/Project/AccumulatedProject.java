@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "AccumulatedProject", schema = "tb")
+@Table(name = "AccumulatedProject")
 @AllArgsConstructor
 public class AccumulatedProject extends NumberOfEntityForProject {
     public AccumulatedProject(Long projectId, int count) {

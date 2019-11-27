@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-@Table(name = "InuringContractLayerReinstatementDetail", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringContractLayerReinstatementDetail")
 public class InuringContractLayerReinstatementDetail {
 
     @Id

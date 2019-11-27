@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "Step", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "Step")
 public class StepEntity {
     private int stepId;
     private Integer taskId;

@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RRAnalysis", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RRAnalysis")
 public class RrAnalysisEntity {
     private int rrAnalysisId;
     private Integer projectId;

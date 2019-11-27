@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "MarketChannel", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "MarketChannel")
 public class MarketChannelEntity {
     private int marketChannelId;
     private String marketChannelCode;

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  */
 
 @Entity
-@Table(name = "InuringContractNode", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringContractNode")
 @Data
 @Getter
 public class InuringContractNode {

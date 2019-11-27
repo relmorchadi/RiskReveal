@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PLTPricingMinimumGrain", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "PLTPricingMinimumGrain")
 public class PltPricingMinimumGrainEntity {
     private String id;
     private Timestamp lastSynchronized;

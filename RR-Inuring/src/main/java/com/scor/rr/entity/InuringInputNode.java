@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 
 @Entity
-@Table(name = "InuringInputNode", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringInputNode")
 public class InuringInputNode {
     private long inuringInputNodeId;
     private int entity;

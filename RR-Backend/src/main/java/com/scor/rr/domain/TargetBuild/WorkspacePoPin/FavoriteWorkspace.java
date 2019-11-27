@@ -18,7 +18,7 @@ public class FavoriteWorkspace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "favoriteWorkspaceId")
-    private Integer favoriteWorkspaceId;
+    private Long favoriteWorkspaceId;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

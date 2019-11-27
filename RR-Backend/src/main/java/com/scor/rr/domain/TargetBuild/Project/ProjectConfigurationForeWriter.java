@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectConfigurationForeWriter", schema = "tb")
+@Table(name = "ProjectConfigurationForeWriter")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class ProjectConfigurationForeWriter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectConfigurationForeWriterId")
-    private Integer projectConfigurationForeWriterId;
+    private Long projectConfigurationForeWriterId;
 
     @Column(name = "Entity")
     private Integer entity;

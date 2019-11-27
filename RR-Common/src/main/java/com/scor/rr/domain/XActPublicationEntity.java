@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "XActPublication", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "XActPublication")
 public class XActPublicationEntity {
     private int xactPublicationId;
     private Integer scorPltHeaderId;

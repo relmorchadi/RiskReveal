@@ -6,7 +6,7 @@ import javax.persistence.*;
  * Created by u004602 on 10/09/2019.
  */
 @Entity
-@Table(name = "InuringInputAttachedPLT", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringInputAttachedPLT")
 public class InuringInputAttachedPLT {
     private long inuringInputAttachedPLTId;
     private int entity;

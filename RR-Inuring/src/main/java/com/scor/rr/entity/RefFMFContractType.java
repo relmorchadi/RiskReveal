@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "RefFMFContractType", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RefFMFContractType")
 public class RefFMFContractType {
 
     @Id

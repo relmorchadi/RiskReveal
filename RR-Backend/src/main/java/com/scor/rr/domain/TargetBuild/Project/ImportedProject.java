@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ImportedProject", schema = "tb")
+@Table(name = "ImportedProject")
 @AllArgsConstructor
 public class ImportedProject extends NumberOfEntityForProject {
     public ImportedProject(Long projectId, int count) {

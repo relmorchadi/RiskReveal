@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "RRAnalysis", schema = "tb")
+@Table(name = "RRAnalysis")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,13 +18,13 @@ public class RRAnalysis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RRAnalysisId")
-    private Integer rrAnalysisId;
+    private Long rrAnalysisId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "ProjectId")
-    private Integer projectId;
+    private Long projectId;
 
     @Column(name = "ImportedDate")
     private Date importedDate;
@@ -39,7 +39,7 @@ public class RRAnalysis {
     private String importStatus;
 
     @Column(name = "ProjectImportRunId")
-    private Integer projectImportRunId;
+    private Long projectImportRunId;
 
     @Column(name = "SourceModellingSystemInstance")
     private String sourceModellingSystemInstance;
@@ -63,7 +63,7 @@ public class RRAnalysis {
     private String fileName;
 
     @Column(name = "AnalysisId")
-    private Integer analysisId;
+    private Long analysisId;
 
     @Column(name = "AnalysisName")
     private String analysisName;

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "DefaultAdjustmentRegionPeril", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustmentRegionPeril")
 @IdClass(DefaultAdjustmentRegionPerilEntityPK.class)
 public class DefaultAdjustmentRegionPerilEntity {
     private int fkDefaultAdjustmentId;

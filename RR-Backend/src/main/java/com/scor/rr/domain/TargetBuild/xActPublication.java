@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "xActPublication", schema = "tb")
+@Table(name = "xActPublication")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,13 +17,13 @@ public class xActPublication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "xActPublicationId")
-    private Integer xActPublicationId;
+    private Long xActPublicationId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "PLTHeaderId")
-    private Integer pltHeaderId;
+    private Long pltHeaderId;
 
     @Column(name = "xActAvailable")
     private Boolean xActAvailable;

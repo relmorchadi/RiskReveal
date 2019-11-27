@@ -21,7 +21,7 @@ public class CloningProject {
         p.setCreationDate(new Timestamp(new Date().getTime()));
         p.setFkCloneSourceProjectId(projectEntity);
         p.setClonedFlag(true);
-        p.setDescription(projectEntity.getDescription());
+        p.setProjectDescription(projectEntity.getProjectDescription());
         p.setAssignedTo(projectEntity.getAssignedTo());
         p.setLinkFlag(projectEntity.getLinkFlag());
         p.setClonedFlag(true);

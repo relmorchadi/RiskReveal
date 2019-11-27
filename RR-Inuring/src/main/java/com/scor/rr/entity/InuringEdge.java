@@ -11,7 +11,7 @@ import java.util.Objects;
  * Created by u004602 on 13/09/2019.
  */
 @Entity
-@Table(name = "InuringEdge", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringEdge")
 public class InuringEdge {
     private long inuringEdgeId;
     private int entity;

@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "InuringPackageProcessingExchangeRate", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringPackageProcessingExchangeRate")
 public class InuringPackageProcessingExchangeRate {
 
     @Id

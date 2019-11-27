@@ -10,7 +10,7 @@ import java.util.Objects;
  * Created by u004602 on 16/09/2019.
  */
 @Entity
-@Table(name = "InuringFinalNode", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringFinalNode")
 public class InuringFinalNode {
     private long inuringFinalNodeId;
     private int entity;

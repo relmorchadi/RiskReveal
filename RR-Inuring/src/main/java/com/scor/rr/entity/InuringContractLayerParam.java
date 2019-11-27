@@ -11,7 +11,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "InuringContractLayerParam", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringContractLayerParam")
 public class InuringContractLayerParam {
 
     @Id

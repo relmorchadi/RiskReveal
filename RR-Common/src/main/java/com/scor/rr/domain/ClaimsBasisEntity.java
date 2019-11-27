@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ClaimsBasis", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ClaimsBasis")
 public class ClaimsBasisEntity {
     private int claimsBasisId;
 

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ARCPublication", schema = "tb")
+@Table(name = "ARCPublication")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,13 +17,13 @@ public class ARCPublication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ARCPublicationId")
-    private Integer arcPublicationId;
+    private Long arcPublicationId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "PLTHeaderId")
-    private Integer pltHeaderId;
+    private Long pltHeaderId;
 
     @Column(name = "PLTLossDataFilePathHadoop")
     private String pltLossDataFilePathHadoop;

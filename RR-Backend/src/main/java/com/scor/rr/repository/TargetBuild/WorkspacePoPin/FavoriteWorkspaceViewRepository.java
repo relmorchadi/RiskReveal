@@ -19,7 +19,7 @@ public interface FavoriteWorkspaceViewRepository extends JpaRepository<FavoriteW
     List<FavoriteWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "tb.COUNT_FAVORITE_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "COUNT_FAVORITE_Workspace", outputParameterName = "count")
     Integer getFavoriteWSCount(@Param("userId") Integer userId);
 
 }

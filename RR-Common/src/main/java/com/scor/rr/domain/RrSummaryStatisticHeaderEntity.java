@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RRSummaryStatisticHeader", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RRSummaryStatisticHeader")
 public class RrSummaryStatisticHeaderEntity {
     private int rrSummaryStatisticHeaderId;
     private String lossDataType;

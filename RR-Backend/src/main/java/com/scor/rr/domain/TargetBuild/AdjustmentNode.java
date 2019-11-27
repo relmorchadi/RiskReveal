@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "AdjustmentNode", schema = "tb")
+@Table(name = "AdjustmentNode")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class AdjustmentNode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AdjustmentNodeId")
-    private Integer adjustmentNodeId;
+    private Long adjustmentNodeId;
 
     @Column(name = "Entity")
     private Integer entity;

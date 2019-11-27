@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "InuringContractLayer", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringContractLayer")
 public class InuringContractLayer {
 
     @Id
