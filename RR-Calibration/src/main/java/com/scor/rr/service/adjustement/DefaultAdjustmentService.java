@@ -71,7 +71,7 @@ public class DefaultAdjustmentService {
                                                                                           int pltEntityId
                                                                                                  ) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
-        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
+        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRAPIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
                 targetRapId,
                 marketChannelId,
                 engineType,
