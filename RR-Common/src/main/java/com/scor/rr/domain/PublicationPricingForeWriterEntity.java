@@ -13,7 +13,7 @@ public class PublicationPricingForeWriterEntity {
 
     
     @Id
-    @Column(name = "FWPublicationId", nullable = false)
+    @Column(name = "PublicationPricingForeWriterEntityId", nullable = false)
     private Long publicationPricingForeWriterEntityId;
     @Basic
     @Column(name = "PLTHeaderId")
