@@ -20,7 +20,7 @@ public class ProjectImportRunEntity {
     @Column(name = "ProjectImportRunId")
     private Long projectImportRunId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "RunId")

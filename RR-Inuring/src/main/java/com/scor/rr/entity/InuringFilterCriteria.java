@@ -20,7 +20,7 @@ public class InuringFilterCriteria {
     @Column(name = "InuringFilterCriteriaId", nullable = false)
     private long inuringFilterCriteriaId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringObjectType")

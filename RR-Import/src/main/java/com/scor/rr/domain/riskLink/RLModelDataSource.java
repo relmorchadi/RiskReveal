@@ -11,10 +11,10 @@ import java.util.Date;
 
 @Data
 @Entity
-@Table(name = "RlModelDataSource")
+@Table(name = "RLModelDataSource")
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlModelDataSource {
+public class RLModelDataSource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class RlModelDataSource {
 //    @Transient
 //    private List<RlAnalysis> rlAnalysisList;
 
-    public RlModelDataSource(DataSource dataSource,Long projectId, String instanceId,String instanceName){
+    public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName){
         this.projectId= projectId;
         this.entity=1;
         this.instanceId= instanceId;

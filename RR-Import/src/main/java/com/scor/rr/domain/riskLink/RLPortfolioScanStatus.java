@@ -17,7 +17,7 @@ public class RLPortfolioScanStatus {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RLPortfolioScanStatusId")
     private Long rlPortfolioScanStatusId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
     @Column(name = "ScanLevel")
     private Integer scanLevel;

@@ -7,16 +7,16 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "RLSourceResult")
+@Table(name = "RLImportSelection")
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlSourceResult {
+public class RLImportSelection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlSourceResultId")
     private Long rlSourceResultId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
     @Column(name = "projectId")
     private Long projectId;
@@ -53,7 +53,7 @@ public class RlSourceResult {
     @JoinColumn(name = "rlAnalysisId")
     private RLAnalysis rlAnalysis;
 
-    public RlSourceResult(RdmAnalysis analysis, Long projectId){
+    public RLImportSelection(RdmAnalysis analysis, Long projectId){
         this.entity=1;
         this.projectId = projectId;
         this.targetCurrency = analysis.getAnalysisCurrency();

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TargetRAP {
+public class TargetRAPEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

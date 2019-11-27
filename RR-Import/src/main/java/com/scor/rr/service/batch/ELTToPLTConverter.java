@@ -6,15 +6,15 @@ import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.RRFile;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
-import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
-import com.scor.rr.domain.model.LossDataHeader;
+import com.scor.rr.domain.model.AnalysisIncludedTargetRAPEntity;
+import com.scor.rr.domain.model.LossDataHeaderEntity;
 import com.scor.rr.domain.model.PET;
-import com.scor.rr.domain.model.TargetRAP;
+import com.scor.rr.domain.model.TargetRAPEntity;
 import com.scor.rr.domain.reference.Contract;
 import com.scor.rr.domain.reference.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
@@ -66,7 +66,7 @@ public class ELTToPLTConverter extends AbstractWriter {
     RlAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RranalysisRepository rrAnalysisRepository;
+    ModelAnalysisEntityRepository rrAnalysisRepository;
 
     @Autowired
     AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
@@ -136,43 +136,43 @@ public class ELTToPLTConverter extends AbstractWriter {
         Map<Long, TransformationBundle> bundleForPLT = new HashMap<>();
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
-            RlSourceResult sourceResult = bundle.getSourceResult();
+            RLImportSelection sourceResult = bundle.getSourceResult();
             Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlSourceResultId()));
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
             String analysisName = rlAnalysisOpt.map(RLAnalysis::getAnalysisName).orElse(null);
             Long analysisId = rlAnalysisOpt.map(RLAnalysis::getAnalysisId).orElse(null);
 
-            RRAnalysis rrAnalysis = ofNullable(fpRRAnalysis)
+            ModelAnalysisEntity modelAnalysisEntity = ofNullable(fpRRAnalysis)
                     .map(fpAn -> fpAn.get(bundle.getFinancialPerspective()))
                     .map(id -> rrAnalysisRepository.findById(id).get())
                     .orElse(null);
 
             if (financialPerspective == null) {
                 log.error("Error creating PLTs: no UP financial perspective found for analysis {} , id {}", analysisName, analysisId);
-                if (rrAnalysis != null) {
-                    rrAnalysis.setImportStatus("ERROR");
-                    rrAnalysisRepository.save(rrAnalysis);
+                if (modelAnalysisEntity != null) {
+                    modelAnalysisEntity.setImportStatus("ERROR");
+                    rrAnalysisRepository.save(modelAnalysisEntity);
                 }
                 continue;
             }
-            List<TargetRAP> targetRaps = analysisIncludedTargetRAPRepository.findByModelAnalysisId(rrAnalysis.getRrAnalysisId())
-                    .map(AnalysisIncludedTargetRAP::getTargetRAPId)
+            List<TargetRAPEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
+                    .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
                     .map(Optional::get)
                     .collect(toList());
 
-            if (targetRaps == null || targetRaps.isEmpty()) {
+            if (targetRapEntities == null || targetRapEntities.isEmpty()) {
                 log.info("Finish tracking at the end of STEP 12 : CONVERT_ELT_TO_PLT for analysis {}, status {}", bundle.getSourceRRLT(), "Error", "stop this tracking");
 
-                if (rrAnalysis != null) {
-                    rrAnalysis.setImportStatus("ERROR");
-                    rrAnalysisRepository.save(rrAnalysis);
+                if (modelAnalysisEntity != null) {
+                    modelAnalysisEntity.setImportStatus("ERROR");
+                    rrAnalysisRepository.save(modelAnalysisEntity);
                 }
 
                 continue;
             }
 
-            List<PltHeaderEntity> pltHeaderEntities = makePurePLTHeaders(bundle, targetRaps, modelingBasis);
+            List<PltHeaderEntity> pltHeaderEntities = makePurePLTHeaders(bundle, targetRapEntities, modelingBasis);
             if (pltHeaderEntities == null || pltHeaderEntities.isEmpty()) {
 //                log.error("RRLT {} has no PLTs, dataset {} error", bundle.getConformedELTHeader().getId(), bundle.getConformedELTHeader().getRepresentationDataset().getId());
                 log.error("RRLT {} has no PLTs, error", bundle.getConformedRRLT());
@@ -286,43 +286,43 @@ public class ELTToPLTConverter extends AbstractWriter {
         log.debug("batchConvert completed");
     }
 
-    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRAP> targetRaps, PLTModelingBasis modelingBasis) {
-        LossDataHeader lossDataHeader= bundle.getConformedRRLT();
-        RRAnalysis rrAnalysis= bundle.getRrAnalysis();
+    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRAPEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
+        LossDataHeaderEntity lossDataHeaderEntity = bundle.getConformedRRLT();
+        ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysisEntity();
 
-        if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeader.getOriginalTarget())) {
+        if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeaderEntity.getOriginalTarget())) {
             throw new IllegalStateException();
         }
 
         List<PltHeaderEntity> pltHeaderEntities = new ArrayList<>();
-        for (TargetRAP targetRap : targetRaps) {
-            PET pet = petRepository.findById(targetRap.getPetId()).get();
+        for (TargetRAPEntity targetRapEntity : targetRapEntities) {
+            PET pet = petRepository.findById(targetRapEntity.getPetId()).get();
             RRFile file = new RRFile(pet);
             BinFile peqtFile = new BinFile(file.getFileName(), peqtPath, null);
             PltHeaderEntity scorPltHeaderEntity = new PltHeaderEntity();
             scorPltHeaderEntity.setPltSimulationPeriods(pet.getNumberSimulationPeriods());
             scorPltHeaderEntity.setPltType(PLTType.Pure.getCode());
-            scorPltHeaderEntity.setProjectId(rrAnalysis.getProjectId());
-            scorPltHeaderEntity.setCurrencyid(lossDataHeader.getCurrency());
-            scorPltHeaderEntity.setTargetRAPId(targetRap.getTargetRAPId());
+            scorPltHeaderEntity.setProjectId(modelAnalysisEntity.getProjectId());
+            scorPltHeaderEntity.setCurrencyid(lossDataHeaderEntity.getCurrency());
+            scorPltHeaderEntity.setTargetRAPId(targetRapEntity.getTargetRAPId());
             scorPltHeaderEntity.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
-            scorPltHeaderEntity.setRrAnalysisId(rrAnalysis.getRrAnalysisId());
+            scorPltHeaderEntity.setRrAnalysisId(modelAnalysisEntity.getRrAnalysisId());
             scorPltHeaderEntity.setCloningSourceId(null);
-            scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRaps.indexOf(targetRap)); // FIXME: 16/07/2016
+            scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRapEntities.indexOf(targetRapEntity)); // FIXME: 16/07/2016
             scorPltHeaderEntity.setCreatedDate(new Date());
             scorPltHeaderEntity.setGeneratedFromDefaultAdjustment(false);
             scorPltHeaderEntity.setRmsSimulationSet(pet.getRmsSimulationSetId());
-            scorPltHeaderEntity.setGeoCode(rrAnalysis.getGeoCode());
-            scorPltHeaderEntity.setGeoDescription(rrAnalysis.getGeoCode());
-            scorPltHeaderEntity.setPerilCode(rrAnalysis.getPeril());
+            scorPltHeaderEntity.setGeoCode(modelAnalysisEntity.getGeoCode());
+            scorPltHeaderEntity.setGeoDescription(modelAnalysisEntity.getGeoCode());
+            scorPltHeaderEntity.setPerilCode(modelAnalysisEntity.getPeril());
             scorPltHeaderEntity.setImportSequence(importSequence);
             scorPltHeaderEntity.setSourceLossModelingBasis(modelingBasis.getCode());
-            String sourceFinPersp = rrAnalysis.getFinancialPerspective();
-            scorPltHeaderEntity.setUdName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
-            scorPltHeaderEntity.setDefaultPltName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
+            String sourceFinPersp = modelAnalysisEntity.getFinancialPerspective();
+            scorPltHeaderEntity.setUdName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
+            scorPltHeaderEntity.setDefaultPltName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
 
             pltHeaderEntities.add(scorPltHeaderEntity);
-            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPltHeaderEntity.getPltHeaderId(), targetRap.getTargetRAPId(), targetRap.getSourceRAPCode(), targetRap.getTargetRAPCode());
+            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPltHeaderEntity.getPltHeaderId(), targetRapEntity.getTargetRAPId(), targetRapEntity.getSourceRAPCode(), targetRapEntity.getTargetRAPCode());
         }
         return pltHeaderEntities;
     }

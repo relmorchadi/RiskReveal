@@ -5,33 +5,33 @@ import com.scor.rr.domain.enums.StatisticMetric;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "EPCurveHeader")
 @Data
 @Builder
-public class EPCurveHeader {
+public class EPCurveHeaderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "EPCurveHeaderId")
     private Long ePCurveHeaderId;
+    @Column(name = "Entity")
     private Integer entity;
+    @Column(name = "LossDataType")
     private String lossDataType;
+    @Column(name = "LossDataId")
     private Long lossDataId;
+    @Column(name = "FinancialPerspective")
     private String financialPerspective;
+    @Column(name = "StatisticMetric")
     private StatisticMetric statisticMetric;
+    @Column(name = "EPCurves")
     private String ePCurves;
+    @Column(name = "EPCFilePath")
     private String ePCFilePath;
+    @Column(name = "EPCFileName")
     private String ePCFileName;
-
-//    public EPCurveHeader(EPCurveHeader epCurveHeader){
-//        this.entity = epCurveHeader.getEntity();
-//        this.lossDataType = epCurveHeader.getLossDataType();
-//        this.financialPerspective = epCurveHeader.getFinancialPerspective();
-//        this.statisticMetric = epCurveHeader.getStatisticMetric();
-//    }
 
 }

@@ -90,18 +90,18 @@ public class RmsService {
         for (DataSource dataSource : dataSources) {
             selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
         }
-        List<RlModelDataSource> existingRlModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
-        for (RlModelDataSource existingRlModelDataSource : existingRlModelDataSources) {
-            if (!selectedDataSources.contains(new MultiKey(existingRlModelDataSource.getType(), existingRlModelDataSource.getInstanceId(), existingRlModelDataSource.getRlId()))) {
-                rlModelDataSourcesRepository.delete(existingRlModelDataSource);
+        List<RLModelDataSource> existingRLModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
+        for (RLModelDataSource existingRLModelDataSource : existingRLModelDataSources) {
+            if (!selectedDataSources.contains(new MultiKey(existingRLModelDataSource.getType(), existingRLModelDataSource.getInstanceId(), existingRLModelDataSource.getRlId()))) {
+                rlModelDataSourcesRepository.delete(existingRLModelDataSource);
             }
         }
 
         for (DataSource dataSource : dataSources) {
-            RlModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
+            RLModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
                     (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
             if (rlModelDataSource == null) {
-                rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
+                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
 
@@ -140,7 +140,7 @@ public class RmsService {
         return rdmAnalysis;
     }
 
-    public void scanAnalysisBasicForRdm(RlModelDataSource rdm) {
+    public void scanAnalysisBasicForRdm(RLModelDataSource rdm) {
         rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(Long.parseLong(rdm.getRlId()), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
@@ -477,7 +477,7 @@ public class RmsService {
      */
     public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList) {
 
-        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
+        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RLImportSelection.class))
                 .map(sourceResult -> {
                     sourceResult = rlSourceResultRepository.save(sourceResult);
                     return sourceResult.getRlSourceResultId();
@@ -535,7 +535,7 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(rlDataSource);
     }
 
-    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
+    public boolean extractLocationLevelExposureDetails(RLModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
         if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
             return false;
 

@@ -6,17 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Data
 @Entity
+@Table(name = "SummaryStatisticHeader")
 @NoArgsConstructor
 @AllArgsConstructor
-public class SummaryStatisticHeader {
+public class SummaryStatisticHeaderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,7 +46,7 @@ public class SummaryStatisticHeader {
     private Double aEP1000;
 
 
-    public SummaryStatisticHeader(Integer entity,String financialPerspective, Double cov, Double standardDeviation
+    public SummaryStatisticHeaderEntity(Integer entity, String financialPerspective, Double cov, Double standardDeviation
             , Double purePremium, String lossDataType, Long lossDataId, String ePSFileName, String ePSFilePath) {
         this.entity = entity;
         this.lossDataType = lossDataType;
@@ -61,9 +59,9 @@ public class SummaryStatisticHeader {
         this.ePSFileName = ePSFileName;
     }
 
-    public SummaryStatisticHeader(SummaryStatisticHeader summaryStatisticHeader) {
-        this.entity = summaryStatisticHeader.getEntity();
-        this.financialPerspective = summaryStatisticHeader.getFinancialPerspective();
-        this.lossDataType = summaryStatisticHeader.getLossDataType();
+    public SummaryStatisticHeaderEntity(SummaryStatisticHeaderEntity summaryStatisticHeaderEntity) {
+        this.entity = summaryStatisticHeaderEntity.getEntity();
+        this.financialPerspective = summaryStatisticHeaderEntity.getFinancialPerspective();
+        this.lossDataType = summaryStatisticHeaderEntity.getLossDataType();
     }
 }

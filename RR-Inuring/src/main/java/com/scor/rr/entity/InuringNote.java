@@ -15,7 +15,7 @@ public class InuringNote {
     @Column(name = "InuringNoteId", nullable = false)
     private long inuringNoteId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name="InuringPackageId", nullable = false)

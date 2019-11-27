@@ -9,13 +9,13 @@ import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.enums.StatisticsType;
-import com.scor.rr.domain.model.EPCurveHeader;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.model.SummaryStatisticHeader;
+import com.scor.rr.domain.model.EPCurveHeaderEntity;
+import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.model.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RlSourceEpHeader;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
+import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -87,7 +87,7 @@ public class EpCurveExtractor {
         transformationBundle.forEach(bundle -> {
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
             String instanceId = bundle.getInstanceId();
-            RRAnalysis rrAnalysis = bundle.getRrAnalysis();
+            ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysisEntity();
             List<RlSourceEpHeader> epHeaders = riskLinkAnalysis.getRlSourceEpHeaders();
             String selectedFp = bundle.getFinancialPerspective();
 
@@ -95,7 +95,7 @@ public class EpCurveExtractor {
             Long rdmId = riskLinkAnalysis.getRdmId();
             String rdmName = riskLinkAnalysis.getRdmName();
 
-            LossDataHeader lossDataHeader = bundle.getSourceRRLT();
+            LossDataHeaderEntity lossDataHeaderEntity = bundle.getSourceRRLT();
 
             List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerpective()).collect(toList());
             List<String> filteredFPs = sourceFPs.stream().filter(fp -> !StringUtils.equalsIgnoreCase(fp, FinancialPerspectiveCodeEnum.TY.getCode())).collect(toList());
@@ -105,17 +105,17 @@ public class EpCurveExtractor {
 
             EpCurveExtractResult epCurveExtractResult = this.mapFinancialPerspectiveToSummaryStats(filteredFPs, riskLinkAnalysis, instanceId, rdmId, rdmName, analysisId);
 
-            lossDataHeaderRepository.save(lossDataHeader);
-            Long lossDataHeaderId = lossDataHeader.getLossDataHeaderId();
-            List<EPCurveHeader> epCurves = this.generateEpCurveHeaders(filteredFPs, epCurveExtractResult, rrAnalysis, lossDataHeaderId);
-            List<SummaryStatisticHeader> summaryStats = this.generateSummaryStatsHeader(filteredFPs, epCurveExtractResult, lossDataHeaderId);
+            lossDataHeaderRepository.save(lossDataHeaderEntity);
+            Long lossDataHeaderId = lossDataHeaderEntity.getLossDataHeaderId();
+            List<EPCurveHeaderEntity> epCurves = this.generateEpCurveHeaders(filteredFPs, epCurveExtractResult, modelAnalysisEntity, lossDataHeaderId);
+            List<SummaryStatisticHeaderEntity> summaryStats = this.generateSummaryStatsHeader(filteredFPs, epCurveExtractResult, lossDataHeaderId);
 
             epCurveHeaderRepository.saveAll(epCurves);
             summaryStatisticHeaderRepository.saveAll(summaryStats);
 
             // Push results into the Bundle
             bundle.setEpCurves(epCurves);
-            bundle.setSummaryStatisticHeaders(summaryStats);
+            bundle.setSummaryStatisticHeaderEntities(summaryStats);
         });
 
 
@@ -128,8 +128,8 @@ public class EpCurveExtractor {
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
 
 
             double proportion = bundle.getSourceResult().getProportion() == null ? 1 : bundle.getSourceResult().getProportion().doubleValue() / 100;
@@ -153,11 +153,11 @@ public class EpCurveExtractor {
             }
             log.debug("source ELT currency {} conformed ELT currency {} exchange rate {}", sourceRRLT.getCurrency(), conformedRRLT.getCurrency(), exchangeRate);
 
-            List<SummaryStatisticHeader> conformedSummaryStatHeaders = new ArrayList<>();
+            List<SummaryStatisticHeaderEntity> conformedSummaryStatHeaders = new ArrayList<>();
 
-            for (SummaryStatisticHeader statisticHeader : bundle.getSummaryStatisticHeaders()) {
+            for (SummaryStatisticHeaderEntity statisticHeader : bundle.getSummaryStatisticHeaderEntities()) {
 
-                SummaryStatisticHeader confSumStat = conformSummaryStatistic(statisticHeader, proportion, multiplier, exchangeRate);
+                SummaryStatisticHeaderEntity confSumStat = conformSummaryStatistic(statisticHeader, proportion, multiplier, exchangeRate);
                 confSumStat.setLossDataId(bundle.getConformedRRLT().getLossDataHeaderId());
 
                 AnalysisSummaryStats analysisSummaryStats = new AnalysisSummaryStats();
@@ -176,37 +176,37 @@ public class EpCurveExtractor {
                 conformedSummaryStatHeaders.add(confSumStat);
             }
 
-            List<EPCurveHeader> conformedEpCurvesHeaders = new ArrayList<>();
+            List<EPCurveHeaderEntity> conformedEpCurvesHeaders = new ArrayList<>();
             List<AnalysisEpCurves> confEPCurvesList = new ArrayList<>();
 
-            for (EPCurveHeader epCurveHeader : bundle.getEpCurves()) {
+            for (EPCurveHeaderEntity epCurveHeaderEntity : bundle.getEpCurves()) {
                 Type listType = new TypeToken<ArrayList<AnalysisEpCurves>>() {
                 }.getType();
                 List<AnalysisEpCurves> confEPCurves =
                         conformELTEPCurves(
-                                gson.fromJson(epCurveHeader.getEPCurves(), listType),
+                                gson.fromJson(epCurveHeaderEntity.getEPCurves(), listType),
                                 proportion,
                                 multiplier,
                                 exchangeRate);
                 confEPCurvesList.addAll(confEPCurves);
 
-                EPCurveHeader conformedEPCurvesHeader = EPCurveHeader.builder()
-                        .entity(epCurveHeader.getEntity())
-                        .lossDataType(epCurveHeader.getLossDataType())
-                        .statisticMetric(epCurveHeader.getStatisticMetric())
+                EPCurveHeaderEntity conformedEPCurvesHeader = EPCurveHeaderEntity.builder()
+                        .entity(epCurveHeaderEntity.getEntity())
+                        .lossDataType(epCurveHeaderEntity.getLossDataType())
+                        .statisticMetric(epCurveHeaderEntity.getStatisticMetric())
                         .ePCurves(gson.toJson(confEPCurves))
                         .lossDataId(bundle.getConformedRRLT().getLossDataHeaderId())
-                        .financialPerspective(epCurveHeader.getFinancialPerspective())
+                        .financialPerspective(epCurveHeaderEntity.getFinancialPerspective())
                         .build();
                 conformedEpCurvesHeaders.add(conformedEPCurvesHeader);
             }
 
-            String makeEpCurveFileName = makeEpCurveFileName(bundle.getFinancialPerspective(), bundle.getRrAnalysis().getCreationDate(), ".bin");
+            String makeEpCurveFileName = makeEpCurveFileName(bundle.getFinancialPerspective(), bundle.getModelAnalysisEntity().getCreationDate(), ".bin");
             BinFile file = epCurveWriter.writeELTEPCurves(confEPCurvesList, makeEpCurveFileName);
 
-            conformedEpCurvesHeaders.forEach(epCurveHeader -> {
-                epCurveHeader.setEPCFilePath(file.getPath());
-                epCurveHeader.setEPCFileName(file.getFileName());
+            conformedEpCurvesHeaders.forEach(epCurveHeaderEntity -> {
+                epCurveHeaderEntity.setEPCFilePath(file.getPath());
+                epCurveHeaderEntity.setEPCFileName(file.getFileName());
             });
 
 
@@ -235,7 +235,7 @@ public class EpCurveExtractor {
         fPs.forEach(fp -> {
             Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve = new HashMap<>();
             Long datasourceId = riskLinkAnalysis.getRlModelDataSourceId();
-            RlModelDataSource datasource = dataSourceRepository.findById(datasourceId).orElseThrow(() -> new RuntimeException("No available datasource with ID " + datasourceId));
+            RLModelDataSource datasource = dataSourceRepository.findById(datasourceId).orElseThrow(() -> new RuntimeException("No available datasource with ID " + datasourceId));
             String instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
 
             // @TODO : Get the treaty label regarding the FP Object
@@ -261,15 +261,15 @@ public class EpCurveExtractor {
         return result;
     }
 
-    private List<EPCurveHeader> generateEpCurveHeaders(List<String> fPs, EpCurveExtractResult epCurveExtractResult, RRAnalysis rrAnalysis, Long lossDataHeaderId) {
+    private List<EPCurveHeaderEntity> generateEpCurveHeaders(List<String> fPs, EpCurveExtractResult epCurveExtractResult, ModelAnalysisEntity modelAnalysisEntity, Long lossDataHeaderId) {
         return fPs.stream().map(fp -> {
-            List<EPCurveHeader> epCurves = new ArrayList<>();
+            List<EPCurveHeaderEntity> epCurves = new ArrayList<>();
             Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurves = epCurveExtractResult.fpToELTEPCurves.get(fp);
             metricToEPCurves.forEach((statisticMetric, analysisEpCurves) -> {
-                String makeEpCurveFileName = makeEpCurveFileName(fp, rrAnalysis.getCreationDate(), ".bin");
+                String makeEpCurveFileName = makeEpCurveFileName(fp, modelAnalysisEntity.getCreationDate(), ".bin");
                 BinFile file = epCurveWriter.writeELTEPCurves(metricToEPCurves.get(statisticMetric), makeEpCurveFileName);
                 epCurves.add(
-                        EPCurveHeader.builder()
+                        EPCurveHeaderEntity.builder()
                                 .ePCurveHeaderId(null)
                                 .entity(1)
                                 .financialPerspective(fp)
@@ -287,13 +287,13 @@ public class EpCurveExtractor {
         }).flatMap(List::stream).collect(toList());
     }
 
-    private List<SummaryStatisticHeader> generateSummaryStatsHeader(List<String> fPs, EpCurveExtractResult epCurveExtractResult, Long lossDataHeaderId) {
+    private List<SummaryStatisticHeaderEntity> generateSummaryStatsHeader(List<String> fPs, EpCurveExtractResult epCurveExtractResult, Long lossDataHeaderId) {
         return fPs.stream().map(fp -> {
             AnalysisSummaryStats summaryStats = epCurveExtractResult.fpToELTSumStat.get(fp);
             //@TODO Review
             String fileName = makeEpSummaryStatFileName(fp, new Date(), ".bin");
             BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(summaryStats, fileName);
-            return new SummaryStatisticHeader(1, fp, summaryStats.getCov(), summaryStats.getStdDev(),
+            return new SummaryStatisticHeaderEntity(1, fp, summaryStats.getCov(), summaryStats.getStdDev(),
                     summaryStats.getPurePremium(), StatisticsType.ELT.getCode(), lossDataHeaderId, fileName, file.getPath());
         }).collect(toList());
     }
@@ -308,8 +308,8 @@ public class EpCurveExtractor {
         }
     }
 
-    private SummaryStatisticHeader conformSummaryStatistic(SummaryStatisticHeader input, double proportion, double multiplier, double exchangeRate) {
-        SummaryStatisticHeader output = new SummaryStatisticHeader(input);
+    private SummaryStatisticHeaderEntity conformSummaryStatistic(SummaryStatisticHeaderEntity input, double proportion, double multiplier, double exchangeRate) {
+        SummaryStatisticHeaderEntity output = new SummaryStatisticHeaderEntity(input);
         output.setCov(input.getCov());
         output.setPurePremium(input.getPurePremium() * proportion * multiplier * exchangeRate);
         output.setStandardDeviation(input.getStandardDeviation() * proportion * multiplier * exchangeRate);

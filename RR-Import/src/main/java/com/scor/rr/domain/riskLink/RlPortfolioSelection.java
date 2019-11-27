@@ -17,7 +17,7 @@ public class RlPortfolioSelection {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RLPortfolioSelectionId")
     private Long rlPortfolioSelectionId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Long entity;
     @Column(name = "ProjectId")
     private Long projectId;

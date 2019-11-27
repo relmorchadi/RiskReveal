@@ -11,7 +11,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class AnalysisIncludedTargetRAP {
+public class AnalysisIncludedTargetRAPEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class AnalysisIncludedTargetRAP {
     private Long modelAnalysisId;
     private Long targetRAPId;
 
-    public AnalysisIncludedTargetRAP(){
+    public AnalysisIncludedTargetRAPEntity(){
         this.entity=1;
     }
 }

@@ -20,7 +20,7 @@ public class InuringContractLayerReinstatementDetail {
     @Column(name = "InuringContractLayerReinstatementDetailId", nullable = false)
     private long inuringContractLayerReinstatementDetailId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractLayerId")

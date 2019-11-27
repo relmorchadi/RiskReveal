@@ -22,7 +22,7 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "WorkspaceId")
     private Long workspaceId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "WorkspaceContextCode")

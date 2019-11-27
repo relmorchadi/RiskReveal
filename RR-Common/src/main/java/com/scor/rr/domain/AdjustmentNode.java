@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentNode")
 public class AdjustmentNode {
     private Integer adjustmentNodeId;
-    private RREntity entity;
+    private Integer entity;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentState adjustmentState;
     private AdjustmentBasis adjustmentBasis;
@@ -18,13 +18,12 @@ public class AdjustmentNode {
     private AdjustmentNode adjustmentNodeCloning;
 
 
-    @ManyToOne
-    @JoinColumn(name = "entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
-    public RREntity getEntity() {
+    @Column(name = "Entity")
+    public Integer getEntity() {
         return entity;
     }
 
-    public void setEntity(RREntity entity) {
+    public void setEntity(Integer entity) {
         this.entity = entity;
     }
 

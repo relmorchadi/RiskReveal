@@ -19,7 +19,7 @@ public class RefFMFContractType {
     @Column(name = "ContractTypeId", nullable = false)
     private long contractTypeId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "ContractTypeCode")

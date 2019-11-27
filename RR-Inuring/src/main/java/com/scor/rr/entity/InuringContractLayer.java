@@ -18,7 +18,7 @@ public class InuringContractLayer {
     @Column(name = "InuringContractLayerId", nullable = false)
     private long inuringContractLayerId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringContractNodeId", nullable = false)

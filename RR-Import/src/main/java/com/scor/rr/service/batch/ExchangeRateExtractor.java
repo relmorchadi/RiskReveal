@@ -1,8 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.RmsExchangeRate;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
+import com.scor.rr.domain.model.LossDataHeaderEntity;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -40,8 +39,8 @@ public class ExchangeRateExtractor {
         Map<String, List<String>> ccyInstanceMap = new HashMap<>();
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
 
             List<String> ccyList = ccyInstanceMap.get(bundle.getInstanceId());
             if (ccyList == null) {
@@ -71,8 +70,8 @@ public class ExchangeRateExtractor {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
 
             List<RmsExchangeRate> exList = rmsExchangeRates.get(bundle.getInstanceId());
             List<RmsExchangeRate> exchangeRates = new ArrayList<>();

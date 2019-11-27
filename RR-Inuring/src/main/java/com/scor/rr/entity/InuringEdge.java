@@ -54,7 +54,7 @@ public class InuringEdge {
         this.inuringEdgeId = inuringEdgeId;
     }
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     public int getEntity() {
         return entity;
     }

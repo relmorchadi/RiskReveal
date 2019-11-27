@@ -39,7 +39,7 @@ public class InuringFinalNode {
         this.inuringFinalNodeId = inuringFinalNodeId;
     }
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     public int getEntity() {
         return entity;
     }

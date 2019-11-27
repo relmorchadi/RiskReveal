@@ -21,7 +21,7 @@ public class InuringCanvasLayout {
     @Column(name = "InuringCanvasLayoutId", nullable = false)
     private long inuringCanvasLayoutId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private int entity;
 
     @Column(name = "InuringPackageId", nullable = false)
