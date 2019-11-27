@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(schema = "poc")
+@Table
 @Data
 @AllArgsConstructor
 public class PortfolioView {
