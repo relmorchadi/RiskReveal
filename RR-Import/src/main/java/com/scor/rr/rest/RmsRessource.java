@@ -30,7 +30,7 @@ public class RmsRessource {
 
         List<DataSource> dataSourcs = rmsService.listAvailableDataSources(instanceId);
 
-        return ResponseEntity.ok(dataSourcs);
+        return ResponseEntity.ok(dataSourcs.subList(1,20));
     }
 
     @GetMapping("listRdmAnalysisBasic")
