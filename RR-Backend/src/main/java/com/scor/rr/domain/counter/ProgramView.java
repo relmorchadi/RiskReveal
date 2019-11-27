@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PROGRAM_VIEW", schema = "poc")
+@Table(name = "PROGRAM_VIEW")
 public class ProgramView {
     @Column(name = "count_occur")
     private Integer countOccur;

@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_NAME_CNT_VW", schema = "poc")
+@Table(name = "CEDANT_NAME_CNT_VW")
 public class CedantNameCountView {
 
     @Id

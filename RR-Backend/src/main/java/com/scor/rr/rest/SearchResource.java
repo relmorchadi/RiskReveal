@@ -1,19 +1,16 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Search.SearchItem;
 import com.scor.rr.domain.TargetBuild.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
-import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
 import com.scor.rr.service.TargetBuild.ShortCutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
