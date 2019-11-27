@@ -239,7 +239,7 @@ public class EpCurveExtractor {
             String instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
 
             // @TODO : Get the treaty label regarding the FP Object
-            rmsService.getAnalysisEpCurves(rdmId, rdmName, analysisId, fp, null)
+            rmsService.getAnalysisEpCurves(instanceId, rdmId, rdmName, analysisId, fp, null)
                     .forEach(epCurve -> {
                         StatisticMetric metric = StatisticMetric.getFrom(epCurve.getEpTypeCode());
                         if (metricToEPCurve.containsKey(metric) && metricToEPCurve.get(metric) != null) {
@@ -254,7 +254,7 @@ public class EpCurveExtractor {
 
             // @TODO : Get the treaty label regarding the FP Object
             AnalysisSummaryStats summaryStats =
-                    ofNullable(rmsService.getAnalysisSummaryStats(rdmId, rdmName, analysisId, fp, null))
+                    ofNullable(rmsService.getAnalysisSummaryStats(instanceId, rdmId, rdmName, analysisId, fp, null))
                             .map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
             result.fpToELTSumStat.put(fp, summaryStats);
         });

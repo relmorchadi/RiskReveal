@@ -26,8 +26,8 @@ public class ConfigurationResource {
     }
 
     @PostMapping("analysis-detail-scan")
-    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Long projectId) {
-        rmsService.scanAnalysisDetail(rlAnalysisList, projectId);
+    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Long projectId, @RequestParam String instanceId) {
+        rmsService.scanAnalysisDetail(instanceId, rlAnalysisList, projectId);
         return ResponseEntity.ok().build();
     }
 
