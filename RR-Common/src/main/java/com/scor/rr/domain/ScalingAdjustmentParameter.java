@@ -44,7 +44,7 @@ public class ScalingAdjustmentParameter {
     }
 
 //    @ManyToOne
-//    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+//    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
 //    public EntityEntity getEntity() {
 //        return entity;
 //    }

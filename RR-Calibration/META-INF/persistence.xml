@@ -67,7 +67,7 @@
         <class>com.scor.rr.domain.DefaultRetPerBandingParamsEntity</class>
         <class>com.scor.rr.domain.entity</class>
         <class>com.scor.rr.domain.MarketChannelEntity</class>
-        <class>com.scor.rr.domain.AdjustmentEventBasedParameterEntity</class>
+        <class>com.scor.rr.domain.EventBasedAdjustmentParameter</class>
         <class>com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter</class>
         <class>com.scor.rr.domain.ScalingAdjustmentParameter</class>
         <properties>

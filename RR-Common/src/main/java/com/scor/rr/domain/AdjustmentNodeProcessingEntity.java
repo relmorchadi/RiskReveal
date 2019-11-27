@@ -12,6 +12,7 @@ public class AdjustmentNodeProcessingEntity {
     private AdjustmentNode adjustmentNode;
     private PltHeaderEntity adjustedPLT;
     private PltHeaderEntity inputPLT;
+    private EntityEntity entity;
 
     @Id
     @Column(name = "AdjustmentNodeProcessingId", nullable = false)
@@ -22,6 +23,16 @@ public class AdjustmentNodeProcessingEntity {
 
     public void setAdjustmentNodeProcessingId(int adjustmentNodeProcessingId) {
         this.adjustmentNodeProcessingId = adjustmentNodeProcessingId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "EntityId", referencedColumnName = "EntityId")
+    public EntityEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
     }
 
     @Override
