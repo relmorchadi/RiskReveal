@@ -78,7 +78,7 @@ public class DefaultAdjustmentService {
                 pltEntityId);
         if (defaultAdjustmentEntities != null) {
             DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentEntities.stream().filter(defaultAdjustmentEntity ->
-                    defaultAdjustmentEntity.getTargetRap().getTargetRapId() == targetRapId &&
+                    defaultAdjustmentEntity.getTargetRap().getTargetRAPId() == targetRapId &&
                             defaultAdjustmentEntity.getEngineType().equals(engineType) &&
                             defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getDefaultAdjustmentId(), regionPerilId) &&
                             defaultAdjustmentEntity.getEntity() == pltEntityId
