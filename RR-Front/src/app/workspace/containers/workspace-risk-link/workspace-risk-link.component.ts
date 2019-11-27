@@ -93,7 +93,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   ws: any;
 
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
-  selectedProject: any;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
