@@ -220,11 +220,11 @@
             <version>1.2.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.scor.rr</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.scor.rr</groupId>-->
+<!--            <artifactId>common</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
