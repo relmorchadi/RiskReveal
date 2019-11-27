@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectImportRun", schema = "tb")
+@Table(name = "ProjectImportRun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

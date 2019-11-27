@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @javax.persistence.Entity
-@Table(name = "DefaultAdjustment", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustment")
 public class DefaultAdjustmentEntity {
     private String engineType;
     private int defaultAdjustmentId;

@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "DefaultAdjustmentThread", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustmentThread")
 public class DefaultAdjustmentThreadEntity {
     private int defaultAdjustmentThreadId;
     private DefaultAdjustmentVersionEntity defaultAdjustmentVersion;

@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "poc")
+@Table
 @Data
 @AllArgsConstructor
 public class AnalysisView {

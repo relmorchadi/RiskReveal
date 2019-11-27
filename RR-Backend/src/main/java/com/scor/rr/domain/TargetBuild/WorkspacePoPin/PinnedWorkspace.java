@@ -18,7 +18,7 @@ public class PinnedWorkspace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pinnedWorkspaceId")
-    private Integer pinnedWorkspaceId;
+    private Long pinnedWorkspaceId;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

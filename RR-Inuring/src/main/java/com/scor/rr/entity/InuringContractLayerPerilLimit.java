@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
-@Table(name = "InuringContractLayerPerilLimit", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringContractLayerPerilLimit")
 public class InuringContractLayerPerilLimit {
 
     @Id

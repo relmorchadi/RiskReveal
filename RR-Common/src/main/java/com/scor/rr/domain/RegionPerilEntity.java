@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RegionPeril", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RegionPeril")
 public class RegionPerilEntity {
     private int regionPerilId;
     private String regionPerilCode;

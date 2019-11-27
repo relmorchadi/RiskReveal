@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RR-Workspace", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RR-Workspace")
 public class RrWorkspaceEntity {
     private String id;
     private String contractId;

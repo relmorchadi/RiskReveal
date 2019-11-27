@@ -9,12 +9,12 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "InuringPackage", schema = "tb")
+@Table(name = "InuringPackage")
 @Data
 @AllArgsConstructor
 public class InuringPackage {
 
-    private int inuringPackageId;
+    private Long inuringPackageId;
     private int entity;
     private String packageName;
     private String packageDescription;
@@ -45,11 +45,11 @@ public class InuringPackage {
     @Id
     @Column(name = "InuringPackageId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getInuringPackageId() {
+    public Long getInuringPackageId() {
         return inuringPackageId;
     }
 
-    public void setInuringPackageId(int inuringPackageId) {
+    public void setInuringPackageId(Long inuringPackageId) {
         this.inuringPackageId = inuringPackageId;
     }
 

@@ -18,7 +18,7 @@ public class RecentWorkspace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "recentWorkspaceId")
-    private Integer recentWorkspaceId;
+    private Long recentWorkspaceId;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

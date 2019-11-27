@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "AdjustmentThread", schema = "tb")
+@Table(name = "AdjustmentThread")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class AdjustmentThread {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AdjustmentThreadId")
-    private Integer adjustmentThreadId;
+    private Long adjustmentThreadId;
 
     @Column(name = "Entity")
     private Integer entity;
@@ -25,10 +25,10 @@ public class AdjustmentThread {
     private Integer threadIndex;
 
     @Column(name = "InitialPlt")
-    private Integer initialPlt;
+    private Long initialPlt;
 
     @Column(name = "FinalPltId")
-    private Integer finalPltId;
+    private Long finalPltId;
 
     @Column(name = "Locked")
     private Boolean locked;

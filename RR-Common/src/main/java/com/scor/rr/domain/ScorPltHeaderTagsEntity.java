@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ScorPLTHeaderTags", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ScorPLTHeaderTags")
 public class ScorPltHeaderTagsEntity {
     private int id;
     private Integer scorPltHeaderId;

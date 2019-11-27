@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "FacContracts", schema = "poc")
+@Table(name = "FacContracts")
 public class FacContract {
 
     @Id
