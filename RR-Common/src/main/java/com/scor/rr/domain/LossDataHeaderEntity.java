@@ -1,4 +1,4 @@
-package com.scor.rr.domain.model;
+package com.scor.rr.domain;
 
 import lombok.Data;
 

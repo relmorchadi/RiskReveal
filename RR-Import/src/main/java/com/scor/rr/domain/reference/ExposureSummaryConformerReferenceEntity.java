@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "ExposureSummaryConformerReference")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExposureSummaryConformerReference {
+public class ExposureSummaryConformerReferenceEntity {
 
     @Id
     @Column(name = "ExposureSummaryConformerReferenceId")

@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.RmsExchangeRate;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;

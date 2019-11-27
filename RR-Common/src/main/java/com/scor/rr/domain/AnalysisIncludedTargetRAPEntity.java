@@ -1,23 +1,24 @@
-package com.scor.rr.domain.model;
+package com.scor.rr.domain;
 
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "AnalysisIncludedTargetRAP")
 @Data
 public class AnalysisIncludedTargetRAPEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "AnalysisIncludedTargetRAPid")
     private Long analysisIncludedTargetRAPid;
+    @Column(name = "Entity")
     private Integer entity;
+    @Column(name = "ModelAnalysisId")
     private Long modelAnalysisId;
+    @Column(name = "TargetRAPId")
     private Long targetRAPId;
 
     public AnalysisIncludedTargetRAPEntity(){

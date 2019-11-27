@@ -9,9 +9,9 @@ import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.enums.StatisticsType;
-import com.scor.rr.domain.model.EPCurveHeaderEntity;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
-import com.scor.rr.domain.model.SummaryStatisticHeaderEntity;
+import com.scor.rr.domain.EPCurveHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RlSourceEpHeader;
@@ -50,16 +50,13 @@ public class EpCurveExtractor {
     private RmsService rmsService;
 
     @Autowired
-    private DefaultReturnPeriodRepository defaultReturnPeriodRepository;
+    private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private EPCurveHeaderRepository epCurveHeaderRepository;
+    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
-
-    @Autowired
-    private LossDataHeaderRepository lossDataHeaderRepository;
+    private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
     @Autowired
     private EpCurveWriter epCurveWriter;
@@ -105,13 +102,13 @@ public class EpCurveExtractor {
 
             EpCurveExtractResult epCurveExtractResult = this.mapFinancialPerspectiveToSummaryStats(filteredFPs, riskLinkAnalysis, instanceId, rdmId, rdmName, analysisId);
 
-            lossDataHeaderRepository.save(lossDataHeaderEntity);
+            lossDataHeaderEntityRepository.save(lossDataHeaderEntity);
             Long lossDataHeaderId = lossDataHeaderEntity.getLossDataHeaderId();
             List<EPCurveHeaderEntity> epCurves = this.generateEpCurveHeaders(filteredFPs, epCurveExtractResult, modelAnalysisEntity, lossDataHeaderId);
             List<SummaryStatisticHeaderEntity> summaryStats = this.generateSummaryStatsHeader(filteredFPs, epCurveExtractResult, lossDataHeaderId);
 
-            epCurveHeaderRepository.saveAll(epCurves);
-            summaryStatisticHeaderRepository.saveAll(summaryStats);
+            epCurveHeaderEntityRepository.saveAll(epCurves);
+            summaryStatisticHeaderEntityRepository.saveAll(summaryStats);
 
             // Push results into the Bundle
             bundle.setEpCurves(epCurves);
@@ -210,9 +207,9 @@ public class EpCurveExtractor {
             });
 
 
-            lossDataHeaderRepository.save(conformedRRLT);
-            summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
-            epCurveHeaderRepository.saveAll(conformedEpCurvesHeaders);
+            lossDataHeaderEntityRepository.save(conformedRRLT);
+            summaryStatisticHeaderEntityRepository.saveAll(conformedSummaryStatHeaders);
+            epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 
             log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlSourceResultId());

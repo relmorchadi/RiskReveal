@@ -1,4 +1,4 @@
-package com.scor.rr.domain.model;
+package com.scor.rr.domain;
 
 
 import com.scor.rr.domain.enums.StatisticMetric;

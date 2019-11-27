@@ -6,10 +6,10 @@ import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.RRFile;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
-import com.scor.rr.domain.model.AnalysisIncludedTargetRAPEntity;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.AnalysisIncludedTargetRAPEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.model.PET;
-import com.scor.rr.domain.model.TargetRAPEntity;
+import com.scor.rr.domain.TargetRapEntity;
 import com.scor.rr.domain.reference.Contract;
 import com.scor.rr.domain.reference.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLAnalysis;
@@ -72,7 +72,7 @@ public class ELTToPLTConverter extends AbstractWriter {
     AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
 
     @Autowired
-    TargetrapRepository targetRAPRepository;
+    TargetRapRepository targetRAPRepository;
 
     @Autowired
     PETRepository petRepository;
@@ -155,7 +155,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 }
                 continue;
             }
-            List<TargetRAPEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
+            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
                     .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
                     .map(Optional::get)
@@ -286,7 +286,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         log.debug("batchConvert completed");
     }
 
-    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRAPEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
+    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRapEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
         LossDataHeaderEntity lossDataHeaderEntity = bundle.getConformedRRLT();
         ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysisEntity();
 
@@ -295,7 +295,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         }
 
         List<PltHeaderEntity> pltHeaderEntities = new ArrayList<>();
-        for (TargetRAPEntity targetRapEntity : targetRapEntities) {
+        for (TargetRapEntity targetRapEntity : targetRapEntities) {
             PET pet = petRepository.findById(targetRapEntity.getPetId()).get();
             RRFile file = new RRFile(pet);
             BinFile peqtFile = new BinFile(file.getFileName(), peqtPath, null);
