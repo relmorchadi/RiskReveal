@@ -87,7 +87,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   filters = {
     systemTag: [],
     userTag: []
-  }
+  };
   filterData = {};
   activeCheckboxSort = false;
   addTagModalIndex = 0;
@@ -96,7 +96,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     tagId: null,
     tagName: '',
     tagColor: '#0700e4'
-  }
+  };
   searchAddress: string;
   listOfPltsDataCache: any[];
   invalidPltString = "<Invalid PLT Thread>";
@@ -266,6 +266,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   pure = PURE;
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
+  @Select(WorkspaceState.getCurrentWorkspaces) ws$;
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   private dropdown: NzDropdownContextComponent;
@@ -273,8 +275,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   returnPeriodInput: any;
   clickedDropdown: any;
   userTagsLength: number = 10000;
-
-
+  wsStatus: any;
+  tabStatus: any;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -288,6 +290,15 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
+    this.ws$.pipe().subscribe(value => {
+      this.wsStatus = _.get(value, 'workspaceType', null);
+      this.detectChanges();
+    });
+
+    this.selectedProject$.pipe().subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.detectChanges();
+    });
   }
 
   filter(key: string, value?: any) {

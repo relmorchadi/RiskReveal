@@ -183,3 +183,13 @@
 .app-body--tansparent{
   background: transparent !important;
 }
+
+.flex-horizontal-sb-layout {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-vertical-layout {
+  display: flex;
+  flex-direction: column;
+}

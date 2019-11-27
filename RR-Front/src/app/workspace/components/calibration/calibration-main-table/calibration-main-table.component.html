@@ -191,7 +191,7 @@
                       <span title>Apply</span>
                       <ul nz-menu>
                         <li nz-submenu>
-                          <span title>Create New Alternate Threads</span>
+                          <span *ngIf="wsStatus !== 'fac'" title>Create New Alternate Threads</span>
                           <ul nz-menu>
                             <li (click)="applyToSelected(adj)" nz-menu-item>For Selected Threads only</li>
                             <li (click)="applyToAll(adj)" nz-menu-item>For All Threads</li>
@@ -665,7 +665,8 @@
                      style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
 
                   <ul nz-menu>
-                    <li (click)="clickButtonPlus(false,thread)" nz-menu-item>Add New Adjustment</li>
+                    <li *ngIf="wsStatus !== 'fac'"
+                        (click)="clickButtonPlus(false,thread)" nz-menu-item>Add New Adjustment</li>
                     <li nz-menu-item>Regenerate</li>
                     <li nz-submenu>
                       <span title>Create</span>
@@ -925,99 +926,99 @@
         <th *ngIf="col.fields == 'overallLMF' && extended"
             colspan="6"
             style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;">
-          <div
-            style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 191px;">
-                        <span
-                          style="width: 110px;white-space: nowrap; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
-          </div>
-          <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
-                       style="font-size: 20px; cursor: pointer;position: absolute;left: 166px;top: 20px;">
-            <i class="icon-menu_24px" nz-dropdown
-               style="font-size: 25px; float: right; margin-right: 7px"></i>
-            <ul nz-menu>
-              <li (click)="clickButtonPlus(true)" nz-menu-item>Add New Adjustment</li>
-              <li nz-menu-item>Add from Template</li>
-              <li nz-menu-item>Reset/Clear</li>
-              <li nz-menu-item>Save</li>
-              <li nz-menu-item>Save As</li>
-              <li nz-submenu>
-                <span title>Apply</span>
-                <ul nz-menu>
-                  <li nz-submenu>
-                    <span title>Create New Alternate Threads</span>
-                    <ul nz-menu>
-                      <li nz-menu-item>For Selected Threads only</li>
-                      <li nz-menu-item>For All Threads</li>
-                    </ul>
-                  </li>
-                  <li nz-submenu>
-                    <span title>Replace Existing Threads</span>
-                    <ul nz-menu>
-                      <li nz-menu-item>For Selected Threads only</li>
-                      <li nz-menu-item>For All Threads</li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nz-dropdown>
-          <div
-            *ngIf="adjsArray.length > 0"
-            [dropZones]="['adjustment-dropZone']"
-            [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
-            style="position: absolute;left: 221px; max-width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-            <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-              <div (click)="selectedAdjust(adj.id)"
-                   (mouseenter)="shownDropDown = adj.id"
-                   (mouseleave)="onLeaveAdjustment(adj.id)"
-                   (onDropSuccess)="dropThreadAdjustment()"
-                   [dragData]="adj"
-                   [dragEnabled]="true"
-                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                   [sortableIndex]="adjIndex"
-                   class="adjustDiv"
-                   dnd-sortable style="margin: 8px!important;">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                             *ngIf="shownDropDown === adj.id"
-                             [(nzVisible)]="dropdownVisible"
-                             nzTrigger="click"
-                             [nzPlacement]="'bottomLeft'" class="dropD">
-                  <i class="icon-menu_24px" nz-dropdown
-                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
+          <ng-container *ngIf="wsStatus !== 'fac'">
+            <div style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 191px;">
+              <span style="width: 110px;white-space: nowrap; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
+            </div>
+            <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                         style="font-size: 20px; cursor: pointer;position: absolute;left: 166px;top: 20px;">
+              <i class="icon-menu_24px" nz-dropdown
+                 style="font-size: 25px; float: right; margin-right: 7px"></i>
+              <ul nz-menu>
+                <li (click)="clickButtonPlus(true)" *ngIf="tabStatus === 'TREATY'"
+                    nz-menu-item>Add New Adjustment</li>
+                <li nz-menu-item>Add from Template</li>
+                <li nz-menu-item>Reset/Clear</li>
+                <li nz-menu-item>Save</li>
+                <li nz-menu-item>Save As</li>
+                <li nz-submenu>
+                  <span title>Apply</span>
                   <ul nz-menu>
-                    <li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>
-                    <li (click)="DeleteAdjustement(adj)" nz-menu-item>Delete</li>
                     <li nz-submenu>
-                      <span title>Apply</span>
+                      <span *ngIf="tabStatus === 'TREATY'" title>Create New Alternate Threads</span>
                       <ul nz-menu>
-                        <li nz-submenu>
-                          <span title>Create New Alternate Threads</span>
-                          <ul nz-menu>
-                            <li (click)="applyToSelected(adj)" nz-menu-item>For Selected Threads only</li>
-                            <li (click)="applyToAll(adj)" nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Replace Existing Threads</span>
-                          <ul nz-menu>
-                            <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>For Selected Threads only
-                            </li>
-                            <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
+                        <li nz-menu-item>For Selected Threads only</li>
+                        <li nz-menu-item>For All Threads</li>
+                      </ul>
+                    </li>
+                    <li nz-submenu>
+                      <span title>Replace Existing Threads</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>For Selected Threads only</li>
+                        <li nz-menu-item>For All Threads</li>
                       </ul>
                     </li>
                   </ul>
-                </nz-dropdown>
-                <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                       class="templateInput"
-                >
-              </div>
-            </ng-container>
-          </div>
-
+                </li>
+              </ul>
+            </nz-dropdown>
+            <div
+              *ngIf="adjsArray.length > 0"
+              [dropZones]="['adjustment-dropZone']"
+              [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
+              style="position: absolute;left: 221px; max-width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+              <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
+                <div (click)="selectedAdjust(adj.id)"
+                     (mouseenter)="shownDropDown = adj.id"
+                     (mouseleave)="onLeaveAdjustment(adj.id)"
+                     (onDropSuccess)="dropThreadAdjustment()"
+                     [dragData]="adj"
+                     [dragEnabled]="true"
+                     [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
+                     [sortableIndex]="adjIndex"
+                     class="adjustDiv"
+                     dnd-sortable style="margin: 8px!important;">
+                            <span
+                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
+                  <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                               *ngIf="shownDropDown === adj.id"
+                               [(nzVisible)]="dropdownVisible"
+                               nzTrigger="click"
+                               [nzPlacement]="'bottomLeft'" class="dropD">
+                    <i class="icon-menu_24px" nz-dropdown
+                       style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                    <ul nz-menu>
+                      <li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>
+                      <li (click)="DeleteAdjustement(adj)" nz-menu-item>Delete</li>
+                      <li nz-submenu>
+                        <span title>Apply</span>
+                        <ul nz-menu>
+                          <li nz-submenu>
+                            <span title>Create New Alternate Threads</span>
+                            <ul nz-menu>
+                              <li (click)="applyToSelected(adj)" nz-menu-item>For Selected Threads only</li>
+                              <li (click)="applyToAll(adj)" nz-menu-item>For All Threads</li>
+                            </ul>
+                          </li>
+                          <li nz-submenu>
+                            <span title>Replace Existing Threads</span>
+                            <ul nz-menu>
+                              <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>For Selected Threads only
+                              </li>
+                              <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>For All Threads</li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                  <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
+                         class="templateInput"
+                  >
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
         </th>
       </ng-container>
     </tr>
@@ -1071,9 +1072,7 @@
                           <li nz-menu-item>
                             <div class="checkboxInput">
                               <label [(ngModel)]="inProgressCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
+                                     nz-checkbox nzChecked style="margin-right: 12px;">
                                 <i class="icon-history-alt iconYellow"></i> In Progress
                               </label>
                             </div>
@@ -1265,7 +1264,8 @@
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
 
                 <ul nz-menu>
-                  <li (click)="clickButtonPlus(false,rowData)" nz-menu-item>Add New Adjustment</li>
+                  <li *ngIf="tabStatus === 'TREATY'"
+                      (click)="clickButtonPlus(false,rowData)" nz-menu-item>Add New Adjustment</li>
                   <li nz-menu-item>Regenerate</li>
                   <li nz-submenu>
                     <span title>Create</span>
@@ -1888,7 +1888,8 @@
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
 
                 <ul nz-menu>
-                  <li (click)="clickButtonPlus(false,rowData)" nz-menu-item>Add New Adjustment</li>
+                  <li *ngIf="tabStatus === 'TREATY'"
+                      (click)="clickButtonPlus(false,rowData)" nz-menu-item>Add New Adjustment</li>
                   <li nz-menu-item>Regenerate</li>
                   <li nz-submenu>
                     <span title>Create</span>
@@ -2138,7 +2139,8 @@
             <i class="icon-menu_24px" nz-dropdown
                style="font-size: 25px; float: right; margin-right: 7px"></i>
             <ul nz-menu>
-              <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
+              <li *ngIf="tabStatus === 'TREATY'"
+                  nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
               <li nz-menu-item>Add from Template</li>
               <li nz-menu-item>Reset/Clear</li>
               <li nz-menu-item>Save</li>
