@@ -6,7 +6,6 @@ import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.EPCurveHeaderEntity;
 import com.scor.rr.domain.LossDataHeaderEntity;
-import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;

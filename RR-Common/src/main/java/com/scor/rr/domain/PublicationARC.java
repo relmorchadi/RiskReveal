@@ -1,4 +1,4 @@
-package com.scor.rr.domain.TargetBuild;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,16 +8,16 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ARCPublication")
+@Table(name = "PublicationARC")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ARCPublication {
+public class PublicationARC {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ARCPublicationId")
-    private Long arcPublicationId;
+    @Column(name = "PublicationARCId")
+    private Long publicationARCId;
 
     @Column(name = "Entity")
     private Integer entity;

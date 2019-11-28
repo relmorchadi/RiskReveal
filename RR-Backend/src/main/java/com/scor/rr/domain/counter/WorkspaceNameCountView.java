@@ -8,7 +8,7 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "WKSP_NAME_CNT_VW", schema = "poc")
+@Table(name = "WKSP_NAME_CNT_VW")
 public class WorkspaceNameCountView {
 
     @Id

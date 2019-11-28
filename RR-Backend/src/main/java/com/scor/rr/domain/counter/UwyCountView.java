@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "UWY_COUNT_VIEW", schema = "poc")
+@Table(name = "UWY_COUNT_VIEW")
 public class UwyCountView {
 
     @Id
