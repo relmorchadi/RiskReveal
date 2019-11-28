@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface UserRrRepository extends JpaRepository<UserRrEntity, String> {
+public interface UserRrRepository extends JpaRepository<UserRrEntity, Integer> {
 
-    @Query("select c from UserRrEntity c where c.userId= :userName")
-    UserRrEntity findByUserName(String userName);
+    @Query("select c from UserRrEntity c where c.userId= :userId")
+    UserRrEntity findByUserName(int userId);
 }

@@ -25,8 +25,8 @@ public class ProjectEntity {
     @Column(name = "WorkspaceId")
     private Long workspaceId;
 
-    @Column(name = "ProjectImportRun")
-    private Integer projectImportRunId;
+    @Column(name = "ProjectImportRunId")
+    private Long projectImportRunId;
 
     @Column(name = "RMSModelDataSourceId")
     private Integer rmsModelDataSourceId;

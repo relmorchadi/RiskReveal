@@ -1,5 +1,6 @@
 package com.scor.rr.repository;
 
+import com.scor.rr.domain.views.VwFacTreaty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

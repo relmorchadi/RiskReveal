@@ -13,7 +13,7 @@ public class UserRrEntity {
     private String userRole;
 
     @Id
-    @Column(name = "userId", nullable = false)
+    @Column(name = "UserId", nullable = false)
     public int getUserId() {
         return userId;
     }

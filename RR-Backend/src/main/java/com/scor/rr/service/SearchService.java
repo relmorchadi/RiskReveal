@@ -6,6 +6,7 @@ import com.scor.rr.domain.TargetBuild.Search.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
+import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;

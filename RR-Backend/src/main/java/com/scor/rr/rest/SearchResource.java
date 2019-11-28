@@ -5,6 +5,7 @@ import com.scor.rr.domain.TargetBuild.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
+import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
 import com.scor.rr.service.TargetBuild.ShortCutService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(schema = "tb")
+@Table
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)
