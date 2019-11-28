@@ -7,10 +7,10 @@ import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
-import com.scor.rr.repository.RlAnalysisRepository;
-import com.scor.rr.repository.RlAnalysisScanStatusRepository;
-import com.scor.rr.repository.RlModelDataSourceRepository;
-import com.scor.rr.repository.RlSourceResultRepository;
+import com.scor.rr.repository.RLAnalysisRepository;
+import com.scor.rr.repository.RLAnalysisScanStatusRepository;
+import com.scor.rr.repository.RLModelDataSourceRepository;
+import com.scor.rr.repository.RLSourceResultRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -44,16 +44,16 @@ public class RmsService {
     JdbcTemplate rmsJdbcTemplate;
 
     @Autowired
-    RlModelDataSourceRepository rlModelDataSourcesRepository;
+    RLModelDataSourceRepository rlModelDataSourcesRepository;
 
     @Autowired
-    RlAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
+    RLAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
 
     @Autowired
-    RlAnalysisRepository rlAnalysisRepository;
+    RLAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RlSourceResultRepository rlSourceResultRepository;
+    RLSourceResultRepository rlSourceResultRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -147,7 +147,7 @@ public class RmsService {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm)
             );
-            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         }
     }

@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "RLAnalysisScanStatus")
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlAnalysisScanStatus {
+public class RLAnalysisScanStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class RlAnalysisScanStatus {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastScan;
 
-    public RlAnalysisScanStatus(Long rlAnalysisId, int scanStatus) {
+    public RLAnalysisScanStatus(Long rlAnalysisId, int scanStatus) {
         this.entity = 1;
         this.rlAnalysisId = rlAnalysisId;
         this.scanLevel = 0; //TODO: define scan level enum

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlAnalysisProfileRegion {
+public class RLAnalysisProfileRegion {
 
 
     @Id

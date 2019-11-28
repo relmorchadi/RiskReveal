@@ -1,4 +1,4 @@
-package com.scor.rr.domain.riskLink;
+package com.scor.rr.domain;
 
 import lombok.Data;
 
@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "ModellingVendor")
 @Data
-public class ModellingVendor {
+public class ModellingVendorEntity {
     @Id
     @Column(name = "Id")
     private String id;

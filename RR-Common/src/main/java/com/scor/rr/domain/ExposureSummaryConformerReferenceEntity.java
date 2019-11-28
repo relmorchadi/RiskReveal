@@ -1,4 +1,4 @@
-package com.scor.rr.domain.reference;
+package com.scor.rr.domain;
 
 
 import lombok.AllArgsConstructor;

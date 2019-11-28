@@ -1,4 +1,4 @@
-package com.scor.rr.domain.riskLink;
+package com.scor.rr.domain;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ModellingSystem")
 @Data
-public class ModellingSystem {
+public class ModellingSystemEntity {
     @Id
     @Column(name = "Id")
     private String id;
@@ -24,5 +24,5 @@ public class ModellingSystem {
     private Integer catObjectId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "VendorId")
-    private ModellingVendor vendor;
+    private ModellingVendorEntity vendor;
 }

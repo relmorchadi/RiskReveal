@@ -1,5 +1,9 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.sql.Timestamp;
@@ -7,521 +11,138 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "CONTRACT")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class ContractEntity {
-    private String id;
-    private Boolean isactive;
-    private Timestamp lastsynchronized;
-    private String fksubsidiaryledgercodeId;
-    private String treatyid;
-    private Integer uwyear;
-    private Integer uworder;
-    private Integer endorsmentnumber;
-    private String treatylabel;
-    private String statusId;
-    private Integer subsidiarycodeId;
-    private String uwunitidId;
-    private String subsidiaryledgercode;
-    private Timestamp inceptiondate;
-    private Timestamp expirydate;
-    private String programid;
-    private String programname;
-    private String bouquetid;
-    private String bouquetname;
-    private String cedentidId;
-    private String underwriterid;
-    private String underwriterfirstname;
-    private String underwriterlastname;
-    private String liabilitycurrencycodeId;
-    private String annuallimitamount;
-    private String eventlimitamount;
-    private Timestamp updateTime;
-    private String leader;
-    private String underwritingunitcode;
-    private String underwritingunitnamell;
-    private String underwritingunitnamels;
-    private String ultimategroupcode;
-    private String ultimategroupname;
-    private String groupsegmentnamelm;
-    private String groupsegmentcode;
-    private String groupsegmentnamels;
-    private String intermediarycode;
-    private String uwUnitOmega2;
-    private Timestamp lastupdateomega;
-    private Timestamp lastextractomega;
-    private Timestamp lastupdatecatdomain;
-    private Timestamp lastsyncruncatdomain;
 
     @Id
-    @Column(name = "CONTRACTID", nullable = false, length = 255)
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    @Column(name = "CONTRACT_ID", nullable = false, length = 255)
+    private String id;
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
-    public Boolean getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(Boolean isactive) {
-        this.isactive = isactive;
-    }
-
+    @Column(name = "IS_ACTIVE", nullable = true)
+    private Boolean isActive;
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
-    public Timestamp getLastsynchronized() {
-        return lastsynchronized;
-    }
-
-    public void setLastsynchronized(Timestamp lastsynchronized) {
-        this.lastsynchronized = lastsynchronized;
-    }
-
+    @Column(name = "LAST_SYNCHRONIZED", nullable = true)
+    private Timestamp lastSynchronized;
     @Basic
-    @Column(name = "FKSUBSIDIARYLEDGERCODEID", nullable = true, length = 255)
-    public String getFksubsidiaryledgercodeId() {
-        return fksubsidiaryledgercodeId;
-    }
-
-    public void setFksubsidiaryledgercodeId(String fksubsidiaryledgercodeId) {
-        this.fksubsidiaryledgercodeId = fksubsidiaryledgercodeId;
-    }
-
+    @Column(name = "FK_SUBSIDIARY_LEDGER_CODE_ID", nullable = true, length = 255)
+    private String fkSubsidiaryLedgerCodeId;
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
-    public String getTreatyid() {
-        return treatyid;
-    }
-
-    public void setTreatyid(String treatyid) {
-        this.treatyid = treatyid;
-    }
-
+    @Column(name = "TREATY_ID", nullable = true, length = 255)
+    private String treatyId;
     @Basic
-    @Column(name = "UWYEAR", nullable = true)
-    public Integer getUwyear() {
-        return uwyear;
-    }
-
-    public void setUwyear(Integer uwyear) {
-        this.uwyear = uwyear;
-    }
-
+    @Column(name = "UW_YEAR", nullable = true)
+    private Integer uwYear;
     @Basic
-    @Column(name = "UWORDER", nullable = true)
-    public Integer getUworder() {
-        return uworder;
-    }
-
-    public void setUworder(Integer uworder) {
-        this.uworder = uworder;
-    }
-
+    @Column(name = "UW_ORDER", nullable = true)
+    private Integer uwOrder;
     @Basic
-    @Column(name = "ENDORSMENTNUMBER", nullable = true)
-    public Integer getEndorsmentnumber() {
-        return endorsmentnumber;
-    }
-
-    public void setEndorsmentnumber(Integer endorsmentnumber) {
-        this.endorsmentnumber = endorsmentnumber;
-    }
-
+    @Column(name = "ENDORSEMENT_NUMBER", nullable = true)
+    private Integer endorsementNumber;
     @Basic
-    @Column(name = "TREATYLABEL", nullable = true, length = 255)
-    public String getTreatylabel() {
-        return treatylabel;
-    }
-
-    public void setTreatylabel(String treatylabel) {
-        this.treatylabel = treatylabel;
-    }
-
+    @Column(name = "TREATY_LABEL", nullable = true, length = 255)
+    private String treatyLabel;
     @Basic
-    @Column(name = "FKSTATUSID", nullable = true, length = 255)
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
+    @Column(name = "FK_STATUS_ID", nullable = true, length = 255)
+    private String statusId;
     @Basic
-    @Column(name = "SUBSIDIARYCODE_ID", nullable = true)
-    public Integer getSubsidiarycodeId() {
-        return subsidiarycodeId;
-    }
-
-    public void setSubsidiarycodeId(Integer subsidiarycodeId) {
-        this.subsidiarycodeId = subsidiarycodeId;
-    }
-
+    @Column(name = "SUBSIDIARY_CODE_ID", nullable = true)
+    private Integer subsidiaryCodeId;
     @Basic
-    @Column(name = "UWUNITID_ID", nullable = true, length = 255)
-    public String getUwunitidId() {
-        return uwunitidId;
-    }
-
-    public void setUwunitidId(String uwunitidId) {
-        this.uwunitidId = uwunitidId;
-    }
-
+    @Column(name = "UW_UNIT_ID", nullable = true, length = 255)
+    private String uwUnitId;
     @Basic
-    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255)
-    public String getSubsidiaryledgercode() {
-        return subsidiaryledgercode;
-    }
-
-    public void setSubsidiaryledgercode(String subsidiaryledgercode) {
-        this.subsidiaryledgercode = subsidiaryledgercode;
-    }
-
+    @Column(name = "SUBSIDIARY_LEDGER_CODE", nullable = true, length = 255)
+    private String subsidiaryLedgerCode;
     @Basic
-    @Column(name = "INCEPTIONDATE", nullable = true)
-    public Timestamp getInceptiondate() {
-        return inceptiondate;
-    }
-
-    public void setInceptiondate(Timestamp inceptiondate) {
-        this.inceptiondate = inceptiondate;
-    }
-
+    @Column(name = "INCEPTION_DATE", nullable = true)
+    private Timestamp inceptionDate;
     @Basic
-    @Column(name = "EXPIRYDATE", nullable = true)
-    public Timestamp getExpirydate() {
-        return expirydate;
-    }
-
-    public void setExpirydate(Timestamp expirydate) {
-        this.expirydate = expirydate;
-    }
-
+    @Column(name = "EXPIRY_DATE", nullable = true)
+    private Timestamp expiryDate;
     @Basic
-    @Column(name = "PROGRAMID", nullable = true, length = 255)
-    public String getProgramid() {
-        return programid;
-    }
-
-    public void setProgramid(String programid) {
-        this.programid = programid;
-    }
-
+    @Column(name = "PROGRAM_ID", nullable = true, length = 255)
+    private String programId;
     @Basic
-    @Column(name = "PROGRAMNAME", nullable = true, length = 255)
-    public String getProgramname() {
-        return programname;
-    }
-
-    public void setProgramname(String programname) {
-        this.programname = programname;
-    }
-
+    @Column(name = "PROGRAM_NAME", nullable = true, length = 255)
+    private String programName;
     @Basic
-    @Column(name = "BOUQUETID", nullable = true, length = 255)
-    public String getBouquetid() {
-        return bouquetid;
-    }
-
-    public void setBouquetid(String bouquetid) {
-        this.bouquetid = bouquetid;
-    }
-
+    @Column(name = "BOUQUET_ID", nullable = true, length = 255)
+    private String bouquetId;
     @Basic
-    @Column(name = "BOUQUETNAME", nullable = true, length = 255)
-    public String getBouquetname() {
-        return bouquetname;
-    }
-
-    public void setBouquetname(String bouquetname) {
-        this.bouquetname = bouquetname;
-    }
-
+    @Column(name = "BOUQUET_NAME", nullable = true, length = 255)
+    private String bouquetName;
     @Basic
-    @Column(name = "FKCEDENTID", nullable = true, length = 255)
-    public String getCedentidId() {
-        return cedentidId;
-    }
-
-    public void setCedentidId(String cedentidId) {
-        this.cedentidId = cedentidId;
-    }
-
+    @Column(name = "FK_CEDENT_ID", nullable = true, length = 255)
+    private String cedentId;
     @Basic
-    @Column(name = "UNDERWRITERID", nullable = true, length = 255)
-    public String getUnderwriterid() {
-        return underwriterid;
-    }
-
-    public void setUnderwriterid(String underwriterid) {
-        this.underwriterid = underwriterid;
-    }
-
+    @Column(name = "UNDERWRITER_ID", nullable = true, length = 255)
+    private String underWriterId;
     @Basic
-    @Column(name = "UNDERWRITERFIRSTNAME", nullable = true, length = 255)
-    public String getUnderwriterfirstname() {
-        return underwriterfirstname;
-    }
-
-    public void setUnderwriterfirstname(String underwriterfirstname) {
-        this.underwriterfirstname = underwriterfirstname;
-    }
-
+    @Column(name = "UNDERWRITER_FIRST_NAME", nullable = true, length = 255)
+    private String underWriterFirstName;
     @Basic
-    @Column(name = "UNDERWRITERLASTNAME", nullable = true, length = 255)
-    public String getUnderwriterlastname() {
-        return underwriterlastname;
-    }
-
-    public void setUnderwriterlastname(String underwriterlastname) {
-        this.underwriterlastname = underwriterlastname;
-    }
-
+    @Column(name = "UNDERWRITER_LAST_NAME", nullable = true, length = 255)
+    private String underWriterLastName;
     @Basic
-    @Column(name = "FKLIABILITYCURRENCYCODE", nullable = true, length = 255)
-    public String getLiabilitycurrencycodeId() {
-        return liabilitycurrencycodeId;
-    }
-
-    public void setLiabilitycurrencycodeId(String liabilitycurrencycodeId) {
-        this.liabilitycurrencycodeId = liabilitycurrencycodeId;
-    }
-
+    @Column(name = "FK_LIABILITY_CURRENCY_CODE", nullable = true, length = 255)
+    private String liabilityCurrencyCodeId;
     @Basic
-    @Column(name = "ANNUALLIMITAMOUNT", nullable = true, length = 255)
-    public String getAnnuallimitamount() {
-        return annuallimitamount;
-    }
-
-    public void setAnnuallimitamount(String annuallimitamount) {
-        this.annuallimitamount = annuallimitamount;
-    }
-
+    @Column(name = "ANNUAL_LIMIT_AMOUNT", nullable = true, length = 255)
+    private String annualLimitAmount;
     @Basic
-    @Column(name = "EVENTLIMITAMOUNT", nullable = true, length = 255)
-    public String getEventlimitamount() {
-        return eventlimitamount;
-    }
-
-    public void setEventlimitamount(String eventlimitamount) {
-        this.eventlimitamount = eventlimitamount;
-    }
-
+    @Column(name = "EVENT_LIMIT_AMOUNT", nullable = true, length = 255)
+    private String eventLimitAmount;
     @Basic
     @Column(name = "UPDATE_TIME", nullable = true)
-    public Timestamp getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Timestamp updateTime) {
-        this.updateTime = updateTime;
-    }
-
+    private Timestamp updateTime;
     @Basic
     @Column(name = "LEADER", nullable = true, length = 255)
-    public String getLeader() {
-        return leader;
-    }
-
-    public void setLeader(String leader) {
-        this.leader = leader;
-    }
-
+    private String leader;
     @Basic
-    @Column(name = "UNDERWRITINGUNITCODE", nullable = true, length = 255)
-    public String getUnderwritingunitcode() {
-        return underwritingunitcode;
-    }
-
-    public void setUnderwritingunitcode(String underwritingunitcode) {
-        this.underwritingunitcode = underwritingunitcode;
-    }
-
+    @Column(name = "UNDERWRITING_UNIT_CODE", nullable = true, length = 255)
+    private String underWritingUnitCode;
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELL", nullable = true, length = 255)
-    public String getUnderwritingunitnamell() {
-        return underwritingunitnamell;
-    }
-
-    public void setUnderwritingunitnamell(String underwritingunitnamell) {
-        this.underwritingunitnamell = underwritingunitnamell;
-    }
-
+    @Column(name = "UNDERWRITING_UNIT_NAME_LL", nullable = true, length = 255)
+    private String underWritingUnitNameLL;
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELS", nullable = true, length = 255)
-    public String getUnderwritingunitnamels() {
-        return underwritingunitnamels;
-    }
-
-    public void setUnderwritingunitnamels(String underwritingunitnamels) {
-        this.underwritingunitnamels = underwritingunitnamels;
-    }
-
+    @Column(name = "UNDERWRITING_UNIT_NAME_LS", nullable = true, length = 255)
+    private String underWritingUnitNameLS;
     @Basic
-    @Column(name = "ULTIMATEGROUPCODE", nullable = true, length = 255)
-    public String getUltimategroupcode() {
-        return ultimategroupcode;
-    }
-
-    public void setUltimategroupcode(String ultimategroupcode) {
-        this.ultimategroupcode = ultimategroupcode;
-    }
-
+    @Column(name = "ULTIMATE_GROUP_CODE", nullable = true, length = 255)
+    private String ultimateGroupCode;
     @Basic
-    @Column(name = "ULTIMATEGROUPNAME", nullable = true, length = 255)
-    public String getUltimategroupname() {
-        return ultimategroupname;
-    }
-
-    public void setUltimategroupname(String ultimategroupname) {
-        this.ultimategroupname = ultimategroupname;
-    }
-
+    @Column(name = "ULTIMATE_GROUP_NAME", nullable = true, length = 255)
+    private String ultimateGroupName;
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELM", nullable = true, length = 255)
-    public String getGroupsegmentnamelm() {
-        return groupsegmentnamelm;
-    }
-
-    public void setGroupsegmentnamelm(String groupsegmentnamelm) {
-        this.groupsegmentnamelm = groupsegmentnamelm;
-    }
-
+    @Column(name = "GROUP_SEGMENT_NAME_LM", nullable = true, length = 255)
+    private String groupSegmentNameLM;
     @Basic
-    @Column(name = "GROUPSEGMENTCODE", nullable = true, length = 255)
-    public String getGroupsegmentcode() {
-        return groupsegmentcode;
-    }
-
-    public void setGroupsegmentcode(String groupsegmentcode) {
-        this.groupsegmentcode = groupsegmentcode;
-    }
-
+    @Column(name = "GROUP_SEGMENT_CODE", nullable = true, length = 255)
+    private String groupSegmentCode;
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELS", nullable = true, length = 255)
-    public String getGroupsegmentnamels() {
-        return groupsegmentnamels;
-    }
-
-    public void setGroupsegmentnamels(String groupsegmentnamels) {
-        this.groupsegmentnamels = groupsegmentnamels;
-    }
-
+    @Column(name = "GROUP_SEGMENT_NAME_LS", nullable = true, length = 255)
+    private String groupSegmentNameLS;
     @Basic
-    @Column(name = "INTERMEDIARYCODE", nullable = true, length = 255)
-    public String getIntermediarycode() {
-        return intermediarycode;
-    }
-
-    public void setIntermediarycode(String intermediarycode) {
-        this.intermediarycode = intermediarycode;
-    }
-
+    @Column(name = "INTERMEDIARY_CODE", nullable = true, length = 255)
+    private String intermediaryCode;
     @Basic
-    @Column(name = "UWUnitOmega2", nullable = true, length = 255)
-    public String getUwUnitOmega2() {
-        return uwUnitOmega2;
-    }
-
-    public void setUwUnitOmega2(String uwUnitOmega2) {
-        this.uwUnitOmega2 = uwUnitOmega2;
-    }
-
+    @Column(name = "UW_Unit_Omega2", nullable = true, length = 255)
+    private String uwUnitOmega2;
     @Basic
-    @Column(name = "LASTUPDATEOMEGA", nullable = true)
-    public Timestamp getLastupdateomega() {
-        return lastupdateomega;
-    }
-
-    public void setLastupdateomega(Timestamp lastupdateomega) {
-        this.lastupdateomega = lastupdateomega;
-    }
-
+    @Column(name = "LAST_UPDATE_OMEGA", nullable = true)
+    private Timestamp lastUpdateOmega;
     @Basic
-    @Column(name = "LASTEXTRACTOMEGA", nullable = true)
-    public Timestamp getLastextractomega() {
-        return lastextractomega;
-    }
-
-    public void setLastextractomega(Timestamp lastextractomega) {
-        this.lastextractomega = lastextractomega;
-    }
-
+    @Column(name = "LAST_EXTRACT_OMEGA", nullable = true)
+    private Timestamp lastExtractOmega;
     @Basic
-    @Column(name = "LASTUPDATECATDOMAIN", nullable = true)
-    public Timestamp getLastupdatecatdomain() {
-        return lastupdatecatdomain;
-    }
-
-    public void setLastupdatecatdomain(Timestamp lastupdatecatdomain) {
-        this.lastupdatecatdomain = lastupdatecatdomain;
-    }
-
+    @Column(name = "LAST_UPDATE_CAT_DOMAIN", nullable = true)
+    private Timestamp lastUpdateCatDomain;
     @Basic
-    @Column(name = "LASTSYNCRUNCATDOMAIN", nullable = true)
-    public Timestamp getLastsyncruncatdomain() {
-        return lastsyncruncatdomain;
-    }
-
-    public void setLastsyncruncatdomain(Timestamp lastsyncruncatdomain) {
-        this.lastsyncruncatdomain = lastsyncruncatdomain;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ContractEntity that = (ContractEntity) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(isactive, that.isactive) &&
-                Objects.equals(lastsynchronized, that.lastsynchronized) &&
-                Objects.equals(fksubsidiaryledgercodeId, that.fksubsidiaryledgercodeId) &&
-                Objects.equals(treatyid, that.treatyid) &&
-                Objects.equals(uwyear, that.uwyear) &&
-                Objects.equals(uworder, that.uworder) &&
-                Objects.equals(endorsmentnumber, that.endorsmentnumber) &&
-                Objects.equals(treatylabel, that.treatylabel) &&
-                Objects.equals(statusId, that.statusId) &&
-                Objects.equals(subsidiarycodeId, that.subsidiarycodeId) &&
-                Objects.equals(uwunitidId, that.uwunitidId) &&
-                Objects.equals(subsidiaryledgercode, that.subsidiaryledgercode) &&
-                Objects.equals(inceptiondate, that.inceptiondate) &&
-                Objects.equals(expirydate, that.expirydate) &&
-                Objects.equals(programid, that.programid) &&
-                Objects.equals(programname, that.programname) &&
-                Objects.equals(bouquetid, that.bouquetid) &&
-                Objects.equals(bouquetname, that.bouquetname) &&
-                Objects.equals(cedentidId, that.cedentidId) &&
-                Objects.equals(underwriterid, that.underwriterid) &&
-                Objects.equals(underwriterfirstname, that.underwriterfirstname) &&
-                Objects.equals(underwriterlastname, that.underwriterlastname) &&
-                Objects.equals(liabilitycurrencycodeId, that.liabilitycurrencycodeId) &&
-                Objects.equals(annuallimitamount, that.annuallimitamount) &&
-                Objects.equals(eventlimitamount, that.eventlimitamount) &&
-                Objects.equals(updateTime, that.updateTime) &&
-                Objects.equals(leader, that.leader) &&
-                Objects.equals(underwritingunitcode, that.underwritingunitcode) &&
-                Objects.equals(underwritingunitnamell, that.underwritingunitnamell) &&
-                Objects.equals(underwritingunitnamels, that.underwritingunitnamels) &&
-                Objects.equals(ultimategroupcode, that.ultimategroupcode) &&
-                Objects.equals(ultimategroupname, that.ultimategroupname) &&
-                Objects.equals(groupsegmentnamelm, that.groupsegmentnamelm) &&
-                Objects.equals(groupsegmentcode, that.groupsegmentcode) &&
-                Objects.equals(groupsegmentnamels, that.groupsegmentnamels) &&
-                Objects.equals(intermediarycode, that.intermediarycode) &&
-                Objects.equals(uwUnitOmega2, that.uwUnitOmega2) &&
-                Objects.equals(lastupdateomega, that.lastupdateomega) &&
-                Objects.equals(lastextractomega, that.lastextractomega) &&
-                Objects.equals(lastupdatecatdomain, that.lastupdatecatdomain) &&
-                Objects.equals(lastsyncruncatdomain, that.lastsyncruncatdomain);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, isactive, lastsynchronized, fksubsidiaryledgercodeId, treatyid, uwyear, uworder, endorsmentnumber, treatylabel, statusId, subsidiarycodeId, uwunitidId, subsidiaryledgercode, inceptiondate, expirydate, programid, programname, bouquetid, bouquetname, cedentidId, underwriterid, underwriterfirstname, underwriterlastname, liabilitycurrencycodeId, annuallimitamount, eventlimitamount, updateTime, leader, underwritingunitcode, underwritingunitnamell, underwritingunitnamels, ultimategroupcode, ultimategroupname, groupsegmentnamelm, groupsegmentcode, groupsegmentnamels, intermediarycode, uwUnitOmega2, lastupdateomega, lastextractomega, lastupdatecatdomain, lastsyncruncatdomain);
-    }
+    @Column(name = "LAST_SYNC_RUN_CAT_DOMAIN", nullable = true)
+    private Timestamp lastSyncRunCatDomain;
+    @Basic
+    @Column(name = "CONTRACT_SOURCE_TYPE__ID", nullable = true)
+    private Long contractSourceTypeId;
 }

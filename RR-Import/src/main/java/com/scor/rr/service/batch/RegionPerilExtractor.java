@@ -8,9 +8,9 @@ import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
 import com.scor.rr.domain.AnalysisIncludedTargetRAPEntity;
 import com.scor.rr.domain.LossDataHeaderEntity;
-import com.scor.rr.domain.reference.RegionPeril;
-import com.scor.rr.domain.riskLink.ModellingSystemInstance;
-import com.scor.rr.domain.riskLink.RlPortfolioSelection;
+import com.scor.rr.domain.RegionPerilEntity;
+import com.scor.rr.domain.ModellingSystemInstanceEntity;
+import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
@@ -40,13 +40,13 @@ public class RegionPerilExtractor {
     private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
-    private RlSourceResultRepository rlSourceResultRepository;
+    private RLSourceResultRepository rlSourceResultRepository;
 
     @Autowired
     private RegionPerilRepository regionPerilRepository;
 
     @Autowired
-    private RlModelDataSourceRepository rlModelDataSourceRepository;
+    private RLModelDataSourceRepository rlModelDataSourceRepository;
 
     @Autowired
     private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
@@ -182,7 +182,7 @@ public class RegionPerilExtractor {
 //                    rrAnalysis.setTreatyLabel(analysisFinancialPerspective.getTreatyLabel());
 //                    rrAnalysis.setTreatyTag(analysisFinancialPerspective.getTreatyTag());
 //                }
-                RegionPeril regionPeril = getRegionPeril(sourceResult);
+                RegionPerilEntity regionPeril = getRegionPeril(sourceResult);
                 modelAnalysisEntity.setPeril(sourceResult.getRlAnalysis().getPeril());
                 modelAnalysisEntity.setRegionPeril(regionPeril != null ? regionPeril.getRegionPerilCode() : null);
                 modelAnalysisEntity.setSourceCurrency(sourceResult.getRlAnalysis().getAnalysisCurrency());
@@ -255,10 +255,10 @@ public class RegionPerilExtractor {
             String[] portfolioSelectionIds = rlPortfolioSelectionIds.split(";");
 
             for (String portfolioSelectionId : portfolioSelectionIds) {
-                RlPortfolioSelection rlPortfolioSelection;
+                RLPortfolioSelection rlPortfolioSelection;
 
                 if (StringUtils.isNumeric(portfolioSelectionId)) {
-                    Optional<RlPortfolioSelection> rlPortfolioSelectionOptional = rlPortfolioSelectionRepository.findById(Long.valueOf(portfolioSelectionId));
+                    Optional<RLPortfolioSelection> rlPortfolioSelectionOptional = rlPortfolioSelectionRepository.findById(Long.valueOf(portfolioSelectionId));
                     if (rlPortfolioSelectionOptional.isPresent()) {
                         rlPortfolioSelection = rlPortfolioSelectionOptional.get();
                     } else {
@@ -271,7 +271,7 @@ public class RegionPerilExtractor {
                 }
 
 
-                ModellingSystemInstance modellingSystemInstance =
+                ModellingSystemInstanceEntity modellingSystemInstance =
                         modellingSystemInstanceRepository.findById(rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceId()).get();
 
 
@@ -302,7 +302,7 @@ public class RegionPerilExtractor {
         }
     }
 
-    private RegionPeril getRegionPeril(RLImportSelection sourceResult) {
+    private RegionPerilEntity getRegionPeril(RLImportSelection sourceResult) {
         String rpCode = sourceResult.getTargetRegionPeril();
         if (rpCode == null || rpCode.isEmpty()) {
             rpCode = sourceResult.getRlAnalysis().getRpCode();

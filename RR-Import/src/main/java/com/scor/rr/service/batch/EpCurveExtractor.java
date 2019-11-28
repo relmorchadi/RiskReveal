@@ -14,7 +14,7 @@ import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
-import com.scor.rr.domain.riskLink.RlSourceEpHeader;
+import com.scor.rr.domain.riskLink.RLSourceEpHeader;
 import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
@@ -44,7 +44,7 @@ public class EpCurveExtractor {
 
 
     @Autowired
-    private RlModelDataSourceRepository dataSourceRepository;
+    private RLModelDataSourceRepository dataSourceRepository;
 
     @Autowired
     private RmsService rmsService;
@@ -85,7 +85,7 @@ public class EpCurveExtractor {
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
             String instanceId = bundle.getInstanceId();
             ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysisEntity();
-            List<RlSourceEpHeader> epHeaders = riskLinkAnalysis.getRlSourceEpHeaders();
+            List<RLSourceEpHeader> epHeaders = riskLinkAnalysis.getRlSourceEpHeaders();
             String selectedFp = bundle.getFinancialPerspective();
 
             Long analysisId = riskLinkAnalysis.getRlAnalysisId();

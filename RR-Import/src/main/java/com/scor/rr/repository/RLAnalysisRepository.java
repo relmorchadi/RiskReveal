@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 
-public interface RlAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
+public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
 
 
     // @TODO : Check Instance ID Param

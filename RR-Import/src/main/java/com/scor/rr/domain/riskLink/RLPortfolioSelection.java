@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RlPortfolioSelection {
+public class RLPortfolioSelection {
 
 
     @Id

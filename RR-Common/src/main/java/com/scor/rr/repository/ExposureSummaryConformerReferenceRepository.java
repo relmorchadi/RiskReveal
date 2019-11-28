@@ -1,6 +1,6 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.reference.ExposureSummaryConformerReferenceEntity;
+import com.scor.rr.domain.ExposureSummaryConformerReferenceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ExposureSummaryConformerReferenceRepository extends JpaRepository<ExposureSummaryConformerReferenceEntity, Long> {

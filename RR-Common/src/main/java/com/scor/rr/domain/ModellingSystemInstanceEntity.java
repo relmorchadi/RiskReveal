@@ -1,7 +1,6 @@
-package com.scor.rr.domain.riskLink;
+package com.scor.rr.domain;
 
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -13,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "ModellingSystemInstance")
 @Data
-public class ModellingSystemInstance {
+public class ModellingSystemInstanceEntity {
     @Id
     @Column(name = "ModellingSystemInstanceId")
     private String modellingSystemInstanceId;
@@ -37,5 +36,5 @@ public class ModellingSystemInstance {
     private Boolean active;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ModellingSystemVersionId")
-    private ModellingSystemVersion modellingSystemVersion;
+    private ModellingSystemVersionEntity modellingSystemVersion;
 }

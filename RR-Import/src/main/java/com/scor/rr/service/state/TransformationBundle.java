@@ -7,7 +7,7 @@ import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.EPCurveHeaderEntity;
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.SummaryStatisticHeaderEntity;
-import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.domain.ModelAnalysisEntity;
@@ -25,7 +25,7 @@ public class TransformationBundle {
 
     private RLAnalysis rlAnalysis;
 
-    private RegionPeril regionPeril;
+    private RegionPerilEntity regionPeril;
 
     private ModelAnalysisEntity modelAnalysisEntity;
 

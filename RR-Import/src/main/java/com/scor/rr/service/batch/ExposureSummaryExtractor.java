@@ -3,8 +3,8 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
-import com.scor.rr.domain.reference.ExposureSummaryConformerReferenceEntity;
-import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.ExposureSummaryConformerReferenceEntity;
+import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLPortfolio;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
@@ -68,7 +68,7 @@ public class ExposureSummaryExtractor {
     private ExposureSummaryConformerReferenceRepository exposureSummaryConformerReferenceRepository;
 
     @Autowired
-    private RlModelDataSourceRepository rlModelDataSourceRepository;
+    private RLModelDataSourceRepository rlModelDataSourceRepository;
 
     @Autowired
     private ExposureSummaryDataRepository exposureSummaryDataRepository;
@@ -332,7 +332,7 @@ public class ExposureSummaryExtractor {
                 exposureSummaryData.setRegionPerilCode("Unmapped");
                 //exposureSummaryData.setRegionPerilGroupCode("Unmapped");
             } else {
-                RegionPeril rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode(), rlExposureSummaryItem.getAdmin1Code(), rlExposureSummaryItem.getPeril());
+                RegionPerilEntity rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode(), rlExposureSummaryItem.getAdmin1Code(), rlExposureSummaryItem.getPeril());
                 if (rp == null) {
                     rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode().toUpperCase(), "", rlExposureSummaryItem.getPeril().toUpperCase());
                 }
@@ -431,7 +431,7 @@ public class ExposureSummaryExtractor {
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
                 } else {
-                    RegionPeril rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
+                    RegionPerilEntity rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
                     if (rp == null) {
                         rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode().toUpperCase(), "", itemIn.getPeril().toUpperCase());
                     }
@@ -457,7 +457,7 @@ public class ExposureSummaryExtractor {
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
                 } else {
-                    RegionPeril rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
+                    RegionPerilEntity rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
                     if (rp == null) {
                         rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode().toUpperCase(), "", itemIn.getPeril().toUpperCase());
                     }

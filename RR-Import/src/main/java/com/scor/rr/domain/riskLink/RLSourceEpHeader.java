@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "RLSourceEPHeader")
 @Data
 @NoArgsConstructor
-public class RlSourceEpHeader {
+public class RLSourceEpHeader {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
