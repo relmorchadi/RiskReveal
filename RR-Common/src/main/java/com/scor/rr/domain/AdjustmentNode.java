@@ -10,9 +10,9 @@ public class AdjustmentNode {
     private Integer entity;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentState adjustmentState;
-    private AdjustmentBasis adjustmentBasis;
-    private AdjustmentCategoryEntity adjustmentCategory;
-    private AdjustmentType adjustmentType;
+    private String adjustmentBasisCode;
+    private String adjustmentCategoryCode;
+    private String adjustmentTypeCode;
     private Boolean capped;
     private String userNarrative;
     private AdjustmentNode adjustmentNodeCloning;
@@ -29,16 +29,16 @@ public class AdjustmentNode {
 
     public AdjustmentNode(Boolean cappedMaxExposure,
                           AdjustmentThreadEntity adjustmentThreadEntity,
-                          AdjustmentBasis adjustmentBasis,
-                          AdjustmentType adjustmentType,
+                          String adjustmentBasisCode,
+                          String adjustmentTypeCode,
                           AdjustmentState adjustmentStateEntity,
-                          AdjustmentCategoryEntity adjustmentCategory) {
+                          String adjustmentCategoryCode) {
         this.capped = cappedMaxExposure;
         this.adjustmentThread = adjustmentThreadEntity;
-        this.adjustmentBasis = adjustmentBasis;
-        this.adjustmentType = adjustmentType;
+        this.adjustmentBasisCode = adjustmentBasisCode;
+        this.adjustmentTypeCode = adjustmentTypeCode;
         this.adjustmentState = adjustmentStateEntity;
-        this.adjustmentCategory = adjustmentCategory;
+        this.adjustmentCategoryCode = adjustmentCategoryCode;
     }
 
     public AdjustmentNode() {
@@ -48,8 +48,8 @@ public class AdjustmentNode {
     public AdjustmentNode(AdjustmentNode other) {
         this.capped = other.capped;
         this.adjustmentThread = other.adjustmentThread;
-        this.adjustmentBasis = other.adjustmentBasis;
-        this.adjustmentType = other.adjustmentType;
+        this.adjustmentBasisCode = other.adjustmentBasisCode;
+        this.adjustmentTypeCode = other.adjustmentTypeCode;
         this.adjustmentState = other.adjustmentState;
     }
 
@@ -98,24 +98,23 @@ public class AdjustmentNode {
         this.adjustmentThread = adjustmentThread;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "AdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
-    public AdjustmentBasis getAdjustmentBasis() {
-        return adjustmentBasis;
+    @Column(name = "AdjustmentBasisCode")
+    public String getAdjustmentBasisCode() {
+        return adjustmentBasisCode;
     }
 
-    public void setAdjustmentBasis(AdjustmentBasis adjustmentBasis) {
-        this.adjustmentBasis = adjustmentBasis;
+    public void setAdjustmentBasisCode(String adjustmentBasisCode) {
+        this.adjustmentBasisCode = adjustmentBasisCode;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "AdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
-    public AdjustmentType getAdjustmentType() {
-        return adjustmentType;
+
+    @Column(name = "AdjustmentTypeCode")
+    public String getAdjustmentTypeCode() {
+        return adjustmentTypeCode;
     }
 
-    public void setAdjustmentType(AdjustmentType adjustmentType) {
-        this.adjustmentType = adjustmentType;
+    public void setAdjustmentTypeCode(String adjustmentTypeCode) {
+        this.adjustmentBasisCode = adjustmentTypeCode;
     }
 
     @ManyToOne
@@ -138,14 +137,13 @@ public class AdjustmentNode {
         this.adjustmentNodeCloning = adjustmentNodeCloning;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "AdjustmentCategoryId", referencedColumnName = "AdjustmentCategoryId")
-    public AdjustmentCategoryEntity getAdjustmentCategory() {
-        return adjustmentCategory;
+    @Column(name = "AdjustmentCategoryCode")
+    public String getAdjustmentCategoryCode() {
+        return adjustmentCategoryCode;
     }
 
-    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
-        this.adjustmentCategory = adjustmentCategory;
+    public void setAdjustmentCategoryCode(String adjustmentCategoryCode) {
+        this.adjustmentCategoryCode = adjustmentCategoryCode;
     }
 
     @Override
