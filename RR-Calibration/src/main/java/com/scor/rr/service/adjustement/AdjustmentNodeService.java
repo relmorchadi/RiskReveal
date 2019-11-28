@@ -224,12 +224,12 @@ public class AdjustmentNodeService {
             if (basis == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, basis null, wrong ----------");
             } else {
-                node.setAdjustmentBasis(basis);
+                node.setAdjustmentBasisCode(basis.getAdjustmentBasisName());
             }
             if (basis.getAdjustmentCategory() == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, category null, wrong ----------");
             } else {
-                node.setAdjustmentCategory(basis.getAdjustmentCategory());
+                node.setAdjustmentCategoryCode(basis.getAdjustmentCategory().getCode());
             }
         }
 
@@ -240,7 +240,7 @@ public class AdjustmentNodeService {
             if (type == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, type null, wrong ----------");
             } else {
-                node.setAdjustmentType(type);
+                node.setAdjustmentTypeCode(type.getType());
             }
         }
 
@@ -310,12 +310,12 @@ public class AdjustmentNodeService {
             if (basis == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, basis null, wrong ----------");
             } else {
-                node.setAdjustmentBasis(basis);
+                node.setAdjustmentBasisCode(basis.getAdjustmentBasisName());
             }
             if (basis.getAdjustmentCategory() == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, category null, wrong ----------");
             } else {
-                node.setAdjustmentCategory(basis.getAdjustmentCategory());
+                node.setAdjustmentCategoryCode(basis.getAdjustmentCategory().getCode());
             }
         }
 
@@ -324,7 +324,7 @@ public class AdjustmentNodeService {
             if (type == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, type null, wrong ----------");
             } else {
-                node.setAdjustmentType(type);
+                node.setAdjustmentTypeCode(type.getType());
             }
         }
 
@@ -442,7 +442,7 @@ public class AdjustmentNodeService {
 //    }
 
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-        if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
+        if (Linear.getValue().equals(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, linear adjustment");
             if (parameterRequest.getLmf() != null) {
                 if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -454,7 +454,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
             }
         }
-        else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
+        else if (EEFFrequency.getValue().equals(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}",EEFFrequency.getValue());
             if (parameterRequest.getRpmf() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -466,7 +466,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
             }
         }
-        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
+        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
@@ -478,7 +478,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
@@ -490,7 +490,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
+        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAROEP.getValue().equals(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}",NONLINEARRETURNEVENTPERIOD.getValue());
             if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                 for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {

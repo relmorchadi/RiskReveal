@@ -269,7 +269,7 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
 
-        if (adjustmentNode.getAdjustmentCategory() == null) {
+        if (adjustmentNode.getAdjustmentCategoryCode() == null) {
             log.info("------ adjustmentNode.getAdjustmentCategory() null, node is final or pure, no adjustment ------");
             return null;
         }
@@ -443,13 +443,13 @@ public class AdjustmentNodeProcessingService {
 //
 
     private List<PLTLossData> calculateProcessing(AdjustmentNode node, List<PLTLossData> pltLossData) throws RRException {
-        if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
+        if (Linear.getValue().equals(node.getAdjustmentTypeCode())) {
             ScalingAdjustmentParameter adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.linearAdjustement(pltLossData, adjustmentScalingParameter.getAdjustmentFactor(), node.getCapped());
-        } else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
+        } else if (EEFFrequency.getValue().equals(node.getAdjustmentTypeCode())) {
             ScalingAdjustmentParameter adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getAdjustmentFactor()); // getRpmf() la gi
-        } else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
+        } else if (NONLINEAROEP.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
             // TODO getPeatData
@@ -457,7 +457,7 @@ public class AdjustmentNodeProcessingService {
 //            return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
 //         } else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
 //            return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
-        } else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+        } else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = adjustmentReturnPeriodBandingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
         } else {
