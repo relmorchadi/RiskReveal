@@ -11,7 +11,6 @@ import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.enums.StatisticsType;
 import com.scor.rr.domain.EPCurveHeaderEntity;
 import com.scor.rr.domain.LossDataHeaderEntity;
-import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RLSourceEpHeader;

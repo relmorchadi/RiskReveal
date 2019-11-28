@@ -1,67 +1,93 @@
 package com.scor.rr.domain;
 
-
-import com.scor.rr.domain.enums.StatisticMetric;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
-@Data
 @Entity
 @Table(name = "SummaryStatisticHeader")
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class SummaryStatisticHeaderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SummaryStatisticHeaderId")
     private Long summaryStatisticHeaderId;
-    private Integer entity;
-    private String lossDataType;
+
+    @Column(name = "LossDataType")
+    private Integer lossDataType;
+
+    @Column(name = "LossDataId")
     private Long lossDataId;
-    private String financialPerspective;
-    private Double purePremium;
-    private String currency;
-    private Double standardDeviation;
-    private StatisticMetric metric;
-    private Double cov;
-    private Double skewness;
-    private Double kurtosis;
-    private String ePSFilePath;
-    private String ePSFileName;
-    private Double oEP10;
-    private Double oEP50;
-    private Double oEP100;
-    private Double oEP250;
-    private Double oEP500;
-    private Double oEP1000;
-    private Double aEP10;
-    private Double aEP50;
-    private Double aEP100;
-    private Double aEP250;
-    private Double aEP500;
-    private Double aEP1000;
 
+    @Column(name = "Entity")
+    private Integer entity;
 
-    public SummaryStatisticHeaderEntity(Integer entity, String financialPerspective, Double cov, Double standardDeviation
-            , Double purePremium, String lossDataType, Long lossDataId, String ePSFileName, String ePSFilePath) {
-        this.entity = entity;
-        this.lossDataType = lossDataType;
-        this.lossDataId = lossDataId;
-        this.financialPerspective = financialPerspective;
-        this.purePremium = purePremium;
-        this.standardDeviation = standardDeviation;
-        this.cov = cov;
-        this.ePSFilePath = ePSFilePath;
-        this.ePSFileName = ePSFileName;
-    }
+    @Column(name = "FinancialPerspective")
+    private Integer financialPerspective;
 
-    public SummaryStatisticHeaderEntity(SummaryStatisticHeaderEntity summaryStatisticHeaderEntity) {
-        this.entity = summaryStatisticHeaderEntity.getEntity();
-        this.financialPerspective = summaryStatisticHeaderEntity.getFinancialPerspective();
-        this.lossDataType = summaryStatisticHeaderEntity.getLossDataType();
-    }
+    @Column(name = "PurePremium")
+    private Integer purePremium;
+
+    @Column(name = "Currency")
+    private Integer currency;
+
+    @Column(name = "StandardDeviation")
+    private Integer standardDeviation;
+
+    @Column(name = "Cov")
+    private Integer cov;
+
+    @Column(name = "Skewness")
+    private Integer skewness;
+
+    @Column(name = "Kurtosis")
+    private Integer kurtosis;
+
+    @Column(name = "EPSFilePath")
+    private Integer ePSFilePath;
+
+    @Column(name = "EPSFileName")
+    private Integer ePSFileName;
+
+    @Column(name = "OEP10")
+    private Integer oep10;
+
+    @Column(name = "OEP50")
+    private Integer oep50;
+
+    @Column(name = "OEP100")
+    private Integer oep100;
+
+    @Column(name = "OEP250")
+    private Integer oep250;
+
+    @Column(name = "OEP500")
+    private Integer oep500;
+
+    @Column(name = "OEP1000")
+    private Integer oep1000;
+
+    @Column(name = "AEP10")
+    private Integer aep10;
+
+    @Column(name = "AEP50")
+    private Integer aep50;
+
+    @Column(name = "AEP100")
+    private Integer aep100;
+
+    @Column(name = "AEP250")
+    private Integer aep250;
+
+    @Column(name = "AEP500")
+    private Integer aep500;
+
+    @Column(name = "AEP1000")
+    private Integer aep1000;
+
 }

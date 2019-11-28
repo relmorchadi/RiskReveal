@@ -15,7 +15,10 @@ public class PublicationPricingForeWriterEntity {
     @Id
     @Column(name = "PublicationPricingForeWriterEntityId", nullable = false)
     private Long publicationPricingForeWriterEntityId;
-    @Basic
+
+    @Column(name = "Entity")
+    private Integer entity;
+
     @Column(name = "PLTHeaderId")
     private Long pltHeaderId;
 

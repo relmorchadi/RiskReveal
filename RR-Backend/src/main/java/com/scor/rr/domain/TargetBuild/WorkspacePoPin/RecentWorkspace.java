@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "RecentWorkspace", schema = "tb")
+@Table(name = "RecentWorkspace")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

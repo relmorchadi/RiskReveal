@@ -1,23 +1,26 @@
-package com.scor.rr.domain.TargetBuild;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
-@Table(name = "xActPublication")
+@Table(name = "PublicationPricingxAct")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class xActPublication {
+public class PublicationPricingxAct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "xActPublicationId")
-    private Long xActPublicationId;
+    @Column(name = "PublicationPricingxActId")
+    private Long publicationPricingxActId;
 
     @Column(name = "Entity")
     private Integer entity;
