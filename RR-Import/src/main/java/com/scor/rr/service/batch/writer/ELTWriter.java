@@ -4,9 +4,9 @@ import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
-import com.scor.rr.repository.LossDataHeaderRepository;
+import com.scor.rr.repository.LossDataHeaderEntityRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
@@ -39,7 +39,7 @@ public class ELTWriter extends AbstractWriter {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private LossDataHeaderRepository lossDataHeaderRepository;
+    private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
     @Value("${ihub.treaty.out.path}")
     private String iHub;
@@ -128,10 +128,10 @@ public class ELTWriter extends AbstractWriter {
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
             LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
-            lossDataHeaderRepository.save(sourceRRLT);
+            lossDataHeaderEntityRepository.save(sourceRRLT);
 
             LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
-            lossDataHeaderRepository.save(conformedRRLT);
+            lossDataHeaderEntityRepository.save(conformedRRLT);
 
             log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
 

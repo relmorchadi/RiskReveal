@@ -7,7 +7,7 @@ import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.ELTLossnBetaFunction;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;

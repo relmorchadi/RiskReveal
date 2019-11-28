@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SummaryStatisticHeader {
+public class SummaryStatisticHeaderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

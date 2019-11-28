@@ -3,7 +3,7 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
-import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
+import com.scor.rr.domain.reference.ExposureSummaryConformerReferenceEntity;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLPortfolio;
@@ -482,7 +482,7 @@ public class ExposureSummaryExtractor {
                  * TODO : ponder a way to propagate the sourceSystem/vendor/version from
                  * the up layer
                  */
-                ExposureSummaryConformerReference ref = exposureSummaryConformerReferenceRepository.
+                ExposureSummaryConformerReferenceEntity ref = exposureSummaryConformerReferenceRepository.
                         findBySourceVendorAndSourceSystemAndVersionAndAxisConformerAliasAndInputCode("RMS", "RISKLINK", "", axisConformerDefinition.getAxisConformerAlias(), value);
                 if (ref != null) {
                     value = ref.getOutputCode();

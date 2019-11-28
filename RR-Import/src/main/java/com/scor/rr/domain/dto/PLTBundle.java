@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

@@ -6,8 +6,8 @@ import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
-import com.scor.rr.domain.model.AnalysisIncludedTargetRAPEntity;
-import com.scor.rr.domain.model.LossDataHeaderEntity;
+import com.scor.rr.domain.AnalysisIncludedTargetRAPEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.reference.RegionPeril;
 import com.scor.rr.domain.riskLink.ModellingSystemInstance;
 import com.scor.rr.domain.riskLink.RlPortfolioSelection;
@@ -61,7 +61,7 @@ public class RegionPerilExtractor {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private TargetrapRepository targetRAPRepository;
+    private TargetRapRepository targetRAPRepository;
 
     @Autowired
     private AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
