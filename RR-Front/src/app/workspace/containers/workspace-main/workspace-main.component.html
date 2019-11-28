@@ -25,7 +25,7 @@
             <div class="row tab-detail p-2 header-tab-wrapper">
               <div class="detail-wrapper">
                 <button (click)="patchWorkspaceDetail(wsIdentifier)"
-                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
+                        class="ml-4 mr-3 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
                   <i *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" nz-icon style="color: #16617a;font-size: 14px;"
                      type="down"
@@ -145,11 +145,10 @@
                       <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.contractDatasource}}</span>
                     </div>
                   </div>
-                  <div style="padding-left: 15px; border-left: 1px solid rgba(255,255,255,0.5); width: 60%" class="flex-horizontal-sb-layout">
+                  <div class="flex-horizontal-sb-layout workspace-treaty-date-wrapper">
                     <div style="display:flex; width: 40%">
-                      <i style="font-size: 1.6em;"
-                         class="icon-calendar-alt mb-4"></i>
-                      <div style="display:flex; flex-direction: column; padding-left: 15px;">
+                      <i class="icon-calendar-alt mb-4"></i>
+                      <div class="workspace-date-menu flex-vertical-layout">
                         <span class="d-block tab-metadata-title">Inception Date :</span>
                         <span
                           class="d-block tab-metadata-value">{{data[wsIdentifier]?.inceptionDate | date:'dd/MM/yyyy'}}</span>
@@ -161,7 +160,7 @@
                     <div  style="border-left: 1px solid rgba(255,255,255,0.5); width: 60%;" class="flex-vertical-layout"
                           *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">
                       <span style="line-height: 17px; padding: 0 0 6px 15px" class="tab-metadata-title">Treaty Section :</span>
-                      <ul class="treaty-list" style="padding-left: 20px;">
+                      <ul class="treaty-list">
                         <li
                           *ngFor="let section of sliceContent(data[wsIdentifier]?.treatySections, state?.sliceValidator)">
                           {{section}}

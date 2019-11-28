@@ -129,6 +129,7 @@
 
 .span-detail {
   text-align: center;
+  padding-left: 10px;
   margin-top: 4px;
   color: #f8e71c;
   font-size: 11px;
@@ -609,6 +610,24 @@
     width: 50%;
     padding-left: 52px;
     padding-right: 0;
+
+    .treaty-list {
+      padding: 0 5px 0 15px;
+    }
+
+    .workspace-treaty-date-wrapper {
+      padding-left: 15px;
+      border-left: 1px solid rgba(255,255,255,0.5);
+      width: 60%;
+
+      .workspace-date-menu {
+        padding-left: 15px;
+      }
+
+      .icon-calendar-alt {
+        font-size:  1.6em;
+      }
+    }
   }
 
   .workspace-menu-header-right {
@@ -617,7 +636,38 @@
   }
 
   @media screen and (max-width: 1250px) and (min-width: 995px) {
+    .workspace-menu-header-left {
+      padding-left: 10px;
 
+      .workspace-treaty-date-wrapper {
+        padding-left: 7px;
+
+        .workspace-date-menu {
+          padding-left: 7px;
+        }
+      }
+
+      .tab-metadata-title {
+        font-size: 11px;
+      }
+
+      .icon-calendar-alt {
+        padding-top: 5px;
+        font-size: 1.3em !important;
+      }
+
+      .tab-metadata-value {
+        font-size: 10px;
+      }
+
+      .treaty-list {
+        padding: 0 5px 0 10px;
+      }
+
+      .treaty-list {
+        font-size: 10px;
+      }
+    }
   }
 
   @media screen and (max-width: 995px) {
@@ -625,12 +675,11 @@
 
     .workspace-menu-header-left {
       width: 100%;
-      padding-left: 61px;
     }
 
     .workspace-menu-header-right {
-      width: 100%;
-      padding-left: 61px;
+      width: 90%;
+      padding-left: 52px;
       margin-top: 0;
     }
   }
