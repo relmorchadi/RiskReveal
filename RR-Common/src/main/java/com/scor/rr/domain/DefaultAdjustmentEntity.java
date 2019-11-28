@@ -6,8 +6,9 @@ import java.util.Objects;
 @javax.persistence.Entity
 @Table(name = "DefaultAdjustment")
 public class DefaultAdjustmentEntity {
-    private String engineType;
+
     private int defaultAdjustmentId;
+    private String engineType;
     private MarketChannelEntity marketChannel;
     private TargetRapEntity targetRap;
     private Integer entity;

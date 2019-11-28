@@ -1,5 +1,6 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.domain.enums.StatisticMetric;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,28 +20,31 @@ public class SummaryStatisticHeaderEntity {
     private Long summaryStatisticHeaderId;
 
     @Column(name = "LossDataType")
-    private Integer lossDataType;
+    private String lossDataType;
 
     @Column(name = "LossDataId")
     private Long lossDataId;
 
     @Column(name = "Entity")
-    private Integer entity;
+    private Long entity;
 
     @Column(name = "FinancialPerspective")
-    private Integer financialPerspective;
+    private String financialPerspective;
 
     @Column(name = "PurePremium")
-    private Integer purePremium;
+    private Double purePremium;
 
-    @Column(name = "Currency")
-    private Integer currency;
+    @Column(name = "Currency", length = 3)
+    private String currency;
 
     @Column(name = "StandardDeviation")
-    private Integer standardDeviation;
+    private Double standardDeviation;
+
+//    @Column(name = "Metric")
+//    private StatisticMetric metric;
 
     @Column(name = "Cov")
-    private Integer cov;
+    private Double cov;
 
     @Column(name = "Skewness")
     private Integer skewness;
@@ -49,45 +53,63 @@ public class SummaryStatisticHeaderEntity {
     private Integer kurtosis;
 
     @Column(name = "EPSFilePath")
-    private Integer ePSFilePath;
+    private String ePSFilePath;
 
     @Column(name = "EPSFileName")
-    private Integer ePSFileName;
+    private String ePSFileName;
 
     @Column(name = "OEP10")
-    private Integer oep10;
+    private Double oep10;
 
     @Column(name = "OEP50")
-    private Integer oep50;
+    private Double oep50;
 
     @Column(name = "OEP100")
-    private Integer oep100;
+    private Double oep100;
 
     @Column(name = "OEP250")
-    private Integer oep250;
+    private Double oep250;
 
     @Column(name = "OEP500")
-    private Integer oep500;
+    private Double oep500;
 
     @Column(name = "OEP1000")
-    private Integer oep1000;
+    private Double oep1000;
 
     @Column(name = "AEP10")
-    private Integer aep10;
+    private Double aep10;
 
     @Column(name = "AEP50")
-    private Integer aep50;
+    private Double aep50;
 
     @Column(name = "AEP100")
-    private Integer aep100;
+    private Double aep100;
 
     @Column(name = "AEP250")
-    private Integer aep250;
+    private Double aep250;
 
     @Column(name = "AEP500")
-    private Integer aep500;
+    private Double aep500;
 
     @Column(name = "AEP1000")
-    private Integer aep1000;
+    private Double aep1000;
 
+    public SummaryStatisticHeaderEntity(Long entity, String financialPerspective, Double cov, Double standardDeviation
+            , Double purePremium, String lossDataType, Long lossDataId, String ePSFileName, String ePSFilePath) {
+        this.entity = entity;
+        this.lossDataType = lossDataType;
+        this.lossDataId = lossDataId;
+        this.financialPerspective = financialPerspective;
+        this.purePremium = purePremium;
+        this.standardDeviation = standardDeviation;
+        this.cov = cov;
+        this.ePSFilePath = ePSFilePath;
+        this.ePSFileName = ePSFileName;
+    }
+
+    public SummaryStatisticHeaderEntity(SummaryStatisticHeaderEntity summaryStatisticHeaderEntity) {
+        this.entity = summaryStatisticHeaderEntity.getEntity();
+        this.financialPerspective = summaryStatisticHeaderEntity.getFinancialPerspective();
+        this.lossDataType = summaryStatisticHeaderEntity.getLossDataType();
+    }
 }

@@ -2,19 +2,14 @@ package com.scor.rr.service.batch;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.scor.rr.domain.AnalysisEpCurves;
-import com.scor.rr.domain.AnalysisSummaryStats;
-import com.scor.rr.domain.RmsExchangeRate;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.enums.StatisticsType;
-import com.scor.rr.domain.EPCurveHeaderEntity;
-import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RLSourceEpHeader;
-import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -289,7 +284,7 @@ public class EpCurveExtractor {
             //@TODO Review
             String fileName = makeEpSummaryStatFileName(fp, new Date(), ".bin");
             BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(summaryStats, fileName);
-            return new SummaryStatisticHeaderEntity(1, fp, summaryStats.getCov(), summaryStats.getStdDev(),
+            return new SummaryStatisticHeaderEntity(1L, fp, summaryStats.getCov(), summaryStats.getStdDev(),
                     summaryStats.getPurePremium(), StatisticsType.ELT.getCode(), lossDataHeaderId, fileName, file.getPath());
         }).collect(toList());
     }

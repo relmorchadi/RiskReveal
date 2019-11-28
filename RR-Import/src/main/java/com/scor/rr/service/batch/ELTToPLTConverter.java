@@ -300,7 +300,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             scorPltHeaderEntity.setCurrencyid(lossDataHeaderEntity.getCurrency());
             scorPltHeaderEntity.setTargetRAPId(targetRapEntity.getTargetRAPId());
             scorPltHeaderEntity.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
-            scorPltHeaderEntity.setRrAnalysisId(modelAnalysisEntity.getRrAnalysisId());
+            scorPltHeaderEntity.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
             scorPltHeaderEntity.setCloningSourceId(null);
             scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRapEntities.indexOf(targetRapEntity)); // FIXME: 16/07/2016
             scorPltHeaderEntity.setCreatedDate(new Date());
