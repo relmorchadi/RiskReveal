@@ -56,18 +56,18 @@ public class InuringGroupingService {
                 String sign = "-";
 
                 List<File> fileList = new ArrayList<>();
-                File file = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
+                File file = new File("C:\\GMB-FOLDER\\temp1\\1.bin");
                 File file2 = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
                 File file4 = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
                 File file5 = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
                 File file6 = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
                 File file3 = new File("C:\\GMB-FOLDER\\processed\\plt6.bin");
                 fileList.add(file);
-                fileList.add(file2);
-                fileList.add(file3);
-                fileList.add(file4);
-                fileList.add(file5);
-                fileList.add(file6);
+//                fileList.add(file2);
+//                fileList.add(file3);
+//                fileList.add(file4);
+//                fileList.add(file5);
+//                fileList.add(file6);
 
 //                pltFileReader.read(fileList);
 

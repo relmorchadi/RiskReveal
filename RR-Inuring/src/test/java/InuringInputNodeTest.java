@@ -118,8 +118,8 @@ public class InuringInputNodeTest {
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
-        when(scorpltheaderRepository.findByPltHeaderId(anyInt())).thenAnswer(plt -> {
-            int id = plt.getArgument(0);
+        when(scorpltheaderRepository.findByPltHeaderId(anyLong())).thenAnswer(plt -> {
+            long id = plt.getArgument(0);
             return id == PLT_ID_NOT_FOUND ? null : new PltHeaderEntity();
         });
 

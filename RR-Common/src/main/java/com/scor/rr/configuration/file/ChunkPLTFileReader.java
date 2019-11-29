@@ -6,6 +6,7 @@ import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -21,10 +22,20 @@ import java.util.*;
 @Component
 public class ChunkPLTFileReader {
 
+    @Autowired
+    private PLTFileWriter pltFileWriter;
+
     public Map<Integer, List<PLTLossData>> read(List<File> files) throws RRException {
 
         Map<Integer, List<PLTLossData>> map = new TreeMap<>();
-        int i = 0;
+        List<Integer> listOfPeriods = new ArrayList<>();
+        List<PLTLossData> simPeriodPlt = new ArrayList<>();
+        List<Integer> periodIDs = new ArrayList<>();
+        int idOfInsertion = 0;
+
+        Map<Integer, List<List<Double>>> contributionMatrixMap = new TreeMap<>();
+        List<List<Double>> contributionMatrix = new ArrayList<>();
+
 
         for (File file : files) {
             if (file == null || !file.exists())
@@ -32,34 +43,43 @@ public class ChunkPLTFileReader {
             if (!"bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
                 throw new PLTFileExtNotSupportedException();
             try {
-                byte[] fileBytes = Files.readAllBytes((file.toPath()));
-                StringBuilder text = new StringBuilder();
-                ByteBuffer ib = ByteBuffer.wrap(fileBytes);
+                FileChannel fc = new FileInputStream(file).getChannel();
+                ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
                 ib.order(ByteOrder.LITTLE_ENDIAN);
-//                if (fileBytes.size() % 26 != 0)
-//                    throw new PLTFileCorruptedException();
+                if (fc.size() % 26 != 0)
+                    throw new PLTFileCorruptedException();
 
-                int periodID = 0;
+                int phase = 0;
+                PLTLossData lossData = new PLTLossData();
+
                 while (ib.hasRemaining()) {
-                    int period = ib.getInt();
-                    int eventId = ib.getInt();
-                    long eventDate = ib.getLong();
-                    short seq = ib.getShort();
-                    float exposure = ib.getFloat();
-                    float loss = ib.getFloat();
-                    PLTLossData lossData = new PLTLossData(period, eventId, eventDate, seq, exposure, loss);
 
-                    if (period == periodID) {
-                        List<PLTLossData> list = map.get(period);
-                        Field a = PLTLossData.class.getDeclaredField("simPeriod");
-                        list = ggg(list, list, lossData, a, i);
-                        map.put(period, list);
-                    } else {
-                        periodID = period;
-                        List<PLTLossData> pltLossDatas = new ArrayList<>();
-                        pltLossDatas.add(lossData);
-                        map.put(period, pltLossDatas);
+                     lossData = buildPLTrow(lossData,ib);
+                    int period = lossData.getSimPeriod();
+                    int rowPhase = (period/ 500) + 1;
+
+                    if( phase == rowPhase ){
+                        workTheMap(map, period, lossData);
                     }
+                    else{
+                        if(phase != 0) {   writeMap(map, phase);}
+
+                        phase = rowPhase;
+
+                        File getChunkPlt = new File("C:\\GMB-FOLDER\\temp1\\" + (rowPhase) + ".bin");
+                        if (getChunkPlt.exists()) {
+                            map = readChunkedPltIntoMap(getChunkPlt);
+                            workTheMap(map, period , lossData);
+                    }else{
+                            List<PLTLossData> pltLossDatas = new ArrayList<>();
+                            pltLossDatas.add(lossData);
+                            map.put(period, pltLossDatas);
+                        }
+                    }
+                }
+
+                if (map.size() != 0) {
+                    writeMap(map, phase);
                 }
             } catch (IOException e) {
                 throw new PLTFileCorruptedException();
@@ -67,13 +87,28 @@ public class ChunkPLTFileReader {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
             }
-            i = 5;
         }
         return map;
     }
 
-    private List<PLTLossData> ggg(List<PLTLossData> parentTarget, List<PLTLossData> target, PLTLossData data, Field field, int i) throws IllegalAccessException, NoSuchFieldException {
+    private void workTheMap(Map<Integer,List<PLTLossData>> map , int period, PLTLossData lossData) throws NoSuchFieldException, IllegalAccessException {
+        if (map.containsKey(period)) {
+            List<PLTLossData> list = map.get(period);
+            Field a = PLTLossData.class.getDeclaredField("eventId");
+            list = ggg(list, list, lossData, a);
+            map.put(period, list);
+        } else {
+            List<PLTLossData> pltLossDatas = new ArrayList<>();
+            pltLossDatas.add(lossData);
+            map.put(period, pltLossDatas);
+        }
+    }
+
+
+    private List<PLTLossData> ggg(List<PLTLossData> parentTarget, List<PLTLossData> target, PLTLossData data, Field field) throws IllegalAccessException, NoSuchFieldException {
         field.setAccessible(true);
         PLTLossData lastOgj = new PLTLossData();
         for (PLTLossData outcomePltLossData : target) {
@@ -81,13 +116,13 @@ public class ChunkPLTFileReader {
                 switch (field.getName()) {
                     case "simPeriod":
                         Field b = PLTLossData.class.getDeclaredField("eventId");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, b, i);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, b);
                     case "eventId":
                         Field c = PLTLossData.class.getDeclaredField("eventDate");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, c, i);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, c);
                     case "eventDate":
                         Field d = PLTLossData.class.getDeclaredField("seq");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, d, i);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, d);
                     default:
                         int index = parentTarget.indexOf(outcomePltLossData);
 
@@ -106,6 +141,15 @@ public class ChunkPLTFileReader {
         return parentTarget;
     }
 
+    private void writeMap(Map<Integer, List<PLTLossData>> map, int phase) throws RRException {
+        List<PLTLossData> writeList = new ArrayList<>();
+        for (Map.Entry<Integer, List<PLTLossData>> entry : map.entrySet()) {
+            writeList.addAll(entry.getValue());
+        }
+        pltFileWriter.write(writeList, new File("C:\\GMB-FOLDER\\temp1\\" + (phase) + ".bin"));
+        map.clear();
+    }
+
     private List<PLTLossData> getPLT(List<PLTLossData> target, int i, Object val, Field field) throws IllegalAccessException {
         field.setAccessible(true);
         List<PLTLossData> newTarget = new ArrayList<>();
@@ -121,26 +165,57 @@ public class ChunkPLTFileReader {
         return newTarget;
     }
 
-    public void testRead(File file) throws IOException {
-        byte[] fileBytes = Files.readAllBytes((file.toPath()));
+    private Map<Integer, List<PLTLossData>> readChunkedPltIntoMap(File file) throws PLTFileCorruptedException, PLTFileNotFoundException, PLTFileExtNotSupportedException {
+        Map<Integer, List<PLTLossData>> map = new TreeMap<>();
 
-        StringBuilder text = new StringBuilder();
-        ByteBuffer ib = ByteBuffer.wrap(fileBytes);
-        ib.order(ByteOrder.LITTLE_ENDIAN);
-        List<PLTLossData> listTest = new ArrayList<>();
+        if (file == null || !file.exists())
+            throw new PLTFileNotFoundException();
+        if (!"bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
+            throw new PLTFileExtNotSupportedException();
+        try {
+            FileChannel fc = new FileInputStream(file).getChannel();
+            ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            ib.order(ByteOrder.LITTLE_ENDIAN);
+            if (fc.size() % 26 != 0)
+                throw new PLTFileCorruptedException();
 
-        while (ib.hasRemaining()) {
-            int period = ib.getInt();
-            int eventId = ib.getInt();
-            long eventDate = ib.getLong();
-            short seq = ib.getShort();
-            float exposure = ib.getFloat();
-            float loss = ib.getFloat();
-            PLTLossData lossData = new PLTLossData(period, eventId, eventDate, seq, exposure, loss);
-            listTest.add(lossData);
+            PLTLossData lossData = new PLTLossData();
+
+            while (ib.hasRemaining()) {
+                PLTLossData lossData1 = buildPLTrow(lossData,ib);
+                int period = lossData1.getSimPeriod();
+
+                if (map.containsKey(period)) {
+                    List<PLTLossData> list = map.get(period);
+                    list.add(lossData);
+                    map.put(period, list);
+                } else {
+                    List<PLTLossData> pltLossDatas = new ArrayList<>();
+                    pltLossDatas.add(lossData);
+                    map.put(period, pltLossDatas);
+                }
+            }
+        } catch (IOException e) {
+            throw new PLTFileCorruptedException();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
         }
-        System.out.println("");
 
+        return map;
 
     }
+
+    private PLTLossData buildPLTrow(PLTLossData pltLossData, ByteBuffer ib) throws CloneNotSupportedException {
+        PLTLossData pltLossData1 = (PLTLossData) pltLossData.clone();
+        pltLossData1.setSimPeriod(ib.getInt());
+        pltLossData1.setEventId( ib.getInt());
+        pltLossData1.setEventDate(ib.getLong());
+        pltLossData1.setSeq(ib.getShort());
+        pltLossData1.setMaxExposure( ib.getFloat());
+        pltLossData1.setLoss(ib.getFloat());
+
+        return pltLossData1;
+    }
 }
+
+

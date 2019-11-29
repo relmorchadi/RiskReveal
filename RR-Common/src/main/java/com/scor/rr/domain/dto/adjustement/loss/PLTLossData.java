@@ -3,7 +3,7 @@ package com.scor.rr.domain.dto.adjustement.loss;
 
 import java.util.Objects;
 
-public class PLTLossData {
+public class PLTLossData implements Cloneable {
 
     private int simPeriod;
     private int eventId;
@@ -19,6 +19,9 @@ public class PLTLossData {
         this.seq = seq;
         this.maxExposure = maxExposure;
         this.loss = loss;
+    }
+    public Object clone()throws CloneNotSupportedException{
+        return (PLTLossData)super.clone();
     }
 
     public PLTLossData(PLTLossData lossData) {
