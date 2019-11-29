@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Objects;
 
-@Entity
-@Table(name = "RREdmRdm")
+//@Entity
+//@Table(name = "RREdmRdm")
 public class EdmRdm {
 
     @Id

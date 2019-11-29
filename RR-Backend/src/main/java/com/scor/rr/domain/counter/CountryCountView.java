@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "COUNTRY_COUNT_VIEW")
+@Table(name = "vw_Country_Count")
 public class CountryCountView {
     
     @Id

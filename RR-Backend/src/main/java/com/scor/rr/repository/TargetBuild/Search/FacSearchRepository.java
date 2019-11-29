@@ -1,4 +1,4 @@
-package com.scor.rr.repository;
+package com.scor.rr.repository.TargetBuild.Search;
 
 import com.scor.rr.domain.TargetBuild.Search.FacSearch;
 import org.springframework.data.jpa.repository.JpaRepository;
