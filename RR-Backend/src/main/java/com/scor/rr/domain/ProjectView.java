@@ -1,4 +1,4 @@
-package com.scor.rr.domain;
+//package com.scor.rr.domain;
 
 import javax.persistence.*;
 import java.io.Serializable;
