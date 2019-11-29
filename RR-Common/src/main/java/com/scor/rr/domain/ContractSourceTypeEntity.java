@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Contract")
+@Table(name = "ContractSourceType")
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContractSourceTypeEntity {
