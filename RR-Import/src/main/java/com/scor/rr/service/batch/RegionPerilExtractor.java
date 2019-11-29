@@ -1,6 +1,5 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.ModelPortfolio;
 import com.scor.rr.domain.ProjectImportRun;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
@@ -69,8 +68,8 @@ public class RegionPerilExtractor {
     @Autowired
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
 
-    @Autowired
-    private ModelPortfolioRepository modelPortfolioRepository;
+//    @Autowired
+//    private ModelPortfolioRepository modelPortfolioRepository;
 
     @Value("#{jobParameters['projectId']}")
     private Long projectId;
@@ -111,7 +110,7 @@ public class RegionPerilExtractor {
         // build RRAnalysis ------------------------------------------------------------
         Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds = new HashMap<>();
         Map<String, Long> fpRRAnalysis = new HashMap<>();
-        List<ModelPortfolio> modelPortfolios = new ArrayList<>();
+//        List<ModelPortfolio> modelPortfolios = new ArrayList<>();
 
         if (sourceResultIdsInput != null) {
             String[] sourceResultIds = sourceResultIdsInput.split(";");
@@ -275,30 +274,30 @@ public class RegionPerilExtractor {
                         modellingSystemInstanceRepository.findById(rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceId()).get();
 
 
-                ModelPortfolio modelPortfolio = new ModelPortfolio(null, rlPortfolioSelection.getProjectId(),
-                        new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRun.getProjectImportRunId(),
-                        rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
-                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),
-                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName(),
-                        modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion(),
-                        rlPortfolioSelection.getRlPortfolio().getEdmId(),
-                        rlPortfolioSelection.getRlPortfolio().getEdmName(),
-                        rlPortfolioSelection.getRlPortfolio().getPortfolioId(),
-                        rlPortfolioSelection.getRlPortfolio().getName(),
-                        rlPortfolioSelection.getRlPortfolio().getType(),
-                        "ALL",
-                        rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
-                        1.0d,
-                        rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
-                        rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
-                        rlPortfolioSelection.getRlPortfolio().getDescription(),
-                        rlPortfolioSelection.getRlPortfolio().getType(),
-                        rlPortfolioSelection.isImportLocationLevel()
-                );
-
-                modelPortfolios.add(modelPortfolioRepository.save(modelPortfolio));
+//                ModelPortfolio modelPortfolio = new ModelPortfolio(null, rlPortfolioSelection.getProjectId(),
+//                        new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRun.getProjectImportRunId(),
+//                        rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
+//                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),
+//                        modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getName(),
+//                        modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion(),
+//                        rlPortfolioSelection.getRlPortfolio().getEdmId(),
+//                        rlPortfolioSelection.getRlPortfolio().getEdmName(),
+//                        rlPortfolioSelection.getRlPortfolio().getPortfolioId(),
+//                        rlPortfolioSelection.getRlPortfolio().getName(),
+//                        rlPortfolioSelection.getRlPortfolio().getType(),
+//                        "ALL",
+//                        rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
+//                        1.0d,
+//                        rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
+//                        rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
+//                        rlPortfolioSelection.getRlPortfolio().getDescription(),
+//                        rlPortfolioSelection.getRlPortfolio().getType(),
+//                        rlPortfolioSelection.isImportLocationLevel()
+//                );
+//
+//                modelPortfolios.add(modelPortfolioRepository.save(modelPortfolio));
             }
-            transformationPackage.setModelPortfolios(modelPortfolios);
+//            transformationPackage.setModelPortfolios(modelPortfolios);
         }
     }
 

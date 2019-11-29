@@ -1,6 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
-import com.scor.rr.domain.GlobalViewSummary;
+//import com.scor.rr.domain.GlobalViewSummary;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -62,8 +62,8 @@ public class RLExposureSummaryItem {
 
     private Date rateDate;
 
-    @ManyToOne
-    @JoinColumn(name = "GlobalViewSummaryId")
-    private GlobalViewSummary globalViewSummary;
+//    @ManyToOne
+//    @JoinColumn(name = "GlobalViewSummaryId")
+//    private GlobalViewSummary globalViewSummary;
 
 }

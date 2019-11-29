@@ -60,7 +60,7 @@ public class ExchangeRateExtractor {
 
         for (Map.Entry<String, List<String>> entry : ccyInstanceMap.entrySet()) {
 
-            List<RmsExchangeRate> exList = rmsService.getRmsExchangeRates(/*entry.getKey()instanceId,*/ entry.getValue()/*ccyList*/);
+            List<RmsExchangeRate> exList = rmsService.getRmsExchangeRates(entry.getKey(), entry.getValue()/*ccyList*/);
             if (exList == null) {
                 log.debug("Error in extracting RMS Exchange Rates");
                 exList = new ArrayList<>();
