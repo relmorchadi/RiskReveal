@@ -11,9 +11,9 @@ public class InuringInputAttachedPLT {
     private long inuringInputAttachedPLTId;
     private int entity;
     private long inuringInputNodeId;
-    private int pltHeaderId;
+    private long pltHeaderId;
 
-    public InuringInputAttachedPLT(long inuringInputNodeId, int pltHeaderId) {
+    public InuringInputAttachedPLT(long inuringInputNodeId, long pltHeaderId) {
         this.entity = 1;
         this.inuringInputNodeId = inuringInputNodeId;
         this.pltHeaderId = pltHeaderId;
@@ -52,11 +52,11 @@ public class InuringInputAttachedPLT {
     }
 
     @Column(name = "PltHeaderId", nullable = false)
-    public int getPltHeaderId() {
+    public long getPltHeaderId() {
         return pltHeaderId;
     }
 
-    public void setPltHeaderId(int pltHeaderId) {
+    public void setPltHeaderId(long pltHeaderId) {
         this.pltHeaderId = pltHeaderId;
     }
 }

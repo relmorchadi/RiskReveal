@@ -18,7 +18,7 @@ public interface InuringContractLayerRepository extends JpaRepository<InuringCon
     void deleteByInuringContractLayerId(long contractLayerId);
     InuringContractLayer findByInuringContractLayerId(long inuringContractLayerId);
 
-    int countInuringContractLayerByInuringContractNodeId(long contractNodeId);
+    long countInuringContractLayerByInuringContractNodeId(long contractNodeId);
 
     List<InuringContractLayer> findByInuringContractNodeId(long inuringContractNodeId);
 

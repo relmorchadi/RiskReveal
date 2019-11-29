@@ -32,7 +32,7 @@ public class InuringGroupingService {
 
             for (Plts plt : request.getPlts()
             ) {
-                PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findByPltHeaderId((long)plt.getPltId());
+                PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findByPltHeaderId(plt.getPltId());
                 if (pltHeaderEntity == null) throw new InuringPltotFoundException(plt.getPltId());
 
                 File file = new File("C:\\GMB-FOLDER\\processed\\test_RR4.bin");

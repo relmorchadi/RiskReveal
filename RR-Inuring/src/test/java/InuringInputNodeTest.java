@@ -63,10 +63,10 @@ public class InuringInputNodeTest {
     private static long INURING_PACKAGE_ZERO_PLT_ID = 1;
     private static long INURING_PACKAGE_HAS_PLT_ID = 2;
 
-    private static int PLT_ID_NOT_FOUND = 0;
-    private static int PLT_ID_1 = 1;
-    private static int PLT_ID_2 = 2;
-    private static int PLT_ID_3 = 3;
+    private static long PLT_ID_NOT_FOUND = 0;
+    private static long PLT_ID_1 = 1;
+    private static long PLT_ID_2 = 2;
+    private static long PLT_ID_3 = 3;
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
