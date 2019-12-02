@@ -326,7 +326,7 @@ public class RegionPerilExtractor {
         rrLossTable.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
         rrLossTable.setCreatedDate(new Date());
         rrLossTable.setLossTableType("ELT");
-        rrLossTable.setFileDataFormat("Treaty");
+        rrLossTable.setFileDataFormat("TreatyView");
         rrLossTable.setOriginalTarget(RRLossTableType.SOURCE.getCode());
         rrLossTable.setCurrency(analysisCurrencyEntity.getCode()); // Source Currency
 
@@ -341,7 +341,7 @@ public class RegionPerilExtractor {
 //        conformedRRLT.setFileType(RRLossTable.FILE_TYPE_BIN); // TODO non c'est RMS
         conformedRRLT.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
         conformedRRLT.setLossTableType("ELT");
-        conformedRRLT.setFileDataFormat("Treaty");
+        conformedRRLT.setFileDataFormat("TreatyView");
         conformedRRLT.setOriginalTarget(RRLossTableType.CONFORMED.getCode());
         conformedRRLT.setCurrency(currencyEntity.getCode()); //  target currency
         // TODO fileName, filePath later

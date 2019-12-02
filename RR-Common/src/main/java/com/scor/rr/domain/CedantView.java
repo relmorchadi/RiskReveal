@@ -7,8 +7,8 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_VIEW")
-public class Cedant {
+@Table(name = "vw_Cedant")
+public class CedantView {
 
     @Id
     @Column(name = "id")
@@ -16,7 +16,7 @@ public class Cedant {
     @Column(name = "label")
     private String label;
 
-    public Cedant() {
+    public CedantView() {
     }
 
     public long getId() {
@@ -39,9 +39,9 @@ public class Cedant {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cedant cedant = (Cedant) o;
-        return id == cedant.id &&
-                Objects.equals(label, cedant.label);
+        CedantView cedantView = (CedantView) o;
+        return id == cedantView.id &&
+                Objects.equals(label, cedantView.label);
     }
 
     @Override

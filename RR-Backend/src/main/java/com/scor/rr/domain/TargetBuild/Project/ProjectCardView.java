@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectCardView")
+@Table(name = "vw_ProjectCard")
 @Data
 @Builder
 @AllArgsConstructor

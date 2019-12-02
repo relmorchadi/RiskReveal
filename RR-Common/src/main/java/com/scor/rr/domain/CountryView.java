@@ -7,8 +7,8 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "COUNTRY_VIEW")
-public class Country {
+@Table(name = "vw_Country")
+public class CountryView {
 
     @Id
     @Column(name = "id")
@@ -16,7 +16,7 @@ public class Country {
     @Column(name = "label")
     private String label;
 
-    public Country() {
+    public CountryView() {
     }
 
     public String getId() {
@@ -39,7 +39,7 @@ public class Country {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Country that = (Country) o;
+        CountryView that = (CountryView) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(label, that.label);
     }

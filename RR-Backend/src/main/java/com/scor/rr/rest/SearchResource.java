@@ -28,17 +28,17 @@ public class SearchResource {
     ShortCutService shortCutService;
 
     @GetMapping("treaty")
-    Page<Treaty> searchTreaty(@RequestParam String keyword, int size) {
+    Page<TreatyView> searchTreaty(@RequestParam String keyword, int size) {
         return searchService.getTreaty(keyword, size);
     }
 
     @GetMapping("cedant")
-    Page<Cedant> searchCedants(@RequestParam String keyword, int size) {
+    Page<CedantView> searchCedants(@RequestParam String keyword, int size) {
         return searchService.getCedants(keyword, size);
     }
 
     @GetMapping("country")
-    Page<Country> searchCountries(@RequestParam String keyword, int size) {
+    Page<CountryView> searchCountries(@RequestParam String keyword, int size) {
         return searchService.getCountryPeril(keyword, size);
     }
 

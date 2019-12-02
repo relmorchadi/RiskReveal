@@ -134,7 +134,7 @@ public class RiskRevealApplicationTests {
         edmPortfolioBasic.setNumber("Taiwan");
         edmPortfolioBasic.setName("All Lines, Taiwan, Ind 2017 TY AD2");
         edmPortfolioBasic.setCreated("2017-03-16 00:00:00.000");
-        edmPortfolioBasic.setDescription("By Country, All Lines");
+        edmPortfolioBasic.setDescription("By CountryView, All Lines");
         edmPortfolioBasic.setType("DET");
 /*      edmPortfolioBasic.setPeril("WS");
         edmPortfolioBasic.setAgSource("RMS 2017");
@@ -191,7 +191,7 @@ public class RiskRevealApplicationTests {
         edmPortfolio0.setNumber("Taiwan | All Lines, Taiwan, Ind 2017 TY AD2");
         edmPortfolio0.setName("All Lines, Taiwan, Ind 2017 TY AD2");
         edmPortfolio0.setCreated("2017-03-16 00:00:00.000");
-        edmPortfolio0.setDescription("By Country, All Lines");
+        edmPortfolio0.setDescription("By CountryView, All Lines");
         edmPortfolio0.setType("DET");
         //edmPortfolio0.setPeril(); for a null a value
         //edmPortfolio0.setAgSource();
@@ -206,7 +206,7 @@ public class RiskRevealApplicationTests {
         edmPortfolio1.setNumber("Taiwan, RES | RES, Taiwan, Ind 2017 TY AD2");
         edmPortfolio1.setName("RES, Taiwan, Ind 2017 TY AD2");
         edmPortfolio1.setCreated("2017-03-16 00:00:00.000");
-        edmPortfolio1.setDescription("By Country, By Line of Business");
+        edmPortfolio1.setDescription("By CountryView, By Line of Business");
         edmPortfolio1.setType("DET");
         //edmPortfolio1.setPeril(); for a null a value
         //edmPortfolio1.setAgSource();

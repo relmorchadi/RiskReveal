@@ -7,8 +7,8 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "TREATY_VIEW")
-public class Treaty {
+@Table(name = "vw_Treaty")
+public class TreatyView {
 
     @Id
     @Column(name = "id")
@@ -17,7 +17,7 @@ public class Treaty {
     @Column(name = "label")
     private String label;
 
-    public Treaty() {
+    public TreatyView() {
     }
 
     public String getId() {
@@ -40,9 +40,9 @@ public class Treaty {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Treaty treaty = (Treaty) o;
-        return Objects.equals(id, treaty.id) &&
-                Objects.equals(label, treaty.label);
+        TreatyView treatyView = (TreatyView) o;
+        return Objects.equals(id, treatyView.id) &&
+                Objects.equals(label, treatyView.label);
     }
 
     @Override

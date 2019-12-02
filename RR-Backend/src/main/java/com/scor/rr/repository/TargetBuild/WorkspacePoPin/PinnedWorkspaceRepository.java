@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface PinnedWorkspaceRepository extends JpaRepository<PinnedWorkspace, Long> {
 
-    @Procedure("togglePinnedWorkspace")
+    @Procedure("dbonew.usp_TogglePinnedWorkspace")
     void togglePinnedWorkspace(@Param("workspaceContextCode") String workspaceContextCode, @Param("workspaceUwYear") Integer workspaceUwYear, @Param("userId") Integer userId);
 }

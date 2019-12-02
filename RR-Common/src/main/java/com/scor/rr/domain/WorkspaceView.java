@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @IdClass(WorkspaceViewId.class)
-@Table(name = "WORKSPACE_VIEW")
+@Table(name = "vw_Workspace")
 public class WorkspaceView implements Serializable{
     @Id
     @Column(name = "UwYear")

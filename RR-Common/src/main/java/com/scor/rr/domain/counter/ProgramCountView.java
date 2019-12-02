@@ -7,15 +7,15 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "vw_Program")
-public class ProgramView {
+@Table(name = "vw_Program_Count")
+public class ProgramCountView {
     @Column(name = "count_occur")
     private Integer countOccur;
     @Id
     @Column(name = "label")
     private String label;
 
-    public ProgramView() {
+    public ProgramCountView() {
     }
 
     public Integer getCountOccur() {
@@ -39,7 +39,7 @@ public class ProgramView {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProgramView that = (ProgramView) o;
+        ProgramCountView that = (ProgramCountView) o;
         return Objects.equals(countOccur, that.countOccur) &&
                 Objects.equals(label, that.label);
     }

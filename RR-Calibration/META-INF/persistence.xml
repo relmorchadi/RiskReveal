@@ -12,14 +12,14 @@
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.PltHeaderEntity</class>
         <class>com.scor.rr.domain.ContractEntity</class>
-        <class>com.scor.rr.domain.Country</class>
+        <class>com.scor.rr.domain.CountryView</class>
         <class>com.scor.rr.domain.ProjectEntity</class>
         <class>com.scor.rr.domain.WorkspaceEntity</class>
         <class>com.scor.rr.domain.ReinstatementEntity</class>
         <class>com.scor.rr.domain.SectionEntity</class>
-        <class>com.scor.rr.domain.Cedant</class>
+        <class>com.scor.rr.domain.CedantView</class>
         <class>com.scor.rr.domain.WorkspaceYears</class>
-        <class>com.scor.rr.domain.Treaty</class>
+        <class>com.scor.rr.domain.TreatyView</class>
         <class>com.scor.rr.domain.WorkspaceView</class>
         <class>com.scor.rr.domain.RrAnalysisEntity</class>
         <class>com.scor.rr.domain.PortfolioView</class>

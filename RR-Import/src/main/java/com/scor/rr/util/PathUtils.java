@@ -44,8 +44,8 @@ public class PathUtils {
 
     public static String getPrefixDirectory(String clientName, Long clientId, String contractId, Integer uwYear, Long projectId) {
         List<String> items = new ArrayList<>();
-        items.add("Treaty");
-        items.add("Cedant");
+        items.add("TreatyView");
+        items.add("CedantView");
         if (clientName != null && clientId != null)
             items.add(new StringBuilder(clientName.replaceAll("[\\\\/:*?\"<>|]", "_")).append("-").append(clientId).toString());
         if (contractId != null)

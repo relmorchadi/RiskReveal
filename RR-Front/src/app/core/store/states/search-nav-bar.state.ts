@@ -452,6 +452,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   private searchLoader(keyword, table) {
+    console.log(keyword, table);
     return this._searchService.searchByTable( this._badgesService.clearString(this._badgesService.parseAsterisk(keyword)) || '', '5', table || '');
   }
 
