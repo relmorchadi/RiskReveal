@@ -33,20 +33,6 @@ public class RmsRessource {
         return ResponseEntity.ok(dataSourcs);
     }
 
-
-    @PostMapping("add-edm-rdm")
-    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
-        rmsService.addEdmRdms(dataSources, projectId, instanceId, instanceName);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("analysis-detail-scan")
-    public ResponseEntity<?> analysisDetailScan(@RequestBody List<AnalysisHeader> rlAnalysisList, @RequestParam Long projectId) {
-        rmsService.scanAnalysisDetail(rlAnalysisList, projectId);
-        return ResponseEntity.ok().build();
-    }
-
-
     @GetMapping("listRdmAnalysisBasic")
     public ResponseEntity<?> listRdmAnalysisBasic(@RequestParam(value = "id") Long id, @RequestParam(value = "name") String name) {
 
@@ -211,14 +197,5 @@ public class RmsRessource {
         return rmsService.getAnalysisModellingOptionSettings(null, rdmId, rdmName, analysisId);
     }
 
-    @PostMapping("saveSourceResults")
-    public ResponseEntity<?> saveSourceResults(@RequestBody List<SourceResultDto> sourceResultDtoList) {
-        try {
-            return new ResponseEntity<>(rmsService.saveSourceResults(sourceResultDtoList), HttpStatus.OK);
-        } catch (Exception ex) {
-            ex.printStackTrace();
 
-            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
