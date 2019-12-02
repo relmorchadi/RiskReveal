@@ -1,12 +1,5 @@
 package com.scor.rr.service.importprocess;
 
-import com.scor.rr.configuration.ConverterType;
-import com.scor.rr.configuration.TypeToConvert;
-import com.scor.rr.configuration.file.CopyFile;
-import com.scor.rr.configuration.utils.Status;
-import com.scor.rr.domain.RegionPerilEntity;
-import com.scor.rr.domain.UserRrEntity;
-import com.scor.rr.domain.dto.ImportFilePLTData;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.repository.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -16,29 +9,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.apache.commons.lang3.StringUtils.trim;
-
 @Service
 public class ImportFileService {
 
@@ -54,8 +35,8 @@ public class ImportFileService {
     @Autowired
     RegionPerilRepository regionperilRepository;
 
-    @Autowired
-    UserRrRepository userRrRepository;
+//    @Autowired
+//    UserRrRepository userRrRepository;
 
     //    public void copyFileToiHub(String path) throws IOException {
 //        File file = new File(path);
@@ -523,10 +504,10 @@ public class ImportFileService {
 //                        }
                     } else if ("UserName".equalsIgnoreCase(defaultMetadata.getMetadataAttribute())) {
                         if (importFileLossDataHeader.getMetadata().get("User") != null) {
-                            UserRrEntity user = userRrRepository.findByUserName(importFileLossDataHeader.getMetadata().get("User"));
-                            if (user != null) {
-                                value = user.getUserFirstName() + user.getUserLastName();
-                            }
+//                            UserRrEntity user = userRrRepository.findByUserName(importFileLossDataHeader.getMetadata().get("User"));
+//                            if (user != null) {
+//                                value = user.getUserFirstName() + user.getUserLastName();
+//                            }
                         }
                     }
                 }
