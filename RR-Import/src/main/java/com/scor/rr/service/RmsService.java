@@ -535,14 +535,13 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(rlDataSource);
     }
 
-    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
-        if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
-            return false;
+    public boolean extractLocationLevelExposureDetails(Long edmId, String edmName, String instance, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
 
         //TODO : Review this method with Viet
         Map<String, Object> dataQueryParams = new HashMap<>();
-        dataQueryParams.put("Edm_id", edm.getRlId());
-        dataQueryParams.put("Edm_name", edm.getName());
+//        dataQueryParams.put("Edm_id", edm.getRlId());
+        dataQueryParams.put("Edm_id", edmId);
+        dataQueryParams.put("Edm_name", edmName);
         dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
         dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
 
@@ -554,13 +553,13 @@ public class RmsService {
             dataQueryParams.put("ConformedCcy", modelPortfolio.getCurrency());
         }
 
-        List<GenericDescriptor> descriptors = extractSchema(edm.getInstanceId(), extractName);
+        List<GenericDescriptor> descriptors = extractSchema(instance, extractName);
 
         if (descriptors.isEmpty()) {
             logger.error("Error: retrieve no descriptors");
             return false;
         }
-        extractExposureToFile(edm.getInstanceId(), sqlQuery, dataQueryParams, descriptors, file);
+        extractExposureToFile(instance, sqlQuery, dataQueryParams, descriptors, file);
 
         return true;
     }
