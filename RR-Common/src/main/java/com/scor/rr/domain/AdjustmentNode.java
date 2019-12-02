@@ -19,7 +19,7 @@ public class AdjustmentNode {
 
 
     @ManyToOne
-    @JoinColumn(name = "Entity", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
     public EntityEntity getEntity() {
         return entity;
     }

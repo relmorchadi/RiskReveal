@@ -13,7 +13,7 @@ public class DefaultReturnPeriodBandingAdjustmentParameter {
     private double adjustmentFactor;
 
     @Id
-    @Column(name = "DefaultReturnPeriodBandingAdjustmentParameterId", nullable = false)
+    @Column(name = "DefaultAdjustmentParameterId", nullable = false)
     public Long getId() {
         return id;
     }
