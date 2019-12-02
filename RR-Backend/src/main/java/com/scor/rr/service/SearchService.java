@@ -132,16 +132,16 @@ public class SearchService {
 //        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
     }
 
-    public Page<Treaty> getTreaty(String keyword, int size) {
+    public Page<TreatyView> getTreaty(String keyword, int size) {
         return treatyRepository.findByLabelIgnoreCaseLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
-    public Page<Cedant> getCedants(String keyword, int size) {
+    public Page<CedantView> getCedants(String keyword, int size) {
         return cedantRepository.findByLabelIgnoreCaseLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
 
-    public Page<Country> getCountryPeril(String keyword, int size) {
+    public Page<CountryView> getCountryPeril(String keyword, int size) {
         return countryPerilRepository.findByLabelIgnoreCaseLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
@@ -321,7 +321,7 @@ public class SearchService {
 
     private void deleteTreatySearch(Long id) {
         if (!treatySearchRepository.existsById(id))
-            throw new RuntimeException("No available Treaty Saved Search with ID " + id);
+            throw new RuntimeException("No available TreatyView Saved Search with ID " + id);
         treatySearchItemRepository.deleteByTreatySearchId(id);
         treatySearchRepository.deleteById(id);
     }

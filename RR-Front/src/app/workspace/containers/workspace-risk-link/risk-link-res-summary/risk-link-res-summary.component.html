@@ -39,7 +39,7 @@
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
               <ng-container *ngFor="let col of columns">
-                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'">
+                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treatyView'">
                   <col [ngStyle]="{'width': col.width}">
                 </ng-container>
                 <ng-container *ngIf="col.visible && wsStatus === 'fac'">
@@ -51,7 +51,7 @@
           <ng-template let-columns pTemplate="header">
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'" pResizableColumn>
+                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treatyView'" pResizableColumn>
                   <ng-container *ngIf="col.type === 'selection'">
                     <label style="margin-top:20px" nz-checkbox [ngModel]="state.summaries.allChecked" (ngModelChange)="updateAllChecked($event, 'summaries')"
                            [nzIndeterminate]="state.summaries.indeterminate"></label>
@@ -113,7 +113,7 @@
           <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treaty'"  class="ui-resizable-column"
+                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treatyView'"  class="ui-resizable-column"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div *ngIf="col.type === 'selection'" class="">
                     <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
@@ -242,7 +242,7 @@
           <div class="header-title">Analysis Results</div>
         </div>
         <div class="body-wrapper-header-right-summary">
-          <ng-container *ngIf="wsStatus === 'treaty'">
+          <ng-container *ngIf="wsStatus === 'treatyView'">
             <button class="a-buttons-outlined-mini" style="margin: 0 10px 0 0" *ngIf="state.collapse.collapseAnalysis"> ADD TO CALIBRATION
             </button>
             <button class="a-buttons-outlined-mini" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
@@ -281,7 +281,7 @@
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
               <ng-container *ngFor="let col of columns">
-                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'">
+                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treatyView'">
                   <col [ngStyle]="{'width': col.width}">
                 </ng-container>
                 <ng-container *ngIf="col.visible && wsStatus === 'fac'">
@@ -293,7 +293,7 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'" pResizableColumn>
+                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treatyView'" pResizableColumn>
                   <ng-container *ngIf="col.type === 'selection'">
                     <label style="margin-top:20px" nz-checkbox [ngModel]="state.results.allChecked" (ngModelChange)="updateAllChecked($event, 'results')"
                            [nzIndeterminate]="state.results.indeterminate"></label>
@@ -357,7 +357,7 @@
           <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
             <tr [pContextMenuRow]="rowData">
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treaty'" class="ui-resizable-column"
+                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treatyView'" class="ui-resizable-column"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div class="" *ngIf="col.type === 'selection'">
                     <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"

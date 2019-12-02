@@ -169,7 +169,7 @@
 //    when
 //       $businessRulesBean : BusinessRulesBean( $map:inputData["domain"] == "TTY" )
 //    then
-//        modify ($businessRulesBean) {setOutputData("firstDir","Treaty")}
+//        modify ($businessRulesBean) {setOutputData("firstDir","TreatyView")}
 //end
 //
 //rule "pathElementsAccount"

@@ -63,7 +63,7 @@
                                 <ng-container *ngIf="filterSelected()?.projectType === 'fac'">
                                   {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - {{filterSelected()?.carStatus}}
                                 </ng-container>
-                                <ng-container *ngIf="filterSelected()?.projectType === 'treaty'">
+                                <ng-container *ngIf="filterSelected()?.projectType === 'treatyView'">
                                   {{filterSelected()?.name}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - Manual
                                 </ng-container>
                               </span>
@@ -78,7 +78,7 @@
                               <ng-container *ngIf="item.projectType === 'fac'">
                                 {{item?.id | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - {{item?.carStatus}}
                               </ng-container>
-                              <ng-container *ngIf="item.projectType === 'treaty'">
+                              <ng-container *ngIf="item.projectType === 'treatyView'">
                                 {{item?.name}} [{{item?.projectId | trimSecondaryFormat}}] - Manual
                               </ng-container>
                             </li>
@@ -159,9 +159,9 @@
                           class="d-block tab-metadata-value">{{data[wsIdentifier]?.expiryDate | date:'dd/MM/yyyy'}}</span>
                       </div>
                     </div>
-                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'" [nzSpan]="16">
+                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'treatyView'" [nzSpan]="16">
                       <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Treaty Section :</span>
-                      <ul class="treaty-list">
+                      <ul class="treatyView-list">
                         <li
                           *ngFor="let section of sliceContent(data[wsIdentifier]?.treatySections, state?.sliceValidator)">
                           {{section}}
@@ -174,7 +174,7 @@
                     </div>
                     <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'fac'" [nzSpan]="16">
                       <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Division :</span>
-                      <ul class="treaty-list">
+                      <ul class="treatyView-list">
                         <li *ngFor="let division of filterSelectedDivision()">
                           Division N°{{division}}
                         </li>
