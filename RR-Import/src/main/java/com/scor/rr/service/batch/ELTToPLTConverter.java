@@ -31,19 +31,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.scor.rr.util.PathUtils.makePLTFileName;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -285,7 +282,7 @@ public class ELTToPLTConverter extends AbstractWriter {
 
     private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRapEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
         LossDataHeaderEntity lossDataHeaderEntity = bundle.getConformedRRLT();
-        ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysisEntity();
+        ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysis();
 
         if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeaderEntity.getOriginalTarget())) {
             throw new IllegalStateException();

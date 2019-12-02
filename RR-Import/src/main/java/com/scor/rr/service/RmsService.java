@@ -5,7 +5,6 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisHeader;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.dto.SourceResultDto;
-import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.RLAnalysisRepository;
@@ -140,7 +139,7 @@ public class RmsService {
         return rdmAnalysis;
     }
 
-    public void scanAnalysisBasicForRdm(String instanceId, RlModelDataSource rdm) {
+    public void scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
         rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId,Long.parseLong(rdm.getRlId()), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {

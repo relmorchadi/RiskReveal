@@ -72,7 +72,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
 
             bundle.setModelingOptionsOfRRLT(options);
 
-            writeFile(bundle.getModelAnalysisEntity(), bundle.getConformedRRLT(), modelingOptions);
+            writeFile(bundle.getModelAnalysis(), bundle.getConformedRRLT(), modelingOptions);
 
             log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
         }

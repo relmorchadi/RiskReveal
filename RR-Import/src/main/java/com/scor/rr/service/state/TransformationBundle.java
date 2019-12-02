@@ -28,7 +28,7 @@ public class TransformationBundle {
 
     private RegionPerilEntity regionPeril;
 
-    private ModelAnalysisEntity modelAnalysisEntity;
+    private ModelAnalysisEntity modelAnalysis;
 
     private LossDataHeaderEntity sourceRRLT;
 

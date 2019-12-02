@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface RLAnalysisScanStatusRepository extends JpaRepository<RLAnalysisScanStatus, Integer> {
+public interface RLAnalysisScanStatusRepository extends JpaRepository<RLAnalysisScanStatus, Long> {
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
     @Query("update RLAnalysisScanStatus ss set ss.scanLevel=1 where ss.rlAnalysisId= :rlModelAnalysisId")

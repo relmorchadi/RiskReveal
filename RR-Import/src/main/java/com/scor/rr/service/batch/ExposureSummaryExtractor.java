@@ -108,8 +108,8 @@ public class ExposureSummaryExtractor {
 
         try {
             //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
-            List<ProjectImportRun> projectImportRunList = projectImportRunRepository.findByProjectProjectId(Long.valueOf(projectId));
-            ProjectImportRun projectImportRun = projectImportRunRepository.findByProjectProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
+            List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
+            ProjectImportRunEntity projectImportRun = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
 
             List<ModelPortfolio> modelPortfolios = transformationPackage.getModelPortfolios();
 
@@ -292,8 +292,7 @@ public class ExposureSummaryExtractor {
                                             //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
                                             // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
                                             // Pass them as parameters for this method.
-                                            RLModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
-                                            if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
+                                            if (rmsService.extractLocationLevelExposureDetails(edmId,edmName,instance, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
                                                 log.debug("==> success");
                                                 extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
                                             } else {

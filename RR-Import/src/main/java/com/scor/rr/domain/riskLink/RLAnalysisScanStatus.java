@@ -17,7 +17,7 @@ public class RLAnalysisScanStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer RLAnalysisScanStatusId;
+    private Long RLAnalysisScanStatusId;
     private Integer entity;
     private Long rlAnalysisId;
     private Integer scanLevel;

@@ -234,7 +234,7 @@ public class RegionPerilExtractor {
                 bundle.setSourceResult(sourceResult);
                 bundle.setRlAnalysis(sourceResult.getRlAnalysis());
                 bundle.setRegionPeril(getRegionPeril(sourceResult));
-                bundle.setModelAnalysisEntity(modelAnalysisEntity);
+                bundle.setModelAnalysis(modelAnalysisEntity);
                 bundle.setSourceRRLT(sourceRRLT);
                 bundle.setConformedRRLT(conformedRRLT);
                 transformationPackage.addTransformationBundle(bundle);
