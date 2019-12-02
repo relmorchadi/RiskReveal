@@ -606,7 +606,7 @@ export const DATA = [
 export const ADJUSTMENTS_ARRAY = [
   {
     "id": 1,
-    "adjustmentBasis": "Wind Pool",
+    "adjustmentBasis": "Winds Pool",
     "category": "Base",
     "name": "Wind Pool",
     "description": "An adjustment to be applied on the basis that wind pools may relieve or contribute to losses.",

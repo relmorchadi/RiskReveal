@@ -64,6 +64,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getProjects(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].projects;
+  }
+
+  @Selector()
   static getCurrentWorkspaces(state: WorkspaceModel) {
     const wsId = state.currentTab.wsIdentifier;
     return state.content[wsId];
@@ -195,9 +201,9 @@ export class WorkspaceState {
    *
    ***********************************/
   @Selector()
-  static getProjects(state: WorkspaceModel) {
+  static getExtentState(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].projects;
+    return state.content[wsIdentifier].calibration.extendState;
   }
 
   @Selector()
@@ -703,6 +709,11 @@ export class WorkspaceState {
   @Action(fromWS.extendPltSection)
   expandPltSection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.extendPltSection) {
     this.calibrationService.expandPltSection(ctx, payload);
+  }
+
+  @Action(fromWS.ExtendStateToggleAction)
+  extendStateToggle(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ExtendStateToggleAction) {
+    this.calibrationService.extendStateToggle(ctx, payload);
   }
 
   @Action(fromWS.collapseTags)

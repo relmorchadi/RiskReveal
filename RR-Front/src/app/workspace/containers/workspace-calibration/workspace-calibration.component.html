@@ -89,7 +89,7 @@
                     </ul>
                   </nz-dropdown>
                   </span>
-                <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
+                <div class="pull-right" *ngIf="tabStatus !== 'FAC'" style="margin-top: 8px; margin-right: 3px;">
                   <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
                      style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
                   <i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"
@@ -113,7 +113,7 @@
             <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
                  [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab" *ngIf="wsStatus !== 'fac'" style="height: 58px; width: 100% !important;">
+              <div class="title-as-tab" *ngIf="tabStatus !== 'FAC'" style="height: 58px; width: 100% !important;">
                   <span class="title">
                     Generic Thread
                      <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
@@ -121,7 +121,7 @@
                        <i class="icon-menu_24px" nz-dropdown
                           style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
                             <ul nz-menu>
-                              <li nz-menu-item *ngIf="wsStatus !== 'fac'" (click)="clickButtonPlus(true)">Add New Adjustment</li>
+                              <li nz-menu-item *ngIf="tabStatus !== 'FAC'" (click)="clickButtonPlus(true)">Add New Adjustment</li>
                               <li (click)="openLoadTemplate()" class="menu-bottom-separator"
                                   nz-menu-item>Load Template</li>
                                 <li nz-submenu>
@@ -226,7 +226,7 @@
               </div>
               <div class="radio-container">
                 <div class="Deltas" style="display: grid">
-                  <div style="display: flex; height: 58px; width: 100%" *ngIf="wsStatus === 'fac'"></div>
+                  <div style="display: flex; height: 58px; width: 100%" *ngIf="tabStatus === 'FAC'"></div>
                   <div style="margin-left: 25px;">
                     <div class="button-toggle" style="width: 480px; float: left;">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
@@ -485,7 +485,7 @@
               (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
               (extend)="extend()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
-              [adjutmentApplication]="adjutmentApplication"
+              [adjustmentApplication]="adjustmentApplication"
               (expandAll)="expandAll($event)"
               (sortChange)="sortChange($event)"
               (checkboxSort)="checkBoxsort()"

@@ -126,6 +126,7 @@ export class WorkspaceService {
             userTags: {},
             selectedPLT: [],
             extendPltSection: false,
+            extendState: false,
             collapseTags: true,
             lastCheckedBool: false,
             firstChecked: '',

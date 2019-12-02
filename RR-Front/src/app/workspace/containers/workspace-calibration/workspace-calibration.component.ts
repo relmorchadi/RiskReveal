@@ -126,7 +126,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   categorySelected: any;
   adjsArray: any[] = [];
   leftNavbarIsCollapsed: boolean;
-  adjutmentApplication = [];
+  adjustmentApplication = [];
   linear: boolean = false;
   dropdownVisible = false;
   workspaceId: string;
@@ -286,6 +286,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   @Select(WorkspaceState.getCurrentWorkspaces) ws$;
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  @Select(WorkspaceState.getExtentState) extentState$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   activeCheckboxSort: boolean = false;
@@ -384,8 +385,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.detectChanges();
     });
 
+    this.extentState$.pipe().subscribe(value => {
+      this.extended = value;
+    });
+
     this.selectedProject$.pipe().subscribe(value => {
       this.tabStatus = _.get(value, 'projectType', null);
+      this.tabStatus === 'FAC' ? this.extend('init') : null;
       this.detectChanges();
     });
 
@@ -395,14 +401,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.listOfPltsData = [...this.listOfPltsCache];
       this.listOfPltsData = _.filter(this.listOfPltsData, pure => _.some(pure.threads, thread => thread.toCalibrate));
       this.initThreadsData();
-      //// console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
+      // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
-     // console.log(data);
+      // console.log(data);
       _.forEach(this.listOfPltsData, row => {
         this.rowKeys[row.pltId] = true;
       });
       // this.rowKeys = this.listOfPltsData.map(e => e.pltId)
-     // console.log('rowKey ===> ', this.rowKeys);
+      // console.log('rowKey ===> ', this.rowKeys);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
@@ -425,9 +431,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
     }));
   }
+
   initTemplateList() {
    // console.log('template List ======> ', this.templateList);
-
     _.forEach(this.templateList, (row: any) => {
       if (row.type == 'Global' && !this.globalTemplates.includes(row)) {
         this.globalTemplates.push(row)
@@ -477,7 +483,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.collapsedTags = path.collapseTags;
    // console.log(path);
-    this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
+    this.adjustmentApplication = _.merge({}, path.adjustmentApplication);
     this.allAdjsArray = _.merge([], path.allAdjsArray).sort(this.dynamicSort("name"));
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
@@ -656,11 +662,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
    // console.log(this.sortData);
   }
 
-  extend() {
-    this.extended = !this.extended;
+  extend(scope = 'toggle') {
+    this.dispatch(new fromWorkspaceStore.ExtendStateToggleAction({scope: scope}));
     if (this.extended) {
-      this.headerWidth = '1013px'
-      this.frozenWidth = '0'
+      this.headerWidth = '1013px';
+      this.frozenWidth = '0';
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
       this.headerWidth = '453px';
@@ -676,7 +682,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     if (this.extended) {
       _.forIn(this.pltColumns, function (value: any, key) {
         value.extended = true;
-      })
+      });
       _.forIn(this.EPMColumns, function (value: any, key) {
         value.extended = true;
       })
@@ -688,14 +694,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
           value.extended = false;
         }
 
-      })
+      });
       _.forIn(this.EPMColumns, function (value: any, key) {
-        if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
-          value.extended = true;
-        } else {
-          value.extended = false;
-        }
-
+        value.extended = (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable)
       })
     }
   }
@@ -766,7 +767,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     let countClient = 0;
     const baseLengthArray = [];
     const clientLengthArray = [];
-    _.forEach(this.adjutmentApplication, (plt, pKey) => {
+    _.forEach(this.adjustmentApplication, (plt, pKey) => {
       countBase = 0;
       countClient = 0;
       _.forEach(plt, (adj, aKey) => {

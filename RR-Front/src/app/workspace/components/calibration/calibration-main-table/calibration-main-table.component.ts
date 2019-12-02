@@ -57,7 +57,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('headerWidth') headerWidth: any;
   // @Input('adjutmentApplication') adjutmentApplication: any;
   // @Input('adjutmentApplicationSubs') adjutmentApplication$: Observable<any>;
-  @Input('adjutmentApplication') adjutmentApplication: any;
+  @Input('adjustmentApplication') adjustmentApplication: any;
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
   @Input('listOfPltsData') listOfPltsData: any;
@@ -290,6 +290,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
+    this.filterCols();
     this.ws$.pipe().subscribe(value => {
       this.wsStatus = _.get(value, 'workspaceType', null);
       this.detectChanges();
@@ -299,6 +300,16 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.tabStatus = _.get(value, 'projectType', null);
       this.detectChanges();
     });
+  }
+
+  filterCols() {
+    if (this.tabStatus === 'FAC') {
+      return _.filter(this.dataColumns, item => item.fields !== 'base' &&
+        item.fields !== 'client' &&
+        item.fields !== 'inuring' &&
+        item.fields !== 'postInuring');
+    } else return this.dataColumns;
+
   }
 
   filter(key: string, value?: any) {
@@ -492,7 +503,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       pltId: pltId,
       draggedAdjs: this.draggedAdjs,
       lastpltId: this.lastDragPltId,
-      application: this.adjutmentApplication
+      application: this.adjustmentApplication
     });
     this.changeRef.detectChanges();
   }
