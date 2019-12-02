@@ -172,7 +172,7 @@ public class SearchService {
                 .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
-            this.recentWorkspaceRepository.setRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
             return buildWorkspaceDetails(
                     contracts,
                     years,

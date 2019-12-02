@@ -41,6 +41,8 @@ public class RiskRevealApplicationTests {
     @Autowired
     private RmsRessource rmsRessource;
 
+    private String instanceId="RL162";
+
     private final Logger logger = LoggerFactory.getLogger(RiskRevealApplicationTests.class);
 
     private RdmAnalysis rdmAnalysis;
@@ -515,8 +517,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listAvailableDataSources() {
-        Mockito.when(rmsService.listAvailableDataSources()).thenReturn(Arrays.asList(dataSource));
-        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources().getBody();
+        Mockito.when(rmsService.listAvailableDataSources(instanceId)).thenReturn(Arrays.asList(dataSource));
+        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId).getBody();
         Assert.assertNotNull(dataSources.get(0));
         Assert.assertNotNull(dataSource);
         try {
@@ -531,8 +533,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listRdmAnalysis() {
-        Mockito.when(rmsService.listRdmAnalysis(rdmAnalysis.getRdmId(), rdmAnalysis.getRdmName(), analysisIdList)).thenReturn(Arrays.asList(rdmAnalysis));
-        List<RdmAnalysis> rdmAnalyses = (List<RdmAnalysis>) rmsRessource.listRdmAnalysis(rdmAnalysis.getRdmId(), rdmAnalysis.getRdmName(), analysisIdList).getBody();
+        Mockito.when(rmsService.listRdmAnalysis(instanceId, rdmAnalysis.getRdmId(), rdmAnalysis.getRdmName(), analysisIdList)).thenReturn(Arrays.asList(rdmAnalysis));
+        List<RdmAnalysis> rdmAnalyses = (List<RdmAnalysis>) rmsRessource.listRdmAnalysis(instanceId, rdmAnalysis.getRdmId(), rdmAnalysis.getRdmName(), analysisIdList).getBody();
         Assert.assertNotNull(rdmAnalysis);
         Assert.assertNotNull(rdmAnalyses.get(0));
 
@@ -547,8 +549,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listRdmAnalysisBasic() {
-        Mockito.when(rmsService.listRdmAnalysisBasic(rdmAnalysisBasic.getRdmId(), rdmAnalysisBasic.getRdmName())).thenReturn(Arrays.asList(rdmAnalysisBasic));
-        List<RdmAnalysisBasic> rdmAnalysisBasics = (List<RdmAnalysisBasic>) rmsRessource.listRdmAnalysisBasic(rdmAnalysisBasic.getRdmId(), rdmAnalysisBasic.getRdmName()).getBody();
+        Mockito.when(rmsService.listRdmAnalysisBasic(instanceId, rdmAnalysisBasic.getRdmId(), rdmAnalysisBasic.getRdmName())).thenReturn(Arrays.asList(rdmAnalysisBasic));
+        List<RdmAnalysisBasic> rdmAnalysisBasics = (List<RdmAnalysisBasic>) rmsRessource.listRdmAnalysisBasic(instanceId, rdmAnalysisBasic.getRdmId(), rdmAnalysisBasic.getRdmName()).getBody();
         Assert.assertNotNull(rdmAnalysisBasic);
         Assert.assertNotNull(rdmAnalysisBasics.get(0));
         try {
@@ -562,8 +564,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listEdmPortfolioBasic() {
-        Mockito.when(rmsService.listEdmPortfolioBasic(edmPortfolioBasic.getEdmId(), edmPortfolioBasic.getEdmName())).thenReturn(Arrays.asList(edmPortfolioBasic));
-        List<EdmPortfolioBasic> edmPortfolioBasics = (List<EdmPortfolioBasic>) rmsRessource.listEdmPortfolioBasic(edmPortfolioBasic.getEdmId(), edmPortfolioBasic.getEdmName()).getBody();
+        Mockito.when(rmsService.listEdmPortfolioBasic(instanceId, edmPortfolioBasic.getEdmId(), edmPortfolioBasic.getEdmName())).thenReturn(Arrays.asList(edmPortfolioBasic));
+        List<EdmPortfolioBasic> edmPortfolioBasics = (List<EdmPortfolioBasic>) rmsRessource.listEdmPortfolioBasic(instanceId, edmPortfolioBasic.getEdmId(), edmPortfolioBasic.getEdmName()).getBody();
         Assert.assertNotNull(edmPortfolioBasics);
         Assert.assertNotNull(edmPortfolioBasic);
         try {
@@ -579,8 +581,8 @@ public class RiskRevealApplicationTests {
     @Test
     public void listEdmPortfolio() {
 
-        Mockito.when(rmsService.listEdmPortfolio(edmPortfolio0.getEdmId(), edmPortfolio0.getEdmName(), portfolioIdList)).thenReturn(Arrays.asList(edmPortfolio0, edmPortfolio1));
-        List<EdmPortfolio> edmPortfolios = (List<EdmPortfolio>) rmsRessource.listEdmPortfolio(edmPortfolio0.getEdmId(), edmPortfolio0.getEdmName(), portfolioIdList).getBody();
+        Mockito.when(rmsService.listEdmPortfolio(instanceId, edmPortfolio0.getEdmId(), edmPortfolio0.getEdmName(), portfolioIdList)).thenReturn(Arrays.asList(edmPortfolio0, edmPortfolio1));
+        List<EdmPortfolio> edmPortfolios = (List<EdmPortfolio>) rmsRessource.listEdmPortfolio(instanceId, edmPortfolio0.getEdmId(), edmPortfolio0.getEdmName(), portfolioIdList).getBody();
         Assert.assertNotNull(edmPortfolios.get(0));
         Assert.assertNotNull(edmPortfolios.get(1));
         Assert.assertNotNull(edmPortfolio0);
@@ -598,8 +600,8 @@ public class RiskRevealApplicationTests {
     @Test
     public void listRdmAllAnalysisEpCurves() {
         List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = Arrays.asList(rdmAnalysisEpCurves1, rdmAnalysisEpCurves2, rdmAnalysisEpCurves3, rdmAnalysisEpCurves4);
-        Mockito.when(rmsService.listRdmAllAnalysisEpCurves(rdmId, rdmName, epPoints, analysisIdList, finPerspList)).thenReturn(rdmAnalysisEpCurves);
-        List<RdmAnalysisEpCurves> rdmAnalysisEpCurvesList = (List<RdmAnalysisEpCurves>) rmsRessource.listRdmAllAnalysisEpCurves(rdmId, rdmName, epPoints, analysisIdList, finPerspList).getBody();
+        Mockito.when(rmsService.listRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIdList, finPerspList)).thenReturn(rdmAnalysisEpCurves);
+        List<RdmAnalysisEpCurves> rdmAnalysisEpCurvesList = (List<RdmAnalysisEpCurves>) rmsRessource.listRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIdList, finPerspList).getBody();
         Assert.assertNotNull(rdmAnalysisEpCurvesList.get(0));
         Assert.assertNotNull(rdmAnalysisEpCurvesList.get(4));
         Assert.assertNotNull(rdmAnalysisEpCurvesList.get(10));
@@ -619,8 +621,8 @@ public class RiskRevealApplicationTests {
     @Test
     public void getRdmAllAnalysisSummaryStats() {
         List<RdmAllAnalysisSummaryStats> rdmAllAnalysisSummaryStats = Arrays.asList(rdmAllAnalysisSummaryStats1, rdmAllAnalysisSummaryStats2, rdmAllAnalysisSummaryStats3, rdmAllAnalysisSummaryStats4);
-        Mockito.when(rmsService.getRdmAllAnalysisSummaryStats(rdmId, rdmName, finPerspList, analysisIdList)).thenReturn(rdmAllAnalysisSummaryStats);
-        List<RdmAllAnalysisSummaryStats> rdmAllAnalysisSummaryStatss = (List<RdmAllAnalysisSummaryStats>) rmsRessource.getRdmAllAnalysisSummaryStats(rdmId, rdmName, finPerspList, analysisIdList).getBody();
+        Mockito.when(rmsService.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, finPerspList, analysisIdList)).thenReturn(rdmAllAnalysisSummaryStats);
+        List<RdmAllAnalysisSummaryStats> rdmAllAnalysisSummaryStatss = (List<RdmAllAnalysisSummaryStats>) rmsRessource.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, finPerspList, analysisIdList).getBody();
         Assert.assertNotNull(rdmAllAnalysisSummaryStatss.get(0));
         Assert.assertNotNull(rdmAllAnalysisSummaryStatss.get(1));
         Assert.assertNotNull(rdmAllAnalysisSummaryStatss.get(2));
@@ -639,8 +641,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getAnalysisEpCurves() {
-        Mockito.when(rmsService.getAnalysisEpCurves(id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(analysisEpCurves));
-        List<AnalysisEpCurves> analysisEpCurvess = (List<AnalysisEpCurves>) rmsRessource.getAnalysisEpCurves(id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
+        Mockito.when(rmsService.getAnalysisEpCurves(instanceId, id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(analysisEpCurves));
+        List<AnalysisEpCurves> analysisEpCurvess = (List<AnalysisEpCurves>) rmsRessource.getAnalysisEpCurves(instanceId, id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
         Assert.assertNotNull(analysisEpCurvess.get(0));
 
         try {
@@ -654,8 +656,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getAnalysisSummaryStats() {
-        Mockito.when(rmsService.getAnalysisSummaryStats(id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(analysisSummaryStats));
-        List<AnalysisSummaryStats> analysisSummaryStatss = (List<AnalysisSummaryStats>) rmsRessource.getAnalysisSummaryStats(id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
+        Mockito.when(rmsService.getAnalysisSummaryStats(instanceId, id, rdmName, analysisId, finPerspCode, treatyLabelId)).thenReturn(Arrays.asList(analysisSummaryStats));
+        List<AnalysisSummaryStats> analysisSummaryStatss = (List<AnalysisSummaryStats>) rmsRessource.getAnalysisSummaryStats(instanceId, id, rdmName, analysisId, finPerspCode, treatyLabelId).getBody();
         Assert.assertNotNull(analysisSummaryStatss.get(0));
         try {
             Assert.assertEquals(analysisSummaryStats, analysisSummaryStatss.get(0));
@@ -668,8 +670,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getRdmAllAnalysisProfileRegions() {
-        Mockito.when(rmsService.getRdmAllAnalysisProfileRegions(id, rdmName, idList)).thenReturn(Arrays.asList(rdmAllAnalysisProfileRegions));
-        List<RdmAllAnalysisProfileRegions> rdmAllAnalysisProfileRegionss = (List<RdmAllAnalysisProfileRegions>) rmsRessource.getRdmAllAnalysisProfileRegions(id, rdmName, idList).getBody();
+        Mockito.when(rmsService.getRdmAllAnalysisProfileRegions(instanceId, id, rdmName, idList)).thenReturn(Arrays.asList(rdmAllAnalysisProfileRegions));
+        List<RdmAllAnalysisProfileRegions> rdmAllAnalysisProfileRegionss = (List<RdmAllAnalysisProfileRegions>) rmsRessource.getRdmAllAnalysisProfileRegions(instanceId, id, rdmName, idList).getBody();
         Assert.assertNotNull(rdmAllAnalysisProfileRegionss.get(1));
         try {
             Assert.assertEquals(rdmAllAnalysisProfileRegionss.get(1), rdmAllAnalysisProfileRegions);
@@ -697,8 +699,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getEdmAllPortfolioAnalysisRegions() {
-        Mockito.when(rmsService.getEdmAllPortfolioAnalysisRegions(edmId, edmName, ccy)).thenReturn(Arrays.asList(edmAllPortfolioAnalysisRegions));
-        List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegionss = (List<EdmAllPortfolioAnalysisRegions>) rmsRessource.getEdmAllPortfolioAnalysisRegions(edmId, edmName, ccy).getBody();
+        Mockito.when(rmsService.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, ccy)).thenReturn(Arrays.asList(edmAllPortfolioAnalysisRegions));
+        List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegionss = (List<EdmAllPortfolioAnalysisRegions>) rmsRessource.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, ccy).getBody();
         Assert.assertNotNull(edmAllPortfolioAnalysisRegionss.get(1));
 
         try {
@@ -712,8 +714,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getRdmAllAnalysisTreatyStructure() {
-        Mockito.when(rmsService.getRdmAllAnalysisTreatyStructure(64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L))).thenReturn(Arrays.asList(rdmAllAnalysisTreatyStructure));
-        List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructures = (List<RdmAllAnalysisTreatyStructure>) rmsRessource.getRdmAllAnalysisTreatyStructure(64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L)).getBody();
+        Mockito.when(rmsService.getRdmAllAnalysisTreatyStructure(instanceId,64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L))).thenReturn(Arrays.asList(rdmAllAnalysisTreatyStructure));
+        List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructures = (List<RdmAllAnalysisTreatyStructure>) rmsRessource.getRdmAllAnalysisTreatyStructure(instanceId,64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L)).getBody();
         Assert.assertNotNull(rdmAllAnalysisTreatyStructures.get(0));
         try {
             Assert.assertEquals(rdmAllAnalysisTreatyStructures.get(0), rdmAllAnalysisTreatyStructure);
@@ -728,8 +730,8 @@ public class RiskRevealApplicationTests {
     @Test
     public void getRmsExchangeRates() {
         List<RmsExchangeRate> rmsExchangeRates = Arrays.asList(rmsExchangeRate1, rmsExchangeRate2);
-        Mockito.when(rmsService.getRmsExchangeRates(ccyList)).thenReturn(rmsExchangeRates);
-        List<RmsExchangeRate> exchangeRates = (List<RmsExchangeRate>) rmsRessource.getRmsExchangeRates(ccyList).getBody();
+        Mockito.when(rmsService.getRmsExchangeRates(instanceId, ccyList)).thenReturn(rmsExchangeRates);
+        List<RmsExchangeRate> exchangeRates = (List<RmsExchangeRate>) rmsRessource.getRmsExchangeRates(instanceId, ccyList).getBody();
         Assert.assertNotNull(exchangeRates.get(0));
         Assert.assertNotNull(exchangeRates.get(1));
         Assert.assertNotNull(exchangeRates);
@@ -746,8 +748,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getCChkBaseCcy() {
-        Mockito.when(rmsService.getCChBaseCcy()).thenReturn(Arrays.asList(cChkBaseCcy));
-        List<CChkBaseCcy> cChkBaseCcies = (List<CChkBaseCcy>) rmsRessource.getCChBaseCcy().getBody();
+        Mockito.when(rmsService.getCChBaseCcy(instanceId)).thenReturn(Arrays.asList(cChkBaseCcy));
+        List<CChkBaseCcy> cChkBaseCcies = (List<CChkBaseCcy>) rmsRessource.getCChBaseCcy(instanceId).getBody();
         Assert.assertNotNull(cChkBaseCcies.get(0));
         try {
             Assert.assertEquals(cChkBaseCcies.get(0), cChkBaseCcy);
@@ -761,8 +763,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getCChkBaseCcyFxRate() {
-        Mockito.when(rmsService.getCChkBaseCcyFxRate()).thenReturn(Arrays.asList(cChkBaseCcyFxRate));
-        List<CChkBaseCcyFxRate> cChkBaseCcyFxRates = (List<CChkBaseCcyFxRate>) rmsRessource.getCChkBaseCcyFxRate().getBody();
+        Mockito.when(rmsService.getCChkBaseCcyFxRate(instanceId)).thenReturn(Arrays.asList(cChkBaseCcyFxRate));
+        List<CChkBaseCcyFxRate> cChkBaseCcyFxRates = (List<CChkBaseCcyFxRate>) rmsRessource.getCChkBaseCcyFxRate(instanceId).getBody();
         Assert.assertNotNull(cChkBaseCcyFxRates.get(0));
         try {
             Assert.assertEquals(cChkBaseCcyFxRates.get(0), cChkBaseCcyFxRate);
@@ -776,8 +778,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getRdmAllAnalysisMultiRegionPerils() {
-        Mockito.when(rmsService.getRdmAllAnalysisMultiRegionPerils(832L, "TC2016_MM_R", Arrays.asList(15L, 123L))).thenReturn(Arrays.asList(rdmAllAnalysisMultiRegionPerils));
-        List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerilss = (List<RdmAllAnalysisMultiRegionPerils>) rmsRessource.getRdmAllAnalysisMultiRegionPerils(832L, "TC2016_MM_R", Arrays.asList(15L, 123L)).getBody();
+        Mockito.when(rmsService.getRdmAllAnalysisMultiRegionPerils(instanceId,832L, "TC2016_MM_R", Arrays.asList(15L, 123L))).thenReturn(Arrays.asList(rdmAllAnalysisMultiRegionPerils));
+        List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerilss = (List<RdmAllAnalysisMultiRegionPerils>) rmsRessource.getRdmAllAnalysisMultiRegionPerils(instanceId, 832L, "TC2016_MM_R", Arrays.asList(15L, 123L)).getBody();
         Assert.assertNotNull(rdmAllAnalysisMultiRegionPerilss.get(0));
         try {
             Assert.assertEquals(rdmAllAnalysisMultiRegionPerilss.get(0), rdmAllAnalysisMultiRegionPerils);
@@ -791,7 +793,7 @@ public class RiskRevealApplicationTests {
     @Test
     public void getAnalysisModellingOptionSettings() {
         Mockito.when(rmsService.getAnalysisModellingOptionSettings("RL-18",50L, "AC15_RL15_AUT_R", 1L)).thenReturn(resultTest);
-        String analysisModellingOptionSettings = rmsRessource.getAnalysisModellingOptionSettings(50L, "AC15_RL15_AUT_R", 1L);
+        String analysisModellingOptionSettings = rmsRessource.getAnalysisModellingOptionSettings(instanceId,50L, "AC15_RL15_AUT_R", 1L);
         Assert.assertNotNull(analysisModellingOptionSettings);
         try {
             Assert.assertEquals(analysisModellingOptionSettings, resultTest);

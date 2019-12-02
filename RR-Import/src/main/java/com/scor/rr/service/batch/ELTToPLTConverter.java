@@ -4,6 +4,7 @@ package com.scor.rr.service.batch;
 import com.codahale.metrics.Timer;
 import com.scor.rr.domain.PLTHeader;
 import com.scor.rr.domain.RRFile;
+import com.scor.rr.domain.RRFinancialPerspective;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
@@ -21,6 +22,7 @@ import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
+import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
@@ -47,6 +50,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.concurrent.*;
 
+import static com.scor.rr.util.PathUtils.makePLTFileName;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -207,8 +211,8 @@ public class ELTToPLTConverter extends AbstractWriter {
                         0, // pure PLT, no thread number
                         pltHeader.getPltHeaderId(),
                         ".bin"
-                        );
-                File file = makeFullFile(prefix, filename);
+                );
+                File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
                 BinFile binFile= new BinFile(file);
                 pltHeader.setPltLossDataFilePath(binFile.getPath());
                 pltHeader.setPltLossDataFileName(binFile.getFileName());
@@ -217,12 +221,12 @@ public class ELTToPLTConverter extends AbstractWriter {
 
                 /** @TODO  Implement later ...
                 pltConverterProgressRepository.save(new PLTConverterProgress(pltHeader.getId(),
-                        pltHeader.getProject().getId(),
-                        sourceResult.getRmsAnalysis().getRdmId(),
-                        sourceResult.getRmsAnalysis().getRdmName(),
-                        sourceResult.getRmsAnalysis().getAnalysisId(),
-                        pltHeader.getPeqtFile().getFileName(),
-                        pltHeader.getImportSequence()));
+                pltHeader.getProject().getId(),
+                sourceResult.getRmsAnalysis().getRdmId(),
+                sourceResult.getRmsAnalysis().getRdmName(),
+                sourceResult.getRmsAnalysis().getAnalysisId(),
+                pltHeader.getPeqtFile().getFileName(),
+                pltHeader.getImportSequence()));
                  */
             }
 
@@ -359,20 +363,6 @@ public class ELTToPLTConverter extends AbstractWriter {
         return Integer.parseInt(StringUtils.split(uwYear, '-')[0]);
     }
 
-    public File makeFullFile(String prefixDirectory, String filename) {
-        final Path fullPath = ihubPath.resolve(prefixDirectory);
-        try {
-            Files.createDirectories(fullPath);
-        } catch (IOException e) {
-            log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
-        }
-        final File parent = fullPath.toFile();
-
-        File file = new File(parent, filename);
-        return file;
-    }
-
     private class TreatyBatchLauncher implements Runnable {
         private final int id;
         private BlockingQueue<RRPeriod> queue;
@@ -436,9 +426,9 @@ public class ELTToPLTConverter extends AbstractWriter {
             Date startConvert = new Date();
             /** @TODO  ...
             for (PLTHeader scorPLTHeader : scorPLTHeaders) {
-                PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
-                pltConverterProgress.setStartConvert(startConvert);
-                pltConverterProgressRepository.save(pltConverterProgress);
+            PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
+            pltConverterProgress.setStartConvert(startConvert);
+            pltConverterProgressRepository.save(pltConverterProgress);
             }
              */
             pool.execute(new TreatyBatchWorker(id, finished, queue, workerLatch, timer, scorPLTHeaders, convertFunctionMapForPLT, outputStreamForPLT));
@@ -543,7 +533,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
                 pltConverterProgress.setEndConvert(endConvert);
                 pltConverterProgressRepository.save(pltConverterProgress);
-                */
+                 */
                 Map<Long, ELTLossBetaConvertFunction> convertFunctionMap = convertFunctionMapForPLT.get(scorPLTHeader.getPltHeaderId());
                 if (convertFunctionMap != null) {
                     convertFunctionMap.clear();
