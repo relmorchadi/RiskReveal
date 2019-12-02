@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "InuringFinalAttachedPLT", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringFinalAttachedPLT")
 public class InuringFinalAttachedPLT {
 
     @Id

@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
-@Table(name = "InuringFilterCriteria", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringFilterCriteria")
 public class InuringFilterCriteria {
 
     @Id

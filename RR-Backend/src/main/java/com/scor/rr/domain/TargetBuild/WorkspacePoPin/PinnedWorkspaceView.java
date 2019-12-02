@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
-@Table(name = "PinnedWorkspaceView", schema = "tb")
+@Table(name = "PinnedWorkspaceView")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class PinnedWorkspaceView {
 
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "userId")
     private Integer userId;

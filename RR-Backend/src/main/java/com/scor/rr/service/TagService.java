@@ -1,11 +1,16 @@
 package com.scor.rr.service;
 
 
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.TargetBuild.*;
+import com.scor.rr.domain.UserRrEntity;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.SaveOrUpdateTagRequest;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.TargetBuild.*;
-import com.scor.rr.repository.TargetBuild.UserRepository;
+import com.scor.rr.repository.UserRrRepository;
+import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,21 +29,21 @@ public class TagService {
     PLTHeaderTagRepository pltHeaderTagRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserRrRepository userRrRepository;
 
     @Autowired
-    WorkspaceRepository workspaceRepository;
+    WorkspaceEntityRepository workspaceEntityRepository;
 
     @Autowired
-    PLTHeaderRepository pltHeaderRepository;
+    PltHeaderRepository pltHeaderRepository;
 
     public Boolean assignTagToPlts(AssignTagToPltsRequest request) {
-        Workspace workspace = workspaceRepository.findById(request.wsId).orElse(null);
-        User user = userRepository.findById(request.userId).orElse(null);
+        WorkspaceEntity workspaceEntity = workspaceEntityRepository.findById(request.wsId).orElse(null);
+        UserRrEntity user = userRrRepository.findById(request.userId).orElse(null);
 
         //TODO: replace orElse By Exceptions
 
-        Set<PLTHeader> pltHeaders = new HashSet<>(pltHeaderRepository.findAllById(request.plts));
+        Set<PltHeaderEntity> pltHeaderEntities = new HashSet<>(pltHeaderRepository.findAllById(request.plts));
 
         request.selectedTags.forEach(tag -> {
 
@@ -85,10 +90,10 @@ public class TagService {
             }
 
             //Set Assignment
-            pltHeaders.forEach( pltHeader -> {
+            pltHeaderEntities.forEach(pltHeader -> {
 
                 PLTHeaderTag pltHeaderTag = new PLTHeaderTag(pltHeader.getPltHeaderId(), newTag.getTagId());
-                pltHeaderTag.setWorkspaceId(workspace.getWorkspaceId());
+                pltHeaderTag.setWorkspaceId(workspaceEntity.getWorkspaceId());
                 pltHeaderTag.setCreatedBy(user.getUserId());
                 pltHeaderTagRepository.save(pltHeaderTag);
 
@@ -103,7 +108,7 @@ public class TagService {
                 if(tmpTagOpt.isPresent()) {
                     Tag tmpTag = tmpTagOpt.get();
 
-                    pltHeaders.forEach(pltHeader -> pltHeaderTagRepository.findByPltHeaderIdAndTagId(tmpTag.getTagId(), pltHeader.getPltHeaderId()).ifPresent(pltHeaderTagRepository::delete));
+                    pltHeaderEntities.forEach(pltHeader -> pltHeaderTagRepository.findByPltHeaderIdAndTagId(tmpTag.getTagId(), pltHeader.getPltHeaderId()).ifPresent(pltHeaderTagRepository::delete));
                 }
             }
 

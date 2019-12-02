@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedWorkspaceView, Integer> {
+public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedWorkspaceView, Long> {
 
     @Query("from AssignedWorkspaceView aws where" +
             " (aws.cedantName like :kw or aws.workspaceContextCode like :kw or aws.workspaceName like :kw or aws.workspaceUwYear like :kw ) " +
@@ -18,7 +18,7 @@ public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedW
     List<AssignedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "tb.COUNT_ASSIGNED_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "COUNT_ASSIGNED_Workspace", outputParameterName = "count")
     Integer getAssignedWSCount(@Param("userId") Integer userId);
 
 }

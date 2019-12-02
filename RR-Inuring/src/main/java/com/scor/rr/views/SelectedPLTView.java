@@ -14,11 +14,11 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "selectedPlt", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "selectedPlt")
 public class SelectedPLTView {
     @Id
     @Column(name = "pltId", nullable = false)
-    private int pltId;
+    private long pltId;
 
     @Column(name = "pltName")
     private String pltName;
@@ -36,7 +36,7 @@ public class SelectedPLTView {
     private String currency;
 
     @Column(name = "targetRAPId")
-    private int targetRapId;
+    private long targetRapId;
 
     @Column(name = "targetRAPCode")
     private String targetRapCode;
@@ -48,6 +48,6 @@ public class SelectedPLTView {
     private String peril;
 
     @Column(name = "projectId")
-    private int projectId;
+    private long projectId;
 
 }

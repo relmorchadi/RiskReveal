@@ -13,7 +13,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "InuringCanvasLayout", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringCanvasLayout")
 public class InuringCanvasLayout {
 
     @Id

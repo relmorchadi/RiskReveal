@@ -10,8 +10,8 @@ public class SelectedPLT {
     private String path;
     private String currency;
     private String targetCurrency;
-    private int sourceName;
-    private int targetRapId;
+    private long sourceName;
+    private long targetRapId;
     private String targetRapCode;
     private String regionPeril;
     private String peril;

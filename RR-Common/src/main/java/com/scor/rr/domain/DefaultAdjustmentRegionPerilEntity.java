@@ -1,14 +1,15 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "DefaultAdjustmentRegionPeril", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustmentRegionPeril")
 @IdClass(DefaultAdjustmentRegionPerilEntityPK.class)
 public class DefaultAdjustmentRegionPerilEntity {
     private int fkDefaultAdjustmentId;
-    private int fkRegionPerilId;
+    private long fkRegionPerilId;
     private String includedExcluded;
     private DefaultAdjustmentEntity defaultAdjustment;
     private RegionPerilEntity regionPeril;
@@ -25,7 +26,7 @@ public class DefaultAdjustmentRegionPerilEntity {
 
     @Id
     @Column(name = "RegionPerilId", nullable = false)
-    public int getFkRegionPerilId() {
+    public long getFkRegionPerilId() {
         return fkRegionPerilId;
     }
 

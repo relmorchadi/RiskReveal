@@ -3,16 +3,18 @@ package com.scor.rr.service;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
 import com.scor.rr.domain.TargetBuild.Search.*;
-import com.scor.rr.domain.TargetBuild.Workspace;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
+import com.scor.rr.repository.TargetBuild.Search.FacSearchItemRepository;
+import com.scor.rr.repository.TargetBuild.Search.FacSearchRepository;
+import com.scor.rr.repository.TargetBuild.Search.TreatySearchItemRepository;
+import com.scor.rr.repository.TargetBuild.Search.TreatySearchRepository;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;
 import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
-import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
 import com.scor.rr.repository.counter.*;
 import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
@@ -81,7 +83,7 @@ public class SearchService {
 //    ProjectViewRepository projectViewRepository;
 
     @Autowired
-    WorkspaceRepository workspaceRepository;
+    WorkspaceEntityRepository workspaceEntityRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -167,7 +169,7 @@ public class SearchService {
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
         List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
-        Optional<Workspace> wsOpt = workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+        Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         List<ProjectCardView> projects = wsOpt
                 .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
                 .orElse(new ArrayList<>());
@@ -193,7 +195,7 @@ public class SearchService {
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(workspaceRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
         detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
         return detailsDTO;
     }

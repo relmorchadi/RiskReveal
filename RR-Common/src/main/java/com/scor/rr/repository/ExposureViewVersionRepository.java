@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ExposureViewVersionRepository extends JpaRepository<ExposureViewVersion, Long> {
 
-    ExposureViewVersion findByExposureViewDefinitionAndCurrent(ExposureViewDefinition exposureViewDefinition, boolean current);
+    ExposureViewVersion findByExposureViewDefinitionAndCurrent(ExposureViewDefinition exposureViewDefinition, boolean isCurrent);
 }

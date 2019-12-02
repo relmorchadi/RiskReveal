@@ -1,12 +1,13 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @IdClass(WorkspaceViewId.class)
-@Table(name = "WORKSPACE_VIEW", schema = "dbo")
+@Table(name = "WORKSPACE_VIEW")
 public class WorkspaceView implements Serializable{
     @Id
     @Column(name = "UwYear")

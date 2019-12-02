@@ -1,10 +1,11 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "AdjustmentCategory", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "AdjustmentCategory")
 public class AdjustmentCategoryEntity {
     private int adjustmentCategoryId;
     private String code;

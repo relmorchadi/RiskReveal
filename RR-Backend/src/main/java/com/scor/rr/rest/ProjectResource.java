@@ -1,6 +1,6 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.TargetBuild.Project.Project;
+import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.service.ProjectService;
@@ -17,8 +17,8 @@ public class ProjectResource {
     ProjectService projectService;
 
     @PostMapping()
-    public Project addNewProject(@RequestParam String wsId, @RequestParam Integer uwy, @RequestBody Project project) {
-        return projectService.addNewProject(wsId, uwy, project);
+    public ProjectEntity addNewProject(@RequestParam String wsId, @RequestParam Integer uwy, @RequestBody ProjectEntity projectEntity) {
+        return projectService.addNewProject(wsId, uwy, projectEntity);
     }
 
     @PutMapping()

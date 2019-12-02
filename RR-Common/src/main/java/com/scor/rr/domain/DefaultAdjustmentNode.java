@@ -1,10 +1,11 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustmentNode")
 public class DefaultAdjustmentNode {
     private Integer sequence;
     private int defaultAdjustmentNodeId;

@@ -1,12 +1,14 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.TargetBuild.Project.*;
-import com.scor.rr.domain.TargetBuild.Workspace;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.repository.ContractSearchResultRepository;
+import com.scor.rr.repository.ProjectEntityRepository;
 import com.scor.rr.repository.TargetBuild.Project.*;
-import com.scor.rr.repository.TargetBuild.WorkspaceRepository;
+import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +23,13 @@ import java.util.Optional;
 public class ProjectService {
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Autowired
     private ContractSearchResultRepository contractSearchResultRepository;
 
     @Autowired
-    private WorkspaceRepository workspaceRepository;
+    private WorkspaceEntityRepository workspaceEntityRepository;
 
     @Autowired
     private NumberOfPLTPublishedToAccumulationRepository numberOfPLTPublishedToAccumulationRepository;
@@ -60,18 +62,19 @@ public class ProjectService {
     private ProjectCardViewRepository projectCardViewRepository;
 
 
-    public Project addNewProject(String wsId, Integer uwy, Project p) {
-        return workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
-                .map(ws -> projectRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
+    public ProjectEntity addNewProject(String wsId, Integer uwy, ProjectEntity p) {
+        return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
+                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() ->
                         contractSearchResultRepository.findByWorkspaceIdAndUwYear(wsId, uwy)
-                                .map(targetContract -> workspaceRepository.save(new Workspace(targetContract)))
-                                .map(newWs -> projectRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
+                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(),
+                                        targetContract.getWorkspaceName(),targetContract.getCedantName())))
+                                .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
                 );
     }
 
-    private Project prePersistProject(Project p, Integer wsId) {
+    private ProjectEntity prePersistProject(ProjectEntity p, Long wsId) {
         p.initProject(wsId);
         return p;
     }
@@ -79,14 +82,14 @@ public class ProjectService {
     public ResponseEntity updateProject(ProjectEditRequest request) {
 
         if(request.getProjectId() != null) {
-            Optional<Project> prjOpt = projectRepository.findById(request.getProjectId());
+            Optional<ProjectEntity> prjOpt = projectEntityRepository.findById(request.getProjectId());
             if(prjOpt.isPresent()) {
-                Project prj = prjOpt.get();
+                ProjectEntity prj = prjOpt.get();
 
                 prj.setAssignedTo(request.getAssignedTo());
                 prj.setProjectName(request.getProjectName());
                 prj.setProjectDescription(request.getProjectDescription());
-                projectRepository.save(prj);
+                projectEntityRepository.save(prj);
 
                 return new ResponseEntity<>(projectCardViewRepository.findByProjectId(request.getProjectId()), HttpStatus.OK);
             }
@@ -98,8 +101,8 @@ public class ProjectService {
     }
 
     public void deleteProject(Long projectId) {
-        if (projectRepository.existsById(projectId))
-            projectRepository.deleteById(projectId);
+        if (projectEntityRepository.existsById(projectId))
+            projectEntityRepository.deleteById(projectId);
         else
             throw new RuntimeException("No available Project with ID : " + projectId);
     }

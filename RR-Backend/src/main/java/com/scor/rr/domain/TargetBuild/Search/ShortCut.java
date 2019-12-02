@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ShortCut", schema = "tb")
+@Table(name = "ShortCut")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class ShortCut {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer shortCutId;
+    private Long shortCutId;
 
     @Column(unique = true)
     private String shortCutLabel;

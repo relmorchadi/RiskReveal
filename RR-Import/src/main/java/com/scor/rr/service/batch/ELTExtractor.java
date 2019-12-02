@@ -3,8 +3,8 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.repository.RlModelDataSourceRepository;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.repository.RLModelDataSourceRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -35,7 +35,7 @@ public class ELTExtractor {
     TransformationPackage transformationPackage;
 
     @Autowired
-    RlModelDataSourceRepository rlModelDataSourceRepository;
+    RLModelDataSourceRepository rlModelDataSourceRepository;
 
 
     @Value("#{jobParameters['contractId']}")
@@ -61,7 +61,7 @@ public class ELTExtractor {
 
             // Build Parameters
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
-            RlSourceResult sourceResult =  bundle.getSourceResult();
+            RLImportSelection sourceResult =  bundle.getSourceResult();
             String fpCode = bundle.getFinancialPerspective();
             String defaultInstanceId = bundle.getInstanceId();
             Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId)  : null;

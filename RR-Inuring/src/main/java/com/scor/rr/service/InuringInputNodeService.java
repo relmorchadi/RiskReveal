@@ -43,14 +43,14 @@ public class InuringInputNodeService {
         if (inuringPackage == null) throw new InuringPackageNotFoundException(request.getInuringPackageId());
 
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
-            for (Integer pltId : request.getAttachedPLTs()) {
+            for (Long pltId : request.getAttachedPLTs()) {
                 if (scorpltheaderRepository.findByPltHeaderId(pltId) == null) throw new InputPLTNotFoundException(pltId);
             }
         }
 
         InuringInputNode inuringInputNode = inuringInputNodeRepository.saveAndFlush(new InuringInputNode(request.getInuringPackageId(), request.getInputNodeName()));
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
-            for (Integer pltId : request.getAttachedPLTs()) {
+            for (Long pltId : request.getAttachedPLTs()) {
                 inuringInputAttachedPLTRepository.saveAndFlush(new InuringInputAttachedPLT(inuringInputNode.getInuringInputNodeId(), pltId));
             }
         }
@@ -60,8 +60,8 @@ public class InuringInputNodeService {
         InuringInputNode inuringInputNode = inuringInputNodeRepository.findByInuringInputNodeId(request.getInuringInputNodeId());
         if (inuringInputNode == null) throw new InuringInputNodeNotFoundException(request.getInuringInputNodeId());
         if (request.getAttachedPLTs() != null) {
-            Set<Integer> newPLTIds = new HashSet<>();
-            for (Integer id : request.getAttachedPLTs()) {
+            Set<Long> newPLTIds = new HashSet<>();
+            for (Long id : request.getAttachedPLTs()) {
                 if (scorpltheaderRepository.findByPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
                 newPLTIds.add(id);
             }
@@ -74,7 +74,7 @@ public class InuringInputNodeService {
                 }
             }
             if (! newPLTIds.isEmpty()) {
-                for (Integer pltId : newPLTIds) {
+                for (Long pltId : newPLTIds) {
                     inuringInputAttachedPLTRepository.saveAndFlush(new InuringInputAttachedPLT(inuringInputNode.getInuringInputNodeId(), pltId));
                 }
             }

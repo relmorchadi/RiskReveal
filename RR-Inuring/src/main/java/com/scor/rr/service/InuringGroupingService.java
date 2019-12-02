@@ -8,14 +8,14 @@ import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InuringPltotFoundException;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringGroupingRequest;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -88,7 +88,7 @@ public class InuringGroupingService {
         List<PLTLossData> newTarget = new ArrayList<>();
         newTarget.add(target.get(i));
         for (int j = i + 1; j < target.size(); j++) {
-            if (field.get(target.get(j)).equals(val) ) {
+            if (field.get(target.get(j)).equals(val)) {
                 newTarget.add(target.get(j));
             } else {
                 return newTarget;

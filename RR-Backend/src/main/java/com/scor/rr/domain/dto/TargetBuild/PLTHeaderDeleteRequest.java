@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class PLTHeaderDeleteRequest {
-    List<Integer> pltHeaderIds;
+    List<Long> pltHeaderIds;
     String deletedBy;
     Date deletedOn;
     String deletedDue;

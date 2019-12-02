@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "PLTDetailSummary", schema = "tb")
+@Table(name = "PLTDetailSummary")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +19,7 @@ public class PLTDetailSummary {
 
     @Id
     @Column(name = "pltId")
-    private Integer pltId;
+    private Long pltId;
 
     @Column(name = "pltName")
     private String pltName;

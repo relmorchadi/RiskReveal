@@ -1,10 +1,11 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ReturnPeriodBandingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ReturnPeriodBandingAdjustmentParameter")
 public class ReturnPeriodBandingAdjustmentParameter {
     private Long id;
     private AdjustmentNode adjustmentNode;

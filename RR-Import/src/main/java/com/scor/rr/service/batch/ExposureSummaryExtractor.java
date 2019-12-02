@@ -3,11 +3,11 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
-import com.scor.rr.domain.reference.ExposureSummaryConformerReference;
-import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.ExposureSummaryConformerReferenceEntity;
+import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLPortfolio;
-import com.scor.rr.domain.riskLink.RlModelDataSource;
+import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.LocationLevelExposure;
@@ -50,7 +50,7 @@ public class ExposureSummaryExtractor {
     private GlobalExposureViewRepository globalExposureViewRepository;
 
     @Autowired
-    private ProjectimportrunRepository projectImportRunRepository;
+    private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
     private ExposureViewRepository exposureViewRepository;
@@ -292,8 +292,8 @@ public class ExposureSummaryExtractor {
                                             //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
                                             // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
                                             // Pass them as parameters for this method.
-                                            RlModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
-                                            if (rmsService.extractLocationLevelExposureDetails(edmId, edmName, instance, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
+                                            RLModelDataSource fullEdm = rlModelDataSourceRepository.findById(edmId).orElse(null);
+                                            if (rmsService.extractLocationLevelExposureDetails(fullEdm, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
                                                 log.debug("==> success");
                                                 extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
                                             } else {
@@ -355,7 +355,7 @@ public class ExposureSummaryExtractor {
                 exposureSummaryData.setRegionPerilCode("Unmapped");
                 //exposureSummaryData.setRegionPerilGroupCode("Unmapped");
             } else {
-                RegionPeril rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode(), rlExposureSummaryItem.getAdmin1Code(), rlExposureSummaryItem.getPeril());
+                RegionPerilEntity rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode(), rlExposureSummaryItem.getAdmin1Code(), rlExposureSummaryItem.getPeril());
                 if (rp == null) {
                     rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode().toUpperCase(), "", rlExposureSummaryItem.getPeril().toUpperCase());
                 }
@@ -454,7 +454,7 @@ public class ExposureSummaryExtractor {
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
                 } else {
-                    RegionPeril rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
+                    RegionPerilEntity rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
                     if (rp == null) {
                         rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode().toUpperCase(), "", itemIn.getPeril().toUpperCase());
                     }
@@ -480,7 +480,7 @@ public class ExposureSummaryExtractor {
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
                 } else {
-                    RegionPeril rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
+                    RegionPerilEntity rp = this.regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode(), itemIn.getAdmin1Code(), itemIn.getPeril());
                     if (rp == null) {
                         rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(itemIn.getCountryCode().toUpperCase(), "", itemIn.getPeril().toUpperCase());
                     }
@@ -505,7 +505,7 @@ public class ExposureSummaryExtractor {
                  * TODO : ponder a way to propagate the sourceSystem/vendor/version from
                  * the up layer
                  */
-                ExposureSummaryConformerReference ref = exposureSummaryConformerReferenceRepository.
+                ExposureSummaryConformerReferenceEntity ref = exposureSummaryConformerReferenceRepository.
                         findBySourceVendorAndSourceSystemAndVersionAndAxisConformerAliasAndInputCode("RMS", "RISKLINK", "", axisConformerDefinition.getAxisConformerAlias(), value);
                 if (ref != null) {
                     value = ref.getOutputCode();
@@ -517,7 +517,7 @@ public class ExposureSummaryExtractor {
                 }
                 break;
             case FUNCTION:
-                RlModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
+                RLModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
                 if (rlModelDataSource != null)
                     value = resolveFunctionalMapping(axisConformerDefinition.getAxisConformerAlias(), Long.valueOf(rlModelDataSource.getRlId()), itemIn);
                 break;

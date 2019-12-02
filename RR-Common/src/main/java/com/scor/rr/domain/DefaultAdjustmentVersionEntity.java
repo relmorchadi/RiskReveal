@@ -1,11 +1,12 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "DefaultAdjustmentVersion", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "DefaultAdjustmentVersion")
 public class DefaultAdjustmentVersionEntity {
     private Integer versionSequence;
     private Timestamp effectiveTo;

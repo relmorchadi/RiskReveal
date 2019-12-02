@@ -8,10 +8,10 @@ import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
+import com.scor.rr.repository.RLAnalysisRepository;
+import com.scor.rr.repository.RLAnalysisScanStatusRepository;
 import com.scor.rr.repository.RLModelDataSourceRepository;
 import com.scor.rr.repository.RLSourceResultRepository;
-import com.scor.rr.repository.RlAnalysisRepository;
-import com.scor.rr.repository.RlAnalysisScanStatusRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -44,10 +44,10 @@ public class RmsService {
     RLModelDataSourceRepository rlModelDataSourcesRepository;
 
     @Autowired
-    RlAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
+    RLAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
 
     @Autowired
-    RlAnalysisRepository rlAnalysisRepository;
+    RLAnalysisRepository rlAnalysisRepository;
 
     @Autowired
     RLSourceResultRepository rlSourceResultRepository;
@@ -90,18 +90,18 @@ public class RmsService {
         for (DataSource dataSource : dataSources) {
             selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
         }
-        List<RlModelDataSource> existingRlModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
-        for (RlModelDataSource existingRlModelDataSource : existingRlModelDataSources) {
-            if (!selectedDataSources.contains(new MultiKey(existingRlModelDataSource.getType(), existingRlModelDataSource.getInstanceId(), existingRlModelDataSource.getRlId()))) {
-                rlModelDataSourcesRepository.delete(existingRlModelDataSource);
+        List<RLModelDataSource> existingRLModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
+        for (RLModelDataSource existingRLModelDataSource : existingRLModelDataSources) {
+            if (!selectedDataSources.contains(new MultiKey(existingRLModelDataSource.getType(), existingRLModelDataSource.getInstanceId(), existingRLModelDataSource.getRlId()))) {
+                rlModelDataSourcesRepository.delete(existingRLModelDataSource);
             }
         }
 
         for (DataSource dataSource : dataSources) {
-            RlModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
+            RLModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
                     (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
             if (rlModelDataSource == null) {
-                rlModelDataSource = new RlModelDataSource(dataSource, projectId, instanceId, instanceName);
+                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
 
@@ -147,7 +147,7 @@ public class RmsService {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm)
             );
-            RlAnalysisScanStatus rlAnalysisScanStatus = new RlAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         }
     }
@@ -477,7 +477,7 @@ public class RmsService {
      */
     public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList) {
 
-        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RlSourceResult.class))
+        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RLImportSelection.class))
                 .map(sourceResult -> {
                     sourceResult = rlSourceResultRepository.save(sourceResult);
                     return sourceResult.getRlSourceResultId();

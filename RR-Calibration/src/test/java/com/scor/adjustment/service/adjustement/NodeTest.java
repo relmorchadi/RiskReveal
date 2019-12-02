@@ -62,7 +62,7 @@ public class NodeTest {
 
     @Before
     public void setUp() throws RRException {
-        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
+        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
                 "",
                 false));
 
@@ -70,7 +70,7 @@ public class NodeTest {
                 1,
                 4, threadTest.getAdjustmentThreadId(),1.7,1.1,null,null));
 
-        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983,
+        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
                 "",
                 false));
 

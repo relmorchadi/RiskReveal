@@ -49,20 +49,20 @@
           <div class="ep-metrics-content">
             <div nz-row class="dropdowns">
               <div nz-col [nzSpan]="6">
-                <div class="dropdown-currency">
+                <div class="dropdown-currencyEntity">
                   <nz-dropdown [nzTrigger]="'click'">
                     <a nz-dropdown>
                       <div style="display:flex">
-                        <div class="dropdown-currency-title">
-                          <span class="dropdown-currency-header">Display Currency</span>
-                          <span class="dropdown-currency-subtitle" style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
+                        <div class="dropdown-currencyEntity-title">
+                          <span class="dropdown-currencyEntity-header">Display Currency</span>
+                          <span class="dropdown-currencyEntity-subtitle" style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
                         </div>
                         <i nz-icon type="down"></i>
                       </div>
                     </a>
                     <ul nz-menu>
-                      <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
-                          *ngFor="let currency of currencies">{{currency?.label}}
+                      <li nz-menu-item (click)="epMetricsCurrencySelected= currencyEntity?.label"
+                          *ngFor="let currencyEntity of currencies">{{currencyEntity?.label}}
                       </li>
                     </ul>
                   </nz-dropdown>
@@ -222,21 +222,21 @@
                 <div class="impact-content">
                   <div nz-row class="dropdowns">
                     <div nz-col [nzSpan]="6">
-                      <div class="dropdown-currency">
+                      <div class="dropdown-currencyEntity">
                         <nz-dropdown [nzTrigger]="'click'">
                           <a nz-dropdown>
                             <div style="display:flex">
-                              <div class="dropdown-currency-title">
-                                <span class="dropdown-currency-header">Display Currency</span>
-                                <span class="dropdown-currency-subtitle"
+                              <div class="dropdown-currencyEntity-title">
+                                <span class="dropdown-currencyEntity-header">Display Currency</span>
+                                <span class="dropdown-currencyEntity-subtitle"
                                       style="font-weight: bold;">{{CalibrationImpactCurrencySelected}}</span>
                               </div>
                               <i nz-icon type="down"></i>
                             </div>
                           </a>
                           <ul nz-menu>
-                            <li nz-menu-item (click)="CalibrationImpactCurrencySelected = currency?.label"
-                                *ngFor="let currency of currencies">{{currency?.label}}
+                            <li nz-menu-item (click)="CalibrationImpactCurrencySelected = currencyEntity?.label"
+                                *ngFor="let currencyEntity of currencies">{{currencyEntity?.label}}
                             </li>
                           </ul>
                         </nz-dropdown>

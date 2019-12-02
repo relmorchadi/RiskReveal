@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "PinnedWorkspace", schema = "tb")
+@Table(name = "PinnedWorkspace")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class PinnedWorkspace {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "pinnedWorkspaceId")
-    private Integer pinnedWorkspaceId;
+    private Long pinnedWorkspaceId;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

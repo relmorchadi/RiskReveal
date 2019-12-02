@@ -3,11 +3,11 @@ package com.scor.rr.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "DefaultReturnPeriodBandingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
+@javax.persistence.Entity
+@Table(name = "DefaultReturnPeriodBandingAdjustmentParameter")
 public class DefaultReturnPeriodBandingAdjustmentParameter {
     private Long id;
-    private EntityEntity entity;
+    private Integer entity;
     private DefaultAdjustmentNode adjustmentNode;
     private double returnPeriod;
     private double adjustmentFactor;
@@ -22,13 +22,12 @@ public class DefaultReturnPeriodBandingAdjustmentParameter {
         this.id = id;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public EntityEntity getEntity() {
+    @Column(name = "Entity")
+    public Integer getEntity() {
         return entity;
     }
 
-    public void setEntity(EntityEntity entity) {
+    public void setEntity(Integer entity) {
         this.entity = entity;
     }
 

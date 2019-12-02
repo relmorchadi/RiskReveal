@@ -12,12 +12,12 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "PltManagerView", schema = "tb")
+@Table(name = "PltManagerView")
 public class PLTManagerView {
 
     @Id
     @Column(name = "pltId")
-    private Integer pltId;
+    private Long pltId;
 
     @Column(name = "pltName")
     private String pltName;
@@ -74,7 +74,7 @@ public class PLTManagerView {
     private String modellingDataSource;
 
     @Column(name = "analysisId")
-    private Integer analysisId;
+    private Long analysisId;
 
     @Column(name = "analysisName")
     private String analysisName;
@@ -95,7 +95,7 @@ public class PLTManagerView {
     private Boolean clientAdjustment;
 
     @Column(name = "projectId")
-    private Integer projectId;
+    private Long projectId;
 
     @Column(name = "projectName")
     private String projectName;
@@ -113,13 +113,13 @@ public class PLTManagerView {
     private Boolean clonedPlt;
 
     @Column(name = "clonedSourcePlt")
-    private Integer clonedSourcePlt;
+    private Long clonedSourcePlt;
 
     @Column(name = "clonedSourceProject")
-    private Integer clonedSourceProject;
+    private Long clonedSourceProject;
 
     @Column(name = "clonedSourceWorkspace")
-    private String clonedSourceWorkspace;
+    private Long clonedSourceWorkspace;
 
     @Column(name = "pltCcy")
     private String pltCcy;

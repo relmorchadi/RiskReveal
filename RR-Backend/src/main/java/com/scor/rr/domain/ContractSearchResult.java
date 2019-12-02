@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 
 
 @Entity
-@Table(schema = "poc")
+@Table
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode

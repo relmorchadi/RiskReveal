@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "RecentWorkspaceView", schema = "tb")
+@Table(name = "RecentWorkspaceView")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class RecentWorkspaceView {
 
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "workspaceContextCode")
     private String workspaceContextCode;

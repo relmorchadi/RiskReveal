@@ -1,81 +1,47 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import java.util.Objects;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
-@Table(name = "Workspace", schema = "dbo", catalog = "RiskReveal")
-public class WorkspaceEntity {
-    private String workspaceId;
-    private String workspaceContextCode;
-    private Integer workspaceUwYear;
-    private String workspaceName;
-    private String cedantName;
+@Table(name = "Workspace")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class WorkspaceEntity implements Serializable {
 
     @Id
-    @Column(name = "workspaceId", nullable = false, length = 255)
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "WorkspaceId")
+    private Long workspaceId;
 
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
+    @Column(name = "Entity")
+    private Integer entity;
 
-    @Basic
-    @Column(name = "workspaceContextCode", nullable = true, length = 255)
-    public String getWorkspaceContextCode() {
-        return workspaceContextCode;
-    }
+    @Column(name = "WorkspaceContextCode")
+    private String workspaceContextCode;
 
-    public void setWorkspaceContextCode(String workspaceContextCode) {
+    @Column(name = "WorkspaceUwYear")
+    private Integer workspaceUwYear;
+
+    @Column(name = "WorkspaceName")
+    private String workspaceName;
+
+    @Column(name = "CedantName")
+    private String cedantName;
+
+    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear, String workspaceName, String cedantName) {
         this.workspaceContextCode = workspaceContextCode;
-    }
-
-    @Basic
-    @Column(name = "workspaceUwYear", nullable = true)
-    public Integer getWorkspaceUwYear() {
-        return workspaceUwYear;
-    }
-
-    public void setWorkspaceUwYear(Integer workspaceUwYear) {
+        this.entity = 1;
         this.workspaceUwYear = workspaceUwYear;
-    }
-
-    @Basic
-    @Column(name = "workspaceName", nullable = true, length = 255)
-    public String getWorkspaceName() {
-        return workspaceName;
-    }
-
-    public void setWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
-    }
-
-    @Basic
-    @Column(name = "cedantName", nullable = true, length = 255)
-    public String getCedantName() {
-        return cedantName;
-    }
-
-    public void setCedantName(String cedantName) {
         this.cedantName = cedantName;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        WorkspaceEntity that = (WorkspaceEntity) o;
-        return Objects.equals(workspaceId, that.workspaceId) &&
-                Objects.equals(workspaceContextCode, that.workspaceContextCode) &&
-                Objects.equals(workspaceUwYear, that.workspaceUwYear) &&
-                Objects.equals(workspaceName, that.workspaceName) &&
-                Objects.equals(cedantName, that.cedantName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(workspaceId, workspaceContextCode, workspaceUwYear, workspaceName, cedantName);
     }
 }

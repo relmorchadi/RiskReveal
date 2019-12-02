@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
     private int fkDefaultAdjustmentId;
-    private int fkRegionPerilId;
+    private long fkRegionPerilId;
 
     @Column(name = "DefaultAdjustmentId", nullable = false)
     @Id
@@ -21,7 +21,7 @@ public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
 
     @Column(name = "RegionPerilId", nullable = false)
     @Id
-    public int getFkRegionPerilId() {
+    public long getFkRegionPerilId() {
         return fkRegionPerilId;
     }
 

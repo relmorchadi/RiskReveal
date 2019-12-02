@@ -1,11 +1,16 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.TargetBuild.*;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.TargetBuild.*;
+import com.scor.rr.repository.UserRrRepository;
+import com.scor.rr.repository.WorkspaceEntityRepository;
 import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,16 +29,14 @@ public class PltBrowserService {
     @Autowired
     UserTagRepository userTagRepository;
     @Autowired
-    WorkspaceRepository workspaceRepository;
+    WorkspaceEntityRepository workspaceEntityRepository;
     @Autowired
-    PLTHeaderRepository pltHeaderRepository;
+    PltHeaderRepository pltHeaderRepository;
     @Autowired
-    UserRepository userRepository;
+    UserRrRepository userRrRepository;
 
     @Autowired
     PLTManagerViewRepository pltManagerViewRepository;
-    @Autowired
-    WorkspaceRepository nworkspaceRepository;
     @Autowired
     PLTManagerViewRepository pltManagerView2Repository;
     @Autowired
@@ -41,8 +44,8 @@ public class PltBrowserService {
     @Autowired
     PLTHeaderTagRepository pltHeaderTagRepository;
 
-    PLTManagerViewHelperResponse appendTagsToPLTs(Set<PLTManagerView> plts, Workspace ws) {
-        HashMap<Integer, Tag> pltHeaderTagCount = new HashMap<>();
+    PLTManagerViewHelperResponse appendTagsToPLTs(Set<PLTManagerView> plts, WorkspaceEntity ws) {
+        HashMap<Long, Tag> pltHeaderTagCount = new HashMap<>();
         plts.forEach( pltView -> {
                     pltView.setTags(
                             pltHeaderTagRepository.findByPltHeaderId(pltView.getPltId())
@@ -70,7 +73,7 @@ public class PltBrowserService {
     }
 
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
-        Workspace ws = nworkspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
+        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
         Set<PLTManagerView> plts = pltManagerView2Repository.findPLTs(request.getWsId(), request.getUwYear());
         Set<PLTManagerView> deletedPlts = pltManagerView2Repository.findDeletedPLTs(request.getWsId(), request.getUwYear());
 
@@ -81,19 +84,19 @@ public class PltBrowserService {
 
     public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
         request.getPltHeaderIds().forEach( pltHeaderId -> {
-            Optional<PLTHeader> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
-            PLTHeader pltHeader;
+            Optional<PltHeaderEntity> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
+            PltHeaderEntity pltHeaderEntity;
 
             if(pltHeaderOpt.isPresent()) {
-                pltHeader = pltHeaderOpt.get();
+                pltHeaderEntity = pltHeaderOpt.get();
 
-                if(pltHeader.getDeletedBy() == null && pltHeader.getDeletedOn() == null && pltHeader.getDeletedDue() == null) {
+                if(pltHeaderEntity.getDeletedBy() == null && pltHeaderEntity.getDeletedOn() == null && pltHeaderEntity.getDeletedDue() == null) {
 
-                    pltHeader.setDeletedBy(request.getDeletedBy());
-                    pltHeader.setDeletedDue(request.getDeletedDue());
-                    pltHeader.setDeletedOn(request.getDeletedOn());
+                    pltHeaderEntity.setDeletedBy(request.getDeletedBy());
+                    pltHeaderEntity.setDeletedDue(request.getDeletedDue());
+                    pltHeaderEntity.setDeletedOn(request.getDeletedOn());
 
-                    pltHeaderRepository.save(pltHeader);
+                    pltHeaderRepository.save(pltHeaderEntity);
                 }
 
             }
@@ -101,21 +104,21 @@ public class PltBrowserService {
         return true;
     }
 
-    public Boolean restorePLTHeader(List<Integer> pltHeaderIds) {
+    public Boolean restorePLTHeader(List<Long> pltHeaderIds) {
         pltHeaderIds.forEach((pltHeaderId) -> {
-            Optional<PLTHeader> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
-            PLTHeader pltHeader;
+            Optional<PltHeaderEntity> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
+            PltHeaderEntity pltHeaderEntity;
 
             if(pltHeaderOpt.isPresent()) {
-                pltHeader = pltHeaderOpt.get();
+                pltHeaderEntity = pltHeaderOpt.get();
 
-                if(pltHeader.getDeletedBy() != null && pltHeader.getDeletedOn() != null && pltHeader.getDeletedDue() != null) {
+                if(pltHeaderEntity.getDeletedBy() != null && pltHeaderEntity.getDeletedOn() != null && pltHeaderEntity.getDeletedDue() != null) {
 
-                    pltHeader.setDeletedBy(null);
-                    pltHeader.setDeletedDue(null);
-                    pltHeader.setDeletedOn(null);
+                    pltHeaderEntity.setDeletedBy(null);
+                    pltHeaderEntity.setDeletedDue(null);
+                    pltHeaderEntity.setDeletedOn(null);
 
-                    pltHeaderRepository.save(pltHeader);
+                    pltHeaderRepository.save(pltHeaderEntity);
                 }
 
             }

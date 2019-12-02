@@ -2,9 +2,9 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.repository.RranalysisRepository;
+import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.XMLWriter;
@@ -33,7 +33,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
     private static final Logger log = LoggerFactory.getLogger(ModellingOptionsExtractor.class);
 
     @Autowired
-    RranalysisRepository rrAnalysisRepository;
+    ModelAnalysisEntityRepository rrAnalysisRepository;
 
     @Autowired
     private TransformationPackage transformationPackage;
@@ -72,7 +72,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
 
             bundle.setModelingOptionsOfRRLT(options);
 
-            writeFile(bundle.getRrAnalysis(), bundle.getConformedRRLT(), modelingOptions);
+            writeFile(bundle.getModelAnalysisEntity(), bundle.getConformedRRLT(), modelingOptions);
 
             log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
         }
@@ -80,12 +80,12 @@ public class ModellingOptionsExtractor extends AbstractWriter {
         return RepeatStatus.FINISHED;
     }
 
-    private void writeFile(RRAnalysis rrAnalysis, LossDataHeader rrLossTable, String options) {
-        RRAnalysis lossAnalysis = rrAnalysisRepository.findById(rrLossTable.getModelAnalysisId()).get();
+    private void writeFile(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity rrLossTable, String options) {
+        ModelAnalysisEntity lossAnalysis = rrAnalysisRepository.findById(rrLossTable.getModelAnalysisId()).get();
 
         String filename = makeAPSFileName(
-                rrAnalysis.getCreationDate(),
-                rrAnalysis.getRegionPeril(),
+                modelAnalysisEntity.getCreationDate(),
+                modelAnalysisEntity.getRegionPeril(),
                 lossAnalysis.getFinancialPerspective(),
                 rrLossTable.getCurrency(),
                 rrLossTable.getOriginalTarget().equals(RRLossTableType.CONFORMED.toString()) ? XLTOT.ORIGINAL : XLTOT.TARGET,

@@ -185,25 +185,25 @@
           <div>
             <div nz-row class="dropdowns" nzGutter="2">
               <div nz-col [nzSpan]="8">
-                <div class="dropdown-currency">
+                <div class="dropdown-currencyEntity">
                   <nz-dropdown [nzTrigger]="'click'">
                     <a nz-dropdown>
                       <div style="display:flex">
-                        <div class="dropdown-currency-title">
-                          <div class="dropdown-currency-header d-flex align-items-center justify-content-between" >
+                        <div class="dropdown-currencyEntity-title">
+                          <div class="dropdown-currencyEntity-header d-flex align-items-center justify-content-between" >
                             <div [nz-tooltip]="'Display Currency'" class="no-wrap">
                               Display Currency
                             </div>
                             <i nz-icon type="down"></i>
                           </div>
-                          <span class="dropdown-currency-subtitle"
+                          <span class="dropdown-currencyEntity-subtitle"
                                 style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
                         </div>
                       </div>
                     </a>
                     <ul nz-menu>
-                      <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
-                          *ngFor="let currency of currencies">{{currency?.label}}
+                      <li nz-menu-item (click)="epMetricsCurrencySelected= currencyEntity?.label"
+                          *ngFor="let currencyEntity of currencies">{{currencyEntity?.label}}
                       </li>
                     </ul>
                   </nz-dropdown>

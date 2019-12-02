@@ -1,15 +1,16 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "MarketChannel", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "MarketChannel")
 public class MarketChannelEntity {
     private int marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
-    private EntityEntity entityByPKentityId;
+    private Integer entity;
 
     @Id
     @Column(name = "MarketChannelID", nullable = false)
@@ -56,13 +57,12 @@ public class MarketChannelEntity {
         return Objects.hash(marketChannelId, marketChannelCode, marketChannelDescription);
     }
 
-    @ManyToOne
-    @JoinColumn(name = "PKentityId", referencedColumnName = "EntityId")
-    public EntityEntity getEntityByPKentityId() {
-        return entityByPKentityId;
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
     }
 
-    public void setEntityByPKentityId(EntityEntity entityByPKentityId) {
-        this.entityByPKentityId = entityByPKentityId;
+    public void setEntity(Integer entity) {
+        this.entity = entity;
     }
 }

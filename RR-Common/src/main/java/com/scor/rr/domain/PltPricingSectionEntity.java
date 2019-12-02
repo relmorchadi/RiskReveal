@@ -1,11 +1,12 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "PLTPricingSection", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "PLTPricingSection")
 public class PltPricingSectionEntity {
     private String id;
     private Timestamp lastSynchronized;

@@ -3,11 +3,9 @@ package com.scor.rr.service.cloning;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.BinfileRepository;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.WorkspaceRepository;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
@@ -32,9 +30,6 @@ public class CloningScorPltHeader {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    BinfileRepository binfileRepository;
-
-    @Autowired
     AdjustmentThreadService threadService;
 
     //TODO: we need to clone ALL properties from source PLT EXCEPT the following ones:
@@ -52,49 +47,50 @@ public class CloningScorPltHeader {
     @Autowired
     WorkspaceRepository workspaceRepository;
 
-    public PltHeaderEntity cloneScorPltHeader(Integer scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity cloneScorPltHeader(Long scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
         PltHeaderEntity pltHeaderEntityInitial = pltHeaderRepository.findByPltHeaderId(scorPltHeaderEntityInitialId);
         if (pltHeaderEntityInitial != null) {
             PltHeaderEntity pltHeaderEntityClone = new PltHeaderEntity(pltHeaderEntityInitial);
             pltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
             pltHeaderEntityClone.setLocked(false);
-            pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
+            //@Todo Review
+//            pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
 //            pltHeaderEntityClone.setWorkspaceEntity(pltHeaderEntityInitial.getWorkspaceEntity());
-            pltHeaderEntityClone.setCloningSource(pltHeaderEntityInitial);
+//            pltHeaderEntityClone.setCloningSource(pltHeaderEntityInitial);
             return pltHeaderRepository.save(pltHeaderEntityClone);
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND, 1);
         }
     }
 
-    private BinFileEntity cloneBinFile(BinFileEntity binFileEntity) {
-        try {
-            File file = new File(binFileEntity.getPath());
-            MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
-            List<PLTLossData> pltFileReaders = readPltFile.read(file);
-            File fileClone = new File("/src/main/resources/file/pltnew.csv");
-            FileUtils.touch(fileClone);
-            CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-            csvpltFileWriter.write(pltFileReaders, fileClone);
-            BinFileEntity fileBinClone = new BinFileEntity();
-            fileBinClone.setFileName(fileClone.getName());
-            fileBinClone.setFqn(fileClone.getAbsolutePath());
-            fileBinClone.setPath(fileClone.getPath());
-            return binfileRepository.save(fileBinClone);
-        } catch (RRException | IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+//    private BinFileEntity cloneBinFile(BinFileEntity binFileEntity) {
+//        try {
+//            File file = new File(binFileEntity.getPath());
+//            MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+//            List<PLTLossData> pltFileReaders = readPltFile.read(file);
+//            File fileClone = new File("/src/main/resources/file/pltnew.csv");
+//            FileUtils.touch(fileClone);
+//            CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+//            csvpltFileWriter.write(pltFileReaders, fileClone);
+//            BinFileEntity fileBinClone = new BinFileEntity();
+//            fileBinClone.setFileName(fileClone.getName());
+//            fileBinClone.setFqn(fileClone.getAbsolutePath());
+//            fileBinClone.setPath(fileClone.getPath());
+//            return binfileRepository.save(fileBinClone);
+//        } catch (RRException | IOException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
 
-    public PltHeaderEntity clonePltWithAdjustment(Integer pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+    public PltHeaderEntity clonePltWithAdjustment(Long pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
         WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
         PltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
 //        scorPltHeaderCloned.setWorkspaceEntity(workspaceEntity);
         if (scorPltHeaderCloned.getPltType().equalsIgnoreCase("pure")) {
             AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
             if (threadCloned != null) {
-                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435); // what ???
+                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435L); // what ???
                 List<AdjustmentNode> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
                 if (nodeEntities != null) {
                     for (AdjustmentNode adjustmentNodeCloned : nodeEntities) {

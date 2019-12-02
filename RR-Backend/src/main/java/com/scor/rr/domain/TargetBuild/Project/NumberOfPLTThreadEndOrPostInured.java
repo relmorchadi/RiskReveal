@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfPLTThreadEndOrPostInured", schema = "tb")
+@Table(name = "NumberOfPLTThreadEndOrPostInured")
 @AllArgsConstructor
 public class NumberOfPLTThreadEndOrPostInured extends NumberOfEntityForProject {
     public NumberOfPLTThreadEndOrPostInured(Long projectId, int count) {
