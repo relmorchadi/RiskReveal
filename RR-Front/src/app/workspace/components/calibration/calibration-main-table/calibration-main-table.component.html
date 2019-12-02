@@ -3,7 +3,7 @@
   (onSort)="onSort($event)"
   dataKey="pltId"
   *ngIf="tableType =='adjustments' && groupedByPure"
-  [columns]="dataColumns"
+  [columns]="filterCols()"
   [contextMenu]="cm"
   [frozenColumns]="frozenColumns"
   [frozenWidth]="frozenWidth+'px'"
@@ -79,7 +79,7 @@
                     </ul>
                   </nz-dropdown>
                   </span>
-            <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
+            <div class="pull-right" *ngIf="tabStatus !== 'FAC'"  style="margin-top: 8px; margin-right: 3px;">
               <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
                  style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
               <i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"
@@ -504,7 +504,7 @@
             [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
             [dropZones]="['widget-dropZone']"
             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-            [sortableData]="adjutmentApplication[rowData.pltId]"
+            [sortableData]="adjustmentApplication[rowData.pltId]"
 
             class="text-elipsice-pure border-dragable"
             dnd-sortable-container
@@ -521,7 +521,7 @@
               </div>-->
             </div>
 
-            <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
+            <ng-container *ngFor="let adjs of adjustmentApplication[rowData.pltId]; let i=index">
               <ng-container
                 *ngIf="col.fields== adjs.category.toLowerCase()"
                 style="display: flex;height: max-content;">
@@ -706,7 +706,7 @@
             <div dnd-sortable-container
                  (dragover)="onDragOver()"
                  [dropZones]="['adjustment-dropZone']"
-                 [sortableData]="adjutmentApplication[thread.pltId]"
+                 [sortableData]="adjustmentApplication[thread.pltId]"
                  (drop)="onDrop(col,thread.pltId,'sortable-container')"
                  [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
                  class="text-elipsice border-dragable"
@@ -723,7 +723,7 @@
                 </div>
               </div>
 
-              <ng-container *ngFor="let adjs of adjutmentApplication[thread.pltId]; let i=index">
+              <ng-container *ngFor="let adjs of adjustmentApplication[thread.pltId]; let i=index">
                 <div *ngIf="col.fields== adjs.category.toLowerCase()"
                      (mouseleave)="onLeaveAdjustment(adjs.id+thread.pltId)"
                      (mouseover)="shownDropDown = adjs.id+thread.pltId"
@@ -811,7 +811,7 @@
 <p-table
   (onSort)="onSort($event)"
   *ngIf="tableType =='adjustments' && !groupedByPure"
-  [columns]="dataColumns"
+  [columns]="filterCols()"
   [contextMenu]="cm"
   [frozenColumns]="frozenColumns"
   [frozenWidth]="frozenWidth+'px'"
@@ -912,7 +912,7 @@
         <th *ngIf="col?.icon === 'icon-ballot_24px'"
             style="background-color: #ffffff !important;height: 88px!important;">
         </th>
-        <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
+        <th *ngIf="col?.icon === 'icon-note' && tabStatus !== 'FAC'" class="separator-right"
             style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
           <i (click)="extend()" *ngIf="!extended" class="icon-chevron_right_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
@@ -1038,124 +1038,124 @@
         </th>
         <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;text-align: center !important;"
             pResizableColumn>
-                      <span style="justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
-                             class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
-                             class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
-                             class="icon-direction" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+          <span style="justify-content: space-between;">
+            {{col?.header}}
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
+                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
+                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
+                 class="icon-direction" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="col?.fields === 'pltName'" pResizableColumn
             style="padding: 0 !important;text-align: center !important;">
-                      <span style="justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
-                             class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
-                             class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
-                             class="icon-direction" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+          <span style="justify-content: space-between;">
+            {{col?.header}}
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
+                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
+                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
+                 class="icon-direction" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="col?.icon === 'icon-ballot_24px'" style="padding: 0 !important;text-align: center !important;">
-                      <span style="justify-content: space-between;">
-                        <nz-dropdown *ngIf="col.icon === 'icon-ballot_24px'" [nzPlacement]="'bottomLeft'">
-                        <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="inProgressCheckbox"
-                                     nz-checkbox nzChecked style="margin-right: 12px;">
-                                <i class="icon-history-alt iconYellow"></i> In Progress
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="newCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
-                                <i class="icon-star iconBlue"></i> New
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="checkedCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
-                                <i class="icon-check-circle iconGreen"></i> Valid
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="lockedCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
-                                <i class="icon-lock-alt iconRed"></i> Locked
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="requiresRegenerationCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
-                                <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="failedCheckbox"
-                                     nz-checkbox
-                                     nzChecked
-                                     style="margin-right: 12px;">
-                                <i class="icon-error_24px iconRed2"></i> Failed
-                              </label>
-                            </div>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
-                             class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
-                             class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
-                             class="icon-direction" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+          <span style="justify-content: space-between;">
+            <nz-dropdown *ngIf="col.icon === 'icon-ballot_24px'" [nzPlacement]="'bottomLeft'">
+              <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
+              <ul nz-menu>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="inProgressCheckbox"
+                           nz-checkbox nzChecked style="margin-right: 12px;">
+                      <i class="icon-history-alt iconYellow"></i> In Progress
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="newCheckbox"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-star iconBlue"></i> New
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="checkedCheckbox"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-check-circle iconGreen"></i> Valid
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="lockedCheckbox"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-lock-alt iconRed"></i> Locked
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="requiresRegenerationCheckbox"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="failedCheckbox"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-error_24px iconRed2"></i> Failed
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown>
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
+                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
+                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
+                 class="icon-direction" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
             style="padding: 0 !important;text-align: center !important;">
           <span style="justify-content: space-between;">
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
-                             class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
-                             class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                          <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
-                             class="icon-direction" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
+                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'desc'"
+                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+              <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchDefault
+                 class="icon-direction" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="col?.fields === 'overallLMF'" style="padding: 0 !important;text-align: center !important;">
-                      <span style="justify-content: space-between;">
-                        {{col?.header}}
-                      </span>
+          <span style="justify-content: space-between;">
+            {{col?.header}}
+          </span>
         </th>
         <th *ngIf="col?.fields === 'peril' ||
                    col?.fields === 'regionPerilCode' ||
@@ -1163,23 +1163,23 @@
                    col?.fields === 'grain' ||
                    col?.fields === 'vendorSystem' ||
                    col?.fields === 'rap' " pResizableColumn>
-                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+          <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+            {{col?.header}}
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="!col.frozen" [ngClass]="{ 'inuring-header':col.fields=='inuring','draggable': col?.dragable}"
             style="padding: 0 !important;text-align: center !important;">
-                      <span style="justify-content: space-between;">
-                        {{col?.header}}
-                      </span>
+          <span style="justify-content: space-between;">
+            {{col?.header}}
+          </span>
         </th>
       </ng-container>
     </tr>
@@ -1305,36 +1305,31 @@
           <div dnd-sortable-container
                (dragover)="onDragOver()"
                [dropZones]="['adjustment-dropZone']"
-               [sortableData]="adjutmentApplication[rowData.pltId]"
+               [sortableData]="adjustmentApplication[rowData.pltId]"
                (drop)="onDrop(col,rowData.pltId,'sortable-container')"
                [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
                class="text-elipsice border-dragable"
                style="display: flex;">
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
-              <div
-                class="adjustDiv"
-                style=" background: #f3f3f3;">
-                                          <span
-                                            class="spanStyle">Model Calib</span>
-                <input class="templateInput" disabled
-                       style=" background: #f3f3f3;" value="2.1">
+              <div class="adjustDiv" style=" background: #f3f3f3;">
+                <span class="spanStyle">Model Calib</span>
+                <input class="templateInput" disabled style=" background: #f3f3f3;" value="2.1">
               </div>
             </div>
 
-            <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
-              <div *ngIf="col.fields== adjs.category.toLowerCase()"
+            <ng-container *ngFor="let adjs of adjustmentApplication[rowData.pltId]; let i=index">
+              <div *ngIf="col.fields == adjs.category.toLowerCase()"
                    (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
                    (mouseover)="shownDropDown = adjs.id+rowData.pltId"
                    dnd-sortable
                    [sortableIndex]="i"
                    [dragEnabled]="true"
                    [dragData]="adjs"
-                   (onDragStart)="onDragStart(adjs,rowData.pltId)"
-                   (onDropSuccess)="onDrop(col,rowData.pltId,'sortable')"
-                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
+                   (onDragStart)="onDragStart(adjs, rowData.pltId)"
+                   (onDropSuccess)="onDrop(col, rowData.pltId,'sortable')"
+                   [ngClass]="{'selectedAdjustment': selectedAdjustment === adjs.ref}"
                    class="adjustDiv">
-                              <span class="spanStyle"
-                                    style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
+                <span class="spanStyle" style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
                 <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
                              *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
                              [(nzVisible)]="dropdownVisible"
@@ -1933,7 +1928,7 @@
               [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
               [dropZones]="['widget-dropZone']"
               [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-              [sortableData]="adjutmentApplication[rowData.pltId]"
+              [sortableData]="adjustmentApplication[rowData.pltId]"
 
               class="text-elipsice border-dragable"
               dnd-sortable-container
@@ -1962,7 +1957,7 @@
                   </div>
                 </div>
               </div>
-              <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
+              <ng-container *ngFor="let adjs of adjustmentApplication[rowData.pltId]; let i=index">
                 <ng-container
                   *ngIf="col.fields== adjs.category.toLowerCase()"
                   style="display: flex;height: max-content; !important;">
@@ -2107,7 +2102,7 @@
         <th *ngIf="col?.icon === 'icon-ballot_24px'"
             style="background-color: #ffffff !important;height: 88px!important;">
         </th>
-        <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
+        <th *ngIf="col?.icon === 'icon-note' && tabStatus !== 'FAC' " class="separator-right"
             style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
           <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
@@ -2129,10 +2124,8 @@
         <th *ngIf="col.fields == 'overallLMF' && extended"
             style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;"
             colspan="6">
-          <div
-            style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 180px;">
-                        <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
+          <div style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 180px;">
+            <span style="width: 110px; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
           </div>
           <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
                        style="font-size: 20px; cursor: pointer;position: absolute;left: 156px;top: 20px;">
@@ -2293,15 +2286,15 @@
             class="separator-right">
 
           <span style="justify-content: space-between;">
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
+            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction"
+                 (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+            </ng-container>
+          </span>
         </th>
         <th *ngIf="col?.fields === 'peril' ||
                    col?.fields === 'regionPerilCode' ||
@@ -2322,11 +2315,10 @@
                       </span>
         </th>
 
-        <th *ngIf="!col.frozen"
-            style="padding: 0 !important;text-align: center !important; border-bottom: none !important;">
-                      <span style="justify-content: space-between; float: right;margin-right: 4px;">
+        <th *ngIf="!col.frozen" style="padding: 0 !important;text-align: center !important; border-bottom: none !important;">
+          <span style="justify-content: space-between; float: right;margin-right: 4px;">
 
-                      </span>
+          </span>
         </th>
       </ng-container>
     </tr>
@@ -2352,11 +2344,8 @@
         <th *ngIf="col?.fields === 'grain'"></th>
         <th *ngIf="col?.fields === 'vendorSystem'"></th>
         <th *ngIf="col?.fields === 'rap'"></th>
-        <th *ngIf="!col.frozen"
-            style="padding: 0 !important;text-align: center !important; border-right: 1px solid  #7f7f7f4a">
-                      <span style="justify-content: space-between; float: right;margin-right: 4px;">
-                        {{col?.header}}
-                      </span>
+        <th *ngIf="!col.frozen" style="padding: 0 !important;text-align: center !important; border-right: 1px solid  #7f7f7f4a">
+          <span style="justify-content: space-between; float: right;margin-right: 4px;">{{col?.header}}</span>
         </th>
       </ng-container>
     </tr>

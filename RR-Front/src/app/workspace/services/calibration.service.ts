@@ -21,6 +21,7 @@ import {
 } from "../containers/workspace-calibration/data";
 import produce from "immer";
 import {ActivatedRoute} from "@angular/router";
+import {WorkspaceModel} from "../model";
 
 @Injectable({
   providedIn: 'root'
@@ -66,9 +67,7 @@ export class CalibrationService implements NgxsOnInit {
       }
     }));
     return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: API_RESPONSE.userTags}));
-    /*t
-
-
+    /*
      const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
      return this.pltApi.getAllPlts(params)
        .pipe(
@@ -261,7 +260,7 @@ export class CalibrationService implements NgxsOnInit {
         if (plts[thread.pltId])
           thread.calibrate = plts[thread.pltId].calibrate;
       })
-    })
+    });
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[workspace].calibration.data[workspace] = _.merge({}, state.content[workspace].calibration.data[workspace], result)
     }));
@@ -279,7 +278,7 @@ export class CalibrationService implements NgxsOnInit {
         if (plts[thread.pltId])
           thread.toCalibrate = plts[thread.pltId].toCalibrate;
       })
-    })
+    });
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], result)
     }));
@@ -318,6 +317,13 @@ export class CalibrationService implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.extendPltSection = payload
     }));
+  }
+
+  extendStateToggle(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {scope} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.extendState = scope === 'init' ? true : !draft.content[this.prefix].calibration.extendState;
+    }))
   }
 
   collapseTags(ctx: StateContext<any>, payload: any) {
@@ -502,7 +508,7 @@ export class CalibrationService implements NgxsOnInit {
             adjustmentApplication[value.pltId] = []
           }
         }
-      })
+      });
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
       }));
@@ -512,12 +518,10 @@ export class CalibrationService implements NgxsOnInit {
   }
 
   dropAdjustment(ctx: StateContext<any>, payload: any) {
-
     let application = payload.application;
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[this.prefix].calibration.adjustmentApplication = application;
       }));
-
   }
 
   deleteAdjsApplication(ctx: StateContext<any>, payload: any) {
