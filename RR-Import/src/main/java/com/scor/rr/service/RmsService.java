@@ -8,10 +8,10 @@ import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
+import com.scor.rr.repository.RLModelDataSourceRepository;
+import com.scor.rr.repository.RLSourceResultRepository;
 import com.scor.rr.repository.RlAnalysisRepository;
 import com.scor.rr.repository.RlAnalysisScanStatusRepository;
-import com.scor.rr.repository.RlModelDataSourceRepository;
-import com.scor.rr.repository.RlSourceResultRepository;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -41,7 +41,7 @@ public class RmsService {
     private final Logger logger = LoggerFactory.getLogger(RmsService.class);
 
     @Autowired
-    RlModelDataSourceRepository rlModelDataSourcesRepository;
+    RLModelDataSourceRepository rlModelDataSourcesRepository;
 
     @Autowired
     RlAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
@@ -50,7 +50,7 @@ public class RmsService {
     RlAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RlSourceResultRepository rlSourceResultRepository;
+    RLSourceResultRepository rlSourceResultRepository;
 
     @Autowired
     ModelMapper modelMapper;
@@ -535,35 +535,35 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(rlDataSource);
     }
 
-//    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
-//        if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
-//            return false;
-//
-//        //TODO : Review this method with Viet
-//        Map<String, Object> dataQueryParams = new HashMap<>();
-//        dataQueryParams.put("Edm_id", edm.getRlId());
-//        dataQueryParams.put("Edm_name", edm.getName());
-//        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
-//        dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
-//
-//        if (LocationLevelExposure.EXTRACT_PORT.equals(extractName)) {
-//            dataQueryParams.put("ProjectID_RR", projectId);
-//        } else if ((LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL.equals(extractName)) ||
-//                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL_CVG.equals(extractName)) ||
-//                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_LOC_CVG.equals(extractName))) {
-//            dataQueryParams.put("ConformedCcy", modelPortfolio.getCurrency());
-//        }
-//
-//        List<GenericDescriptor> descriptors = extractSchema(edm.getInstanceId(), extractName);
-//
-//        if (descriptors.isEmpty()) {
-//            logger.error("Error: retrieve no descriptors");
-//            return false;
-//        }
-//        extractExposureToFile(edm.getInstanceId(), sqlQuery, dataQueryParams, descriptors, file);
-//
-//        return true;
-//    }
+    public boolean extractLocationLevelExposureDetails(RlModelDataSource edm, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
+        if (!ModelDataSourceType.EDM.toString().equals(edm.getType()))
+            return false;
+
+        //TODO : Review this method with Viet
+        Map<String, Object> dataQueryParams = new HashMap<>();
+        dataQueryParams.put("Edm_id", edm.getRlId());
+        dataQueryParams.put("Edm_name", edm.getName());
+        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
+        dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
+
+        if (LocationLevelExposure.EXTRACT_PORT.equals(extractName)) {
+            dataQueryParams.put("ProjectID_RR", projectId);
+        } else if ((LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_POL_CVG.equals(extractName)) ||
+                (LocationLevelExposure.EXTRACT_PORT_ACCOUNT_LOC_CVG.equals(extractName))) {
+            dataQueryParams.put("ConformedCcy", modelPortfolio.getCurrency());
+        }
+
+        List<GenericDescriptor> descriptors = extractSchema(edm.getInstanceId(), extractName);
+
+        if (descriptors.isEmpty()) {
+            logger.error("Error: retrieve no descriptors");
+            return false;
+        }
+        extractExposureToFile(edm.getInstanceId(), sqlQuery, dataQueryParams, descriptors, file);
+
+        return true;
+    }
 
     private List<GenericDescriptor> extractSchema(String instanceId, String extractName) {
         logger.debug("extractSchema");
