@@ -55,7 +55,7 @@ public class ELTWriter extends AbstractWriter {
             writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
             writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
 
-            log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("ELTBinaryWriter completed");
         return RepeatStatus.FINISHED;
@@ -135,7 +135,7 @@ public class ELTWriter extends AbstractWriter {
 
             log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
 
-            log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("writeHeader completed");
         return RepeatStatus.FINISHED;

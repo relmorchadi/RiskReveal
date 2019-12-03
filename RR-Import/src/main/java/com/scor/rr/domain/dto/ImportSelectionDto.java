@@ -3,10 +3,10 @@ package com.scor.rr.domain.dto;
 import lombok.Data;
 
 @Data
-public class SourceResultDto {
+public class ImportSelectionDto {
 
-    private Integer projectId;
-    private Integer rlAnalysisId;
+    private Long projectId;
+    private Long rlAnalysisId;
     private String targetCurrency;
     private String targetRegionPeril;
     private Float unitMultiplier;

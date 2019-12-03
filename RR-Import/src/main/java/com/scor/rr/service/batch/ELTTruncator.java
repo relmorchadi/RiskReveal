@@ -61,7 +61,7 @@ public class ELTTruncator {
             bundle.setTruncationThreshold(threshold);
 
             // finish step 5 TRUNCATE_ELT for one analysis in loop for of many analysis
-            log.info("Finish import progress STEP 5 : TRUNCATE_ELT for analysis: {}", sourceResult.getRlSourceResultId());
+            log.info("Finish import progress STEP 5 : TRUNCATE_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }
         log.debug("ELTTruncator completed");
         return RepeatStatus.FINISHED;
