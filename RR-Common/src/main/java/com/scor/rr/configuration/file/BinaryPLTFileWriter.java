@@ -7,6 +7,7 @@ import com.scor.rr.exceptions.pltfile.PLTDataNullException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileWriteException;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.stereotype.Component;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
 
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * Created by u004602 on 28/06/2019.
  */
+@Component
 public class BinaryPLTFileWriter implements PLTFileWriter {
     public void write(List<PLTLossData> pltLossDataList, File file) throws RRException {
         if (! "bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))

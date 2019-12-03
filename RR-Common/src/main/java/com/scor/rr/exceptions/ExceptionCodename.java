@@ -33,6 +33,7 @@ public enum ExceptionCodename {
     /*
         This section is delegated to Inuring Exceptions
      */
+    INURING_INVALID_NUMBER_PLTS("Invalid number of PLTS"),
     INURING_PLT_NOT_FOUND("Inuring Plt Not found"),
     INURING_PACKAGE_NOT_FOUND("Inuring Package not found"),
     INURING_NOTE_NOT_FOUND("Inuring Note not found"),
