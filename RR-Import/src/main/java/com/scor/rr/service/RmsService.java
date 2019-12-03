@@ -2,15 +2,10 @@ package com.scor.rr.service;
 
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.dto.RLAnalysisELT;
-import com.scor.rr.domain.dto.SourceResultDto;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
-import com.scor.rr.repository.RLAnalysisRepository;
-import com.scor.rr.repository.RLAnalysisScanStatusRepository;
-import com.scor.rr.repository.RLModelDataSourceRepository;
-import com.scor.rr.repository.RLSourceResultRepository;
+import com.scor.rr.repository.*;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -27,7 +22,6 @@ import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.sql.Types;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,19 +34,28 @@ public class RmsService {
     private final Logger logger = LoggerFactory.getLogger(RmsService.class);
 
     @Autowired
-    RLModelDataSourceRepository rlModelDataSourcesRepository;
+    private RLModelDataSourceRepository rlModelDataSourcesRepository;
 
     @Autowired
-    RLAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
+    private RLAnalysisScanStatusRepository rlAnalysisScanStatusRepository;
 
     @Autowired
-    RLAnalysisRepository rlAnalysisRepository;
+    private RLAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RLSourceResultRepository rlSourceResultRepository;
+    private RLPortfolioRepository rlPortfolioRepository;
 
     @Autowired
-    ModelMapper modelMapper;
+    private RLImportSelectionRepository rlImportSelectionRepository;
+
+    @Autowired
+    private RLPortfolioScanStatusRepository rlPortfolioScanStatusRepository;
+
+    @Autowired
+    private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     @Qualifier(value = "dataSource")
@@ -84,33 +87,6 @@ public class RmsService {
         return dataSources;
     }
 
-    public void addEdmRdms(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
-        Set<MultiKey> selectedDataSources = new HashSet<>();
-        for (DataSource dataSource : dataSources) {
-            selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
-        }
-        List<RLModelDataSource> existingRLModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
-        for (RLModelDataSource existingRLModelDataSource : existingRLModelDataSources) {
-            if (!selectedDataSources.contains(new MultiKey(existingRLModelDataSource.getType(), existingRLModelDataSource.getInstanceId(), existingRLModelDataSource.getRlId()))) {
-                rlModelDataSourcesRepository.delete(existingRLModelDataSource);
-            }
-        }
-
-        for (DataSource dataSource : dataSources) {
-            RLModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
-                    (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
-            if (rlModelDataSource == null) {
-                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
-                rlModelDataSourcesRepository.save(rlModelDataSource);
-            }
-
-            if ("RDM".equals(rlModelDataSource.getType())) {
-                scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
-            }
-        }
-
-    }
-
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListRdmAnalysisBasic @rdm_id=" + id + " ,@rdm_name=" + name;
         this.logger.debug("Service starts executing the query ...");
@@ -139,44 +115,6 @@ public class RmsService {
         return rdmAnalysis;
     }
 
-    public void scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
-        rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
-        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId,Long.parseLong(rdm.getRlId()), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
-            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
-                    new RLAnalysis(rdmAnalysisBasic, rdm)
-            );
-            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
-            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-        }
-    }
-
-    public void scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
-        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
-
-        rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
-                .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm(BigInteger.valueOf((int) key.getKey(0)), (String) key.getKey(1), rlAnalysisList)));
-
-        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
-
-            Long rdmId = ((Integer) multiKeyListEntry.getKey().getKey(0)).longValue();
-            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
-
-            this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
-                    .stream()
-                    .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysiById(projectId, rdmAnalysis))
-                    .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
-                    .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
-
-        }
-
-    }
-
-    private List<Long> getAnalysisIdByRdm(BigInteger rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
-        return rlAnalysisList.stream().filter(item -> item.getRdmId().intValue() == rdmId.intValue() && item.getRdmName().equals(rdmName))
-                .map(AnalysisHeader::getAnalysisId).map(Integer::longValue).collect(toList());
-    }
-
     public List<EdmPortfolioBasic> listEdmPortfolioBasic(String instanceId, Long id, String name) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
         this.logger.debug("Service starts executing the query ...");
@@ -187,13 +125,13 @@ public class RmsService {
         return edmPortfolioBasic;
     }
 
-    public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<String> portfolioList) {
+    public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<Long> portfolioList) {
         String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name=" + name;
         List<EdmPortfolio> edmPortfolios = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
 
         if (portfolioList != null) {
-            String sql = query + ",@portfolio_id_list=" + portfolioList;
+            String sql = query + ",@portfolioList=" + portfolioList;
             edmPortfolios = getJdbcTemplate(instanceId).query(
                     sql, new EdmPortfolioRowMapper()
             );
@@ -204,6 +142,149 @@ public class RmsService {
         }
         this.logger.debug("the data returned ", edmPortfolios);
         return edmPortfolios;
+    }
+
+    private void scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
+        rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
+        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, Long.parseLong(rdm.getRlId()), rdm.getName());
+        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+            RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
+                    new RLAnalysis(rdmAnalysisBasic, rdm)
+            );
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
+        }
+    }
+
+    private void scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
+        Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
+
+        if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
+            rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
+                    .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
+
+            for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
+
+                Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
+                String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+                this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                        .stream()
+                        .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysisById(projectId, rdmAnalysis))
+                        .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
+                        .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
+            }
+        }
+    }
+
+    private void scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
+        rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(edm.getRlModelDataSourceId());
+        List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, Long.parseLong(edm.getRlId()), edm.getName());
+        for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
+            RLPortfolio rlPortfolio = this.rlPortfolioRepository.save(
+                    new RLPortfolio(edmPortfolioBasic, edm)
+            );
+            RLPortfolioScanStatus rlAnalysisScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
+            rlPortfolioScanStatusRepository.save(rlAnalysisScanStatus);
+        }
+    }
+
+    private void scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
+        Map<MultiKey, List<Long>> portfolioByEdms = new HashMap<>();
+
+        if (rlPortfolioList != null && !rlPortfolioList.isEmpty()) {
+            rlPortfolioList.stream().map(item -> new MultiKey(item.getEdmId(), item.getEdmName())).distinct()
+                    .forEach(key -> portfolioByEdms.put(key, this.getPortfolioIdByEdm((Long) key.getKey(0), (String) key.getKey(1), rlPortfolioList)));
+
+            for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : portfolioByEdms.entrySet()) {
+
+                Long edmId = (Long) multiKeyListEntry.getKey().getKey(0);
+                String edmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+                this.listEdmPortfolio(instanceId, edmId, edmName, multiKeyListEntry.getValue())
+                        .forEach(edmPortfolio -> this.rlPortfolioRepository.updatePortfolioById(projectId, edmPortfolio));
+            }
+        }
+    }
+
+    /********** Scan Basic / Detailed **********/
+
+    public void basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
+        Set<MultiKey> selectedDataSources = new HashSet<>();
+        for (DataSource dataSource : dataSources) {
+            selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
+        }
+        List<RLModelDataSource> existingRLModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
+        for (RLModelDataSource existingRLModelDataSource : existingRLModelDataSources) {
+            if (!selectedDataSources.contains(new MultiKey(existingRLModelDataSource.getType(), existingRLModelDataSource.getInstanceId(), existingRLModelDataSource.getRlId()))) {
+                rlModelDataSourcesRepository.delete(existingRLModelDataSource);
+            }
+        }
+
+        for (DataSource dataSource : dataSources) {
+            RLModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
+                    (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
+            if (rlModelDataSource == null) {
+                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
+                rlModelDataSourcesRepository.save(rlModelDataSource);
+            }
+
+            if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+                scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
+            } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
+                scanPortfolioBasicForEdm(instanceId, rlModelDataSource);
+            }
+        }
+
+    }
+
+    public void detailedScan(DetailedScanDto detailedScanDto) {
+        this.scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId());
+        this.scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId());
+    }
+
+    /********** END :Scan Basic / Detailed **********/
+
+    /**
+     * @param importSelectionDtoList
+     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
+     */
+    public List<Long> saveAnalysisImportSelection(List<ImportSelectionDto> importSelectionDtoList) {
+
+        if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty())
+            return importSelectionDtoList.stream()
+                    .map(RLImportSelection::new)
+                    .map(importSelection -> {
+                        importSelection = rlImportSelectionRepository.save(importSelection);
+                        return importSelection.getRlImportSelectionId();
+                    }).collect(toList());
+        return new ArrayList<>();
+    }
+
+    /**
+     * @param portfolioImportSelectionDtoList
+     * @implNote Method used to save portfolio config (PortfolioSelection). values that has been chosen by the user
+     */
+    public List<Long> savePortfolioImportSelection(List<PortfolioSelectionDto> portfolioImportSelectionDtoList) {
+
+        if (portfolioImportSelectionDtoList != null && !portfolioImportSelectionDtoList.isEmpty())
+            return portfolioImportSelectionDtoList.stream()
+                    .map(RLPortfolioSelection::new)
+                    .map(portfolioSelection -> {
+                        portfolioSelection = rlPortfolioSelectionRepository.save(portfolioSelection);
+                        return portfolioSelection.getRlPortfolioSelectionId();
+                    }).collect(toList());
+        return new ArrayList<>();
+    }
+
+    private List<Long> getAnalysisIdByRdm(Long rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
+        return rlAnalysisList.stream().filter(item -> item.getRdmId().longValue() == rdmId.longValue() && item.getRdmName().equals(rdmName))
+                .map(AnalysisHeader::getAnalysisId).collect(toList());
+    }
+
+    private List<Long> getPortfolioIdByEdm(Long edmId, String edmName, List<PortfolioHeader> rlPortfolioList) {
+        return rlPortfolioList.stream().filter(item -> item.getEdmId().longValue() == edmId.longValue() && item.getEdmName().equals(edmName))
+                .map(PortfolioHeader::getPortfolioId).collect(toList());
     }
 
     public List<RdmAnalysisEpCurves> listRdmAllAnalysisEpCurves(String instanceId, Long id, String name, int epPoints, List<Long> analysisIdList, List<String> finPerspList) {
@@ -470,21 +551,6 @@ public class RmsService {
         return builder.toString();
     }
 
-    /**
-     * @param sourceResultDtoList
-     * @implNote Method used to save analysis config (SourceResult). values that has been chosen by the user
-     */
-    public List<Long> saveSourceResults(List<SourceResultDto> sourceResultDtoList) {
-
-        return sourceResultDtoList.stream().map(sourceResultDto -> modelMapper.map(sourceResultDto, RLImportSelection.class))
-                .map(sourceResult -> {
-                    sourceResult = rlSourceResultRepository.save(sourceResult);
-                    return sourceResult.getRlSourceResultId();
-                }).collect(toList());
-    }
-
-    /* TODO Implement */
-
     private String convertList(List<String> list) {
         return list.stream().collect(Collectors.joining(","));
     }
@@ -529,11 +595,6 @@ public class RmsService {
         getJdbcTemplate(instanceId).update(removeEDMPortfolioContextSQL, params);
     }
 
-    public NamedParameterJdbcTemplate createTemplate(String dataSource) {
-        //@TODO
-        return new NamedParameterJdbcTemplate(rlDataSource);
-    }
-
     public boolean extractLocationLevelExposureDetails(Long edmId, String edmName, String instance, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
 
         //TODO : Review this method with Viet
@@ -565,7 +626,7 @@ public class RmsService {
 
     private List<GenericDescriptor> extractSchema(String instanceId, String extractName) {
         logger.debug("extractSchema");
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createNamedParameterTemplate(instanceId);
         Map<String, Object> schemaQueryParams = new HashMap<>();
         schemaQueryParams.put("extract_name", extractName);
         logger.debug("extractSchema | schemaSqlQuery: {}, params: {}", extractLocationLevelSchemaQuery, schemaQueryParams);
@@ -576,7 +637,7 @@ public class RmsService {
 
     private void extractExposureToFile(String instanceId, String sqlQuery, Map<String, Object> dataQueryParams, List<GenericDescriptor> descriptors, File file) {
         logger.debug("run query {} with params {}", sqlQuery, dataQueryParams);
-        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createTemplate(instanceId);
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = createNamedParameterTemplate(instanceId);
         ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
         namedParameterJdbcTemplate.query(sqlQuery, dataQueryParams, extractor);
     }
@@ -605,7 +666,11 @@ public class RmsService {
         }
     }
 
-    private JdbcTemplate getJdbcTemplate(String instanceId){
+    private JdbcTemplate getJdbcTemplate(String instanceId) {
         return new JdbcTemplate(rmsInstanceCache.getDataSource(instanceId));
+    }
+
+    public NamedParameterJdbcTemplate createNamedParameterTemplate(String instanceId) {
+        return new NamedParameterJdbcTemplate(this.getJdbcTemplate(instanceId));
     }
 }

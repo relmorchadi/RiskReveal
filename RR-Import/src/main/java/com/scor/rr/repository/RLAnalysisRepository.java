@@ -37,8 +37,8 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " ra.rdmName= :#{#analysis.rdmName} and " +
             " ra.analysisId= :#{#analysis.analysisId} and " +
             " ra.analysisName= :#{#analysis.analysisName} ")
-    void updateAnalysiById(@Param("projectId") Long projectId,
-                           @Param("analysis") RdmAnalysis analysis);
+    void updateAnalysisById(@Param("projectId") Long projectId,
+                            @Param("analysis") RdmAnalysis analysis);
 
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")

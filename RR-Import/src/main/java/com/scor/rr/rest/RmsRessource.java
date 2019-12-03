@@ -1,13 +1,10 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.AnalysisHeader;
-import com.scor.rr.domain.dto.SourceResultDto;
 import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +64,7 @@ public class RmsRessource {
 
     @GetMapping("listEdmPortfolio")
     public ResponseEntity<?> listEdmPortfolio(@RequestParam String instanceId, @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
-                                              @RequestParam(value = "portfolioList", required = false) List<String> portfolioList) {
+                                              @RequestParam(value = "portfolioList", required = false) List<Long> portfolioList) {
 
         this.logger.debug("start getting listEdmPortfolio ...");
 

@@ -148,7 +148,7 @@ public class ELTConformer {
             //@TODO Review
             //bundle.setAnalysisELTnBetaFunction(eltLossesnBetaFunction);
 
-            log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlSourceResultId());
+            log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }
         log.debug("ELTConformer completed");
         return RepeatStatus.FINISHED;

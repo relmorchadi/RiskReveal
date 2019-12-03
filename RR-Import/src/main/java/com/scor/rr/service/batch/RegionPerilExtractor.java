@@ -40,7 +40,7 @@ public class RegionPerilExtractor {
     private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
-    private RLSourceResultRepository rlSourceResultRepository;
+    private RLImportSelectionRepository rlSourceResultRepository;
 
     @Autowired
     private RegionPerilRepository regionPerilRepository;
@@ -317,7 +317,7 @@ public class RegionPerilExtractor {
     private LossDataHeaderEntity makeSourceRRLT(ModelAnalysisEntity modelAnalysisEntity, RLImportSelection sourceResult, String financialPerspective, CurrencyEntity analysisCurrencyEntity) {
 
         if (financialPerspective == null) {
-            log.debug("no analysis financial perspective found for source result {}", sourceResult.getRlSourceResultId());
+            log.debug("no analysis financial perspective found for source result {}", sourceResult.getRlImportSelectionId());
         }
 
         LossDataHeaderEntity rrLossTable = new LossDataHeaderEntity();

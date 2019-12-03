@@ -9,26 +9,27 @@ export class BadgesService {
 
   readonly regularExpession = /(\w*:){1}(((\w|\"|\*)*\s)*)/g;
 
-  readonly shortcuts = {
-    c: 'CedantName',
-    cid: 'CedantCode',
-    uwy: 'UWYear',
-    w: 'WorkspaceName',
-    wid: 'WorkspaceId',
-    ctr: 'CountryName'
-  };
+   shortcuts = {}
 
   constructor() {
 
+  }
+
+  public initShortCuts(shortCuts: ShortCut[]) {
+    let newShortCuts = {};
+
+    _.forEach(shortCuts, shortCut => {
+      newShortCuts[_.trim(shortCut.shortCutAttribute, ':')] = shortCut.shortCutLabel;
+    });
+
+    this.shortcuts = newShortCuts;
   }
 
   public generateBadges(expression, shortcuts = this.shortcuts): string | Array<{ key, value, operator }> {
     if (!`${expression} `.match(this.regularExpession))
       return expression;
     let badges = [];
-    console.log(expression);
     `${expression} `.replace(this.regularExpession, (match, shortcut, keyword) => {
-      console.log(match, shortcut, keyword);
       //let key = shortcuts[_.toLower(_.trim(shortcut, ':'))];
       let key = _.trim(shortcut, ':');
       let badge = {
@@ -51,8 +52,11 @@ export class BadgesService {
   }
 
   public transformKeyword(expr: any) {
+    console.log(this.shortcuts)
     return expr.replace(/(\w*:){1}/g, (match, shortcut, keyword) => {
+      console.log(shortcut)
       let shortCutExist = this.shortcuts[_.toLower(_.trim(shortcut, ':'))];
+      console.log(shortCutExist ? shortCutExist + ":" : shortcut)
       return shortCutExist ? shortCutExist + ":" : shortcut;
     });
   }
@@ -63,6 +67,16 @@ export class BadgesService {
       mapTableNameToBadgeKey[shortCut.mappingTable] = shortCut.shortCutLabel;
     })
     return mapTableNameToBadgeKey;
+  }
+
+  public initShortCutsFromKeysMapper(shortCuts: ShortCut[]) {
+     let newMapper= {};
+
+     _.forEach(shortCuts, shortCut => {
+       newMapper[_.trim(shortCut.shortCutAttribute, ':')] = _.startCase(shortCut.shortCutLabel);
+     })
+
+    return newMapper;
   }
 
   public clearString(expr) {

@@ -159,12 +159,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   onSpace(evt: KeyboardEvent) {
-    if (this.scrollParams.position && this.scrollParams.scrollTo >= 0) {
-      evt.preventDefault();
-      let {i, j} = this.scrollParams.position;
-      //this.selectSearchBadge(this.mapTableNameToBadgeKey[this.state.tables[i]], this.state.data[i][j].label);
-      this.scrollParams.scrollTo = -1;
-    }
   }
 
   onBackspace(evt: KeyboardEvent) {
@@ -184,12 +178,15 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   convertBadgeToExpression(badges) {
+    console.log(badges);
     let globalExpression = "";
     let index;
     _.forEach(badges, (badge, i: number) => {
       index = this.searchShortCuts.findIndex(row => {
+        console.log({row,badge});
         return row.shortCutLabel == badge.key;
       });
+      console.log(index);
       if(i == badges.length - 1) {
         globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
       } else {
@@ -328,6 +325,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   replaceExpressionWithShortCut(possibleShortCut: string) {
     event.preventDefault();
+    console.log(possibleShortCut);
     this.contractFilterFormGroup.get('globalKeyword').patchValue(possibleShortCut + ":");
   }
 }

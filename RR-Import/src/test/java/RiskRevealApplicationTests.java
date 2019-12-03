@@ -73,7 +73,7 @@ public class RiskRevealApplicationTests {
 
     private List<Long> analysisIdList = Arrays.asList(1L, 2L);
     private List<Long> idList = Arrays.asList(1L, 2L);
-    private List<String> portfolioIdList = Arrays.asList("1~DET", "2~DET");
+    private List<Long> portfolioIdList = Arrays.asList(1L,2L);
     private static int epPoints = 50;
     private static String rdmName = "AC15_RL15_AUT_R";
     private static String edmName = "IED2017_TWTY_AD2_TWD_EDM170";

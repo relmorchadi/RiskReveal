@@ -95,7 +95,7 @@ public class ExchangeRateExtractor {
             // TODO how to do ?????????????????????????????
             bundle.setRmsExchangeRatesOfRRLT(exchangeRates);
 
-            log.info("Finish import progress STEP 3 : EXTRACT_RMS_EXCHANGE_RATE for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 3 : EXTRACT_RMS_EXCHANGE_RATE for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("RmsExchangeRatesExtractor completed");
     }

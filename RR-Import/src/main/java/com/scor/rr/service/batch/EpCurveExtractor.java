@@ -219,7 +219,7 @@ public class EpCurveExtractor extends AbstractWriter {
             epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 
-            log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("RMSEPCurveExtractor.runConformedExtraction completed");
         return RepeatStatus.FINISHED;
