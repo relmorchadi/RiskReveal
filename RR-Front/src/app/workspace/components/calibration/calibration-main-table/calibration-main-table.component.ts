@@ -303,6 +303,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   filterCols() {
+    // console.log(this.dataColumns);
+    // return this.dataColumns;
     if (this.tabStatus === 'FAC') {
       return _.filter(this.dataColumns, item => item.fields !== 'base' &&
         item.fields !== 'client' &&
