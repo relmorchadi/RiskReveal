@@ -20,11 +20,11 @@ public class CloningProject {
         p.setWorkspaceByFkWorkspaceId(workspaceEntity);
         p.setCreationDate(new Timestamp(new Date().getTime()));
         p.setFkCloneSourceProjectId(projectEntity);
-        p.setClonedFlag(true);
+        p.setIsCloned(true);
         p.setProjectDescription(projectEntity.getProjectDescription());
         p.setAssignedTo(projectEntity.getAssignedTo());
-        p.setLinkFlag(projectEntity.getLinkFlag());
-        p.setClonedFlag(true);
+        p.setIsLinked(projectEntity.getIsLinked());
+        p.setIsCloned(true);
         return projectRepository.save(p);
 
     }
