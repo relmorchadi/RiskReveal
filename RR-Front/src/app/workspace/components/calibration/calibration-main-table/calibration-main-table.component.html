@@ -32,53 +32,53 @@
             colspan="12"
             style="background-color: #ffffff !important;height: 88px!important; padding: 0;border-top:0 !important;">
           <div class="title-as-tab" style=" width: 100% !important;justify-content: space-between;">
-                  <span class="title">
-                    PLTs
-                   <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
-                                [nzPlacement]="'bottomLeft'" nzTrigger="click"
-                                style=" left: 100px; margin-top: 20px;">
-                    <i class="icon-menu_24px" nz-dropdown
-                       style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
+            <span class="title">
+              PLTs
+              <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
+                           [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                           style=" left: 100px; margin-top: 20px;">
+                <i class="icon-menu_24px" nz-dropdown
+                   style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
+                <ul nz-menu>
+                  <li nz-submenu>
+                    <span title>Create</span>
                     <ul nz-menu>
-                      <li nz-submenu>
-                        <span title>Create</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>New Default Thread</li>
-                          <li nz-menu-item>New Non-default Thread</li>
-                        </ul>
-                      </li>
-                      <li nz-submenu>
-                        <span title>Clone</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>New Default Thread</li>
-                          <li nz-menu-item>New Non-default Thread</li>
-                        </ul>
-                      </li>
-                      <li class="menu-bottom-separator" nz-submenu>
-                        <span title>Regenerate</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>Selected Threads Only</li>
-                          <li nz-menu-item>All Threads</li>
-                        </ul>
-                      </li>
-                      <li nz-menu-item>Publish to Princing</li>
-                      <li nz-menu-item>Publish to Accumulation</li>
-                      <li nz-submenu>
-                        <span title>Inuring</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>Add to New Inuring Package</li>
-                          <li nz-menu-item>Add to Existing Inuring Package</li>
-                        </ul>
-                      </li>
-                      <li nz-menu-item>Add to Comparer</li>
-                      <li class="menu-bottom-separator" nz-menu-item>Export</li>
-                      <li nz-menu-item>Edit PLT Name</li>
-                      <li nz-menu-item>Manage Tags</li>
-                      <li nz-menu-item>Remove</li>
-                      <li nz-menu-item>Delete</li>
+                      <li nz-menu-item>New Default Thread</li>
+                      <li nz-menu-item>New Non-default Thread</li>
                     </ul>
-                  </nz-dropdown>
-                  </span>
+                  </li>
+                  <li nz-submenu>
+                    <span title>Clone</span>
+                    <ul nz-menu>
+                      <li nz-menu-item>New Default Thread</li>
+                      <li nz-menu-item>New Non-default Thread</li>
+                    </ul>
+                  </li>
+                  <li class="menu-bottom-separator" nz-submenu>
+                    <span title>Regenerate</span>
+                    <ul nz-menu>
+                      <li nz-menu-item>Selected Threads Only</li>
+                      <li nz-menu-item>All Threads</li>
+                    </ul>
+                  </li>
+                  <li nz-menu-item>Publish to Princing</li>
+                  <li nz-menu-item>Publish to Accumulation</li>
+                  <li nz-submenu>
+                    <span title>Inuring</span>
+                    <ul nz-menu>
+                      <li nz-menu-item>Add to New Inuring Package</li>
+                      <li nz-menu-item>Add to Existing Inuring Package</li>
+                    </ul>
+                  </li>
+                  <li nz-menu-item>Add to Comparer</li>
+                  <li class="menu-bottom-separator" nz-menu-item>Export</li>
+                  <li nz-menu-item>Edit PLT Name</li>
+                  <li nz-menu-item>Manage Tags</li>
+                  <li nz-menu-item>Remove</li>
+                  <li nz-menu-item>Delete</li>
+                </ul>
+              </nz-dropdown>
+            </span>
             <div class="pull-right" *ngIf="tabStatus !== 'FAC'"  style="margin-top: 8px; margin-right: 3px;">
               <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
                  style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
@@ -175,8 +175,9 @@
                    [sortableIndex]="adjIndex"
                    class="adjustDiv"
                    dnd-sortable style="margin: 8px!important;">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
+                <span style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">
+                  {{adj?.name}}
+                </span>
                 <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
                              *ngIf="shownDropDown === adj.id"
                              [(nzVisible)]="dropdownVisible"
@@ -432,12 +433,15 @@
           </div>-->
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice-pure"
-               style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+          <div class="text-ellipsis-pure" style="font-weight: bold">
+            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice-pure">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+               class="text-ellipsis-pure">
+            <span class="text-wrap-ellipsis">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</span>
+          </div>
         </ng-container>
         <!--<ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -506,7 +510,7 @@
             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
             [sortableData]="adjustmentApplication[rowData.pltId]"
 
-            class="text-elipsice-pure border-dragable"
+            class="text-ellipsis-pure border-dragable"
             dnd-sortable-container
             style="display: flex;">
 
@@ -635,12 +639,14 @@
             </div>
           </ng-container>
           <ng-container *ngIf="col.fields === 'pltId'">
-            <div class="text-elipsice"
-                 style="font-weight: bold">{{thread.pltId | textLength}}</div>
+            <div class="text-table-cell" style="font-weight: bold">
+              <span class="text-wrap-ellipsis">{{thread.pltId | textLength}}</span>
+            </div>
           </ng-container>
           <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-            <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-                 class="text-elipsice">{{ i == 2 ? (thread[col.fields]) : thread[col.fields]}}</div>
+            <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}" class="text-table-cell">
+              <span class="text-wrap-ellipsis">{{ i == 2 ? (thread[col.fields]) : thread[col.fields]}}</span>
+            </div>
           </ng-container>
           <ng-container *ngIf="col?.type == 'icon'">
             <div class="td-wrapper-check">
@@ -709,15 +715,12 @@
                  [sortableData]="adjustmentApplication[thread.pltId]"
                  (drop)="onDrop(col,thread.pltId,'sortable-container')"
                  [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-                 class="text-elipsice border-dragable"
+                 class="text-table-cell border-dragable"
                  style="display: flex;">
 
               <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
-                <div
-                  class="adjustDiv"
-                  style=" background: #f3f3f3;">
-                                          <span
-                                            class="spanStyle">Model Calib</span>
+                <div class="adjustDiv" style=" background: #f3f3f3;">
+                  <span class="spanStyle">Model Calib</span>
                   <input class="templateInput" disabled
                          style=" background: #f3f3f3;" value="2.1">
                 </div>
@@ -827,7 +830,7 @@
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
       <ng-container *ngFor="let col of columns">
-        <col [ngStyle]="{'width': col.width+'px'}">
+        <col [ngStyle]="{'width': tabStatus === 'FAC' ? col.width + '%' : col.width + 'px'}">
       </ng-container>
     </colgroup>
   </ng-template>
@@ -1234,12 +1237,14 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice"
-               style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+          <div class="text-table-cell" style="font-weight: bold">
+            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-          <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+          <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}" class="text-table-cell">
+            <span class="text-wrap-ellipsis">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -1308,7 +1313,7 @@
                [sortableData]="adjustmentApplication[rowData.pltId]"
                (drop)="onDrop(col,rowData.pltId,'sortable-container')"
                [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice border-dragable"
+               class="text-table-cell border-dragable"
                style="display: flex;">
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
               <div class="adjustDiv" style=" background: #f3f3f3;">
@@ -1853,12 +1858,14 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice"
-               style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+          <div class="text-table-cell" style="font-weight: bold">
+            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-          <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+          <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}" class="text-table-cell">
+            <span class="text-wrap-ellipsis">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -1930,10 +1937,9 @@
               [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
               [sortableData]="adjustmentApplication[rowData.pltId]"
 
-              class="text-elipsice border-dragable"
+              class="text-table-cell border-dragable"
               dnd-sortable-container
               style="display: flex;">
-
               <div *ngIf="col.fields=='default'"
                    style="display: flex;font-weight: bold; !important;height: max-content">
                 <div class="impactAnalysisDiv" style=" background: #f3f3f3;">
@@ -1989,8 +1995,8 @@
           </ng-container>
         </ng-container>
         <ng-template #invalidPlt>
-          <div *ngIf="col.fields == 'base'" class="invalid-plt text-elipsice border-dragable">
-            {{invalidPltString}}
+          <div *ngIf="col.fields == 'base'" class="invalid-plt text-table-cell border-dragable">
+            <span class="text-wrap-ellipsis">{{invalidPltString}}</span>
           </div>
         </ng-template>
       </td>
@@ -2017,7 +2023,7 @@
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
       <ng-container *ngFor="let col of columns">
-        <col [ngStyle]="{'width': col.width+'px'}">
+        <col [ngStyle]="{'width': col.width + 'px'}">
       </ng-container>
     </colgroup>
   </ng-template>
@@ -2374,12 +2380,14 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice"
-               style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+          <div class="text-table-cell" style="font-weight: bold">
+            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-          <div class="text-elipsice"
-               [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+          <div class="text-table-cell" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
+            <span class="text-wrap-ellipsis">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</span>
+          </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -2441,24 +2449,24 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col?.dragable">
-          <div class="text-elipsice border-dragable threeValues" style="display: grid;">
-            <div class="EPM0">
+          <div class="text-table-cell border-dragable threeValues" style="display: grid;">
+            <div class="EPM0 text-wrap-ellipsis">
               {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][0])}}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1] > 0"
-                 class="EPM2B">
+                 class="EPM2B text-wrap-ellipsis">
               {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1]  < 0"
-                 class="EPM2R">
+                 class="EPM2R text-wrap-ellipsis">
               {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  > 0"
-                 class="EPM2B">
+                 class="EPM2B text-wrap-ellipsis">
               {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%' }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  < 0"
-                 class="EPM2R">
+                 class="EPM2R text-wrap-ellipsis">
               {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%'}}
             </div>
           </div>
@@ -2508,10 +2516,8 @@
       </ng-template>
       <ng-template pTemplate="footer">
         <tr>
-          <th style="padding-top: 10px;"><i (click)="addToReturnPeriods()"
-                                            style="font-size: 14px; margin-right: 1px; margin-top: 3px"
-                                            [ngStyle]="{'cursor' : 'pointer'}"
-                                            class="icon-plus-circle"></i>
+          <th style="padding-top: 10px;">
+            <i (click)="addToReturnPeriods()" style="font-size: 14px; margin-right: 1px; margin-top: 3px" [ngStyle]="{'cursor' : 'pointer'}" class="icon-plus-circle"></i>
             <input class="a-textfield-mini" style="width: 95%" type="text" [(ngModel)]="returnPeriodInput"
                    name="new-field"></th>
         </tr>
