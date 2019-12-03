@@ -7,7 +7,6 @@ import java.util.Objects;
 @Table(name = "DefaultEventBasedAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 public class DefaultEventBasedAdjustmentParameter {
     private int defaultAdjustmentParameterId;
-    private EntityEntity entity;
     private String inputFilePath;
     private String inputFileName;
     private DefaultAdjustmentNode defaultAdjustmentNode;
@@ -30,16 +29,6 @@ public class DefaultEventBasedAdjustmentParameter {
 
     public void setDefaultAdjustmentParameterId(int defaultAdjustmentParameterId) {
         this.defaultAdjustmentParameterId = defaultAdjustmentParameterId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public EntityEntity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(EntityEntity entity) {
-        this.entity = entity;
     }
 
     @Basic
