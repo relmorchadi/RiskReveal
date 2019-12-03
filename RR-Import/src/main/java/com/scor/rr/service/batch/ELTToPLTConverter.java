@@ -131,7 +131,7 @@ public class ELTToPLTConverter extends AbstractWriter {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             RLImportSelection sourceResult = bundle.getSourceResult();
-            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlSourceResultId()));
+            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlImportSelectionId()));
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
             String analysisName = rlAnalysisOpt.map(RLAnalysis::getAnalysisName).orElse(null);
             Long analysisId = rlAnalysisOpt.map(RLAnalysis::getAnalysisId).orElse(null);

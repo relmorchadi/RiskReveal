@@ -33,7 +33,7 @@ public class PLTWriter {
 
                 if (bundle.getPltBundles() == null) {
                     log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getLossDataHeaderId());
-                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
                     continue;
                 }
                 for (PLTBundle pltBundle : bundle.getPltBundles()) {
@@ -42,7 +42,7 @@ public class PLTWriter {
                     }
                 }
 
-                log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+                log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
             }
             log.debug("writeHeader completed");
             return RepeatStatus.FINISHED;

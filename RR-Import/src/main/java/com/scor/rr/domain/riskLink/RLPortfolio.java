@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.scor.rr.domain.EdmPortfolioBasic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,10 @@ public class RLPortfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "RlAnalysisId")
+    @Column(name = "RlPortfolioId")
     private Long rlPortfolioId;
+    @Column(name = "Entity")
+    private Long entity;
     @Column(name = "ProjectId")
     private Long projectId;
     @Column(name = "EdmId")
@@ -54,4 +57,22 @@ public class RLPortfolio {
     @ManyToOne
     @JoinColumn(name = "RlModelDataSourceId")
     private RLModelDataSource rlModelDataSource;
+
+    public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm) {
+        this.entity = 1L;
+        this.projectId = edm.getProjectId();
+        this.edmId = Long.valueOf(edm.getRlId());
+        this.edmName = edm.getName();
+        this.portfolioId = edmPortfolioBasic.getPortfolioId();
+        this.name = edmPortfolioBasic.getName();
+        //this.created = edmPortfolioBasic.getCreated();
+        this.description = edmPortfolioBasic.getDescription();
+        this.type = edmPortfolioBasic.getType();
+        this.peril = edmPortfolioBasic.getPeril();
+        this.agSource = edmPortfolioBasic.getAgSource();
+        this.agCedent = edmPortfolioBasic.getAgCedant();
+        this.agCurrency = edmPortfolioBasic.getAgCurrency();
+        this.rlModelDataSource = edm;
+
+    }
 }

@@ -89,7 +89,7 @@ public class ELTExtractor {
             bundle.setRlAnalysisELT(rlAnalysisELT);
 
             // finish step 4 EXTRACT_ELT for one analysis in loop for of many analysis
-            log.info("Finish import progress STEP 4 : EXTRACT_ELT for analysis: {}", sourceResult.getRlSourceResultId());
+            log.info("Finish import progress STEP 4 : EXTRACT_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }
     }
 

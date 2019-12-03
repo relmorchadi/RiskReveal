@@ -193,7 +193,7 @@ public class ExposureSummaryExtractor {
                                             //
                                             globalViewSummary = globalViewSummaryRepository.save(globalViewSummary);
 
-                                            NamedParameterJdbcTemplate template = rmsService.createTemplate(instance);
+                                            NamedParameterJdbcTemplate template = rmsService.createNamedParameterTemplate(instance);
 
                                             List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
                                                     exposureViewQuery.getQuery(),
@@ -326,7 +326,6 @@ public class ExposureSummaryExtractor {
         }
 
     }
-
 
     private List<ExposureSummaryData> transformSummary(ExposureViewDefinition exposureViewDefinition, List<RLExposureSummaryItem> rlExposureSummaryItems) {
 
