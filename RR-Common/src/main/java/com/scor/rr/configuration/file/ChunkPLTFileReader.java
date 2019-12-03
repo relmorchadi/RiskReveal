@@ -25,7 +25,7 @@ public class ChunkPLTFileReader {
     @Autowired
     private PLTFileWriter pltFileWriter;
 
-    public Map<Integer, List<PLTLossData>> read(List<File> files) throws RRException {
+    public Map<Integer, List<PLTLossData>> read(List<File> files, List<String> signs, List<Double> currencies) throws RRException {
 
         Map<Integer, List<PLTLossData>> map = new TreeMap<>();
         List<Integer> listOfPeriods = new ArrayList<>();
@@ -38,6 +38,8 @@ public class ChunkPLTFileReader {
 
 
         for (File file : files) {
+
+            int i = files.indexOf(file);
             if (file == null || !file.exists())
                 throw new PLTFileNotFoundException();
             if (!"bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
@@ -56,10 +58,10 @@ public class ChunkPLTFileReader {
 
                      lossData = buildPLTrow(lossData,ib);
                     int period = lossData.getSimPeriod();
-                    int rowPhase = (period/ 500) + 1;
+                    int rowPhase = (period/ 1000) + 1;
 
                     if( phase == rowPhase ){
-                        workTheMap(map, period, lossData);
+                        workTheMap(map, period, lossData, signs.get(i), currencies.get(i));
                     }
                     else{
                         if(phase != 0) {   writeMap(map, phase);}
@@ -69,7 +71,7 @@ public class ChunkPLTFileReader {
                         File getChunkPlt = new File("C:\\GMB-FOLDER\\temp1\\" + (rowPhase) + ".bin");
                         if (getChunkPlt.exists()) {
                             map = readChunkedPltIntoMap(getChunkPlt);
-                            workTheMap(map, period , lossData);
+                            workTheMap(map, period , lossData, signs.get(i), currencies.get(i));
                     }else{
                             List<PLTLossData> pltLossDatas = new ArrayList<>();
                             pltLossDatas.add(lossData);
@@ -94,11 +96,11 @@ public class ChunkPLTFileReader {
         return map;
     }
 
-    private void workTheMap(Map<Integer,List<PLTLossData>> map , int period, PLTLossData lossData) throws NoSuchFieldException, IllegalAccessException {
+    private void workTheMap(Map<Integer,List<PLTLossData>> map , int period, PLTLossData lossData, String sign, Double exchangeRate) throws NoSuchFieldException, IllegalAccessException {
         if (map.containsKey(period)) {
             List<PLTLossData> list = map.get(period);
             Field a = PLTLossData.class.getDeclaredField("eventId");
-            list = ggg(list, list, lossData, a);
+            list = ggg(list, list, lossData, a, sign, exchangeRate);
             map.put(period, list);
         } else {
             List<PLTLossData> pltLossDatas = new ArrayList<>();
@@ -108,30 +110,38 @@ public class ChunkPLTFileReader {
     }
 
 
-    private List<PLTLossData> ggg(List<PLTLossData> parentTarget, List<PLTLossData> target, PLTLossData data, Field field) throws IllegalAccessException, NoSuchFieldException {
+    private List<PLTLossData> ggg(List<PLTLossData> parentTarget, List<PLTLossData> target, PLTLossData data, Field field, String sign,Double currencyExchangeRate) throws IllegalAccessException, NoSuchFieldException {
         field.setAccessible(true);
+
+        if(sign == "-") {
+            data.setLoss(data.getLoss()*(-1)*currencyExchangeRate);
+            data.setMaxExposure(data.getMaxExposure()*(-1)*currencyExchangeRate);
+        }
         PLTLossData lastOgj = new PLTLossData();
         for (PLTLossData outcomePltLossData : target) {
             if (Double.valueOf(field.get(data).toString()).equals(Double.valueOf(field.get(outcomePltLossData).toString()))) {
                 switch (field.getName()) {
                     case "simPeriod":
                         Field b = PLTLossData.class.getDeclaredField("eventId");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, b);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, b, "+", 1.0);
                     case "eventId":
                         Field c = PLTLossData.class.getDeclaredField("eventDate");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, c);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, c, "+",1.0);
                     case "eventDate":
                         Field d = PLTLossData.class.getDeclaredField("seq");
-                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, d);
+                        return ggg(parentTarget, getPLT(target, target.indexOf(outcomePltLossData), field.get(outcomePltLossData), field), data, d, "+",1.0);
                     default:
                         int index = parentTarget.indexOf(outcomePltLossData);
 
-                        outcomePltLossData.setLoss(0);
+
+                        outcomePltLossData.setLoss(outcomePltLossData.getLoss() + data.getLoss());
+                        outcomePltLossData.setMaxExposure(outcomePltLossData.getMaxExposure() + data.getMaxExposure());
 
                         parentTarget.set(index, outcomePltLossData);
                         return parentTarget;
                 }
             } else if (Double.valueOf(field.get(data).toString()) < Double.valueOf(field.get(outcomePltLossData).toString())) {
+
                 parentTarget.add(parentTarget.indexOf(outcomePltLossData), data);
                 return parentTarget;
             }
@@ -179,6 +189,10 @@ public class ChunkPLTFileReader {
             if (fc.size() % 26 != 0)
                 throw new PLTFileCorruptedException();
 
+//            byte[] fileBytes = Files.readAllBytes((file.toPath()));
+//            ByteBuffer ib = ByteBuffer.wrap(fileBytes);
+//            ib.order(ByteOrder.LITTLE_ENDIAN);
+
             PLTLossData lossData = new PLTLossData();
 
             while (ib.hasRemaining()) {
@@ -187,11 +201,11 @@ public class ChunkPLTFileReader {
 
                 if (map.containsKey(period)) {
                     List<PLTLossData> list = map.get(period);
-                    list.add(lossData);
+                    list.add(lossData1);
                     map.put(period, list);
                 } else {
                     List<PLTLossData> pltLossDatas = new ArrayList<>();
-                    pltLossDatas.add(lossData);
+                    pltLossDatas.add(lossData1);
                     map.put(period, pltLossDatas);
                 }
             }
