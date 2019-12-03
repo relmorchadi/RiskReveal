@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "AdjustmentEventBasedParameter", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "AdjustmentEventBasedParameter")
 public class AdjustmentEventBasedParameterEntity {
     private int adjustmentEventBasedParameterId;
     private String inputFilePath;

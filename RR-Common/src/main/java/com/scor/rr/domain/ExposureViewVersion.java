@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 
 @Entity
+@Table(name = "ExposureViewVersion")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class ExposureViewVersion {
     private String name;
     @Column(name = "Number")
     private Integer number;
-    @Column(name = "Current")
+    @Column(name = "isCurrent")
     private boolean current;
 
     @ManyToOne

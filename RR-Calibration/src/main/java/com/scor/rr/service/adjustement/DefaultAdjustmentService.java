@@ -57,7 +57,7 @@ public class DefaultAdjustmentService {
     AdjustmentNodeService adjustmentNodeService;
 
     @Autowired
-    RranalysisRepository rranalysisRepository;
+    ModelAnalysisEntityRepository modelAnalysisEntityRepository;
 
     //NOTE: I think we should have two functions:
     // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
@@ -71,17 +71,17 @@ public class DefaultAdjustmentService {
                                                                                           int pltEntityId
                                                                                                  ) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
-        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEntityIdEquals(
+        List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRAPIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
                 targetRapId,
                 marketChannelId,
                 engineType,
                 pltEntityId);
         if (defaultAdjustmentEntities != null) {
             DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentEntities.stream().filter(defaultAdjustmentEntity ->
-                    defaultAdjustmentEntity.getTargetRap().getTargetRapId() == targetRapId &&
+                    defaultAdjustmentEntity.getTargetRap().getTargetRAPId() == targetRapId &&
                             defaultAdjustmentEntity.getEngineType().equals(engineType) &&
                             defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getDefaultAdjustmentId(), regionPerilId) &&
-                            defaultAdjustmentEntity.getEntity().getEntityId() == pltEntityId
+                            defaultAdjustmentEntity.getEntity() == pltEntityId
             )
                     .findAny().orElse(null);
             if (defaultAdjustment != null) {
@@ -116,12 +116,12 @@ public class DefaultAdjustmentService {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
-            if (rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).isPresent()) {
+            if (modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).isPresent()) {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
                         1, //TODO: add MarketChannelId, then replace by pltHeaderEntity.getMarketChannelId() != null ? pltHeaderEntity.getMarketChannelId() : 1,
-                        rranalysisRepository.findById(pltHeaderEntity.getRrAnalysisId()).get().getModel(),
+                        modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).get().getModel(),
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
         }

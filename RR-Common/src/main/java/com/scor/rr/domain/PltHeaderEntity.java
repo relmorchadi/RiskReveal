@@ -26,8 +26,8 @@ public class PltHeaderEntity {
     @Column(name = "PLTType")
     private String pltType;
 
-    @Column(name = "RRAnalysisId")
-    private Long rrAnalysisId;
+    @Column(name = "ModelAnalysisId")
+    private Long modelAnalysisId;
 
     @Column(name = "TargetRAPId")
     private Long targetRAPId;
@@ -159,7 +159,7 @@ public class PltHeaderEntity {
 //        this.basisChanged = other.basisChanged;
         this.inuringPackageId = other.inuringPackageId;
 //        this.engineType = other.engineType;
-        this.rrAnalysisId = other.rrAnalysisId;
+        this.modelAnalysisId = other.modelAnalysisId;
         this.targetRAPId = other.getTargetRAPId();
         this.regionPerilId = other.regionPerilId;
         this.projectId = other.projectId;

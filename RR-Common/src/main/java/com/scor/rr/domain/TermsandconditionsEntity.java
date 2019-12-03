@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "TERMSANDCONDITIONS", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "TERMSANDCONDITIONS")
 public class TermsandconditionsEntity {
     private String id;
     private Boolean isactive;

@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "UserTag", schema = "tb")
+@Table(name = "UserTag")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,7 +24,7 @@ public class UserTag {
     @Column(name = "TagId")
     private Long tagId;
 
-    @Column(name = "User")
+    @Column(name = "UserId")
     private Integer user;
 
     @Column(name = "UserOverrideColour", length = 8)

@@ -7,10 +7,10 @@ import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.ELTLossnBetaFunction;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
-import com.scor.rr.domain.model.LossDataHeader;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.repository.RranalysisRepository;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ import static java.util.Optional.ofNullable;
 public class ELTConformer {
 
     @Autowired
-    RranalysisRepository rrAnalysisRepository;
+    ModelAnalysisEntityRepository rrAnalysisRepository;
 
     @Autowired
     TransformationPackage transformationPackage;
@@ -58,7 +58,7 @@ public class ELTConformer {
             Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId) : null;
             String instanceId = bundle.getInstanceId();
             RLAnalysisELT sourceAnalysisPLT =  bundle.getRlAnalysisELT();
-            RlSourceResult sourceResult= bundle.getSourceResult();
+            RLImportSelection sourceResult= bundle.getSourceResult();
 
             List<RlEltLoss> conformedELTLosses = new ArrayList<>();
 
@@ -100,8 +100,8 @@ public class ELTConformer {
 
             log.info("ELT {}, proportion {}, multiplier {}", conformedAnalysisELT.getAnalysisId(), proportion, multiplier);
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
             List<RmsExchangeRate> rlExchangeRates= bundle.getRmsExchangeRatesOfRRLT();
 
             double exchangeRate = 1.0d;
@@ -148,7 +148,7 @@ public class ELTConformer {
             //@TODO Review
             //bundle.setAnalysisELTnBetaFunction(eltLossesnBetaFunction);
 
-            log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlSourceResultId());
+            log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }
         log.debug("ELTConformer completed");
         return RepeatStatus.FINISHED;

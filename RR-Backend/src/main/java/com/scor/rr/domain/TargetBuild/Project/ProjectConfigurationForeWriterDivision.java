@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "ProjectConfigurationForeWriterDivision", schema = "tb")
+@Table(name = "ProjectConfigurationForeWriterDivision")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,13 +18,13 @@ public class ProjectConfigurationForeWriterDivision {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectConfigurationForeWriterDivisionId")
-    private Integer projectConfigurationForeWriterDivisionId;
+    private Long projectConfigurationForeWriterDivisionId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "ProjectConfigurationForeWriterContractId")
-    private Integer projectConfigurationForeWriterContractId;
+    private Long projectConfigurationForeWriterContractId;
 
     @Column(name = "DivisionNumber", length = 15)
     private String divisionNumber;

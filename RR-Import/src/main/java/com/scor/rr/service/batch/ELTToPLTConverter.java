@@ -2,25 +2,20 @@ package com.scor.rr.service.batch;
 
 
 import com.codahale.metrics.Timer;
-import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.RRFile;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
-import com.scor.rr.domain.model.AnalysisIncludedTargetRAP;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.model.PET;
-import com.scor.rr.domain.model.TargetRAP;
-import com.scor.rr.domain.reference.Contract;
-import com.scor.rr.domain.reference.FinancialPerspective;
+import com.scor.rr.domain.PetEntity;
+import com.scor.rr.domain.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
+import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
+import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +35,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -63,16 +57,16 @@ public class ELTToPLTConverter extends AbstractWriter {
     ContractRepository contractRepository;
 
     @Autowired
-    RlAnalysisRepository rlAnalysisRepository;
+    RLAnalysisRepository rlAnalysisRepository;
 
     @Autowired
-    RranalysisRepository rrAnalysisRepository;
+    ModelAnalysisEntityRepository rrAnalysisRepository;
 
     @Autowired
     AnalysisIncludedTargetRAPRepository analysisIncludedTargetRAPRepository;
 
     @Autowired
-    TargetrapRepository targetRAPRepository;
+    TargetRapRepository targetRAPRepository;
 
     @Autowired
     PETRepository petRepository;
@@ -87,8 +81,8 @@ public class ELTToPLTConverter extends AbstractWriter {
     private Path ihubPath;
 
     @Value("${ihub.treaty.out.path}")
-    private void setIhubPath(String path){
-        this.ihubPath= Paths.get(path);
+    private void setIhubPath(String path) {
+        this.ihubPath = Paths.get(path);
     }
 
     @Value("${convert.executor.chunk.size}")
@@ -136,43 +130,43 @@ public class ELTToPLTConverter extends AbstractWriter {
         Map<Long, TransformationBundle> bundleForPLT = new HashMap<>();
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
-            RlSourceResult sourceResult = bundle.getSourceResult();
-            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlSourceResultId()));
+            RLImportSelection sourceResult = bundle.getSourceResult();
+            Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlImportSelectionId()));
             Optional<RLAnalysis> rlAnalysisOpt = rlAnalysisRepository.findById(sourceResult.getRlAnalysis().getRlAnalysisId());
             String analysisName = rlAnalysisOpt.map(RLAnalysis::getAnalysisName).orElse(null);
             Long analysisId = rlAnalysisOpt.map(RLAnalysis::getAnalysisId).orElse(null);
 
-            RRAnalysis rrAnalysis = ofNullable(fpRRAnalysis)
+            ModelAnalysisEntity modelAnalysisEntity = ofNullable(fpRRAnalysis)
                     .map(fpAn -> fpAn.get(bundle.getFinancialPerspective()))
                     .map(id -> rrAnalysisRepository.findById(id).get())
                     .orElse(null);
 
             if (financialPerspective == null) {
                 log.error("Error creating PLTs: no UP financial perspective found for analysis {} , id {}", analysisName, analysisId);
-                if (rrAnalysis != null) {
-                    rrAnalysis.setImportStatus("ERROR");
-                    rrAnalysisRepository.save(rrAnalysis);
+                if (modelAnalysisEntity != null) {
+                    modelAnalysisEntity.setImportStatus("ERROR");
+                    rrAnalysisRepository.save(modelAnalysisEntity);
                 }
                 continue;
             }
-            List<TargetRAP> targetRaps = analysisIncludedTargetRAPRepository.findByModelAnalysisId(rrAnalysis.getRrAnalysisId())
-                    .map(AnalysisIncludedTargetRAP::getTargetRAPId)
+            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
+                    .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
                     .map(Optional::get)
                     .collect(toList());
 
-            if (targetRaps == null || targetRaps.isEmpty()) {
+            if (targetRapEntities == null || targetRapEntities.isEmpty()) {
                 log.info("Finish tracking at the end of STEP 12 : CONVERT_ELT_TO_PLT for analysis {}, status {}", bundle.getSourceRRLT(), "Error", "stop this tracking");
 
-                if (rrAnalysis != null) {
-                    rrAnalysis.setImportStatus("ERROR");
-                    rrAnalysisRepository.save(rrAnalysis);
+                if (modelAnalysisEntity != null) {
+                    modelAnalysisEntity.setImportStatus("ERROR");
+                    rrAnalysisRepository.save(modelAnalysisEntity);
                 }
 
                 continue;
             }
 
-            List<PltHeaderEntity> pltHeaderEntities = makePurePLTHeaders(bundle, targetRaps, modelingBasis);
+            List<PltHeaderEntity> pltHeaderEntities = makePurePLTHeaders(bundle, targetRapEntities, modelingBasis);
             if (pltHeaderEntities == null || pltHeaderEntities.isEmpty()) {
 //                log.error("RRLT {} has no PLTs, dataset {} error", bundle.getConformedELTHeader().getId(), bundle.getConformedELTHeader().getRepresentationDataset().getId());
                 log.error("RRLT {} has no PLTs, error", bundle.getConformedRRLT());
@@ -182,7 +176,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             //PLT Truncator
             String region = rlAnalysisOpt.map(RLAnalysis::getRegion).orElse(null);
             String peril = rlAnalysisOpt.map(RLAnalysis::getPeril).orElse(null);
-            String currency =rlAnalysisOpt.map(RLAnalysis::getAnalysisCurrency).orElse(null);
+            String currency = rlAnalysisOpt.map(RLAnalysis::getAnalysisCurrency).orElse(null);
 //            double threshold = truncator.getThresholdFor(region, peril, currency, "PLT");
             double threshold = 0.0;
 
@@ -207,22 +201,22 @@ public class ELTToPLTConverter extends AbstractWriter {
                         0, // pure PLT, no thread number
                         pltHeaderEntity.getPltHeaderId(),
                         ".bin"
-                        );
-                File file = makeFullFile(prefix, filename);
-                BinFile binFile= new BinFile(file);
+                );
+                File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+                BinFile binFile = new BinFile(file);
                 pltHeaderEntity.setLossDataFilePath(binFile.getPath());
                 pltHeaderEntity.setLossDataFileName(binFile.getFileName());
 
                 bundleForPLT.put(pltHeaderEntity.getPltHeaderId(), bundle);
 
-                /** @TODO  Implement later ...
+                /** @TODO Implement later ...
                 pltConverterProgressRepository.save(new PLTConverterProgress(pltHeader.getId(),
-                        pltHeader.getProject().getId(),
-                        sourceResult.getRmsAnalysis().getRdmId(),
-                        sourceResult.getRmsAnalysis().getRdmName(),
-                        sourceResult.getRmsAnalysis().getAnalysisId(),
-                        pltHeader.getPeqtFile().getFileName(),
-                        pltHeader.getImportSequence()));
+                pltHeader.getProject().getId(),
+                sourceResult.getRmsAnalysis().getRdmId(),
+                sourceResult.getRmsAnalysis().getRdmName(),
+                sourceResult.getRmsAnalysis().getAnalysisId(),
+                pltHeader.getPeqtFile().getFileName(),
+                pltHeader.getImportSequence()));
                  */
             }
 
@@ -286,43 +280,43 @@ public class ELTToPLTConverter extends AbstractWriter {
         log.debug("batchConvert completed");
     }
 
-    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRAP> targetRaps, PLTModelingBasis modelingBasis) {
-        LossDataHeader lossDataHeader= bundle.getConformedRRLT();
-        RRAnalysis rrAnalysis= bundle.getRrAnalysis();
+    private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRapEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
+        LossDataHeaderEntity lossDataHeaderEntity = bundle.getConformedRRLT();
+        ModelAnalysisEntity modelAnalysisEntity = bundle.getModelAnalysis();
 
-        if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeader.getOriginalTarget())) {
+        if (!RRLossTableType.CONFORMED.getCode().equals(lossDataHeaderEntity.getOriginalTarget())) {
             throw new IllegalStateException();
         }
 
         List<PltHeaderEntity> pltHeaderEntities = new ArrayList<>();
-        for (TargetRAP targetRap : targetRaps) {
-            PET pet = petRepository.findById(targetRap.getPetId()).get();
+        for (TargetRapEntity targetRapEntity : targetRapEntities) {
+            PetEntity pet = petRepository.findById(targetRapEntity.getPetId()).get();
             RRFile file = new RRFile(pet);
             BinFile peqtFile = new BinFile(file.getFileName(), peqtPath, null);
             PltHeaderEntity scorPltHeaderEntity = new PltHeaderEntity();
             scorPltHeaderEntity.setPltSimulationPeriods(pet.getNumberSimulationPeriods());
             scorPltHeaderEntity.setPltType(PLTType.Pure.getCode());
-            scorPltHeaderEntity.setProjectId(rrAnalysis.getProjectId());
-            scorPltHeaderEntity.setCurrencyid(lossDataHeader.getCurrency());
-            scorPltHeaderEntity.setTargetRAPId(targetRap.getTargetRAPId());
+            scorPltHeaderEntity.setProjectId(modelAnalysisEntity.getProjectId());
+            scorPltHeaderEntity.setCurrencyid(lossDataHeaderEntity.getCurrency());
+            scorPltHeaderEntity.setTargetRAPId(targetRapEntity.getTargetRAPId());
             scorPltHeaderEntity.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
-            scorPltHeaderEntity.setRrAnalysisId(rrAnalysis.getRrAnalysisId());
+            scorPltHeaderEntity.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
             scorPltHeaderEntity.setCloningSourceId(null);
-            scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRaps.indexOf(targetRap)); // FIXME: 16/07/2016
+            scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRapEntities.indexOf(targetRapEntity)); // FIXME: 16/07/2016
             scorPltHeaderEntity.setCreatedDate(new Date());
             scorPltHeaderEntity.setGeneratedFromDefaultAdjustment(false);
-            scorPltHeaderEntity.setRmsSimulationSet(pet.getRmsSimulationSetId());
-            scorPltHeaderEntity.setGeoCode(rrAnalysis.getGeoCode());
-            scorPltHeaderEntity.setGeoDescription(rrAnalysis.getGeoCode());
-            scorPltHeaderEntity.setPerilCode(rrAnalysis.getPeril());
+            scorPltHeaderEntity.setRmsSimulationSet(pet.getRlSimulationSetId());
+            scorPltHeaderEntity.setGeoCode(modelAnalysisEntity.getGeoCode());
+            scorPltHeaderEntity.setGeoDescription(modelAnalysisEntity.getGeoCode());
+            scorPltHeaderEntity.setPerilCode(modelAnalysisEntity.getPeril());
             scorPltHeaderEntity.setImportSequence(importSequence);
             scorPltHeaderEntity.setSourceLossModelingBasis(modelingBasis.getCode());
-            String sourceFinPersp = rrAnalysis.getFinancialPerspective();
-            scorPltHeaderEntity.setUdName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
-            scorPltHeaderEntity.setDefaultPltName(rrAnalysis.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
+            String sourceFinPersp = modelAnalysisEntity.getFinancialPerspective();
+            scorPltHeaderEntity.setUdName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
+            scorPltHeaderEntity.setDefaultPltName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
 
             pltHeaderEntities.add(scorPltHeaderEntity);
-            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPltHeaderEntity.getPltHeaderId(), targetRap.getTargetRAPId(), targetRap.getSourceRAPCode(), targetRap.getTargetRAPCode());
+            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPltHeaderEntity.getPltHeaderId(), targetRapEntity.getTargetRAPId(), targetRapEntity.getSourceRAPCode(), targetRapEntity.getTargetRAPCode());
         }
         return pltHeaderEntities;
     }
@@ -330,7 +324,7 @@ public class ELTToPLTConverter extends AbstractWriter {
     private void groupImportPltByPeqt(Map<String, List<PltHeaderEntity>> pltsByPeqt, List<PltHeaderEntity> pltHeaderEntities) {
         if (pltHeaderEntities != null && !pltHeaderEntities.isEmpty()) {
             for (PltHeaderEntity pltHeaderEntity : pltHeaderEntities) {
-                PET pet = targetRAPRepository.findById(pltHeaderEntity.getTargetRAPId()).map(tr -> petRepository.findById(tr.getPetId()))
+                PetEntity pet = targetRAPRepository.findById(pltHeaderEntity.getTargetRAPId()).map(tr -> petRepository.findById(tr.getPetId()))
                         .map(Optional::get).orElse(null);
                 if (pet != null) {
                     List<PltHeaderEntity> scorPLTHeaderEntities = pltsByPeqt.get(pet.getPeqtFileName());
@@ -347,30 +341,16 @@ public class ELTToPLTConverter extends AbstractWriter {
 
     private PLTModelingBasis getModelingBasis() {
         if (contractId != null && uwYear != null) {
-            String sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId,uwYear)
-                    .map(Contract::getContractSourceTypeId)
+            Long sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId, uwYear)
+                    .map(ContractEntity::getContractSourceTypeId)
                     .orElse(null);
-            return "5".equals(sourceTypeId) ? PLTModelingBasis.PM : PLTModelingBasis.AM;
+            return sourceTypeId == 5L ? PLTModelingBasis.PM : PLTModelingBasis.AM;
         }
         return PLTModelingBasis.AM;
     }
 
     private Integer parseUwYear(String uwYear) {
         return Integer.parseInt(StringUtils.split(uwYear, '-')[0]);
-    }
-
-    public File makeFullFile(String prefixDirectory, String filename) {
-        final Path fullPath = ihubPath.resolve(prefixDirectory);
-        try {
-            Files.createDirectories(fullPath);
-        } catch (IOException e) {
-            log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
-        }
-        final File parent = fullPath.toFile();
-
-        File file = new File(parent, filename);
-        return file;
     }
 
     private class TreatyBatchLauncher implements Runnable {
@@ -380,7 +360,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         private BinFile peqtFile;
         private List<PltHeaderEntity> scorPLTHeaderEntities;
         Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
-        private Boolean[] finished = { Boolean.FALSE };
+        private Boolean[] finished = {Boolean.FALSE};
         private int nbWorkers;
 
         public TreatyBatchLauncher(CountDownLatch latch, BinFile peqtFile, List<PltHeaderEntity> scorPLTHeaderEntities,
@@ -394,23 +374,19 @@ public class ELTToPLTConverter extends AbstractWriter {
             nbWorkers = 1;
         }
 
-        private final static int PERIOD_HEADER_SIZE=8;
-        private final static int PERIOD_EVENT_SIZE=21;
+        private final static int PERIOD_HEADER_SIZE = 8;
+        private final static int PERIOD_EVENT_SIZE = 21;
 
-        private void closeDirectBuffer(ByteBuffer cb)
-        {
-            if(cb == null || !cb.isDirect()) return;
-            try
-            {
+        private void closeDirectBuffer(ByteBuffer cb) {
+            if (cb == null || !cb.isDirect()) return;
+            try {
                 Method cleaner = cb.getClass().getMethod("cleaner");
                 cleaner.setAccessible(true);
                 Method clean = Class.forName("sun.misc.Cleaner").getMethod("clean");
                 clean.setAccessible(true);
                 clean.invoke(cleaner.invoke(cb));
                 log.trace("cleaned buffer");
-            }
-            catch(Exception ex)
-            {
+            } catch (Exception ex) {
                 log.debug("not able to clean buffer, let the GC do it's work", ex);
             }
             cb = null;
@@ -425,7 +401,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             for (PltHeaderEntity pltHeaderEntity : scorPLTHeaderEntities) {
                 File file = new File(pltHeaderEntity.getLossDataFilePath(), pltHeaderEntity.getLossDataFileName());
                 try {
-                    FileOutputStream  outputStream = new FileOutputStream(file);
+                    FileOutputStream outputStream = new FileOutputStream(file);
                     outputStreamForPLT.put(pltHeaderEntity.getPltHeaderId(), outputStream);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -434,11 +410,11 @@ public class ELTToPLTConverter extends AbstractWriter {
             }
 
             Date startConvert = new Date();
-            /** @TODO  ...
+            /** @TODO ...
             for (PLTHeader scorPLTHeader : scorPLTHeaders) {
-                PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
-                pltConverterProgress.setStartConvert(startConvert);
-                pltConverterProgressRepository.save(pltConverterProgress);
+            PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
+            pltConverterProgress.setStartConvert(startConvert);
+            pltConverterProgressRepository.save(pltConverterProgress);
             }
              */
             pool.execute(new TreatyBatchWorker(id, finished, queue, workerLatch, timer, scorPLTHeaderEntities, convertFunctionMapForPLT, outputStreamForPLT));
@@ -449,21 +425,20 @@ public class ELTToPLTConverter extends AbstractWriter {
             try {
                 File f = new File(peqtFile.getPath(), peqtFile.getFileName());
                 fc = FileChannel.open(f.toPath(), StandardOpenOption.READ);
-                long fileSize=fc.size();
-                long bufferSize=1024*1024*16;
+                long fileSize = fc.size();
+                long bufferSize = 1024 * 1024 * 16;
 
-                if(fileSize<bufferSize)
-                {
-                    bufferSize=(int)fileSize;
+                if (fileSize < bufferSize) {
+                    bufferSize = (int) fileSize;
                 }
 
-                MappedByteBuffer ib=fc.map(FileChannel.MapMode.READ_ONLY, 0, bufferSize);
+                MappedByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, bufferSize);
                 ib.order(ByteOrder.LITTLE_ENDIAN);
-                long time=System.currentTimeMillis();
-                long filePosition=0;
-                int remainingBuffer=0;
+                long time = System.currentTimeMillis();
+                long filePosition = 0;
+                int remainingBuffer = 0;
 
-                while(filePosition+ib.position()<fileSize) {
+                while (filePosition + ib.position() < fileSize) {
                     remainingBuffer = ib.remaining();
                     //
                     if (remainingBuffer < PERIOD_HEADER_SIZE) {
@@ -476,17 +451,14 @@ public class ELTToPLTConverter extends AbstractWriter {
                     final int period = ib.getInt();
                     int nbEvents = ib.getInt();
 
-                    if(nbEvents>0)
-                    {
-                        if((remainingBuffer - PERIOD_HEADER_SIZE) <(PERIOD_EVENT_SIZE*nbEvents))
-                        {
-                            if((PERIOD_EVENT_SIZE*nbEvents)+PERIOD_HEADER_SIZE>bufferSize)
-                            {
-                                bufferSize=(PERIOD_EVENT_SIZE*nbEvents)+PERIOD_HEADER_SIZE;
+                    if (nbEvents > 0) {
+                        if ((remainingBuffer - PERIOD_HEADER_SIZE) < (PERIOD_EVENT_SIZE * nbEvents)) {
+                            if ((PERIOD_EVENT_SIZE * nbEvents) + PERIOD_HEADER_SIZE > bufferSize) {
+                                bufferSize = (PERIOD_EVENT_SIZE * nbEvents) + PERIOD_HEADER_SIZE;
                             }
-                            filePosition+=ib.position();
+                            filePosition += ib.position();
                             closeDirectBuffer(ib);
-                            ib=fc.map(FileChannel.MapMode.READ_ONLY, filePosition, Math.min(bufferSize, (fileSize-filePosition)));
+                            ib = fc.map(FileChannel.MapMode.READ_ONLY, filePosition, Math.min(bufferSize, (fileSize - filePosition)));
                             ib.order(ByteOrder.LITTLE_ENDIAN);
                         }
 
@@ -507,20 +479,20 @@ public class ELTToPLTConverter extends AbstractWriter {
                             i++;
                         }
 
-                        if(periodCount%10000==0) log.info("reading PEQT '{}' period count {}",peqtFile.getFileName(), periodCount);
+                        if (periodCount % 10000 == 0)
+                            log.info("reading PEQT '{}' period count {}", peqtFile.getFileName(), periodCount);
 
-                        while(!queue.offer(p))
-                        {
+                        while (!queue.offer(p)) {
                             Thread.yield();
                         }
 
                     }
                 }
 
-                log.info("total time to read PEQT : {}", System.currentTimeMillis()-time);
+                log.info("total time to read PEQT : {}", System.currentTimeMillis() - time);
             } catch (IOException e) {
                 log.error("Master {}: reading PEQT {}, IOException", this.id, peqtFile.getFileName(), e);
-            }finally {
+            } finally {
                 log.info("Master {}: finish reading PEQT {}, total period count {}", this.id, peqtFile.getFileName(), periodCount);
                 IOUtils.closeQuietly(fc);
                 pool.shutdown();
@@ -543,7 +515,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 PLTConverterProgress pltConverterProgress = pltConverterProgressRepository.findByPltId(scorPLTHeader.getId());
                 pltConverterProgress.setEndConvert(endConvert);
                 pltConverterProgressRepository.save(pltConverterProgress);
-                */
+                 */
                 Map<Long, ELTLossBetaConvertFunction> convertFunctionMap = convertFunctionMapForPLT.get(scorPltHeaderEntity.getPltHeaderId());
                 if (convertFunctionMap != null) {
                     convertFunctionMap.clear();
@@ -554,10 +526,10 @@ public class ELTToPLTConverter extends AbstractWriter {
 
             latch.countDown();
             log.info("Master {}: finish processing PEQT {}", this.id, peqtFile.getFileName());
-            log.info("ELT2PLT {} nano 75%",timer.getSnapshot().get75thPercentile());
-            log.info("ELT2PLT {} nano 95%",timer.getSnapshot().get95thPercentile());
-            log.info("ELT2PLT {} nano min",timer.getSnapshot().getMin());
-            log.info("ELT2PLT {} nano max",timer.getSnapshot().getMax());
+            log.info("ELT2PLT {} nano 75%", timer.getSnapshot().get75thPercentile());
+            log.info("ELT2PLT {} nano 95%", timer.getSnapshot().get95thPercentile());
+            log.info("ELT2PLT {} nano min", timer.getSnapshot().getMin());
+            log.info("ELT2PLT {} nano max", timer.getSnapshot().getMax());
         }
     }
 
@@ -617,7 +589,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         } else
                             break;
                     } else {
-                        long time=System.nanoTime();
+                        long time = System.nanoTime();
                         periodCount++;
                         for (PltHeaderEntity scorPltHeaderEntity : scorPLTHeaderEntities) {
                             Map<Long, ELTLossBetaConvertFunction> convertFunctionMap = convertFunctionMapForPLT.get(scorPltHeaderEntity.getPltHeaderId());
@@ -633,7 +605,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                                 }
                             }
                         }
-                        timer.update(System.nanoTime()-time,TimeUnit.NANOSECONDS);
+                        timer.update(System.nanoTime() - time, TimeUnit.NANOSECONDS);
                     }
                 } catch (Throwable e) {
                     log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
@@ -655,8 +627,8 @@ public class ELTToPLTConverter extends AbstractWriter {
             workerLatch.countDown();
         }
 
-        private void writeBufferToOutputStream(FileOutputStream outputStream, List<PLTLossData> pltLossDataList) throws  IOException{
-            byte[] out = new byte[26*pltLossDataList.size()];
+        private void writeBufferToOutputStream(FileOutputStream outputStream, List<PLTLossData> pltLossDataList) throws IOException {
+            byte[] out = new byte[26 * pltLossDataList.size()];
             ByteBuffer buffer = ByteBuffer.wrap(out);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             Collections.sort(pltLossDataList, cmp);
@@ -690,7 +662,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 } else if (quantile == 0.0f) { // no quantile, loss = meanLoss
                     eventLoss = convertFunction.getLoss();
                 } else {
-                    log.trace("eventId|quantile|{}|{}",eventID,quantile);
+                    log.trace("eventId|quantile|{}|{}", eventID, quantile);
                     if (convertFunction.getConvertFunction() == null) {
                         convertFunction.setConvertFunction(factory.buildFunction(
                                 convertFunction.getLoss(),

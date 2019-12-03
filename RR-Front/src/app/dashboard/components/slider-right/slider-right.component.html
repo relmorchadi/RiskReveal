@@ -33,11 +33,11 @@
         <span class="title">TREATY</span>
       </div>
       <ul class="widgets-list">
-        <li *ngFor="let treaty of widgetsMockData.treaty" class="widget-item" (click)="treaty.selected = !treaty.selected "
-            [ngClass]="{'active-widget-item': treaty.selected}">
-          <i [ngClass]="treaty.icon"></i> {{treaty.title}}
+        <li *ngFor="let treatyView of widgetsMockData.treatyView" class="widget-item" (click)="treatyView.selected = !treatyView.selected "
+            [ngClass]="{'active-widget-item': treatyView.selected}">
+          <i [ngClass]="treatyView.icon"></i> {{treatyView.title}}
           <i class="float-right mr-1 mt-1"
-             [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
+             [ngClass]="{'icon-check_24px': treatyView.selected, 'icon-radio_button_unchecked_24px': !treatyView.selected}"></i>
         </li>
       </ul>
       <div class="highlight" style="margin-top: 10px">

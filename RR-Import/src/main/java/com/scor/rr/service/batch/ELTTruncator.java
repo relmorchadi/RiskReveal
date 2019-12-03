@@ -4,7 +4,7 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
+import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -39,7 +38,7 @@ public class ELTTruncator {
             // start new step (import progress) : step 5 TRUNCATE_ELT for this analysis in loop of many analysis :
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
             RLAnalysisELT riskLinkAnalysisELT = bundle.getRlAnalysisELT();
-            RlSourceResult sourceResult=bundle.getSourceResult();
+            RLImportSelection sourceResult=bundle.getSourceResult();
             log.info("truncating ELT data for analysis " + riskLinkAnalysis.getAnalysisId());
             log.info("Threshold found: " + threshold);
             log.debug("Source ELT size = {}", riskLinkAnalysisELT.getEltLosses().size());
@@ -62,7 +61,7 @@ public class ELTTruncator {
             bundle.setTruncationThreshold(threshold);
 
             // finish step 5 TRUNCATE_ELT for one analysis in loop for of many analysis
-            log.info("Finish import progress STEP 5 : TRUNCATE_ELT for analysis: {}", sourceResult.getRlSourceResultId());
+            log.info("Finish import progress STEP 5 : TRUNCATE_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }
         log.debug("ELTTruncator completed");
         return RepeatStatus.FINISHED;

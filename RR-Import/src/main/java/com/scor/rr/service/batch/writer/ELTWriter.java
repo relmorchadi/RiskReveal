@@ -4,9 +4,9 @@ import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
-import com.scor.rr.repository.LossDataHeaderRepository;
+import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.repository.LossDataHeaderEntityRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
@@ -39,7 +39,7 @@ public class ELTWriter extends AbstractWriter {
     private TransformationPackage transformationPackage;
 
     @Autowired
-    private LossDataHeaderRepository lossDataHeaderRepository;
+    private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
     @Value("${ihub.treaty.out.path}")
     private String iHub;
@@ -52,23 +52,23 @@ public class ELTWriter extends AbstractWriter {
 
             log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getAnalysisId());
 
-            writeELT(bundle.getRrAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
-            writeELT(bundle.getRrAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
+            writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
+            writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
 
-            log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("ELTBinaryWriter completed");
         return RepeatStatus.FINISHED;
     }
 
-    private void writeELT(RRAnalysis rrAnalysis, LossDataHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
+    private void writeELT(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity rrImportedLossData, List<RlEltLoss> eltLossList) {
 
         log.debug("Starting write RRLT");
 
         String filename = makeELTFileName(
-                rrAnalysis.getCreationDate(),
-                rrAnalysis.getRegionPeril(),
-                rrAnalysis.getFinancialPerspective(),
+                modelAnalysisEntity.getCreationDate(),
+                modelAnalysisEntity.getRegionPeril(),
+                modelAnalysisEntity.getFinancialPerspective(),
                 rrImportedLossData.getCurrency(),
                 rrImportedLossData.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                 rrImportedLossData.getLossDataHeaderId(),
@@ -86,7 +86,7 @@ public class ELTWriter extends AbstractWriter {
         log.debug("writeELT completed");
     }
 
-    private File writeELTFile(String filename, LossDataHeader rrImportedLossData, List<RlEltLoss> eltLossList) {
+    private File writeELTFile(String filename, LossDataHeaderEntity rrImportedLossData, List<RlEltLoss> eltLossList) {
         log.debug("Starting write RRLT File");
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -127,15 +127,15 @@ public class ELTWriter extends AbstractWriter {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            lossDataHeaderRepository.save(sourceRRLT);
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            lossDataHeaderEntityRepository.save(sourceRRLT);
 
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
-            lossDataHeaderRepository.save(conformedRRLT);
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
+            lossDataHeaderEntityRepository.save(conformedRRLT);
 
             log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
 
-            log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("writeHeader completed");
         return RepeatStatus.FINISHED;

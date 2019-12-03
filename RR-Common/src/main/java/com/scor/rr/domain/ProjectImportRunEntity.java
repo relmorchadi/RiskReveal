@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectImportRun", schema = "tb")
+@Table(name = "ProjectImportRun")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,7 +20,7 @@ public class ProjectImportRunEntity {
     @Column(name = "ProjectImportRunId")
     private Long projectImportRunId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "RunId")

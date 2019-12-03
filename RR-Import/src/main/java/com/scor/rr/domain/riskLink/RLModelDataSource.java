@@ -1,0 +1,51 @@
+package com.scor.rr.domain.riskLink;
+
+
+import com.scor.rr.domain.DataSource;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@Data
+@Entity
+@Table(name = "RLModelDataSource")
+@AllArgsConstructor
+@NoArgsConstructor
+public class RLModelDataSource {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long rlModelDataSourceId;
+    private Integer entity;
+    private Long projectId;
+    // To define a Sequence
+    private String rlDataSource;
+    // To review the type with Shaun
+    private String rlId;
+    private String instanceName;
+    private String instanceId;
+    private String name;
+    private String type;
+    // To review the type with Shaun
+    private String versionId;
+    private Date dateCreated;
+//
+//    @Transient
+//    private List<RlAnalysis> rlAnalysisList;
+
+    public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName){
+        this.projectId= projectId;
+        this.entity=1;
+        this.instanceId= instanceId;
+        this.instanceName= instanceName;
+        this.rlId= dataSource.getRmsId().toString();
+        this.name= dataSource.getName();
+        this.type = dataSource.getType();
+        this.versionId = String.valueOf(dataSource.getVersionId());
+        this.dateCreated= new Date();
+    }
+
+}

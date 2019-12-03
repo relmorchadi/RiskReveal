@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+//import com.scor.rr.domain.GlobalViewSummary;
 import com.scor.rr.domain.GlobalViewSummary;
 import lombok.Data;
 

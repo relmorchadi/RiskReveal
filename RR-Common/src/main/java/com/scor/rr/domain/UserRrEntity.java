@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "UserRR", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "UserRR")
 public class UserRrEntity {
     private int userId;
     private String userFirstName;
@@ -13,7 +13,7 @@ public class UserRrEntity {
     private String userRole;
 
     @Id
-    @Column(name = "userId", nullable = false)
+    @Column(name = "UserId", nullable = false)
     public int getUserId() {
         return userId;
     }

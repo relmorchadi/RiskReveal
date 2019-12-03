@@ -9,7 +9,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "PLTHeaderTag", schema = "tb")
+@Table(name = "PLTHeaderTag")
 @Data
 @NoArgsConstructor
 public class PLTHeaderTag {

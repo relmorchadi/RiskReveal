@@ -5,13 +5,13 @@ import com.scor.rr.domain.RmsExchangeRate;
 import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.RLAnalysisELT;
-import com.scor.rr.domain.model.EPCurveHeader;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.model.SummaryStatisticHeader;
-import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.EPCurveHeaderEntity;
+import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.SummaryStatisticHeaderEntity;
+import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.domain.riskLink.RLAnalysis;
-import com.scor.rr.domain.riskLink.RlSourceResult;
-import com.scor.rr.domain.riskReveal.RRAnalysis;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.domain.ModelAnalysisEntity;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -22,19 +22,19 @@ public class TransformationBundle {
 
     private String financialPerspective;
 
-    private RlSourceResult sourceResult;
+    private RLImportSelection sourceResult;
 
     private RLAnalysis rlAnalysis;
 
-    private RegionPeril regionPeril;
+    private RegionPerilEntity regionPeril;
 
-    private RRAnalysis rrAnalysis;
+    private ModelAnalysisEntity modelAnalysis;
 
-    private LossDataHeader sourceRRLT;
+    private LossDataHeaderEntity sourceRRLT;
 
     private String instanceId;
 
-    private LossDataHeader conformedRRLT;
+    private LossDataHeaderEntity conformedRRLT;
 
     private List<RmsExchangeRate> rmsExchangeRatesOfRRLT;
 
@@ -59,9 +59,9 @@ public class TransformationBundle {
 
     private List<PLTBundle> pltBundles;
 
-    List<EPCurveHeader> epCurves;
+    List<EPCurveHeaderEntity> epCurves;
 
-    List<SummaryStatisticHeader> summaryStatisticHeaders;
+    List<SummaryStatisticHeaderEntity> summaryStatisticHeaderEntities;
 
     public synchronized void addPLTBundle(PLTBundle pltBundle) {
         if (this.pltBundles == null) {

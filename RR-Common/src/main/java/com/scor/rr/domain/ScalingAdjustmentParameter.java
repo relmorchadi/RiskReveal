@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ScalingAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ScalingAdjustmentParameter")
 public class ScalingAdjustmentParameter {
     private Long id;
 //    private EntityEntity entity;

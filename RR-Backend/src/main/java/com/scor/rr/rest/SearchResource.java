@@ -1,7 +1,6 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Search.SearchItem;
 import com.scor.rr.domain.TargetBuild.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,17 +28,17 @@ public class SearchResource {
     ShortCutService shortCutService;
 
     @GetMapping("treaty")
-    Page<Treaty> searchTreaty(@RequestParam String keyword, int size) {
+    Page<TreatyView> searchTreaty(@RequestParam String keyword, int size) {
         return searchService.getTreaty(keyword, size);
     }
 
     @GetMapping("cedant")
-    Page<Cedant> searchCedants(@RequestParam String keyword, int size) {
+    Page<CedantView> searchCedants(@RequestParam String keyword, int size) {
         return searchService.getCedants(keyword, size);
     }
 
     @GetMapping("country")
-    Page<Country> searchCountries(@RequestParam String keyword, int size) {
+    Page<CountryView> searchCountries(@RequestParam String keyword, int size) {
         return searchService.getCountryPeril(keyword, size);
     }
 

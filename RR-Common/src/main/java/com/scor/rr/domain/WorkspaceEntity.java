@@ -22,7 +22,7 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "WorkspaceId")
     private Long workspaceId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "WorkspaceContextCode")
@@ -31,16 +31,20 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "WorkspaceUwYear")
     private Integer workspaceUwYear;
 
+    @Column(name = "WorkspaceMarketChannel", length = 5)
+    private String workspaceMarketChannel;
+
     @Column(name = "WorkspaceName")
     private String workspaceName;
 
     @Column(name = "CedantName")
     private String cedantName;
 
-    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear, String workspaceName, String cedantName) {
+    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,String workspaceMarketChannel, String workspaceName, String cedantName) {
         this.workspaceContextCode = workspaceContextCode;
         this.entity = 1;
         this.workspaceUwYear = workspaceUwYear;
+        this.workspaceMarketChannel= workspaceMarketChannel;
         this.workspaceName = workspaceName;
         this.cedantName = cedantName;
     }

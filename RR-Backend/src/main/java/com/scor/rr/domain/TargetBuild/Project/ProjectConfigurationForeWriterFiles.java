@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "ProjectConfigurationForeWriterFiles", schema = "tb")
+@Table(name = "ProjectConfigurationForeWriterFiles")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,13 +21,13 @@ public class ProjectConfigurationForeWriterFiles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ProjectConfigurationForeWriterFilesId")
-    private Integer projectConfigurationForeWriterFilesId;
+    private Long projectConfigurationForeWriterFilesId;
 
     @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "ProjectConfigurationForeWriterId")
-    private Integer projectConfigurationForeWriterId;
+    private Long projectConfigurationForeWriterId;
 
     @Column(name = "AccFileName")
     private String accFileName;

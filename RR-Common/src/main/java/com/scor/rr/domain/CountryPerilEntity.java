@@ -1,12 +1,11 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "COUNTRYPERIL", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "COUNTRYPERIL")
 public class CountryPerilEntity {
     private String id;
     private Boolean isactive;

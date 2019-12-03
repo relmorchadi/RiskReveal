@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "AccumulationPackageOverrideSection", schema = "tb")
+@Table(name = "AccumulationPackageOverrideSection")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

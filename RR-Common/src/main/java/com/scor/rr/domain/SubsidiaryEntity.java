@@ -6,7 +6,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "SUBSIDIARY", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "SUBSIDIARY")
 public class SubsidiaryEntity {
     private String id;
     private Boolean isactive;

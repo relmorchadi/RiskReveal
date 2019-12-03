@@ -3,8 +3,10 @@ package com.scor.rr.service.batch.writer;
 import com.scor.rr.domain.AnalysisEpCurves;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.StatisticMetric;
+import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
@@ -29,7 +31,8 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class EpCurveWriter {
+@StepScope
+public class EpCurveWriter extends AbstractWriter{
 
     private Path ihubPath;
 
@@ -37,9 +40,6 @@ public class EpCurveWriter {
     private void setIhubPath(String path){
         this.ihubPath= Paths.get(path);
     }
-
-    @Value("${ihub.prefix.directory}")
-    private String prefixDirectory;
 
     public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
 //        Map<StatisticMetric, List<AnalysisEpCurves>> metricToPLTEPCurve = new HashMap<>();
@@ -53,22 +53,8 @@ public class EpCurveWriter {
     }
 
     private BinFile writePLTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-        File file = makeFullFile(prefixDirectory, filename);
+        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
         return writePLTEPCurves(metricToEPCurve, file);
-    }
-
-    private File makeFullFile(String prefixDirectory, String filename) {
-        final Path fullPath = ihubPath.resolve(prefixDirectory);
-        try {
-            Files.createDirectories(fullPath);
-        } catch (IOException e) {
-            log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
-        }
-        final File parent = fullPath.toFile();
-
-        File file = new File(parent, filename);
-        return file;
     }
 
     private BinFile writePLTEPCurves(List<AnalysisEpCurves> epCurves, File file) {

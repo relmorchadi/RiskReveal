@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "ProjectMGAConfiguration", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "ProjectMGAConfiguration")
 public class ProjectMgaConfigurationEntity {
     private int id;
     private String expectedFrequency;

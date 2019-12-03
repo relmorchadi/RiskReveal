@@ -57,14 +57,7 @@ const initiaState: SearchNavBar = {
   mostUsedSavedSearch: [],
   shortcuts: [],
   mapTableNameToBadgeKey: {},
-  sortcutFormKeysMapper: {
-    c: 'Cedant Name',
-    cid: 'Cedant Code',
-    uwy: 'Year',
-    w: 'Workspace Name',
-    wid: 'Workspace Id',
-    ctr: 'Country Name'
-  },
+  shortcutFormKeysMapper: {},
   searchContent: {value: null}
 };
 @State<SearchNavBar>({
@@ -147,13 +140,15 @@ export class SearchNavBarState implements NgxsOnInit {
    */
 
   @Action(LoadShortCuts)
-  loadShortCuts(ctx: StateContext<SearchNavBar>, action : LoadShortCuts) {
+  loadShortCuts(ctx: StateContext<SearchNavBarState>, action : LoadShortCuts) {
     return this._searchService.loadShort()
       .pipe(
         tap( (shortCuts: any[]) => {
-          ctx.patchState(produce(ctx.getState(), draft => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["UW YEAR", "PLT", "PROJECT",  "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["UW YEAR", "PLT", "PROJECT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable)));
+          this._badgesService.initShortCuts(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)));
+          ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT",  "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable)));
+             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)))
           }));
         })
       )
@@ -325,7 +320,7 @@ export class SearchNavBarState implements NgxsOnInit {
   doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
     ctx.patchState(produce(ctx.getState(), draft => {
       if (!_.isEmpty(expression)) {
-        draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
+        draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.shortcutFormKeysMapper)};
         console.log(draft.searchContent);
         draft.badges = _.isArray(draft.searchContent.value) ? draft.searchContent.value : [];
       }

@@ -17,7 +17,7 @@ public class RLPortfolioScanStatus {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "RLPortfolioScanStatusId")
     private Long rlPortfolioScanStatusId;
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
     @Column(name = "ScanLevel")
     private Integer scanLevel;
@@ -30,4 +30,11 @@ public class RLPortfolioScanStatus {
     @OneToOne
     @JoinColumn(name = "RLPortfolioId")
     private RLPortfolio rlPortfolio;
+
+    public RLPortfolioScanStatus(RLPortfolio rlPortfolio, int scanStatus) {
+        this.entity = 1;
+        this.rlPortfolio = rlPortfolio;
+        this.scanStatus = scanStatus;
+        this.scanLevel = 0;
+    }
 }

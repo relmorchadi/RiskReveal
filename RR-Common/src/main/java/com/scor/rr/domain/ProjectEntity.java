@@ -19,14 +19,14 @@ public class ProjectEntity {
     @Column(name = "ProjectId")
     private Long projectId;
 
-    @Column(name = "RREntity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "WorkspaceId")
     private Long workspaceId;
 
-    @Column(name = "ProjectImportRun")
-    private Integer projectImportRunId;
+    @Column(name = "ProjectImportRunId")
+    private Long projectImportRunId;
 
     @Column(name = "RMSModelDataSourceId")
     private Integer rmsModelDataSourceId;
@@ -37,23 +37,23 @@ public class ProjectEntity {
     @Column(name = "ProjectDescription")
     private String projectDescription;
 
-    @Column(name = "MasterFlag")
-    private Boolean masterFlag;
+    @Column(name = "IsMaster")
+    private Boolean isMaster;
 
-    @Column(name = "LinkFlag")
-    private Boolean linkFlag;
+    @Column(name = "IsLinked")
+    private Boolean isLinked;
 
-    @Column(name = "PublishFlag")
-    private Boolean publishFlag;
+    @Column(name = "IsPublished")
+    private Boolean isPublished;
 
-    @Column(name = "ClonedFlag")
-    private Boolean clonedFlag;
+    @Column(name = "IsCloned")
+    private Boolean isCloned;
 
-    @Column(name = "PostInuredFlag")
-    private Boolean postInuredFlag;
+    @Column(name = "IsPostInured")
+    private Boolean isPostInured;
 
-    @Column(name = "MgaFlag")
-    private Boolean mgaFlag;
+    @Column(name = "IsMGA")
+    private Boolean isMGA;
 
     @Column(name = "AssignedTo")
     private String assignedTo;
@@ -91,12 +91,12 @@ public class ProjectEntity {
     public void initProject(Long workspaceId) {
         this.projectId = null;
         this.workspaceId = workspaceId;
-        this.masterFlag = false;
-        this.linkFlag = false;
-        this.publishFlag = false;
-        this.clonedFlag = false;
-        this.postInuredFlag = false;
-        this.mgaFlag= false;
+        this.isMaster = false;
+        this.isCloned = false;
+        this.isLinked = false;
+        this.isPostInured = false;
+        this.isPublished = false;
+        this.isMGA= false;
         this.assignedTo = this.createdBy;
         this.deleted= false;
     }

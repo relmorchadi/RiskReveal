@@ -1,8 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.RmsExchangeRate;
-import com.scor.rr.domain.model.LossDataHeader;
-import com.scor.rr.domain.riskReveal.RRLossTableHeader;
+import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -40,8 +39,8 @@ public class ExchangeRateExtractor {
         Map<String, List<String>> ccyInstanceMap = new HashMap<>();
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
 
             List<String> ccyList = ccyInstanceMap.get(bundle.getInstanceId());
             if (ccyList == null) {
@@ -60,7 +59,7 @@ public class ExchangeRateExtractor {
 
         for (Map.Entry<String, List<String>> entry : ccyInstanceMap.entrySet()) {
 
-            List<RmsExchangeRate> exList = rmsService.getRmsExchangeRates(/*entry.getKey()instanceId,*/ entry.getValue()/*ccyList*/);
+            List<RmsExchangeRate> exList = rmsService.getRmsExchangeRates(entry.getKey(), entry.getValue()/*ccyList*/);
             if (exList == null) {
                 log.debug("Error in extracting RMS Exchange Rates");
                 exList = new ArrayList<>();
@@ -71,8 +70,8 @@ public class ExchangeRateExtractor {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeader sourceRRLT = bundle.getSourceRRLT();
-            LossDataHeader conformedRRLT = bundle.getConformedRRLT();
+            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
 
             List<RmsExchangeRate> exList = rmsExchangeRates.get(bundle.getInstanceId());
             List<RmsExchangeRate> exchangeRates = new ArrayList<>();
@@ -96,7 +95,7 @@ public class ExchangeRateExtractor {
             // TODO how to do ?????????????????????????????
             bundle.setRmsExchangeRatesOfRRLT(exchangeRates);
 
-            log.info("Finish import progress STEP 3 : EXTRACT_RMS_EXCHANGE_RATE for analysis: {}", bundle.getSourceResult().getRlSourceResultId());
+            log.info("Finish import progress STEP 3 : EXTRACT_RMS_EXCHANGE_RATE for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
         log.debug("RmsExchangeRatesExtractor completed");
     }

@@ -1,7 +1,7 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.RegionPerilMapping;
-import com.scor.rr.domain.reference.RegionPeril;
+import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.repository.RegionPerilMappingRepository;
 import com.scor.rr.repository.RegionPerilRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +18,9 @@ public class RegionPerilService {
     @Autowired
     private RegionPerilRepository regionPerilRepository;
 
-    public RegionPeril findRegionPerilByCountryCodeAdmin1CodePerilCode(String countryCode, String admin1Code, String perilCode) {
+    public RegionPerilEntity findRegionPerilByCountryCodeAdmin1CodePerilCode(String countryCode, String admin1Code, String perilCode) {
 
-        RegionPeril result = null;
+        RegionPerilEntity result = null;
         RegionPerilMapping rpm = this.findRegionPerilMappingByCountryCodeAdmin1CodePerilCode(countryCode, admin1Code, perilCode);
         if (rpm != null) {
             result = this.findRegionPerilByRegionPerilID(rpm.getRegionPerilID());
@@ -39,7 +39,7 @@ public class RegionPerilService {
         return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode, admin1Code, perilCode).orElse(null);
     }
 
-    public RegionPeril findRegionPerilByRegionPerilID(Integer regionPerilID)
+    public RegionPerilEntity findRegionPerilByRegionPerilID(Long regionPerilID)
     {
         return regionPerilRepository.findById(regionPerilID).orElse(null);
     }

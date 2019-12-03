@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DefaultAdjustmentRepository extends JpaRepository<DefaultAdjustmentEntity,Integer> {
 
-    List<DefaultAdjustmentEntity> findByTargetRapTargetRapIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEntityIdEquals(
+    List<DefaultAdjustmentEntity> findByTargetRapTargetRAPIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
             long targetRap_targetRapId,
             long marketChannel_marketChannelId,
             String engineType,

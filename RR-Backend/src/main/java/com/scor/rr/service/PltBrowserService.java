@@ -9,6 +9,7 @@ import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.TargetBuild.*;
+import com.scor.rr.repository.UserRrRepository;
 import com.scor.rr.repository.WorkspaceEntityRepository;
 import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class PltBrowserService {
     @Autowired
     PltHeaderRepository pltHeaderRepository;
     @Autowired
-    UserRepository userRepository;
+    UserRrRepository userRrRepository;
 
     @Autowired
     PLTManagerViewRepository pltManagerViewRepository;

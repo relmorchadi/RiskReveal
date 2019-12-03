@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "AccumulationPackageAttachedPLT", schema = "tb")
+@Table(name = "AccumulationPackageAttachedPLT")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

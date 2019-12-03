@@ -62,18 +62,18 @@ public class RLAnalysis {
 
     @OneToOne
     @JoinColumn(name = "analysisScanStatus")
-    private RlAnalysisScanStatus rlAnalysisScanStatus;
+    private RLAnalysisScanStatus rlAnalysisScanStatus;
 
     @OneToMany(mappedBy = "rlAnalysis", fetch = FetchType.LAZY)
-    private List<RlSourceResult> rlSourceResult;
+    private List<RLImportSelection> RLImportSelection;
 
     @OneToMany(mappedBy = "rLAnalysisId")
-    private List<RlSourceEpHeader> rlSourceEpHeaders;
+    private List<RLSourceEpHeader> rlSourceEpHeaders;
 
     @OneToMany(mappedBy = "rlAnalysis")
-    private List<RlAnalysisProfileRegion> rlAnalysisProfileRegions;
+    private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
 
-    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RlModelDataSource rdm) {
+    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
         this.projectId = rdm.getProjectId();

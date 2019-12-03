@@ -8,7 +8,7 @@ package com.scor.rr.domain.enums;
  */
 public enum CARType {
 
-	FAC("Facultative"), TTY("Treaty");
+	FAC("Facultative"), TTY("TreatyView");
 
 	private String code;
 
