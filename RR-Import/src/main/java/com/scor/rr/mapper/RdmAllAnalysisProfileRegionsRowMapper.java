@@ -12,8 +12,8 @@ public class RdmAllAnalysisProfileRegionsRowMapper implements RowMapper<RdmAllAn
     public RdmAllAnalysisProfileRegions mapRow(ResultSet rs, int rowNum) throws SQLException {
 
         RdmAllAnalysisProfileRegions rdmAllAnalysisProfileRegions = new RdmAllAnalysisProfileRegions();
-        rdmAllAnalysisProfileRegions.setAnalysisid(rs.getLong("analysis_id"));
-        rdmAllAnalysisProfileRegions.setAnlysisRegion(rs.getString("analysis_region"));
+        rdmAllAnalysisProfileRegions.setAnalysisId(rs.getLong("analysis_id"));
+        rdmAllAnalysisProfileRegions.setAnalysisRegion(rs.getString("analysis_region"));
         rdmAllAnalysisProfileRegions.setAnalysisRegionName(rs.getString("analysis_region_name"));
         rdmAllAnalysisProfileRegions.setProfileRegion(rs.getString("profile_region"));
         rdmAllAnalysisProfileRegions.setProfileRegionName(rs.getString("profile_region_name"));

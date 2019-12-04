@@ -75,12 +75,12 @@ public class RmsRessource {
     @GetMapping("listRdmAnalysisEpCurves")
     public ResponseEntity<?> listRdmAllAnalysisEpCurves(@RequestParam String instanceId,
                                                         @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
-                                                        @RequestParam(value = "epPoints") int epPoints,
+                                                        @RequestParam(value = "epPoints") List<Integer> epPoints,
                                                         @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList,
                                                         @RequestParam(value = "finPerspList", required = false) List<String> finPerspList) {
         this.logger.debug("start getting listRdmAnalysisEpCurves ...");
 
-        List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = rmsService.listRdmAllAnalysisEpCurves(instanceId, id, name, epPoints, analysisIdList, finPerspList);
+        List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = rmsService.getRdmAllAnalysisEpCurves(instanceId, id, name, epPoints, analysisIdList, finPerspList);
 
         return ResponseEntity.ok(rdmAnalysisEpCurves);
     }
