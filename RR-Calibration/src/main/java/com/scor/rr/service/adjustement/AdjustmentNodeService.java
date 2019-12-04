@@ -470,7 +470,7 @@ public class AdjustmentNodeService {
 //    }
 
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-        if (Linear.getValue().equals(node.getAdjustmentTypeCode())) {
+        if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, linear adjustment");
             if (parameterRequest.getLmf() != null) {
                 if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -482,8 +482,8 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
             }
         }
-        else if (EEFFrequency.getValue().equals(node.getAdjustmentTypeCode())) {
-            log.info("saveParameterNode, {}",EEFFrequency.getValue());
+        else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
+            log.info("saveParameterNode, {}",EEF_FREQUENCY.getValue());
             if (parameterRequest.getRpmf() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getRpmf()");
@@ -494,7 +494,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
             }
         }
-        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
@@ -506,21 +506,21 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
 //                log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
-                log.info("saveParameterNode, {}", NONLINEAR_EEF_RPB.getValue());
+                log.info("saveParameterNode, {}", NONLINEAR_EVENT_PERIOD_DRIVEN.getValue());
                 savePeatDataFile(node, parameterRequest);
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAROEP.getValue().equals(node.getAdjustmentTypeCode())) {
-            log.info("saveParameterNode, {}",NONLINEARRETURNEVENTPERIOD.getValue());
+        else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
+            log.info("saveParameterNode, {}", node.getAdjustmentTypeCode());
             if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                 for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
                     periodBandingParameterService.save(new ReturnPeriodBandingAdjustmentParameter(adjustmentReturnPeriodBanding.getReturnPeriod(), adjustmentReturnPeriodBanding.getAdjustmentFactor(), node));

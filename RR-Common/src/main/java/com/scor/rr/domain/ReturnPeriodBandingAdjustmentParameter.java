@@ -8,7 +8,6 @@ import java.util.Objects;
 @Table(name = "ReturnPeriodBandingAdjustmentParameter")
 public class ReturnPeriodBandingAdjustmentParameter {
     private Long id;
-    private EntityEntity entity;
     private AdjustmentNode adjustmentNode;
     private double returnPeriod;
     private double adjustmentFactor;
@@ -47,16 +46,6 @@ public class ReturnPeriodBandingAdjustmentParameter {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
-    public EntityEntity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(EntityEntity entity) {
-        this.entity = entity;
     }
 
     @Basic
