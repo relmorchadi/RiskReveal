@@ -7,8 +7,8 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultAdjustmentNode")
 public class DefaultAdjustmentNode {
-    private Integer sequence;
     private int defaultAdjustmentNodeId;
+    private Integer sequence;
     private Boolean isCappedMaxExposure;
     private AdjustmentBasis adjustmentBasis;
     private AdjustmentType adjustmentType;
