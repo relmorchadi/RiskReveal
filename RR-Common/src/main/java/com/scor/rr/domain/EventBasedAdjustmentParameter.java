@@ -6,30 +6,40 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentEventBasedParameter")
-public class AdjustmentEventBasedParameterEntity {
-    private int adjustmentEventBasedParameterId;
+public class EventBasedAdjustmentParameter {
+    private int adjustmentParameterId;
+    private Integer entity;
     private String inputFilePath;
     private String inputFileName;
     private AdjustmentNode adjustmentNode;
 
-    public AdjustmentEventBasedParameterEntity() {
+    public EventBasedAdjustmentParameter() {
     }
 
-    public AdjustmentEventBasedParameterEntity(String inputFilePath, String inputFileName, AdjustmentNode adjustmentNode) {
+    public EventBasedAdjustmentParameter(String inputFilePath, String inputFileName, AdjustmentNode adjustmentNode) {
         this.inputFilePath = inputFilePath;
         this.inputFileName = inputFileName;
         this.adjustmentNode = adjustmentNode;
     }
 
     @Id
-    @Column(name = "AdjustmentEventBasedParameterId", nullable = false)
+    @Column(name = "AdjustmentParameterId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getAdjustmentEventBasedParameterId() {
-        return adjustmentEventBasedParameterId;
+    public int getAdjustmentParameterId() {
+        return adjustmentParameterId;
     }
 
-    public void setAdjustmentEventBasedParameterId(int adjustmentEventBasedParameterId) {
-        this.adjustmentEventBasedParameterId = adjustmentEventBasedParameterId;
+    public void setAdjustmentParameterId(int adjustmentParameterId) {
+        this.adjustmentParameterId = adjustmentParameterId;
+    }
+
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Integer entity) {
+        this.entity = entity;
     }
 
     @Basic
@@ -56,15 +66,15 @@ public class AdjustmentEventBasedParameterEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentEventBasedParameterEntity that = (AdjustmentEventBasedParameterEntity) o;
-        return adjustmentEventBasedParameterId == that.adjustmentEventBasedParameterId &&
+        EventBasedAdjustmentParameter that = (EventBasedAdjustmentParameter) o;
+        return adjustmentParameterId == that.adjustmentParameterId &&
                 Objects.equals(inputFilePath, that.inputFilePath) &&
                 Objects.equals(inputFileName, that.inputFileName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentEventBasedParameterId, inputFilePath, inputFileName);
+        return Objects.hash(adjustmentParameterId, inputFilePath, inputFileName);
     }
 
     @ManyToOne

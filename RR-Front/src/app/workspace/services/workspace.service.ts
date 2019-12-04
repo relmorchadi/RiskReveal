@@ -84,8 +84,8 @@ export class WorkspaceService {
           projects: _.map(projects, prj => {
             return prj.carRequestId === null ? {...prj, projectType: 'TREATY'} : {...prj, projectType: 'FAC'};
           }),
+          workspaceType: _.includes(_.map(projects, prj => {return prj.carRequestId === null ? 'TREATY' : 'FAC'}), 'FAC') ? 'fac' : 'treaty',
           isPinned: false,
-          workspaceType: type,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
@@ -126,6 +126,7 @@ export class WorkspaceService {
             userTags: {},
             selectedPLT: [],
             extendPltSection: false,
+            extendState: false,
             collapseTags: true,
             lastCheckedBool: false,
             firstChecked: '',
@@ -456,9 +457,10 @@ export class WorkspaceService {
     const {assignedTo, projectId, projectName, projectDescription} = payload.data;
     const wsIdentifier = state.currentTab.wsIdentifier;
     return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription).pipe(
-      map( prj => ctx.patchState(produce(ctx.getState(), draft => {
+      map( (prj: any) => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
-          return item.projectId === projectId ? {...prj, selected: item.selected} : {...item};
+          return item.projectId === projectId ? {...prj, projectType: prj.carRequestId === null ? 'TREATY' : 'FAC'
+            , selected: item.selected} : {...item};
         }) : null;
       }))
     ), catchError(err => {

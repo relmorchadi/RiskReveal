@@ -57,7 +57,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('headerWidth') headerWidth: any;
   // @Input('adjutmentApplication') adjutmentApplication: any;
   // @Input('adjutmentApplicationSubs') adjutmentApplication$: Observable<any>;
-  @Input('adjutmentApplication') adjutmentApplication: any;
+  @Input('adjustmentApplication') adjustmentApplication: any;
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
   @Input('listOfPltsData') listOfPltsData: any;
@@ -87,7 +87,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   filters = {
     systemTag: [],
     userTag: []
-  }
+  };
   filterData = {};
   activeCheckboxSort = false;
   addTagModalIndex = 0;
@@ -96,7 +96,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     tagId: null,
     tagName: '',
     tagColor: '#0700e4'
-  }
+  };
   searchAddress: string;
   listOfPltsDataCache: any[];
   invalidPltString = "<Invalid PLT Thread>";
@@ -266,6 +266,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   pure = PURE;
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
+  @Select(WorkspaceState.getCurrentWorkspaces) ws$;
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   private dropdown: NzDropdownContextComponent;
@@ -273,8 +275,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   returnPeriodInput: any;
   clickedDropdown: any;
   userTagsLength: number = 10000;
-
-
+  wsStatus: any;
+  tabStatus: any;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -288,6 +290,28 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
+    this.filterCols();
+    this.ws$.pipe().subscribe(value => {
+      this.wsStatus = _.get(value, 'workspaceType', null);
+      this.detectChanges();
+    });
+
+    this.selectedProject$.pipe().subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.detectChanges();
+    });
+  }
+
+  filterCols() {
+    // console.log(this.dataColumns);
+    // return this.dataColumns;
+    if (this.tabStatus === 'FAC') {
+      return _.filter(this.dataColumns, item => item.fields !== 'base' &&
+        item.fields !== 'client' &&
+        item.fields !== 'inuring' &&
+        item.fields !== 'postInuring');
+    } else return this.dataColumns;
+
   }
 
   filter(key: string, value?: any) {
@@ -481,7 +505,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       pltId: pltId,
       draggedAdjs: this.draggedAdjs,
       lastpltId: this.lastDragPltId,
-      application: this.adjutmentApplication
+      application: this.adjustmentApplication
     });
     this.changeRef.detectChanges();
   }

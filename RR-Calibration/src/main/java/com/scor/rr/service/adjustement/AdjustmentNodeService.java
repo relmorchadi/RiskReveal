@@ -2,7 +2,6 @@ package com.scor.rr.service.adjustement;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
@@ -22,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -517,7 +515,7 @@ public class AdjustmentNodeService {
             FileUtils.touch(file);
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
-            eventBasedParameterService.save(new AdjustmentEventBasedParameterEntity(file.getPath(),file.getName(),node));
+            eventBasedParameterService.save(new EventBasedAdjustmentParameter(file.getPath(),file.getName(),node));
             log.info("------ Success save file ------");
         } catch (IOException | RRException e) {
             e.printStackTrace();

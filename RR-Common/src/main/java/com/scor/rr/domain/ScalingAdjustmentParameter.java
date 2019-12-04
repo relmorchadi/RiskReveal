@@ -9,6 +9,7 @@ import java.util.Objects;
 public class ScalingAdjustmentParameter {
     private Long id;
 //    private EntityEntity entity;
+    private Integer entity;
     private AdjustmentNode adjustmentNode;
     private Double adjustmentFactor;
 
@@ -20,6 +21,16 @@ public class ScalingAdjustmentParameter {
     public ScalingAdjustmentParameter() {
 
     }
+
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Integer entity) {
+        this.entity = entity;
+    }
+
 
     @Id
     @Column(name = "AdjustmentParameterId", nullable = false)
@@ -33,7 +44,7 @@ public class ScalingAdjustmentParameter {
     }
 
 //    @ManyToOne
-//    @JoinColumn(name = "RREntity", referencedColumnName = "EntityId", insertable = false, updatable = false)
+//    @JoinColumn(name = "Entity", referencedColumnName = "EntityId", insertable = false, updatable = false)
 //    public EntityEntity getEntity() {
 //        return entity;
 //    }

@@ -2,6 +2,7 @@ package com.scor.rr.configuration.file;
 
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
+import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.util.List;

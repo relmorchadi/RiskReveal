@@ -8,6 +8,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentNodeProcessing")
 public class AdjustmentNodeProcessingEntity {
     private int adjustmentNodeProcessingId;
+    private Integer entity;
     private AdjustmentNode adjustmentNode;
     private PltHeaderEntity adjustedPLT;
     private PltHeaderEntity inputPLT;
@@ -23,12 +24,22 @@ public class AdjustmentNodeProcessingEntity {
         this.adjustmentNodeProcessingId = adjustmentNodeProcessingId;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeProcessingEntity that = (AdjustmentNodeProcessingEntity) o;
         return adjustmentNodeProcessingId == that.adjustmentNodeProcessingId;
+    }
+
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Integer entity) {
+        this.entity = entity;
     }
 
     @Override

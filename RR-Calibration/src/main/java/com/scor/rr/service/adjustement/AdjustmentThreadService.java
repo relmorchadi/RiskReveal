@@ -54,9 +54,9 @@ public class AdjustmentThreadService {
 
     public AdjustmentThreadEntity createNewAdjustmentThread(AdjustmentThreadCreationRequest adjustmentThreadCreationRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
-        adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
-        adjustmentThreadEntity.setLastModifiedOn(adjustmentThreadEntity.getCreatedOn());
-        adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
+//        adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
+//        adjustmentThreadEntity.setLastModifiedOn(adjustmentThreadEntity.getCreatedOn());
+//        adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(false);
         adjustmentThreadEntity.setThreadStatus("Initialized");
         if(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {

@@ -1,4 +1,4 @@
-<div class="a-app-wrapper">
+<!--<div class="a-app-wrapper">
   <div class="a-app-header">
 
       <h4>Calibration</h4>
@@ -7,929 +7,930 @@
   <div class="app-body">
 
   </div>
+</div>-->
+<div class="plt-browser-wrapper">
+  <div class="a-app-wrapper">
+    <div class="a-app-header">
+      <h4>Calibration Editor</h4>
+    </div>
+    <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
+      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;min-width: 160px;">
+        <div style="padding:unset;width: 80%;">
+          <app-plt-left-menu
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+            [leftMenuInputs]="leftMenuInputs"
+          ></app-plt-left-menu>
+        </div>
+        <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
+           style="font-size: 25px; cursor: pointer; margin-top: 10px;"></i>
+      </div>
+      <div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">
+        <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
+          <i (click)="collapseTags()" class="icon-chevron_right_24px"
+             style="font-size: 20px; cursor: pointer"></i>
+        </div>
+      </div>
+      <plt-tag-manager
+        [tagsInputs]="tagsInputs"
+        (actionDispatcher)="tagsActionDispatcher($event)"
+      >
+      </plt-tag-manager>
+      <div class="tabset-right" style="flex: 1;background-color: #ffffff;">
+        <div>
+          <div class="PLTs-content">
+
+            <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
+                 style="float: left;background-color: #fff">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">
+                  <span class="title">
+                    PLTs
+                   <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
+                                [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                                style=" left: 100px; margin-top: 20px;">
+                    <i class="icon-menu_24px" nz-dropdown
+                       style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
+                    <ul nz-menu>
+                      <li nz-submenu>
+                        <span title>Create</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>New Default Thread</li>
+                          <li nz-menu-item>New Non-default Thread</li>
+                        </ul>
+                      </li>
+                      <li nz-submenu>
+                        <span title>Clone</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>New Default Thread</li>
+                          <li nz-menu-item>New Non-default Thread</li>
+                        </ul>
+                      </li>
+                      <li class="menu-bottom-separator" nz-submenu>
+                        <span title>Regenerate</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>Selected Threads Only</li>
+                          <li nz-menu-item>All Threads</li>
+                        </ul>
+                      </li>
+                      <li nz-menu-item>Publish to Princing</li>
+                      <li nz-menu-item>Publish to Accumulation</li>
+                      <li nz-submenu>
+                        <span title>Inuring</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>Add to New Inuring Package</li>
+                          <li nz-menu-item>Add to Existing Inuring Package</li>
+                        </ul>
+                      </li>
+                      <li nz-menu-item>Add to Comparer</li>
+                      <li class="menu-bottom-separator" nz-menu-item>Export</li>
+                      <li nz-menu-item>Edit PLT Name</li>
+                      <li nz-menu-item>Manage Tags</li>
+                      <li nz-menu-item>Remove</li>
+                      <li nz-menu-item>Delete</li>
+                    </ul>
+                  </nz-dropdown>
+                  </span>
+                <div class="pull-right" *ngIf="tabStatus !== 'FAC'" style="margin-top: 8px; margin-right: 3px;">
+                  <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
+                     style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+                  <i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"
+                     style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+                </div>
+              </div>
+              <div class=" radio-container">
+                <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
+                <div style="margin-top: 23px;float: right">
+                  <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
+                     class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
+                  <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
+                     class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
+                  <i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>
+                  <i (click)="manageColumn = true" class="icon-settings_24px" nz-tooltip="Manage columns"
+                     style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
+                </div>
+
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
+                 style="background-color: #fff">
+              <div class="title-as-tab" *ngIf="tabStatus !== 'FAC'" style="height: 58px; width: 100% !important;">
+                  <span class="title">
+                    Generic Thread
+                     <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                                  style=" left: 100px; margin-top: 20px;">
+                       <i class="icon-menu_24px" nz-dropdown
+                          style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
+                            <ul nz-menu>
+                              <li nz-menu-item *ngIf="tabStatus !== 'FAC'" (click)="clickButtonPlus(true)">Add New Adjustment</li>
+                              <li (click)="openLoadTemplate()" class="menu-bottom-separator"
+                                  nz-menu-item>Load Template</li>
+                                <li nz-submenu>
+                                  <span title>Apply To All </span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                  </ul>
+                              </li>
+                              <li class="menu-bottom-separator" nz-submenu>
+                                  <span title>Apply To Selected</span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                  </ul>
+                              </li>
+                              <li (click)="openSaveTemplate(true)" nz-menu-item>Save Template</li>
+                              <li (click)="openSaveTemplate(false)" nz-menu-item>Save Template As</li>
+                              <li nz-menu-item>Reset/Clear</li>
+                            </ul>
+                    </nz-dropdown>
+                  </span>
+                <div style="display: flex; flex: 1;height: 66px;width: calc(100% - 175px);">
+                  <div
+                    [sortableData]="adjsArray"
+                    *ngIf="adjsArray.length > 0"
+                    [dropZones]="['adjustment-dropZone']"
+                    class="generic-thread-container"
+                    dnd-sortable-container
+                    style=" max-width: calc(100% - 100px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;margin-top: 11px;">
+                    <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
+                      <div (click)="selectedAdjust(adj.id)"
+                           (onDragEnd)="cdRef.detectChanges()"
+                           (onDragStart)="onDragStart(adj)"
+                           [dragData]="adj"
+                           [dragEnabled]="true"
+                           [sortableIndex]="adjIndex"
+                           dnd-sortable
+                           (mouseleave)="onLeaveAdjustment(adj.id)"
+                           (mouseover)="shownDropDown = adj.id"
+                           [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
+                           class="adjustDiv"
+                           style="margin: 2px 8px 8px 8px !important;">
+                            <span
+                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
+                        <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                                     *ngIf="shownDropDown === adj.id"
+                                     [(nzVisible)]="dropdownVisible"
+                                     [nzPlacement]="'bottomLeft'"
+                                     class="dropD" nzTrigger="click">
+                          <i class="icon-menu_24px" nz-dropdown
+                             style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                          <ul nz-menu>
+                            <li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>
+                            <li (click)="DeleteAdjustement(adj)" class="menu-bottom-separator" nz-menu-item>Delete</li>
+                            <li nz-submenu>
+                              <span title>Apply For All Threads</span>
+                              <ul nz-menu>
+                                <li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>
+                                <li nz-menu-item>New Alternate Threads</li>
+                                <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>
+                              </ul>
+                            <li nz-submenu>
+                              <span title>Apply For Selected Threads only</span>
+                              <ul nz-menu>
+                                <li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>
+                                <li nz-menu-item>New Alternate Threads</li>
+                                <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </nz-dropdown>
+                        <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
+                               class="templateInput"
+                        >
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div
+                    style="display: flex; align-items: center;margin: 5px 18px 7px 8px;float: right;flex-direction: column;justify-content: center;">
+                    Template:
+                    <span *ngIf="template.id !== 0" class="template-type"> {{template.type}} </span>
+                    <div style="display: flex">
+                      <span
+                        style="text-overflow: ellipsis;max-width: 150px;overflow: hidden;display: block;">{{template.name}}</span>
+                      <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
+                       nzPlacement="right"
+                       nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>
+                    </div>
+                    <ng-template #tool>
+                      <div class="description-tooltip">
+                        <span class="title"> Description</span>
+                        <p>{{template.description}}</p>
+                      </div>
+                    </ng-template>
+                  </div>
+
+                </div>
+
+              </div>
+              <div class="radio-container">
+                <div class="Deltas" style="display: grid">
+                  <div style="display: flex; height: 58px; width: 100%" *ngIf="tabStatus === 'FAC'"></div>
+                  <div style="margin-left: 25px;">
+                    <div class="button-toggle" style="width: 480px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts Analysis" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;">
+                  <span class="title">
+                    Thread Level EP Metrics
+                  </span>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Display</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Financial Unit</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{financialUnits.selected.label}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeFinancialUnit(financialUnit)"
+                          *ngFor="let financialUnit of financialUnits.data" nz-menu-item>
+                        {{financialUnit.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Currency</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{currencies.selected.label}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>
+                        {{currency.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+              <div class="radio-container">
+                <div class="Deltas" style="display: grid">
+                  <div style="    margin-left: 25px;">
+                    <div class="button-toggle" style="width: 480px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts Analysis" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                      <i class="icon-settings_24px" nz-dropdown
+                         style="margin-right: 6px;font-size: 20px;cursor: pointer;float: right;margin-top: 20px;"></i>
+                      <ul nz-menu style="font-size: 12px">
+                        <li (click)="manageReturnPeriods = true" nz-menu-item>Manage return periods</li>
+                        <li nz-menu-item>Export to Excel</li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"
+                 class="table-header2"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
+                <div style="display: flex">
+                  <span class="title">
+                    Impacts
+                  </span>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Change Display</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeEPM(epm)" *ngFor="let epm of EPMS" nz-menu-item>{{epm}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Financial Unit</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{financialUnits.selected.label}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeFinancialUnit(financialUnit)"
+                            *ngFor="let financialUnit of financialUnits.data" nz-menu-item>
+                          {{financialUnit.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Change Currency</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{currencies.selected.label}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>
+                          {{currency.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+
+                <div class="impact-container">
+                  <div class="impacts-points">
+                  <span>
+                    Exhaustion Point(pE): 999,999,999,999
+                  </span>
+                    <span>
+                    User Specified Point(pU): 999,999,999,999
+                  </span>
+                    <span>
+                    Activation Point(pA): 999,999,999,999
+                  </span>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Layer Overlay</span>
+                          <span class="dropdown-item-selected-calibration">Workspace</span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li nz-menu-item>Workspace</li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+
+              </div>
+              <div class="radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="display: grid">
+                  <div style="margin-left: 25px">
+                    <div class="button-toggle" style="width: 480px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts Analysis" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <div class="button-toggle" style="width: 265px; float: left;">
+                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
+                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
+                                 class="switch-input"></nz-switch>&nbsp;
+                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}">Deltas by Amount </span>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <app-calibration-main-table
+              (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
+              (extend)="extend()"
+              (toggleSelectPlts)="toggleSelectPlts($event)"
+              [adjustmentApplication]="adjustmentApplication"
+              (expandAll)="expandAll($event)"
+              (sortChange)="sortChange($event)"
+              (checkboxSort)="checkBoxsort()"
+              (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"
+              (draggedAdjs)="onDragStart($event.draggedAdjs)"
+              (adjustColWidth)="adjustColWidth($event)"
+              (togglePureRow)="togglePureRow($event)"
+              [EPMColumns]="EPMColumns"
+              [sortData]="sortData"
+              [frozenColumns]="frozenColumns"
+              [dataColumns]="dataColumns"
+              [extended]="extended"
+
+              [headerWidth]="headerWidth"
+              [frozenWidth]="frozenWidth"
+              [allRowsExpanded]="allRowsExpanded"
+
+              [EPMDisplay]="EPMDisplay"
+              [randomMetaData]="randomMetaData"
+              [listOfPltsThread]="listOfPltsThread"
+              [rowGroupMetadata]="rowGroupMetadata"
+              [groupedByPure]="groupedByPure"
+              [rowKeys]="rowKeys"
+
+              [pltColumns]="pltColumns"
+              [tableType]="tableType"
+              (closeReturnPeriods)="manageReturnPeriods = false"
+              [manageReturnPeriods]="manageReturnPeriods"
+              [selectedAdjustment]="selectedAdjustment"
+              [deletedPlts]="deletedPlts"
+              [listOfDeletedPltsData]="listOfDeletedPltsData"
+              [listOfDeletedPlts]="listOfDeletedPlts"
+              [listOfPltsData]="listOfPltsData"
+              [showDeleted]="showDeleted"
+              [systemTagsCount]="systemTagsCount"
+              [selectAll]="selectAll"
+              [selectedEPM]="selectedEPM"
+              [selectedListOfPlts]="selectedListOfPlts"
+              [someItemsAreSelected]="someItemsAreSelected"
+            >
+            </app-calibration-main-table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
-<!--<div class="plt-browser-wrapper">-->
-  <!--<div class="a-app-wrapper">-->
-    <!--<div class="a-app-header">-->
-      <!--<h4>Calibration Editor</h4>-->
-    <!--</div>-->
-    <!--<div class="my-tabs" style="margin-bottom: 10px; height: 95%">-->
-      <!--<div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;min-width: 160px;">-->
-        <!--<div style="padding:unset;width: 80%;">-->
-          <!--<app-plt-left-menu-->
-            <!--(actionDispatcher)="leftMenuActionDispatcher($event)"-->
-            <!--[leftMenuInputs]="leftMenuInputs"-->
-          <!--&gt;</app-plt-left-menu>-->
-        <!--</div>-->
-        <!--<i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"-->
-           <!--style="font-size: 25px; cursor: pointer; margin-top: 10px;"></i>-->
-      <!--</div>-->
-      <!--<div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">-->
-        <!--<div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">-->
-          <!--<i (click)="collapseTags()" class="icon-chevron_right_24px"-->
-             <!--style="font-size: 20px; cursor: pointer"></i>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<plt-tag-manager-->
-        <!--[tagsInputs]="tagsInputs"-->
-        <!--(actionDispatcher)="tagsActionDispatcher($event)"-->
-      <!--&gt;-->
-      <!--</plt-tag-manager>-->
-      <!--<div class="tabset-right" style="flex: 1;background-color: #ffffff;">-->
-        <!--<div>-->
-          <!--<div class="PLTs-content">-->
+<app-adjustment-pop-up
+  [isVisible]="isVisible"
+  [AdjustementType]="AdjustementType"
+  [modalTitle]="modalTitle"
+  [singleValue]="singleValue"
+  [columnPosition]="columnPosition"
+  [modifyModal]="modifyModal"
+  [global]="global"
+  [categorySelected]="categorySelected"
+  [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
+  (selectCategory)="selectCategory($event)"
+  (handleCancel)="handleCancel()"
+  (addAdjustmentFromPlusIcon)="addAdjustment($event)"
+  (saveAdjModification)="saveAdjModification($event)">
+</app-adjustment-pop-up>
+<app-add-remove-pop-up
+  [isVisible]="addRemoveModal"
+  [selectionStep]="'plt'"
+  [userTags]="userTags"
+  [projects]="projects"
+  (onSave)="addRemoveOnSave($event)"
+  [stepConfig]=" {wsId: workspaceId,
+    uwYear: uwy,
+    plts: listOfPltsData}"
+  (onVisibleChange)="addRemoveModal= $event">
+</app-add-remove-pop-up>
+<p-dialog
+  [visible]="manageColumn"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
 
-            <!--<div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"-->
-                 <!--style="float: left;background-color: #fff">-->
-              <!--<div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">-->
-                  <!--<span class="title">-->
-                    <!--PLTs-->
-                   <!--<nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"-->
-                                <!--[nzPlacement]="'bottomLeft'" nzTrigger="click"-->
-                                <!--style=" left: 100px; margin-top: 20px;">-->
-                    <!--<i class="icon-menu_24px" nz-dropdown-->
-                       <!--style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>-->
-                    <!--<ul nz-menu>-->
-                      <!--<li nz-submenu>-->
-                        <!--<span title>Create</span>-->
-                        <!--<ul nz-menu>-->
-                          <!--<li nz-menu-item>New Default Thread</li>-->
-                          <!--<li nz-menu-item>New Non-default Thread</li>-->
-                        <!--</ul>-->
-                      <!--</li>-->
-                      <!--<li nz-submenu>-->
-                        <!--<span title>Clone</span>-->
-                        <!--<ul nz-menu>-->
-                          <!--<li nz-menu-item>New Default Thread</li>-->
-                          <!--<li nz-menu-item>New Non-default Thread</li>-->
-                        <!--</ul>-->
-                      <!--</li>-->
-                      <!--<li class="menu-bottom-separator" nz-submenu>-->
-                        <!--<span title>Regenerate</span>-->
-                        <!--<ul nz-menu>-->
-                          <!--<li nz-menu-item>Selected Threads Only</li>-->
-                          <!--<li nz-menu-item>All Threads</li>-->
-                        <!--</ul>-->
-                      <!--</li>-->
-                      <!--<li nz-menu-item>Publish to Princing</li>-->
-                      <!--<li nz-menu-item>Publish to Accumulation</li>-->
-                      <!--<li nz-submenu>-->
-                        <!--<span title>Inuring</span>-->
-                        <!--<ul nz-menu>-->
-                          <!--<li nz-menu-item>Add to New Inuring Package</li>-->
-                          <!--<li nz-menu-item>Add to Existing Inuring Package</li>-->
-                        <!--</ul>-->
-                      <!--</li>-->
-                      <!--<li nz-menu-item>Add to Comparer</li>-->
-                      <!--<li class="menu-bottom-separator" nz-menu-item>Export</li>-->
-                      <!--<li nz-menu-item>Edit PLT Name</li>-->
-                      <!--<li nz-menu-item>Manage Tags</li>-->
-                      <!--<li nz-menu-item>Remove</li>-->
-                      <!--<li nz-menu-item>Delete</li>-->
-                    <!--</ul>-->
-                  <!--</nz-dropdown>-->
-                  <!--</span>-->
-                <!--<div class="pull-right" style="margin-top: 8px; margin-right: 3px;">-->
-                  <!--<i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"-->
-                     <!--style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>-->
-                  <!--<i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"-->
-                     <!--style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class=" radio-container">-->
-                <!--<label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>-->
-                <!--<div style="margin-top: 23px;float: right">-->
-                  <!--<i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"-->
-                     <!--class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>-->
-                  <!--<i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"-->
-                     <!--class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>-->
-                  <!--<i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>-->
-                  <!--<i (click)="manageColumn = true" class="icon-settings_24px" nz-tooltip="Manage columns"-->
-                     <!--style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>-->
-                <!--</div>-->
+  <p-header>
+    <div class="header">
+      <h6>Manage Columns</h6>
+      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
 
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div *ngIf="!extended && tableType=='adjustments'" class="table-header2"-->
-                 <!--[ngStyle]="{'margin-left': headerWidth}"-->
-                 <!--style="background-color: #fff">-->
-              <!--<div class="title-as-tab" style="height: 58px; width: 100% !important;">-->
-                  <!--<span class="title">-->
-                    <!--Generic Thread-->
-                     <!--<nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"-->
-                                  <!--style=" left: 100px; margin-top: 20px;">-->
-                       <!--<i class="icon-menu_24px" nz-dropdown-->
-                          <!--style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>-->
-                            <!--<ul nz-menu>-->
-                              <!--<li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>-->
-                              <!--<li (click)="openLoadTemplate()" class="menu-bottom-separator"-->
-                                  <!--nz-menu-item>Load Template</li>-->
-                                <!--<li nz-submenu>-->
-                                  <!--<span title>Apply To All </span>-->
-                                  <!--<ul nz-menu>-->
-                                    <!--<li nz-menu-item>Add to Existing Threads</li>-->
-                                    <!--<li nz-menu-item>Replace Existing Threads</li>-->
-                                    <!--<li nz-menu-item>New Alternate Threads</li>-->
-                                  <!--</ul>-->
-                              <!--</li>-->
-                              <!--<li class="menu-bottom-separator" nz-submenu>-->
-                                  <!--<span title>Apply To Selected</span>-->
-                                  <!--<ul nz-menu>-->
-                                    <!--<li nz-menu-item>Add to Existing Threads</li>-->
-                                    <!--<li nz-menu-item>Replace Existing Threads</li>-->
-                                    <!--<li nz-menu-item>New Alternate Threads</li>-->
-                                  <!--</ul>-->
-                              <!--</li>-->
-                              <!--<li (click)="openSaveTemplate(true)" nz-menu-item>Save Template</li>-->
-                              <!--<li (click)="openSaveTemplate(false)" nz-menu-item>Save Template As</li>-->
-                              <!--<li nz-menu-item>Reset/Clear</li>-->
-                            <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</span>-->
-                <!--<div style="display: flex; flex: 1;height: 66px;width: calc(100% - 175px);">-->
-                  <!--<div-->
-                    <!--[sortableData]="adjsArray"-->
-                    <!--*ngIf="adjsArray.length > 0"-->
-                    <!--[dropZones]="['adjustment-dropZone']"-->
-                    <!--class="generic-thread-container"-->
-                    <!--dnd-sortable-container-->
-                    <!--style=" max-width: calc(100% - 100px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;margin-top: 11px;">-->
-                    <!--<ng-container *ngFor="let adj of adjsArray;let adjIndex=index">-->
-                      <!--<div (click)="selectedAdjust(adj.id)"-->
-                           <!--(onDragEnd)="cdRef.detectChanges()"-->
-                           <!--(onDragStart)="onDragStart(adj)"-->
-                           <!--[dragData]="adj"-->
-                           <!--[dragEnabled]="true"-->
-                           <!--[sortableIndex]="adjIndex"-->
-                           <!--dnd-sortable-->
-                           <!--(mouseleave)="onLeaveAdjustment(adj.id)"-->
-                           <!--(mouseover)="shownDropDown = adj.id"-->
-                           <!--[ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"-->
-                           <!--class="adjustDiv"-->
-                           <!--style="margin: 2px 8px 8px 8px !important;">-->
-                            <!--<span-->
-                              <!--style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>-->
-                        <!--<nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"-->
-                                     <!--*ngIf="shownDropDown === adj.id"-->
-                                     <!--[(nzVisible)]="dropdownVisible"-->
-                                     <!--[nzPlacement]="'bottomLeft'"-->
-                                     <!--class="dropD" nzTrigger="click">-->
-                          <!--<i class="icon-menu_24px" nz-dropdown-->
-                             <!--style="font-size: 14px;float: right;margin-right: 2px;"></i>-->
-                          <!--<ul nz-menu>-->
-                            <!--<li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>-->
-                            <!--<li (click)="DeleteAdjustement(adj)" class="menu-bottom-separator" nz-menu-item>Delete</li>-->
-                            <!--<li nz-submenu>-->
-                              <!--<span title>Apply For All Threads</span>-->
-                              <!--<ul nz-menu>-->
-                                <!--<li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>-->
-                                <!--<li nz-menu-item>New Alternate Threads</li>-->
-                                <!--<li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>-->
-                              <!--</ul>-->
-                            <!--<li nz-submenu>-->
-                              <!--<span title>Apply For Selected Threads only</span>-->
-                              <!--<ul nz-menu>-->
-                                <!--<li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>-->
-                                <!--<li nz-menu-item>New Alternate Threads</li>-->
-                                <!--<li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>-->
-                              <!--</ul>-->
-                            <!--</li>-->
-                          <!--</ul>-->
-                        <!--</nz-dropdown>-->
-                        <!--<input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"-->
-                               <!--class="templateInput"-->
-                        <!--&gt;-->
-                      <!--</div>-->
-                    <!--</ng-container>-->
-                  <!--</div>-->
-                  <!--<div-->
-                    <!--style="display: flex; align-items: center;margin: 5px 18px 7px 8px;float: right;flex-direction: column;justify-content: center;">-->
-                    <!--Template:-->
-                    <!--<span *ngIf="template.id !== 0" class="template-type"> {{template.type}} </span>-->
-                    <!--<div style="display: flex">-->
-                      <!--<span-->
-                        <!--style="text-overflow: ellipsis;max-width: 150px;overflow: hidden;display: block;">{{template.name}}</span>-->
-                      <!--<i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip-->
-                       <!--nzPlacement="right"-->
-                       <!--nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>-->
-                    <!--</div>-->
-                    <!--<ng-template #tool>-->
-                      <!--<div class="description-tooltip">-->
-                        <!--<span class="title"> Description</span>-->
-                        <!--<p>{{template.description}}</p>-->
-                      <!--</div>-->
-                    <!--</ng-template>-->
-                  <!--</div>-->
+  <div class="content">
 
-                <!--</div>-->
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfColumns]"
+        [cdkDropListData]="extraFrozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraFrozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
 
-              <!--</div>-->
-              <!--<div class="radio-container">-->
-                <!--<div class="Deltas" style="display: grid">-->
-                  <!--<div style="    margin-left: 25px;">-->
-                    <!--<div class="button-toggle" style="width: 480px; float: left;">-->
-                      <!--<span style="font-weight: bold; margin-right: 10px">View: </span>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'20px'}"-->
-                                     <!--label="Adjustments" name="tableType"-->
-                                     <!--value="adjustments"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'30px'}"-->
-                                     <!--label="Impacts Analysis" name="tableType"-->
-                                     <!--value="Impacts"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'10px'}"-->
-                                     <!--label="EP Metrics" name="tableType"-->
-                                     <!--value="EP Metrics"></p-radioButton>-->
-                    <!--</div>-->
-                    <!--<i (click)="manageAdjColumn = true" class="icon-settings_24px"-->
-                       <!--nz-tooltip="Manage  adjustment columns"-->
-                       <!--style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"-->
-                 <!--[ngStyle]="{'margin-left': headerWidth}"-->
-                 <!--style="background-color: #fff">-->
-              <!--<div class="title-as-tab" style="height: 58px; width: 100% !important;">-->
-                  <!--<span class="title">-->
-                    <!--Thread Level EP Metrics-->
-                  <!--</span>-->
-                <!--<div class="body-wrap-dropDowns-calibration">-->
-                  <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                    <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                      <!--<div class="dropdown-wrap-title-calibration">-->
-                        <!--<span class="dropdown-title-calibration">Change Display</span>-->
-                        <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{selectedEPM}}-->
-                      <!--</span>-->
-                      <!--</div>-->
-                      <!--<div class="dropdown-icon">-->
-                        <!--<i nz-icon type="down"></i>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                    <!--<ul nz-menu>-->
-                      <!--<li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}-->
-                      <!--</li>-->
-                    <!--</ul>-->
-                  <!--</nz-dropdown>-->
-                <!--</div>-->
-                <!--<div class="body-wrap-dropDowns-calibration">-->
-                  <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                    <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                      <!--<div class="dropdown-wrap-title-calibration">-->
-                        <!--<span class="dropdown-title-calibration">Financial Unit</span>-->
-                        <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{financialUnits.selected.label}}-->
-                      <!--</span>-->
-                      <!--</div>-->
-                      <!--<div class="dropdown-icon">-->
-                        <!--<i nz-icon type="down"></i>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                    <!--<ul nz-menu>-->
-                      <!--<li (click)="changeFinancialUnit(financialUnit)"-->
-                          <!--*ngFor="let financialUnit of financialUnits.data" nz-menu-item>-->
-                        <!--{{financialUnit.label}}-->
-                      <!--</li>-->
-                    <!--</ul>-->
-                  <!--</nz-dropdown>-->
-                <!--</div>-->
-                <!--<div class="body-wrap-dropDowns-calibration">-->
-                  <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                    <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                      <!--<div class="dropdown-wrap-title-calibration">-->
-                        <!--<span class="dropdown-title-calibration">Change Currency</span>-->
-                        <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{currencies.selected.label}}-->
-                      <!--</span>-->
-                      <!--</div>-->
-                      <!--<div class="dropdown-icon">-->
-                        <!--<i nz-icon type="down"></i>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                    <!--<ul nz-menu>-->
-                      <!--<li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>-->
-                        <!--{{currency.label}}-->
-                      <!--</li>-->
-                    <!--</ul>-->
-                  <!--</nz-dropdown>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="radio-container">-->
-                <!--<div class="Deltas" style="display: grid">-->
-                  <!--<div style="    margin-left: 25px;">-->
-                    <!--<div class="button-toggle" style="width: 480px; float: left;">-->
-                      <!--<span style="font-weight: bold; margin-right: 10px">View: </span>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'20px'}"-->
-                                     <!--label="Adjustments" name="tableType"-->
-                                     <!--value="adjustments"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'30px'}"-->
-                                     <!--label="Impacts Analysis" name="tableType"-->
-                                     <!--value="Impacts"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'10px'}"-->
-                                     <!--label="EP Metrics" name="tableType"-->
-                                     <!--value="EP Metrics"></p-radioButton>-->
-                    <!--</div>-->
-                    <!--<nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">-->
-                      <!--<i class="icon-settings_24px" nz-dropdown-->
-                         <!--style="margin-right: 6px;font-size: 20px;cursor: pointer;float: right;margin-top: 20px;"></i>-->
-                      <!--<ul nz-menu style="font-size: 12px">-->
-                        <!--<li (cflick)="manageReturnPeriods = true" nz-menu-item>Manage return periods</li>-->
-                        <!--<li nz-menu-item>Export to Excel</li>-->
-                      <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"-->
-                 <!--class="table-header2"-->
-                 <!--style="background-color: #fff">-->
-              <!--<div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">-->
-                <!--<div style="display: flex">-->
-                  <!--<span class="title">-->
-                    <!--Impacts-->
-                  <!--</span>-->
-                  <!--<div class="body-wrap-dropDowns-calibration">-->
-                    <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                      <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                        <!--<div class="dropdown-wrap-title-calibration">-->
-                          <!--<span class="dropdown-title-calibration">Change Display</span>-->
-                          <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{selectedEPM}}-->
-                      <!--</span>-->
-                        <!--</div>-->
-                        <!--<div class="dropdown-icon">-->
-                          <!--<i nz-icon type="down"></i>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<ul nz-menu>-->
-                        <!--<li (click)="changeEPM(epm)" *ngFor="let epm of EPMS" nz-menu-item>{{epm}}-->
-                        <!--</li>-->
-                      <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</div>-->
-                  <!--<div class="body-wrap-dropDowns-calibration">-->
-                    <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                      <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                        <!--<div class="dropdown-wrap-title-calibration">-->
-                          <!--<span class="dropdown-title-calibration">Financial Unit</span>-->
-                          <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{financialUnits.selected.label}}-->
-                      <!--</span>-->
-                        <!--</div>-->
-                        <!--<div class="dropdown-icon">-->
-                          <!--<i nz-icon type="down"></i>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<ul nz-menu>-->
-                        <!--<li (click)="changeFinancialUnit(financialUnit)"-->
-                            <!--*ngFor="let financialUnit of financialUnits.data" nz-menu-item>-->
-                          <!--{{financialUnit.label}}-->
-                        <!--</li>-->
-                      <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</div>-->
-                  <!--<div class="body-wrap-dropDowns-calibration">-->
-                    <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-                      <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                        <!--<div class="dropdown-wrap-title-calibration">-->
-                          <!--<span class="dropdown-title-calibration">Change Currency</span>-->
-                          <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{currencies.selected.label}}-->
-                      <!--</span>-->
-                        <!--</div>-->
-                        <!--<div class="dropdown-icon">-->
-                          <!--<i nz-icon type="down"></i>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<ul nz-menu>-->
-                        <!--<li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>-->
-                          <!--{{currency.label}}-->
-                        <!--</li>-->
-                      <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</div>-->
-                <!--</div>-->
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
 
-                <!--<div class="impact-container">-->
-                  <!--<div class="impacts-points">-->
-                  <!--<span>-->
-                    <!--Exhaustion Point(pE): 999,999,999,999-->
-                  <!--</span>-->
-                    <!--<span>-->
-                    <!--User Specified Point(pU): 999,999,999,999-->
-                  <!--</span>-->
-                    <!--<span>-->
-                    <!--Activation Point(pA): 999,999,999,999-->
-                  <!--</span>-->
-                  <!--</div>-->
-                  <!--<div class="body-wrap-dropDowns-calibration">-->
-                    <!--<nz-dropdown [nzTrigger]="'click'">-->
-                      <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                        <!--<div class="dropdown-wrap-title-calibration">-->
-                          <!--<span class="dropdown-title-calibration">Layer Overlay</span>-->
-                          <!--<span class="dropdown-item-selected-calibration">Workspace</span>-->
-                        <!--</div>-->
-                        <!--<div class="dropdown-icon">-->
-                          <!--<i nz-icon type="down"></i>-->
-                        <!--</div>-->
-                      <!--</div>-->
-                      <!--<ul nz-menu>-->
-                        <!--<li nz-menu-item>Workspace</li>-->
-                      <!--</ul>-->
-                    <!--</nz-dropdown>-->
-                  <!--</div>-->
-                <!--</div>-->
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfColumns]"
+        [cdkDropListData]="frozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of frozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
 
-              <!--</div>-->
-              <!--<div class="radio-container" style="width: 100% !important;">-->
-                <!--<div class="Deltas" style="display: grid">-->
-                  <!--<div style="margin-left: 25px">-->
-                    <!--<div class="button-toggle" style="width: 480px; float: left;">-->
-                      <!--<span style="font-weight: bold; margin-right: 10px">View: </span>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'20px'}"-->
-                                     <!--label="Adjustments" name="tableType"-->
-                                     <!--value="adjustments"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'30px'}"-->
-                                     <!--label="Impacts Analysis" name="tableType"-->
-                                     <!--value="Impacts"></p-radioButton>-->
-                      <!--<p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"-->
-                                     <!--[ngStyle]="{'padding-right':'10px'}"-->
-                                     <!--label="EP Metrics" name="tableType"-->
-                                     <!--value="EP Metrics"></p-radioButton>-->
-                    <!--</div>-->
-                    <!--<div class="button-toggle" style="width: 265px; float: left;">-->
-                      <!--<span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;-->
-                      <!--<nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"-->
-                                 <!--class="switch-input"></nz-switch>&nbsp;-->
-                      <!--<span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}">Deltas by Amount </span>-->
-                    <!--</div>-->
-                    <!--<i (click)="manageAdjColumn = true" class="icon-settings_24px"-->
-                       <!--nz-tooltip="Manage  adjustment columns"-->
-                       <!--style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>-->
-                  <!--</div>-->
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="manageAdjColumn"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
 
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<app-calibration-main-table-->
-              <!--(clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"-->
-              <!--(extend)="extend()"-->
-              <!--(toggleSelectPlts)="toggleSelectPlts($event)"-->
-              <!--[adjutmentApplication]="adjutmentApplication"-->
-              <!--(expandAll)="expandAll($event)"-->
-              <!--(sortChange)="sortChange($event)"-->
-              <!--(checkboxSort)="checkBoxsort()"-->
-              <!--(onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"-->
-              <!--(draggedAdjs)="onDragStart($event.draggedAdjs)"-->
-              <!--(adjustColWidth)="adjustColWidth($event)"-->
-              <!--(togglePureRow)="togglePureRow($event)"-->
-              <!--[EPMColumns]="EPMColumns"-->
-              <!--[sortData]="sortData"-->
-              <!--[frozenColumns]="frozenColumns"-->
-              <!--[dataColumns]="dataColumns"-->
-              <!--[extended]="extended"-->
+  <p-header>
+    <div class="header">
+      <h6>Manage Columns</h6>
+      <i style="cursor: pointer" (click)="toggleColumnsManager(false)" class="icon-close_24px"></i>
+    </div>
+  </p-header>
 
-              <!--[headerWidth]="headerWidth"-->
-              <!--[frozenWidth]="frozenWidth"-->
-              <!--[allRowsExpanded]="allRowsExpanded"-->
+  <div class="content">
 
-              <!--[EPMDisplay]="EPMDisplay"-->
-              <!--[randomMetaData]="randomMetaData"-->
-              <!--[listOfPltsThread]="listOfPltsThread"-->
-              <!--[rowGroupMetadata]="rowGroupMetadata"-->
-              <!--[groupedByPure]="groupedByPure"-->
-              <!--[rowKeys]="rowKeys"-->
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
+        [cdkDropListData]="extraDataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraDataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
 
-              <!--[pltColumns]="pltColumns"-->
-              <!--[tableType]="tableType"-->
-              <!--(closeReturnPeriods)="manageReturnPeriods = false"-->
-              <!--[manageReturnPeriods]="manageReturnPeriods"-->
-              <!--[selectedAdjustment]="selectedAdjustment"-->
-              <!--[deletedPlts]="deletedPlts"-->
-              <!--[listOfDeletedPltsData]="listOfDeletedPltsData"-->
-              <!--[listOfDeletedPlts]="listOfDeletedPlts"-->
-              <!--[listOfPltsData]="listOfPltsData"-->
-              <!--[showDeleted]="showDeleted"-->
-              <!--[systemTagsCount]="systemTagsCount"-->
-              <!--[selectAll]="selectAll"-->
-              <!--[selectedEPM]="selectedEPM"-->
-              <!--[selectedListOfPlts]="selectedListOfPlts"-->
-              <!--[someItemsAreSelected]="someItemsAreSelected"-->
-            <!--&gt;-->
-            <!--</app-calibration-main-table>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
 
-    <!--</div>-->
-  <!--</div>-->
-<!--</div>-->
-<!--<app-adjustment-pop-up-->
-  <!--[isVisible]="isVisible"-->
-  <!--[AdjustementType]="AdjustementType"-->
-  <!--[modalTitle]="modalTitle"-->
-  <!--[singleValue]="singleValue"-->
-  <!--[columnPosition]="columnPosition"-->
-  <!--[modifyModal]="modifyModal"-->
-  <!--[global]="global"-->
-  <!--[categorySelected]="categorySelected"-->
-  <!--[categorySelectedFromAdjustement]="categorySelectedFromAdjustement"-->
-  <!--(selectCategory)="selectCategory($event)"-->
-  <!--(handleCancel)="handleCancel()"-->
-  <!--(addAdjustmentFromPlusIcon)="addAdjustment($event)"-->
-  <!--(saveAdjModification)="saveAdjModification($event)">-->
-<!--</app-adjustment-pop-up>-->
-<!--<app-add-remove-pop-up-->
-  <!--[isVisible]="addRemoveModal"-->
-  <!--[selectionStep]="'plt'"-->
-  <!--[userTags]="userTags"-->
-  <!--[projects]="projects"-->
-  <!--(onSave)="addRemoveOnSave($event)"-->
-  <!--[stepConfig]=" {wsId: workspaceId,-->
-    <!--uwYear: uwy,-->
-    <!--plts: listOfPltsData}"-->
-  <!--(onVisibleChange)="addRemoveModal= $event">-->
-<!--</app-add-remove-pop-up>-->
-<!--<p-dialog-->
-  <!--[visible]="manageColumn"-->
-  <!--[closable]="false"-->
-  <!--styleClass="m-dialog-modal"-->
-  <!--appendTo="body"-->
-  <!--[modal]="true"-->
-  <!--[autoZIndex]="false"-->
-  <!--[responsive]="true"-->
-<!--&gt;-->
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
+        [cdkDropListData]="dataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of dataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
 
-  <!--<p-header>-->
-    <!--<div class="header">-->
-      <!--<h6>Manage Columns</h6>-->
-      <!--<i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>-->
-    <!--</div>-->
-  <!--</p-header>-->
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager(false)" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns(false)" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="saveTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
 
-  <!--<div class="content">-->
+  <p-header>
+    <div class="header">
+      <h6>Save Template</h6>
+      <i style="cursor: pointer" (click)="closeSaveTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
 
-    <!--<div style="display: flex;flex-direction: column;">-->
-      <!--<h6>Available columns:</h6>-->
-      <!--<div-->
-        <!--cdkDropList-->
-        <!--[id]="'availableListOfColumns'"-->
-        <!--#availbleListOfColumns="cdkDropList"-->
-        <!--[cdkDropListConnectedTo]="[usedListOfColumns]"-->
-        <!--[cdkDropListData]="extraFrozenColumnsCache"-->
-        <!--class="m-box-d"-->
-        <!--(cdkDropListDropped)="dropColumn($event)">-->
-        <!--<ng-container *ngFor="let col of extraFrozenColumnsCache;let i=index">-->
-          <!--<div class="m-box-drag" *ngIf="col.header" cdkDrag>-->
-            <!--<div class="m-box-overlay">-->
-              <!--<div class="left">-->
-                <!--<div class="burger" cdkDragHandle>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                <!--</div>-->
-                <!--<span class="subtitle-2">-->
-              <!--{{col.header}}-->
-              <!--</span>-->
-              <!--</div>-->
-              <!--&lt;!&ndash;-->
-              <!--<div class="right">-->
-                <!--<i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>-->
-                <!--<i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>-->
-              <!--</div>-->
-              <!--&ndash;&gt;-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</ng-container>-->
-      <!--</div>-->
-    <!--</div>-->
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input (focus)="$event.target.select()" [(ngModel)]="templateName" id="templateNameInput" #templateNameInput
+               class="a-textfield-mini" nz-input nz-tooltip
+               style="width: 300px; !important; margin-right: 5px;"/>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea pInputTextarea [(ngModel)]="templateDesc" rows="4" style="width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-radio-group [(ngModel)]="templateType" class="default-radio">
+          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
+          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </div>
 
-    <!--<div class="toolkit">-->
-      <!--<div class="toolkit-cnt">-->
-        <!--<div class="all right">-->
-          <!--<i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>-->
-        <!--</div>-->
-        <!--<span>-->
-          <!--All-->
-        <!--</span>-->
-        <!--<div class="all left">-->
-          <!--<i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveCurrentTemplate()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="loadTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
 
-    <!--<div style="display: flex;flex-direction: column;">-->
-      <!--<h6>Show these columns in order:</h6>-->
-      <!--<div-->
-        <!--cdkDropList-->
-        <!--[id]="'usedListOfColumns'"-->
-        <!--#usedListOfColumns="cdkDropList"-->
-        <!--[cdkDropListConnectedTo]="[availbleListOfColumns]"-->
-        <!--[cdkDropListData]="frozenColumnsCache"-->
-        <!--class="m-box-d"-->
-        <!--(cdkDropListDropped)="dropColumn($event)">-->
-        <!--<ng-container *ngFor="let col of frozenColumnsCache;let i=index">-->
-          <!--<div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>-->
-            <!--<div class="m-box-overlay">-->
-              <!--<div class="left">-->
-                <!--<div class="burger" cdkDragHandle>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                <!--</div>-->
-                <!--<span class="subtitle-2">-->
-              <!--{{col.header}}-->
-              <!--</span>-->
-              <!--</div>-->
-              <!--&lt;!&ndash;-->
-              <!--<div class="right">-->
-                <!--<i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>-->
-                <!--<i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>-->
-              <!--</div>-->
-              <!--&ndash;&gt;-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</ng-container>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
+  <p-header>
+    <div class="header">
+      <h6>Load Template</h6>
+      <i style="cursor: pointer" (click)="closeLoadTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
 
-  <!--<p-footer>-->
-    <!--<div class="footer">-->
-      <!--<button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>-->
-      <!--<button class="a-buttons-contained" (click)="saveColumns()" nz-button>-->
-        <!--Save-->
-      <!--</button>-->
-    <!--</div>-->
-  <!--</p-footer>-->
-<!--</p-dialog>-->
-<!--<p-dialog-->
-  <!--[visible]="manageAdjColumn"-->
-  <!--[closable]="false"-->
-  <!--styleClass="m-dialog-modal"-->
-  <!--appendTo="body"-->
-  <!--[modal]="true"-->
-  <!--[autoZIndex]="false"-->
-  <!--[responsive]="true"-->
-<!--&gt;-->
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3" style="margin-top: 15px;">
+        <label>Template: </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
 
-  <!--<p-header>-->
-    <!--<div class="header">-->
-      <!--<h6>Manage Columns</h6>-->
-      <!--<i style="cursor: pointer" (click)="toggleColumnsManager(false)" class="icon-close_24px"></i>-->
-    <!--</div>-->
-  <!--</p-header>-->
-
-  <!--<div class="content">-->
-
-    <!--<div style="display: flex;flex-direction: column;">-->
-      <!--<h6>Available columns:</h6>-->
-      <!--<div-->
-        <!--cdkDropList-->
-        <!--[id]="'availableListOfColumns'"-->
-        <!--#availbleListOfAdjColumns="cdkDropList"-->
-        <!--[cdkDropListConnectedTo]="[usedListOfAdjColumns]"-->
-        <!--[cdkDropListData]="extraDataColumnsCache"-->
-        <!--class="m-box-d"-->
-        <!--(cdkDropListDropped)="dropColumn($event)">-->
-        <!--<ng-container *ngFor="let col of extraDataColumnsCache;let i=index">-->
-          <!--<div class="m-box-drag" *ngIf="col.header" cdkDrag>-->
-            <!--<div class="m-box-overlay">-->
-              <!--<div class="left">-->
-                <!--<div class="burger" cdkDragHandle>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                <!--</div>-->
-                <!--<span class="subtitle-2">-->
-              <!--{{col.header}}-->
-              <!--</span>-->
-              <!--</div>-->
-              <!--&lt;!&ndash;-->
-              <!--<div class="right">-->
-                <!--<i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>-->
-                <!--<i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>-->
-              <!--</div>-->
-              <!--&ndash;&gt;-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</ng-container>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="toolkit">-->
-      <!--<div class="toolkit-cnt">-->
-        <!--<div class="all right">-->
-          <!--<i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>-->
-        <!--</div>-->
-        <!--<span>-->
-          <!--All-->
-        <!--</span>-->
-        <!--<div class="all left">-->
-          <!--<i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div style="display: flex;flex-direction: column;">-->
-      <!--<h6>Show these columns in order:</h6>-->
-      <!--<div-->
-        <!--cdkDropList-->
-        <!--[id]="'usedListOfColumns'"-->
-        <!--#usedListOfAdjColumns="cdkDropList"-->
-        <!--[cdkDropListConnectedTo]="[availbleListOfAdjColumns]"-->
-        <!--[cdkDropListData]="dataColumnsCache"-->
-        <!--class="m-box-d"-->
-        <!--(cdkDropListDropped)="dropColumn($event)">-->
-        <!--<ng-container *ngFor="let col of dataColumnsCache;let i=index">-->
-          <!--<div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>-->
-            <!--<div class="m-box-overlay">-->
-              <!--<div class="left">-->
-                <!--<div class="burger" cdkDragHandle>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                  <!--<div class="line"></div>-->
-                <!--</div>-->
-                <!--<span class="subtitle-2">-->
-              <!--{{col.header}}-->
-              <!--</span>-->
-              <!--</div>-->
-              <!--&lt;!&ndash;-->
-              <!--<div class="right">-->
-                <!--<i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>-->
-                <!--<i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>-->
-              <!--</div>-->
-              <!--&ndash;&gt;-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</ng-container>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-
-  <!--<p-footer>-->
-    <!--<div class="footer">-->
-      <!--<button (click)="toggleColumnsManager(false)" nz-button class="a-button-text">cancel</button>-->
-      <!--<button class="a-buttons-contained" (click)="saveColumns(false)" nz-button>-->
-        <!--Save-->
-      <!--</button>-->
-    <!--</div>-->
-  <!--</p-footer>-->
-<!--</p-dialog>-->
-<!--<p-dialog-->
-  <!--[visible]="saveTemplate"-->
-  <!--[closable]="false"-->
-  <!--styleClass="m-dialog-modal"-->
-  <!--appendTo="body"-->
-  <!--[modal]="true"-->
-  <!--[autoZIndex]="false"-->
-  <!--[responsive]="true"-->
-<!--&gt;-->
-
-  <!--<p-header>-->
-    <!--<div class="header">-->
-      <!--<h6>Save Template</h6>-->
-      <!--<i style="cursor: pointer" (click)="closeSaveTemplate()" class="icon-close_24px"></i>-->
-    <!--</div>-->
-  <!--</p-header>-->
-
-  <!--<div class="content" style="display: unset;">-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3">-->
-        <!--<label> Name: </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<input (focus)="$event.target.select()" [(ngModel)]="templateName" id="templateNameInput" #templateNameInput-->
-               <!--class="a-textfield-mini" nz-input nz-tooltip-->
-               <!--style="width: 300px; !important; margin-right: 5px;"/>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3">-->
-        <!--<label> Description </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<textarea pInputTextarea [(ngModel)]="templateDesc" rows="4" style="width: 300px"></textarea>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3">-->
-        <!--<label> Type: </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<nz-radio-group [(ngModel)]="templateType" class="default-radio">-->
-          <!--<label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>-->
-          <!--<label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>-->
-        <!--</nz-radio-group>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-
-  <!--<p-footer>-->
-    <!--<div class="footer">-->
-      <!--<button (click)="closeSaveTemplate()" nz-button class="a-button-text">cancel</button>-->
-      <!--<button class="a-buttons-contained" (click)="saveCurrentTemplate()" nz-button>-->
-        <!--Save-->
-      <!--</button>-->
-    <!--</div>-->
-  <!--</p-footer>-->
-<!--</p-dialog>-->
-<!--<p-dialog-->
-  <!--[visible]="loadTemplate"-->
-  <!--[closable]="false"-->
-  <!--styleClass="m-dialog-modal"-->
-  <!--[modal]="true"-->
-  <!--[autoZIndex]="false"-->
-  <!--[responsive]="true"-->
-<!--&gt;-->
-
-  <!--<p-header>-->
-    <!--<div class="header">-->
-      <!--<h6>Load Template</h6>-->
-      <!--<i style="cursor: pointer" (click)="closeLoadTemplate()" class="icon-close_24px"></i>-->
-    <!--</div>-->
-  <!--</p-header>-->
-
-  <!--<div class="content" style="display: unset;">-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3" style="margin-top: 15px;">-->
-        <!--<label>Template: </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<div class="body-wrap-dropDowns-calibration">-->
-
-          <!--<nz-select-->
-            <!--[(ngModel)]="searchSelectedTemplate"-->
-            <!--class="a-dropdown-small input-wrapper"-->
-            <!--nzPlaceHolder="Select a template"-->
-            <!--nzShowSearch-->
-            <!--style="width: 300px">-->
-            <!--<nz-option-group nzLabel="Local Templates" *ngIf="localTemplates.length">-->
-              <!--<nz-option *ngFor="let option of localTemplates" [nzLabel]="option.name" [nzValue]="option">-->
-                <!--{{option.name}}-->
-              <!--</nz-option>-->
-            <!--</nz-option-group>-->
-            <!--<nz-option-group nzLabel="Global Templates" *ngIf="globalTemplates.length">-->
-              <!--<nz-option *ngFor="let option of globalTemplates" [nzLabel]="option.name" [nzValue]="option">-->
-                <!--{{option.name}}-->
-              <!--</nz-option>-->
-            <!--</nz-option-group>-->
-          <!--</nz-select>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3">-->
-        <!--<label> Type: </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<p style="font-weight: bold"> {{searchSelectedTemplate.type}}</p>-->
-      <!--</div>-->
-    <!--</div>-->
-    <!--<div class="ui-g">-->
-      <!--<div class="ui-g-3">-->
-        <!--<label> Description </label>-->
-      <!--</div>-->
-      <!--<div class="ui-g-9">-->
-        <!--<p> {{searchSelectedTemplate.description}}</p>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</div>-->
-  <!--<p-footer>-->
-    <!--<div class="footer">-->
-      <!--<button (click)="closeLoadTemplate()" nz-button class="a-button-text">cancel</button>-->
-      <!--<button class="a-buttons-contained" (click)="loadCurrentTemplate()" nz-button>-->
-        <!--Save-->
-      <!--</button>-->
-    <!--</div>-->
-  <!--</p-footer>-->
-<!--</p-dialog>-->
+          <nz-select
+            [(ngModel)]="searchSelectedTemplate"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a template"
+            nzShowSearch
+            style="width: 300px">
+            <nz-option-group nzLabel="Local Templates" *ngIf="localTemplates.length">
+              <nz-option *ngFor="let option of localTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Global Templates" *ngIf="globalTemplates.length">
+              <nz-option *ngFor="let option of globalTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <p style="font-weight: bold"> {{searchSelectedTemplate.type}}</p>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <p> {{searchSelectedTemplate.description}}</p>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeLoadTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="loadCurrentTemplate()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

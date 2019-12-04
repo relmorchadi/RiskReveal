@@ -11,6 +11,7 @@ public class ReturnPeriodBandingAdjustmentParameter {
     private AdjustmentNode adjustmentNode;
     private double returnPeriod;
     private double adjustmentFactor;
+    private Integer entity;
 
     public ReturnPeriodBandingAdjustmentParameter(Double returnPeriod, Double adjustmentFactor, AdjustmentNode adjustmentNode) {
         this.returnPeriod = returnPeriod;
@@ -25,6 +26,15 @@ public class ReturnPeriodBandingAdjustmentParameter {
     public ReturnPeriodBandingAdjustmentParameter(double returnPeriod, double adjustmentFactor) {
         this.returnPeriod = returnPeriod;
         this.adjustmentFactor = adjustmentFactor;
+    }
+
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Integer entity) {
+        this.entity = entity;
     }
 
     @Id

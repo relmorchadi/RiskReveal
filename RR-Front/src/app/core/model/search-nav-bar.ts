@@ -20,7 +20,7 @@ export class SearchNavBar {
   mostUsedSavedSearch: any[];
   shortcuts: ShortCut[];
   mapTableNameToBadgeKey: any;
-  sortcutFormKeysMapper: any;
+  shortcutFormKeysMapper: any;
   searchContent: any;
   emptyResult: boolean;
   showSavedSearch: boolean;

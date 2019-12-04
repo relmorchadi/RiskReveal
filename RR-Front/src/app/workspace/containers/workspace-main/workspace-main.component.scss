@@ -129,6 +129,7 @@
 
 .span-detail {
   text-align: center;
+  padding-left: 10px;
   margin-top: 4px;
   color: #f8e71c;
   font-size: 11px;
@@ -160,7 +161,7 @@
   position: relative;
   flex: 1;
   background: rgb(244, 246, 252);
-  
+
 }
 
 .hide-btn {
@@ -280,13 +281,16 @@
 
     .tab-metadata-title {
       color: rgba(255, 255, 255, 0.6);
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 0.25px;
       line-height: 20px;
       padding-right: 0;
+      white-space: nowrap;
+
       @media screen and (max-width: 768px) {
         font-size: 12px;
       }
+
       @media screen and (max-width: 1024px) and (min-width: 769px) {
         font-size: 11px;
       }
@@ -302,7 +306,7 @@
     .tab-metadata-more {
       color: #03DAC4;
       font-family: Rubik;
-      font-size: 14.22px;
+      font-size: 13.22px;
       letter-spacing: 0.25px;
       line-height: 20px;
       cursor: pointer;
@@ -311,7 +315,7 @@
 
     .tab-kpi-title {
       opacity: 0.5;
-      padding: 5px 0 3px;
+      padding: 7px 0 15px;
       color: #FFFFFF;
       font-size: 16.26px;
       letter-spacing: 0.08px;
@@ -321,7 +325,7 @@
     .kpi-icon-title {
       color: rgba(255, 255, 255, 0.5);
       font-family: Rubik;
-      font-size: 12.75px;
+      font-size: 11.75px;
       letter-spacing: 0.08px;
       line-height: 16px;
       word-break: break-word;
@@ -336,7 +340,7 @@
     .kpi-icon-value {
       color: #FFFFFF;
       font-family: Rubik;
-      font-size: 28.54px;
+      font-size: 26.54px;
       letter-spacing: 0.25px;
       line-height: 41px;
       @media screen and (max-width: 768px) {
@@ -590,12 +594,108 @@
   }
 }
 
-.d-inline-flex.flex-column.justify-content-end {
-  border-left: 1px solid rgba(255, 255, 255, 0.5);
-}
-
 .dropdown-project-style {
   padding-top: 2px;
   margin-left: 9px;
   font-size: 13.26px;
+}
+
+.workspace-menu-header-wrapper {
+  height: fit-content;
+  display: flex;
+  padding: 6px 0;
+  width: 100%;
+
+  .workspace-menu-header-left {
+    width: 50%;
+    padding-left: 52px;
+    padding-right: 0;
+
+    .treaty-list {
+      padding: 0 5px 0 15px;
+    }
+
+    .workspace-treaty-date-wrapper {
+      padding-left: 15px;
+      border-left: 1px solid rgba(255,255,255,0.5);
+      width: 60%;
+
+      .workspace-date-menu {
+        padding-left: 15px;
+      }
+
+      .icon-calendar-alt {
+        font-size:  1.6em;
+      }
+    }
+  }
+
+  .workspace-menu-header-right {
+    width: 50%;
+    margin-top: -60px;
+  }
+
+  @media screen and (max-width: 1250px) and (min-width: 995px) {
+    .workspace-menu-header-left {
+      padding-left: 10px;
+
+      .workspace-treaty-date-wrapper {
+        padding-left: 7px;
+
+        .workspace-date-menu {
+          padding-left: 7px;
+        }
+      }
+
+      .tab-metadata-title {
+        font-size: 11px;
+      }
+
+      .icon-calendar-alt {
+        padding-top: 5px;
+        font-size: 1.3em !important;
+      }
+
+      .tab-metadata-value {
+        font-size: 10px;
+      }
+
+      .treaty-list {
+        padding: 0 5px 0 10px;
+      }
+
+      .treaty-list {
+        font-size: 10px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 995px) {
+    flex-direction: column;
+
+    .workspace-menu-header-left {
+      width: 100%;
+    }
+
+    .workspace-menu-header-right {
+      width: 90%;
+      padding-left: 52px;
+      margin-top: 0;
+    }
+  }
+}
+
+.item-workspace-info {
+  align-items: center;
+}
+
+.full-width-flex {
+  display: flex;
+  width: 100%;
+}
+
+.number-workspace-info {
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
+  width: 16%;
+  padding: 6px 0 0 8px;
 }

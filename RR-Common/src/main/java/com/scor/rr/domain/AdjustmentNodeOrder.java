@@ -8,9 +8,19 @@ import java.util.Objects;
 @Table(name = "AdjustmentOrder")
 public class AdjustmentNodeOrder {
     private int adjustmentNodeOrderId;
+    private Integer entity;
     private Integer adjustmentOrder;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentNode adjustmentNode;
+
+    @Column(name = "Entity")
+    public Integer getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Integer entity) {
+        this.entity = entity;
+    }
 
     @Id
     @Column(name = "AdjustmentNodeOrderId", nullable = false)

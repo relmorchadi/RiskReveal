@@ -1,36 +1,31 @@
 export class loadAllPltsFromCalibration {
-  static readonly type = '[Calibration] Load All Plts Data'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Load All Plts Data';
+  constructor(public payload?: any) {}
 }
 
 export class loadAllAdjustmentApplication {
-  static readonly type = '[Calibration] load All Adjustment Application'
+  static readonly type = '[Calibration] load All Adjustment Application';
+  constructor(public payload?: any) {}
+}
 
-  constructor(public payload?: any) {
-  }
+export class LoadAllDefaultAdjastementApplication {
+  static readonly type = '[Calibration] Load All Default Adjustment';
+  constructor(public payload?: any) {}
 }
 
 export class loadAllPltsFromCalibrationSuccess {
-  static readonly type = '[Calibration] Load All Plts Success'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Load All Plts Success';
+  constructor(public payload?: any) {}
 }
 
 export class loadAllPltsFromCalibrationFail {
-  static readonly type = '[Calibration] Load All Plts Fail'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Load All Plts Fail';
+  constructor(public payload?: any) {}
 }
 
 export class constructUserTagsFromCalibration {
-  static readonly type = '[Calibration] Construct User Tags'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Construct User Tags';
+  constructor(public payload?: any) {}
 }
 
 export class ToggleSelectPltsFromCalibration {
@@ -79,6 +74,11 @@ export class extendPltSection {
 
   constructor(public payload?: any) {
   }
+}
+
+export class ExtendStateToggleAction {
+  static readonly type = '[Calibration] Extend Toggle State';
+  constructor(public payload?: any) {}
 }
 
 export class collapseTags {

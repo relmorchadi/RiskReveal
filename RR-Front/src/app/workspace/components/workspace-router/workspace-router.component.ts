@@ -55,7 +55,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     //Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
     //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
-    //Calibration: {component: WorkspaceCalibrationComponent, selector: (state) => state},
+    Calibration: {component: WorkspaceCalibrationComponent, selector: (state) => state},
     //Inuring: {component: WorkspaceInuringComponent, selector: (state) => state},
     //ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
     //Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},

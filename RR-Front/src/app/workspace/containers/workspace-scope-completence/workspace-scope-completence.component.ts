@@ -245,11 +245,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           child: _.sortBy(this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps), item => item.id)
         };
         const index = _.findIndex(res, row => row.id == object.id);
-        if (index === -1) {
-          res.push(object);
-        } else {
-          res[index] = object;
-        }
+        index === -1 ? res.push(object) : res[index] = object;
       });
     });
     return _.sortBy(_.cloneDeep(res), item => item.id);
@@ -269,11 +265,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           child: _.sortBy(this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || {child: []}).child, targetRap.regionPerils), item => item.id)
         };
         const index = _.findIndex(res, row => row.id === object.id);
-        if (index === -1) {
-          res.push(object);
-        } else {
-          res[index] = object;
-        }
+        index === -1 ? res.push(object) : res[index] = object;
       });
     });
     return _.sortBy(_.cloneDeep(res), item => item.id);
