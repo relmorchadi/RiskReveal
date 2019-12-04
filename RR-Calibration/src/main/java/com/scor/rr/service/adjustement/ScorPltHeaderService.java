@@ -69,22 +69,22 @@ public class ScorPltHeaderService {
     //NOTE: this service should be open and as a part of API
 
     private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) throws com.scor.rr.exceptions.RRException {
-        if (Linear.getValue().equals(parameterProcess.getType())) {
+        if (LINEAR.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
         }
-        if (EEFFrequency.getValue().equals(parameterProcess.getType())) {
+        if (EEF_FREQUENCY.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());
         }
-        if (NONLINEAROEP.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_OEP_RPB.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
-        if (NonLinearEventDriven.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EVENT_DRIVEN.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
-        if (NONLINEARRETURNPERIOD.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
-        if (NONLINEARRETURNEVENTPERIOD.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EEF_RPB.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         throwException(TYPE_NOT_FOUND, NOT_FOUND);

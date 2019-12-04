@@ -2,6 +2,7 @@ package com.scor.rr.domain.dto.adjustement;
 
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.domain.dto.adjustement.loss.PEATDataRequest;
 
 import java.util.List;
 
@@ -12,7 +13,16 @@ public class AdjustmentNodeUpdateRequest extends AdjustmentNodeRequest {
     private Integer adjustmentNodeId;
     private Integer adjustmentState;
 
-    public AdjustmentNodeUpdateRequest(Integer adjustmentNodeId, Integer sequence, Boolean capped, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
+    public AdjustmentNodeUpdateRequest(Integer adjustmentNodeId,
+                                       Integer sequence,
+                                       Boolean capped,
+                                       Integer adjustmentBasis,
+                                       Integer adjustmentType,
+                                       Integer adjustmentState,
+                                       Integer adjustmentThreadId,
+                                       Double lmf, Double rpmf,
+                                       PEATDataRequest peatData,
+                                       List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
         super(sequence, capped, adjustmentBasis, adjustmentType, adjustmentThreadId, lmf, rpmf, peatData, adjustmentReturnPeriodBandings);
         this.adjustmentNodeId = adjustmentNodeId;
         this.adjustmentState = adjustmentState;
