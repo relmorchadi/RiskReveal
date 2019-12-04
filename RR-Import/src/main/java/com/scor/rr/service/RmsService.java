@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
@@ -21,11 +22,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.sql.Types;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.scor.rr.util.Utils.setAttribute;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -55,6 +60,9 @@ public class RmsService {
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
 
     @Autowired
+    private RLSourceEpHeaderRepository rlSourceEpHeaderRepository;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
@@ -76,6 +84,17 @@ public class RmsService {
     @Autowired
     private RmsInstanceCache rmsInstanceCache;
 
+    private DecimalFormat df;
+
+    @PostConstruct
+    private void buildDecimalFormatter(){
+        df=new DecimalFormat("#0.0", DecimalFormatSymbols.getInstance(Locale.US));
+        df.setGroupingUsed(false);
+        df.setMinimumFractionDigits(10);
+        df.setMinimumFractionDigits(1);
+        df.setMinimumIntegerDigits(1);
+        df.setDecimalSeparatorAlwaysShown(true);
+    }
 
     public List<DataSource> listAvailableDataSources(String instanceId) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
@@ -168,13 +187,74 @@ public class RmsService {
                 Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
-                this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                List<RLAnalysis> analyses=this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
                         .stream()
                         .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysisById(projectId, rdmAnalysis))
                         .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
-                        .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
+                        .peek(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()))
+                        .collect(toList());
+
+                /**
+                 * Extract EP SourceHeaders
+                 * @Todo load Fp / Return Periods
+                 */
+                this.extractSourceEpHeaders(instanceId, rdmId, rdmName,new ArrayList<>(), analyses, new ArrayList<>());
             }
         }
+    }
+
+
+    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName,List<Double> returnPeriods, List<RLAnalysis> analyses, List<String> fpCodes){
+        List<Long> analysisIds= analyses.stream().map(RLAnalysis::getAnalysisId).collect(toList());
+        List<RdmAnalysisEpCurves> epCurves= this.listRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, returnPeriods, analysisIds, fpCodes);
+        this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName,fpCodes, analysisIds)
+                .forEach(stat -> {
+                    RLSourceEpHeader epHeader= new RLSourceEpHeader(stat);
+                    filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
+                        int returnPeriod= 1 /  epC.getExceedanceProbabilty();
+                        int statisticMetric = epC.getEbpTypeCode();
+                        try {
+                            String fieldName= this.generateEpCurveFieldName(returnPeriod, statisticMetric);
+                            setAttribute(epHeader, fieldName, epC.getLoss());
+                        }catch (Exception exp){
+                            exp.printStackTrace();
+                        }
+                    });
+                    rlSourceEpHeaderRepository.save(epHeader);
+                });
+
+    }
+
+    private String generateEpCurveFieldName(int returnPeriod, int statisticMetric) throws Exception{
+        StatisticMetric statMetric= StatisticMetric.getFrom(statisticMetric);
+        String fieldName=null;
+        switch (statMetric){
+            case AEP:
+                fieldName="aEP";
+                break;
+            case OEP:
+                fieldName="oEP";
+                break;
+            default:
+                throw new Exception("Non supported Stat Metric by RlSourceEpHeader Entity " + statisticMetric);
+        }
+        if(fieldName != null && RLSourceEpHeader.isValidReturnPeriod(returnPeriod)){
+            return fieldName.concat(String.valueOf(returnPeriod));
+        }
+        else {
+            throw new Exception("Non supported Return Period by RlSourceEpHeader Entity " + returnPeriod);
+        }
+    }
+
+    private List<RdmAnalysisEpCurves> filterEpCurvesByStat(List<RdmAnalysisEpCurves> epCurves, RdmAllAnalysisSummaryStats stats){
+        return epCurves.stream().filter(epC -> {
+            try {
+                return epC.getId().equals(stats.getAnalysisId()) && epC.getFinPerspCode().equals(stats.getFinPerspCode()) && epC.getTreatyLabelId().equals(stats.getTreatyLabelId());
+            } catch (NullPointerException exp){
+                exp.printStackTrace();
+                return false;
+            }
+        } ).collect(toList());
     }
 
     private void scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
@@ -287,47 +367,35 @@ public class RmsService {
                 .map(PortfolioHeader::getPortfolioId).collect(toList());
     }
 
-    public List<RdmAnalysisEpCurves> listRdmAllAnalysisEpCurves(String instanceId, Long id, String name, int epPoints, List<Long> analysisIdList, List<String> finPerspList) {
-
+    public List<RdmAnalysisEpCurves> listRdmAllAnalysisEpCurves(String instanceId, Long id, String name, List<Double> returnPeriods, List<Long> analysisIdList, List<String> finPerspList) {
+        List<String> values=new ArrayList<>();
+        for(Double rp:returnPeriods) {
+            values.add(df.format(rp));
+        }
         String LIST = "";
+        
         if (finPerspList != null) {
             for (String s : finPerspList) {
-
                 LIST += s + ",";
             }
             LIST = LIST.substring(0, LIST.length() - 1);
         }
         List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = new ArrayList<>();
 
-        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisEpCurves @rdm_id=" + id + ", @rdm_name=" + name + ",@ep_points=" + epPoints;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_GetRdmAllAnalysisEpCurves @rdm_id=" + id + ", @rdm_name=" + name + ",@ep_points=" + StringUtils.join(values, ",");
+            if (analysisIdList != null) {
+            query += ", @analysis_id_list=" + analysisIdList;
+     
+        }
+            if (!LIST.isEmpty()) {
+            query += ", @fin_persp_list=" + "'" + LIST + "'";
+        }
+    
         this.logger.debug("Service starts executing the query ...");
-        if (analysisIdList != null && !LIST.isEmpty()) {
-            String sql = query + ", @fin_persp_list=" + "'" + LIST + "'" + ", @analysis_id_list=" + analysisIdList;
-            rdmAnalysisEpCurves = getJdbcTemplate(instanceId).query(
-                    sql,
-                    new RdmAnalysisEpCurvesRowMapper()
+        rdmAnalysisEpCurves = getJdbcTemplate(instanceId).query(
+                                    query,
+                                    new RdmAnalysisEpCurvesRowMapper()
             );
-        }
-        if (analysisIdList != null && LIST.isEmpty()) {
-            String sql = query + ", @analysis_id_list=" + analysisIdList;
-            rdmAnalysisEpCurves = getJdbcTemplate(instanceId).query(
-                    sql,
-                    new RdmAnalysisEpCurvesRowMapper()
-            );
-        }
-        if (analysisIdList == null && !LIST.isEmpty()) {
-            String sql = query + ", @fin_persp_list=" + "'" + LIST + "'";
-            rdmAnalysisEpCurves = getJdbcTemplate(instanceId).query(
-                    sql,
-                    new RdmAnalysisEpCurvesRowMapper()
-            );
-        }
-        if (analysisIdList == null && LIST.isEmpty()) {
-            rdmAnalysisEpCurves = getJdbcTemplate(instanceId).query(
-                    query,
-                    new RdmAnalysisEpCurvesRowMapper()
-            );
-        }
         this.logger.debug("the data returned ", rdmAnalysisEpCurves);
         return rdmAnalysisEpCurves;
     }

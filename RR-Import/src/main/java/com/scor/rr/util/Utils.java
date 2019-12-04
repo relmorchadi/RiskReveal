@@ -8,9 +8,12 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -40,5 +43,16 @@ public class Utils {
         }
 
         return options;
+    }
+
+    public static void setAttribute(Object obj, String fieldName, Integer value){
+        PropertyDescriptor pd;
+        try {
+            pd = new PropertyDescriptor(fieldName, obj.getClass());
+            pd.getWriteMethod().invoke(obj, value);
+        } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
