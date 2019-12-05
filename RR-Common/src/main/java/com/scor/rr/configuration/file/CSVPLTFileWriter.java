@@ -49,7 +49,7 @@ public class CSVPLTFileWriter implements PLTFileWriter {
         }
     }
 
-    public void writeReturnPeriodBending(List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, File file) throws RRException {
+    public void writeReturnPeriodBanding(List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, File file) throws RRException {
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
         if (adjustmentReturnPeriodBandings == null) {
