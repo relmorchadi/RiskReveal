@@ -24,4 +24,6 @@ public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>
             " rp.portfolioId= :#{#portfolio.portfolioId} AND " +
             " rp.name= :#{#portfolio.name}")
     void updatePortfolioById(@Param("projectId") Long projectId, @Param("portfolio") EdmPortfolio portfolio);
+
+    RLPortfolio findByEdmIdAndEdmNameAndPortfolioId(Long edmId, String edmName, Long portfolioId);
 }

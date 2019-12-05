@@ -65,6 +65,9 @@ public class RmsService {
     @Autowired
     private RLSourceEpHeaderRepository rlSourceEpHeaderRepository;
 
+    @Autowired
+    private RLPortfolioAnalysisRegionRepository rlPortfolioAnalysisRegionRepository;
+
     @Value("${rms.ds.dbname}")
     private String DATABASE;
 
@@ -254,10 +257,18 @@ public class RmsService {
 
                 Long edmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String edmName = (String) multiKeyListEntry.getKey().getKey(1);
-
                 this.listEdmPortfolio(instanceId, edmId, edmName, multiKeyListEntry.getValue())
                         .forEach(edmPortfolio -> this.rlPortfolioRepository.updatePortfolioById(projectId, edmPortfolio));
+
+                this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, "USD")
+                        .stream()
+                        .map(portfolioAnalysisRegions -> {
+                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndPortfolioId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId());
+                            return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio, "USD");
+                        })
+                        .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
             }
+
         }
     }
 

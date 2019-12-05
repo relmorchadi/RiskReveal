@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.scor.rr.domain.EdmAllPortfolioAnalysisRegions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,4 +41,14 @@ public class RLPortfolioAnalysisRegion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RlPortfolioId")
     private RLPortfolio rlPortfolio;
+
+    public RLPortfolioAnalysisRegion(EdmAllPortfolioAnalysisRegions portfolioAnalysisRegions, RLPortfolio rlPortfolio, String currency) {
+        this.analysisRegion = portfolioAnalysisRegions.getAnalysisRegion();
+        this.analysisRegionName = portfolioAnalysisRegions.getAnalysisRegionDesc();
+        this.peril = portfolioAnalysisRegions.getPeril();
+        this.locationCount = portfolioAnalysisRegions.getLocCount();
+        this.totalTIVinUSD = portfolioAnalysisRegions.getTotalTiv();
+        this.exposureCurrency = currency;
+        this.rlPortfolio = rlPortfolio;
+    }
 }
