@@ -79,7 +79,7 @@ public class CSVPLTFileReader implements PLTFileReader {
                 int simPeriod = Integer.parseInt(sc.next()); //Event ID
                 int seq = Integer.parseInt(sc.next());
                 double lmf = Double.parseDouble(sc.next()); //Lmf
-
+                sc.next();
                 peatData.add(new PEATData(eventId,
                         simPeriod,
                         seq,

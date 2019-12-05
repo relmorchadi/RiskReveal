@@ -29,22 +29,22 @@ public class CalculAdjRest {
     public List<PLTLossData> CalcAdjustment(@RequestBody CalculAdjustmentDto calculAdjustmentDto) throws RRException, IOException, com.scor.rr.exceptions.RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(calculAdjustmentDto.getPathToFile()));
-        if (Linear.equals(calculAdjustmentDto.getType()) ){
+        if (LINEAR.equals(calculAdjustmentDto.getType()) ){
             pltLossData = CalculAdjustement.linearAdjustement(pltLossData, calculAdjustmentDto.getLmf(), calculAdjustmentDto.isCap());
         }
-        else if (EEFFrequency.equals(calculAdjustmentDto.getType())) {
+        else if (EEF_FREQUENCY.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.eefFrequency(pltLossData, calculAdjustmentDto.isCap(),calculAdjustmentDto.getRpmf());
         }
-        else if (NONLINEAROEP.equals(calculAdjustmentDto.getType())) {
+        else if (NONLINEAR_OEP_RPB.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.oepReturnBanding(pltLossData, calculAdjustmentDto.isCap(), calculAdjustmentDto.getAdjustmentReturnPeriodBandings());
         }
-        else if (NonLinearEventDriven.equals(calculAdjustmentDto.getType())) {
+        else if (NONLINEAR_EVENT_DRIVEN.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getPeatDatas());
         }
-        else if (NONLINEARRETURNPERIOD.equals(calculAdjustmentDto.getType())) {
+        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getPeatDatas());
         }
-        else if (NONLINEARRETURNEVENTPERIOD.equals(calculAdjustmentDto.getType())) {
+        else if (NONLINEAR_EEF_RPB.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getAdjustmentReturnPeriodBandings());
         }
         File f = new File(calculAdjustmentDto.getNewFilePath());

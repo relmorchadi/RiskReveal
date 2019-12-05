@@ -4,6 +4,10 @@ public class ReturnPeriodBandingAdjustmentParameterRequest {
     private double returnPeriod;
     private double adjustmentFactor;
 
+    public ReturnPeriodBandingAdjustmentParameterRequest(double returnPeriod, double adjustmentFactor) {
+        this.returnPeriod = returnPeriod;
+        this.adjustmentFactor = adjustmentFactor;
+    }
     public double getReturnPeriod() {
         return returnPeriod;
     }
