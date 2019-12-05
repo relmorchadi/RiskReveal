@@ -42,6 +42,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('draggedAdjs') draggedAdjsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('adjustColWidth') adjustColWidthEmitter: EventEmitter<any> = new EventEmitter();
   @Output('togglePureRow') togglePureRowEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('groupByPure') groupByPureEmitter: EventEmitter<any> = new EventEmitter();
 
 
   @Input('extended') extended: boolean;
@@ -303,8 +304,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   filterCols() {
-    // console.log(this.dataColumns);
-    // return this.dataColumns;
     if (this.tabStatus === 'FAC') {
       return _.filter(this.dataColumns, item => item.fields !== 'base' &&
         item.fields !== 'client' &&
@@ -448,6 +447,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
 
   extend() {
     this.extendEmitter.emit();
+  }
+
+  groupByPure() {
+    this.groupByPureEmitter.emit();
   }
 
   clickButtonPlus(bool, data?: any) {
