@@ -25,7 +25,7 @@
             <div class="row tab-detail p-2 header-tab-wrapper">
               <div class="detail-wrapper">
                 <button (click)="patchWorkspaceDetail(wsIdentifier)"
-                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
+                        class="ml-4 mr-3 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
                   <i *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" nz-icon style="color: #16617a;font-size: 14px;"
                      type="down"
@@ -60,11 +60,11 @@
                           <a nz-dropdown>
                             <span class="d-flex align-items-center">
                               <span class="dropdown-project-style">
-                                <ng-container *ngIf="filterSelected()?.projectType === 'fac'">
-                                  {{filterSelected()?.id | trimFormat}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - {{filterSelected()?.carStatus}}
+                                <ng-container *ngIf="filterSelected()?.projectType === 'FAC'">
+                                  {{filterSelected()?.projectName}} [{{filterSelected()?.projectId}}] - {{filterSelected()?.carRequestStatus}}
                                 </ng-container>
-                                <ng-container *ngIf="filterSelected()?.projectType === 'treatyView'">
-                                  {{filterSelected()?.name}} [{{filterSelected()?.projectId | trimSecondaryFormat}}] - Manual
+                                <ng-container *ngIf="filterSelected()?.projectType === 'TREATY'">
+                                  {{filterSelected()?.projectName}} [{{filterSelected()?.projectId}}] - Manual
                                 </ng-container>
                               </span>
                               <span class="d-flex">
@@ -74,12 +74,13 @@
                             </span>
                           </a>
                           <ul style="padding:0" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
-                            <li (click)="selectProject(item.id)" *ngFor="let item of filterListProject()" nz-menu-item>
-                              <ng-container *ngIf="item.projectType === 'fac'">
-                                {{item?.id | trimFormat}} [{{item?.projectId | trimSecondaryFormat}}] - {{item?.carStatus}}
+                            <li (click)="selectProject(item.projectId)" *ngFor="let item of filterListProject()" nz-menu-item>
+                              <ng-container *ngIf="item.projectType === 'FAC'">
+                                {{item?.carRequestId}} [{{item?.projectId}}] - {{item?.carRequestStatus}}
+                                <!--| trimSecondaryFormat-->
                               </ng-container>
-                              <ng-container *ngIf="item.projectType === 'treatyView'">
-                                {{item?.name}} [{{item?.projectId | trimSecondaryFormat}}] - Manual
+                              <ng-container *ngIf="item.projectType === 'TREATY'">
+                                {{item?.projectName}} [{{item?.projectId}}] - Manual
                               </ng-container>
                             </li>
                           </ul>
@@ -123,34 +124,31 @@
               </div>
             </div>
           </div>
-          <div [ngClass]="{'collapse':data[wsIdentifier]?.collapseWorkspaceDetail}" [nzSpan]="24" nz-col>
-            <div class="row tab-detail p-2 pb-6" style="padding-bottom: 2rem !important;">
+          <div [ngClass]="{'collapse':data[wsIdentifier]?.collapseWorkspaceDetail}">
+            <div class="tab-detail workspace-menu-header-wrapper" style="padding-bottom: 1rem !important;">
 
-              <div class="col-md-12 col-lg-6 " style="padding-left: 65px; padding-right: 0;">
-                <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
-                  <div nz-col nz-row [nzSpan]="8">
-                    <div class="row">
-                      <span style="flex: 0 0 49.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.subsidiaryId}}
+              <div class="flex-horizontal-sb-layout workspace-menu-header-left">
+                <div style="padding-top:0px !important;" class="full-width-flex">
+                  <div style="width: 40%">
+                    <div class="item-workspace-info full-width-flex">
+                      <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Subsidary :</span>
+                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.subsidiaryId}}
                         - {{data[wsIdentifier]?.subsidiaryName}}</span>
                     </div>
-                    <div class="row">
-                      <span style="flex: 0 0 49.333333%;" class="col-7 tab-metadata-title">Subsidary Ledger :</span>
-                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.subsidiaryLedgerId}}
+                    <div class="item-workspace-info full-width-flex">
+                      <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Subsidary Ledger :</span>
+                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.subsidiaryLedgerId}}
                         - {{data[wsIdentifier]?.ledgerName}}</span>
                     </div>
-                    <div class="row">
-                        <span style="flex: 0 0 49.333333%;"
-                              class="col-7 tab-metadata-title">Contract Source :</span>
-                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.contractDatasource}}</span>
+                    <div class="item-workspace-info full-width-flex">
+                        <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Contract Source :</span>
+                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.contractDatasource}}</span>
                     </div>
                   </div>
-                  <div nz-col style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row
-                       [nzSpan]="16">
-                    <div style="display:flex;" nz-col [nzSpan]="8">
-                      <i style="font-size: 1.6em;"
-                         class="icon-calendar-alt mb-4"></i>
-                      <div style="display:flex; flex-direction: column; padding-left: 15px;">
+                  <div class="flex-horizontal-sb-layout workspace-treaty-date-wrapper">
+                    <div style="display:flex; width: 40%">
+                      <i class="icon-calendar-alt mb-4"></i>
+                      <div class="workspace-date-menu flex-vertical-layout">
                         <span class="d-block tab-metadata-title">Inception Date :</span>
                         <span
                           class="d-block tab-metadata-value">{{data[wsIdentifier]?.inceptionDate | date:'dd/MM/yyyy'}}</span>
@@ -159,9 +157,10 @@
                           class="d-block tab-metadata-value">{{data[wsIdentifier]?.expiryDate | date:'dd/MM/yyyy'}}</span>
                       </div>
                     </div>
-                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'treatyView'" [nzSpan]="16">
-                      <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Treaty Section :</span>
-                      <ul class="treatyView-list">
+                    <div  style="border-left: 1px solid rgba(255,255,255,0.5); width: 60%;" class="flex-vertical-layout"
+                          *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">
+                      <span style="line-height: 17px; padding: 0 0 6px 15px" class="tab-metadata-title">Treaty Section :</span>
+                      <ul class="treaty-list">
                         <li
                           *ngFor="let section of sliceContent(data[wsIdentifier]?.treatySections, state?.sliceValidator)">
                           {{section}}
@@ -172,9 +171,10 @@
                         <span (click)="patchSliceValue(true)" *ngIf="!state?.sliceValidator" class="tab-metadata-more">Hide</span>
                       </ng-container>
                     </div>
-                    <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" *ngIf="data[wsIdentifier]?.workspaceType === 'fac'" [nzSpan]="16">
-                      <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Division :</span>
-                      <ul class="treatyView-list">
+                    <div style="border-left: 1px solid rgba(255,255,255,0.5); width: 60%;" class="flex-vertical-layout"
+                         *ngIf="data[wsIdentifier]?.workspaceType === 'fac'">
+                      <span style="line-height: 17px; padding: 0 0 6px 15px" class="tab-metadata-title">Division :</span>
+                      <ul class="treaty-list" style="padding-left: 20px;">
                         <li *ngFor="let division of filterSelectedDivision()">
                           Division N°{{division}}
                         </li>
@@ -187,36 +187,36 @@
                   </div>
                 </div>
               </div>
-              <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;">
+              <div class="flex-vertical-layout workspace-menu-header-right">
                 <h5 class="tab-kpi-title">In Scope Region Perils</h5>
                 <div class="d-flex">
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-location_searching_24px mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Region Perils</span>
                     <span class="kpi-icon-value">4/6</span>
                   </div>
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-adjust-half mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Exposures</span>
                     <span class="kpi-icon-value">1</span>
                   </div>
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-box mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
                     <span class="kpi-icon-value">3</span>
                   </div>
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-note mb-3"></i>
                     <span style="flex:1;"
                           class="d-flex align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
                     <span class="kpi-icon-value">2</span>
                   </div>
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-dollar-alt mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Priced</span>
                     <span class="kpi-icon-value">1</span>
                   </div>
-                  <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                  <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-focus-add mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
                     <span class="kpi-icon-value">0</span>

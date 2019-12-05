@@ -9,7 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash'
-import {Select, Store} from "@ngxs/store";
+import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
   collapseTags,
@@ -20,7 +20,7 @@ import {
   extendPltSection,
   replaceAdjustement,
   saveAdjModification,
-  saveAdjustment
+  saveAdjustment, SetCurrentTab
 } from "../../store/actions";
 import {switchMap, tap} from 'rxjs/operators';
 import {WorkspaceState} from "../../store/states";
@@ -42,7 +42,7 @@ import * as tagsStore from "../../../shared/components/plt/plt-tag-manager/store
   selector: 'app-workspace-calibration',
   templateUrl: './workspace-calibration.component.html',
   styleUrls: ['./workspace-calibration.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
@@ -297,6 +297,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   globalTemplates: any = [];
   wsStatus: any;
   tabStatus: any;
+  wsIdentifier;
 
   // @ViewChild('templateNameInput') templateNameInput: ElementRef;
   dropAll = (param) => null;
@@ -306,6 +307,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private nzDropdownService: NzDropdownService,
     private store$: Store,
     private zone: NgZone,
+    private actions$: Actions,
     private cdRef: ChangeDetectorRef,
     private router$: Router,
     private systemTagService: SystemTagsService,
@@ -387,12 +389,22 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
     this.extentState$.pipe().subscribe(value => {
       this.extended = value;
+      this.detectChanges();
     });
 
     this.selectedProject$.pipe().subscribe(value => {
       this.tabStatus = _.get(value, 'projectType', null);
       this.tabStatus === 'FAC' ? this.extend('init') : null;
       this.detectChanges();
+    });
+
+    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+        this.extendRebase();
+        if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+        this.detectChanges();
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
@@ -458,7 +470,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
     _.forEach(this.listOfPltsThread, value => {
       this.randomMetaData[value.pltId] = {}
-    })
+    });
     _.forEach(this.listOfPltsThread, value => {
       _.forEach(cols, col => {
         if (col == 'AAL') {
@@ -479,6 +491,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   patchState(state: any): void {
+    const {wsIdentifier} = state;
+    this.wsIdentifier = wsIdentifier;
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.collapsedTags = path.collapseTags;
@@ -662,6 +676,20 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
    // console.log(this.sortData);
   }
 
+  extendRebase() {
+    if (this.extended) {
+      this.headerWidth = '1013px';
+      this.frozenWidth = '0';
+      this.genericWidth = ['1019px', '33px', '157px'];
+    } else {
+      this.headerWidth = '453px';
+      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
+      this.genericWidth = ['409px', '33px', '157px '];
+    }
+    this.adjustExention();
+    this.initDataColumns();
+  }
+
   extend(scope = 'toggle') {
     this.dispatch(new fromWorkspaceStore.ExtendStateToggleAction({scope: scope}));
     if (this.extended) {
@@ -699,6 +727,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         value.extended = (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable)
       })
     }
+  }
+
+  groupByPure() {
+    this.groupedByPure = !this.groupedByPure;
   }
 
   clickButtonPlus(bool, data?: any) {

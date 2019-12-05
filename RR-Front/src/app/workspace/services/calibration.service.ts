@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
 import {applyAdjustment} from "../store/actions";
-import {map} from "rxjs/operators";
+import {catchError, map, mergeMap} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./api/plt.api";
 import {
@@ -12,7 +12,7 @@ import {
   API_RESPONSE,
   DATA,
   LIST_OF_DISPLAY_PLTS,
-  LIST_OF_PLTS,
+  LIST_OF_PLTS, ONE_PLT,
   PLT_COLUMNS,
   PLT_DATA,
   PURE,
@@ -55,77 +55,84 @@ export class CalibrationService implements NgxsOnInit {
 
   /*Load Plts*/
   loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
-
     const {params} = payload;
     this.ctx = ctx;
     this.prefix = params.workspaceId + '-' + params.uwy;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
-      draft.content[this.prefix].calibration.filters = {
-        systemTag: [],
-        userTag: []
-      }
-    }));
-    return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: API_RESPONSE.userTags}));
-    /*
-     const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-     return this.pltApi.getAllPlts(params)
-       .pipe(
-         mergeMap((data) => {
+   // return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: API_RESPONSE.userTags}));
+    const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
+    return this.pltApi.getAllPlts(params)
+      .pipe(
+        mergeMap((data) => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            if (data.plts.length > 0) {
+              draft.content[this.prefix].calibration.data = Object.assign({},
+                {
+                  ...ctx.getState().data,
+                  [this.prefix]: _.merge({},
+                    ...data.plts.map(plt => ({
+                      [plt.pltId]: {
+                        ...plt,
+                        selected: false,
+                        visible: true,
+                        tagFilterActive: false,
+                        opened: false,
+                        deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
+                        deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
+                        deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
+                        status: this.status[this.getRandomInt()],
+                        newPlt: Math.random() >= 0.5,
+                        EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
+                        calibrate: true,
+                        toCalibrate: true,
+                        pureId: this.pure[this.getRandomInt(0,2)],
+                        threads: [
+                          plt
+                        ].map(thread => ({
+                          ...thread,
+                          pltId: "SPLTH-000" + this.getRandomInt(7000,8000),
+                          selected: false,
+                          visible: true,
+                          tagFilterActive: false,
+                          opened: false,
+                          deleted: ls[thread.pltId] ? ls[thread.pltId].deleted : undefined,
+                          deletedBy: ls[thread.pltId] ? ls[thread.pltId].deletedBy : undefined,
+                          deletedAt: ls[thread.pltId] ? ls[thread.pltId].deletedAt : undefined,
+                          status: this.status[this.getRandomInt()],
+                          newPlt: Math.random() >= 0.5,
+                          EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
+                          calibrate: true,
+                          toCalibrate: true,
+                          pureId: plt.pltId,
+                        }))
+                      }
+                    }))
+                  )
+                });
+              draft.content[this.prefix].calibration.filters = {
+                systemTag: [],
+                userTag: []
+              }
+            } else {
+              draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
+              draft.content[this.prefix].calibration.filters = {
+                systemTag: [],
+                userTag: []
+              }
+            }
+           }));
+           return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
+         }),
+         catchError(err => {
+           console.log(err);
            ctx.patchState(produce(ctx.getState(), draft => {
-             draft.content[this.prefix].calibration.data = Object.assign({},
-               {
-                 ...ctx.getState().data,
-                 [this.prefix]: _.merge({},
-                   ...data.plts.map(plt => ({
-                     [plt.pltId]: {
-                       ...plt,
-                       selected: false,
-                       visible: true,
-                       tagFilterActive: false,
-                       opened: false,
-                       deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
-                       deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
-                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
-                       status: this.status[this.getRandomInt()],
-                       newPlt: Math.random() >= 0.5,
-                       EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
-                       calibrate: true,
-                       toCalibrate: true,
-                       pureId:this.pure[this.getRandomInt(0,2)],
-                       threads: [
-                         {...ONE_PLT},
-                         {...ONE_PLT},
-                       ].map(thread => ({
-                           ...thread,
-                           pltId: "SPLTH-000"+this.getRandomInt(7000,8000),
-                           selected: false,
-                           visible: true,
-                           tagFilterActive: false,
-                           opened: false,
-                           deleted: ls[thread.pltId] ? ls[thread.pltId].deleted : undefined,
-                           deletedBy: ls[thread.pltId] ? ls[thread.pltId].deletedBy : undefined,
-                           deletedAt: ls[thread.pltId] ? ls[thread.pltId].deletedAt : undefined,
-                           status: this.status[this.getRandomInt()],
-                           newPlt: Math.random() >= 0.5,
-                           EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
-                           calibrate: true,
-                           toCalibrate: true,
-                           pureId: plt.pltId,
-                       }))
-                     }
-                   }))
-                 )
-               });
+             draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
              draft.content[this.prefix].calibration.filters = {
                systemTag: [],
                userTag: []
              }
            }));
-           return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
-         }),
-         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationFail()))
-       );*/
+           return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationFail());
+         }));
   }
 
   /*Load Plts*/
@@ -148,7 +155,7 @@ export class CalibrationService implements NgxsOnInit {
     let plts = [];
     _.forEach(_.merge({}, state.content[this.prefix].calibration.data[this.prefix]), plt => {
       plts.push(plt);
-    })
+    });
     console.log(plts);
     let threads = Array.prototype.concat.apply([], plts.map(row => row.threads));
 
@@ -165,7 +172,7 @@ export class CalibrationService implements NgxsOnInit {
     const {
       data,
       userTags
-    } = ctx.getState()
+    } = ctx.getState();
 
     let uesrTagsSummary = {};
 
@@ -176,10 +183,10 @@ export class CalibrationService implements NgxsOnInit {
         tagId,
         pltHeaders,
         ...rest
-      } = payloadTag
+      } = payloadTag;
 
       uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
-    })
+    });
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.userTags = uesrTagsSummary;
     }));
@@ -321,8 +328,10 @@ export class CalibrationService implements NgxsOnInit {
 
   extendStateToggle(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {scope} = payload;
+    const state = ctx.getState();
+    const wsIdentifier = state.currentTab.wsIdentifier
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.extendState = scope === 'init' ? true : !draft.content[this.prefix].calibration.extendState;
+      draft.content[wsIdentifier].calibration.extendState = scope === 'init' ? true : !draft.content[wsIdentifier].calibration.extendState;
     }))
   }
 

@@ -219,16 +219,6 @@
       }
 
       .title {
-        span {
-          letter-spacing: 0.2px;
-          line-height: 27px;
-          font-size: 13px;
-          font-family: rubik;
-          padding-left: 9px;
-          font-weight: bold;
-          min-width: max-content;
-        }
-
         .title-list {
           letter-spacing: 0.2px;
           line-height: 27px;
@@ -1001,11 +991,6 @@
     }
 
     .ui-table-thead {
-
-      .checkBoxHead div {
-        display: flex;
-      }
-
       th {
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #F3F3F3;
@@ -1457,10 +1442,10 @@ body .ui-table .ui-table-thead > tr > th {
 
 .addRemove {
   font-size: 14px;
+  display: flex;
   font-weight: bold;
   color: #0700e4;
-  margin-top: 30px;
-  margin-left: 15px;
+  margin: 20px 0 8px 15px;
   cursor: pointer;
 }
 
@@ -1847,28 +1832,6 @@ body .ui-table .ui-table-thead > tr > th {
 
 }
 
-@media (min-width: 1100px) {
-  .radio-container {
-    margin-top: 0px;
-
-  }
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
-    width: calc(100% - 230px);
-    float: left;
-    color: #585858;
-
-    span.title {
-      padding: 16px 0px 42px 23px;
-      font-size: 15px;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
-    }
-  }
-
-}
-
 .impactAnalysisDiv {
   margin: 3px !important;
   border: solid 1px #cccccc;
@@ -1905,4 +1868,37 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.ant-checkbox-wrapper {
   margin-left: 4px;
+}
+
+/* ================================== Extend header CSS ========================================  */
+
+.checkboxHead-Extended {
+  display: flex;
+  background-color: #ffffff !important;
+  height: 105px !important;
+  padding: 0;
+
+  .checkboxHead-inner {
+    width: 102px;
+    border-top: 3px solid #0700e4;
+
+    .checkboxHead-title {
+      display: flex;
+      font-size: 15.22px;
+      padding: 15px 0 0 15px;
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+}
+
+.regenerate-all {
+  font-size: 17px;
+  margin-right: 5px;
+  color: #0700e4;
+  cursor: pointer;
+
+  &:hover {
+    color: #1890ff;
+  }
 }

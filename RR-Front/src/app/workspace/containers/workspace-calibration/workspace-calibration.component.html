@@ -97,8 +97,8 @@
                 </div>
               </div>
               <div class=" radio-container">
-                <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
-                <div style="margin-top: 23px;float: right">
+                <label (click)="addRemoveModal = true" class="addRemove">Add/Remove</label>
+                <div style="margin-top: 23px; float: right">
                   <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
                      class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
                   <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
@@ -484,6 +484,7 @@
             <app-calibration-main-table
               (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
               (extend)="extend()"
+              (groupByPure)="groupByPure()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
               [adjustmentApplication]="adjustmentApplication"
               (expandAll)="expandAll($event)"
