@@ -353,7 +353,7 @@ public class AdjustmentNodeProcessingService {
 //    public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
 //        return adjustmentNodeProcessingRepository.findAll()
 //                .stream()
-//                .filter(ape -> ape.getAdjustmentNode().getAdjustmentNodeId() == nodeId)
+//                .filter(ape -> ape.getDefaultAdjustmentNode().getAdjustmentNodeId() == nodeId)
 //                .findAny()
 //                .orElseThrow(throwException(PLT_NOT_FOUND, NOT_FOUND));
 //    }
