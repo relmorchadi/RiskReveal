@@ -1,9 +1,9 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.TargetBuild.PLTDetails.PLTDetailSummary;
-import com.scor.rr.domain.TargetBuild.PLTManagerView;
+import com.scor.rr.domain.entities.PLTDetails.PLTDetailSummary;
+import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.WorkspaceEntity;
-import com.scor.rr.repository.TargetBuild.PLTDetailSummaryRepository;
+import com.scor.rr.repository.PLTDetailSummaryRepository;
 import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

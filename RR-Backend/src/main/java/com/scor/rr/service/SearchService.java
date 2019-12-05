@@ -1,22 +1,21 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
-import com.scor.rr.domain.TargetBuild.Search.*;
+import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.entities.Project.ProjectCardView;
+import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
-import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
-import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
+import com.scor.rr.repository.Project.ProjectCardViewRepository;
+import com.scor.rr.repository.Search.FacSearchItemRepository;
+import com.scor.rr.repository.Search.FacSearchRepository;
+import com.scor.rr.repository.Search.TreatySearchItemRepository;
+import com.scor.rr.repository.Search.TreatySearchRepository;
+import com.scor.rr.repository.WorkspacePoPin.FavoriteWorkspaceRepository;
+import com.scor.rr.repository.WorkspacePoPin.RecentWorkspaceRepository;
 import com.scor.rr.repository.counter.*;
-import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
 import com.scor.rr.util.SearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,10 +90,6 @@ public class SearchService {
     QueryHelper queryHelper;
     @Autowired
     SearchQuery searchQuery;
-    @Autowired
-    VwFacTreatyRepository vwFacTreatyRepository;
-    @Autowired
-    VwFacTreatySpecification vwFacTreatySpecification;
 
     @Autowired
     FacSearchRepository facSearchRepository;
@@ -195,13 +190,9 @@ public class SearchService {
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.findExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
         detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
         return detailsDTO;
-    }
-
-    public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter), pageable);
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {

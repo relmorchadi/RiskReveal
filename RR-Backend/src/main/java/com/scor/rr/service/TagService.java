@@ -1,16 +1,13 @@
 package com.scor.rr.service;
 
 
-import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.TargetBuild.*;
-import com.scor.rr.domain.UserRrEntity;
-import com.scor.rr.domain.WorkspaceEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.SaveOrUpdateTagRequest;
-import com.scor.rr.repository.PltHeaderRepository;
-import com.scor.rr.repository.TargetBuild.*;
-import com.scor.rr.repository.UserRrRepository;
-import com.scor.rr.repository.WorkspaceEntityRepository;
+import com.scor.rr.domain.entities.PLTHeaderTag;
+import com.scor.rr.domain.entities.Tag;
+import com.scor.rr.domain.entities.UserTag;
+import com.scor.rr.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +45,7 @@ public class TagService {
         request.selectedTags.forEach(tag -> {
 
             Tag newTag;
-            com.scor.rr.domain.TargetBuild.UserTag userTag;
+            UserTag userTag;
 
             //Check if Tag exist else create it
             if(tag.getTagId() != null && !tagRepository.existsById(tag.getTagId())) {
@@ -68,7 +65,7 @@ public class TagService {
             }
 
             //Update UserTag preference if changed
-            Optional<com.scor.rr.domain.TargetBuild.UserTag> userTagOpt = userTagRepository.findByTagIdAndUser(newTag.getTagId(), user.getUserId());
+            Optional<UserTag> userTagOpt = userTagRepository.findByTagIdAndUser(newTag.getTagId(), user.getUserId());
 
             if(userTagOpt.isPresent()) {
                 userTag = userTagOpt.get();
