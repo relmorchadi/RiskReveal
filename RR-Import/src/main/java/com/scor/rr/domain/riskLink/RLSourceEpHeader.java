@@ -1,10 +1,14 @@
 package com.scor.rr.domain.riskLink;
 
 import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
+import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
+
+import static java.util.Optional.ofNullable;
 
 @Entity
 @Table(name = "RLSourceEPHeader")
@@ -90,5 +94,16 @@ public class RLSourceEpHeader {
             case 1000:
                 this.setOEP1000(value);
         }
+    }
+    public RLSourceEpHeader(RdmAllAnalysisSummaryStats stat) {
+        rLAnalysisId= stat.getAnalysisId();
+        financialPerspective= stat.getFinPerspCode();
+        purePremium=stat.getPurePremium();
+        stdDev=stat.getStdDev();
+        coV=stat.getCov();
+    }
+
+    public void setStatistic(Integer statisticMetric, Integer returnPeriod){
+
     }
 }
