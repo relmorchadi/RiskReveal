@@ -39,10 +39,10 @@ public class PltHeaderEntity {
     @Column(name = "ProjectId")
     private Long projectId;
 
-    @Column(name = "Locked")
-    private Boolean locked;
+    @Column(name = "IsLocked")
+    private Boolean isLocked;
 
-    @Column(name = "PLTSimulationPeriods")
+    @Column(name = "SimulationPeriods")
     private Integer pltSimulationPeriods;
 
     @Column(name = "GeneratedFromDefaultAdjustment")
@@ -140,7 +140,7 @@ public class PltHeaderEntity {
 
     public PltHeaderEntity(PltHeaderEntity other) {
         this.pltType = other.pltType;
-        this.locked = other.locked;
+        this.isLocked = other.isLocked;
         this.pltSimulationPeriods = other.pltSimulationPeriods;
         this.generatedFromDefaultAdjustment = other.generatedFromDefaultAdjustment;
         this.currencyCode = other.getCurrencyCode();

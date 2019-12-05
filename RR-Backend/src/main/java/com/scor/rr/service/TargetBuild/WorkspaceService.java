@@ -47,7 +47,7 @@ public class WorkspaceService {
                         .workspaceName(favoriteWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(favoriteWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(favoriteWorkspaceView.getWorkspaceUwYear())
-                        .cedantName(favoriteWorkspaceView.getCedantName())
+                        .clientName(favoriteWorkspaceView.getCedantName())
                         .build()
                 ).collect(Collectors.toList());
     }
@@ -61,7 +61,7 @@ public class WorkspaceService {
                         .workspaceName(recentWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(recentWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(recentWorkspaceView.getWorkspaceUwYear())
-                        .cedantName(recentWorkspaceView.getCedantName())
+                        .clientName(recentWorkspaceView.getCedantName())
                         .build()
                 ).collect(Collectors.toList());
     }
@@ -75,7 +75,7 @@ public class WorkspaceService {
                         .workspaceName(assignedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(assignedWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(assignedWorkspaceView.getWorkspaceUwYear())
-                        .cedantName(assignedWorkspaceView.getCedantName())
+                        .clientName(assignedWorkspaceView.getCedantName())
                         .build()
                 ).collect(Collectors.toList());
     }
@@ -88,7 +88,7 @@ public class WorkspaceService {
                         .workspaceName(pinnedWorkspaceView.getWorkspaceName())
                         .workspaceContextCode(pinnedWorkspaceView.getWorkspaceContextCode())
                         .workspaceUwYear(pinnedWorkspaceView.getWorkspaceUwYear())
-                        .cedantName(pinnedWorkspaceView.getCedantName())
+                        .clientName(pinnedWorkspaceView.getCedantName())
                         .build()
                 ).collect(Collectors.toList());
     }

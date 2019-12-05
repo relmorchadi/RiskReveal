@@ -62,10 +62,10 @@ public class ModelAnalysisEntity {
     @Column(name = "FileName")
     private String fileName;
 
-    @Column(name = "AnalysisId")
+    @Column(name = "SourceAnalysisId")
     private Long analysisId;
 
-    @Column(name = "AnalysisName")
+    @Column(name = "SourceAnalysisName")
     private String analysisName;
 
     @Column(name = "Grain")
@@ -74,23 +74,21 @@ public class ModelAnalysisEntity {
     @Column(name = "FinancialPerspective")
     private String financialPerspective;
 
-    @Column(name = "TreatyLabel")
+    @Column(name = "FinancialTreatyLabel")
     private String treatyLabel;
 
-    @Column(name = "TreatyTag")
+    @Column(name = "FinancialTreatyTag")
     private String treatyTag;
 
     @Column(name = "Peril")
     private String peril;
 
-    //TODO : review with shaun
     @Column(name = "SubPeril")
     private String subPeril;
 
     @Column(name = "GeoCode")
     private String geoCode;
 
-    //TODO : review with shaun
     @Column(name = "Region")
     private String region;
 
@@ -136,14 +134,13 @@ public class ModelAnalysisEntity {
     @Column(name = "ProfileKey")
     private String profileKey;
 
-    //TODO : review with shaun
     @Column(name = "ProfileName")
     private String profileName;
 
     @Column(name = "Description")
     private String description;
 
-    @Column(name = "AnalysisLevel")
+    @Column(name = "SourceAnalysisLevel")
     private String analysisLevel;
 
     @Column(name = "LossAmplification")
@@ -166,6 +163,27 @@ public class ModelAnalysisEntity {
 
     @Column(name = "SourceLossModellingBasis")
     private String sourceLossModellingBasis;
+
+    @Column(name = "SourceLossTableType")
+    private String sourceLossTableType;
+
+    @Column(name = "EventSet")
+    private String eventSet;
+
+    @Column(name = "ModelModule")
+    private String modelModule;
+
+    @Column(name = "SourceResultsReference")
+    private String sourceResultsReference;
+
+    @Column(name = "OccurrenceBasisOverrideReason")
+    private String occurrenceBasisOverrideReason;
+
+    @Column(name = "OccurrenceBasisOverrideBy")
+    private String occurrenceBasisOverrideBy;
+
+    @Column(name = "Metadata")
+    private String metaData;
 
 //    public RRAnalysis(RlSourceResult sourceResult){
 //    }

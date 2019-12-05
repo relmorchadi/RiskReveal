@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "PLTDetailSummary")
+@Table(name = "vw_PLTDetailSummary")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

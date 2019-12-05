@@ -22,8 +22,8 @@ public interface WorkspaceProjection {
 //    @JsonProperty("cedantCode")
 //    @Value("#{target.cedantCode}")
     String getCedantCode();
-//    @JsonProperty("cedantName")
-//    @Value("#{target.cedantName}")
+//    @JsonProperty("clientName")
+//    @Value("#{target.clientName}")
     String getCedantName();
 //    @JsonProperty("countryName")
 //    @Value("#{target.countryName}")

@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "FavoriteWorkspaceView")
+@Table(name = "vw_FavoriteWorkspace")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
