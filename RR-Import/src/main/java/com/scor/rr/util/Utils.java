@@ -45,7 +45,7 @@ public class Utils {
         return options;
     }
 
-    public static void setAttribute(Object obj, String fieldName, Integer value){
+    public static void setAttribute(Object obj, String fieldName, Double value){
         PropertyDescriptor pd;
         try {
             pd = new PropertyDescriptor(fieldName, obj.getClass());

@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Data
+@Table(name = "RLPortfolioAnalysisRegion")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RLPortfolioAnalysisRegion {

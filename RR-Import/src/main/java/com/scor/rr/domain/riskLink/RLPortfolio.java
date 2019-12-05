@@ -51,7 +51,7 @@ public class RLPortfolio {
     @Column(name = "TIV")
     private BigDecimal tiv;
 
-    @OneToMany
+    @OneToMany(mappedBy = "rlPortfolio")
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
     @ManyToOne

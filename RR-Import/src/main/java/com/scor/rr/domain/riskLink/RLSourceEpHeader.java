@@ -1,14 +1,10 @@
 package com.scor.rr.domain.riskLink;
 
 import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
-import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
-
-import static java.util.Optional.ofNullable;
 
 @Entity
 @Table(name = "RLSourceEPHeader")
@@ -54,56 +50,46 @@ public class RLSourceEpHeader {
     @Column(name = "CoV")
     private Double coV;
 
-    public RLSourceEpHeader(RdmAllAnalysisSummaryStats rdmAllAnalysisSummaryStats, Long rLAnalysisId) {
-        this.financialPerspective = rdmAllAnalysisSummaryStats.getFinPerspCode();
-        this.purePremium = rdmAllAnalysisSummaryStats.getPurePremium();
-        this.coV = rdmAllAnalysisSummaryStats.getCov();
-        this.stdDev = rdmAllAnalysisSummaryStats.getStdDev();
-        this.rLAnalysisId = rLAnalysisId;
-    }
+//    public void setAEP(Double value, int exceedanceProbabilty) {
+//        switch (exceedanceProbabilty) {
+//            case 10:
+//                this.setAEP10(value);
+//            case 50:
+//                this.setAEP50(value);
+//            case 100:
+//                this.setAEP100(value);
+//            case 250:
+//                this.setAEP250(value);
+//            case 500:
+//                this.setAEP500(value);
+//            case 1000:
+//                this.setAEP1000(value);
+//        }
+//    }
+//
+//    public void setOEP(Double value, int exceedanceProbabilty) {
+//        switch (exceedanceProbabilty) {
+//            case 10:
+//                this.setOEP10(value);
+//            case 50:
+//                this.setOEP50(value);
+//            case 100:
+//                this.setOEP100(value);
+//            case 250:
+//                this.setOEP250(value);
+//            case 500:
+//                this.setOEP500(value);
+//            case 1000:
+//                this.setOEP1000(value);
+//        }
+//    }
 
-    public void setAEP(Double value, int exceedanceProbabilty){
-        switch(exceedanceProbabilty){
-            case 10:
-                this.setAEP10(value);
-            case 50:
-                this.setAEP50(value);
-            case 100:
-                this.setAEP100(value);
-            case 250:
-                this.setAEP250(value);
-            case 500:
-                this.setAEP500(value);
-            case 1000:
-                this.setAEP1000(value);
-        }
-    }
-
-    public void setOEP(Double value, int exceedanceProbabilty){
-        switch(exceedanceProbabilty){
-            case 10:
-                this.setOEP10(value);
-            case 50:
-                this.setOEP50(value);
-            case 100:
-                this.setOEP100(value);
-            case 250:
-                this.setOEP250(value);
-            case 500:
-                this.setOEP500(value);
-            case 1000:
-                this.setOEP1000(value);
-        }
-    }
     public RLSourceEpHeader(RdmAllAnalysisSummaryStats stat) {
-        rLAnalysisId= stat.getAnalysisId();
-        financialPerspective= stat.getFinPerspCode();
-        purePremium=stat.getPurePremium();
-        stdDev=stat.getStdDev();
-        coV=stat.getCov();
+        rLAnalysisId = stat.getAnalysisId();
+        financialPerspective = stat.getFinPerspCode();
+        purePremium = stat.getPurePremium();
+        stdDev = stat.getStdDev();
+        coV = stat.getCov();
     }
 
-    public void setStatistic(Integer statisticMetric, Integer returnPeriod){
-
-    }
 }

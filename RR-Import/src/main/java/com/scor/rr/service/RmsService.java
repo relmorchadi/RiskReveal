@@ -7,6 +7,7 @@ import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
+import com.scor.rr.util.Utils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -79,6 +80,9 @@ public class RmsService {
 
     @Value(value = "extractLocationLevelSchemaQuery")
     private String extractLocationLevelSchemaQuery;
+
+    @Value(value = "extractEdmDetailsSummarySqlQuery")
+    private String getEdmDetailsSummarySqlQuery;
 
     @Autowired
     private RmsInstanceCache rmsInstanceCache;
@@ -194,42 +198,7 @@ public class RmsService {
                         })
                         .forEach(analysisProfileRegion -> rlAnalysisProfileRegionsRepository.save(analysisProfileRegion));
 
-                this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, multiKeyListEntry.getValue())
-                        .stream()
-                        .map(rdmAnalysisEpCurves -> {
-                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndAnalysisId(rdmId, rdmName, rdmAnalysisEpCurves.getAnalysisId());
-                            RLSourceEpHeader sourceEpHeader = new RLSourceEpHeader(rdmAnalysisEpCurves, rlAnalysis.getRlAnalysisId());
-                            this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, Collections.singletonList(rdmAnalysisEpCurves.getAnalysisId()), fpCodes)
-                                    .forEach(epCurves -> this.setAEPAndOEP(sourceEpHeader, StatisticMetric.getFrom(epCurves.getEbpTypeCode()), epCurves));
-                            return sourceEpHeader;
-                        })
-                        .forEach(sourceEpHeader -> {
-                            rlSourceEpHeaderRepository.deleteByRLAnalysisIdAndFinancialPerspective(sourceEpHeader.getRLAnalysisId(), sourceEpHeader.getFinancialPerspective());
-                            rlSourceEpHeaderRepository.save(sourceEpHeader);
-                        });
-            }
-        }
-    }
-
-    private void setAEPAndOEP(RLSourceEpHeader sourceEpHeader, StatisticMetric statisticMetric, RdmAnalysisEpCurves epCurves) {
-        if (statisticMetric != null) {
-            switch (statisticMetric) {
-                case AEP:
-                    sourceEpHeader.setAEP(epCurves.getLoss(), epCurves.getExceedanceProbabilty());
-                    break;
-                case OEP:
-                    sourceEpHeader.setOEP(epCurves.getLoss(), epCurves.getExceedanceProbabilty());
-                    break;
-                case CEP:
-                    break;
-                case EEF:
-                    break;
-                case TVAR_AEP:
-                    break;
-                case TVAR_OEP:
-                    break;
-                default:
-                    break;
+                this.extractSourceEpHeaders(instanceId, rdmId, rdmName, epPoints, multiKeyListEntry.getValue(), fpCodes);
             }
         }
     }
@@ -719,5 +688,122 @@ public class RmsService {
             super.setParameters(paramArray);
             super.compile();
         }
+    }
+
+    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, List<Integer> epPoints, List<Long> analysisIds, List<String> fpCodes) {
+
+        List<RdmAnalysisEpCurves> epCurves = this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIds, fpCodes);
+
+        this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
+                .forEach(stat -> {
+                    RLSourceEpHeader sourceEpHeader = new RLSourceEpHeader(stat);
+                    filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
+                        int statisticMetric = epC.getEbpTypeCode();
+                        try {
+                            String fieldName = this.generateEpCurveFieldName(epC.getExceedanceProbabilty(), statisticMetric);
+                            Utils.setAttribute(sourceEpHeader, fieldName, epC.getLoss());
+                        } catch (Exception exp) {
+                            exp.printStackTrace();
+                        }
+                    });
+                    rlSourceEpHeaderRepository.deleteByRLAnalysisIdAndFinancialPerspective(sourceEpHeader.getRLAnalysisId(), sourceEpHeader.getFinancialPerspective());
+                    rlSourceEpHeaderRepository.save(sourceEpHeader);
+                });
+
+    }
+
+    private String generateEpCurveFieldName(int exceedanceProbability, int statisticMetric) throws Exception {
+        StatisticMetric statMetric = StatisticMetric.getFrom(statisticMetric);
+        String fieldName = null;
+        if (statMetric != null) {
+            switch (statMetric) {
+                case AEP:
+                    fieldName = "aEP";
+                    break;
+                case OEP:
+                    fieldName = "oEP";
+                    break;
+                default:
+                    throw new Exception("Non supported Stat Metric by RlSourceEpHeader Entity " + statisticMetric);
+            }
+        }
+        if (fieldName != null)
+            return fieldName.concat(String.valueOf(exceedanceProbability));
+        else
+            throw new Exception("Non supported Return Period by RlSourceEpHeader Entity " + exceedanceProbability);
+    }
+
+    private List<RdmAnalysisEpCurves> filterEpCurvesByStat(List<RdmAnalysisEpCurves> epCurves, RdmAllAnalysisSummaryStats stats) {
+        return epCurves.stream().filter(epC -> {
+            try {
+                if (epC.getAnalysisId() != null && epC.getFinPerspCode() != null && epC.getTreatyLabelId() != null)
+                    return epC.getAnalysisId().equals(stats.getAnalysisId()) &&
+                            epC.getFinPerspCode().equals(stats.getFinPerspCode()) &&
+                            epC.getTreatyLabelId().equals(String.valueOf(stats.getTreatyLabelId()));
+                else if (epC.getAnalysisId() != null && epC.getFinPerspCode() != null && epC.getTreatyLabelId() == null)
+                    return epC.getAnalysisId().equals(stats.getAnalysisId()) &&
+                            epC.getFinPerspCode().equals(stats.getFinPerspCode());
+                else
+                    return false;
+            } catch (NullPointerException exp) {
+                exp.printStackTrace();
+                return false;
+            }
+        }).collect(toList());
+    }
+
+    public Map<String, List<String>> extractDetailedExposure(File file, Long edmId, String edmName, String instance, String extractName, List<String> portfolioIdList, List<String> portfolioExcludeRegionPeril,
+                                                             Integer runId, Long portfolioId, String portfolioType) {
+        List<String> errors = new ArrayList<>();
+        List<String> warnings = new ArrayList<>();
+        boolean needToRemove = false;
+
+        if (runId == null) {
+            warnings.add("runId is null. Create a new one with parameters:" +
+                    " InstanceId=" + instance +
+                    " RmsId=" + edmId +
+                    " Name=" + edmName +
+                    " portfolioIdList=" + portfolioIdList +
+                    " portfolioExcludeRegionPeril=" + portfolioExcludeRegionPeril);
+            runId = createEDMPortfolioContext(instance, edmId, edmName, portfolioIdList, portfolioExcludeRegionPeril);
+            needToRemove = true;
+        }
+        if (runId != null && runId > 0) {
+            List<GenericDescriptor> descriptors = extractSchema(instance, extractName);
+            if (descriptors == null || descriptors.isEmpty()) {
+                logger.error("Error: retrieve no descriptors");
+            }
+
+            extractDetailedExposureToFile(instance, edmId, edmName, runId, portfolioId, portfolioType, descriptors, file);
+
+            if (needToRemove) {
+                removeEDMPortfolioContext(instance, runId);
+            }
+        } else {
+            logger.error("RunID is null or equal to 0");
+            errors.add("RunID is null or equal to 0");
+        }
+
+        Map<String, List<String>> res = new HashMap<>();
+        res.put("Error", errors);
+        res.put("Warning", warnings);
+        return res;
+    }
+
+    private void extractDetailedExposureToFile(String instanceId, Long edmId, String edmName, Integer runId, Long portfolioId, String portfolioType,
+                                               List<GenericDescriptor> descriptors, File file) {
+        logger.debug("extractDetailedExposureToFile");
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = this.createNamedParameterTemplate(instanceId);
+        Map<String, Object> dataQueryParams = new HashMap<>();
+        dataQueryParams.put("edm_id", edmId);
+        dataQueryParams.put("edm_name", edmName);
+        dataQueryParams.put("runid", runId);
+        if (portfolioId != null && portfolioType != null) {
+            dataQueryParams.put("Portfolio_Id", portfolioId);
+            dataQueryParams.put("Portfolio_Type", portfolioType);
+        }
+        ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
+        logger.debug("run query {} with params {}", getEdmDetailsSummarySqlQuery, dataQueryParams);
+        namedParameterJdbcTemplate.query(getEdmDetailsSummarySqlQuery, dataQueryParams, extractor);
     }
 }
