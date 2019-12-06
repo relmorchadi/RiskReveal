@@ -16,46 +16,46 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class PLTWriter {
 
+    // TODO : Review its utility with viet
+    private static boolean DBG = true;
     @Autowired
     private TransformationPackage transformationPackage;
-
     @Autowired
     private PltHeaderRepository pltHeaderRepository;
 
-    // TODO : Review its utility with viet
-    private static boolean DBG = true;
+    public RepeatStatus writeHeader() {
 
-    public RepeatStatus writeHeader(){
+        log.debug("Starting writeHeader");
 
-            log.debug("Starting writeHeader");
+        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
-
-                if (bundle.getPltBundles() == null) {
-                    log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getLossDataHeaderId());
-                    log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
-                    continue;
-                }
-                for (PLTBundle pltBundle : bundle.getPltBundles()) {
-                    if (!pltBundle.getPltError()) {
-                        persistHeader(pltBundle.getHeader());
-                    }
-                }
-
+            if (bundle.getPltBundles() == null) {
+                log.error("ERROR in RRLT {}, no PLTs found", bundle.getConformedRRLT().getLossDataHeaderId());
                 log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+                continue;
             }
-            log.debug("writeHeader completed");
-            return RepeatStatus.FINISHED;
+            for (PLTBundle pltBundle : bundle.getPltBundles()) {
+                if (!pltBundle.getPltError()) {
+                    pltBundle.setHeader(persistHeader(pltBundle.getHeader()));
+                }
+            }
+
+            log.info("Finish import progress STEP 14 : WRITE_PLT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+        }
+        log.debug("writeHeader completed");
+        return RepeatStatus.FINISHED;
     }
 
-    private void persistHeader(PltHeaderEntity scorPltHeaderEntity) {
+    private PltHeaderEntity persistHeader(PltHeaderEntity pltHeaderEntity) {
 
-        if (scorPltHeaderEntity.getLossDataFilePath() == null && scorPltHeaderEntity.getLossDataFileName() != null) {
+        if (pltHeaderEntity.getLossDataFilePath() == null && pltHeaderEntity.getLossDataFileName() != null) {
             throw new IllegalStateException("Write binary files and assign their names to me first");
         }
         // TODO : To review
-        //scorPLTHeader.setPltStatus(PLTStatus.ValidFull);
-        pltHeaderRepository.save(scorPltHeaderEntity);
-        if (DBG) log.info("Finish persisting ScorPLTHeader " + scorPltHeaderEntity.getPltHeaderId());
+//        scorPltHeaderEntity.setPltStatus(PLTStatus.ValidFull);
+        pltHeaderEntity = pltHeaderRepository.save(pltHeaderEntity);
+        if (DBG) log.info("Finish persisting ScorPLTHeader " + pltHeaderEntity.getPltHeaderId());
+
+        return pltHeaderEntity;
     }
 }

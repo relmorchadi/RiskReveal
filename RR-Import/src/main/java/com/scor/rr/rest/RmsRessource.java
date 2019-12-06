@@ -6,7 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,7 +22,6 @@ public class RmsRessource {
     @Autowired
     RmsService rmsService;
 
-
     @GetMapping("listAvailableDataSources")
     public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId) {
 
@@ -27,7 +29,7 @@ public class RmsRessource {
 
         List<DataSource> dataSourcs = rmsService.listAvailableDataSources(instanceId);
 
-        return ResponseEntity.ok(dataSourcs.subList(1,20));
+        return ResponseEntity.ok(dataSourcs.subList(1, 20));
     }
 
     @GetMapping("listRdmAnalysisBasic")
