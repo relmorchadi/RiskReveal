@@ -7,18 +7,18 @@ import java.util.Objects;
 @Entity
 @Table(name = "MarketChannel")
 public class MarketChannelEntity {
-    private int marketChannelId;
+    private long marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
     private Integer entity;
 
     @Id
     @Column(name = "MarketChannelID", nullable = false)
-    public int getMarketChannelId() {
+    public long getMarketChannelId() {
         return marketChannelId;
     }
 
-    public void setMarketChannelId(int marketChannelId) {
+    public void setMarketChannelId(long marketChannelId) {
         this.marketChannelId = marketChannelId;
     }
 
