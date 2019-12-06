@@ -1,7 +1,7 @@
 package com.scor.rr.repository.specification;
 
 import com.google.common.base.Supplier;
-import com.scor.rr.domain.ContractSearchResult;
+import com.scor.rr.domain.entities.ContractSearchResult;
 import com.scor.rr.domain.ContractSearchResult_;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import com.scor.rr.domain.dto.WorkspaceFilter;

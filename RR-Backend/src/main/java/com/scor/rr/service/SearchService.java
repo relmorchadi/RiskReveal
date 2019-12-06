@@ -1,22 +1,21 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
-import com.scor.rr.domain.TargetBuild.Search.*;
+import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.entities.Project.ProjectCardView;
+import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
-import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
-import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
+import com.scor.rr.repository.Project.ProjectCardViewRepository;
+import com.scor.rr.repository.Search.FacSearchItemRepository;
+import com.scor.rr.repository.Search.FacSearchRepository;
+import com.scor.rr.repository.Search.TreatySearchItemRepository;
+import com.scor.rr.repository.Search.TreatySearchRepository;
+import com.scor.rr.repository.WorkspacePoPin.FavoriteWorkspaceRepository;
+import com.scor.rr.repository.WorkspacePoPin.RecentWorkspaceRepository;
 import com.scor.rr.repository.counter.*;
-import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
 import com.scor.rr.util.SearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,10 +90,6 @@ public class SearchService {
     QueryHelper queryHelper;
     @Autowired
     SearchQuery searchQuery;
-    @Autowired
-    VwFacTreatyRepository vwFacTreatyRepository;
-    @Autowired
-    VwFacTreatySpecification vwFacTreatySpecification;
 
     @Autowired
     FacSearchRepository facSearchRepository;
@@ -171,16 +166,19 @@ public class SearchService {
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         List<ProjectCardView> projects = wsOpt
-                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
+                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            String marketChannel = "TREATY";
+            if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
             return buildWorkspaceDetails(
                     contracts,
                     years,
                     projects,
                     workspaceId,
-                    uwy
+                    uwy,
+                    marketChannel
             );
         } else {
             throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
@@ -188,20 +186,16 @@ public class SearchService {
     }
 
 
-    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy) {
+    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy, String marketChannel) {
         ContractSearchResult firstWs = contracts.get(0);
-        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs);
+        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs, marketChannel);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.findExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
         detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
         return detailsDTO;
-    }
-
-    public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter), pageable);
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {

@@ -143,7 +143,7 @@ public class DefaultAdjustmentService {
 //            List<AdjustmentNodeEntity> adjustmentNodeEntities = new ArrayList<>();
 //            AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
 //            adjustmentThreadEntity.setFinalPLT(purePlt);
-//            adjustmentThreadEntity.setLocked(true);
+//            adjustmentThreadEntity.setIsLocked(true);
 //            adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
 //            adjustmentThreadEntity.setCreatedBy("HAMZA");
 //            adjustmentThreadEntity = adjustmentThreadRepository.save(adjustmentThreadEntity);

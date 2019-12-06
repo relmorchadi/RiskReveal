@@ -1,13 +1,13 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.ProjectEntity;
-import com.scor.rr.domain.TargetBuild.Project.*;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
+import com.scor.rr.domain.entities.Project.*;
 import com.scor.rr.repository.ContractSearchResultRepository;
 import com.scor.rr.repository.ProjectEntityRepository;
-import com.scor.rr.repository.TargetBuild.Project.*;
+import com.scor.rr.repository.Project.*;
 import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

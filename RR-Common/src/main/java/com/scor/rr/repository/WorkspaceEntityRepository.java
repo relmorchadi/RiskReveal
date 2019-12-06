@@ -17,8 +17,8 @@ public interface WorkspaceEntityRepository extends JpaRepository<WorkspaceEntity
     Optional<WorkspaceEntity> findWorkspaceByPltHeaderId(@Param("pltHeaderId") Long pltHeaderId);
 
     @Transactional
-    @Query(value = "exec dbo.count_expected_region_peril @treatyId= :treatyId,@year= :uwYear, @sectionId= :sectionId", nativeQuery = true)
-    List<String> countExpectedRegionPeril(@Param("treatyId") String treatyId, @Param("uwYear") int uwYear, @Param("sectionId") int sectionId);
+    @Query(value = "exec dbonew.usp_Count_Expected_Region_Peril @treatyId= :treatyId,@year= :uwYear, @sectionId= :sectionId", nativeQuery = true)
+    List<String> findExpectedRegionPeril(@Param("treatyId") String treatyId, @Param("uwYear") int uwYear, @Param("sectionId") int sectionId);
 
 //    @Transactional
 //    @Query(value = "exec dbo.count_expectedScope_counter @wsId=:wsId", nativeQuery = true)

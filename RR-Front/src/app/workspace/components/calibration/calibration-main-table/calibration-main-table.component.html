@@ -448,7 +448,7 @@
             <div *ngIf="col.icon=='icon-ballot_24px'">
               <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
-                                         'icon-lock-alt iconRed': rowData?.status=='locked',
+                                         'icon-lock-alt iconRed': rowData?.status=='isLocked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
                                          'icon-star iconBlue': rowData?.status=='new',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }"

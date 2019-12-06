@@ -1,24 +1,17 @@
 package com.scor.rr.service.cloning;
 
-import com.scor.rr.configuration.file.CSVPLTFileWriter;
-import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
-import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.WorkspaceRepository;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
@@ -52,7 +45,7 @@ public class CloningScorPltHeader {
         if (pltHeaderEntityInitial != null) {
             PltHeaderEntity pltHeaderEntityClone = new PltHeaderEntity(pltHeaderEntityInitial);
             pltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
-            pltHeaderEntityClone.setLocked(false);
+            pltHeaderEntityClone.setIsLocked(false);
             //@Todo Review
 //            pltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
 //            pltHeaderEntityClone.setWorkspaceEntity(pltHeaderEntityInitial.getWorkspaceEntity());

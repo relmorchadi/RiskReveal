@@ -1,7 +1,7 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.WorkspaceProjection;
+import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.projection.WorkspaceProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 
 public interface ContractSearchResultRepository extends JpaRepository<ContractSearchResult, String>, JpaSpecificationExecutor<ContractSearchResult> {

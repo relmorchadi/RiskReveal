@@ -29,7 +29,7 @@ public class WorkspaceView implements Serializable{
     private String treatyName;
     @Column(name = "cedantCode")
     private String cedantCode;
-    @Column(name = "cedantName")
+    @Column(name = "clientName")
     private String cedantName;
 
     public WorkspaceView() {

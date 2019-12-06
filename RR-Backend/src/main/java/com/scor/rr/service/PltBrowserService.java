@@ -1,16 +1,14 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.TargetBuild.*;
+import com.scor.rr.domain.entities.Tag;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
-import com.scor.rr.repository.PltHeaderRepository;
-import com.scor.rr.repository.TargetBuild.*;
-import com.scor.rr.repository.UserRrRepository;
-import com.scor.rr.repository.WorkspaceEntityRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
