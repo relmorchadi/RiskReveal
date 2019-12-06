@@ -40,7 +40,7 @@ public class WorkspaceDetailsDTO {
     private int pricedPlts;
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult contract) {
+    public WorkspaceDetailsDTO(ContractSearchResult contract, String marketChannel) {
         this.id = contract.getId();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();
@@ -52,6 +52,7 @@ public class WorkspaceDetailsDTO {
         this.expiryDate = contract.getExpiryDate();
         this.subsidiaryLedgerId = contract.getSubsidiaryLedgerid();
         this.contractDatasource = contract.getContractSourceTypeName();
+        this.marketChannel = marketChannel;
     }
 
     public void setTreatySections(List<ContractSearchResult> items) {
