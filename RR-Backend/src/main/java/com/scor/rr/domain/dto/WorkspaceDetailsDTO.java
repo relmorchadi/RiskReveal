@@ -30,6 +30,7 @@ public class WorkspaceDetailsDTO {
     private Boolean isFavorite;
     private Boolean isPinned;
     private String contractDatasource;
+    private String marketChannel;
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
