@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
-@Table(name = "AdjustmentEventBasedParameter")
+@Table(name = "EventBasedAdjustmentParameter")
 public class EventBasedAdjustmentParameter {
     private int adjustmentParameterId;
     private Integer entity;
