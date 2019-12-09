@@ -2,10 +2,7 @@ package com.scor.rr.rest.pltAdjustment;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.dto.AEPMetric;
-import com.scor.rr.domain.dto.CalculAdjustmentDto;
-import com.scor.rr.domain.dto.OEPMetric;
-import com.scor.rr.domain.dto.StaticType;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
@@ -58,13 +55,13 @@ public class CalculAdjRest {
 
 
     @GetMapping("aepMetric")
-    public List<AEPMetric> aepMetric(String pathToFile) throws RRException {
+    public EPMetric aepMetric(String pathToFile) throws RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
         return CalculAdjustement.getAEPMetric(pltLossData);
     }
     @GetMapping("oepMetric")
-    public List<OEPMetric> oepMetric(String pathToFile) throws RRException {
+    public EPMetric oepMetric(String pathToFile) throws RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
         return CalculAdjustement.getOEPMetric(pltLossData);
@@ -86,16 +83,16 @@ public class CalculAdjRest {
         return 0;
     }
     @GetMapping("AEPTvAR-METRIC")
-    public List<AEPMetric> AEPTvAR(String pathToFile) throws RRException {
+    public EPMetric AEPTvAR(String pathToFile) throws RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
-        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData));
+        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData).getEpMetricPoints());
     }
     @GetMapping("OEPTvAR-METRIC")
-    public List<OEPMetric> OEPTvAR(String pathToFile) throws RRException {
+    public EPMetric OEPTvAR(String pathToFile) throws RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
-        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
+        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData).getEpMetricPoints());
     }
 
     @GetMapping("convert-to-csv")
