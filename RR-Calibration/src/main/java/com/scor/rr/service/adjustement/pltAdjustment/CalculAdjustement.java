@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
-import com.scor.rr.configuration.UtilsMethode;
+import com.scor.rr.configuration.UtilsMethod;
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
