@@ -25,7 +25,8 @@ public class RLAnalysis {
     private Long projectId;
     private Long rdmId;
     private String rdmName;
-    private Long analysisId;
+    @Column(name = "analysisId")
+    private Long rlId;
     private String analysisName;
     private String analysisDescription;
     private String defaultGrain;
@@ -79,7 +80,7 @@ public class RLAnalysis {
         this.projectId = rdm.getProjectId();
         this.rdmId = Long.valueOf(rdm.getRlId());
         this.rdmName = rdm.getName();
-        this.analysisId = rdmAnalysisBasic.getAnalysisId();
+        this.rlId = rdmAnalysisBasic.getAnalysisId();
         this.analysisName = rdmAnalysisBasic.getAnalysisName();
         this.analysisDescription = rdmAnalysisBasic.getDescription();
         this.defaultGrain = null; // TO Check

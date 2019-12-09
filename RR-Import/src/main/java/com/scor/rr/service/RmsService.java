@@ -188,7 +188,7 @@ public class RmsService {
                 this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
                         .stream()
                         .map(analysisProfileRegion -> {
-                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndAnalysisId(rdmId, rdmName, analysisProfileRegion.getAnalysisId());
+                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlId(rdmId, rdmName, analysisProfileRegion.getAnalysisId());
                             return new RLAnalysisProfileRegion(analysisProfileRegion, rlAnalysis);
                         })
                         .forEach(analysisProfileRegion -> rlAnalysisProfileRegionsRepository.save(analysisProfileRegion));
