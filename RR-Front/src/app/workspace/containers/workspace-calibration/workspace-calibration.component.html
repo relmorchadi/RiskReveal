@@ -15,7 +15,7 @@
     </div>
     <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;min-width: 160px;">
-        <div style="padding:unset;width: 80%;">
+        <div style="padding:unset; width: 80%;">
           <app-plt-left-menu
             (actionDispatcher)="leftMenuActionDispatcher($event)"
             [leftMenuInputs]="leftMenuInputs"
@@ -37,8 +37,7 @@
       </plt-tag-manager>
       <div class="tabset-right" style="flex: 1;background-color: #ffffff;">
         <div>
-          <div class="PLTs-content">
-
+          <div class="PLTs-content" [ngClass]="{'tableFac-layout': extended}">
             <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
                  style="float: left;background-color: #fff">
               <div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">
@@ -97,8 +96,8 @@
                 </div>
               </div>
               <div class=" radio-container">
-                <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
-                <div style="margin-top: 23px;float: right">
+                <label (click)="addRemoveModal = true" class="addRemove">Add/Remove</label>
+                <div style="margin-top: 23px; float: right">
                   <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
                      class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
                   <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
@@ -484,6 +483,7 @@
             <app-calibration-main-table
               (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
               (extend)="extend()"
+              (groupByPure)="groupByPure()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
               [adjustmentApplication]="adjustmentApplication"
               (expandAll)="expandAll($event)"

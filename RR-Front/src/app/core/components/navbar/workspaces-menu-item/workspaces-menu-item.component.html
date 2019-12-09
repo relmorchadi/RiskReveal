@@ -38,7 +38,7 @@
                       </div>
                       <div (click)="toggleWorkspace('recent', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
@@ -96,7 +96,7 @@
                     </div>
                     <div (click)="toggleWorkspace('favorite', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                          class="item-popover-context">
-                      <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                      <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                       <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                         - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                     </div>
@@ -154,7 +154,7 @@
                       </div>
                       <div (click)="toggleWorkspace('assigned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
@@ -213,7 +213,7 @@
                       </div>
                       <div (click)="toggleWorkspace('pinned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
