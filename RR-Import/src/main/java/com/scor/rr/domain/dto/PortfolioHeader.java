@@ -11,6 +11,8 @@ public class PortfolioHeader {
 
     private Long portfolioId;
     private String portfolioName;
+    private String portfolioType;
+    private String currency;
     private Long edmId;
     private String edmName;
 }

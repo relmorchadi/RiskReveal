@@ -2,6 +2,8 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.dto.AEPMetric;
+import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.service.state.TransformationBundle;
@@ -11,12 +13,15 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @StepScope
 @Service
@@ -65,7 +70,31 @@ public class DefaultAdjustment {
                                     log.info("Calculation for thread has ended successfully");
                                 else
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThreadEntity.getAdjustmentThreadId());
+
+                                String fullFilePath = pltBundle.getHeader().getLossDataFilePath() + "/" + pltBundle.getHeader().getLossDataFileName();
+
+                                // @INFO : AEPMetric request/response config
+
+                                HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
+
+                                ParameterizedTypeReference<List<AEPMetric>> aepMetricType = new ParameterizedTypeReference<List<AEPMetric>>() {
+                                };
+
+                                ResponseEntity<List<AEPMetric>> aepMetricResponse = restTemplate
+                                        .exchange(threadCreationURL, HttpMethod.GET, aepMetricRequest, aepMetricType);
+
+                                // @INFO : OEPMetric request/response config
+
+                                HttpEntity<String> oepMetricRequest = new HttpEntity<>(fullFilePath);
+
+                                ParameterizedTypeReference<List<OEPMetric>> oepMetricType = new ParameterizedTypeReference<List<OEPMetric>>() {
+                                };
+
+                                ResponseEntity<List<OEPMetric>> oepMetricResponse = restTemplate
+                                        .exchange(threadCreationURL, HttpMethod.GET, oepMetricRequest, oepMetricType);
                             }
+                        } else {
+                            log.error("An error has occurred {}", response.getStatusCodeValue());
                         }
                     }
                 }

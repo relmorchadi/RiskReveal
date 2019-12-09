@@ -12,6 +12,8 @@ public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>
 
     RLPortfolio findByPortfolioId(Long portfolioId);
 
+    @Modifying
+    @Transactional(transactionManager = "rrTransactionManager")
     void deleteByRlModelDataSourceRlModelDataSourceId(Long rlModelDataSourceId);
 
     @Modifying()

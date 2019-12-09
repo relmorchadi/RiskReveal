@@ -90,21 +90,16 @@ public class RmsService {
     /********** Scan Basic / Detailed **********/
 
     public void basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
-        Set<MultiKey> selectedDataSources = new HashSet<>();
-        for (DataSource dataSource : dataSources) {
-            selectedDataSources.add(new MultiKey(dataSource.getType(), instanceId, dataSource.getRmsId().toString()));
-        }
-        List<RLModelDataSource> existingRLModelDataSources = rlModelDataSourcesRepository.findByProjectId(projectId);
-        for (RLModelDataSource existingRLModelDataSource : existingRLModelDataSources) {
-            if (!selectedDataSources.contains(new MultiKey(existingRLModelDataSource.getType(), existingRLModelDataSource.getInstanceId(), existingRLModelDataSource.getRlId()))) {
-                rlModelDataSourcesRepository.delete(existingRLModelDataSource);
-            }
-        }
 
         for (DataSource dataSource : dataSources) {
-            RLModelDataSource rlModelDataSource = rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId
-                    (projectId, dataSource.getType(), instanceId, dataSource.getRmsId().toString());
-            if (rlModelDataSource == null) {
+
+            RLModelDataSource rlModelDataSource =
+                    rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), instanceId, dataSource.getRmsId());
+
+            if (rlModelDataSource != null) {
+                rlAnalysisRepository.deleteByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
+                rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
+            } else {
                 rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
@@ -159,7 +154,7 @@ public class RmsService {
 
     private void scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
         rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
-        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, Long.parseLong(rdm.getRlId()), rdm.getName());
+        List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, rdm.getRlId(), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm)
@@ -205,7 +200,7 @@ public class RmsService {
 
     private void scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
         rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(edm.getRlModelDataSourceId());
-        List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, Long.parseLong(edm.getRlId()), edm.getName());
+        List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
         for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
             RLPortfolio rlPortfolio = this.rlPortfolioRepository.save(
                     new RLPortfolio(edmPortfolioBasic, edm)
@@ -217,10 +212,13 @@ public class RmsService {
 
     private void scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
         Map<MultiKey, List<Long>> portfolioByEdms = new HashMap<>();
+        Map<MultiKey, List<String>> portfolioIdAndTypeAndCurrencyByEdms = new HashMap<>();
 
         if (rlPortfolioList != null && !rlPortfolioList.isEmpty()) {
             rlPortfolioList.stream().map(item -> new MultiKey(item.getEdmId(), item.getEdmName())).distinct()
-                    .forEach(key -> portfolioByEdms.put(key, this.getPortfolioIdByEdm((Long) key.getKey(0), (String) key.getKey(1), rlPortfolioList)));
+                    .forEach(key -> {
+                        portfolioByEdms.put(key, this.getPortfolioIdByEdm((Long) key.getKey(0), (String) key.getKey(1), rlPortfolioList));
+                    });
 
             for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : portfolioByEdms.entrySet()) {
 
@@ -249,6 +247,11 @@ public class RmsService {
     private List<Long> getPortfolioIdByEdm(Long edmId, String edmName, List<PortfolioHeader> rlPortfolioList) {
         return rlPortfolioList.stream().filter(item -> item.getEdmId().longValue() == edmId.longValue() && item.getEdmName().equals(edmName))
                 .map(PortfolioHeader::getPortfolioId).collect(toList());
+    }
+
+    private List<String> getPortfolioIdPortfolioTypeCurrencyByEdm(Long edmId, String edmName, List<PortfolioHeader> rlPortfolioList) {
+        return rlPortfolioList.stream().filter(item -> item.getEdmId().longValue() == edmId.longValue() && item.getEdmName().equals(edmName))
+                .map(portfolioHeader -> portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType() + "~" + portfolioHeader.getCurrency()).collect(toList());
     }
 
     /****** Risk Link Interface ******/
@@ -666,30 +669,6 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(this.getJdbcTemplate(instanceId));
     }
 
-    private static class CreateEdmSummaryStoredProc extends StoredProcedure {
-        private String sqlProc;
-
-        public String getSqlProc() {
-            return sqlProc;
-        }
-
-        CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate, String sqlProc) {
-            // NOTA : regionPerilExclude maybe an DEV schema artifact
-            super(jdbcTemplate, sqlProc);
-            this.sqlProc = sqlProc;
-            //
-            setFunction(false);
-            SqlParameter edmID = new SqlParameter("Edm_ID", Types.INTEGER);
-            SqlParameter edmName = new SqlParameter("Edm_Name", Types.VARCHAR);
-            SqlParameter edmPortList = new SqlParameter("PortfolioList", Types.VARCHAR);
-            SqlParameter regionPerilExclude = new SqlParameter("RegionPerilExclude", Types.VARCHAR);
-            SqlOutParameter runID = new SqlOutParameter("RunID", Types.INTEGER);
-            SqlParameter[] paramArray = {edmID, edmName, edmPortList, regionPerilExclude, runID};
-            super.setParameters(paramArray);
-            super.compile();
-        }
-    }
-
     private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, List<Integer> epPoints, List<Long> analysisIds, List<String> fpCodes) {
 
         List<RdmAnalysisEpCurves> epCurves = this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIds, fpCodes);
@@ -805,5 +784,29 @@ public class RmsService {
         ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
         logger.debug("run query {} with params {}", getEdmDetailsSummarySqlQuery, dataQueryParams);
         namedParameterJdbcTemplate.query(getEdmDetailsSummarySqlQuery, dataQueryParams, extractor);
+    }
+
+    private static class CreateEdmSummaryStoredProc extends StoredProcedure {
+        private String sqlProc;
+
+        CreateEdmSummaryStoredProc(JdbcTemplate jdbcTemplate, String sqlProc) {
+            // NOTA : regionPerilExclude maybe an DEV schema artifact
+            super(jdbcTemplate, sqlProc);
+            this.sqlProc = sqlProc;
+            //
+            setFunction(false);
+            SqlParameter edmID = new SqlParameter("Edm_ID", Types.INTEGER);
+            SqlParameter edmName = new SqlParameter("Edm_Name", Types.VARCHAR);
+            SqlParameter edmPortList = new SqlParameter("PortfolioList", Types.VARCHAR);
+            SqlParameter regionPerilExclude = new SqlParameter("RegionPerilExclude", Types.VARCHAR);
+            SqlOutParameter runID = new SqlOutParameter("RunID", Types.INTEGER);
+            SqlParameter[] paramArray = {edmID, edmName, edmPortList, regionPerilExclude, runID};
+            super.setParameters(paramArray);
+            super.compile();
+        }
+
+        public String getSqlProc() {
+            return sqlProc;
+        }
     }
 }
