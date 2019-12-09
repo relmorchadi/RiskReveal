@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
-import com.scor.rr.configuration.UtilsMethode;
+import com.scor.rr.configuration.UtilsMethod;
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
@@ -26,7 +26,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())).filter(UtilsMethode.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
             return new EPMetric(StatisticMetric.OEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
                 finalI[0]++;
@@ -41,7 +41,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethode.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
             return new EPMetric(StatisticMetric.OEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {
