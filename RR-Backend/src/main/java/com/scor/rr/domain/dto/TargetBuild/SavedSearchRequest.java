@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.TargetBuild;
 
-import com.scor.rr.domain.TargetBuild.Search.SearchItem;
+import com.scor.rr.domain.entities.Search.SearchItem;
 import com.scor.rr.domain.enums.SearchType;
 import lombok.Data;
 

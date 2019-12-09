@@ -43,7 +43,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 1",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: true,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 6}, {tagId: 7}],
 //           userTags: [{tagId: 1}, {tagId: 2}],
@@ -61,7 +61,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 2",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 1}],
 //           userTags: [{tagId: 1}],
@@ -79,7 +79,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 3",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 2}, {tagId: 6}, {tagId: 1}],
 //           userTags: [{tagId: 1}, {tagId: 2}],
@@ -97,7 +97,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_LMF1.T1",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 5}],
 //           userTags: [{tagId: 2}, {tagId: 1}],
@@ -115,7 +115,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_LMF1.T11687",
 //           icon: 'icon-check-circle iconGreen',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 2}],
 //           userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
@@ -137,7 +137,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "122282", threadName: "APEQ-ID_GULM 1", icon: 'icon-lock-alt iconRed',
 //           checked: false,
-//           locked: true,
+//           isLocked: true,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 6}, {tagId: 7}],
 //           userTags: [{tagId: 2}, {tagId: 3}],
@@ -148,12 +148,12 @@ export const ADJUSTMENT_TYPE = [
 //           grain: "liberty-NAHU",
 //           vendorSystem: "RMS RiskLink",
 //           rap: "North Atlantic",
-//           status: 'locked'
+//           status: 'isLocked'
 //         },
 //         {
 //           id: "122292", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
 //           checked: false,
-//           locked: true,
+//           isLocked: true,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 6}],
 //           userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
@@ -164,7 +164,7 @@ export const ADJUSTMENT_TYPE = [
 //           grain: "liberty-NAHU",
 //           vendorSystem: "RMS RiskLink",
 //           rap: "North Atlantic",
-//           status: 'locked'
+//           status: 'isLocked'
 //         },
 //
 //       ]
@@ -175,7 +175,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "12299192", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 4}, {tagId: 6}, {tagId: 3}],
 //           userTags: [{tagId: 1}, {tagId: 3}],
@@ -191,7 +191,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "12295892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 7}, {tagId: 4}, {tagId: 5}],
 //           userTags: [{tagId: 1}, {tagId: 2}],

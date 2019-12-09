@@ -1,6 +1,6 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.TargetBuild.UserTag;
+import com.scor.rr.domain.entities.UserTag;
 import com.scor.rr.domain.dto.UserResponse;
 import com.scor.rr.repository.UserRrRepository;
 import org.modelmapper.ModelMapper;

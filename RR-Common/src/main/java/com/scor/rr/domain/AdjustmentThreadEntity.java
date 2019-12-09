@@ -42,7 +42,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "locked")
+    @Column(name = "isLocked")
     public Boolean getLocked() {
         return locked;
     }
@@ -138,7 +138,7 @@ public class AdjustmentThreadEntity {
 //        if (o == null || getClass() != o.getClass()) return false;
 //        AdjustmentThreadEntity that = (AdjustmentThreadEntity) o;
 //        return adjustmentThreadId == that.adjustmentThreadId &&
-//                Objects.equals(locked, that.locked) &&
+//                Objects.equals(isLocked, that.isLocked) &&
 //                Objects.equals(createdBy, that.createdBy) &&
 //                Objects.equals(createdOn, that.createdOn) &&
 //                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
@@ -149,7 +149,7 @@ public class AdjustmentThreadEntity {
 //
 //    @Override
 //    public int hashCode() {
-//        return Objects.hash(locked, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGeneratedOn, generatedOn, adjustmentThreadId);
+//        return Objects.hash(isLocked, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGeneratedOn, generatedOn, adjustmentThreadId);
 //    }
 
     @ManyToOne

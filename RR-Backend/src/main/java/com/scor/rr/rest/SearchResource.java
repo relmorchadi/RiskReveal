@@ -1,16 +1,14 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Search.ShortCut;
+import com.scor.rr.domain.entities.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
-import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
-import com.scor.rr.service.TargetBuild.ShortCutService;
+import com.scor.rr.service.ShortCutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,11 +92,6 @@ public class SearchResource {
     ResponseEntity<?> deleteSavedSearch(@RequestParam SearchType searchType, @RequestParam Long id) {
         searchService.deleteSavedSearch(searchType, id);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("fac-treaties")
-    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return searchService.getAllFacTreaties(filter, pageable);
     }
 
     @PostMapping("workspace/expert-mode")
