@@ -17,16 +17,10 @@ public class AdjustmentNodeRest {
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
 
-
     @GetMapping("all")
     public List<AdjustmentNode> findAll() {
         return adjustmentNodeService.findAll();
     }
-
-//    @PostMapping
-//    public AdjustmentNode save(@RequestBody AdjustmentNodeRequest request) throws RRException {
-//        return adjustmentNodeService.save(request);
-//    }
 
     @PostMapping("create")
     public AdjustmentNode createAdjustmentNode(@RequestBody AdjustmentNodeRequest request) throws RRException {

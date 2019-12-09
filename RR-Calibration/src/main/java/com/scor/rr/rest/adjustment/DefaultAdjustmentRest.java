@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/defaultadjustment")
+@RequestMapping("api/defaultAdjustment")
 public class DefaultAdjustmentRest {
 
 
     @Autowired
     DefaultAdjustmentService defaultAdjustmentService;
 
-    @GetMapping("lookupdefaultadjustment")
+    @GetMapping("lookupDefaultAdjustment")
     public List<DefaultAdjustmentNode> getDefaultAdjustmentNodeByPurePltMarketChannel(int targetRapId,
                                                                                       int regionPerilId,
                                                                                       int marketChannelId,
