@@ -26,14 +26,12 @@ public class RLPortfolioScanStatus {
     @Column(name = "LastScan")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastScan;
-
-    @OneToOne
-    @JoinColumn(name = "RLPortfolioId")
-    private RLPortfolio rlPortfolio;
+    @Column(name = "RLPortfolio")
+    private Long rlPortfolio;
 
     public RLPortfolioScanStatus(RLPortfolio rlPortfolio, int scanStatus) {
         this.entity = 1;
-        this.rlPortfolio = rlPortfolio;
+        this.rlPortfolio = rlPortfolio.getRlPortfolioId();
         this.scanStatus = scanStatus;
         this.scanLevel = 0;
     }

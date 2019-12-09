@@ -18,34 +18,37 @@ public class RLModelDataSource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "RlModelDataSourceId")
     private Long rlModelDataSourceId;
+    @Column(name = "Entity")
     private Integer entity;
+    @Column(name = "ProjectId")
     private Long projectId;
-    // To define a Sequence
-    private String rlDataSource;
-    // To review the type with Shaun
-    private String rlId;
+    @Column(name = "RlId")
+    private Long rlId;
+    @Column(name = "InstanceName")
     private String instanceName;
+    @Column(name = "InstanceId")
     private String instanceId;
+    @Column(name = "Name")
     private String name;
+    @Column(name = "Type")
     private String type;
-    // To review the type with Shaun
+    @Column(name = "VersionId")
     private String versionId;
+    @Column(name = "DateCreated")
     private Date dateCreated;
-//
-//    @Transient
-//    private List<RlAnalysis> rlAnalysisList;
 
-    public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName){
-        this.projectId= projectId;
-        this.entity=1;
-        this.instanceId= instanceId;
-        this.instanceName= instanceName;
-        this.rlId= dataSource.getRmsId().toString();
-        this.name= dataSource.getName();
+    public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName) {
+        this.projectId = projectId;
+        this.entity = 1;
+        this.instanceId = instanceId;
+        this.instanceName = instanceName;
+        this.rlId = dataSource.getRmsId();
+        this.name = dataSource.getName();
         this.type = dataSource.getType();
         this.versionId = String.valueOf(dataSource.getVersionId());
-        this.dateCreated= new Date();
+        this.dateCreated = new Date();
     }
 
 }

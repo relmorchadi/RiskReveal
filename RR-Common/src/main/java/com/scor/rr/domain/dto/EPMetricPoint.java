@@ -1,14 +1,17 @@
 package com.scor.rr.domain.dto;
 
-public class AEPMetric {
+/**
+ * Created by u004602 on 09/12/2019.
+ */
+public class EPMetricPoint {
     double frequency;
     double returnPeriod;
-    double lossAep;
+    double loss;
 
-    public AEPMetric(double frequency, double returnPeriod, double lossAep) {
+    public EPMetricPoint(double frequency, double returnPeriod, double loss) {
         this.frequency = frequency;
         this.returnPeriod = returnPeriod;
-        this.lossAep = lossAep;
+        this.loss = loss;
     }
 
     public double getFrequency() {
@@ -27,11 +30,11 @@ public class AEPMetric {
         this.returnPeriod = returnPeriod;
     }
 
-    public double getLossAep() {
-        return lossAep;
+    public double getLoss() {
+        return loss;
     }
 
-    public void setLossAep(double lossOep) {
-        this.lossAep = lossOep;
+    public void setLoss(double loss) {
+        this.loss = loss;
     }
 }

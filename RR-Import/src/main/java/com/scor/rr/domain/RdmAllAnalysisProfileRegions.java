@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 @Data
 public class RdmAllAnalysisProfileRegions {
 
-    private Long analysisid;
-    private String anlysisRegion;
+    private Long analysisId;
+    private String analysisRegion;
     private String analysisRegionName;
     private String profileRegion;
     private String profileRegionName;

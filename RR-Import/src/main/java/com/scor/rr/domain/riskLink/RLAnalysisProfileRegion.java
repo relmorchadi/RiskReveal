@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.scor.rr.domain.RdmAllAnalysisProfileRegions;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class RLAnalysisProfileRegion {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlAnalysisProfileRegionId")
     private Long rlAnalysisProfileRegionId;
 
@@ -41,4 +42,16 @@ public class RLAnalysisProfileRegion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RlAnalysisId")
     private RLAnalysis rlAnalysis;
+
+
+    public RLAnalysisProfileRegion(RdmAllAnalysisProfileRegions rdmAllAnalysisProfileRegions, RLAnalysis rlAnalysis) {
+
+        this.analysisRegion = rdmAllAnalysisProfileRegions.getAnalysisRegion();
+        this.analysisRegionName = rdmAllAnalysisProfileRegions.getAnalysisRegionName();
+        this.profileRegion = rdmAllAnalysisProfileRegions.getProfileRegion();
+        this.profileRegionName = rdmAllAnalysisProfileRegions.getProfileRegionName();
+        this.peril = rdmAllAnalysisProfileRegions.getPeril();
+        this.aal = rdmAllAnalysisProfileRegions.getAal();
+        this.rlAnalysis = rlAnalysis;
+    }
 }
