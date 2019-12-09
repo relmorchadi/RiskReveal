@@ -879,6 +879,7 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -893,6 +894,7 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -907,6 +909,7 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -920,7 +923,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -934,7 +938,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -948,7 +953,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -962,7 +968,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -976,7 +983,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -990,7 +998,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1004,7 +1013,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1018,7 +1028,8 @@ export const PLT_COLUMNS = [
     type: 'icon',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1032,7 +1043,8 @@ export const PLT_COLUMNS = [
     type: 'icon',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1046,7 +1058,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#F3F3F3'
   },
   {
     sortDir: 1,
@@ -1060,7 +1073,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1074,7 +1088,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#F3F3F3'
   },
   {
     sortDir: 1,
@@ -1088,7 +1103,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1102,7 +1118,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FAEBD7'
   },
   {
     sortDir: 1,
@@ -1116,7 +1133,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
 ];
 export const EPM_COLUMNS = [

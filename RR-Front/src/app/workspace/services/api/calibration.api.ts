@@ -6,8 +6,8 @@ import {backendUrl, utilityBackEndUrl} from "../../../shared/api";
 @Injectable({
   providedIn: 'root'
 })
-export class CalibrationApi {
-  protected URL = `${utilityBackEndUrl().calibration}/`;
+export class CalibrationAPI {
+  protected URL = `${utilityBackEndUrl().calibration}`;
 
   constructor(private http: HttpClient) {
   }

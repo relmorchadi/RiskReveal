@@ -261,6 +261,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   wsHeaderSelected: boolean;
   modalSelect: any;
   initAdjutmentApplication: any;
+  defaultAdjustmentInfo = false;
   randomPercentage: any;
   randomAmount: number;
   AALNumber: number = null;
