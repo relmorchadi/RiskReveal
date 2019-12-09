@@ -61,12 +61,11 @@ public class CSVPLTFileReader implements PLTFileReader {
         }
     }
 
-    public List<PEATData> readPeatData(File file) throws RRException {
+    public List<PEATData> readEvenPeriodDrivenPeatData(File file) throws RRException {
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
-
         try {
             List<PEATData> peatData = new ArrayList<>();
             Scanner sc = new Scanner(new FileReader(file));
@@ -75,13 +74,48 @@ public class CSVPLTFileReader implements PLTFileReader {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
-                int eventId = Integer.parseInt(sc.next()); //Simulated Period ID
-                int simPeriod = Integer.parseInt(sc.next()); //Event ID
+                int simPeriod = Integer.parseInt(sc.next()); //Simulated Period ID
+                int eventId = Integer.parseInt(sc.next()); //Event ID
                 int seq = Integer.parseInt(sc.next());
-                double lmf = Double.parseDouble(sc.next()); //Lmf
-                sc.next();
+                double lmf = Double.parseDouble(sc.next()); //Lmf : take the 1st lmf : todo : change after
+                // if has next line, go to next line, todo : ask Viet
+                if (sc.hasNextLine()) {
+                    sc.nextLine();
+                }
                 peatData.add(new PEATData(eventId,
                         simPeriod,
+                        seq,
+                        lmf));
+            }
+            return peatData;
+        } catch (IOException | NoSuchElementException e) {
+            throw new PLTFileCorruptedException();
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
+    }
+
+    public List<PEATData> readEvenDrivenPeatData(File file) throws RRException {
+        if (file == null || !file.exists())
+            throw new PLTFileNotFoundException();
+        if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
+            throw new PLTFileExtNotSupportedException();
+        try {
+            List<PEATData> peatData = new ArrayList<>();
+            Scanner sc = new Scanner(new FileReader(file));
+            sc.useDelimiter("\\r\\n|;");
+            if (sc.hasNextLine()) {
+                sc.nextLine();
+            }
+            while (sc.hasNext()) {
+                int eventId = Integer.parseInt(sc.next()); //Event ID
+                int seq = Integer.parseInt(sc.next());
+                double lmf = Double.parseDouble(sc.next()); //Lmf : take the 1st lmf : todo : change after
+                // if has next line, go to next line, todo : ask Viet
+                if (sc.hasNextLine()) {
+                    sc.nextLine();
+                }
+                peatData.add(new PEATData(eventId,
                         seq,
                         lmf));
             }

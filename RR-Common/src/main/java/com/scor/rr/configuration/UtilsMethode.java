@@ -15,13 +15,12 @@ import java.util.function.Predicate;
 
 public class UtilsMethode {
 
-    public static List<PEATData> getPeatDataFromFile(String path){
-        List<PEATData> peatData = new ArrayList<>();
+    public static List<PEATData> getEvenPeriodDrivenPeatDataFromFile(String path){
         if (path != null) {
             File file = new File(path);
             CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
             try {
-                return csvpltFileReader.readPeatData(file);
+                return csvpltFileReader.readEvenPeriodDrivenPeatData(file);
             } catch (RRException e) {
                 e.printStackTrace();
             }
@@ -29,7 +28,21 @@ public class UtilsMethode {
         return null;
     }
 
-    public static List<ReturnPeriodBandingAdjustmentParameter> getReturnPeriodBendings(String path) {
+    public static List<PEATData> getEvenDrivenPeatDataFromFile(String path){
+        if (path != null) {
+            File file = new File(path);
+            CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+            try {
+                return csvpltFileReader.readEvenDrivenPeatData(file);
+            } catch (RRException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    public static List<ReturnPeriodBandingAdjustmentParameter> getReturnPeriodBandings(String path) {
         if (path != null) {
             File file = new File(path);
             CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
