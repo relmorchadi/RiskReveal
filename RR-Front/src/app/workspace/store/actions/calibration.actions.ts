@@ -3,17 +3,17 @@ export class loadAllPltsFromCalibration {
   constructor(public payload?: any) {}
 }
 
-export class loadAllAdjustmentApplication {
+export class LoadAllAdjustmentApplication {
   static readonly type = '[Calibration] load All Adjustment Application';
   constructor(public payload?: any) {}
 }
 
-export class LoadAllDefaultAdjastementApplication {
+export class LoadAllDefaultAdjustmentApplication {
   static readonly type = '[Calibration] Load All Default Adjustment';
   constructor(public payload?: any) {}
 }
 
-export class loadAllPltsFromCalibrationSuccess {
+export class LoadAllPltsFromCalibrationSuccess {
   static readonly type = '[Calibration] Load All Plts Success';
   constructor(public payload?: any) {}
 }
@@ -30,23 +30,17 @@ export class constructUserTagsFromCalibration {
 
 export class ToggleSelectPltsFromCalibration {
   static readonly type = '[Calibration] Toggle Select Plts';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class calibrateSelectPlts {
   static readonly type = '[Calibration] Toggle calibrate Plts';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class toCalibratePlts {
   static readonly type = '[Calibration] Save PLTs to calibrate';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class setUserTagsFiltersFromCalibration {

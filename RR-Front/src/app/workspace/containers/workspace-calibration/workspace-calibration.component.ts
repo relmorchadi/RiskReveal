@@ -374,6 +374,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
+      this.dispatch(new fromWorkspaceStore.LoadAllDefaultAdjustmentApplication());
       /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy

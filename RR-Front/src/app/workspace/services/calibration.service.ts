@@ -2,9 +2,11 @@ import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
 import {applyAdjustment} from "../store/actions";
-import {catchError, map, mergeMap} from "rxjs/operators";
+import {catchError, map, mergeMap, switchMap} from "rxjs/operators";
+import {of} from 'rxjs/internal/observable/of';
 import * as _ from "lodash";
 import {PltApi} from "./api/plt.api";
+import {CalibrationAPI} from "./api/calibration.api";
 import {
   ADJUSTMENT_APPLICATION,
   ADJUSTMENT_TYPE,
@@ -22,6 +24,7 @@ import {
 import produce from "immer";
 import {ActivatedRoute} from "@angular/router";
 import {WorkspaceModel} from "../model";
+import {forkJoin} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +36,10 @@ export class CalibrationService implements NgxsOnInit {
   ctx = null;
   prefix = null;
 
-  constructor(private store$: Store, private pltApi: PltApi, private route$: ActivatedRoute) {
+  constructor(private store$: Store,
+              private pltApi: PltApi,
+              private calibrationAPI: CalibrationAPI,
+              private route$: ActivatedRoute) {
 
   }
 
@@ -120,7 +126,7 @@ export class CalibrationService implements NgxsOnInit {
               }
             }
            }));
-           return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
+           return ctx.dispatch(new fromPlt.LoadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
          }),
          catchError(err => {
            console.log(err);
@@ -143,6 +149,25 @@ export class CalibrationService implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustmentApplication = ADJUSTMENT_APPLICATION;
     }));
+  }
+
+  loadAllDefaultAdjustment(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const marketChannel = state.content[wsIdentifier].marketChannel;
+    return forkJoin(
+      _.toArray(state.content[wsIdentifier].calibration.data[wsIdentifier]).map(item => {
+        return this.calibrationAPI.loadDefaultAdjustement('AGG', marketChannel, item.pltId, item.regionPerilId, item.targetRapId)
+      })
+    ).pipe(
+      switchMap(data => {
+      console.log(data);
+      return of();
+    }),
+      catchError(err => {
+        return of();
+      })
+    )
   }
 
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<any>, payload: any) {

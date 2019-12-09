@@ -656,13 +656,18 @@ export class WorkspaceState {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
   }
 
-  @Action(fromWS.loadAllAdjustmentApplication)
-  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+  @Action(fromWS.LoadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAllAdjustmentApplication) {
     return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
-  @Action(fromWS.loadAllPltsFromCalibrationSuccess)
-  loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibrationSuccess) {
+  @Action(fromWS.LoadAllDefaultAdjustmentApplication)
+  loadAllDefaultAdjustmentApplication(ctx: StateContext<WorkspaceModel>) {
+    return this.calibrationService.loadAllDefaultAdjustment(ctx);
+  }
+
+  @Action(fromWS.LoadAllPltsFromCalibrationSuccess)
+  loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAllPltsFromCalibrationSuccess) {
     this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload);
   }
 

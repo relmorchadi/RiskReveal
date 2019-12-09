@@ -943,7 +943,7 @@
   }
 }
 
-:host .PLTs-content {
+.PLTs-content {
   //background: #fff;
 
   ::ng-deep {
@@ -953,36 +953,6 @@
 
     .ui-table-frozen-view {
       min-height: 610px;
-    }
-
-    thead {
-      th {
-        background-color: #efefef;
-        border: none;
-
-        .header-tab {
-          display: flex;
-
-          i {
-            font-size: 22px;
-          }
-        }
-      }
-
-      .ant-checkbox-indeterminate .ant-checkbox-inner {
-        background-color: #0700cf;
-        border-color: #0700cf;
-      }
-
-      .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-        height: 4px;
-        background-color: #ffffff;
-      }
-
-      .ant-checkbox-checked .ant-checkbox-inner {
-        background-color: #0700cf;
-        border-color: #0700cf;
-      }
     }
 
     tbody {
@@ -1000,22 +970,24 @@
     }
 
     .ui-table-thead {
-
-      .checkBoxHead div {
-        display: flex;
-      }
-
       th {
-        color: rgba(0, 0, 0, 0.38) !important;
-        background-color: #F3F3F3;
-        outline-color: #fff;
+        color: rgba(0, 0, 0, 0.48) !important;
+        background-color: #FFFFFF;
+        outline-color: #F3F3F3;
+        font-size: 12px;
+        font-weight: bold;
         font-family: Rubik;
-        height: 45px;
+        height: 36px;
         border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-        border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
-        padding: 0 !important;
+        padding: 0 2px !important;
 
+        .header-tab {
+          display: flex;
+
+          i {
+            font-size: 22px;
+          }
+        }
 
         .filter-input {
           width: 100%;
@@ -1048,6 +1020,37 @@
           font-size: 28px;
           margin-left: 2px;
           cursor: pointer;
+        }
+      }
+
+      .ant-checkbox-indeterminate .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+
+      .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+        height: 4px;
+        background-color: #ffffff;
+      }
+
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+
+      .checkBoxHead div {
+        display: flex;
+      }
+
+      tr:nth-child(2n + 1) {
+        th {
+          border-top: 1px solid rgba(0, 0, 0, 0.15);
+        }
+      }
+
+      tr:nth-child(2n) {
+        th {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15);
         }
       }
     }
@@ -1137,6 +1140,24 @@
   }
 }
 
+.tableFac-layout {
+  ::ng-deep {
+    .ui-table-thead {
+      tr:nth-child(2n) {
+        th {
+          border-bottom: none;
+        }
+      }
+
+      tr:nth-child(2n + 1) {
+        th {
+          border-top: none;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+        }
+      }
+    }
+  }
+}
 
 ::ng-deep .tab-content-cnt {
   overflow: visible;
