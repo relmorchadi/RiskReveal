@@ -1,9 +1,7 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
-import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
-import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.enums.StatisticMetric;
 import org.slf4j.Logger;
