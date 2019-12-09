@@ -1,7 +1,7 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
-import com.scor.rr.domain.dto.OEPMetric;
+import com.scor.rr.domain.dto.EPMetricPoint;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 
@@ -33,7 +33,7 @@ public interface ICalculAdjustment {
         return null;
     }
 
-    static List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData) {
+    static List<EPMetricPoint> getOEPMetric(List<PLTLossData> pltLossData) {
         return null;
     }
 

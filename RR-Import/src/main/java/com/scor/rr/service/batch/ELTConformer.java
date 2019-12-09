@@ -51,7 +51,7 @@ public class ELTConformer {
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             // Extract Params
             RLAnalysis rlAnalysis = bundle.getRlAnalysis();
-            Long anlsId = rlAnalysis.getAnalysisId();
+            Long anlsId = rlAnalysis.getRlId();
             Long rdmId =rlAnalysis.getRdmId();
             String rdmName = rlAnalysis.getRdmName();
             String fpCode = bundle.getFinancialPerspective(); // not understood ???

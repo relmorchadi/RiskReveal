@@ -39,7 +39,7 @@ public class ELTTruncator {
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
             RLAnalysisELT riskLinkAnalysisELT = bundle.getRlAnalysisELT();
             RLImportSelection sourceResult=bundle.getSourceResult();
-            log.info("truncating ELT data for analysis " + riskLinkAnalysis.getAnalysisId());
+            log.info("truncating ELT data for analysis " + riskLinkAnalysis.getRlId());
             log.info("Threshold found: " + threshold);
             log.debug("Source ELT size = {}", riskLinkAnalysisELT.getEltLosses().size());
 

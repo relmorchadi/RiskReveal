@@ -6,17 +6,23 @@ import java.io.Serializable;
 
 public class PEATData implements Serializable {
 
-    private  int eventId;
-    private  int simPeriod; // shared properties among PLTLossData in one analysis!
-    private  int seq;
+    private int eventId;
+    private int simPeriod; // shared properties among PLTLossData in one analysis!
+    private int seq;
     private double lmf;
 
     public PEATData() {
     }
 
-    public PEATData(int eventId, int simPeriod, int seq, double lmf) {
-        this.eventId = eventId;
+    public PEATData(int simPeriod, int eventId, int seq, double lmf) {
         this.simPeriod = simPeriod;
+        this.eventId = eventId;
+        this.seq = seq;
+        this.lmf = lmf;
+    }
+
+    public PEATData(int eventId, int seq, double lmf) {
+        this.eventId = eventId;
         this.seq = seq;
         this.lmf = lmf;
     }

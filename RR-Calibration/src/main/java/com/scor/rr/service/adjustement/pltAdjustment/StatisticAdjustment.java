@@ -1,8 +1,9 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
-import com.scor.rr.domain.dto.AEPMetric;
-import com.scor.rr.domain.dto.OEPMetric;
+import com.scor.rr.domain.dto.EPMetric;
+import com.scor.rr.domain.dto.EPMetricPoint;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.domain.enums.StatisticMetric;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,11 @@ public class StatisticAdjustment {
 
     public static double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            List<AEPMetric> aepMetrics = CalculAdjustement.getAEPMetric(pltLossDatas);
+            List<EPMetricPoint> aepMetrics = CalculAdjustement.getAEPMetric(pltLossDatas).getEpMetricPoints();
             if(aepMetrics != null) {
                 double averageAnnualLoss;
                 averageAnnualLoss = averageAnnualLoss(pltLossDatas);
-                return Math.sqrt(aepMetrics.stream().mapToDouble(value -> Math.pow(value.getLossAep() - averageAnnualLoss, 2)).sum() / (CONSTANTE - 1));
+                return Math.sqrt(aepMetrics.stream().mapToDouble(value -> Math.pow(value.getLoss() - averageAnnualLoss, 2)).sum() / (CONSTANTE - 1));
             } else {
                 log.info("AEP EMPTY");
                 return 0;
@@ -42,28 +43,30 @@ public class StatisticAdjustment {
         }
     }
 
-    public static List<AEPMetric> AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
+    public static EPMetric AEPTVaRMetrics(List<EPMetricPoint> aepMetrics) {
         if(aepMetrics != null && !aepMetrics.isEmpty()) {
             final int[] s = {0};
             final double[] oep = {0};
-            return aepMetrics.stream().map(aepMetric -> {
+            return new EPMetric(StatisticMetric.TVAR_AEP,
+                    aepMetrics.stream().map(aepMetric -> {
                 s[0] = s[0] +1;
-                oep[0] = oep[0] + aepMetric.getLossAep();
-                return new AEPMetric(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList());
+                oep[0] = oep[0] + aepMetric.getLoss();
+                return new EPMetricPoint(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList()));
         } else {
             log.info("PLT EMPTY");
             return null;
         }
     }
 
-    public static List<OEPMetric> OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
+    public static EPMetric OEPTVaRMetrics(List<EPMetricPoint> oepMetrics) {
         if(oepMetrics != null && !oepMetrics.isEmpty()) {
             final int[] s = {0};
             final double[] oep = {0};
-            return oepMetrics.stream().map(aepMetric -> {
+            return new EPMetric(StatisticMetric.TVAR_OEP,
+                    oepMetrics.stream().map(aepMetric -> {
                 s[0] = s[0] +1;
-                oep[0] = oep[0] + aepMetric.getLossOep();
-                return new OEPMetric(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList());
+                oep[0] = oep[0] + aepMetric.getLoss();
+                return new EPMetricPoint(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList()));
         } else {
             log.info("PLT EMPTY");
             return null;

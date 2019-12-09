@@ -65,7 +65,7 @@ public class ELTExtractor {
             String fpCode = bundle.getFinancialPerspective();
             String defaultInstanceId = bundle.getInstanceId();
             Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId)  : null;
-            Long analysisId = riskLinkAnalysis.getAnalysisId();
+            Long analysisId = riskLinkAnalysis.getRlId();
             Long rdmId = riskLinkAnalysis.getRdmId();
             String rdmName = riskLinkAnalysis.getRdmName();
 
@@ -74,7 +74,7 @@ public class ELTExtractor {
                     .map(dsId -> rlModelDataSourceRepository.findById(dsId).get())
                     .map(ds -> ds.getInstanceId())
                     .orElseGet(() -> {
-                log.warn("RmsModelDatasource is null for rlAnalysis {} - use instanceId from batch", riskLinkAnalysis.getAnalysisId());
+                log.warn("RmsModelDatasource is null for rlAnalysis {} - use instanceId from batch", riskLinkAnalysis.getRlId());
                 return defaultInstanceId;
             });
 

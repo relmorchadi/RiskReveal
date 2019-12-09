@@ -173,7 +173,7 @@ public class RegionPerilExtractor {
 
                 modelAnalysisEntity.setDataSourceId(sourceResult.getRlAnalysis().getRdmId());
                 modelAnalysisEntity.setDataSourceName(sourceResult.getRlAnalysis().getRdmName());
-                modelAnalysisEntity.setAnalysisId(sourceResult.getRlAnalysis().getAnalysisId());
+                modelAnalysisEntity.setAnalysisId(sourceResult.getRlAnalysis().getRlId());
                 modelAnalysisEntity.setAnalysisName(sourceResult.getRlAnalysis().getAnalysisName());
                 modelAnalysisEntity.setFinancialPerspective(sourceResult.getFinancialPerspective());
 
