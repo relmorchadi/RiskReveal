@@ -1,470 +1,487 @@
-<!--<div class="app-wrapper">-->
-  <!--<div class="top-separator">-->
-    <!--<div style="width: 100%">-->
-      <!--<span>-->
-        <!--USER PREFERENCE SETTINGS &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>-->
-      <!--</span>-->
-    <!--</div>-->
-  <!--</div>-->
-  <!--<div class="app-header">-->
-    <!--<div class="app-title-manager">-->
-      <!--<h4>User Preference Settings</h4>-->
-      <!--&lt;!&ndash;      <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"-->
-                    <!--nz-button nzType="primary" nzSize="default" nzShape="circle">-->
-              <!--<i style="color: #9592E6;" nz-icon theme="outline">-->
-                <!--<i class="icon-map-pin-alt"></i>-->
-              <!--</i>-->
-            <!--</button>&ndash;&gt;-->
-    <!--</div>-->
-  <!--</div>-->
-  <!--<div>-->
-    <!--<nz-tabset nzTabPosition="left">-->
-      <!--<nz-tab [nzTitle]="generalConfig">-->
-        <!--<div>-->
-          <!--<span class="main-tab-title">General</span>-->
-          <!--<div class="settings-holder">-->
-            <!--&lt;!&ndash;            <span class="head-title">Search</span>-->
-                        <!--<div class="settings-wrapper">-->
-                          <!--<div class="user-config-item">-->
-                            <!--<span>Search Target :</span>-->
-                            <!--<nz-select class="dropdown-default"-->
-                                       <!--style="width: 270px;"-->
-                                       <!--[ngModel]="searchTarget"-->
-                                       <!--(ngModelChange)="changeSearch($event)"-->
-                                       <!--nzShowSearch>-->
-                              <!--<nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>-->
-                              <!--<nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>-->
-                            <!--</nz-select>-->
-                          <!--</div>-->
-                        <!--</div>&ndash;&gt;-->
+<div class="app-wrapper">
+  <div class="top-separator">
+    <div style="width: 100%">
+      <span>
+        USER PREFERENCE SETTINGS &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>
+      </span>
+    </div>
+  </div>
+  <div class="app-header">
+    <div class="app-title-manager">
+      <h4>User Preference Settings</h4>
+      <!--      <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+                    nz-button nzType="primary" nzSize="default" nzShape="circle">
+              <i style="color: #9592E6;" nz-icon theme="outline">
+                <i class="icon-map-pin-alt"></i>
+              </i>
+            </button>-->
+    </div>
+  </div>
+  <div>
+    <nz-tabset nzTabPosition="left">
+      <nz-tab [nzTitle]="generalConfig">
+        <div>
+          <div class="settings-holder">
+            <!--            <span class="head-title">Search</span>
+                        <div class="settings-wrapper">
+                          <div class="user-config-item">
+                            <span>Search Target :</span>
+                            <nz-select class="dropdown-default"
+                                       style="width: 270px;"
+                                       [ngModel]="searchTarget"
+                                       (ngModelChange)="changeSearch($event)"
+                                       nzShowSearch>
+                              <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
+                              <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
+                            </nz-select>
+                          </div>
+                        </div>-->
 
-            <!--<span class="head-title">Date & Time</span>-->
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div class="a-card-item"><span>Short Date</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.general.dateFormat.shortDate"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select a Short Date Format"-->
-                  <!--&gt;-->
-                    <!--<nz-option nzLabel="DD/MM/YYYY" nzValue="DD/MM/YYYY"></nz-option>-->
-                    <!--<nz-option nzLabel="DD/MM/YY" nzValue="D/M/YY"></nz-option>-->
-                    <!--<nz-option nzLabel="MM/DD/YYYY" nzValue="MM/DD/YYYY"></nz-option>-->
-                    <!--<nz-option nzLabel="M/D/YY" nzValue="M/D/YY"></nz-option>-->
-                    <!--<nz-option nzLabel="DD-MM-YYYY" nzValue="DD-MM-YYYY"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Long Date</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.general.dateFormat.longDate"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select A Long Date Format"-->
-                  <!--&gt;-->
-                    <!--<nz-option nzLabel="DDDD MMMM YYYY" nzValue="DDDD MMMM YYYY"></nz-option>-->
-                    <!--<nz-option nzLabel="DDD MMMM YYYY" nzValue="DDD MMMM YYYY"></nz-option>-->
-                    <!--<nz-option nzLabel="DD MMMM YYYY" nzValue="DD MMMM YYYY"></nz-option>-->
-                    <!--<nz-option nzLabel="D MMM YYYY" nzValue="D MMM YYYY"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Short Time</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.general.dateFormat.shortTime"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select A Time Format"-->
-                  <!--&gt;-->
-                    <!--<nz-option nzLabel="HH:MM" nzValue="HH:MM"></nz-option>-->
-                    <!--<nz-option nzLabel="HH.MM" nzValue="HH.MM"></nz-option>-->
-                    <!--<nz-option nzLabel="HH' MM" nzValue="HH' MM"></nz-option>-->
-                    <!--<nz-option nzLabel="HH' h' MM" nzValue="HH' h' MM"></nz-option>-->
-                    <!--<nz-option nzLabel="H:MM" nzValue="H:MM"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Long Time</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.general.dateFormat.longTime"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select A Time Format"-->
-                  <!--&gt;-->
-                    <!--<nz-option nzLabel="HH:MM:SS" nzValue="HH:MM:SS"></nz-option>-->
-                    <!--<nz-option nzLabel="H:MM:SS" nzValue="H:MM:SS"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Time Zone</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<ng2-timezone-picker [(timezone)]="state.general.timeZone" guess="true" showOffset="true"-->
-                                       <!--style="width: 270px"></ng2-timezone-picker>-->
-                <!--</div>-->
-              <!--</div>-->
+            <div class="flex-horizontal-sb-layout">
+              <div class="main-tab-title" style="margin-left: 5px">General</div>
+              <div>
+                <span class="expand-overlay">Expand all</span>
+                <button (click)="saveChanges()" class="a-buttons-contained">Save</button>
+              </div>
+            </div>
+            <span class="head-title">Date & Time</span>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Short Date</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.general.dateFormat.shortDate"
+                    (ngModelChange)="changePerspective($event, 'shortDate')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select a Short Date Format"
+                  >
+                    <nz-option nzLabel="DD/MM/YYYY" nzValue="DD/MM/YYYY"></nz-option>
+                    <nz-option nzLabel="DD/MM/YY" nzValue="D/M/YY"></nz-option>
+                    <nz-option nzLabel="MM/DD/YYYY" nzValue="MM/DD/YYYY"></nz-option>
+                    <nz-option nzLabel="M/D/YY" nzValue="M/D/YY"></nz-option>
+                    <nz-option nzLabel="DD-MM-YYYY" nzValue="DD-MM-YYYY"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Long Date</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.general.dateFormat.longDate"
+                    (ngModelChange)="changePerspective($event, 'longDate')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select A Long Date Format"
+                  >
+                    <nz-option nzLabel="DDDD MMMM YYYY" nzValue="DDDD MMMM YYYY"></nz-option>
+                    <nz-option nzLabel="DDD MMMM YYYY" nzValue="DDD MMMM YYYY"></nz-option>
+                    <nz-option nzLabel="DD MMMM YYYY" nzValue="DD MMMM YYYY"></nz-option>
+                    <nz-option nzLabel="D MMM YYYY" nzValue="D MMM YYYY"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Short Time</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.general.dateFormat.shortTime"
+                    (ngModelChange)="changePerspective($event, 'shortTime')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select A Time Format"
+                  >
+                    <nz-option nzLabel="HH:MM" nzValue="HH:MM"></nz-option>
+                    <nz-option nzLabel="HH.MM" nzValue="HH.MM"></nz-option>
+                    <nz-option nzLabel="HH' MM" nzValue="HH' MM"></nz-option>
+                    <nz-option nzLabel="HH' h' MM" nzValue="HH' h' MM"></nz-option>
+                    <nz-option nzLabel="H:MM" nzValue="H:MM"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Long Time</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.general.dateFormat.longTime"
+                    (ngModelChange)="changePerspective($event, 'longTime')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select A Time Format"
+                  >
+                    <nz-option nzLabel="HH:MM:SS" nzValue="HH:MM:SS"></nz-option>
+                    <nz-option nzLabel="H:MM:SS" nzValue="H:MM:SS"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Time Zone</span>
+                <div class="a-card-item-right">
+                  <ng2-timezone-picker [(timezone)]="state.general.timeZone" guess="true" showOffset="true"
+                                       style="width: 270px"></ng2-timezone-picker>
+                </div>
+              </div>
 
-            <!--</div>-->
+            </div>
 
-            <!--<span class="head-title">Numerical</span>-->
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div (click)="numberCollapse = !numberCollapse" class="a-card-item" style="cursor: pointer"><span>Number Format</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<i class="icon-arrow_forward_ios_24px"></i>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div style="border-bottom: 1px solid rgba(0, 0, 0, 0.15);" *ngIf="numberCollapse">-->
-                <!--<div class="a-card-item number-config-item"><span>Number Of Decimal Places</span>-->
-                  <!--<div>-->
-                    <!--<nz-input-number-->
-                      <!--[ngModel]="state.general.numberFormat.numberOfDecimals"-->
-                      <!--[nzMin]="0"-->
-                      <!--[nzMax]="12"-->
-                      <!--[nzStep]="1"-->
-                      <!--(ngModelChange)="changeNumberFormat($event , 'numberOfDecimals')"-->
-                      <!--style="width: 270px;"-->
-                    <!--&gt;</nz-input-number>-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<div class="a-card-item number-config-item"><span>Decimal Separator Character</span>-->
-                  <!--<div class="custom-radio">-->
-                    <!--<nz-select-->
-                      <!--style="width: 270px;"-->
-                      <!--[ngModel]="state.general.numberFormat.decimalSeparator"-->
-                      <!--(ngModelChange)="changeNumberFormat($event , 'decimalSeparator')"-->
-                      <!--nzShowSearch-->
-                      <!--class="a-dropdown-small"-->
-                      <!--nzPlaceHolder="Select A Time Format"-->
-                    <!--&gt;-->
-                      <!--<nz-option nzLabel="Comma (,)" nzValue=","></nz-option>-->
-                      <!--<nz-option nzLabel="Period (.)" nzValue="."></nz-option>-->
-                      <!--<nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>-->
-                      <!--<nz-option nzLabel="Space ( )" nzValue=" "></nz-option>-->
-                    <!--</nz-select>-->
-                    <!--&lt;!&ndash;                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">-->
-                                          <!--<label nz-radio nzValue=",">,</label>-->
-                                          <!--<label nz-radio nzValue=".">.</label>-->
-                                          <!--<label nz-radio nzValue="'">'</label>-->
-                                        <!--</nz-radio-group>&ndash;&gt;-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<div class="a-card-item number-config-item"><span>Thousand Separator Character</span>-->
-                  <!--<div class="custom-radio">-->
-                    <!--<nz-select-->
-                      <!--style="width: 270px;"-->
-                      <!--[ngModel]="state.general.numberFormat.decimalThousandSeparator"-->
-                      <!--(ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')"-->
-                      <!--nzShowSearch-->
-                      <!--class="a-dropdown-small"-->
-                      <!--nzPlaceHolder="Select A Time Format"-->
-                    <!--&gt;-->
-                      <!--<nz-option nzLabel="Comma (,)" nzValue=","></nz-option>-->
-                      <!--<nz-option nzLabel="Period (.)" nzValue="."></nz-option>-->
-                      <!--<nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>-->
-                      <!--<nz-option nzLabel="Space ( )" nzValue=" "></nz-option>-->
-                    <!--</nz-select>-->
-                    <!--&lt;!&ndash;                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">-->
-                                          <!--<label nz-radio nzValue=",">,</label>-->
-                                          <!--<label nz-radio nzValue=".">.</label>-->
-                                          <!--<label nz-radio nzValue="'">'</label>-->
-                                        <!--</nz-radio-group>&ndash;&gt;-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<div class="a-card-item number-config-item column-config"><span>Negative Numbers</span>-->
-                  <!--<div class="list-config-wrapper">-->
-                    <!--<ul>-->
-                      <!--<li (click)="changeNumberFormat('simple' , 'negativeFormat')"-->
-                          <!--[ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simple'}">-->
-                        <!-- -{{number_format(9123.104687921545317523123,-->
-                        <!--state.general.numberFormat.numberOfDecimals,-->
-                        <!--state.general.numberFormat.decimalSeparator,-->
-                        <!--state.general.numberFormat.decimalThousandSeparator)}}</li>-->
-                      <!--<li (click)="changeNumberFormat('redHue' , 'negativeFormat')"-->
-                          <!--[ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'redHue'}">-->
-                        <!--<span style="color: red">{{number_format(9123.104687921545317523123,-->
-                          <!--state.general.numberFormat.numberOfDecimals,-->
-                          <!--state.general.numberFormat.decimalSeparator,-->
-                          <!--state.general.numberFormat.decimalThousandSeparator)}}</span></li>-->
-                      <!--<li (click)="changeNumberFormat('simpleRHue' , 'negativeFormat')"-->
-                          <!--[ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simpleRHue'}">-->
-                        <!--<span style="color: red">-{{number_format(9123.104687921545317523123,-->
-                          <!--state.general.numberFormat.numberOfDecimals,-->
-                          <!--state.general.numberFormat.decimalSeparator,-->
-                          <!--state.general.numberFormat.decimalThousandSeparator)}}</span></li>-->
-                      <!--<li (click)="changeNumberFormat('roundBrackets' , 'negativeFormat')"-->
-                          <!--[ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'roundBrackets'}">-->
-                        <!--({{number_format(9123.104687921545317523123,-->
-                        <!--state.general.numberFormat.numberOfDecimals,-->
-                        <!--state.general.numberFormat.decimalSeparator,-->
-                        <!--state.general.numberFormat.decimalThousandSeparator)}})-->
-                      <!--</li>-->
-                    <!--</ul>-->
-                  <!--</div>-->
-                <!--</div>-->
-              <!--</div>-->
+            <span class="head-title">Numerical</span>
+            <div class="a-card-list-wrap">
+              <div (click)="numberCollapse = !numberCollapse" class="a-card-item" style="cursor: pointer"><span>Number Format</span>
+                <div class="a-card-item-right">
+                  <i class="icon-arrow_forward_ios_24px"></i>
+                </div>
+              </div>
+              <div style="border-bottom: 1px solid rgba(0, 0, 0, 0.15);" *ngIf="numberCollapse">
+                <div class="a-card-item number-config-item"><span>Number Of Decimal Places</span>
+                  <div>
+                    <nz-input-number
+                      [ngModel]="state.general.numberFormat.numberOfDecimals"
+                      [nzMin]="0"
+                      [nzMax]="12"
+                      [nzStep]="1"
+                      (ngModelChange)="changeNumberFormat($event , 'numberOfDecimals')"
+                      style="width: 270px;"
+                    ></nz-input-number>
+                  </div>
+                </div>
+                <div class="a-card-item number-config-item"><span>Decimal Separator Character</span>
+                  <div class="custom-radio">
+                    <nz-select
+                      style="width: 270px;"
+                      [ngModel]="state.general.numberFormat.decimalSeparator"
+                      (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')"
+                      nzShowSearch
+                      class="a-dropdown-small"
+                      nzPlaceHolder="Select A Time Format"
+                    >
+                      <nz-option nzLabel="Comma (,)" nzValue=","></nz-option>
+                      <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
+                      <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
+                      <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
+                    </nz-select>
+                    <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
+                                          <label nz-radio nzValue=",">,</label>
+                                          <label nz-radio nzValue=".">.</label>
+                                          <label nz-radio nzValue="'">'</label>
+                                        </nz-radio-group>-->
+                  </div>
+                </div>
+                <div class="a-card-item number-config-item"><span>Thousand Separator Character</span>
+                  <div class="custom-radio">
+                    <nz-select
+                      style="width: 270px;"
+                      [ngModel]="state.general.numberFormat.decimalThousandSeparator"
+                      (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')"
+                      nzShowSearch
+                      class="a-dropdown-small"
+                      nzPlaceHolder="Select A Time Format"
+                    >
+                      <nz-option nzLabel="Comma (,)" nzValue=","></nz-option>
+                      <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
+                      <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
+                      <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
+                    </nz-select>
+                    <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
+                                          <label nz-radio nzValue=",">,</label>
+                                          <label nz-radio nzValue=".">.</label>
+                                          <label nz-radio nzValue="'">'</label>
+                                        </nz-radio-group>-->
+                  </div>
+                </div>
+                <div class="a-card-item number-config-item column-config"><span>Negative Numbers</span>
+                  <div class="list-config-wrapper">
+                    <ul>
+                      <li (click)="changeNumberFormat('simple' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simple'}">
+                         -{{number_format(9123.104687921545317523123,
+                        state.general.numberFormat.numberOfDecimals,
+                        state.general.numberFormat.decimalSeparator,
+                        state.general.numberFormat.decimalThousandSeparator)}}</li>
+                      <li (click)="changeNumberFormat('redHue' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'redHue'}">
+                        <span style="color: red">{{number_format(9123.104687921545317523123,
+                          state.general.numberFormat.numberOfDecimals,
+                          state.general.numberFormat.decimalSeparator,
+                          state.general.numberFormat.decimalThousandSeparator)}}</span></li>
+                      <li (click)="changeNumberFormat('simpleRHue' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simpleRHue'}">
+                        <span style="color: red">-{{number_format(9123.104687921545317523123,
+                          state.general.numberFormat.numberOfDecimals,
+                          state.general.numberFormat.decimalSeparator,
+                          state.general.numberFormat.decimalThousandSeparator)}}</span></li>
+                      <li (click)="changeNumberFormat('roundBrackets' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'roundBrackets'}">
+                        ({{number_format(9123.104687921545317523123,
+                        state.general.numberFormat.numberOfDecimals,
+                        state.general.numberFormat.decimalSeparator,
+                        state.general.numberFormat.decimalThousandSeparator)}})
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
 
-            <!--</div>-->
+            </div>
 
-            <!--<span class="head-title">Recent</span>-->
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div class="a-card-item"><span>Number of recent history items (My recent)</span></div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="footer-tab-settings">-->
-            <!--<button class="a-buttons-contained">Save</button>-->
-          <!--</div>-->
-        <!--</div>-->
-
-
-        <!--<ng-template #generalConfig>-->
-          <!--<span>General</span>-->
-        <!--</ng-template>-->
-      <!--</nz-tab>-->
-      <!--<nz-tab [nzTitle]="importConfig">-->
-        <!--<div>-->
-          <!--<span class="main-tab-title">Import</span>-->
-          <!--<div class="settings-holder">-->
-
-            <!--<span class="head-title">General</span>-->
-
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div class="a-card-item">-->
-                <!--<span>Default Import Type</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--(ngModelChange)="defaultImportChange()"-->
-                    <!--[(ngModel)]="defaultImport"-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select an import"-->
-                    <!--nzShowSearch-->
-                    <!--style="width: 270px;"-->
-                  <!--&gt;-->
-                    <!--<nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>-->
-                    <!--<nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>-->
-                    <!--<nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
+            <span class="head-title">Recent</span>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Number of recent history items (My recent)</span></div>
+            </div>
+          </div>
+        </div>
 
 
-            <!--<span class="head-title">Default Configuration: RiskLink</span>-->
-            <!--<div class="a-card-list-wrap">-->
+        <ng-template #generalConfig>
+          <span>General</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="importConfig">
+        <div>
+          <div class="settings-holder">
 
-              <!--<div class="a-card-item">-->
-                <!--<span>Financial Perspective Event Level</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<p-multiSelect [ngModel]="state.riskLink.financialPerspectiveELT.selected"-->
-                                 <!--[options]="state.riskLink.financialPerspectiveELT.data"-->
-                                 <!--[style]="{width: '270px'}"-->
-                                 <!--defaultLabel="Select Financial Perspective"-->
-                                 <!--maxSelectedLabels="1"></p-multiSelect>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item">-->
-                <!--<span>Financial Perspective Statistics</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.riskLink.financialPerspectiveEPM?.selected"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select an FP"-->
-                  <!--&gt;-->
-                    <!--<nz-option *ngFor="let item of state.riskLink.financialPerspectiveEPM?.data" [nzLabel]="item"-->
-                               <!--[nzValue]="item"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item">-->
-                <!--<span>Target Exposure Currency</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.riskLink.targetCurrency?.selected"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select an import"-->
-                  <!--&gt;-->
-                    <!--<nz-option *ngFor="let item of state.riskLink.targetCurrency?.data" [nzLabel]="item"-->
-                               <!--[nzValue]="item"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
+            <div class="flex-horizontal-sb-layout">
+              <div class="main-tab-title" style="margin-left: 5px">Import</div>
+              <div>
+<!--                <span class="expand-overlay">Expand all</span>-->
+                <button (click)="saveChanges()" class="a-buttons-contained">Save</button>
+              </div>
+            </div>
 
-              <!--<div class="a-card-item">-->
-                <!--<span>Target Analysis Currency</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.riskLink.targetAnalysisCurrency?.selected"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select an import"-->
-                  <!--&gt;-->
-                    <!--<nz-option *ngFor="let item of state.riskLink.targetAnalysisCurrency?.data" [nzLabel]="item"-->
-                               <!--[nzValue]="item"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
+            <span class="head-title">General</span>
 
-              <!--<div class="a-card-item">-->
-                <!--<span>Server Instance</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.riskLink.rmsInstance?.selected"-->
-                    <!--(ngModelChange)="changePerspective()"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select an import"-->
-                  <!--&gt;-->
-                    <!--<nz-option *ngFor="let item of state.riskLink.rmsInstance?.data" [nzLabel]="item"-->
-                               <!--[nzValue]="item"></nz-option>-->
-                  <!--</nz-select>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Exposures Data Sources (EDM)</span></div>-->
-              <!--<div class="a-card-item"><span>Loss Data Sources (RDM)</span></div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="footer-tab-settings">-->
-            <!--<button class="a-buttons-contained">Save</button>-->
-          <!--</div>-->
-        <!--</div>-->
+            <div class="a-card-list-wrap">
+              <div class="a-card-item">
+                <span>Default Import Type</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    (ngModelChange)="changeImportData($event, 'importPage')"
+                    [ngModel]="defaultImport"
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an import"
+                    nzShowSearch
+                    style="width: 270px;"
+                  >
+                    <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+                    <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+                    <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </div>
 
-        <!--<ng-template #importConfig>-->
-          <!--<span>Import</span>-->
-        <!--</ng-template>-->
-      <!--</nz-tab>-->
-      <!--<nz-tab [nzTitle]="widgetConfig" style="min-height: 100vh;">-->
-        <!--<div>-->
-          <!--<span class="main-tab-title">Widgets</span>-->
-          <!--<div class="settings-holder">-->
-            <!--&lt;!&ndash;            <span class="head-title">Widget Info</span>-->
-                        <!--<div class="settings-wrapper">-->
-                          <!--<div class="user-config-item"><span>Generation of the default thread</span></div>-->
-                        <!--</div>&ndash;&gt;-->
 
-            <!--<span class="head-title">Default Scope Of Contract</span>-->
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div class="a-card-item"><span>Country</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<p-multiSelect [ngModel]="state.contractOfInterest.country.selected"-->
-                                 <!--[options]="state.contractOfInterest.country.data"-->
-                                 <!--[style]="{width: '270px'}"-->
-                                 <!--defaultLabel="Select Countries"-->
-                                 <!--maxSelectedLabels="1"-->
-                                 <!--optionLabel="shortName"></p-multiSelect>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>UW Unit</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<p-multiSelect [ngModel]="state.contractOfInterest.uwUnit.selected"-->
-                                 <!--[options]="state.contractOfInterest.uwUnit.data"-->
-                                 <!--[style]="{width: '270px'}"-->
-                                 <!--defaultLabel="Select UW Unit"-->
-                                 <!--maxSelectedLabels="1"-->
-                                 <!--optionLabel="name"></p-multiSelect>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="footer-tab-settings">-->
-            <!--<button class="a-buttons-contained">Save</button>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<ng-template #widgetConfig>-->
-          <!--<span>Contracts Of Interest</span>-->
-        <!--</ng-template>-->
-      <!--</nz-tab>-->
-      <!--<nz-tab [nzTitle]="epMetricConfig">-->
-        <!--<div>-->
-          <!--<span class="main-tab-title">EP Curves</span>-->
-          <!--<div class="settings-holder">-->
+            <span class="head-title">Default Configuration: RiskLink</span>
+            <div class="a-card-list-wrap">
 
-            <!--<span class="head-title">Default</span>-->
-            <!--<div class="a-card-list-wrap">-->
-              <!--<div class="a-card-item"><span>Custom Return Period</span>-->
-                <!--<div class="a-card-item-right">-->
-                  <!--<nz-select-->
-                    <!--style="width: 270px;"-->
-                    <!--[ngModel]="state.epCurves.returnPeriod?.selected"-->
-                    <!--(ngModelChange)="changeContract($event, 'uwUnit')"-->
-                    <!--nzMode="multiple"-->
-                    <!--[nzMaxTagCount]="1"-->
-                    <!--[nzMaxTagPlaceholder]="tagRPPlaceHolder"-->
-                    <!--nzShowSearch-->
-                    <!--class="a-dropdown-small"-->
-                    <!--nzPlaceHolder="Select Return Period"-->
-                  <!--&gt;-->
-                    <!--<nz-option *ngFor="let item of state.epCurves.returnPeriod?.data" [nzLabel]="item"-->
-                               <!--[nzValue]="item"></nz-option>-->
-                  <!--</nz-select>-->
-                  <!--<ng-template #tagRPPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<div class="a-card-item"><span>Default display of EP Curves</span></div>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div class="footer-tab-settings">-->
-            <!--<button class="a-buttons-contained">Save</button>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<ng-template #epMetricConfig>-->
-          <!--<span>EP Curves</span>-->
-        <!--</ng-template>-->
-      <!--</nz-tab>-->
-      <!--&lt;!&ndash;      <nz-tab [nzTitle]="gamConfig">-->
-              <!--<div>-->
-                <!--<span class="main-tab-title">GAM Settings</span>-->
-                <!--<div>-->
+              <div class="a-card-item">
+                <span>Financial Perspective Event Level</span>
+                <div class="a-card-item-right">
+                  <p-multiSelect [ngModel]="state.riskLink.financialPerspectiveELT"
+                                 (ngModelChange)="changeImportData($event, 'financialPerspectiveELT')"
+                                 [options]="financialPerspectiveELT"
+                                 [style]="{width: '270px'}"
+                                 defaultLabel="Select Financial Perspective"
+                                 maxSelectedLabels="1"></p-multiSelect>
+                </div>
+              </div>
+              <div class="a-card-item">
+                <span>Financial Perspective Statistics</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.financialPerspectiveEPM"
+                    (ngModelChange)="changeImportData($event, 'financialPerspectiveEPM')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an FP"
+                  >
+                    <nz-option *ngFor="let item of financialPerspectiveEPM" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item">
+                <span>Target Exposure Currency</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.targetCurrency"
+                    (ngModelChange)="changeImportData($event, 'targetCurrency')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of targetCurrency" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
 
-                  <!--<span class="head-title">Default Settings</span>-->
-                  <!--<div class="settings-wrapper">-->
-                    <!--<div class="user-config-item"><span>Generating the default thread</span></div>-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<div class="footer-tab-settings">-->
-                  <!--<button class="button-standard">Save</button>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<ng-template #gamConfig>-->
-                <!--<span>GAM Configuration</span>-->
-              <!--</ng-template>-->
-            <!--</nz-tab>-->
-            <!--<nz-tab [nzTitle]="searchConfig">-->
-              <!--<div>-->
-                <!--<span class="main-tab-title">Search Settings</span>-->
-                <!--<div>-->
-                  <!--<span class="head-title">Search Result Order</span>-->
+              <div class="a-card-item">
+                <span>Target Analysis Currency</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.targetAnalysisCurrency"
+                    (ngModelChange)="changeImportData($event, 'targetAnalysisCurrency')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of targetAnalysisCurrency" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
 
-                  <!--<div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">-->
-                    <!--<div class="example-box" *ngFor="let item of search" cdkDrag>{{item}}</div>-->
-                  <!--</div>-->
-                <!--</div>-->
-                <!--<div class="footer-tab-settings">-->
-                  <!--<button class="button-standard">Save</button>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<ng-template #searchConfig>-->
-                <!--<span>Search Configuration</span>-->
-              <!--</ng-template>-->
-            <!--</nz-tab>&ndash;&gt;-->
-    <!--</nz-tabset>-->
-  <!--</div>-->
-<!--</div>-->
+              <div class="a-card-item">
+                <span>Server Instance</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.rmsInstance"
+                    (ngModelChange)="changeImportData($event, 'rmsInstance')"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of rmsInstance" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Exposures Data Sources (EDM)</span></div>
+              <div class="a-card-item"><span>Loss Data Sources (RDM)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #importConfig>
+          <span>Import</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="widgetConfig" style="min-height: 100vh;">
+        <div>
+          <div class="settings-holder">
+            <!--            <span class="head-title">Widget Info</span>
+                        <div class="settings-wrapper">
+                          <div class="user-config-item"><span>Generation of the default thread</span></div>
+                        </div>-->
+
+            <div class="flex-horizontal-sb-layout">
+              <div class="main-tab-title" style="margin-left: 5px">Widgets</div>
+              <div>
+                <span class="expand-overlay">Expand all</span>
+                <button (click)="saveChanges()" class="a-buttons-contained">Save</button>
+              </div>
+            </div>
+            <span class="head-title">Default Scope Of Contract</span>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Country</span>
+                <div class="a-card-item-right">
+                  <p-multiSelect [ngModel]="state.contractOfInterest.country"
+                                 (ngModelChange)="widgetConfigChange($event, 'country')"
+                                 [options]="countries"
+                                 [style]="{width: '270px'}"
+                                 defaultLabel="Select Countries"
+                                 maxSelectedLabels="1"
+                                 optionLabel="shortName"></p-multiSelect>
+                </div>
+              </div>
+              <div class="a-card-item"><span>UW Unit</span>
+                <div class="a-card-item-right">
+                  <p-multiSelect [ngModel]="state.contractOfInterest.uwUnit"
+                                 (ngModelChange)="widgetConfigChange($event, 'uwUnit')"
+                                 [options]="uwUnits"
+                                 [style]="{width: '270px'}"
+                                 defaultLabel="Select UW Unit"
+                                 maxSelectedLabels="1"
+                                 optionLabel="name"></p-multiSelect>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #widgetConfig>
+          <span>Contracts Of Interest</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="epMetricConfig">
+        <div>
+          <div class="settings-holder">
+
+            <div class="flex-horizontal-sb-layout">
+              <div class="main-tab-title" style="margin-left: 5px">EP Curves</div>
+              <div>
+                <span class="expand-overlay">Expand all</span>
+                <button (click)="saveChanges()" class="a-buttons-contained">Save</button>
+              </div>
+            </div>
+
+            <span class="head-title">Default</span>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Custom Return Period</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.epCurves.returnPeriod?.selected"
+                    (ngModelChange)="changeContract($event, 'uwUnit')"
+                    nzMode="multiple"
+                    [nzMaxTagCount]="1"
+                    [nzMaxTagPlaceholder]="tagRPPlaceHolder"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select Return Period"
+                  >
+                    <nz-option *ngFor="let item of state.epCurves.returnPeriod?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                  <ng-template #tagRPPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                </div>
+              </div>
+              <div class="a-card-item"><span>Default display of EP Curves</span></div>
+            </div>
+          </div>
+        </div>
+        <ng-template #epMetricConfig>
+          <span>EP Curves</span>
+        </ng-template>
+      </nz-tab>
+      <!--      <nz-tab [nzTitle]="gamConfig">
+              <div>
+                <span class="main-tab-title">GAM Settings</span>
+                <div>
+
+                  <span class="head-title">Default Settings</span>
+                  <div class="settings-wrapper">
+                    <div class="user-config-item"><span>Generating the default thread</span></div>
+                  </div>
+                </div>
+                <div class="footer-tab-settings">
+                  <button class="button-standard">Save</button>
+                </div>
+              </div>
+              <ng-template #gamConfig>
+                <span>GAM Configuration</span>
+              </ng-template>
+            </nz-tab>
+            <nz-tab [nzTitle]="searchConfig">
+              <div>
+                <span class="main-tab-title">Search Settings</span>
+                <div>
+                  <span class="head-title">Search Result Order</span>
+
+                  <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+                    <div class="example-box" *ngFor="let item of search" cdkDrag>{{item}}</div>
+                  </div>
+                </div>
+                <div class="footer-tab-settings">
+                  <button class="button-standard">Save</button>
+                </div>
+              </div>
+              <ng-template #searchConfig>
+                <span>Search Configuration</span>
+              </ng-template>
+            </nz-tab>-->
+    </nz-tabset>
+  </div>
+</div>
