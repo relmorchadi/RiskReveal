@@ -29,7 +29,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -87,7 +87,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                <td *ngFor="let col of columns"
+                <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div class="items-popover-wrapper" >
                     <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -145,7 +145,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -204,7 +204,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
