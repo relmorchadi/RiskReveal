@@ -77,9 +77,7 @@ export class ExtendStateToggleAction {
 
 export class collapseTags {
   static readonly type = '[Calibration] collapse Tags';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class saveAdjustment {

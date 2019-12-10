@@ -416,7 +416,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.initThreadsData();
       // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
-      // console.log(data);
       _.forEach(this.listOfPltsData, row => {
         this.rowKeys[row.pltId] = true;
       });
@@ -633,8 +632,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   resetPath() {
-    this.filterData = _.omit(this.filterData, 'project')
-    this.projects = _.map(this.projects, p => ({...p, selected: false}))
+    this.filterData = _.omit(this.filterData, 'project');
+    this.projects = _.map(this.projects, p => ({...p, selected: false}));
     this.showDeleted = false;
   }
 
@@ -980,8 +979,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   collapseTags() {
-    this.store$.dispatch(new collapseTags(!this.collapsedTags))
-    this.cdRef.detectChanges();
+    this.store$.dispatch(new collapseTags());
+    this.detectChanges();
   }
 
 

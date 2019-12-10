@@ -354,15 +354,17 @@ export class CalibrationService implements NgxsOnInit {
   extendStateToggle(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {scope} = payload;
     const state = ctx.getState();
-    const wsIdentifier = state.currentTab.wsIdentifier
+    const wsIdentifier = state.currentTab.wsIdentifier;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].calibration.extendState = scope === 'init' ? true : !draft.content[wsIdentifier].calibration.extendState;
     }))
   }
 
-  collapseTags(ctx: StateContext<any>, payload: any) {
+  collapseTags(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.collapseTags = payload
+      draft.content[wsIdentifier].calibration.collapseTags = !draft.content[wsIdentifier].calibration.collapseTags;
     }));
   }
 
