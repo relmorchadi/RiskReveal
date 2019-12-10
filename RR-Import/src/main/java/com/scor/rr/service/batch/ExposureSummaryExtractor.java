@@ -225,13 +225,13 @@ public class ExposureSummaryExtractor {
                             String extractName = "RR_RL_GetEdmDetailSummary";
                             entry.getValue().forEach(modelPortfolio -> {
 
-                                RLPortfolio rLPortfolio = rlPortfolioRepository.findByPortfolioId(modelPortfolio.getPortfolioId());
-                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getPortfolioId());
+                                RLPortfolio rLPortfolio = rlPortfolioRepository.findByRlId(modelPortfolio.getPortfolioId());
+                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getRlId());
                                 if (f == null) {
                                     log.error("Error while creating detail exposure file !");
                                 } else {
                                     log.debug("Export to file: {}}", f.getAbsolutePath());
-                                    rmsService.extractDetailedExposure(f, edmId, edmName, instance, extractName, portfolioAndConformedCurrencyList, null, runId, rLPortfolio.getPortfolioId(), rLPortfolio.getType());
+                                    rmsService.extractDetailedExposure(f, edmId, edmName, instance, extractName, portfolioAndConformedCurrencyList, null, runId, rLPortfolio.getRlId(), rLPortfolio.getType());
 
                                     // dh modified
                                     byte[] buffer = new byte[1024];
