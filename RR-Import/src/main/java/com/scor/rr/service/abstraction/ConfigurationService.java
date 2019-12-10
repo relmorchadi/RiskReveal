@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ConfigurationService {
 
-    List<RLAnalysisDto> getRLAnalysisByRLModelDataSourceId(Long rlModelDataSourceId);
+    List<RLAnalysisDto> getRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long rmsId);
 
-    List<RLPortfolioDto> getRLPortfolioByRLModelDataSourceId(Long rlModelDataSourceId);
+    List<RLPortfolioDto> getRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long rmsId);
 }
