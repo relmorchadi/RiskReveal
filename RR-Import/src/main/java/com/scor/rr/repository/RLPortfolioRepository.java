@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long> {
 
-    RLPortfolio findByPortfolioId(Long portfolioId);
+    RLPortfolio findByRlId(Long portfolioId);
 
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
@@ -26,11 +26,11 @@ public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>
             " WHERE rp.projectId= :projectId AND " +
             " rp.edmId= :#{#portfolio.edmId} AND " +
             " rp.edmName= :#{#portfolio.edmName} AND " +
-            " rp.portfolioId= :#{#portfolio.portfolioId} AND " +
+            " rp.rlId= :#{#portfolio.portfolioId} AND " +
             " rp.name= :#{#portfolio.name}")
     void updatePortfolioById(@Param("projectId") Long projectId, @Param("portfolio") EdmPortfolio portfolio);
 
-    RLPortfolio findByEdmIdAndEdmNameAndPortfolioId(Long edmId, String edmName, Long portfolioId);
+    RLPortfolio findByEdmIdAndEdmNameAndRlId(Long edmId, String edmName, Long portfolioId);
 
     List<RLPortfolio> findByRlModelDataSourceRlModelDataSourceId(Long rlModelDataSourceId);
 }

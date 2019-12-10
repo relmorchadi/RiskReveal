@@ -29,7 +29,7 @@ public class RLPortfolio {
     @Column(name = "EdmName")
     private String edmName;
     @Column(name = "PortfolioId")
-    private Long portfolioId;
+    private Long rlId;
     @Column(name = "Number")
     private String number;
     @Column(name = "Name")
@@ -67,7 +67,7 @@ public class RLPortfolio {
         this.projectId = edm.getProjectId();
         this.edmId = Long.valueOf(edm.getRlId());
         this.edmName = edm.getName();
-        this.portfolioId = edmPortfolioBasic.getPortfolioId();
+        this.rlId = edmPortfolioBasic.getPortfolioId();
         this.name = edmPortfolioBasic.getName();
         //this.created = edmPortfolioBasic.getCreated();
         this.description = edmPortfolioBasic.getDescription();

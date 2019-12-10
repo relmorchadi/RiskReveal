@@ -27,9 +27,9 @@ public class RmsRessource {
 
         this.logger.debug("controller starts getting dataSource ...");
 
-        List<DataSource> dataSourcs = rmsService.listAvailableDataSources(instanceId);
+        List<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId);
 
-        return ResponseEntity.ok(dataSourcs.subList(1, 20));
+        return ResponseEntity.ok(dataSources);
     }
 
     @GetMapping("listRdmAnalysisBasic")
