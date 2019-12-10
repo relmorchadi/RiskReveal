@@ -58,13 +58,16 @@ public class ConfigurationResource {
     }
 
     @GetMapping(value = "get-riskLink-analysis-portfolios")
-    public ResponseEntity<?> getRLAnalysisOrRLPortfolios(@RequestParam Long rlModelDataSource, @RequestParam ModelDataSourceType type) {
+    public ResponseEntity<?> getRLAnalysisOrRLPortfolios(@RequestParam String instanceId,
+                                                         @RequestParam Long projectId,
+                                                         @RequestParam Long rmsId,
+                                                         @RequestParam ModelDataSourceType type) {
         try {
             switch (type) {
                 case EDM:
-                    return new ResponseEntity<>(configurationService.getRLPortfolioByRLModelDataSourceId(rlModelDataSource), HttpStatus.OK);
+                    return new ResponseEntity<>(configurationService.getRLPortfolioByRLModelDataSourceId(instanceId, projectId, rmsId), HttpStatus.OK);
                 case RDM:
-                    return new ResponseEntity<>(configurationService.getRLAnalysisByRLModelDataSourceId(rlModelDataSource), HttpStatus.OK);
+                    return new ResponseEntity<>(configurationService.getRLAnalysisByRLModelDataSourceId(instanceId, projectId, rmsId), HttpStatus.OK);
                 default:
                     return new ResponseEntity<>("Unknown type", HttpStatus.NOT_ACCEPTABLE);
             }
