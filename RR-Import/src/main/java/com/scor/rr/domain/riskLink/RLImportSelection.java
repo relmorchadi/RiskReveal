@@ -21,25 +21,25 @@ public class RLImportSelection {
     private Long rlImportSelectionId;
     @Column(name = "Entity")
     private Integer entity;
-    @Column(name = "projectId")
+    @Column(name = "ProjectId")
     private Long projectId;
-    @Column(name = "targetCurrency")
+    @Column(name = "TargetCurrency")
     private String targetCurrency;
-    @Column(name = "targetRegionPeril")
+    @Column(name = "TargetRegionPeril")
     private String targetRegionPeril;
     @Column(name = "UserSelectedGrain")
     private String userSelectedGrain;
-    @Column(name = "overrideRegionPerilBasis")
+    @Column(name = "OverrideRegionPerilBasis")
     private String overrideRegionPerilBasis;
-    @Column(name = "occurrenceBasis")
+    @Column(name = "OccurrenceBasis")
     private String occurrenceBasis;
-    @Column(name = "financialPerspective")
+    @Column(name = "FinancialPerspective")
     private String financialPerspective;
-    @Column(name = "unitMultiplier")
+    @Column(name = "UnitMultiplier")
     private Float unitMultiplier;
-    @Column(name = "proportion")
+    @Column(name = "Proportion")
     private Float proportion;
-    @Column(name = "targetRAPCode")
+    @Column(name = "TargetRAPCode")
     private String targetRAPCode;
     // TODO : Review with shaun
     @Column(name = "ProxyScalingBasis")
@@ -53,7 +53,7 @@ public class RLImportSelection {
     //
 
     @ManyToOne
-    @JoinColumn(name = "rlAnalysisId")
+    @JoinColumn(name = "RLAnalysisId")
     private RLAnalysis rlAnalysis;
 
     public RLImportSelection(RdmAnalysis analysis, Long projectId) {
