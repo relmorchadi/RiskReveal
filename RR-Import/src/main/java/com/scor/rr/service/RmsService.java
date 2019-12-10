@@ -230,7 +230,7 @@ public class RmsService {
                 this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, "USD")
                         .stream()
                         .map(portfolioAnalysisRegions -> {
-                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndPortfolioId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId());
+                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId());
                             return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio, "USD");
                         })
                         .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
@@ -621,7 +621,7 @@ public class RmsService {
 //        dataQueryParams.put("Edm_id", edm.getRlId());
         dataQueryParams.put("Edm_id", edmId);
         dataQueryParams.put("Edm_name", edmName);
-        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getPortfolioId());
+        dataQueryParams.put("PortfolioID_RMS", rlPortfolio.getRlId());
         dataQueryParams.put("PortfolioID_RR", rlPortfolio.getRlPortfolioId());
 
         if (LocationLevelExposure.EXTRACT_PORT.equals(extractName)) {

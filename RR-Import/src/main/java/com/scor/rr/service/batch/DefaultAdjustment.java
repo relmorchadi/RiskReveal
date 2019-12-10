@@ -2,6 +2,7 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.service.state.TransformationBundle;
@@ -11,15 +12,12 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
 
 @StepScope
 @Service
@@ -69,27 +67,7 @@ public class DefaultAdjustment {
                                 else
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThreadEntity.getAdjustmentThreadId());
 
-                                String fullFilePath = pltBundle.getHeader().getLossDataFilePath() + "/" + pltBundle.getHeader().getLossDataFileName();
-
-                                // @INFO : AEPMetric request/response config
-
-                                HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
-
-//                                ParameterizedTypeReference<List<AEPMetric>> aepMetricType = new ParameterizedTypeReference<List<AEPMetric>>() {
-//                                };
-
-//                                ResponseEntity<List<AEPMetric>> aepMetricResponse = restTemplate
-//                                        .exchange(threadCreationURL, HttpMethod.GET, aepMetricRequest, aepMetricType);
-//
-//                                // @INFO : OEPMetric request/response config
-//
-//                                HttpEntity<String> oepMetricRequest = new HttpEntity<>(fullFilePath);
-//
-//                                ParameterizedTypeReference<List<OEPMetric>> oepMetricType = new ParameterizedTypeReference<List<OEPMetric>>() {
-//                                };
-//
-//                                ResponseEntity<List<OEPMetric>> oepMetricResponse = restTemplate
-//                                        .exchange(threadCreationURL, HttpMethod.GET, oepMetricRequest, oepMetricType);
+                                this.insertStatsForPlt(pltBundle.getHeader(), restTemplate);
                             }
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
@@ -105,5 +83,45 @@ public class DefaultAdjustment {
         log.debug("Default adjustment completed");
 
         return RepeatStatus.FINISHED;
+    }
+
+    private void insertStatsForPlt(PltHeaderEntity plt, RestTemplate restTemplate){
+        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
+
+        // @INFO : AEPMetric request/response config
+
+        HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
+
+        ResponseEntity<EPMetric> aepMetricResponse = restTemplate
+                .exchange(threadCreationURL, HttpMethod.GET, aepMetricRequest, EPMetric.class);
+
+        // @INFO : OEPMetric request/response config
+
+        HttpEntity<String> oepMetricRequest = new HttpEntity<>(fullFilePath);
+
+        ResponseEntity<EPMetric> oepMetricResponse = restTemplate
+                .exchange(threadCreationURL, HttpMethod.GET, oepMetricRequest, EPMetric.class);
+
+        if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK)) {
+            EPMetric epMetric = aepMetricResponse.getBody();
+            if (epMetric != null && epMetric.getEpMetricPoints() != null && !epMetric.getEpMetricPoints().isEmpty()) {
+                epMetric.getEpMetricPoints().forEach(epMetricPoint -> {
+
+                });
+            }
+        } else {
+            log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+        }
+
+        if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK)) {
+            EPMetric epMetric = oepMetricResponse.getBody();
+            if (epMetric != null && epMetric.getEpMetricPoints() != null && !epMetric.getEpMetricPoints().isEmpty()) {
+                epMetric.getEpMetricPoints().forEach(epMetricPoint -> {
+
+                });
+            }
+        } else {
+            log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
+        }
     }
 }

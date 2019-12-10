@@ -283,7 +283,7 @@ public class RegionPerilExtractor {
                         modellingSystemInstance.getModellingSystemVersion().getModellingSystemVersion(),
                         rlPortfolioSelection.getRlPortfolio().getEdmId(),
                         rlPortfolioSelection.getRlPortfolio().getEdmName(),
-                        rlPortfolioSelection.getRlPortfolio().getPortfolioId(),
+                        rlPortfolioSelection.getRlPortfolio().getRlId(),
                         rlPortfolioSelection.getRlPortfolio().getName(),
                         rlPortfolioSelection.getRlPortfolio().getType(),
                         "ALL",
