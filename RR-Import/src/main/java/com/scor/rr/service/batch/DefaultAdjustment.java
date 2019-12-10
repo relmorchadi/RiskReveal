@@ -71,13 +71,13 @@ public class DefaultAdjustment {
 
                                 String fullFilePath = pltBundle.getHeader().getLossDataFilePath() + "/" + pltBundle.getHeader().getLossDataFileName();
 
-//                                // @INFO : AEPMetric request/response config
-//
-//                                HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
-//
+                                // @INFO : AEPMetric request/response config
+
+                                HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
+
 //                                ParameterizedTypeReference<List<AEPMetric>> aepMetricType = new ParameterizedTypeReference<List<AEPMetric>>() {
 //                                };
-//
+
 //                                ResponseEntity<List<AEPMetric>> aepMetricResponse = restTemplate
 //                                        .exchange(threadCreationURL, HttpMethod.GET, aepMetricRequest, aepMetricType);
 //
