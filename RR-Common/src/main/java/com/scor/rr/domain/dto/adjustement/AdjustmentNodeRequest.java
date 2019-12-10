@@ -14,7 +14,6 @@ public class AdjustmentNodeRequest {
     private Integer adjustmentThreadId;
     private Double lmf;
     private Double rpmf;
-//    private List<PEATData> peatData;
     private PEATDataRequest peatData;
     private List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings;
 

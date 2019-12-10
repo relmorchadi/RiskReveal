@@ -15,7 +15,7 @@ public class AdjustmentNode {
     private String adjustmentTypeCode;
     private Boolean capped;
     private String userNarrative;
-    private AdjustmentNode adjustmentNodeCloning;
+    private AdjustmentNode cloningSource;
 
 
     @Column(name = "Entity")
@@ -129,12 +129,12 @@ public class AdjustmentNode {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId", insertable = false, updatable = false)
-    public AdjustmentNode getAdjustmentNodeCloning() {
-        return adjustmentNodeCloning;
+    public AdjustmentNode getCloningSource() {
+        return cloningSource;
     }
 
-    public void setAdjustmentNodeCloning(AdjustmentNode adjustmentNodeCloning) {
-        this.adjustmentNodeCloning = adjustmentNodeCloning;
+    public void setCloningSource(AdjustmentNode cloningSource) {
+        this.cloningSource = cloningSource;
     }
 
     @Column(name = "AdjustmentCategoryCode")
