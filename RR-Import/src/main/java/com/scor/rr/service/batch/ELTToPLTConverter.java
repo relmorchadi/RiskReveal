@@ -343,7 +343,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         if (contractId != null && uwYear != null) {
             Long sourceTypeId = contractRepository.findByTreatyIdAndUwYear(contractId, uwYear)
                     .map(ContractEntity::getContractSourceTypeId)
-                    .orElse(null);
+                    .orElse(0L);
             return sourceTypeId == 5L ? PLTModelingBasis.PM : PLTModelingBasis.AM;
         }
         return PLTModelingBasis.AM;

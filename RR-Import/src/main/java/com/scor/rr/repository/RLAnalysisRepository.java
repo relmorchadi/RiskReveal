@@ -53,4 +53,6 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " rla.analysisName= :#{#analysis.analysisName} ")
     RLAnalysis findByProjectIdAndAnalysis(@Param("projectId") Long projectId,
                                           @Param("analysis") RdmAnalysis analysis);
+
+    RLAnalysis findByRdmIdAndRdmNameAndAnalysisId(Long rdmId, String rdmName, Long analysisId);
 }

@@ -6,7 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -19,7 +22,6 @@ public class RmsRessource {
     @Autowired
     RmsService rmsService;
 
-
     @GetMapping("listAvailableDataSources")
     public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId) {
 
@@ -27,7 +29,7 @@ public class RmsRessource {
 
         List<DataSource> dataSourcs = rmsService.listAvailableDataSources(instanceId);
 
-        return ResponseEntity.ok(dataSourcs.subList(1,20));
+        return ResponseEntity.ok(dataSourcs.subList(1, 20));
     }
 
     @GetMapping("listRdmAnalysisBasic")
@@ -75,12 +77,12 @@ public class RmsRessource {
     @GetMapping("listRdmAnalysisEpCurves")
     public ResponseEntity<?> listRdmAllAnalysisEpCurves(@RequestParam String instanceId,
                                                         @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
-                                                        @RequestParam(value = "epPoints") int epPoints,
+                                                        @RequestParam(value = "epPoints") List<Integer> epPoints,
                                                         @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList,
                                                         @RequestParam(value = "finPerspList", required = false) List<String> finPerspList) {
         this.logger.debug("start getting listRdmAnalysisEpCurves ...");
 
-        List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = rmsService.listRdmAllAnalysisEpCurves(instanceId, id, name, epPoints, analysisIdList, finPerspList);
+        List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = rmsService.getRdmAllAnalysisEpCurves(instanceId, id, name, epPoints, analysisIdList, finPerspList);
 
         return ResponseEntity.ok(rdmAnalysisEpCurves);
     }

@@ -1,16 +1,13 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
-import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PEATDataRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.cloning.CloningScorPltHeader;
-import org.apache.commons.io.FileUtils;
+import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -37,6 +32,12 @@ public class AdjustmentNodeService {
 
     @Autowired
     private AdjustmentNodeRepository adjustmentNodeRepository;
+
+    @Autowired
+    private ScalingAdjustmentParameterRepository scalingAdjustmentParameterRepository;
+
+    @Autowired
+    private EventBasedAdjustmentParameterRepository eventBasedAdjustmentParameterRepository;
 
     @Autowired
     private AdjustmentBasisRepository adjustmentBasisRepository;
@@ -69,7 +70,7 @@ public class AdjustmentNodeService {
     private AdjustmentNodeOrderService nodeOrderService;
 
     @Autowired
-    private CloningScorPltHeader cloningScorPltHeader;
+    private CloningScorPltHeaderService cloningScorPltHeaderService;
 
     @Autowired
     private DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
@@ -80,7 +81,8 @@ public class AdjustmentNodeService {
     @Autowired
     private DefaultReturnPeriodBandingAdjustmentParameterRepository defaultReturnPeriodBandingAdjustmentParameterRepository;
 
-    //TODO: implementation for updating node
+    @Autowired
+    private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
         return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
@@ -538,21 +540,6 @@ public class AdjustmentNodeService {
         }
     }
 
-// old code
-//    void savePeatDataFile(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-//        try {
-//            log.info("------ Saving PEAT DATA FILE ------");
-//            File file = new File("src/main/resources/file/peatData"+node.getAdjustmentNodeId()+".csv");
-//            FileUtils.touch(file);
-//            CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-//            csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
-//            eventBasedParameterService.save(new EventBasedAdjustmentParameter(file.getPath(),file.getName(),node));
-//            log.info("------ Success save file ------");
-//        } catch (IOException | RRException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     void savePeatDataFile(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
         try {
             log.info("------ Saving PEAT DATA FILE ------");
@@ -569,7 +556,7 @@ public class AdjustmentNodeService {
             List<AdjustmentNode> nodeEntitiesCloned = new ArrayList<>();
             for (AdjustmentNode nodeParent : nodeEntities) {
                 AdjustmentNode nodeCloned = new AdjustmentNode(nodeParent);
-                nodeCloned.setAdjustmentNodeCloning(nodeParent);
+                nodeCloned.setCloningSource(nodeParent);
                 nodeCloned.setAdjustmentThread(threadClone);
                 nodeEntitiesCloned.add(adjustmentNodeRepository.save(nodeCloned));
             }

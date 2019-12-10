@@ -3,8 +3,7 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.dto.AEPMetric;
-import com.scor.rr.domain.dto.OEPMetric;
+import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -50,12 +49,12 @@ public class ScorPltHeaderService {
         return StatisticAdjustment.CoefOfVariance(getPltLossDataFromFile(path));
     }
 
-    public List<AEPMetric> AEPTVaRMetrics(String path) throws RRException {
-        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)));
+    public EPMetric AEPTVaRMetrics(String path) throws RRException {
+        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)).getEpMetricPoints());
     }
 
-    public List<OEPMetric> OEPTVaRMetrics(String path) throws RRException {
-        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)));
+    public EPMetric OEPTVaRMetrics(String path) throws RRException {
+        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)).getEpMetricPoints());
     }
 
     public Double averageAnnualLoss(String path) throws RRException {

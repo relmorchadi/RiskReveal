@@ -1,13 +1,10 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.*;
-import com.scor.rr.service.cloning.CloningScorPltHeader;
+import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CloningPltTest {
 
     @Autowired
-    CloningScorPltHeader cloningScorPltHeader;
+    CloningScorPltHeaderService cloningScorPltHeaderService;
 
     @Autowired
     ScorPltHeaderService scorPltHeaderService;

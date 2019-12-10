@@ -51,8 +51,12 @@ public class RLPortfolio {
     @Column(name = "TIV")
     private BigDecimal tiv;
 
-    @OneToMany
+    @OneToMany(mappedBy = "rlPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "portfolioScanStatus")
+    private RLPortfolioScanStatus rlPortfolioScanStatus;
 
     @ManyToOne
     @JoinColumn(name = "RlModelDataSourceId")

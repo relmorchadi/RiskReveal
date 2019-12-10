@@ -16,7 +16,6 @@ public class AdjustmentThreadRest {
     @Autowired
     AdjustmentThreadService adjustmentThreadService;
 
-
     @PostMapping("create")
     public AdjustmentThreadEntity createNewAdjustmentThread(@RequestBody AdjustmentThreadCreationRequest request) throws RRException {
         return adjustmentThreadService.createNewAdjustmentThread(request);
@@ -27,10 +26,15 @@ public class AdjustmentThreadRest {
         return adjustmentThreadService.updateAdjustmentThreadFinalPLT(request);
     }
 
-//    @PostMapping("clone")
-//    public AdjustmentThreadEntity createNewAdjustmentThread(@RequestBody AdjustmentThreadCreationRequest request) throws RRException {
-//        return adjustmentThreadService.createNewAdjustmentThread(request);
-//    }
+    @PostMapping("clone")
+    public AdjustmentThreadEntity cloneThread(@RequestParam Integer threadId) throws RRException {
+        return adjustmentThreadService.cloneThread(threadId);
+    }
+
+    @PostMapping("cloneWithoutDefaultAdjustment")
+    public AdjustmentThreadEntity cloneThreadWithoutDefaultAdjustment(@RequestParam Integer threadId) throws RRException {
+        return adjustmentThreadService.cloneThreadWithoutDefaultAdjustment(threadId);
+    }
 
     @PostMapping("branch")
     public AdjustmentThreadEntity branchNewAdjustmentThread(@RequestBody AdjustmentThreadBranchingRequest request) throws RRException {
@@ -41,6 +45,4 @@ public class AdjustmentThreadRest {
     public AdjustmentThreadEntity findById(Integer id){
         return adjustmentThreadService.findOne(id);
     }
-
-
 }

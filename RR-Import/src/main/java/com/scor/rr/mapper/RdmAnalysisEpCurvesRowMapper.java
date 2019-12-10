@@ -13,12 +13,12 @@ public class RdmAnalysisEpCurvesRowMapper implements RowMapper<RdmAnalysisEpCurv
 
         RdmAnalysisEpCurves rdmAnalysisEpCurves = new RdmAnalysisEpCurves();
 
-        rdmAnalysisEpCurves.setId(rs.getLong("analysis_id"));
+        rdmAnalysisEpCurves.setAnalysisId(rs.getLong("analysis_id"));
         rdmAnalysisEpCurves.setFinPerspCode(rs.getString("fin_persp_code"));
         rdmAnalysisEpCurves.setTreatyLabelId(rs.getString("treaty_label_id"));
         rdmAnalysisEpCurves.setTreatyLabel(rs.getString("treaty_label"));
         rdmAnalysisEpCurves.setEbpTypeCode(rs.getInt("ep_type_code"));
-        rdmAnalysisEpCurves.setLoss(rs.getInt("loss"));
+        rdmAnalysisEpCurves.setLoss(rs.getDouble("loss"));
         rdmAnalysisEpCurves.setExceedanceProbabilty(rs.getInt("exceedance_probability"));
         rdmAnalysisEpCurves.setReturnId(rs.getBigDecimal("return_period").setScale(2, RoundingMode.HALF_UP));
 

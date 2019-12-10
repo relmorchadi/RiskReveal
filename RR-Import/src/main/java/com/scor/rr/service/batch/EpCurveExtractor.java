@@ -85,7 +85,7 @@ public class EpCurveExtractor extends AbstractWriter {
 
             LossDataHeaderEntity lossDataHeaderEntity = bundle.getSourceRRLT();
 
-            List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerpective()).collect(toList());
+            List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerspective()).collect(toList());
             List<String> filteredFPs = sourceFPs.stream().filter(fp -> !StringUtils.equalsIgnoreCase(fp, FinancialPerspectiveCodeEnum.TY.getCode())).collect(toList());
 
             if (!StringUtils.equalsIgnoreCase(selectedFp, FinancialPerspectiveCodeEnum.TY.getCode()))

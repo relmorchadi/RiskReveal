@@ -15,7 +15,7 @@ import java.util.List;
 public class GlobalViewSummary {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GlobalViewSummaryId")
     private Long globalViewSummaryId;
     @Column(name = "SummaryTitle")
