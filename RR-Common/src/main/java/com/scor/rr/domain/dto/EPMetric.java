@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class EPMetric {
     private StatisticMetric metric;
-    List<EPMetricPoint> epMetricPoints;
+    private List<EPMetricPoint> epMetricPoints;
 
     public EPMetric() {
     }

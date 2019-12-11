@@ -1,10 +1,22 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.PltHeaderEntity;
+import com.google.gson.Gson;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
+import com.scor.rr.domain.dto.StaticType;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
+import com.scor.rr.domain.enums.PLTPublishStatus;
+import com.scor.rr.domain.enums.StatisticsType;
+import com.scor.rr.domain.enums.XLTOT;
+import com.scor.rr.repository.EPCurveHeaderEntityRepository;
+import com.scor.rr.repository.ModelAnalysisEntityRepository;
+import com.scor.rr.repository.RegionPerilRepository;
+import com.scor.rr.repository.SummaryStatisticHeaderEntityRepository;
+import com.scor.rr.service.batch.writer.AbstractWriter;
+import com.scor.rr.service.batch.writer.EpCurveWriter;
+import com.scor.rr.service.batch.writer.EpSummaryStatWriter;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -12,26 +24,60 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Optional;
 
 @StepScope
 @Service
 @Slf4j
-public class DefaultAdjustment {
+public class DefaultAdjustment extends AbstractWriter {
 
     @Autowired
     private TransformationPackage transformationPackage;
+
+    @Autowired
+    private EpCurveWriter epCurveWriter;
+
+    @Autowired
+    private EpSummaryStatWriter epSummaryStatWriter;
+
+    @Autowired
+    private ModelAnalysisEntityRepository modelAnalysisEntityRepository;
+
+    @Autowired
+    private RegionPerilRepository regionPerilRepository;
+
+    @Autowired
+    private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
+
+    @Autowired
+    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
 
     @Value(value = "${thread.creation.service}")
     private String threadCreationURL;
 
     @Value(value = "${thread.calculation.service}")
     private String threadCalculationURL;
+
+    @Value(value = "${thread.calculation.service.aep}")
+    private String aEPMetricURL;
+
+    @Value(value = "${thread.calculation.service.oep}")
+    private String oEPMetricURL;
+
+    @Value(value = "${thread.calculation.service.aepTvAR}")
+    private String aEPTvARMetricURL;
+
+    @Value(value = "${thread.calculation.service.oepTvAR}")
+    private String oEPTvARMetricURL;
+
+    @Value(value = "${thread.calculation.service.summary}")
+    private String summaryStatURL;
+
 
     public RepeatStatus defaultAdjustment() {
 
@@ -56,19 +102,26 @@ public class DefaultAdjustment {
 
                             if (adjustmentThreadEntity != null && adjustmentThreadEntity.getAdjustmentThreadId() != null) {
 
-                                HttpEntity<Integer> calculateThreadRequest =
-                                        new HttpEntity<>(adjustmentThreadEntity.getAdjustmentThreadId());
+                                HttpHeaders requestHeaders = new HttpHeaders();
+                                requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+                                HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+
+                                UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
+                                        .queryParam("threadId", adjustmentThreadEntity.getAdjustmentThreadId());
 
                                 ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
-                                        .exchange(threadCalculationURL, HttpMethod.POST, calculateThreadRequest, PltHeaderEntity.class);
+                                        .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
 
-                                if (calculationResponse.getStatusCode().equals(HttpStatus.OK))
+                                if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
-                                else
+                                    this.getAndWriteStatsForPlt(adjustmentThreadEntity.getFinalPLT(), restTemplate, true, adjustmentThreadEntity.getAdjustmentThreadId());
+                                } else {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThreadEntity.getAdjustmentThreadId());
-
-                                this.insertStatsForPlt(pltBundle.getHeader(), restTemplate);
+                                }
                             }
+
+                            this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
                         }
@@ -85,43 +138,148 @@ public class DefaultAdjustment {
         return RepeatStatus.FINISHED;
     }
 
-    private void insertStatsForPlt(PltHeaderEntity plt, RestTemplate restTemplate){
-        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
+    private void getAndWriteStatsForPlt(PltHeaderEntity pltHeader, RestTemplate restTemplate, boolean isThread, Integer threadId) {
 
-        // @INFO : AEPMetric request/response config
+        String fullFilePath = pltHeader.getLossDataFilePath() + "/" + pltHeader.getLossDataFileName();
 
-        HttpEntity<String> aepMetricRequest = new HttpEntity<>(fullFilePath);
+        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(pltHeader.getModelAnalysisId());
+        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(pltHeader.getRegionPerilId());
 
-        ResponseEntity<EPMetric> aepMetricResponse = restTemplate
-                .exchange(threadCreationURL, HttpMethod.GET, aepMetricRequest, EPMetric.class);
+        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
 
-        // @INFO : OEPMetric request/response config
+            HttpHeaders requestHeaders = new HttpHeaders();
+            requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        HttpEntity<String> oepMetricRequest = new HttpEntity<>(fullFilePath);
+            HttpEntity<String> request = new HttpEntity<>(requestHeaders);
 
-        ResponseEntity<EPMetric> oepMetricResponse = restTemplate
-                .exchange(threadCreationURL, HttpMethod.GET, oepMetricRequest, EPMetric.class);
+            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
+            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
+            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
+            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
 
-        if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK)) {
-            EPMetric epMetric = aepMetricResponse.getBody();
-            if (epMetric != null && epMetric.getEpMetricPoints() != null && !epMetric.getEpMetricPoints().isEmpty()) {
-                epMetric.getEpMetricPoints().forEach(epMetricPoint -> {
+            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
+            else
+                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
 
-                });
+
+            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
+            else
+                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
+
+
+            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
+            else
+                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+
+
+            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
+            else
+                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+
+            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.averageAnnualLoss, restTemplate);
+            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.CoefOfVariance, restTemplate);
+            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.stdDev, restTemplate);
+
+            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
+                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
+                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
+
+                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
+                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
             }
         } else {
-            log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
         }
+    }
 
-        if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK)) {
-            EPMetric epMetric = oepMetricResponse.getBody();
-            if (epMetric != null && epMetric.getEpMetricPoints() != null && !epMetric.getEpMetricPoints().isEmpty()) {
-                epMetric.getEpMetricPoints().forEach(epMetricPoint -> {
+    private void writeEPStat(PltHeaderEntity pltHeader, ModelAnalysisEntity modelAnalysis, RegionPerilEntity regionPeril, ResponseEntity<EPMetric> response, boolean isThread, Integer threadId) {
+        EPMetric oepMetric = response.getBody();
+        Gson gson = new Gson();
 
-                });
+        if (oepMetric != null && oepMetric.getEpMetricPoints() != null && !oepMetric.getEpMetricPoints().isEmpty()) {
+
+            String epCurveFilename = makePLTEPCurveFilename(
+                    pltHeader.getCreatedDate(),
+                    regionPeril.getRegionPerilCode(),
+                    modelAnalysis.getFinancialPerspective(),
+                    pltHeader.getCurrencyCode(),
+                    XLTOT.TARGET,
+                    pltHeader.getTargetRAPId(),
+                    pltHeader.getPltSimulationPeriods(),
+                    PLTPublishStatus.PURE,
+                    isThread ? threadId : 0, // pure PLT
+                    pltHeader.getPltHeaderId(),
+                    "bin");
+            BinFile file = epCurveWriter.writePLTEPCurves(oepMetric.getEpMetricPoints(), epCurveFilename, oepMetric.getMetric());
+
+            EPCurveHeaderEntity epCurveHeader = EPCurveHeaderEntity.builder()
+                    .entity(1)
+                    .lossDataType("PLT")
+                    .statisticMetric(oepMetric.getMetric())
+                    .ePCurves(gson.toJson(oepMetric.getEpMetricPoints()))
+                    // TODO : Review this
+                    .lossDataId(pltHeader.getPltHeaderId())
+                    .financialPerspective(modelAnalysis.getFinancialPerspective())
+                    .build();
+
+            if (file != null) {
+                epCurveHeader.setEPCFilePath(file.getPath());
+                epCurveHeader.setEPCFileName(file.getFileName());
             }
-        } else {
-            log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
+
+            epCurveHeaderEntityRepository.save(epCurveHeader);
         }
+    }
+
+    private void writeSummaryStat(PltHeaderEntity pltHeader, ModelAnalysisEntity modelAnalysis, RegionPerilEntity regionPeril,
+                                  double averageAnnualLoss, double cov, double stdDev, boolean isThread, Integer threadId) {
+
+        String summaryStatFilename = makePLTSummaryStatFilename(
+                pltHeader.getCreatedDate(),
+                regionPeril.getRegionPerilCode(),
+                modelAnalysis.getFinancialPerspective(),
+                pltHeader.getCurrencyCode(),
+                XLTOT.TARGET,
+                pltHeader.getTargetRAPId(),
+                pltHeader.getPltSimulationPeriods(),
+                PLTPublishStatus.PURE,
+                isThread ? threadId : 0, // pure PLT
+                pltHeader.getPltHeaderId(),
+                "bin");
+
+        AnalysisSummaryStats analysisSummaryStats = new AnalysisSummaryStats();
+
+        analysisSummaryStats.setPurePremium(averageAnnualLoss);
+        analysisSummaryStats.setCov(cov);
+        analysisSummaryStats.setStdDev(stdDev);
+
+        BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(analysisSummaryStats, summaryStatFilename);
+
+        // @TODO: review the pltHeaderId with the data modal
+
+        SummaryStatisticHeaderEntity summaryStatisticHeaderEntity =
+                new SummaryStatisticHeaderEntity(1L, modelAnalysis.getFinancialPerspective(), cov, stdDev,
+                        averageAnnualLoss, StatisticsType.PLT.getCode(), pltHeader.getPltHeaderId(), summaryStatFilename, file.getPath());
+
+        summaryStatisticHeaderEntityRepository.save(summaryStatisticHeaderEntity);
+    }
+
+    private ResponseEntity<EPMetric> getEpStats(String url, HttpEntity request, String fullFilePath, RestTemplate restTemplate) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("pathToFile", fullFilePath);
+        return restTemplate
+                .exchange(uriBuilder.toUriString(), HttpMethod.GET, request, EPMetric.class);
+    }
+
+    private ResponseEntity<Double> getSummaryStats(String url, HttpEntity request, String fullFilePath, StaticType type, RestTemplate restTemplate) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("pathToFile", fullFilePath)
+                .queryParam("type", type.getValue());
+        return restTemplate
+                .exchange(uriBuilder.toUriString(), HttpMethod.GET, request, Double.class);
     }
 }

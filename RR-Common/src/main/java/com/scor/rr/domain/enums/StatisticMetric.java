@@ -41,4 +41,25 @@ public enum StatisticMetric {
 		// @formatter:on
 	}
 
+	public static int getFrom(StatisticMetric statisticMetric) {
+		// @formatter:off
+		switch (statisticMetric) {
+			case AEP:
+				return 0;
+			case OEP:
+				return 1;
+			case TVAR_AEP:
+				return 10;
+			case TVAR_OEP:
+				return 11;
+			case EEF:
+				return 20;
+			case CEP:
+				return 21;
+			default:
+				return 404;
+		}
+		// @formatter:on
+	}
+
 }

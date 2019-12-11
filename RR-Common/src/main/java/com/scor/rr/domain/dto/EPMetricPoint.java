@@ -4,9 +4,9 @@ package com.scor.rr.domain.dto;
  * Created by u004602 on 09/12/2019.
  */
 public class EPMetricPoint {
-    double frequency;
-    double returnPeriod;
-    double loss;
+    private double frequency;
+    private double returnPeriod;
+    private double loss;
 
     public EPMetricPoint(double frequency, double returnPeriod, double loss) {
         this.frequency = frequency;
