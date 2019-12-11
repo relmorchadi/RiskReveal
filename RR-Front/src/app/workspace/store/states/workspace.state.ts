@@ -723,7 +723,7 @@ export class WorkspaceState {
 
   @Action(fromWS.collapseTags)
   collapseTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.collapseTags) {
-    this.calibrationService.collapseTags(ctx, payload);
+    return this.calibrationService.collapseTags(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustment)

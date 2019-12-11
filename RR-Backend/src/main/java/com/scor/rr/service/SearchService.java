@@ -34,6 +34,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -170,7 +171,7 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-            String marketChannel = "TREATY";
+            Long marketChannel = null;
             if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
             return buildWorkspaceDetails(
                     contracts,
@@ -186,16 +187,31 @@ public class SearchService {
     }
 
 
-    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy, String marketChannel) {
+    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy, Long marketChannel) {
         ContractSearchResult firstWs = contracts.get(0);
         WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs, marketChannel);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.findExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setExpectedRegionPerils(getCount(workspaceEntityRepository.getDistinctRegionPerilsInScopeCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedExposureSummaries(getCount(new ArrayList<>(Arrays.asList())));
+        detailsDTO.setQualifiedPLTs(getCount(workspaceEntityRepository.getDistinctRegionPerilsByQualifyingPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedPublishedForPricing(getCount(workspaceEntityRepository.getDistinctRPByPublishedToPricingQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedPriced(getCount(workspaceEntityRepository.getDistinctRPByPricedQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedAccumulation(getCount(workspaceEntityRepository.getDistinctRPByAccumulatedQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
         detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
         return detailsDTO;
+    }
+
+    private Integer getCount(List<Map<String, Object>> arr) {
+        if( arr.size() > 0 ) {
+            Map<String, Object> tmp = arr.get(0);
+            System.out.println(tmp);
+            System.out.println(tmp.get("count"));
+            return (Integer) tmp.get("count");
+
+        } else return 0;
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {

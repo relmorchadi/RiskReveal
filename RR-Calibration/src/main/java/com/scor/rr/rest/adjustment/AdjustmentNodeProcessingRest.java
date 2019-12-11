@@ -18,17 +18,6 @@ public class AdjustmentNodeProcessingRest {
     @Autowired
     AdjustmentNodeProcessingService adjustmentNodeProcessingService;
 
-
-//    @PostMapping("input")
-//    public AdjustmentNodeProcessingEntity saveByInputPlt(@RequestBody AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
-//        return adjustmentNodeProcessingService.saveByInputPlt(adjustmentNodeProcessingRequest);
-//    }
-//
-//    @PostMapping("adjusted")
-//    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(@RequestBody AdjustmentParameterRequest parameterRequest) throws RRException {
-//        return adjustmentNodeProcessingService.saveByAdjustedPlt(parameterRequest);
-//    }
-
     @PostMapping("adjustNode")
     public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(@RequestParam Integer nodeId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTPassingByNode(nodeId);

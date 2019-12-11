@@ -1,6 +1,6 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.configuration.UtilsMethode;
+import com.scor.rr.configuration.UtilsMethod;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
@@ -12,7 +12,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
-import com.scor.rr.service.cloning.CloningScorPltHeader;
+import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -22,10 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -39,7 +36,6 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class AdjustmentNodeProcessingService {
-
     private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeProcessingService.class);
 
     @Autowired
@@ -67,7 +63,7 @@ public class AdjustmentNodeProcessingService {
     AdjustmentEventBasedParameterService eventBasedParameterService;
 
     @Autowired
-    AdjustmentScalingParameterRepository adjustmentScalingParameterRepository;
+    ScalingAdjustmentParameterRepository scalingAdjustmentParameterRepository;
 
     @Autowired
     ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
@@ -79,7 +75,7 @@ public class AdjustmentNodeProcessingService {
     AdjustmentNodeService adjustmentNodeService;
 
     @Autowired
-    CloningScorPltHeader cloningScorPltHeader;
+    CloningScorPltHeaderService cloningScorPltHeaderService;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
@@ -115,13 +111,14 @@ public class AdjustmentNodeProcessingService {
         List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
         AdjustmentNodeProcessingEntity processing = null;
         if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
+            // sort adjustmentNodes by node order from 1 to n then processing
             adjustmentNodes.sort(
                     Comparator.comparing(this::findOrderOfNode));
             for (AdjustmentNode node : adjustmentNodes) {
                 processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
             }
         }
-        // sort adjustmentNodes by node order from 0 to n
+
         PltHeaderEntity finalPLT = thread.getFinalPLT();
 
         File sourceFile = null;
@@ -133,7 +130,7 @@ public class AdjustmentNodeProcessingService {
 
         File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
         try {
-            copyFile(sourceFile, dstFile);
+            UtilsMethod.copyFile(sourceFile, dstFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -146,38 +143,6 @@ public class AdjustmentNodeProcessingService {
         thread.setFinalPLT(finalPLT);
         adjustmentThreadRepository.save(thread);
         return finalPLT; // return final PLT
-    }
-
-    private static long copyFile(File sourceFile, File destFile) throws IOException {
-        FileChannel source = null;
-        FileChannel destination = null;
-        long size = 0;
-        try {
-            if (!destFile.exists()) {
-                destFile.createNewFile();
-            }
-            log.debug("source file {} dest file {}", sourceFile, destFile);
-            source = new FileInputStream(sourceFile).getChannel();
-            destination = new FileOutputStream(destFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-            size = source.size();
-        } catch (Exception e) {
-            log.debug("Error in copyFile {}", e);
-            throw e;
-        } finally {
-            try {
-                if (source != null) {
-                    source.close();
-                }
-                if (destination != null) {
-                    destination.close();
-                }
-                log.debug("Channel closed with size {}", size);
-            } catch (Exception ex) {
-                log.debug("Closed channel exception {}", ex.getMessage());
-            }
-        }
-        return size;
     }
 
     public Integer findOrderOfNode(AdjustmentNode node) {
@@ -342,10 +307,10 @@ public class AdjustmentNodeProcessingService {
 
     private List<PLTLossData> calculateProcessing(AdjustmentNode node, List<PLTLossData> pltLossData) throws RRException {
         if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
-            ScalingAdjustmentParameter adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
+            ScalingAdjustmentParameter adjustmentScalingParameter = scalingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.linearAdjustement(pltLossData, adjustmentScalingParameter.getAdjustmentFactor(), node.getCapped());
         } else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
-            ScalingAdjustmentParameter adjustmentScalingParameter = adjustmentScalingParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
+            ScalingAdjustmentParameter adjustmentScalingParameter = scalingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getAdjustmentFactor()); // getRpmf() la gi
         } else if (NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = returnPeriodBandingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
@@ -356,12 +321,12 @@ public class AdjustmentNodeProcessingService {
         } else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             EventBasedAdjustmentParameter parameter = eventBasedAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             File peatDataFile = new File(parameter.getInputFilePath(), parameter.getInputFileName());
-            List<PEATData> peatData = UtilsMethode.getEvenDrivenPeatDataFromFile(peatDataFile.getPath());
+            List<PEATData> peatData = UtilsMethod.getEvenDrivenPeatDataFromFile(peatDataFile.getPath());
             return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, node.getCapped(), peatData);
         } else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             EventBasedAdjustmentParameter parameter = eventBasedAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             File peatDataFile = new File(parameter.getInputFilePath(), parameter.getInputFileName());
-            List<PEATData> peatData = UtilsMethode.getEvenPeriodDrivenPeatDataFromFile(peatDataFile.getPath());
+            List<PEATData> peatData = UtilsMethod.getEvenPeriodDrivenPeatDataFromFile(peatDataFile.getPath());
             return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), peatData);
         } else {
             throw new com.scor.rr.exceptions.RRException(TYPE_NOT_FOUND, 1);
@@ -373,11 +338,11 @@ public class AdjustmentNodeProcessingService {
             PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();
             for (AdjustmentNode nodeCloned : nodeClones) {
-                AdjustmentNodeProcessingEntity processingEntityPure = adjustmentNodeProcessingRepository.findByAdjustmentNode(nodeCloned.getAdjustmentNodeCloning());
+                AdjustmentNodeProcessingEntity processingEntityPure = adjustmentNodeProcessingRepository.findByAdjustmentNode(nodeCloned.getCloningSource());
                 AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
                 processingEntityCloned.setAdjustmentNode(nodeCloned);
                 processingEntityCloned.setInputPLT(inputPlt);
-                processingEntityCloned.setAdjustedPLT(processingEntityPure.getAdjustedPLT().getPltHeaderId() == threadInitial.getInitialPLT().getPltHeaderId() ? threadCloned.getInitialPLT() : cloningScorPltHeader.cloneScorPltHeader(processingEntityPure.getAdjustedPLT().getPltHeaderId()));
+                processingEntityCloned.setAdjustedPLT(processingEntityPure.getAdjustedPLT().getPltHeaderId() == threadInitial.getInitialPLT().getPltHeaderId() ? threadCloned.getInitialPLT() : cloningScorPltHeaderService.cloneScorPltHeader(processingEntityPure.getAdjustedPLT().getPltHeaderId()));
                 inputPlt = processingEntityCloned.getAdjustedPLT();
                 processingEntities.add(processingEntityCloned);
             }
