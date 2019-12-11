@@ -18,7 +18,7 @@ import {combineLatest} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filter.pipe';
 import {NotificationService} from '../../../shared/services';
-import {debounceTime, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {debounceTime, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {SetCurrentTab} from '../../store/actions';
 
 @Component({
@@ -309,8 +309,17 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
-  toggleItemsListRDM(RDM) {
-    this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction(RDM), new fromWs.PatchAddToBasketStateAction()]);
+  toggleItemsListRDM(datasource) {
+    this.selectedProject$.pipe(take(1))
+      .subscribe(p => {
+        const {projectId}=p;
+        const {rmsId, type}=datasource;
+        this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction({
+          projectId,
+          rmsId,
+          type
+        }), new fromWs.PatchAddToBasketStateAction()]);
+      });
     if (this.tabStatus === 'fac') {
       this.setFilterDivision();
     }
@@ -365,6 +374,21 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   }
 
+  scanDataSources(){
+    console.log('selected EDM / RDM', this.state);
+    this.selectedProject$.pipe(take(1))
+      .subscribe(p => {
+        const projectId=p.projectId;
+        console.log('this is project id', p);
+        const selectedDS= _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
+        this.dispatch(new fromWs.DatasourceScanAction({
+          selectedDS,
+          projectId
+        }));
+      })
+  }
+
+  // Old datasource scan
   selectedItem() {
     this.fillLists();
     this.closeDropdown();
@@ -394,7 +418,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getScrollableCols() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       return this.scrollableColsAnalysis;
     } else {
       return this.scrollableColsPortfolio;
@@ -402,7 +426,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getFrozenCols() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       return this.frozenColsAnalysis;
     } else {
       return this.frozenColsPortfolio;
@@ -410,24 +434,25 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getTableData() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
-      return _.toArray(_.get(this.analysis, 'data', null));
+    if (this.state.selectedEDMOrRDM === 'RDM') {
+      return this.analysis || [];
     } else {
-      return _.toArray(_.get(this.portfolios, 'data', null));
+      return this.portfolios || [];
     }
   }
 
   getSelection(event) {
-    if (event.length > 1) {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
-        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'chunk', data: event}));
-      } else {
-        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
-        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'chunk', data: event}));
-      }
-    }
-    this.UpdateCheckboxStatus();
+    console.log('Analysis Portfolio selection', event);
+    // if (event.length > 1) {
+    //   if (this.state.selectedEDMOrRDM === 'rdm') {
+    //     this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+    //     this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'chunk', data: event}));
+    //   } else {
+    //     this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+    //     this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'chunk', data: event}));
+    //   }
+    // }
+    // this.UpdateCheckboxStatus();
   }
 
   getIndeterminate() {
@@ -556,7 +581,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   selectOne(row) {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
@@ -594,11 +619,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   selectWithUnselect(row) {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+    if (this.state.selectedEDMOrRDM === 'RDM') {
+      // this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+      // this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
