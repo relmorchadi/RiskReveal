@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
@@ -175,70 +172,62 @@ public class AdjustmentThreadService {
                 cloneOrderNode(node, newNode);
                 // clone parameters of nodes
                 cloneParameterNode(node, newNode);
-                // clone nodes processing
-                AdjustmentNodeProcessingEntity processing = adjustmentNodeProcessingRepository.findByAdjustmentNode(node);
-                if (processing != null) {
-                    AdjustmentNodeProcessingEntity newProcessing = new AdjustmentNodeProcessingEntity();
-                    newProcessing.setAdjustmentNode(newNode);
-                    newProcessing.setAdjustedPLT(cloningScorPltHeaderService.cloneScorPltHeader(processing.getAdjustedPLT().getPltHeaderId()));
-                    if (mapNodeAndOrder.get(node) == null) {
-                        throw new IllegalStateException("node order = null, wrong");
-                    }
-                    if (1 == mapNodeAndOrder.get(node)) {
-                        newProcessing.setInputPLT(newNode.getAdjustmentThread().getInitialPLT());
-                    } else {
-                        newProcessing.setInputPLT(newInputPLT);
-                    }
-                    adjustmentNodeProcessingRepository.save(newProcessing); // check if newInputPLT changes, be safe : save before
-                    newInputPLT = newProcessing.getAdjustedPLT();
-                }
+//                // clone nodes processing
+//                AdjustmentNodeProcessingEntity processing = adjustmentNodeProcessingRepository.findByAdjustmentNode(node);
+//                if (processing != null) {
+//                    AdjustmentNodeProcessingEntity newProcessing = new AdjustmentNodeProcessingEntity();
+//                    newProcessing.setAdjustmentNode(newNode);
+//                    newProcessing.setAdjustedPLT(cloningScorPltHeaderService.cloneScorPltHeader(processing.getAdjustedPLT().getPltHeaderId()));
+//                    if (mapNodeAndOrder.get(node) == null) {
+//                        throw new IllegalStateException("node order = null, wrong");
+//                    }
+//                    if (1 == mapNodeAndOrder.get(node)) {
+//                        newProcessing.setInputPLT(newNode.getAdjustmentThread().getInitialPLT());
+//                    } else {
+//                        newProcessing.setInputPLT(newInputPLT);
+//                    }
+//                    adjustmentNodeProcessingRepository.save(newProcessing); // check if newInputPLT changes, be safe : save before
+//                    newInputPLT = newProcessing.getAdjustedPLT();
+//                }
             }
         }
     }
 
-    public void cloneListOfNodesWithoutDefaultAdjustment(List<AdjustmentNode> nodes, AdjustmentThreadEntity newThread) throws RRException {
-        if (nodes != null && !nodes.isEmpty()) {
-            // sort adjustmentNodes by node order from 1 to n then processing
-            nodes.sort(
-                    Comparator.comparing(this::findOrderOfNode));
-            Map<AdjustmentNode, Integer> mapNodeAndOrder = new HashMap<>();
-            for (AdjustmentNode node : nodes) {
-                mapNodeAndOrder.put(node, nodes.indexOf(node) + 1);
-            }
+    public void cloneListOfNodesWithoutDefaultAdjustment(Map<AdjustmentNode, Integer> mapNodeNonDefaultAndOrder, AdjustmentThreadEntity newThread) throws RRException {
+
+        if (mapNodeNonDefaultAndOrder != null && !mapNodeNonDefaultAndOrder.isEmpty()) {
 
             PltHeaderEntity newInputPLT = null;
 
             // todo treat default adjustment nodes
-
-
-
-            for (AdjustmentNode node : nodes) {
+            for (Map.Entry<AdjustmentNode, Integer> entryNode : mapNodeNonDefaultAndOrder.entrySet()) {
+                AdjustmentNode node = entryNode.getKey();
                 AdjustmentNode newNode = new AdjustmentNode(node);
                 newNode.setAdjustmentThread(newThread);
                 newNode.setCloningSource(node);
                 adjustmentNodeRepository.save(newNode);
 
                 // clone nodes order
-                cloneOrderNode(node, newNode);
+                cloneOrderNodeNonDefault(node, newNode, entryNode.getValue());
                 // clone parameters of nodes
                 cloneParameterNode(node, newNode);
                 // clone nodes processing
-                AdjustmentNodeProcessingEntity processing = adjustmentNodeProcessingRepository.findByAdjustmentNode(node);
-                if (processing != null) {
-                    AdjustmentNodeProcessingEntity newProcessing = new AdjustmentNodeProcessingEntity();
-                    newProcessing.setAdjustmentNode(newNode);
-                    newProcessing.setAdjustedPLT(cloningScorPltHeaderService.cloneScorPltHeader(processing.getAdjustedPLT().getPltHeaderId()));
-                    if (mapNodeAndOrder.get(node) == null) {
-                        throw new IllegalStateException("node order = null, wrong");
-                    }
-                    if (1 == mapNodeAndOrder.get(node)) {
-                        newProcessing.setInputPLT(newNode.getAdjustmentThread().getInitialPLT());
-                    } else {
-                        newProcessing.setInputPLT(newInputPLT);
-                    }
-                    adjustmentNodeProcessingRepository.save(newProcessing); // check if newInputPLT changes, be safe : save before
-                    newInputPLT = newProcessing.getAdjustedPLT();
-                }
+//                AdjustmentNodeProcessingEntity processing = adjustmentNodeProcessingRepository.findByAdjustmentNode(node);
+//                if (processing != null) {
+//                    AdjustmentNodeProcessingEntity newProcessing = new AdjustmentNodeProcessingEntity();
+//                    newProcessing.setAdjustmentNode(newNode);
+//                    newProcessing.setAdjustedPLT(cloningScorPltHeaderService.cloneScorPltHeader(processing.getAdjustedPLT().getPltHeaderId()));
+//                    if (mapNodeNonDefaultAndOrder.get(node) == null) {
+//                        throw new IllegalStateException("node order = null, wrong");
+//                    }
+//                    if (1 == mapNodeNonDefaultAndOrder.get(node)) {
+//                        newProcessing.setInputPLT(newNode.getAdjustmentThread().getInitialPLT());
+//                    } else {
+//                        newProcessing.setInputPLT(newInputPLT);
+//                    }
+//                    adjustmentNodeProcessingRepository.save(newProcessing); // check if newInputPLT changes, be safe : save before
+//                    newInputPLT = newProcessing.getAdjustedPLT();
+//                }
             }
         }
     }
@@ -252,6 +241,18 @@ public class AdjustmentThreadService {
         newOrder.setAdjustmentThread(newNode.getAdjustmentThread());
         newOrder.setAdjustmentNode(newNode);
         newOrder.setAdjustmentOrder(order.getAdjustmentOrder());
+        adjustmentNodeOrderRepository.save(newOrder);
+    }
+
+    public void cloneOrderNodeNonDefault(AdjustmentNode node, AdjustmentNode newNode, Integer orderNonDefault) {
+        AdjustmentNodeOrder order = adjustmentNodeOrderRepository.findByAdjustmentNode(node);
+        if (order == null) {
+            throw new IllegalStateException("order object = null, wrong");
+        }
+        AdjustmentNodeOrder newOrder = new AdjustmentNodeOrder();
+        newOrder.setAdjustmentThread(newNode.getAdjustmentThread());
+        newOrder.setAdjustmentNode(newNode);
+        newOrder.setAdjustmentOrder(orderNonDefault);
         adjustmentNodeOrderRepository.save(newOrder);
     }
 
@@ -296,11 +297,29 @@ public class AdjustmentThreadService {
 
         // clone nodes
         List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
-        Map<AdjustmentNode, Integer> mapNodeAndOrder = new HashMap<>();
+        Map<AdjustmentNode, Integer> mapNodeNonDefaultAndOrder = new HashMap<>();
+        List<AdjustmentNode> nodesDefault = new ArrayList<>();
+        // sort adjustmentNodes by node order from 1 to n
+        adjustmentNodes.sort(
+                Comparator.comparing(this::findOrderOfNode));
         for (AdjustmentNode node : adjustmentNodes) {
-            mapNodeAndOrder.put(node, adjustmentNodes.indexOf(node) + 1);
+            if (node.getAdjustmentCategoryCode().equals("Default")) {
+                nodesDefault.add(node);
+            }
         }
-        cloneListOfNodesWithoutDefaultAdjustment(adjustmentNodes, newThread);
+
+        for (AdjustmentNode node : adjustmentNodes) {
+            if (node.getAdjustmentCategoryCode().equals("Base")) {
+                mapNodeNonDefaultAndOrder.put(node, adjustmentNodes.indexOf(node) + 1);
+            }
+            // 1 /2 3/ 4 5
+
+            if (!node.getAdjustmentCategoryCode().equals("Base") && !node.getAdjustmentCategoryCode().equals("Default")) {
+                mapNodeNonDefaultAndOrder.put(node, adjustmentNodes.indexOf(node) + 1 - nodesDefault.size());
+            }
+        }
+
+        cloneListOfNodesWithoutDefaultAdjustment(mapNodeNonDefaultAndOrder, newThread);
         return newThread;
     }
     public AdjustmentThreadEntity branchNewAdjustmentThread(AdjustmentThreadBranchingRequest request) throws RRException {
