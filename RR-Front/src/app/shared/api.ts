@@ -8,7 +8,7 @@ export const backendUrl: () => string = () => {
 
 export const importUrl: () => string = () => {
   const {hostname} = window.location;
-  return environment.production ? `http://${hostname}:8880/risk-reveal/api/`
+  return environment.production ? `http://${hostname}:9080/risk-reveal-import/api/`
     : environment.IMPORT_URI;
 };
 
