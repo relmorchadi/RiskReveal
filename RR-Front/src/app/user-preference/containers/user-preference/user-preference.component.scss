@@ -83,15 +83,23 @@
 }
 
 .main-tab-title {
-  font-size: 21px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: bold;
   margin-bottom: 15px;
   display: flex;
+}
+
+.expand-overlay {
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 20px;
+  color: #00C4AA;
 }
 
 .settings-holder {
   width: 60%;
   margin: auto;
+  padding-bottom: 20px;
 }
 
 .return-icon {
@@ -130,7 +138,7 @@
       list-style: none;
       margin-bottom: 0;
       padding: 0;
-      
+
       li {
         cursor: pointer;
         padding: 3px 15px;

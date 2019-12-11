@@ -980,7 +980,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   collapseTags() {
-    this.store$.dispatch(new collapseTags(!this.collapsedTags))
+    this.store$.dispatch(new collapseTags(!this.collapsedTags));
     this.cdRef.detectChanges();
   }
 

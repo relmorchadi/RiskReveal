@@ -5,8 +5,8 @@ import * as fromGeneralConfig from '../actions';
 import {Data} from '../../model/data';
 import produce from "immer";
 import {of} from "rxjs";
-import {mergeMap} from "rxjs/operators";
-
+import {catchError, map, mergeMap} from "rxjs/operators";
+import {GlobalConfigApi} from '../../service/api/global-config.api';
 
 const initiaState: GeneralConfig = {
     general: {
@@ -28,27 +28,15 @@ const initiaState: GeneralConfig = {
     },
     riskLink: {
       importPage: '',
-      financialPerspectiveELT: {
-        data: [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
-          {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
-          {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}],
-        selected: ['Net Loss Pre Cat (RL)']
-      },
-      financialPerspectiveEPM: {
-          data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
-          selected: 'Facultative Reinsurance Loss'
-      },
-      targetCurrency: {
-        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
-        selected: 'Main Liability Currency (MLC)'},
-      targetAnalysisCurrency: {
-        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
-        selected: 'Main Liability Currency (MLC)'},
-      rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'], selected: 'AZU-P-RL17-SQL14'},
+      financialPerspectiveELT: ['Net Loss Pre Cat (RL)'],
+      financialPerspectiveEPM: 'Facultative Reinsurance Loss',
+      targetCurrency: 'Main Liability Currency (MLC)',
+      targetAnalysisCurrency: 'Main Liability Currency (MLC)',
+      rmsInstance: 'AZU-P-RL17-SQL14',
     },
     contractOfInterest: {
-      country: {data: Data.countries, selected: []},
-      uwUnit: {data: Data.uwUnit, selected: []},
+      country: [],
+      uwUnit: [],
     },
     epCurves: {
       returnPeriod: {data: [], selected: []},
@@ -64,7 +52,7 @@ export class GeneralConfigState implements NgxsOnInit {
 
   ctx = null;
 
-  constructor() {
+  constructor(private globalAPI: GlobalConfigApi) {
 
   }
 
@@ -83,6 +71,11 @@ export class GeneralConfigState implements NgxsOnInit {
   @Selector()
   static getGeneralConfigAttr(path: string, value: any) {
     return  (state: any) =>  _.get(state.RiskLinkModel, path, value);
+  }
+
+  @Selector()
+  static getDateConfig(state: GeneralConfig) {
+    return state.general.dateFormat;
   }
 
   @Selector()
@@ -111,6 +104,63 @@ export class GeneralConfigState implements NgxsOnInit {
         }});
   }
 
+  @Action(fromGeneralConfig.PatchDateFormatAction)
+  patchDateTarget(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchDateFormatAction) {
+    const state = ctx.getState();
+    const {target, value} = payload;
+
+    let newFormat = {...state.general.dateFormat};
+    if (target === 'shortDate') { newFormat = {...newFormat, shortDate: value}; }
+    if (target === 'longDate') { newFormat = {...newFormat, longDate: value}; }
+    if (target === 'shortTime') { newFormat = {...newFormat, shortTime: value}; }
+    if (target === 'longTime') { newFormat = {...newFormat, longTime: value}; }
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.general.dateFormat = newFormat;
+    }));
+  }
+
+  @Action(fromGeneralConfig.PatchImportDataAction)
+  patchImportData(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchImportDataAction) {
+    const state = ctx.getState();
+    const {target, value} = payload;
+
+    let newFormat = {...state.riskLink};
+    if (target === 'importPage') { newFormat = {...newFormat, importPage: value}; }
+    if (target === 'financialPerspectiveELT') { newFormat = {...newFormat, financialPerspectiveELT: value}; }
+    if (target === 'financialPerspectiveEPM') { newFormat = {...newFormat, financialPerspectiveEPM: value}; }
+    if (target === 'targetCurrency') { newFormat = {...newFormat, targetCurrency: value}; }
+    if (target === 'targetAnalysisCurrency') { newFormat = {...newFormat, targetAnalysisCurrency: value}; }
+    if (target === 'rmsInstance') { newFormat = {...newFormat, rmsInstance: value}; }
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.riskLink = newFormat
+    }));
+  }
+
+  @Action(fromGeneralConfig.PatchWidgetDataAction)
+  patchWidgetData(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchWidgetDataAction) {
+    const state = ctx.getState();
+    const {target, value} = payload;
+
+    let newFormat = {...state.contractOfInterest};
+    if (target === 'country') { newFormat = {...newFormat, country: value}; }
+    if (target === 'uwUnit') { newFormat = {...newFormat, uwUnit: value}; }
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.contractOfInterest = newFormat
+    }));
+  }
+
+  @Action(fromGeneralConfig.PostNewConfigAction)
+  postNewConfigDetail(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PostNewConfigAction) {
+    const state = ctx.getState();
+
+    return this.globalAPI.postGlobalConfig(payload).pipe( map(prj =>
+      ctx.dispatch(new fromGeneralConfig.PostNewConfigSuccessAction({}))),
+      catchError(err => ctx.dispatch(new fromGeneralConfig.PostNewConfigFailAction({})))
+      );
+  }
 
   @Action(fromGeneralConfig.AddNewColors)
   addNewColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.AddNewColors) {
