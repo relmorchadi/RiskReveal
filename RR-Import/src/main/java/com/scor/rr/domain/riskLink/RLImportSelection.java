@@ -50,6 +50,8 @@ public class RLImportSelection {
     private String multiplierBasis;
     @Column(name = "MultiplierNarrative")
     private String multiplierNarrative;
+    @Column(name = "SystemRegionPeril")
+    private String systemRegionPeril;
     //
 
     @ManyToOne
