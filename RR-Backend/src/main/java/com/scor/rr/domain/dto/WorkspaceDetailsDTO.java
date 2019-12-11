@@ -30,17 +30,19 @@ public class WorkspaceDetailsDTO {
     private Boolean isFavorite;
     private Boolean isPinned;
     private String contractDatasource;
-    private String marketChannel;
+    private Long marketChannel;
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
-    private List<String> expectedRegionPerils;
-    private int publishedForAccumulationPlts;
-    private int publishedForPricingPlts;
-    private int pricedPlts;
+    private int expectedRegionPerils;
+    private int expectedExposureSummaries;
+    private int qualifiedPLTs;
+    private int expectedPublishedForPricing;
+    private int expectedPriced;
+    private int expectedAccumulation;
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult contract, String marketChannel) {
+    public WorkspaceDetailsDTO(ContractSearchResult contract, Long marketChannel) {
         this.id = contract.getId();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();
@@ -68,14 +70,8 @@ public class WorkspaceDetailsDTO {
     public void setProjects(List<ProjectCardView> projects) {
         if(projects != null) {
             this.projects = projects;
-            this.publishedForAccumulationPlts = projects.stream().mapToInt(ProjectCardView::getAccumulatedPlts).sum();
-            this.publishedForPricingPlts = projects.stream().mapToInt(ProjectCardView::getPublishedForPricingCount).sum();
-            this.pricedPlts = projects.stream().mapToInt(ProjectCardView::getFinalPricing).sum();
         }else{
             this.projects= new ArrayList<>();
-            this.publishedForAccumulationPlts = 0;
-            this.publishedForPricingPlts = 0;
-            this.pricedPlts = 0;
         }
 
     }

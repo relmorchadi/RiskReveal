@@ -62,6 +62,10 @@ export class SearchService {
     return this._http.get(`${this.api}saved-search/most`, { params: payload })
   }
 
+  deleteSavedSearch(payload) : Observable<any> {
+    return this._http.delete(`${this.api}saved-search/`, { params: payload })
+  }
+
   saveSearch(payload): Observable<any> {
     return this._http.post(this.api, payload);
   }
