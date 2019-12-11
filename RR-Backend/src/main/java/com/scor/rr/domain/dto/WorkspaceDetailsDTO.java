@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto;
 
-import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import lombok.Data;
 import lombok.NoArgsConstructor;

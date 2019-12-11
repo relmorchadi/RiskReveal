@@ -1,7 +1,7 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
@@ -34,7 +34,6 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
