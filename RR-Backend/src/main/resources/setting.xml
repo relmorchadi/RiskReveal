@@ -18,7 +18,7 @@
       <mapping class="com.scor.rr.domain.CedantView"/>
       <mapping class="com.scor.rr.domain.WorkspaceYears"/>
     <mapping class="com.scor.rr.domain.TreatyView"/>
-      <mapping class="com.scor.rr.domain.entities.ContractSearchResult"/>
+      <mapping class="com.scor.rr.domain.ContractSearchResult"/>
       <mapping class="com.scor.rr.domain.counter.CedantNameCountView"/>
       <mapping class="com.scor.rr.domain.counter.CountryCountView"/>
       <mapping class="com.scor.rr.domain.counter.TreatyCountView"/>

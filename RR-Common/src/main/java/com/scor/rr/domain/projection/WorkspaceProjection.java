@@ -1,6 +1,6 @@
 package com.scor.rr.domain.projection;
 
-import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.ContractSearchResult;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(

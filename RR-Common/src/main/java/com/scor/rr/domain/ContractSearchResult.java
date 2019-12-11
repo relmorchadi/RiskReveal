@@ -1,4 +1,4 @@
-package com.scor.rr.domain.entities;
+package com.scor.rr.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
