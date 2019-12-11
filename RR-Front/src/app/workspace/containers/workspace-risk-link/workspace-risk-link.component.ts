@@ -28,7 +28,7 @@ import {SetCurrentTab} from '../../store/actions';
   providers: [ConfirmationService]
 })
 export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit, StateSubscriber {
-
+  collapsehead;
   regionPeril;
   hyperLinks: string[] = ['RiskLink', 'File-Based'];
   hyperLinksRoutes: any = {
