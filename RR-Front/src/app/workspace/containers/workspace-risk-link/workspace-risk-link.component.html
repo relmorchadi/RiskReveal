@@ -1,19 +1,4 @@
-<div class="a-app-wrapper">
-  <div class="a-app-header">
-
-    <div style="display: flex;flex-direction: column;align-items: flex-start;">
-      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
-      (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
-      <h4>RiskLink Import</h4>
-    </div>
-
-  </div>
-  <div class="app-body">
-
-  </div>
-</div>
-
-<!--<div class="workspace-main-content">
+<div class="workspace-main-content">
   <app-pin
     (pinWs)="pinWorkspace()"
     [active]="!workspaceInfo?.isPinned"
@@ -24,7 +9,6 @@
     <div class="body-wrap">
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
-          &lt;!&ndash;          <span class="body-wrap-header-text-title">TREATY</span>&ndash;&gt;
           <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
@@ -53,8 +37,9 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective ELT</span>
-              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.financialPerspectiveELT?.selected">
-                {{state?.financialValidator?.financialPerspectiveELT?.selected}}
+              <span class="dropdown-item-selected"
+                    *ngIf="state?.financialValidator?.financialPerspectiveELT?.selected as selectedFp">
+                  {{selectedFp?.desc}} ({{selectedFp?.code}})
               </span>
             </div>
             <div class="dropdown-icon">
@@ -63,26 +48,28 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveELT', item)"
-                *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item.desc}}
+              ({{item.desc}})
+            </li>
           </ul>
         </nz-dropdown>
-        &lt;!&ndash;        <nz-dropdown [nzTrigger]="'click'">
-                  <div class="dropdown-wrap" nz-dropdown>
-                    <div class="dropdown-wrap-title">
-                      <span class="dropdown-title">Financial Perspective EPMetrics</span>
-                      <span class="dropdown-item-selected" *ngIf="state.financialValidator.financialPerspectiveEPM.selected">
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Financial Perspective EPMetrics</span>
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.financialPerspectiveEPM?.selected">
                         {{state.financialValidator.financialPerspectiveEPM.selected}}
                       </span>
-                    </div>
-                    <div class="dropdown-icon">
-                      <i nz-icon type="down"></i>
-                    </div>
-                  </div>
-                  <ul nz-menu>
-                    <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
-                        *ngFor="let item of state.financialValidator.financialPerspectiveEPM.data">{{item}}</li>
-                  </ul>
-                </nz-dropdown>&ndash;&gt;
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
+                *ngFor="let item of state?.financialValidator?.financialPerspectiveEPM?.data">{{item}}</li>
+          </ul>
+        </nz-dropdown>
 
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
@@ -165,10 +152,8 @@
                   <nz-tabset class="a-tab-minitab">
                     <nz-tab nzTitle="EDM & RDM">
                       <div class="search-bar-result-list">
-                        <p-virtualScroller [value]="dataList(listEdmRdm.data)" scrollHeight="305px"
-                                           [itemSize]="30" [rows]="listEdmRdm.numberOfElement"
-                                           [lazy]="true" (onLazyLoad)="loadItemsLazy($event)"
-                                           [totalRecords]="listEdmRdm.totalNumberElement">
+                        <p-virtualScroller [value]="listEdmRdm?.data | rmsDatasource" scrollHeight="305px"
+                                           [itemSize]="30">
                           <ng-template let-item pTemplate="item">
                             <div class="poover-menu-item"
                                  (click)="$event.stopPropagation(); toggleItems(item, $event, 'link')"
@@ -180,8 +165,8 @@
                                   <i style="margin-right: 5px" class="icon-check"></i>
                                 </span>
                               </ng-template>
-                              <span class="logo" *ngIf="item?.type === 'rdm'" style="background: #03DAC4">R</span>
-                              <span class="logo" *ngIf="item?.type === 'edm'" style="background: #0700CF">E</span>
+                              <span class="logo" *ngIf="item?.type === 'RDM'" style="background: #03DAC4">R</span>
+                              <span class="logo" *ngIf="item?.type === 'EDM'" style="background: #0700CF">E</span>
                               <span>{{item?.name}}</span>
                             </div>
                           </ng-template>
@@ -191,14 +176,14 @@
                         </p-virtualScroller>
                       </div>
                       <div class="search-bar-result-button">
-                        <button (click)="selectedItem()" class="a-buttons-contained">ADD</button>
+                        <button (click)="scanDataSources()" class="a-buttons-contained">ADD</button>
                       </div>
                     </nz-tab>
                     <nz-tab nzTitle="EDM">
                       <div class="search-bar-result-list">
                         <ul>
-                          <ng-container *ngFor="let item of dataList(listEdmRdm.data)">
-                            <li *ngIf="item?.type === 'edm'" class="poover-menu-item"
+                          <ng-container *ngFor="let item of (listEdmRdm.data | rmsDatasource:'EDM')">
+                            <li class="poover-menu-item"
                                 (click)="toggleItems(item, $event, 'solo')"
                                 [ngClass]="{'poover-menu-item-active': item?.selected}">
                               <label nz-checkbox (ngModelChange)="toggleItems(item, $event, 'solo')"
@@ -217,8 +202,8 @@
                     <nz-tab nzTitle="RDM">
                       <div class="search-bar-result-list">
                         <ul>
-                          <ng-container *ngFor="let item of dataList(listEdmRdm.data)">
-                            <li *ngIf="item?.type === 'rdm'" class="poover-menu-item"
+                          <ng-container *ngFor="let item of (listEdmRdm.data | rmsDatasource:'RDM')">
+                            <li class="poover-menu-item"
                                 (click)="toggleItems(item, $event, 'solo')"
                                 [ngClass]="{'poover-menu-item-active': item?.selected}">
                               <label nz-checkbox (ngModelChange)="toggleItems(item, $event, 'solo')"
@@ -231,7 +216,7 @@
                         </ul>
                       </div>
                       <div class="search-bar-result-button">
-                        <button (click)="selectedItem()" class="a-buttons-contained-mini">ADD</button>
+                        <button (click)="scanDataSources()" class="a-buttons-contained-mini">ADD</button>
                       </div>
                     </nz-tab>
                   </nz-tabset>
@@ -239,9 +224,10 @@
               </div>
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
-              &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
+              <button *ngIf="collapsehead" nz-button> ADVANCED</button>
               <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'fac'"
-                      class="a-buttons-outlined-mini">Auto Attach</button>
+                      class="a-buttons-outlined-mini">Auto Attach
+              </button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -256,60 +242,63 @@
                 <div class="body-wrap-menu-header" style="flex-direction: column">
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
-                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveEDMAndRDMSelection()" style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="synchronizeEDMAndRDMSelection()" class="icon-sync_24px"></i>
-                    <i nz-tooltip nzTitle="Clear default settings" (click)="removeEDMAndRDMSelection()" class="icon-close_24px"></i>
+                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveEDMAndRDMSelection()"
+                       style="font-size: 23px" class="icon-save_24px"></i>
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="synchronizeEDMAndRDMSelection()"
+                       class="icon-sync_24px"></i>
+                    <i nz-tooltip nzTitle="Clear default settings" (click)="removeEDMAndRDMSelection()"
+                       class="icon-close_24px"></i>
                   </div>
                 </div>
               </div>
               <div class="list-items"
-                   *ngIf="state?.display?.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
+                   *ngIf="state?.display?.displayListRDMEDM && state.selection.edms.length > 0">
                 <span class="list-items-title">EDM</span>
                 <ul>
-                  <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM.edm)">
-                    <li class="poover-menu-item"
-                        [ngClass]="{'poover-menu-item-active': itemsE.selected}">
+                  <ng-container *ngFor="let edmId of state.selection.edms">
+                    <li *ngIf="listEdmRdm?.data[edmId] as itemsE" class="poover-menu-item"
+                        [ngClass]="{'poover-menu-item-active': state?.selection?.currentDataSource == edmId}">
                       <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
-                      <ng-container *ngIf="itemsE?.scanned">
+                      <ng-container>
                         <span class="reference"
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
                           /{{getNumberElement(itemsE, 'portfolio')}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/0</span>
-                        &lt;!&ndash;<i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>&ndash;&gt;
+<!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
-                      <ng-container *ngIf="!itemsE?.scanned">
-                        <span class="loading">Scanning</span>
-                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
-                      </ng-container>
+                      <!--                      <ng-container *ngIf="!itemsE?.scanned">-->
+                      <!--                        <span class="loading">Scanning</span>-->
+                      <!--                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>-->
+                      <!--                      </ng-container>-->
                       <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
               </div>
               <div class="list-items"
-                   *ngIf="state?.display?.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm).length > 0">
+                   *ngIf="state?.display?.displayListRDMEDM && state.selection.rdms.length > 0">
                 <span class="list-items-title">RDM</span>
                 <ul>
-                  <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm)">
-                    <li class="poover-menu-item"
-                        [ngClass]="{'poover-menu-item-active': itemsR.selected}">
+                  <ng-container *ngFor="let rdmId of state.selection.rdms">
+                    <li *ngIf="listEdmRdm?.data[rdmId] as itemsR" class="poover-menu-item"
+                        [ngClass]="{'poover-menu-item-active': state?.selection?.currentDataSource == rdmId }">
                       <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
-                      <ng-container *ngIf="itemsR?.scanned">
+                      <ng-container>
                         <span class="reference"
                               *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
                           /{{getNumberElement(itemsR, 'analysis')}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/0</span>
                         <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
-                      <ng-container *ngIf="!itemsR?.scanned">
-                        <span class="loading">Scanning</span>
-                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
-                      </ng-container>
+                      <!--                      <ng-container *ngIf="!itemsR?.scanned">-->
+                      <!--                        <span class="loading">Scanning</span>-->
+                      <!--                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>-->
+                      <!--                      </ng-container>-->
                       <i (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -353,13 +342,14 @@
                 </div>
               </div>
               <div style="display: flex; flex-direction: column">
-                &lt;!&ndash;                           [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)" [lazy]="true" [virtualRowHeight]="25"
-                           [rows]="20" [totalRecords]="getTableRecords()"&ndash;&gt;
                 <div class="show-table">
-                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" (selectionChange)="getSelection($event)"
-                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]" selectionMode="multiple" [(selection)]="selectedRows"
+                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()"
+                           (selectionChange)="getSelection($event)"
+                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]"
+                           selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
-                           [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
+                           [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
+                           [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -368,24 +358,28 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <ng-container *ngFor="let col of columns">
-                          <th [ngClass]="{'select-header': col.header === 'selected'}" *ngIf="col.header === 'selected'">
-                            <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                          <th [ngClass]="{'select-header': col.header === 'selected'}"
+                              *ngIf="col.header === 'selected'">
+                            <label *ngIf="state.selectedEDMOrRDM === 'RDM'"
                                    nz-checkbox [ngModel]="allCheckedAnalysis"
-                                   (ngModelChange)="updateAllChecked('analysis')"
+                                   (ngModelChange)="selectOne('analysis')"
                                    [nzIndeterminate]="indeterminateAnalysis"></label>
-                            <label *ngIf="state.selectedEDMOrRDM === 'edm'"
+                            <label *ngIf="state.selectedEDMOrRDM === 'EDM'"
                                    nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="updateAllChecked('portfolio')"
+                                   (ngModelChange)="selectOne('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
-                          <th [ngClass]="{'select-header': col.header === 'selected'}" *ngIf="col.header === 'Imported'">
+                          <th [ngClass]="{'select-header': col.header === 'selected'}"
+                              *ngIf="col.header === 'Imported'">
 
                           </th>
-                          <th *ngIf="col.header !== 'selected'" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
+                          <th *ngIf="col.header !== 'selected'" pResizableColumn
+                              [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                             <div>
                               {{col.header}}
                               <p-sortIcon style="position: absolute; float: right;"
-                                          [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order"
+                                          [field]="col.field" ariaLabel="Activate to sort"
+                                          ariaLabelDesc="Activate to sort in descending order"
                                           ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                             </div>
                           </th>
@@ -407,22 +401,21 @@
                       <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
-                          <div style=" display: flex;" *ngIf="col.type === 'select'">
-                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
-                                   [ngModel]="rowData.selected"></label>
-                          </div>
-                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                               *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
-                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                               *ngIf="col.type === 'date'"><span>{{getDateValue(rowData[col.field])}}</span></div>
-                          <div *ngIf="col.type === 'icon'">
-                            <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
-                               class="icon-upload_24px"></i>
-                          </div>
+                                <div style=" display: flex;" *ngIf="col.type === 'select'">
+                                  <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
+                                         [ngModel]="rowData.selected"></label>
+                                </div>
+                                <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                                     *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                                <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                                     *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
+                                <div *ngIf="col.type === 'icon'">
+                                  <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                                     class="icon-upload_24px"></i>
+                                </div>
                         </td>
                       </tr>
                     </ng-template>
- -
                   </p-table>
                   <app-manage-columns [visible]="managePopUpAnalysis" [columns]="cloneData(scrollableColsAnalysis)"
                                       (onSubmit)="saveColumns($event, 'analysis')"
@@ -433,9 +426,11 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained-mini">ADD
+                  FOR IMPORT
                 </button>
-                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled-mini" disabled>ADD FOR IMPORT
+                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled-mini" disabled>ADD FOR
+                  IMPORT
                 </button>
                 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
               </div>
@@ -449,15 +444,17 @@
       <div class="footer-section" *ngIf="state?.display?.displayImport">
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
-&lt;!&ndash;            <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
+            &lt;!&ndash;
+            <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
               <nz-option *ngFor="let op of state?.financialValidator?.calibration?.data" [nzLabel]="op"
                          [nzValue]="op"></nz-option>
             </nz-select>&ndash;&gt;
-&lt;!&ndash;            <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
+            &lt;!&ndash; <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
             <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>&ndash;&gt;
           </div>
           <div class="body-wrap-footer-right">
-            <button style="padding: 6px 20px 7px" (click)="importMainAction()" class="a-buttons-contained-mini">IMPORT</button>
+            <button style="padding: 6px 20px 7px" (click)="importMainAction()" class="a-buttons-contained-mini">IMPORT
+            </button>
           </div>
         </div>
       </div>
@@ -473,7 +470,6 @@
   </div>
 </ng-template>
 
-&lt;!&ndash;Pop Up Filter&ndash;&gt;
 <p-dialog
   [visible]="filterModalVisibility"
   [closable]="false"
@@ -533,13 +529,13 @@
                                                                          class="a-textfield-mini input-wrapper">
     </div>
     <div class="row-input"><span class="label-input">Peril</span><input placeholder="Number"
-                                                                         class="a-textfield-mini input-wrapper">
+                                                                        class="a-textfield-mini input-wrapper">
     </div>
     <div class="row-input"><span class="label-input">User Value</span><input placeholder="Number"
-                                                                         class="a-textfield-mini input-wrapper">
+                                                                             class="a-textfield-mini input-wrapper">
     </div>
     <div class="row-input"><span class="label-input">Name/Description</span><input placeholder="Number"
-                                                                         class="a-textfield-mini input-wrapper">
+                                                                                   class="a-textfield-mini input-wrapper">
     </div>
   </div>
   <p-footer>
@@ -549,7 +545,6 @@
     </div>
   </p-footer>
 </p-dialog>
-&lt;!&ndash; warning pop Up&ndash;&gt;
 <p-dialog
   [visible]="showPopUp"
   [closable]="false"
@@ -573,4 +568,4 @@
       <button (click)="showPopUp = false" class="a-buttons-contained">Yes</button>
     </div>
   </p-footer>
-</p-dialog>-->
+</p-dialog>

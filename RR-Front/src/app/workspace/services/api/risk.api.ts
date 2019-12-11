@@ -1,20 +1,33 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {backendUrl} from "../../../shared/api";
+import {backendUrl, importUrl} from "../../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiskApi {
-  protected URL = `${backendUrl()}risk-link/`;
+  protected URL = `${importUrl()}risk-link/`;
   protected FURL = `${backendUrl()}fac/`;
+  protected IMPORT_URL= importUrl();
 
   constructor(private http: HttpClient) {
   }
 
-  searchRiskLinkData(Keyword = '', PageSize = '20', offset = '0', Page = '0'): Observable<any> {
-    return this.http.get(`${this.URL}edm-rdm?keyword=${Keyword}&size=${PageSize}&page=${Page}`);
+  loadImportRefData(){
+    return this.http.get(`${this.IMPORT_URL}import/refs`);
+  }
+
+  scanDatasources(dataSources:any[], projectId, instanceId,instanceName){
+    return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {params: {projectId, instanceId, instanceName}});
+  }
+
+  loadDataSourceContent(instanceId, projectId, rmsId , type){
+    return this.http.get(`${this.IMPORT_URL}import/config/get-riskLink-analysis-portfolios`, {params: {instanceId, projectId, rmsId , type}});
+  }
+
+  searchRiskLinkData(instanceId): Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId}});
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {

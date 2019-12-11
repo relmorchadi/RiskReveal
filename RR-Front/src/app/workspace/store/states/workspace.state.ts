@@ -272,25 +272,13 @@ export class WorkspaceState {
   @Selector()
   static getAnalysis(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    let selectedAnalysis: any = _.toArray(_.get(state.content[wsIdentifier],
-      `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
-    selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
-    return {
-      data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
-    };
+    return state.content[wsIdentifier].riskLink.analysis;
   }
 
   @Selector()
   static getPortfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    let selectedPortfolio: any = _.toArray(_.get(state.content[wsIdentifier],
-      `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
-    selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
-    return {
-      data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
-    };
+    return state.content[wsIdentifier].riskLink.portfolios;
   }
 
   @Selector()
@@ -855,6 +843,11 @@ export class WorkspaceState {
     this.riskLinkFacade.toggleRiskLinkEDMAndRDM(ctx, payload);
   }
 
+  @Action(fromWS.DatasourceScanAction)
+  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction){
+    return this.riskLinkFacade.dataSourcesScan(ctx,payload);
+  }
+
   @Action(fromWS.ToggleRiskLinkPortfolioAction)
   toggleRiskLinkPortfolio(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkPortfolioAction) {
     this.riskLinkFacade.toggleRiskLinkPortfolio(ctx, payload);
@@ -1037,7 +1030,7 @@ export class WorkspaceState {
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
-    this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
+    return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
   }
 
   @Action(fromWS.ToggleAnalysisForLinkingAction)

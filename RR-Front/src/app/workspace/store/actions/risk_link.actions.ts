@@ -148,6 +148,11 @@ export class SelectFacRiskLinkEDMAndRDMAction {
   constructor(public payload: any) {}
 }
 
+export class DatasourceScanAction {
+  static readonly type = '[Risk Link] Datasource Scan';
+  constructor(public payload:any) {}
+}
+
 export class ApplyFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Apply Financial Perspective For Analysis';
   constructor(public payload: any) {}

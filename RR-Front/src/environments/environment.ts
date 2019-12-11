@@ -5,8 +5,8 @@
 export const environment = {
   production: false,
   API_URI: 'http://localhost:8080/api/',
+  IMPORT_URI: 'http://localhost:8081/api/',
   hmr: false
-
 };
 
 /*
