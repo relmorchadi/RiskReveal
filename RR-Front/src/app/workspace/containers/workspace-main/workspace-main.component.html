@@ -93,32 +93,32 @@
                   <div nzTitle="Scope" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-location_searching_24px mb-2"></i>
-                    <span><b>4/6</b></span>
+                    <span><b>{{data[wsIdentifier]?.expectedRegionPerils}}</b></span>
                   </div>
                   <div nzTitle="Exposures" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-adjust-half mb-2"></i>
-                    <span><b>1</b></span>
+                    <span><b>{{data[wsIdentifier]?.expectedExposureSummaries}}</b></span>
                   </div>
                   <div nzTitle="Qualifying PLTs" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                    <span><b>3</b></span>
+                    <span><b>{{data[wsIdentifier]?.qualifiedPLTs}}</b></span>
                   </div>
                   <div nzTitle="Published For Pricing" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                    <span><b>2</b></span>
+                    <span><b>{{data[wsIdentifier]?.expectedPublishedForPricing}}</b></span>
                   </div>
                   <div nzTitle="Priced" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                    <span><b>2</b></span>
+                    <span><b>{{data[wsIdentifier]?.expectedPriced}}</b></span>
                   </div>
                   <div nzTitle="Published For Accumulation" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                    <span><b>0</b></span>
+                    <span><b>{{data[wsIdentifier]?.expectedAccumulation}}</b></span>
                   </div>
                 </div>
               </div>
@@ -193,33 +193,33 @@
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-location_searching_24px mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Region Perils</span>
-                    <span class="kpi-icon-value">4/6</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.expectedRegionPerils}}</span>
                   </div>
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-adjust-half mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Exposures</span>
-                    <span class="kpi-icon-value">1</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.expectedExposureSummaries}}</span>
                   </div>
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-box mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
-                    <span class="kpi-icon-value">3</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.qualifiedPLTs}}</span>
                   </div>
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-note mb-3"></i>
                     <span style="flex:1;"
                           class="d-flex align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
-                    <span class="kpi-icon-value">2</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.expectedPublishedForPricing}}</span>
                   </div>
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-dollar-alt mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Priced</span>
-                    <span class="kpi-icon-value">1</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.expectedPriced}}</span>
                   </div>
                   <div style="flex:1" class="flex-vertical-layout justify-content-end number-workspace-info">
                     <i style="font-size: 1.6em" class="icon-focus-add mb-3"></i>
                     <span style="flex:1;" class="d-flex align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
-                    <span class="kpi-icon-value">0</span>
+                    <span class="kpi-icon-value">{{data[wsIdentifier]?.expectedAccumulation}}</span>
                   </div>
                 </div>
               </div>

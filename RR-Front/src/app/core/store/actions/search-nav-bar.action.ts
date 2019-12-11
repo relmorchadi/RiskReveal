@@ -207,5 +207,12 @@ export class LoadShortCuts {
   }
 }
 
+export class DeleteSearchItem {
+  static readonly type = '[Search Nav Bar] Delete Saved Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
 
 

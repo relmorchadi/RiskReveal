@@ -9,7 +9,7 @@ import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
 import {
   CloseAllTagsAction,
-  CloseTagByIndexAction, LoadMostUsedSavedSearch,
+  CloseTagByIndexAction, DeleteSearchItem, LoadMostUsedSavedSearch,
   saveSearch,
   toggleSavedSearch,
   UpdateBadges
@@ -447,5 +447,11 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   sortChange(sortData) {
     this.sortData = sortData;
     this._loadData(this.paginationOption.offset);
+  }
+
+  deleteSearchItem(id) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.store.dispatch(new DeleteSearchItem({id}))
   }
 }

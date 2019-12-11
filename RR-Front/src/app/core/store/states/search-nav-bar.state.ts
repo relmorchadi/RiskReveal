@@ -22,7 +22,8 @@ import {
   SelectBadgeAction,
   showSavedSearch,
   toggleSavedSearch,
-  UpdateBadges
+  UpdateBadges,
+  DeleteSearchItem
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
@@ -390,6 +391,17 @@ export class SearchNavBarState implements NgxsOnInit {
           })
         })
       )
+  }
+
+  @Action(DeleteSearchItem)
+  deleteSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: DeleteSearchItem) {
+    return this._searchService.deleteSavedSearch({
+      searchType: "TREATY",
+      userId: 1,
+      id: payload.id
+    }).pipe(
+      mergeMap( () => ctx.dispatch(new LoadSavedSearch()))
+    )
   }
 
   @Action(LoadMostUsedSavedSearch)

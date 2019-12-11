@@ -67,7 +67,7 @@ public class ProjectService {
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() ->
                         contractSearchResultRepository.findByWorkspaceIdAndUwYear(wsId, uwy)
-                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), "",
+                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), null,
                                         targetContract.getWorkspaceName(),targetContract.getCedantName())))
                                 .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
