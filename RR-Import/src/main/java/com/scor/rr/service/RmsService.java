@@ -130,17 +130,16 @@ public class RmsService {
     }
 
     //@Transactional(transactionManager = "rrTransactionManager")
-    public void detailedScan(DetailedScanDto detailedScanDto) {
+    public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
 //        ExecutorService executor = Executors.newFixedThreadPool(2);
 
 //        Runnable analysisScanTask = () ->
 //        Runnable portfolioScanTask = () ->
 //        executor.execute(analysisScanTask);
 //        executor.execute(portfolioScanTask);
-        scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId());
-        scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId());
-
-
+        return new DetailedScanResult(
+                scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()),
+                scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
     }
 
     /********** END :Scan Basic / Detailed **********/
@@ -189,11 +188,12 @@ public class RmsService {
         }
     }
 
-    private void scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
+    private List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
 
         List<Integer> epPoints = Arrays.asList(10, 50, 100, 250, 500, 1000);
         List<String> fpCodes = financialPerspectiveRepository.findAllCodes();
+        List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
 
         if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
             rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
@@ -207,20 +207,26 @@ public class RmsService {
                 this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
                         .stream()
                         .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysisById(projectId, rdmAnalysis))
-                        .map(rdmAnalysis -> this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis))
+                        .map(rdmAnalysis -> {
+                            RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
+                            allScannedAnalysis.add(rlAnalysis);
+                            return rlAnalysis;
+                        })
                         .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
 
                 this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
                         .stream()
                         .map(analysisProfileRegion -> {
-                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlId(rdmId, rdmName, analysisProfileRegion.getAnalysisId());
+                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
                             return new RLAnalysisProfileRegion(analysisProfileRegion, rlAnalysis);
                         })
                         .forEach(analysisProfileRegion -> rlAnalysisProfileRegionsRepository.save(analysisProfileRegion));
 
-                this.extractSourceEpHeaders(instanceId, rdmId, rdmName, epPoints, multiKeyListEntry.getValue(), fpCodes);
+                this.extractSourceEpHeaders(instanceId, rdmId, rdmName, projectId, epPoints, multiKeyListEntry.getValue(), fpCodes);
             }
         }
+
+        return allScannedAnalysis;
     }
 
     private void scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
@@ -237,10 +243,11 @@ public class RmsService {
         }
     }
 
-    private void scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
+    private List<RLPortfolio> scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
 
         Integer runId;
         Map<MultiKey, List<String>> portfolioIdAndTypeAndCurrencyByEdms = new HashMap<>();
+        List<RLPortfolio> allScannedPortfolios = new ArrayList<>();
 
         if (rlPortfolioList != null && !rlPortfolioList.isEmpty()) {
             rlPortfolioList.stream().map(item -> new MultiKey(item.getEdmId(), item.getEdmName())).distinct()
@@ -264,16 +271,17 @@ public class RmsService {
                         .map(portfolioAnalysisRegions -> {
                             RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
                             rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
-                            rlPortfolioRepository.save(rlPortfolio);
+                            rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
                             rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
+                            allScannedPortfolios.add(rlPortfolio);
                             return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
                         })
                         .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
 
                 this.removeEDMPortfolioContext(instanceId, runId);
             }
-
         }
+        return allScannedPortfolios;
     }
 
     private List<Long> getAnalysisIdByRdm(Long rdmId, String rdmName, List<AnalysisHeader> rlAnalysisList) {
@@ -716,14 +724,14 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(this.getJdbcTemplate(instanceId));
     }
 
-    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, List<Integer> epPoints, List<Long> analysisIds, List<String> fpCodes) {
+    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, Long projectId, List<Integer> epPoints, List<Long> analysisIds, List<String> fpCodes) {
 
         List<RdmAnalysisEpCurves> epCurves = this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIds, fpCodes);
 
         this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
                 .forEach(stat -> {
                     RLSourceEpHeader sourceEpHeader = new RLSourceEpHeader(stat);
-                    RLAnalysis rlAnalysis = rlAnalysisRepository.findByRlId(stat.getAnalysisId());
+                    RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, stat.getAnalysisId(), projectId);
                     sourceEpHeader.setRLAnalysisId(rlAnalysis.getRlAnalysisId());
                     filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
                         int statisticMetric = epC.getEbpTypeCode();

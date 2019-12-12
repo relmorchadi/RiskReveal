@@ -1,6 +1,7 @@
 package com.scor.rr.domain.riskLink;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.RdmAnalysisBasic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,15 +64,19 @@ public class RLAnalysis {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "analysisScanStatus")
+    @JsonBackReference
     private RLAnalysisScanStatus rlAnalysisScanStatus;
 
     @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<RLImportSelection> RLImportSelection;
 
-    @OneToMany(mappedBy = "rLAnalysisId", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rLAnalysisId", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<RLSourceEpHeader> rlSourceEpHeaders;
 
-    @OneToMany(mappedBy = "rlAnalysis", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "rlAnalysis", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonBackReference
     private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
