@@ -60,4 +60,6 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
     RLAnalysis findByRdmIdAndRdmNameAndRlId(Long rdmId, String rdmName, Long analysisId);
 
     List<RLAnalysis> findByRlModelDataSourceId(Long rlModelDataSourceId);
+
+    RLAnalysis findByRlId(Long analysisId);
 }

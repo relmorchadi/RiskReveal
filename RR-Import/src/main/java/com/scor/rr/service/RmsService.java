@@ -29,9 +29,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.sql.Types;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import static com.scor.rr.util.Utils.applyOffsetSizeToList;
 import static java.util.stream.Collectors.toList;
@@ -100,9 +97,10 @@ public class RmsService {
 
     /********** Scan Basic / Detailed **********/
 
+//    @Transactional(transactionManager = "rrTransactionManager")
     public void basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
 
-        ExecutorService executor = Executors.newFixedThreadPool(dataSources.size());
+//        ExecutorService executor = Executors.newFixedThreadPool(dataSources.size());
         for (DataSource dataSource : dataSources) {
 
             RLModelDataSource rlModelDataSource =
@@ -116,29 +114,33 @@ public class RmsService {
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
 
+//            final RLModelDataSource rlModelDataSourceLM = rlModelDataSource;
+
             if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+//                Runnable rdmScanTask = () ->
+//                executor.execute(rdmScanTask);
                 scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
             } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
+//                Runnable edmScanTask = () ->
+//                executor.execute(edmScanTask);
                 scanPortfolioBasicForEdm(instanceId, rlModelDataSource);
             }
         }
 
     }
 
+    //@Transactional(transactionManager = "rrTransactionManager")
     public void detailedScan(DetailedScanDto detailedScanDto) {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
+//        ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        Runnable analysisScaTask = () -> scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId());
-        Runnable portfolioScanTask = () -> scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId());
+//        Runnable analysisScanTask = () ->
+//        Runnable portfolioScanTask = () ->
+//        executor.execute(analysisScanTask);
+//        executor.execute(portfolioScanTask);
+        scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId());
+        scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId());
 
-        executor.execute(analysisScaTask);
-        executor.execute(portfolioScanTask);
 
-        try {
-            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /********** END :Scan Basic / Detailed **********/
@@ -721,6 +723,8 @@ public class RmsService {
         this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
                 .forEach(stat -> {
                     RLSourceEpHeader sourceEpHeader = new RLSourceEpHeader(stat);
+                    RLAnalysis rlAnalysis = rlAnalysisRepository.findByRlId(stat.getAnalysisId());
+                    sourceEpHeader.setRLAnalysisId(rlAnalysis.getRlAnalysisId());
                     filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
                         int statisticMetric = epC.getEbpTypeCode();
                         try {
