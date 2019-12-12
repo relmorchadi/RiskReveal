@@ -33,8 +33,7 @@ public class ConfigurationResource {
 
     @PostMapping("detailed-scan")
     public ResponseEntity<?> analysisDetailScan(@RequestBody DetailedScanDto detailedScanDto) {
-        rmsService.detailedScan(detailedScanDto);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(rmsService.detailedScan(detailedScanDto), HttpStatus.OK);
     }
 
     @PostMapping("save-analysis-import-selection")
