@@ -8,6 +8,7 @@ import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.util.Utils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -15,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -25,7 +29,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.sql.Types;
 import java.util.*;
+import java.util.stream.IntStream;
 
+import static com.scor.rr.util.Utils.applyOffsetSizeToList;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -256,14 +262,20 @@ public class RmsService {
 
     /****** Risk Link Interface ******/
 
-    public List<DataSource> listAvailableDataSources(String instanceId) {
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
         this.logger.debug("Service starts executing the query ...");
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
                 sql,
                 new DataSourceRowMapper());
-        this.logger.debug("the data returned ", dataSources);
-        return dataSources;
+        if(! StringUtils.isEmpty(keyword))
+            dataSources = dataSources.stream().filter(ds -> StringUtils.containsIgnoreCase(ds.getName(), keyword) )
+                    .collect(toList());
+
+        List<DataSource> parsedDatasources= applyOffsetSizeToList(dataSources, offset, size);
+
+        this.logger.debug("the data returned ", parsedDatasources);
+        return new PageImpl<>(parsedDatasources, PageRequest.of(offset / size, size),dataSources.size());
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {

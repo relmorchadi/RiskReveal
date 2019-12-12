@@ -20,6 +20,7 @@ import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filte
 import {NotificationService} from '../../../shared/services';
 import {debounceTime, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {SetCurrentTab} from '../../store/actions';
+import {FormControl} from "@angular/forms";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -115,6 +116,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getValidResults) validate$;
   showPopUp = false;
 
+  @Select(WorkspaceState.getSelectedAnalysisPortfolio)
+  selectedAnalysisPortfolio$;
+
   filterAnalysis = {};
 
   filterPortfolio = {
@@ -130,6 +134,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     peril: '',
   };
 
+  datasourceKeywordFc:FormControl;
+
   constructor(
     private _helper: HelperService,
     private route: ActivatedRoute,
@@ -140,6 +146,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    this.datasourceKeywordFc= new FormControl(['']);
   }
   ngOnInit() {
     this.serviceSubscription = [
@@ -196,16 +203,39 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         })
     ];
 
+    this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+      keyword: '',
+      offset: 0,
+      size: 100,
+    }));
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
+
+    this.datasourceKeywordFc.valueChanges
+      .pipe(debounceTime(500))
+      .subscribe(val => {
+      this.onInputSearch(val);
+    })
   }
 
   patchState({wsIdentifier, data}: any): void {
     this.workspaceInfo = data;
     this.wsIdentifier = wsIdentifier;
+  }
+
+  lazyLoadDataSources(lazyLoadEvent){
+    console.log('Datasources lazy load', lazyLoadEvent);
+    const {first, rows} = lazyLoadEvent;
+    if (first + rows < this.state.listEdmRdm.totalElements ) {
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+        keyword: this.datasourceKeywordFc.value,
+        offset: first,
+        size: rows,
+      }));
+    }
   }
 
   autoLinkAnalysis() {
@@ -232,6 +262,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       "workspaceContextCode": this.workspaceInfo.wsId,
       "workspaceUwYear": this.workspaceInfo.uwYear
     })]);
+  }
+
+  onInputSearch(keyword) {
+    this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({keyword, offset: 0, size: '100'}));
+    this.detectChanges();
   }
 
   loadDataOnScroll(event) {
@@ -555,30 +590,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
-  onInputSearch(event) {
-    if (event.target.value.length > 2) {
-      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
-    } else {
-      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
-    }
-    this.detectChanges();
-  }
-
-  loadItemsLazy(event) {
-    let sizePage = '';
-    if (event.first + event.rows > this.state.listEdmRdm.totalNumberElement) {
-      sizePage = this.state.listEdmRdm.totalNumberElement.toString();
-    } else {
-      sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
-    }
-    if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
-      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-        keyword: this.state.listEdmRdm.searchValue,
-        size: sizePage,
-      }));
-    }
-
-  }
 
   selectOne(row) {
     if (this.state.selectedEDMOrRDM === 'RDM') {

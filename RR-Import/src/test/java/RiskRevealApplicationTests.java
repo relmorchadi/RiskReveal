@@ -33,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @RunWith(SpringRunner.class)
 public class RiskRevealApplicationTests {
 
@@ -518,8 +520,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listAvailableDataSources() {
-        Mockito.when(rmsService.listAvailableDataSources(instanceId)).thenReturn(Arrays.asList(dataSource));
-        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId).getBody();
+        Mockito.when(rmsService.listAvailableDataSources(instanceId, null, 0,20).get().collect(toList())).thenReturn(Arrays.asList(dataSource));
+        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId, null, 0, 20).getBody();
         Assert.assertNotNull(dataSources.get(0));
         Assert.assertNotNull(dataSource);
         try {

@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface ModellingSystemInstanceRepository extends JpaRepository<ModellingSystemInstanceEntity, String> {
 
-    @Query("select msi.modellingSystemInstanceId from ModellingSystemInstanceEntity msi")
+    @Query("select msi.modellingSystemInstanceId from ModellingSystemInstanceEntity msi" +
+            " where msi.active=true")
     List<String> findInstanceCodes();
 
 }
