@@ -17,7 +17,7 @@ import java.util.List;
 public class RLPortfolio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlPortfolioId")
     private Long rlPortfolioId;
     @Column(name = "Entity")
@@ -54,7 +54,7 @@ public class RLPortfolio {
     @OneToMany(mappedBy = "rlPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "portfolioScanStatus")
     private RLPortfolioScanStatus rlPortfolioScanStatus;
 

@@ -76,4 +76,14 @@ public class ConfigurationResource {
             return new ResponseEntity<>("An error has Occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "get-source-ep-headers")
+    public ResponseEntity<?> getSourceEpHeaders(@RequestParam Long analysisId) {
+        try {
+            return new ResponseEntity<>(configurationService.getSourceEpHeadersForAnalysis(analysisId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

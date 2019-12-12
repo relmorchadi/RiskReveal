@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
-public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long> {
+public interface RLPortfolioRepository extends JpaRepository<RLPortfolio, Long> {
 
     RLPortfolio findByRlId(Long portfolioId);
 
@@ -22,15 +21,18 @@ public interface  RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>
     @Modifying()
     @Transactional(transactionManager = "rrTransactionManager")
     @Query("UPDATE RLPortfolio rp" +
-            " SET rp.tiv = :#{#portfolio.tiv}" +
-            " WHERE rp.projectId= :projectId AND " +
+            " SET rp.tiv =:#{#portfolio.tiv}," +
+            " rp.number =:#{#portfolio.number}," +
+            " rp.created =:#{#portfolio.created}" +
+            " WHERE " +
+            " rp.projectId= :projectId AND " +
             " rp.edmId= :#{#portfolio.edmId} AND " +
             " rp.edmName= :#{#portfolio.edmName} AND " +
             " rp.rlId= :#{#portfolio.portfolioId} AND " +
             " rp.name= :#{#portfolio.name}")
     void updatePortfolioById(@Param("projectId") Long projectId, @Param("portfolio") EdmPortfolio portfolio);
 
-    RLPortfolio findByEdmIdAndEdmNameAndRlId(Long edmId, String edmName, Long portfolioId);
+    RLPortfolio findByEdmIdAndEdmNameAndRlIdAndProjectId(Long edmId, String edmName, Long portfolioId, Long projectId);
 
     List<RLPortfolio> findByRlModelDataSourceRlModelDataSourceId(Long rlModelDataSourceId);
 }
