@@ -50,40 +50,6 @@ public class RLSourceEpHeader {
     @Column(name = "CoV")
     private Double coV;
 
-//    public void setAEP(Double value, int exceedanceProbabilty) {
-//        switch (exceedanceProbabilty) {
-//            case 10:
-//                this.setAEP10(value);
-//            case 50:
-//                this.setAEP50(value);
-//            case 100:
-//                this.setAEP100(value);
-//            case 250:
-//                this.setAEP250(value);
-//            case 500:
-//                this.setAEP500(value);
-//            case 1000:
-//                this.setAEP1000(value);
-//        }
-//    }
-//
-//    public void setOEP(Double value, int exceedanceProbabilty) {
-//        switch (exceedanceProbabilty) {
-//            case 10:
-//                this.setOEP10(value);
-//            case 50:
-//                this.setOEP50(value);
-//            case 100:
-//                this.setOEP100(value);
-//            case 250:
-//                this.setOEP250(value);
-//            case 500:
-//                this.setOEP500(value);
-//            case 1000:
-//                this.setOEP1000(value);
-//        }
-//    }
-
     public RLSourceEpHeader(RdmAllAnalysisSummaryStats stat) {
         rLAnalysisId = stat.getAnalysisId();
         financialPerspective = stat.getFinPerspCode();

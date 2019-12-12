@@ -5,12 +5,14 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 
 public class EdmPortfolioRowMapper implements RowMapper<EdmPortfolio> {
 
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     @Override
-    public EdmPortfolio mapRow(ResultSet rs , int rowNum ) throws SQLException {
+    public EdmPortfolio mapRow(ResultSet rs, int rowNum) throws SQLException {
 
         EdmPortfolio edmPortfolio = new EdmPortfolio();
         edmPortfolio.setEdmId(rs.getLong("edm_id"));
@@ -18,8 +20,6 @@ public class EdmPortfolioRowMapper implements RowMapper<EdmPortfolio> {
         edmPortfolio.setPortfolioId(rs.getLong("port_id"));
         edmPortfolio.setNumber(rs.getString("port_num"));
         edmPortfolio.setName(rs.getString("port_name"));
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        edmPortfolio.setCreated(df.format(rs.getTimestamp("port_created_dt").toLocalDateTime()));
         edmPortfolio.setDescription(rs.getString("port_descr"));
         edmPortfolio.setType(rs.getString("port_type"));
         edmPortfolio.setPeril(rs.getString("peril"));
@@ -27,8 +27,12 @@ public class EdmPortfolioRowMapper implements RowMapper<EdmPortfolio> {
         edmPortfolio.setAgCedant(rs.getString("ag_cedant"));
         edmPortfolio.setAgCurrency(rs.getString("ag_ccy"));
         edmPortfolio.setTiv(rs.getBigDecimal("tiv"));
-
-        return  edmPortfolio ;
+        try {
+            edmPortfolio.setCreated(df.parse(rs.getString("port_created_dt")));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return edmPortfolio;
     }
 
 }

@@ -3,6 +3,7 @@ package com.scor.rr.domain;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class EdmPortfolio {
@@ -12,7 +13,7 @@ public class EdmPortfolio {
     private Long portfolioId;
     private String number;
     private String name;
-    private String created;
+    private Date created;
     private String description;
     private String type;
     private String peril;

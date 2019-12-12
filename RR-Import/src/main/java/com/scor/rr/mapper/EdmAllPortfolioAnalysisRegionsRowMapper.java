@@ -16,11 +16,13 @@ public class EdmAllPortfolioAnalysisRegionsRowMapper implements RowMapper<EdmAll
 
         edmAllPortfolioAnalysisRegions.setPortfolioId(rs.getLong("port_id"));
         edmAllPortfolioAnalysisRegions.setPortfolioType(rs.getString("port_type"));
-        edmAllPortfolioAnalysisRegions.setAnalysisRegion(rs.getString("analysis_region"));
-        edmAllPortfolioAnalysisRegions.setAnalysisRegionDesc(rs.getString("analysis_region_desc"));
-        edmAllPortfolioAnalysisRegions.setPeril(rs.getString("peril"));
-        edmAllPortfolioAnalysisRegions.setTotalTiv(BigDecimal.valueOf(rs.getDouble("total_tiv")).setScale(3, RoundingMode.HALF_UP).doubleValue());
-        edmAllPortfolioAnalysisRegions.setLocCount(rs.getInt("loc_count"));
+        edmAllPortfolioAnalysisRegions.setAnalysisRegion(rs.getString("AnalysisRegionCode"));
+        edmAllPortfolioAnalysisRegions.setAnalysisRegionDesc(rs.getString("AnalysisRegionDesc"));
+        edmAllPortfolioAnalysisRegions.setPeril(rs.getString("Peril"));
+        edmAllPortfolioAnalysisRegions.setTotalTiv(BigDecimal.valueOf(rs.getDouble("TotalTiv")).setScale(3, RoundingMode.HALF_UP).doubleValue());
+        edmAllPortfolioAnalysisRegions.setLocCount(rs.getInt("LocCount"));
+        edmAllPortfolioAnalysisRegions.setExpoCurrency(rs.getString("expo_ccy"));
+        edmAllPortfolioAnalysisRegions.setRateToUsd(rs.getDouble("expo_ccy_roe_usd"));
 
         return edmAllPortfolioAnalysisRegions ;
     }

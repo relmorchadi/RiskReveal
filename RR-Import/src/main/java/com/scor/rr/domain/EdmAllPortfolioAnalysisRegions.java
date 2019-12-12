@@ -10,6 +10,8 @@ public class EdmAllPortfolioAnalysisRegions {
     private String analysisRegion;
     private String analysisRegionDesc;
     private String peril;
+    private String expoCurrency;
+    private double rateToUsd;
     private double totalTiv;
     private int locCount;
 
