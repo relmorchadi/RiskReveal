@@ -1630,17 +1630,17 @@ export class RiskLinkStateService {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.selectedEDMOrRDM = type;
             draft.content[wsIdentifier].riskLink.display.displayTable = true;
-            const  {analysis, portfolios}= draft.content[wsIdentifier].riskLink.selection;
+            const {analysis, portfolios} = draft.content[wsIdentifier].riskLink.selection;
             if (type == 'EDM') {
-              draft.content[wsIdentifier].riskLink.portfolios = _.map(data, (item:any) => ({
+              draft.content[wsIdentifier].riskLink.portfolios = _.map(data, (item: any) => ({
                 ...item,
-                selected: (portfolios[rmsId] && portfolios[rmsId][item.rlPortfolioId] ) != null
+                selected: (portfolios[rmsId] && portfolios[rmsId][item.rlPortfolioId]) != null
               }));
             } else if (type == 'RDM') {
-              draft.content[wsIdentifier].riskLink.analysis = _.map(data, (item:any) => ({
+              draft.content[wsIdentifier].riskLink.analysis = _.map(data, (item: any) => ({
                 ...item,
-                selected: (analysis[rmsId] && analysis[rmsId][item.rlAnalysisId] ) != null
-              }) );
+                selected: (analysis[rmsId] && analysis[rmsId][item.rlAnalysisId]) != null
+              }));
             }
             const selection = draft.content[wsIdentifier].riskLink.selection;
             draft.content[wsIdentifier].riskLink.selection = {
@@ -1892,7 +1892,7 @@ export class RiskLinkStateService {
             console.log('this is ds', ds);
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             const {riskLink} = draft.content[wsIdentifier];
-            const selectedDataSources = [... _.keys(riskLink.selection.edms), ... _.keys(riskLink.selection.rdms)];
+            const selectedDataSources = [..._.keys(riskLink.selection.edms), ..._.keys(riskLink.selection.rdms)];
             const {content, numberOfElement, totalElements} = ds;
             draft.content[wsIdentifier].riskLink.listEdmRdm.data = _.merge({},
               ...content.map(item => ({
@@ -1958,7 +1958,7 @@ export class RiskLinkStateService {
                       rdms: {},
                       analysis: {},
                       portfolios: {}
-                      },
+                    },
                     linking: {
                       edm: null,
                       rdm: {data: null, selected: null},
@@ -2003,7 +2003,19 @@ export class RiskLinkStateService {
         ),
         // mergeMap(dt => of(ctx.dispatch(new fromWs.SynchronizeEDMAndRDMSelectionAction())))
       );
+  }
 
+  runDetailedScan(ctx, payload) {
+    return this.riskApi.runDetailedScan()
+      .pipe(
+        mergeMap(res => {
+
+          return of(res);
+        })
+        , catchError(err => {
+          console.error('Error while doing the detailed scan', err);
+          return of(err);
+        }))
   }
 
   private _facTraitement(ctx): boolean {

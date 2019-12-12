@@ -262,3 +262,8 @@ export class LoadRiskLinkPortfolioDataAction {
   static readonly type = '[Risk Link] Load Risk Link portfolio Data';
   constructor(public payload: any) {}
 }
+
+export class RunDetailedScanAction {
+  static readonly type = '[Risk Link] Run detailed scan';
+  constructor(public payload: any) {}
+}
