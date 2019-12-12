@@ -443,13 +443,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   displayImported() {
-    this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
-    this.dispatch(new fromWs.AddToBasketAction());
-    this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      if (value !== undefined && value !== null) {
-        this.showPopUp = !value;
-      }
-    });
+    // this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
+    // this.dispatch(new fromWs.AddToBasketAction());
+    // this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    //   if (value !== undefined && value !== null) {
+    //     this.showPopUp = !value;
+    //   }
+    // });
+    //Run the detail scan
+
+
   }
 
   getScrollableCols() {

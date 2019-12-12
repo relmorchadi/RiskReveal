@@ -1078,6 +1078,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 
+  @Action(fromWS.RunDetailedScanAction)
+  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction){
+    return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  }
+
   /***********************************
    *
    * Scope And Completeness Actions
