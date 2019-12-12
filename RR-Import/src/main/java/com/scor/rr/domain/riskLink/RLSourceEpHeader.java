@@ -51,7 +51,6 @@ public class RLSourceEpHeader {
     private Double coV;
 
     public RLSourceEpHeader(RdmAllAnalysisSummaryStats stat) {
-        rLAnalysisId = stat.getAnalysisId();
         financialPerspective = stat.getFinPerspCode();
         purePremium = stat.getPurePremium();
         stdDev = stat.getStdDev();
