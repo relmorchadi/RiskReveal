@@ -9,6 +9,7 @@ import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.util.Utils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -26,7 +30,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.sql.Types;
 import java.util.*;
+import java.util.stream.IntStream;
 
+import static com.scor.rr.util.Utils.applyOffsetSizeToList;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -69,6 +75,9 @@ public class RmsService {
 
     @Autowired
     private RLPortfolioAnalysisRegionRepository rlPortfolioAnalysisRegionRepository;
+
+    @Autowired
+    private RegionPerilService regionPerilService;
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
@@ -272,14 +281,20 @@ public class RmsService {
 
     /****** Risk Link Interface ******/
 
-    public List<DataSource> listAvailableDataSources(String instanceId) {
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
         this.logger.debug("Service starts executing the query ...");
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
                 sql,
                 new DataSourceRowMapper());
-        this.logger.debug("the data returned ", dataSources);
-        return dataSources;
+        if(! StringUtils.isEmpty(keyword))
+            dataSources = dataSources.stream().filter(ds -> StringUtils.containsIgnoreCase(ds.getName(), keyword) )
+                    .collect(toList());
+
+        List<DataSource> parsedDatasources= applyOffsetSizeToList(dataSources, offset, size);
+
+        this.logger.debug("the data returned ", parsedDatasources);
+        return new PageImpl<>(parsedDatasources, PageRequest.of(offset / size, size),dataSources.size());
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {
@@ -824,6 +839,178 @@ public class RmsService {
 
         public String getSqlProc() {
             return sqlProc;
+        }
+    }
+
+    private String resolveSystemRegionPeril(long rlAnalysisId) {
+        String systemRegionPeril = null;
+        Optional<RLAnalysis> rlAnalysis = rlAnalysisRepository.findById(rlAnalysisId);
+        if (rlAnalysis.isPresent()) {
+            Map<String, RegionPerilNode> regionPerilMap = new HashMap<>();
+            List<RLAnalysisProfileRegion> analysisProfileRegions = rlAnalysisProfileRegionsRepository.findByRLAnalysisRLAnalysisId(rlAnalysisId);
+            for(RLAnalysisProfileRegion  analysisProfileRegion : analysisProfileRegions) {
+                RegionPerilEntity rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(analysisProfileRegion.getAnalysisRegion(), "", analysisProfileRegion.getPeril());
+                if (rp != null) {
+                    String rootRegionPerilCode = rlAnalysis.get().getRpCode();
+                    //TODO: need to define a new ref table
+//                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPeril(analysis.getRpCode());
+//                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPeril())) {
+//                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPeril();
+//                    }
+                    if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {
+                        fillWithParenting(regionPerilMap, rp, analysisProfileRegion);
+                    }
+                }
+            }
+            RegionPerilNode topLevelRegionPeril = null;
+            for(Map.Entry<String, RegionPerilNode> e:regionPerilMap.entrySet()) {
+                RegionPerilNode children=e.getValue();
+                RegionPerilNode parent=regionPerilMap.get(e.getValue().regionPeril.getHierarchyParentCode());
+                if(parent!=null) {
+                    parent.children.add(children);
+                    children.parent=parent;
+                }
+                else {
+                    topLevelRegionPeril=children;
+                }
+            }
+            if (topLevelRegionPeril != null) {
+                systemRegionPeril = crawlDownToSystemRegionPeril(topLevelRegionPeril);
+            } else {
+                logger.error("no top level RegionPeil found for analysis '{}':'{}' from RDM '{}':'{}'",
+                        rlAnalysis.get().getRlId(), rlAnalysis.get().getAnalysisName(), rlAnalysis.get().getRdmId(), rlAnalysis.get().getRdmName());
+            }
+        } else {
+            logger.error("RLAnalysis Id {} not found", rlAnalysisId);
+        }
+        return systemRegionPeril;
+    }
+
+    private boolean isSameRegionPerilHierarchy(String rootRegionPerilCode, RegionPerilEntity regionPeril) {
+        RegionPerilEntity rp = regionPeril;
+        while (rp != null && ! StringUtils.isEmpty(rp.getHierarchyParentCode())) {
+            rp = regionPerilService.findRegionPerilByRegionPerilCode(rp.getHierarchyParentCode());
+        }
+
+        if (rp != null && rp.getRegionPerilCode().equals(rootRegionPerilCode))
+            return true;
+        return false;
+    }
+
+    private void fillWithParenting(Map<String, RegionPerilNode> regionPerilMap, RegionPerilEntity rp, RLAnalysisProfileRegion rlAnalysisProfileRegion) {
+        if(rp != null) {
+            RegionPerilNode rpn = regionPerilMap.get(rp.getRegionPerilCode());
+            if (rpn == null) {
+                rpn = new RegionPerilNode(rp);
+                regionPerilMap.put(rp.getRegionPerilCode(), rpn);
+            }
+            if(rlAnalysisProfileRegion != null) {
+                rpn.associatedAnalysisRegions.add(rlAnalysisProfileRegion);
+            }
+            if(rp.getHierarchyLevel() > 0 && !regionPerilMap.containsKey(rp.getHierarchyParentCode())) {
+                RegionPerilEntity rpParent = regionPerilService.findRegionPerilByRegionPerilCode(rp.getHierarchyParentCode());
+                fillWithParenting(regionPerilMap, rpParent, null);
+            }
+        }
+    }
+
+    private String crawlDownToSystemRegionPeril(RegionPerilNode node) {
+        if(node.getRegionPerilAAL(false) > 0.0d) {
+            return node.getRegionPeril().getRegionPerilCode();
+        } else {
+            List<RegionPerilNode> candidates=new ArrayList<>();
+            for(RegionPerilNode child:node.children) {
+                if(child.getRegionPerilAAL(true) > 0.0d) {
+                    candidates.add(child);
+                }
+            }
+            if(candidates.size() > 1) {
+                return node.getRegionPeril().getRegionPerilCode();
+            } else {
+                for(RegionPerilNode c : candidates) {
+                    return crawlDownToSystemRegionPeril(c);
+                }
+            }
+            return null;
+        }
+    }
+
+
+    private static class RegionPerilNode {
+        public RegionPerilNode(RegionPerilEntity regionPeril) {
+
+            this.regionPeril=regionPeril;
+        }
+
+        private RegionPerilEntity regionPeril;
+
+        private RegionPerilNode parent;
+
+        private Set<RegionPerilNode> children = new HashSet<>();
+
+        private Set<RLAnalysisProfileRegion> associatedAnalysisRegions = new HashSet<>();
+
+
+        public double getRegionPerilAAL(boolean withChildren) {
+            if (associatedAnalysisRegions!=null) {
+                double sum=0d;
+                for(RLAnalysisProfileRegion analysisRegion : associatedAnalysisRegions)
+                {
+                    if(analysisRegion.getAal() != null) {
+                        sum += analysisRegion.getAal().doubleValue();
+                    }
+                }
+                if (withChildren && children !=null && !children.isEmpty()) {
+                    for (RegionPerilNode rpn : children) {
+                        sum += rpn.getRegionPerilAAL(withChildren);
+                    }
+                }
+                return sum;
+            }
+            else
+            {
+                return 0d;
+            }
+        }
+
+
+        public RegionPerilNode getParent()
+        {
+            return parent;
+        }
+
+        public void setParent(RegionPerilNode parent)
+        {
+            this.parent=parent;
+        }
+
+
+        public Set<RegionPerilNode> getChildren()
+        {
+            return children;
+        }
+
+        public void setChildren(Set<RegionPerilNode> children)
+        {
+            this.children=children;
+        }
+
+        public RegionPerilEntity getRegionPeril()
+        {
+            return regionPeril;
+        }
+
+        public void setRegionPeril(RegionPerilEntity regionPeril)
+        {
+            this.regionPeril=regionPeril;
+        }
+
+        public Set<RLAnalysisProfileRegion> getAssociatedAnalysisRegions() {
+            return associatedAnalysisRegions;
+        }
+
+        public void setAssociatedAnalysisRegions(Set<RLAnalysisProfileRegion> associatedAnalysisRegions) {
+            this.associatedAnalysisRegions = associatedAnalysisRegions;
         }
     }
 }

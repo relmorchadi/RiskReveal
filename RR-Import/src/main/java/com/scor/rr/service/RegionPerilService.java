@@ -43,4 +43,9 @@ public class RegionPerilService {
     {
         return regionPerilRepository.findById(regionPerilID).orElse(null);
     }
+
+    public RegionPerilEntity findRegionPerilByRegionPerilCode(String rpCode)
+    {
+        return regionPerilRepository.findByRegionPerilCode(rpCode);
+    }
 }

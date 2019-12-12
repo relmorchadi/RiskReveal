@@ -202,7 +202,7 @@
         <dependency>
             <artifactId>common</artifactId>
             <groupId>com.scor.rr</groupId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${rr_version}</version>
         </dependency>
         <!--<dependency>-->
             <!--<groupId>ch.qos.logback</groupId>-->

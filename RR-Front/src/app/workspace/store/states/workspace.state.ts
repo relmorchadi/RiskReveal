@@ -299,6 +299,17 @@ export class WorkspaceState {
     return state.content[wsIdentifier].riskLink.results.isValid;
   }
 
+  //
+  @Selector()
+  static getSelectedAnalysisPortfolio(state:WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis,portfolios}= state.content[wsIdentifier].riskLink.selection;
+    return [
+      ... _.flatten(_.values(analysis).map(val => _.toArray(val)) ),
+      ... _.flatten(_.values(portfolios).map(val => _.toArray(val)) )
+    ];
+  }
+
   @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;

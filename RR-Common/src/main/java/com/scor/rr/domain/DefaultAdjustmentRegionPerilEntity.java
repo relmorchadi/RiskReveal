@@ -30,7 +30,7 @@ public class DefaultAdjustmentRegionPerilEntity {
         return fkRegionPerilId;
     }
 
-    public void setFkRegionPerilId(int fkRegionPerilId) {
+    public void setFkRegionPerilId(long fkRegionPerilId) {
         this.fkRegionPerilId = fkRegionPerilId;
     }
 

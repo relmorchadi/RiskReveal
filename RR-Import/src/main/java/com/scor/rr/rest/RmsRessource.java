@@ -5,6 +5,7 @@ import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,11 +24,11 @@ public class RmsRessource {
     RmsService rmsService;
 
     @GetMapping("listAvailableDataSources")
-    public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId) {
+    public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "20") int size) {
 
         this.logger.debug("controller starts getting dataSource ...");
 
-        List<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId);
+        Page<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size);
 
         return ResponseEntity.ok(dataSources);
     }
