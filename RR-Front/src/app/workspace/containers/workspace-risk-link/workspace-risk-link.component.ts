@@ -14,7 +14,7 @@ import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
 import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
 import * as moment from 'moment';
-import {combineLatest} from 'rxjs';
+import {combineLatest, forkJoin} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filter.pipe';
 import {NotificationService} from '../../../shared/services';
@@ -116,8 +116,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getValidResults) validate$;
   showPopUp = false;
 
-  @Select(WorkspaceState.getSelectedAnalysisPortfolio)
-  selectedAnalysisPortfolio$;
+  @Select(WorkspaceState.getFlatSelectedAnalysisPortfolio)
+  flatSelectedAnalysisPortfolio$;
+
+  @Select(WorkspaceState.getSelectedAnalysisProtfolios)
+  selectedAnalysisPortfolios$;
+
+
+
 
   filterAnalysis = {};
 
@@ -442,7 +448,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     );
   }
 
-  displayImported() {
+  runDetailedScan() {
     // this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     // this.dispatch(new fromWs.AddToBasketAction());
     // this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
@@ -451,7 +457,23 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     //   }
     // });
     //Run the detail scan
-
+    forkJoin(
+      [
+        this.selectedProject$,
+        this.selectedAnalysisPortfolios$
+      ]
+      .map(item => item.pipe(take(1)))
+    ).subscribe(data => {
+      const [p, analysisPortfolioSelection]= data;
+      console.log('Those are selected section', analysisPortfolioSelection);
+      console.log('Project', p);
+      const {analysis, portfolios}= analysisPortfolioSelection;
+      this.dispatch(new fromWs.RunDetailedScanAction({
+        projectId: p.projectId,
+        analysis,
+        portfolios
+      }));
+    });
 
   }
 

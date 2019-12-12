@@ -430,7 +430,7 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="(selectedAnalysisPortfolio$ | async)?.length>0; else disabledAddForImportBtn" (click)="displayImported()" class="a-buttons-contained-mini">ADD
+                <button *ngIf="(flatSelectedAnalysisPortfolio$ | async)?.length>0; else disabledAddForImportBtn" (click)="runDetailedScan()" class="a-buttons-contained-mini">ADD
                   FOR IMPORT
                 </button>
                 <ng-template #disabledAddForImportBtn>
