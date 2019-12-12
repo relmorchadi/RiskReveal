@@ -142,7 +142,7 @@ export class WorkspaceState {
 
   @Selector()
   static getContract(state: WorkspaceModel) {
-    const wsIdentifier =  state.currentTab.wsIdentifier;
+    const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].contract;
   }
 
@@ -299,14 +299,48 @@ export class WorkspaceState {
     return state.content[wsIdentifier].riskLink.results.isValid;
   }
 
-  //
+
   @Selector()
-  static getSelectedAnalysisPortfolio(state:WorkspaceModel){
+  static getSelectedAnalysisProtfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    const {analysis,portfolios}= state.content[wsIdentifier].riskLink.selection;
+    const {analysis, portfolios, edms, rdms} = state.content[wsIdentifier].riskLink.selection;
+    return {
+      analysis: _.flatten(
+        _.keys(analysis).map(rdmId => _.map( _.toArray(analysis[rdmId]), item => ({
+          rdmId,
+          rdmName: rdms[rdmId].name,
+          analysisId: item.rlId,
+          analysisName: item.analysisName,
+        }) ))
+      ),
+      portfolios: _.flatten(
+        _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
+          edmId,
+          edmName: edms[edmId].name,
+          curreny: item.agCurrency,
+          portfolioId: item.rlId,
+          portfolioName: item.name,
+          portfolioType: item.type
+        }) ))
+      )
+    };
+
+    /*
+    return {
+      analysis: _.flatten(_.values(analysis).map(val => _.toArray(val))),
+      portfolios: _.flatten(_.values(portfolios).map(val => _.toArray(val)))
+    };
+     */
+  }
+
+
+  @Selector()
+  static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios} = state.content[wsIdentifier].riskLink.selection;
     return [
-      ... _.flatten(_.values(analysis).map(val => _.toArray(val)) ),
-      ... _.flatten(_.values(portfolios).map(val => _.toArray(val)) )
+      ..._.flatten(_.values(analysis).map(val => _.toArray(val))),
+      ..._.flatten(_.values(portfolios).map(val => _.toArray(val)))
     ];
   }
 
@@ -517,7 +551,7 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.loadWorkSpaceAndPlts)
-  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts) {
     return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
   }
 
@@ -855,8 +889,8 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.DatasourceScanAction)
-  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction){
-    return this.riskLinkFacade.dataSourcesScan(ctx,payload);
+  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction) {
+    return this.riskLinkFacade.dataSourcesScan(ctx, payload);
   }
 
   @Action(fromWS.ToggleRiskLinkPortfolioAction)
@@ -1079,7 +1113,7 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.RunDetailedScanAction)
-  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction){
+  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
     return this.riskLinkFacade.runDetailedScan(ctx, payload);
   }
 
@@ -1160,10 +1194,12 @@ export class WorkspaceState {
   AddInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInputNode) {
     return this.inuringService.AddInputNode(ctx, payload);
   }
+
   @Action(fromInuring.EditInputNode)
   EditInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInputNode) {
     return this.inuringService.EditInputNode(ctx, payload);
   }
+
   @Action(fromInuring.DeleteInputNode)
   DeleteInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInputNode) {
     return this.inuringService.DeleteInputNode(ctx, payload);

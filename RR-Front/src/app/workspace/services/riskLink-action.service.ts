@@ -2006,7 +2006,8 @@ export class RiskLinkStateService {
   }
 
   runDetailedScan(ctx, payload) {
-    return this.riskApi.runDetailedScan()
+    const {projectId, analysis,portfolios}=payload;
+    return this.riskApi.runDetailedScan(instanceId, projectId, analysis,portfolios)
       .pipe(
         mergeMap(res => {
 

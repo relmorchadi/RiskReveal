@@ -30,8 +30,8 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId, keyword, offset, size}});
   }
 
-  runDetailedScan(){
-    return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {}});
+  runDetailedScan(instanceId, projectI, rlAnalysisList, rlPortfolioList){
+    return this.http.post(`${this.IMPORT_URL}import/config/detailed-scan`, {instanceId, projectI, rlAnalysisList, rlPortfolioList});
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
