@@ -27,7 +27,6 @@ registerLocaleData(en);
 @NgModule({
   declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
   providers: [
-    {provide: STORAGE_ENGINE, useClass: MyStorageEngine},
     {provide: ErrorHandler, useClass: GlobalErrorHandler}
   ],
   imports: [
@@ -38,33 +37,22 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsStoragePluginModule.forRoot(),
     StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [
     NgZorroAntdModule,
-    NgxsFormPluginModule, NgxsModule,
+    NgxsFormPluginModule,
+    NgxsModule,
     ...COMPONENTS, ...CONTAINERS
   ]
 })
-export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {
+export class CoreModule {
   static forRoot() {
     return {
       ngModule: CoreModule,
       providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
         {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };
-  }
-
-  public hmrNgxsStoreOnInit(ctx: StateContext<Snapshot>, snapshot: Partial<Snapshot>) {
-    console.log('[RiskReveal Core] : Init State');
-    ctx.patchState(snapshot);
-    console.log({snapshot});
-  }
-
-  public hmrNgxsStoreBeforeOnDestroy(ctx: StateContext<Snapshot>): Partial<Snapshot> {
-    console.log('[RiskReveal Core]  : Save State before destroying');
-    return ctx.getState();
   }
 }

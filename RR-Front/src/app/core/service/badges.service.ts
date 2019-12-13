@@ -25,12 +25,15 @@ export class BadgesService {
     this.shortcuts = newShortCuts;
   }
 
-  public generateBadges(expression, shortcuts = this.shortcuts): string | Array<{ key, value, operator }> {
+  public generateBadges(expression, shortcuts = this.shortcuts): { newExpr: string, badges: any[]} {
+     console.log(expression);
     if (!`${expression} `.match(this.regularExpession))
-      return expression;
+      return {
+        newExpr: expression,
+        badges: []
+      };
     let badges = [];
-    `${expression} `.replace(this.regularExpession, (match, shortcut, keyword) => {
-      //let key = shortcuts[_.toLower(_.trim(shortcut, ':'))];
+    let newExpr = `${expression} `.replace(this.regularExpession, (match, shortcut, keyword) => {
       let key = _.trim(shortcut, ':');
       let badge = {
         key,
@@ -39,8 +42,11 @@ export class BadgesService {
       };
       badges.push(badge);
       return '';
-    });
-    return badges;
+    }) || '';
+    return {
+      newExpr: _.trim(newExpr) ,
+      badges
+    };
   }
 
   private getOperator(str: string, field: string) {
@@ -52,9 +58,7 @@ export class BadgesService {
   }
 
   public transformKeyword(expr: any) {
-    console.log(this.shortcuts)
     return expr.replace(/(\w*:){1}/g, (match, shortcut, keyword) => {
-      console.log(shortcut)
       let shortCutExist = this.shortcuts[_.toLower(_.trim(shortcut, ':'))];
       console.log(shortCutExist ? shortCutExist + ":" : shortcut)
       return shortCutExist ? shortCutExist + ":" : shortcut;
