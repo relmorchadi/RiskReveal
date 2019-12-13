@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.List;
@@ -24,5 +25,10 @@ public class TreatySearch extends WorkspaceSearch {
 
     @OneToMany(mappedBy = "treatySearchId")
     List<TreatySearchItem> items;
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.savedDate == null) savedDate = new Date();
+    }
 
 }

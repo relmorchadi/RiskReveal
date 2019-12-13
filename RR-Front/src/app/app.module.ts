@@ -24,7 +24,6 @@ import {DndModule} from 'ngx-drag-drop';
     NgbModule,
     DndModule
   ],
-  providers: [HelperService],
   bootstrap: [EntryComponent],
 
 })

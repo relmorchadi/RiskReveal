@@ -89,6 +89,13 @@ public class SearchResource {
         );
     }
 
+    @GetMapping("recent")
+    ResponseEntity<?> getRecentSearch(@RequestParam Integer userId) {
+        return ResponseEntity.ok(
+                searchService.getRecentSearch(userId)
+        );
+    }
+
     @GetMapping("saved-search/most")
     ResponseEntity<?> getMostUsedSavedSearch(@RequestParam SearchType searchType, @RequestParam Integer userId) {
         return ResponseEntity.ok(

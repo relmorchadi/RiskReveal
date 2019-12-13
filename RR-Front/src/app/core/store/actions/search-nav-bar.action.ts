@@ -214,5 +214,12 @@ export class DeleteSearchItem {
   }
 }
 
+export class LoadRecentSearch {
+  static readonly type = '[Search Nav Bar] Load Recent Search';
+
+  constructor(public payload?: any) {
+  }
+}
+
 
 
