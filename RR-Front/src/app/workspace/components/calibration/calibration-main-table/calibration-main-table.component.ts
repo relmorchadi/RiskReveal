@@ -59,6 +59,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   // @Input('adjutmentApplication') adjutmentApplication: any;
   // @Input('adjutmentApplicationSubs') adjutmentApplication$: Observable<any>;
   @Input('adjustmentApplication') adjustmentApplication: any;
+  @Input('defaultAdjustment') defaultAdjustment: any;
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
   @Input('listOfPltsData') listOfPltsData: any;
@@ -81,6 +82,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('rowKeys') rowKeys: any;
   @Input('allRowsExpanded') allRowsExpanded: any;
   @Input('sortData') sortData: any;
+  selectedAdjustmentData: any;
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
   params = {};
@@ -304,12 +306,19 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     });
   }
 
+  showAdjustmentData(data) {
+    this.defaultAdjustmentInfo = true;
+    this.selectedAdjustmentData = data;
+  }
+
   filterCols() {
     if (this.tabStatus === 'FAC') {
       return _.filter(this.dataColumns, item => item.fields !== 'base' &&
         item.fields !== 'client' &&
         item.fields !== 'inuring' &&
-        item.fields !== 'postInuring');
+        item.fields !== 'postInuring' &&
+        item.fields !== 'userTags'
+      );
     } else return this.dataColumns;
 
   }

@@ -485,7 +485,6 @@
               (extend)="extend()"
               (groupByPure)="groupByPure()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
-              [adjustmentApplication]="adjustmentApplication"
               (expandAll)="expandAll($event)"
               (sortChange)="sortChange($event)"
               (checkboxSort)="checkBoxsort()"
@@ -493,6 +492,10 @@
               (draggedAdjs)="onDragStart($event.draggedAdjs)"
               (adjustColWidth)="adjustColWidth($event)"
               (togglePureRow)="togglePureRow($event)"
+
+              (closeReturnPeriods)="manageReturnPeriods = false"
+              [adjustmentApplication]="adjustmentApplication"
+              [defaultAdjustment]="defaultAdjustment"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"
@@ -512,7 +515,6 @@
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"
-              (closeReturnPeriods)="manageReturnPeriods = false"
               [manageReturnPeriods]="manageReturnPeriods"
               [selectedAdjustment]="selectedAdjustment"
               [deletedPlts]="deletedPlts"

@@ -416,7 +416,7 @@
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
           <div class="text-ellipsis-pure" style="font-weight: bold">
-            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+            <span class="text-wrap-ellipsis">{{rowData.pltId}}</span>
           </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
@@ -510,7 +510,7 @@
               <ng-container
                 *ngIf="col.fields== adjs.category.toLowerCase()"
                 style="display: flex;height: max-content;">
-                <div (drop)="onDrop(col,rowData.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
+                <div (drop)="onDrop(col, rowData.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id + rowData.pltId)"
                      (mouseover)="shownDropDown = adjs.id+rowData.pltId"
                      (onDragStart)="onDragStart(adjs,rowData.pltId)" [dragData]="adjs"
                      [dragEnabled]="true"
@@ -1174,14 +1174,14 @@
         class="on-hover"
         *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)"
         [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }">
-      <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
+      <td (click)="handlePLTClick(rowData.pltId, rowIndex,$event)"
           *ngFor="let col of columns; let i = index"
           dnd-droppable
           [dropZones]="['adjustment-dropZone']"
           (drop)="onDrop(col,rowData.pltId,'sortable-TD')"
           [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
         <ng-container *ngIf="col.fields === 'checkbox'">
-          <label (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)" [nzChecked]="rowData.selected"
+          <label (nzCheckedChange)="selectSinglePLT(rowData.pltId, $event)" [nzChecked]="rowData.selected"
                  nz-checkbox></label>
         </ng-container>
         <ng-container *ngIf="col.fields === 'userTags'">
@@ -1196,7 +1196,7 @@
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
           <div class="text-table-cell" style="font-weight: bold">
-            <span class="text-wrap-ellipsis">{{rowData.pltId | textLength}}</span>
+            <span class="text-wrap-ellipsis">{{rowData.pltId}}</span>
           </div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
@@ -1273,11 +1273,19 @@
                [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
                class="text-table-cell border-dragable"
                style="display: flex;">
+
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
-              <div class="adjustDiv" style=" background: #f3f3f3;">
+              <div *ngIf="wsStatus !== 'fac'" class="adjustDiv" style=" background: #f3f3f3;">
                 <span class="spanStyle">Model Calib</span>
                 <input class="templateInput" disabled style=" background: #f3f3f3;" value="2.1">
               </div>
+              <ng-container *ngIf="wsStatus === 'fac'">
+                <div *ngFor="let item of defaultAdjustment[rowData?.pltId]" (click)="showAdjustmentData(item)"
+                     class="adjustDiv" style="background: #f3f3f3;">
+                  <span>{{item.adjustmentBasis?.basisShortName}}</span>
+                  <input class="templateInput" disabled style=" background: #f3f3f3;" [value]="item.adjustmentBasis?.sequence">
+                </div>
+              </ng-container>
             </div>
 
             <ng-container *ngFor="let adjs of adjustmentApplication[rowData.pltId]; let i=index">
@@ -2502,9 +2510,92 @@
            appendTo="body">
   <p-header>
     <div class="header">
-      <h6>Configure Return Period</h6>
-      <i (click)="hide()" class="icon-close_24px" style="cursor: pointer"></i>
+      <h6>Default Adjustment</h6>
+      <i (click)="defaultAdjustmentInfo =  false" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
   </p-header>
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Basis </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            [ngModel]="selectedAdjustmentData?.adjustmentBasis?.adjustmentBasisName"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Adjustment Basis"
+            nzShowSearch
+            disabled
+            style="padding: 10px 0; width: 300px"
+          >
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-12" style="border-bottom: 1px solid #c7c7c7a6;">
+        <nz-collapse [nzBordered]="false">
+          <nz-collapse-panel [nzActive]="true" [nzHeader]="selectedAdjustmentData?.adjustmentBasis?.adjustmentBasisName">
+            <p>{{selectedAdjustmentData?.adjustmentBasis?.description}}</p>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Category </label>
+      </div>
+      <div class="ui-g-9">
+        <b>{{selectedAdjustmentData?.adjustmentBasis?.adjustmentCategory?.categoryName}}</b>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Narrative </label>
+      </div>
+      <div class="ui-g-9">
+        <p>{{selectedAdjustmentData?.adjustmentBasis?.adjustmentCategory?.categoryDesc}}</p>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Type </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            [ngModel]="selectedAdjustmentData?.adjustmentType.type"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a type"
+            nzShowSearch
+            disabled
+            style="padding: 10px 0; width: 300px">
+<!--            <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>-->
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Capped </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-switch [ngModel]="selectedAdjustmentData?.adjustmentBasis?.exposureFlag == 'CAP'"
+                   [nzDisabled]="true"
+                   nzSize="small">
+        </nz-switch>
+      </div>
+    </div>
+<!--    <div *ngIf="selectedAdjustmentData?. == 'Linear'" class="ui-g">
+      <div class="ui-g-3">
+        <label> Loss Modification Factor (LMF) </label>
+      </div>
+      <div class="ui-g-9">
+        <input [(ngModel)]="columnPosition" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip
+               style="width: 300px; !important;"/>
+      </div>
+    </div>-->
+  </div>
 </p-dialog>
 
