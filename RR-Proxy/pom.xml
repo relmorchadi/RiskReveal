@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.scor.rr.proxy</groupId>
     <artifactId>risk-reveal-proxy</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${rr_version}</version>
     <name>Risk Reveal Backend Proxy</name>
     <description>Risk Reveal Project by Scor</description>
     <packaging>war</packaging>
