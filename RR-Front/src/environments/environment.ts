@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  API_URI: 'http://localhost:8081/api/',
-  hmr: false
-
+  API_URI: 'http://localhost:8080/api/',
+  hmr: false,
+  IMPORT_URI:'http://dcvdevalmf1:9080/risk-reveal-import/api/'
 };
 
 /*
