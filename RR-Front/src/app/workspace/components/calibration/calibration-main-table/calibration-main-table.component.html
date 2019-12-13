@@ -13,7 +13,7 @@
   [scrollable]="true"
   [expandedRowKeys]="rowKeys"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 280px)"
+  [scrollHeight]="extendedHeader ? 'calc(100vh - 260px)' : 'calc(100vh - 50px)'"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="listOfPltsData  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -25,7 +25,7 @@
     </colgroup>
   </ng-template>
   <ng-template let-columns pTemplate="header">
-    <tr *ngIf="extended" style="background-color: #ffffff !important;">
+    <tr *ngIf="extendedHeader" style="background-color: #ffffff !important;">
       <ng-container *ngFor="let col of columns;">
         <th [attr.colspan]="9" [ngStyle]="{'overflow':'visible'}">
           <div class="checkboxHead-Extended justify-sb">
@@ -86,9 +86,9 @@
             style="background-color: #ffffff !important; height: 105px !important; position:relative">
           <div style="height: 92px" class="flex-vertical-layout justify-sb">
             <div class="flex-horizontal-sb-layout justify-fe">
-              <i (click)="extend()" *ngIf="!extended" class="icon-chevron_right_24px"
+              <i (click)="extend()" *ngIf="!extendedHeader" class="icon-chevron_right_24px"
                  style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65)"></i>
-              <i (click)="extend()" *ngIf="extended" class="icon-chevron_left_24px"
+              <i (click)="extend()" *ngIf="extendedHeader" class="icon-chevron_left_24px"
                  style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65)"></i>
             </div>
             <div style="display: flex; align-items: center" class="justify-fe">
@@ -494,7 +494,7 @@
 
             class="text-ellipsis-pure border-dragable"
             dnd-sortable-container
-            style="display: flex;">
+            style="display: flex; height: 30px;">
 
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
               <!--<div
@@ -804,7 +804,7 @@
   [responsive]="true"
   [scrollable]="true"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 280px)"
+  [scrollHeight]="extendedHeader ? 'calc(100vh - 260px)' : 'calc(100vh - 50px)'"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsThread)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -816,7 +816,7 @@
     </colgroup>
   </ng-template>
   <ng-template let-columns pTemplate="header">
-    <tr *ngIf="extended" style="background-color: #ffffff !important;">
+    <tr *ngIf="extendedHeader" style="background-color: #ffffff !important;">
       <th [attr.colspan]="9" [ngStyle]="{'overflow':'visible'}">
         <div class="checkboxHead-Extended justify-sb">
           <div class="flex-vertical-layout justify-sb">
@@ -876,9 +876,9 @@
             style="background-color: #ffffff !important; height: 105px !important; position:relative">
         <div style="height: 92px" class="flex-vertical-layout justify-sb">
           <div class="flex-horizontal-sb-layout justify-fe">
-            <i (click)="extend()" *ngIf="!extended" class="icon-chevron_right_24px"
+            <i (click)="extend()" *ngIf="!extendedHeader" class="icon-chevron_right_24px"
                style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65)"></i>
-            <i (click)="extend()" *ngIf="extended" class="icon-chevron_left_24px"
+            <i (click)="extend()" *ngIf="extendedHeader" class="icon-chevron_left_24px"
                style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65)"></i>
           </div>
           <div style="display: flex; align-items: center" class="justify-fe">
@@ -1170,7 +1170,7 @@
     </tr>
   </ng-template>
   <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="body">
-    <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData"
+    <tr (contextmenu)="selectedItemForMenu = rowData.pltId" [pContextMenuRow]="rowData"
         class="on-hover"
         *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)"
         [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }">
@@ -1410,7 +1410,7 @@
   [responsive]="true"
   [scrollable]="true"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 280px)"
+  [scrollHeight]="'calc(100vh-280px)'"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsThread)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -1982,7 +1982,7 @@
   [columnResizeMode]="'fit'"
   [contextMenu]="cm"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 280px)"
+  [scrollHeight]="extendedHeader ? 'calc(100vh - 260px)' : 'calc(100vh - 50px)'"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
   (onSort)="onSort($event)"
@@ -1997,7 +1997,7 @@
     </colgroup>
   </ng-template>
   <ng-template pTemplate="header" let-columns>
-    <tr *ngIf="extended" style="background-color: #ffffff !important;">
+    <tr *ngIf="extendedHeader" style="background-color: #ffffff !important;">
       <ng-container *ngFor="let col of columns;">
         <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
             class="checkBoxHead"
@@ -2064,7 +2064,7 @@
         <th *ngIf="col?.fields === 'pltName'"
             style="background-color: #ffffff !important;height: 88px!important;">
         </th>
-        <th *ngIf="extended &&
+        <th *ngIf="extendedHeader &&
                     (col.fields === 'rap' ||
                      col.fields === 'vendorSystem'||
                      col.fields === 'grain'||
@@ -2079,12 +2079,12 @@
         </th>
         <th *ngIf="col?.icon === 'icon-note' && tabStatus !== 'FAC' " class="separator-right"
             style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
-          <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
+          <i *ngIf="!extendedHeader" (click)="extend()" class="icon-chevron_right_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-          <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
+          <i *ngIf="extendedHeader" (click)="extend()" class="icon-chevron_left_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
         </th>
-        <th *ngIf="col?.dragable && !extended
+        <th *ngIf="col?.dragable && !extendedHeader
                                 && col.fields !== 'overallLMF'
                                 && col.fields !== 'postInuring'
                                 && col.fields !== 'inuring'"
@@ -2096,7 +2096,7 @@
         <th *ngIf=" col.fields == 'postInuring'"
             style="background-color: #ffffff !important;height: 88px!important; vertical-align: middle;">
         </th>
-        <th *ngIf="col.fields == 'overallLMF' && extended"
+        <th *ngIf="col.fields == 'overallLMF' && extendedHeader"
             style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;"
             colspan="6">
           <div style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 180px;">
@@ -2529,6 +2529,8 @@
             disabled
             style="padding: 10px 0; width: 300px"
           >
+            <nz-option [nzLabel]="selectedAdjustmentData?.adjustmentBasis?.adjustmentBasisName"
+                       [nzValue]="selectedAdjustmentData?.adjustmentBasis?.adjustmentBasisName"></nz-option>
           </nz-select>
         </div>
       </div>
@@ -2571,7 +2573,8 @@
             nzShowSearch
             disabled
             style="padding: 10px 0; width: 300px">
-<!--            <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>-->
+            <nz-option [nzLabel]="selectedAdjustmentData?.adjustmentType.type"
+                       [nzValue]="selectedAdjustmentData?.adjustmentType.type"></nz-option>
           </nz-select>
         </div>
       </div>

@@ -40,7 +40,7 @@
           <div class="PLTs-content" [ngClass]="{'tableFac-layout': extended}">
             <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
                  style="float: left;background-color: #fff">
-              <div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between;">
                   <span class="title">
                     PLTs
                    <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
@@ -110,7 +110,6 @@
               </div>
             </div>
             <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
-                 [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
               <div class="title-as-tab" *ngIf="tabStatus !== 'FAC'" style="height: 58px; width: 100% !important;">
                   <span class="title">
@@ -226,21 +225,23 @@
               <div class="radio-container">
                 <div class="Deltas" style="display: grid">
                   <div style="display: flex; height: 58px; width: 100%" *ngIf="tabStatus === 'FAC'"></div>
-                  <div style="margin-left: 25px;">
-                    <div class="button-toggle" style="width: 480px; float: left;">
+                  <div class="radio-button-wrapper">
+                    <div class="button-toggle">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
-                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
-                                     [ngStyle]="{'padding-right':'20px'}"
-                                     label="Adjustments" name="tableType"
-                                     value="adjustments"></p-radioButton>
-                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
-                                     [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts Analysis" name="tableType"
-                                     value="Impacts"></p-radioButton>
-                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
-                                     [ngStyle]="{'padding-right':'10px'}"
-                                     label="EP Metrics" name="tableType"
-                                     value="EP Metrics"></p-radioButton>
+                      <div class="p-button-group">
+                        <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                       [ngStyle]="{'padding-right':'20px'}"
+                                       label="Adjustments" name="tableType"
+                                       value="adjustments"></p-radioButton>
+                        <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                       [ngStyle]="{'padding-right':'30px'}"
+                                       label="Impacts Analysis" name="tableType"
+                                       value="Impacts"></p-radioButton>
+                        <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                       [ngStyle]="{'padding-right':'10px'}"
+                                       label="EP Metrics" name="tableType"
+                                       value="EP Metrics"></p-radioButton>
+                      </div>
                     </div>
                     <i (click)="manageAdjColumn = true" class="icon-settings_24px"
                        nz-tooltip="Manage  adjustment columns"
@@ -250,7 +251,6 @@
               </div>
             </div>
             <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
-                 [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
               <div class="title-as-tab" style="height: 58px; width: 100% !important;">
                   <span class="title">
@@ -319,8 +319,8 @@
               </div>
               <div class="radio-container">
                 <div class="Deltas" style="display: grid">
-                  <div style="    margin-left: 25px;">
-                    <div class="button-toggle" style="width: 480px; float: left;">
+                  <div class="radio-button-wrapper">
+                    <div class="button-toggle">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'20px'}"
@@ -347,9 +347,7 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"
-                 class="table-header2"
-                 style="background-color: #fff">
+            <div *ngIf="!extended && tableType=='Impacts'" class="table-header2" style="background-color: #fff">
               <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
                 <div style="display: flex">
                   <span class="title">
@@ -450,8 +448,8 @@
               </div>
               <div class="radio-container" style="width: 100% !important;">
                 <div class="Deltas" style="display: grid">
-                  <div style="margin-left: 25px">
-                    <div class="button-toggle" style="width: 480px; float: left;">
+                  <div class="radio-button-wrapper">
+                    <div class="button-toggle">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'20px'}"

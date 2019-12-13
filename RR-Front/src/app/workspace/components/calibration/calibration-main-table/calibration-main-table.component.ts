@@ -45,7 +45,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('groupByPure') groupByPureEmitter: EventEmitter<any> = new EventEmitter();
 
 
-  @Input('extended') extended: boolean;
+  @Input('extended') extendedHeader: boolean;
   // @Input('cm') cm: any;
   @Input('tableType') tableType: any;
   //columns
