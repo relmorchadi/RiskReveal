@@ -150,8 +150,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    const expr = this.convertBadgeToExpression(this.state.badges);
-    this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr ? this.globalKeyword + " " + expr : this.globalKeyword));
+    const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
+    const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
+    this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
   }
 
@@ -172,23 +173,27 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   convertBadgeToExpression(badges) {
-    let globalExpression = "";
+    let expression = "";
+    let globalExprLength = 0;
     let index;
+    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       if(! (badge.key == "global search") ) {
         index = this.searchShortCuts.findIndex(row => {
           return row.shortCutLabel == badge.key;
         });
         if(i == badges.length - 1) {
-          globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
+          expression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
         } else {
-          globalExpression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value + " ";
+          expression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value + " ";
         }
       } else {
-        globalExpression = badge.value + globalExpression;
+        expression = expression.substring(globalExprLength);
+        globalExprLength = badge.value.length;
+        expression = badge.value + " " + expression;
       }
     });
-    return globalExpression;
+    return expression;
   }
 
   convertExpressionToBadge(expression) {
@@ -287,7 +292,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   onChangeTagValue(badge) {
     if (this.isExpertMode) {
-      console.log(badge);
       let index = _.findIndex(this.state.badges, row => row.key == badge.key);
       this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index, this.isExpertMode));
       if (this.globalKeyword.length > 0) {

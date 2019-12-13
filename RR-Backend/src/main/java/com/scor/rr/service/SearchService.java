@@ -331,9 +331,9 @@ public class SearchService {
     public List<?> getSavedSearches(SearchType searchType, Integer userId) {
         if (userId != null) {
             if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findAllByUserId(userId);
+                return facSearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
             else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findAllByUserId(userId);
+                return treatySearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
             else {
                 throw new RuntimeException("Unsupported Search Type" + searchType);
             }
@@ -344,9 +344,9 @@ public class SearchService {
     public List<?> getMostUsedSavedSearch(SearchType searchType, Integer userId) {
         if (userId != null) {
             if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+                return facSearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
             else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+                return treatySearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
             else {
                 throw new RuntimeException("Unsupported Search Type" + searchType);
             }

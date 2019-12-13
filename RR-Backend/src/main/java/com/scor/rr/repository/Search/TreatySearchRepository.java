@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TreatySearchRepository extends JpaRepository<TreatySearch, Long> {
 
-    List<TreatySearch> findAllByUserId(Integer userId);
+    List<TreatySearch> findAllByUserIdOrderBySavedDateDesc(Integer userId);
 
-    List<TreatySearch> findTop5ByUserIdOrderByCountDesc(Integer userId);
+    List<TreatySearch> findTop5ByUserIdOrderByCountDescSavedDateDesc(Integer userId);
 }
