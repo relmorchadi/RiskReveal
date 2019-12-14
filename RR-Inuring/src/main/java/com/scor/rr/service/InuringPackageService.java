@@ -9,6 +9,7 @@ import com.scor.rr.enums.*;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.*;
 import com.scor.rr.repository.*;
+import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringPackageCreationRequest;
 import com.scor.rr.response.InuringPackageDetailsResponse;
 import com.scor.rr.views.SelectedPLTView;
@@ -29,6 +30,8 @@ import java.util.Map;
 @Service
 @Transactional
 public class InuringPackageService {
+    @Autowired
+    private InuringInputNodeService inuringInputNodeService;
     @Autowired
     private InuringPackageRepository inuringPackageRepository;
     @Autowired
@@ -67,6 +70,10 @@ public class InuringPackageService {
                 request.getWorkspaceId(),
                 request.getCreatedBy()));
         inuringFinalNodeService.createInuringFinalNodeForPackage(inuringPackage.getInuringPackageId());
+        List<Long> voidPLts = null;
+        InuringInputNodeCreationRequest req = new InuringInputNodeCreationRequest(inuringPackage.getInuringPackageId(),"Default Name",voidPLts);
+        inuringInputNodeService.createInuringInputNode(req);
+
     }
 
     public void deleteInuringPackage(long inuringPackageId) throws RRException {
