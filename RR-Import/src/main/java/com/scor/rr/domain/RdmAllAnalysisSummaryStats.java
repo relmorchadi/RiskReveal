@@ -16,8 +16,8 @@ public class RdmAllAnalysisSummaryStats {
     private String treatyTag;
     private String occurrenceBasis;
     private int epTypeCode;
-    private BigDecimal purePremium;
-    private BigDecimal stdDev;
-    private BigDecimal cov;
+    private Double purePremium;
+    private Double stdDev;
+    private Double cov;
 
 }

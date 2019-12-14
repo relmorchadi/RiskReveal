@@ -1,12 +1,15 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.domain.RdmAnalysis;
+import com.scor.rr.domain.dto.RLAnalysisDto;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
@@ -35,7 +38,7 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " where ra.projectId= :projectId and " +
             " ra.rdmId= :#{#analysis.rdmId} and " +
             " ra.rdmName= :#{#analysis.rdmName} and " +
-            " ra.analysisId= :#{#analysis.analysisId} and " +
+            " ra.rlId= :#{#analysis.analysisId} and " +
             " ra.analysisName= :#{#analysis.analysisName} ")
     void updateAnalysisById(@Param("projectId") Long projectId,
                             @Param("analysis") RdmAnalysis analysis);
@@ -49,8 +52,12 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " where rla.projectId= :projectId and " +
             " rla.rdmId= :#{#analysis.rdmId} and " +
             " rla.rdmName= :#{#analysis.rdmName} and " +
-            " rla.analysisId= :#{#analysis.analysisId} and " +
+            " rla.rlId= :#{#analysis.analysisId} and " +
             " rla.analysisName= :#{#analysis.analysisName} ")
     RLAnalysis findByProjectIdAndAnalysis(@Param("projectId") Long projectId,
                                           @Param("analysis") RdmAnalysis analysis);
+
+    RLAnalysis findByRdmIdAndRdmNameAndRlId(Long rdmId, String rdmName, Long analysisId);
+
+    List<RLAnalysis> findByRlModelDataSourceId(Long rlModelDataSourceId);
 }

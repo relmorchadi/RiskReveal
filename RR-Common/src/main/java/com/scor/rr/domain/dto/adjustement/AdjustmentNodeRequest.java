@@ -1,11 +1,10 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.domain.dto.adjustement.loss.PEATDataRequest;
 
 import java.util.List;
-import java.util.Map;
 
 public class AdjustmentNodeRequest {
     private Integer sequence;
@@ -15,20 +14,20 @@ public class AdjustmentNodeRequest {
     private Integer adjustmentThreadId;
     private Double lmf;
     private Double rpmf;
-    private List<PEATData> peatData;
+    private PEATDataRequest peatData;
     private List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings;
 
     public AdjustmentNodeRequest() {
     }
 
-        public AdjustmentNodeRequest(Integer sequence,
+    public AdjustmentNodeRequest(Integer sequence,
                                  Boolean capped,
                                  Integer adjustmentBasis,
                                  Integer adjustmentType,
                                  Integer adjustmentThreadId,
                                  Double lmf,
                                  Double rpmf,
-                                 List<PEATData> peatData,
+                                 PEATDataRequest peatData,
                                  List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings) {
         this.sequence = sequence;
         this.adjustmentBasis = adjustmentBasis;
@@ -90,11 +89,19 @@ public class AdjustmentNodeRequest {
         this.rpmf = rpmf;
     }
 
-    public List<PEATData> getPeatData() {
+//    public List<PEATData> getPeatData() {
+//        return peatData;
+//    }
+//
+//    public void setPeatData(List<PEATData> peatData) {
+//        this.peatData = peatData;
+//    }
+
+    public PEATDataRequest getPeatData() {
         return peatData;
     }
 
-    public void setPeatData(List<PEATData> peatData) {
+    public void setPeatData(PEATDataRequest peatData) {
         this.peatData = peatData;
     }
 

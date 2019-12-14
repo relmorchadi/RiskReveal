@@ -1,6 +1,6 @@
 const scrollableColsAnalysis = [
   {field: '', header: '', width: '0px', type: '', filtered: true},
-  {field: 'description', header: 'Description', width: '150px', type: 'text', filtered: true},
+  {field: 'analysisDescription', header: 'Description', width: '150px', type: 'text', filtered: true},
   {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text', filtered: true},
   {field: 'groupType', header: 'Group Type', width: '110px', type: 'text', filtered: true},
   {field: 'cedant', header: 'Cedant', width: '110px', type: 'text', filtered: true},
@@ -25,16 +25,16 @@ const scrollableColsAnalysis = [
 
 const frozenColsAnalysis = [
   {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
-  {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
-  {field: 'analysisId', header: 'id', width: '30px', type: 'text', filtered: true},
+  // {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
+  {field: 'rlId', header: 'id', width: '30px', type: 'text', filtered: true},
   {field: 'analysisName', header: 'name', width: '190px', type: 'text', filtered: true}
 ];
 
 const scrollableColsPortfolio = [
   {field: '', header: '', width: '0px', type: '', filtered: true},
-  {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text', filtered: true},
-  {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date', filtered: true},
-  {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text', filtered: true},
+  {field: 'name', header: 'Name', width: '150px', type: 'text', filtered: true},
+  {field: 'created', header: 'Creation Date', width: '180px', type: 'date', filtered: true},
+  {field: 'description', header: 'Description', width: '180px', type: 'text', filtered: true},
   {field: 'type', header: 'Type', width: '180px', type: 'text', filtered: true},
   {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text', filtered: true},
   {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text', filtered: true},
@@ -44,8 +44,8 @@ const scrollableColsPortfolio = [
 
 const frozenColsPortfolio = [
   {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
-  {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
-  {field: 'dataSourceId', header: 'id', width: '30px', type: 'text', filtered: true},
+  // {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
+  {field: 'rlId', header: 'id', width: '30px', type: 'text', filtered: true},
   {field: 'number', header: 'Number', width: '190px', type: 'text', filtered: true}
 ];
 

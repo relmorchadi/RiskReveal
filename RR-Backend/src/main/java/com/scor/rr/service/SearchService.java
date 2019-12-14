@@ -1,22 +1,18 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.TargetBuild.Project.ProjectCardView;
-import com.scor.rr.domain.TargetBuild.Search.*;
+import com.scor.rr.domain.ContractSearchResult;
+import com.scor.rr.domain.entities.Project.ProjectCardView;
+import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
 import com.scor.rr.domain.enums.SearchType;
-import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
-import com.scor.rr.repository.TargetBuild.Project.ProjectCardViewRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.FacSearchRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchItemRepository;
-import com.scor.rr.repository.TargetBuild.Search.TreatySearchRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.FavoriteWorkspaceRepository;
-import com.scor.rr.repository.TargetBuild.WorkspacePoPin.RecentWorkspaceRepository;
+import com.scor.rr.repository.Project.ProjectCardViewRepository;
+import com.scor.rr.repository.Search.*;
+import com.scor.rr.repository.WorkspacePoPin.FavoriteWorkspaceRepository;
+import com.scor.rr.repository.WorkspacePoPin.RecentWorkspaceRepository;
 import com.scor.rr.repository.counter.*;
-import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
 import com.scor.rr.util.SearchQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,10 +87,6 @@ public class SearchService {
     QueryHelper queryHelper;
     @Autowired
     SearchQuery searchQuery;
-    @Autowired
-    VwFacTreatyRepository vwFacTreatyRepository;
-    @Autowired
-    VwFacTreatySpecification vwFacTreatySpecification;
 
     @Autowired
     FacSearchRepository facSearchRepository;
@@ -117,6 +109,12 @@ public class SearchService {
     @Autowired
     FavoriteWorkspaceRepository favoriteWorkspaceRepository;
 
+    @Autowired
+    RecentSearchRepository recentSearchRepository;
+
+    @Autowired
+    RecentSearchItemRepository recentSearchItemRepository;
+
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
 
@@ -124,7 +122,7 @@ public class SearchService {
     private void feedCountMapper() {
         countMapper.put(TableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.COUNTRY, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
         countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -171,16 +169,19 @@ public class SearchService {
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         List<ProjectCardView> projects = wsOpt
-                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId().longValue()))
+                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            Long marketChannel = null;
+            if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
             return buildWorkspaceDetails(
                     contracts,
                     years,
                     projects,
                     workspaceId,
-                    uwy
+                    uwy,
+                    marketChannel
             );
         } else {
             throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
@@ -188,20 +189,31 @@ public class SearchService {
     }
 
 
-    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy) {
+    private WorkspaceDetailsDTO buildWorkspaceDetails(List<ContractSearchResult> contracts, List<Integer> years, List<ProjectCardView> projects, String workspaceId, String uwy, Long marketChannel) {
         ContractSearchResult firstWs = contracts.get(0);
-        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs);
+        WorkspaceDetailsDTO detailsDTO = new WorkspaceDetailsDTO(firstWs, marketChannel);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(workspaceEntityRepository.countExpectedRegionPeril(firstWs.getTreatyid(), firstWs.getUwYear(), firstWs.getSectionid()));
+        detailsDTO.setExpectedRegionPerils(getCount(workspaceEntityRepository.getDistinctRegionPerilsInScopeCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedExposureSummaries(getCount(new ArrayList<>(Arrays.asList())));
+        detailsDTO.setQualifiedPLTs(getCount(workspaceEntityRepository.getDistinctRegionPerilsByQualifyingPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedPublishedForPricing(getCount(workspaceEntityRepository.getDistinctRPByPublishedToPricingQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedPriced(getCount(workspaceEntityRepository.getDistinctRPByPricedQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
+        detailsDTO.setExpectedAccumulation(getCount(workspaceEntityRepository.getDistinctRPByAccumulatedQualifiedPLTsCount(firstWs.getWorkSpaceId(), firstWs.getUwYear())));
         detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(firstWs.getWorkSpaceId(), firstWs.getUwYear(), 1));
         return detailsDTO;
     }
 
-    public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter), pageable);
+    private Integer getCount(List<Map<String, Object>> arr) {
+        if( arr.size() > 0 ) {
+            Map<String, Object> tmp = arr.get(0);
+            System.out.println(tmp);
+            System.out.println(tmp.get("count"));
+            return (Integer) tmp.get("count");
+
+        } else return 0;
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
@@ -222,6 +234,46 @@ public class SearchService {
                     }
                 }
             }
+        }
+        String keyword = request.getKeyword().replace("%", "").trim();
+
+        if(!keyword.equals("") || request.getFilter().size() > 0) {
+            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdOrderBySearchDateDesc(1);
+            int recentSearchesLength = recentSearches.size();
+
+            if( recentSearchesLength == 7 ) {
+                RecentSearch SearchItem = recentSearches.get(recentSearchesLength - 1);
+                recentSearchRepository.delete(SearchItem);
+            }
+
+            RecentSearch newSearch = new RecentSearch();
+            newSearch.setUserId(1);
+            recentSearchRepository.save(newSearch);
+
+            List<RecentSearchItem> items= new ArrayList<>();
+
+            if(!keyword.equals("")) {
+                RecentSearchItem newSearchItem = new RecentSearchItem();
+                newSearchItem.setKey("global search");
+                newSearchItem.setOperator("LIKE");
+                newSearchItem.setValue(keyword);
+                newSearchItem.setRecentSearchId(newSearch.getId());
+                items.add(newSearchItem);
+            }
+
+            request.getFilter()
+                    .forEach( expertModeFilter -> {
+                        if(!expertModeFilter.getValue().equals("")) {
+                            RecentSearchItem newSearchItem = new RecentSearchItem();
+                            newSearchItem.setKey(expertModeFilter.getField());
+                            newSearchItem.setOperator(expertModeFilter.getOperator().value);
+                            newSearchItem.setValue(expertModeFilter.getValue().replace("%", "").trim());
+                            newSearchItem.setRecentSearchId(newSearch.getId());
+                            items.add(newSearchItem);
+                        }
+                    });
+
+            recentSearchItemRepository.saveAll(items);
         }
 
         String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
@@ -279,9 +331,9 @@ public class SearchService {
     public List<?> getSavedSearches(SearchType searchType, Integer userId) {
         if (userId != null) {
             if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findAllByUserId(userId);
+                return facSearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
             else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findAllByUserId(userId);
+                return treatySearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
             else {
                 throw new RuntimeException("Unsupported Search Type" + searchType);
             }
@@ -292,13 +344,17 @@ public class SearchService {
     public List<?> getMostUsedSavedSearch(SearchType searchType, Integer userId) {
         if (userId != null) {
             if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+                return facSearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
             else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findTop5ByUserIdOrderByCountDesc(userId);
+                return treatySearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
             else {
                 throw new RuntimeException("Unsupported Search Type" + searchType);
             }
         } else throw new RuntimeException("No userID was Provided");
+    }
+
+    public List<RecentSearch> getRecentSearch(Integer userId) {
+        return recentSearchRepository.findTop5ByUserIdOrderBySearchDateDesc(userId);
     }
 
     public void deleteSavedSearch(SearchType searchType, Long id) {

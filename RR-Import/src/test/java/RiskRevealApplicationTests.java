@@ -1,3 +1,4 @@
+import com.scor.rr.domain.*;
 import com.scor.rr.rest.RmsRessource;
 import com.scor.rr.service.RmsService;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -27,10 +28,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import com.scor.rr.domain.*;
+import static java.util.stream.Collectors.toList;
 
 @RunWith(SpringRunner.class)
 public class RiskRevealApplicationTests {
@@ -41,7 +44,7 @@ public class RiskRevealApplicationTests {
     @Autowired
     private RmsRessource rmsRessource;
 
-    private String instanceId="RL162";
+    private String instanceId = "RL162";
 
     private final Logger logger = LoggerFactory.getLogger(RiskRevealApplicationTests.class);
 
@@ -73,8 +76,8 @@ public class RiskRevealApplicationTests {
 
     private List<Long> analysisIdList = Arrays.asList(1L, 2L);
     private List<Long> idList = Arrays.asList(1L, 2L);
-    private List<Long> portfolioIdList = Arrays.asList(1L,2L);
-    private static int epPoints = 50;
+    private List<Long> portfolioIdList = Arrays.asList(1L, 2L);
+    private static List<Integer> epPoints = new ArrayList<>(Collections.singleton(50));
     private static String rdmName = "AC15_RL15_AUT_R";
     private static String edmName = "IED2017_TWTY_AD2_TWD_EDM170";
     private static String ccy = "CAD";
@@ -219,37 +222,37 @@ public class RiskRevealApplicationTests {
 
         rdmAnalysisEpCurves1 = new RdmAnalysisEpCurves();
 
-        rdmAnalysisEpCurves1.setId(1L);
+        rdmAnalysisEpCurves1.setAnalysisId(1L);
         rdmAnalysisEpCurves1.setFinPerspCode("GR");
         rdmAnalysisEpCurves1.setEbpTypeCode(0);
-        rdmAnalysisEpCurves1.setLoss(0);
+        rdmAnalysisEpCurves1.setLoss(0d);
         rdmAnalysisEpCurves1.setExceedanceProbabilty(50);
         rdmAnalysisEpCurves1.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
 
         rdmAnalysisEpCurves2 = new RdmAnalysisEpCurves();
 
-        rdmAnalysisEpCurves2.setId(1L);
+        rdmAnalysisEpCurves2.setAnalysisId(1L);
         rdmAnalysisEpCurves2.setFinPerspCode("RL");
         rdmAnalysisEpCurves2.setEbpTypeCode(0);
-        rdmAnalysisEpCurves2.setLoss(0);
+        rdmAnalysisEpCurves2.setLoss(0d);
         rdmAnalysisEpCurves2.setExceedanceProbabilty(50);
         rdmAnalysisEpCurves2.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
 
         rdmAnalysisEpCurves3 = new RdmAnalysisEpCurves();
 
-        rdmAnalysisEpCurves3.setId(2L);
+        rdmAnalysisEpCurves3.setAnalysisId(2L);
         rdmAnalysisEpCurves3.setFinPerspCode("GR");
         rdmAnalysisEpCurves3.setEbpTypeCode(10);
-        rdmAnalysisEpCurves3.setLoss(0);
+        rdmAnalysisEpCurves3.setLoss(0d);
         rdmAnalysisEpCurves3.setExceedanceProbabilty(50);
         rdmAnalysisEpCurves3.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
 
         rdmAnalysisEpCurves4 = new RdmAnalysisEpCurves();
 
-        rdmAnalysisEpCurves4.setId(2L);
+        rdmAnalysisEpCurves4.setAnalysisId(2L);
         rdmAnalysisEpCurves4.setFinPerspCode("RL");
         rdmAnalysisEpCurves4.setEbpTypeCode(11);
-        rdmAnalysisEpCurves4.setLoss(0);
+        rdmAnalysisEpCurves4.setLoss(0d);
         rdmAnalysisEpCurves4.setExceedanceProbabilty(50);
         rdmAnalysisEpCurves4.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
 
@@ -259,9 +262,9 @@ public class RiskRevealApplicationTests {
         rdmAllAnalysisSummaryStats1.setFinPerspCode("GR");
         rdmAllAnalysisSummaryStats1.setOccurrenceBasis("PerEvent");
         rdmAllAnalysisSummaryStats1.setEpTypeCode(1);
-        rdmAllAnalysisSummaryStats1.setPurePremium(BigDecimal.valueOf(11454673.5044312));
-        rdmAllAnalysisSummaryStats1.setStdDev(BigDecimal.valueOf(14614733.5169415));
-        rdmAllAnalysisSummaryStats1.setCov(BigDecimal.valueOf(1.27587517106339));
+        rdmAllAnalysisSummaryStats1.setPurePremium(11454673.5044312);
+        rdmAllAnalysisSummaryStats1.setStdDev(14614733.5169415);
+        rdmAllAnalysisSummaryStats1.setCov(1.27587517106339);
 
         rdmAllAnalysisSummaryStats2 = new RdmAllAnalysisSummaryStats();
 
@@ -269,9 +272,9 @@ public class RiskRevealApplicationTests {
         rdmAllAnalysisSummaryStats2.setFinPerspCode("RL");
         rdmAllAnalysisSummaryStats2.setOccurrenceBasis("PerEvent");
         rdmAllAnalysisSummaryStats2.setEpTypeCode(1);
-        rdmAllAnalysisSummaryStats2.setPurePremium(BigDecimal.valueOf(11454673.5044312));
-        rdmAllAnalysisSummaryStats2.setStdDev(BigDecimal.valueOf(14614733.5169415));
-        rdmAllAnalysisSummaryStats2.setCov(BigDecimal.valueOf(1.27587517106339));
+        rdmAllAnalysisSummaryStats1.setPurePremium(11454673.5044312);
+        rdmAllAnalysisSummaryStats1.setStdDev(14614733.5169415);
+        rdmAllAnalysisSummaryStats1.setCov(1.27587517106339);
 
         rdmAllAnalysisSummaryStats3 = new RdmAllAnalysisSummaryStats();
 
@@ -279,9 +282,9 @@ public class RiskRevealApplicationTests {
         rdmAllAnalysisSummaryStats3.setFinPerspCode("GR");
         rdmAllAnalysisSummaryStats3.setOccurrenceBasis("PerEvent");
         rdmAllAnalysisSummaryStats3.setEpTypeCode(1);
-        rdmAllAnalysisSummaryStats3.setPurePremium(BigDecimal.valueOf(7525806.3543131));
-        rdmAllAnalysisSummaryStats3.setStdDev(BigDecimal.valueOf(10268499.6803201));
-        rdmAllAnalysisSummaryStats3.setCov(BigDecimal.valueOf(1.36443846637579));
+        rdmAllAnalysisSummaryStats1.setPurePremium(11454673.5044312);
+        rdmAllAnalysisSummaryStats1.setStdDev(14614733.5169415);
+        rdmAllAnalysisSummaryStats1.setCov(1.27587517106339);
 
         rdmAllAnalysisSummaryStats4 = new RdmAllAnalysisSummaryStats();
 
@@ -289,9 +292,9 @@ public class RiskRevealApplicationTests {
         rdmAllAnalysisSummaryStats4.setFinPerspCode("RL");
         rdmAllAnalysisSummaryStats4.setOccurrenceBasis("PerEvent");
         rdmAllAnalysisSummaryStats4.setEpTypeCode(1);
-        rdmAllAnalysisSummaryStats4.setPurePremium(BigDecimal.valueOf(7525806.3543131));
-        rdmAllAnalysisSummaryStats4.setStdDev(BigDecimal.valueOf(10268499.6803201));
-        rdmAllAnalysisSummaryStats4.setCov(BigDecimal.valueOf(1.36443846637579));
+        rdmAllAnalysisSummaryStats1.setPurePremium(11454673.5044312);
+        rdmAllAnalysisSummaryStats1.setStdDev(14614733.5169415);
+        rdmAllAnalysisSummaryStats1.setCov(1.27587517106339);
         //*****************************************************************************************
         analysisEpCurves = new AnalysisEpCurves();
 
@@ -313,8 +316,8 @@ public class RiskRevealApplicationTests {
 
         //**************************************************
         rdmAllAnalysisProfileRegions = new RdmAllAnalysisProfileRegions();
-        rdmAllAnalysisProfileRegions.setAnalysisid(2L);
-        rdmAllAnalysisProfileRegions.setAnlysisRegion("EU-EU");
+        rdmAllAnalysisProfileRegions.setAnalysisId(2L);
+        rdmAllAnalysisProfileRegions.setAnalysisRegion("EU-EU");
         rdmAllAnalysisProfileRegions.setProfileRegion("EU-EU");
         rdmAllAnalysisProfileRegions.setAnalysisRegionName("Europe");
         rdmAllAnalysisProfileRegions.setProfileRegion("EU");
@@ -517,8 +520,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listAvailableDataSources() {
-        Mockito.when(rmsService.listAvailableDataSources(instanceId)).thenReturn(Arrays.asList(dataSource));
-        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId).getBody();
+        Mockito.when(rmsService.listAvailableDataSources(instanceId, null, 0,20).get().collect(toList())).thenReturn(Arrays.asList(dataSource));
+        List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId, null, 0, 20).getBody();
         Assert.assertNotNull(dataSources.get(0));
         Assert.assertNotNull(dataSource);
         try {
@@ -600,7 +603,7 @@ public class RiskRevealApplicationTests {
     @Test
     public void listRdmAllAnalysisEpCurves() {
         List<RdmAnalysisEpCurves> rdmAnalysisEpCurves = Arrays.asList(rdmAnalysisEpCurves1, rdmAnalysisEpCurves2, rdmAnalysisEpCurves3, rdmAnalysisEpCurves4);
-        Mockito.when(rmsService.listRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIdList, finPerspList)).thenReturn(rdmAnalysisEpCurves);
+        Mockito.when(rmsService.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIdList, finPerspList)).thenReturn(rdmAnalysisEpCurves);
         List<RdmAnalysisEpCurves> rdmAnalysisEpCurvesList = (List<RdmAnalysisEpCurves>) rmsRessource.listRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIdList, finPerspList).getBody();
         Assert.assertNotNull(rdmAnalysisEpCurvesList.get(0));
         Assert.assertNotNull(rdmAnalysisEpCurvesList.get(4));
@@ -714,8 +717,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getRdmAllAnalysisTreatyStructure() {
-        Mockito.when(rmsService.getRdmAllAnalysisTreatyStructure(instanceId,64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L))).thenReturn(Arrays.asList(rdmAllAnalysisTreatyStructure));
-        List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructures = (List<RdmAllAnalysisTreatyStructure>) rmsRessource.getRdmAllAnalysisTreatyStructure(instanceId,64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L)).getBody();
+        Mockito.when(rmsService.getRdmAllAnalysisTreatyStructure(instanceId, 64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L))).thenReturn(Arrays.asList(rdmAllAnalysisTreatyStructure));
+        List<RdmAllAnalysisTreatyStructure> rdmAllAnalysisTreatyStructures = (List<RdmAllAnalysisTreatyStructure>) rmsRessource.getRdmAllAnalysisTreatyStructure(instanceId, 64L, "AC15_RL15_GBR_R", Arrays.asList(40L, 41L)).getBody();
         Assert.assertNotNull(rdmAllAnalysisTreatyStructures.get(0));
         try {
             Assert.assertEquals(rdmAllAnalysisTreatyStructures.get(0), rdmAllAnalysisTreatyStructure);
@@ -778,7 +781,7 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getRdmAllAnalysisMultiRegionPerils() {
-        Mockito.when(rmsService.getRdmAllAnalysisMultiRegionPerils(instanceId,832L, "TC2016_MM_R", Arrays.asList(15L, 123L))).thenReturn(Arrays.asList(rdmAllAnalysisMultiRegionPerils));
+        Mockito.when(rmsService.getRdmAllAnalysisMultiRegionPerils(instanceId, 832L, "TC2016_MM_R", Arrays.asList(15L, 123L))).thenReturn(Arrays.asList(rdmAllAnalysisMultiRegionPerils));
         List<RdmAllAnalysisMultiRegionPerils> rdmAllAnalysisMultiRegionPerilss = (List<RdmAllAnalysisMultiRegionPerils>) rmsRessource.getRdmAllAnalysisMultiRegionPerils(instanceId, 832L, "TC2016_MM_R", Arrays.asList(15L, 123L)).getBody();
         Assert.assertNotNull(rdmAllAnalysisMultiRegionPerilss.get(0));
         try {
@@ -792,8 +795,8 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void getAnalysisModellingOptionSettings() {
-        Mockito.when(rmsService.getAnalysisModellingOptionSettings("RL-18",50L, "AC15_RL15_AUT_R", 1L)).thenReturn(resultTest);
-        String analysisModellingOptionSettings = rmsRessource.getAnalysisModellingOptionSettings(instanceId,50L, "AC15_RL15_AUT_R", 1L);
+        Mockito.when(rmsService.getAnalysisModellingOptionSettings("RL-18", 50L, "AC15_RL15_AUT_R", 1L)).thenReturn(resultTest);
+        String analysisModellingOptionSettings = rmsRessource.getAnalysisModellingOptionSettings(instanceId, 50L, "AC15_RL15_AUT_R", 1L);
         Assert.assertNotNull(analysisModellingOptionSettings);
         try {
             Assert.assertEquals(analysisModellingOptionSettings, resultTest);
@@ -818,7 +821,7 @@ public class RiskRevealApplicationTests {
     }
 
     @Bean(value = "jobLauncherTaskExecutor")
-    public TaskExecutor getTaskExecutor(){
+    public TaskExecutor getTaskExecutor() {
 
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(Integer.parseInt(env.getProperty("batch.job.executor.pool.size")));
@@ -826,14 +829,14 @@ public class RiskRevealApplicationTests {
     }
 
     @Bean
-    public DataSourceTransactionManager getDataSourceTransactionManager(){
+    public DataSourceTransactionManager getDataSourceTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(getDataSource());
         return dataSourceTransactionManager;
     }
 
     @Bean(value = "myDataSource")
-    public BasicDataSource getDataSource(){
+    public BasicDataSource getDataSource() {
         BasicDataSource basicDataSource = new BasicDataSource();
         basicDataSource.setDriverClassName(env.getProperty("batch.jdbc.driver"));
         basicDataSource.setUrl(env.getProperty("batch.jdbc.url"));
@@ -845,20 +848,20 @@ public class RiskRevealApplicationTests {
     }
 
     @Bean(value = "myJobRepository")
-    public JobRepository getJobRepository() throws Exception{
+    public JobRepository getJobRepository() throws Exception {
         MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
         factory.setTransactionManager(getDataSourceTransactionManager());
         return factory.getObject();
     }
 
     @Bean(value = "myJobRegistry")
-    public JobRegistry getJobRegistry(){
+    public JobRegistry getJobRegistry() {
         MapJobRegistry jobRegistry = new MapJobRegistry();
         return jobRegistry;
     }
 
     @Bean(value = "myJobLauncher")
-    public SimpleJobLauncher getJobLauncher() throws Exception{
+    public SimpleJobLauncher getJobLauncher() throws Exception {
 
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
         simpleJobLauncher.setJobRepository(getJobRepository());
@@ -868,7 +871,7 @@ public class RiskRevealApplicationTests {
     }
 
     @Bean(value = "myJobService")
-    public SimpleJobServiceFactoryBean getJobServiceFactory() throws Exception{
+    public SimpleJobServiceFactoryBean getJobServiceFactory() throws Exception {
         SimpleJobServiceFactoryBean simpleJobServiceFactoryBean = new SimpleJobServiceFactoryBean();
 
         simpleJobServiceFactoryBean.setDataSource(getDataSource());

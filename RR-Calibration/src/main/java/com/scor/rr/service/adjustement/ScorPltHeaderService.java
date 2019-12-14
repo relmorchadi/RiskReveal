@@ -3,8 +3,7 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.dto.AEPMetric;
-import com.scor.rr.domain.dto.OEPMetric;
+import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -50,12 +49,12 @@ public class ScorPltHeaderService {
         return StatisticAdjustment.CoefOfVariance(getPltLossDataFromFile(path));
     }
 
-    public List<AEPMetric> AEPTVaRMetrics(String path) throws RRException {
-        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)));
+    public EPMetric AEPTVaRMetrics(String path) throws RRException {
+        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)).getEpMetricPoints());
     }
 
-    public List<OEPMetric> OEPTVaRMetrics(String path) throws RRException {
-        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)));
+    public EPMetric OEPTVaRMetrics(String path) throws RRException {
+        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)).getEpMetricPoints());
     }
 
     public Double averageAnnualLoss(String path) throws RRException {
@@ -69,22 +68,22 @@ public class ScorPltHeaderService {
     //NOTE: this service should be open and as a part of API
 
     private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) throws com.scor.rr.exceptions.RRException {
-        if (Linear.getValue().equals(parameterProcess.getType())) {
+        if (LINEAR.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
         }
-        if (EEFFrequency.getValue().equals(parameterProcess.getType())) {
+        if (EEF_FREQUENCY.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());
         }
-        if (NONLINEAROEP.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_OEP_RPB.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
-        if (NonLinearEventDriven.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EVENT_DRIVEN.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
-        if (NONLINEARRETURNPERIOD.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
-        if (NONLINEARRETURNEVENTPERIOD.getValue().equals(parameterProcess.getType())) {
+        if (NONLINEAR_EEF_RPB.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         throwException(TYPE_NOT_FOUND, NOT_FOUND);

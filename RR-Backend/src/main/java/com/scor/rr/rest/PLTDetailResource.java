@@ -1,6 +1,6 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.TargetBuild.PLTDetails.PLTDetailSummary;
+import com.scor.rr.domain.entities.PLTDetails.PLTDetailSummary;
 import com.scor.rr.service.PLTDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

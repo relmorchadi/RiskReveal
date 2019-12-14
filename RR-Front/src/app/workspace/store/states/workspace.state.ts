@@ -64,6 +64,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getProjects(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].projects;
+  }
+
+  @Selector()
   static getCurrentWorkspaces(state: WorkspaceModel) {
     const wsId = state.currentTab.wsIdentifier;
     return state.content[wsId];
@@ -195,9 +201,9 @@ export class WorkspaceState {
    *
    ***********************************/
   @Selector()
-  static getProjects(state: WorkspaceModel) {
+  static getExtentState(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].projects;
+    return state.content[wsIdentifier].calibration.extendState;
   }
 
   @Selector()
@@ -266,25 +272,13 @@ export class WorkspaceState {
   @Selector()
   static getAnalysis(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    let selectedAnalysis: any = _.toArray(_.get(state.content[wsIdentifier],
-      `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
-    selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
-    return {
-      data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
-      totalNumberElement: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].totalNumberElement,
-    };
+    return state.content[wsIdentifier].riskLink.analysis;
   }
 
   @Selector()
   static getPortfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    let selectedPortfolio: any = _.toArray(_.get(state.content[wsIdentifier],
-      `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
-    selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
-    return {
-      data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
-      totalNumberElement: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].totalNumberElement,
-    };
+    return state.content[wsIdentifier].riskLink.portfolios;
   }
 
   @Selector()
@@ -303,6 +297,17 @@ export class WorkspaceState {
   static getValidResults(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.results.isValid;
+  }
+
+  //
+  @Selector()
+  static getSelectedAnalysisPortfolio(state:WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis,portfolios}= state.content[wsIdentifier].riskLink.selection;
+    return [
+      ... _.flatten(_.values(analysis).map(val => _.toArray(val)) ),
+      ... _.flatten(_.values(portfolios).map(val => _.toArray(val)) )
+    ];
   }
 
   @Selector()
@@ -650,13 +655,18 @@ export class WorkspaceState {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
   }
 
-  @Action(fromWS.loadAllAdjustmentApplication)
-  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+  @Action(fromWS.LoadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAllAdjustmentApplication) {
     return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
-  @Action(fromWS.loadAllPltsFromCalibrationSuccess)
-  loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibrationSuccess) {
+  @Action(fromWS.LoadAllDefaultAdjustmentApplication)
+  loadAllDefaultAdjustmentApplication(ctx: StateContext<WorkspaceModel>) {
+    return this.calibrationService.loadAllDefaultAdjustment(ctx);
+  }
+
+  @Action(fromWS.LoadAllPltsFromCalibrationSuccess)
+  loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAllPltsFromCalibrationSuccess) {
     this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload);
   }
 
@@ -705,9 +715,14 @@ export class WorkspaceState {
     this.calibrationService.expandPltSection(ctx, payload);
   }
 
+  @Action(fromWS.ExtendStateToggleAction)
+  extendStateToggle(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ExtendStateToggleAction) {
+    this.calibrationService.extendStateToggle(ctx, payload);
+  }
+
   @Action(fromWS.collapseTags)
   collapseTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.collapseTags) {
-    this.calibrationService.collapseTags(ctx, payload);
+    return this.calibrationService.collapseTags(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustment)
@@ -837,6 +852,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMAction) {
     this.riskLinkFacade.toggleRiskLinkEDMAndRDM(ctx, payload);
+  }
+
+  @Action(fromWS.DatasourceScanAction)
+  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction){
+    return this.riskLinkFacade.dataSourcesScan(ctx,payload);
   }
 
   @Action(fromWS.ToggleRiskLinkPortfolioAction)
@@ -1021,7 +1041,7 @@ export class WorkspaceState {
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
-    this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
+    return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
   }
 
   @Action(fromWS.ToggleAnalysisForLinkingAction)

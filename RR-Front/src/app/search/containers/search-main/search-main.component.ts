@@ -8,8 +8,8 @@ import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState} from '../../../core/store/states';
 import {
-  CloseAllTagsAction,
-  CloseTagByIndexAction, LoadMostUsedSavedSearch,
+  CloseAllTagsAction, CloseGlobalSearchAction,
+  CloseTagByIndexAction, DeleteSearchItem, LoadMostUsedSavedSearch,
   saveSearch,
   toggleSavedSearch,
   UpdateBadges
@@ -20,6 +20,8 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
 import {BadgesService} from "../../../core/service/badges.service";
 import {distinctUntilChanged, takeUntil} from "rxjs/operators";
+import {LoadRecentSearch} from "../../../core/store/actions";
+import {combineLatest} from "rxjs";
 
 
 @Component({
@@ -163,6 +165,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   searchLabel: any;
   mapTableNameToBadgeKey: any;
   fromSavedSearch: boolean;
+  searchSub$;
 
   constructor(private _searchService: SearchService,private _badgeService: BadgesService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
@@ -176,6 +179,18 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
       this.detectChanges();
     });
+    /*combineLatest(
+      this.searchContent$,
+      this.store.select(SearchNavBarState.getActualGlobalKeyword)
+    )
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(([{value}, globalSearchItem]) => {
+        this.globalSearchItem = globalSearchItem;
+        this._checkSearchContent(value);
+        this._loadData();
+        this.detectChanges();
+      });*/
+
     this.searchContent$
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(({value}) => {
@@ -185,7 +200,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
+      this.detectChanges();
     });
+
     this.savedSearch$.pipe(this.unsubscribeOnDestroy).subscribe(savedSearch => {
       this.savedSearch = savedSearch;
       this.detectChanges();
@@ -239,10 +256,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   private _checkSearchContent(value: string | any[]) {
     if (_.isString(value) || value == null) {
-      this.globalSearchItem = (value as string);
       this.searchContent = [];
     } else {
-      this.globalSearchItem = null;
       this.searchContent = value;
     }
   }
@@ -266,20 +281,35 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   closeGlobalSearch() {
-    this.store.dispatch(new CloseAllTagsAction());
+    this.store.dispatch(new CloseGlobalSearchAction());
   }
 
   get filter() {
-    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []).map(item => ({
-      ...item,
-      value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value)),
-    }));
+    let tags= [];
+    let keyword= "";
+
+    _.forEach(_.isString(this.searchContent) ? [] : (this.searchContent || []), item => {
+
+      if(item.key == "global search") {
+        keyword = item.value;
+      } else {
+        tags.push({
+          ...item,
+          value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value))
+        })
+      }
+
+    });
+
     let tableFilter = _.map(this._filter, (value, key) => ({key, value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
-    return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
-      ...item,
-      field: _.camelCase(item.key),
-      operator: item.operator || 'LIKE'
-    }));
+    return {
+      filters: _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
+        ...item,
+        field: _.camelCase(item.key),
+        operator: item.operator || 'LIKE'
+      })),
+      keyword
+    }
   }
 
   private searchData(id, year) {
@@ -299,16 +329,21 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
+    this.searchSub$ && this.searchSub$.unsubscribe();
     this.loading = true;
+    const {
+      filters,
+      keyword
+    } = this.filter;
     let params = {
-      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(this.globalSearchItem)),
-      filter: this.filter,
+      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(keyword)),
+      filter: filters,
       sort: this.getSortColumns(this.sortData),
       offset,
       size: size,
       fromSavedSearch: this.fromSavedSearch
     };
-    this._searchService.expertModeSearch(params)
+    this.searchSub$ = this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
         this.contracts = _.map(data.content, item => ({...item, selected: false}));
@@ -334,6 +369,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         };
 
         if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+        this.dispatch(new LoadRecentSearch());
         if(this.fromSavedSearch) {
           this.dispatch(new LoadMostUsedSavedSearch());
           this.fromSavedSearch = false;
@@ -447,5 +483,11 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   sortChange(sortData) {
     this.sortData = sortData;
     this._loadData(this.paginationOption.offset);
+  }
+
+  deleteSearchItem(id) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.store.dispatch(new DeleteSearchItem({id}))
   }
 }

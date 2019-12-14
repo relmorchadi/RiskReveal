@@ -3,7 +3,7 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.AdjustmentReturnPeriodBandingParameterRepository;
+import com.scor.rr.repository.ReturnPeriodBandingAdjustmentParameterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AdjustmentReturnPeriodBandingParameterService {
 
     @Autowired
-    AdjustmentReturnPeriodBandingParameterRepository parameterRepository;
+    ReturnPeriodBandingAdjustmentParameterRepository parameterRepository;
 
     public List<ReturnPeriodBandingAdjustmentParameter> getAdjustmentReturnPeriodBandingParameterByNode(Integer ideNode) {
         return parameterRepository.findByAdjustmentNodeAdjustmentNodeId(ideNode);

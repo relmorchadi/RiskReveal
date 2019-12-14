@@ -8,6 +8,7 @@ import * as _ from "lodash";
 })
 export class EditContractPopUpComponent implements OnInit {
   @Input() showEditContractPopup: any;
+  currencyEntity={};
   @Output('closePop') closePopEmitter: EventEmitter<any> = new EventEmitter();
   layersColumns = [
     {field: 'num', header: 'Num'},

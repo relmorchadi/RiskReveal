@@ -3,7 +3,6 @@ package com.scor.rr.mapper;
 import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,9 +23,9 @@ public class RdmAllAnalysisSummaryStatsRowMapper implements RowMapper<RdmAllAnal
         rdmAllAnalysisSummaryStats.setTreatyTag(rs.getString("treaty_tag"));
         rdmAllAnalysisSummaryStats.setOccurrenceBasis(rs.getString("occurrence_basis"));
         rdmAllAnalysisSummaryStats.setEpTypeCode(rs.getInt("ep_type_code"));
-        rdmAllAnalysisSummaryStats.setPurePremium(rs.getBigDecimal("pure_premium").setScale(7, RoundingMode.HALF_UP));
-        rdmAllAnalysisSummaryStats.setStdDev(rs.getBigDecimal("std_dev").setScale(7, RoundingMode.HALF_UP));
-        rdmAllAnalysisSummaryStats.setCov(rs.getBigDecimal("cov").setScale(14, RoundingMode.HALF_UP));
+        rdmAllAnalysisSummaryStats.setPurePremium(rs.getDouble("pure_premium"));
+        rdmAllAnalysisSummaryStats.setStdDev(rs.getDouble("std_dev"));
+        rdmAllAnalysisSummaryStats.setCov(rs.getDouble("cov"));
 
         return rdmAllAnalysisSummaryStats;
     }

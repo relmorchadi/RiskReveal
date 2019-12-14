@@ -219,16 +219,6 @@
       }
 
       .title {
-        span {
-          letter-spacing: 0.2px;
-          line-height: 27px;
-          font-size: 13px;
-          font-family: rubik;
-          padding-left: 9px;
-          font-weight: bold;
-          min-width: max-content;
-        }
-
         .title-list {
           letter-spacing: 0.2px;
           line-height: 27px;
@@ -528,78 +518,7 @@
   }
 }
 
-.title-section-drawer {
-  div {
-    margin-bottom: 15px;
-  }
-
-  h3 {
-    margin-top: 0;
-    margin-bottom: 0.5em;
-    color: rgb(170, 170, 170);
-    font-weight: 500;
-    font-family: rubik;
-    font-size: 15px;
-  }
-
-  button {
-    background-color: #0700cf;
-    color: #fff;
-    border: 0px solid;
-    border-radius: 35px;
-    font-family: rubik;
-    font-size: 16px;
-
-    span {
-      padding: 10px;
-    }
-
-    i {
-      margin-right: 10px;
-    }
-  }
-}
-
-.button-section-drawer {
-  .cancel {
-    button {
-      background-color: #ffffff;
-      color: #9e9e9e;
-      border-radius: 35px;
-      font-family: rubik;
-      font-size: 16px;
-      border: 0.6px solid;
-
-      span {
-        padding: 10px 12px;
-      }
-    }
-
-    button:hover {
-      background-color: #9e9e9e;
-      color: #ffffff;
-    }
-  }
-
-  .add {
-    button {
-      background-color: #0700cf;
-      color: #fff;
-      border: 0px solid;
-      border-radius: 35px;
-      font-family: rubik;
-      font-size: 16px;
-
-      span {
-        padding: 10px 32px;
-      }
-    }
-  }
-}
-
-
 .dropdowns {
-
   border-bottom: 1px solid #aeaeae;
   padding-bottom: 10px;
   margin-top: 15px;
@@ -683,56 +602,6 @@
       }
     }
   }
-}
-
-.metric-table-content {
-
-  .metric-table {
-    font-size: 12px;
-    font-family: Rubik;
-    display: block;
-    overflow: auto;
-    padding-bottom: 4px;
-
-    th {
-      font-weight: bold;
-      color: #898989;
-      padding: 3px 0px;
-      text-align: center;
-
-      i {
-        font-size: 16px;
-        color: #000;
-        cursor: pointer;
-        padding: 0px 0px 0px 3px;
-        cursor: pointer;
-      }
-    }
-
-    td {
-      //padding: 7px 5px 1px 2px;
-      text-align: right;
-    }
-
-    input {
-      border-right: 0px;
-      border-left: 0px;
-      border-top: 0px;
-      border-bottom: 1px solid #4540db;
-      background: #f4f6fc;
-    }
-
-
-  }
-}
-
-.metric-table-footer {
-  color: #000;
-  font-size: 12px;
-  font-family: Rubik;
-  font-weight: bold;
-  padding: 2px 5px 2px 5px;
-  margin: 5px 0px 0px 10px;
 }
 
 ::ng-deep {
@@ -944,199 +813,11 @@
   }
 }
 
-:host .PLTs-content {
-  background: #fff;
-
-  ::ng-deep {
-    .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
-      background-color: #efefef;
-    }
-
-    .ui-table-frozen-view {
-      min-height: 610px;
-    }
-
-    thead {
-      th {
-        background-color: #efefef;
-        border: none;
-
-        .header-tab {
-          display: flex;
-
-          i {
-            font-size: 22px;
-          }
-        }
-      }
-
-      .ant-checkbox-indeterminate .ant-checkbox-inner {
-        background-color: #0700cf;
-        border-color: #0700cf;
-      }
-
-      .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-        height: 4px;
-        background-color: #ffffff;
-      }
-
-      .ant-checkbox-checked .ant-checkbox-inner {
-        background-color: #0700cf;
-        border-color: #0700cf;
-      }
-    }
-
-    tbody {
-      .ant-checkbox-checked .ant-checkbox-inner {
-        background-color: #0700cf;
-        border-color: #0700cf;
-      }
-    }
-
-    .icon-check {
-      background-color: #0700e4;
-      color: #fff;
-      border-radius: 25px;
-      font-size: 16px;
-    }
-
-    .ui-table-thead {
-
-      .checkBoxHead div {
-        display: flex;
-      }
-
-      th {
-        color: rgba(0, 0, 0, 0.38) !important;
-        background-color: #F3F3F3;
-        outline-color: #fff;
-        font-family: Rubik;
-        height: 45px;
-        border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-        border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
-        text-align: center !important;
-        padding: 0 !important;
-
-        .filter-input {
-          width: 100%;
-          background-color: #f9f9f9;
-
-          i {
-            width: 10%;
-            margin-left: 5px;
-            background-color: #F5F5F5;
-          }
-
-          input {
-            padding: 0px 1px 0px 1px;
-            width: 63%;
-            background-color: #f9f9f9;
-            border: none;
-            height: 25px;
-
-            &:focus {
-              outline: 0;
-            }
-          }
-        }
-
-        .ui-sortable-column-icon {
-          color: #848484 !important;
-        }
-
-        .icon-sort-amount-down {
-          font-size: 28px;
-          margin-left: 2px;
-          cursor: pointer;
-        }
-      }
-    }
-
-    .ui-table-tbody {
-      tr {
-        background-color: #fff !important;
-      }
-
-      tr.active_plt_item {
-        background-color: #fcf9d6 !important;
-      }
-
-      tr.opened_plt_item {
-        background-color: #E9E9E9 !important;
-      }
-
-      tr:hover {
-        background-color: #F7F8FD !important;
-      }
-
-
-      td {
-        padding: 0px !important;
-        cursor: pointer;
-        font-size: 14px;
-        border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-        user-select: none;
-
-        .text-elipsice {
-          width: 100%;
-          height: 51.47px !important;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-        }
-
-        .text-elipsice-pure {
-          width: 100%;
-          height: 35.47px !important;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-        }
-
-        .td-wrapper-tags {
-          padding: 4px 0px 0px 5px !important;
-          position: relative;
-          top: -4px;
-
-          .tag-el {
-            border-radius: 29px;
-            font-size: 14px;
-            margin-left: -7px;
-            padding: 0px 7px 0px 7px;
-            border: 2px solid white;
-          }
-
-          .tag-ellipsis {
-            background-color: #0CB79B;
-            border-radius: 25px;
-            color: white;
-            font-size: 14px;
-            text-align: center;
-            border: 2px solid white;
-            margin-left: -7px;
-          }
-        }
-      }
-
-      .ui-contextmenu-selected {
-        color: inherit !important;
-      }
-
-      tr.active_contract_item {
-        background-color: #FCF9D6 !important;
-      }
-
-      tr.selected_contract_item {
-        background-color: #E9E9E9 !important;
-      }
-    }
-  }
+.text-table-cell {
+  width: 100%;
+  height: 51.47px !important;
+  display: flex;
+  align-items: center;
 }
 
 
@@ -1321,6 +1002,11 @@
   background-color: #FAEBD7 !important;
 }
 
+
+.default-header {
+  background-color: #F3F3F3 !important;
+}
+
 .separator-right {
   border-right: 5px solid #F4F6FC !important;
 }
@@ -1365,9 +1051,6 @@
   min-width: 109px !important;
 }
 
-/*.adjustDiv:hover {
-  border: solid 1px #028004;
-}*/
 .adjustDiv:focus {
   border: solid 1px #028004;
 }
@@ -1463,10 +1146,10 @@ body .ui-table .ui-table-thead > tr > th {
 
 .addRemove {
   font-size: 14px;
+  display: flex;
   font-weight: bold;
   color: #0700e4;
-  margin-top: 30px;
-  margin-left: 15px;
+  margin: 20px 0 8px 15px;
   cursor: pointer;
 }
 
@@ -1525,51 +1208,6 @@ body .ui-table .ui-table-thead > tr > th {
 .table-radio {
 
 }
-
-/*@media (max-width: 1100px) {
-  .radio-container {
-    margin-top: 0px;
-    margin-right: 0px;
-  }
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
-    width: calc(100% - 28px);
-    float: left;
-    color: #585858;
-    height: 53px;
-
-    span.title {
-      padding: 16px 0px 16px 12px;
-      font-size: 1.3em;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
-    }
-  }
-
-}
-
-@media (min-width: 1100px) {
-  .radio-container {
-    margin-top: 0px;
-    margin-right: 5px;
-  }
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
-    width: calc(100% - 230px);
-    float: left;
-    color: #585858;
-
-    span.title {
-      padding: 16px 0px 16px 23px;
-      font-size: 1.3em;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
-    }
-  }
-
-}*/
 
 .table-header1 {
   height: 88px !important;
@@ -1853,28 +1491,6 @@ body .ui-table .ui-table-thead > tr > th {
 
 }
 
-@media (min-width: 1100px) {
-  .radio-container {
-    margin-top: 0px;
-
-  }
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
-    width: calc(100% - 230px);
-    float: left;
-    color: #585858;
-
-    span.title {
-      padding: 16px 0px 42px 23px;
-      font-size: 15px;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
-    }
-  }
-
-}
-
 .impactAnalysisDiv {
   margin: 3px !important;
   border: solid 1px #cccccc;
@@ -1911,4 +1527,37 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.ant-checkbox-wrapper {
   margin-left: 4px;
+}
+
+/* ================================== Extend header CSS ========================================  */
+
+.checkboxHead-Extended {
+  display: flex;
+  background-color: #ffffff !important;
+  height: 105px !important;
+  padding: 0;
+
+  .checkboxHead-inner {
+    width: 102px;
+    border-top: 3px solid #0700e4;
+
+    .checkboxHead-title {
+      display: flex;
+      font-size: 15.22px;
+      padding: 15px 0 0 15px;
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+}
+
+.regenerate-all {
+  font-size: 17px;
+  margin-right: 5px;
+  color: #0700e4;
+  cursor: pointer;
+
+  &:hover {
+    color: #1890ff;
+  }
 }

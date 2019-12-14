@@ -3,6 +3,20 @@
   height: 3px;
 }
 
+.search-cell-container:hover {
+  .deleteSearch {
+    visibility: visible;
+  }
+}
+
+.deleteSearch {
+  visibility: hidden;
+  color: white;background-color: red;
+  height: 14px;
+  border-radius: 25px;
+  margin-right: 7px;
+}
+
 nz-layout {
   //height: 90%;
   width: 100%;
@@ -357,6 +371,7 @@ nz-layout {
   border-bottom: .5px solid #dee2e6;
   font-family: Rubik, sans-serif;
   cursor: pointer;
+  align-items: center;
 }
 
 .search-cell-container:hover {

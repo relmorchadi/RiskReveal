@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 @Table(name = "Workspace")
@@ -25,27 +24,30 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "Entity")
     private Integer entity;
 
-    @Column(name = "WorkspaceContextCode")
+    @Column(name = "WorkspaceContext", length = 40)
+    private String workspaceContext;
+
+    @Column(name = "WorkspaceContextCode", length = 55)
     private String workspaceContextCode;
 
     @Column(name = "WorkspaceUwYear")
     private Integer workspaceUwYear;
 
-    @Column(name = "WorkspaceMarketChannel", length = 5)
-    private String workspaceMarketChannel;
+    @Column(name = "WorkspaceMarketChannel")
+    private Long workspaceMarketChannel;
 
     @Column(name = "WorkspaceName")
     private String workspaceName;
 
-    @Column(name = "CedantName")
-    private String cedantName;
+    @Column(name = "ClientName")
+    private String clientName;
 
-    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,String workspaceMarketChannel, String workspaceName, String cedantName) {
+    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,Long workspaceMarketChannel, String workspaceName, String clientName) {
         this.workspaceContextCode = workspaceContextCode;
         this.entity = 1;
         this.workspaceUwYear = workspaceUwYear;
         this.workspaceMarketChannel= workspaceMarketChannel;
         this.workspaceName = workspaceName;
-        this.cedantName = cedantName;
+        this.clientName = clientName;
     }
 }

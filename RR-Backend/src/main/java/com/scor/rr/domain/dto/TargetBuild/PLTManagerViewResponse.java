@@ -1,7 +1,7 @@
 package com.scor.rr.domain.dto.TargetBuild;
 
-import com.scor.rr.domain.TargetBuild.PLTManagerView;
-import com.scor.rr.domain.TargetBuild.Tag;
+import com.scor.rr.domain.entities.PLTManagerView;
+import com.scor.rr.domain.entities.Tag;
 import lombok.Data;
 
 import java.util.Set;

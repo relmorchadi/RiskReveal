@@ -50,7 +50,7 @@ public class ELTWriter extends AbstractWriter {
 
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getAnalysisId());
+            log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getRlId());
 
             writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
             writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());

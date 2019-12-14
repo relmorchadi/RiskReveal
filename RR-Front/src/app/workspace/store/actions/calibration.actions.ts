@@ -1,57 +1,46 @@
 export class loadAllPltsFromCalibration {
-  static readonly type = '[Calibration] Load All Plts Data'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Load All Plts Data';
+  constructor(public payload?: any) {}
 }
 
-export class loadAllAdjustmentApplication {
-  static readonly type = '[Calibration] load All Adjustment Application'
-
-  constructor(public payload?: any) {
-  }
+export class LoadAllAdjustmentApplication {
+  static readonly type = '[Calibration] load All Adjustment Application';
+  constructor(public payload?: any) {}
 }
 
-export class loadAllPltsFromCalibrationSuccess {
-  static readonly type = '[Calibration] Load All Plts Success'
+export class LoadAllDefaultAdjustmentApplication {
+  static readonly type = '[Calibration] Load All Default Adjustment';
+  constructor(public payload?: any) {}
+}
 
-  constructor(public payload?: any) {
-  }
+export class LoadAllPltsFromCalibrationSuccess {
+  static readonly type = '[Calibration] Load All Plts Success';
+  constructor(public payload?: any) {}
 }
 
 export class loadAllPltsFromCalibrationFail {
-  static readonly type = '[Calibration] Load All Plts Fail'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Load All Plts Fail';
+  constructor(public payload?: any) {}
 }
 
 export class constructUserTagsFromCalibration {
-  static readonly type = '[Calibration] Construct User Tags'
-
-  constructor(public payload?: any) {
-  }
+  static readonly type = '[Calibration] Construct User Tags';
+  constructor(public payload?: any) {}
 }
 
 export class ToggleSelectPltsFromCalibration {
   static readonly type = '[Calibration] Toggle Select Plts';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class calibrateSelectPlts {
   static readonly type = '[Calibration] Toggle calibrate Plts';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class toCalibratePlts {
   static readonly type = '[Calibration] Save PLTs to calibrate';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class setUserTagsFiltersFromCalibration {
@@ -81,11 +70,14 @@ export class extendPltSection {
   }
 }
 
+export class ExtendStateToggleAction {
+  static readonly type = '[Calibration] Extend Toggle State';
+  constructor(public payload?: any) {}
+}
+
 export class collapseTags {
   static readonly type = '[Calibration] collapse Tags';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class saveAdjustment {

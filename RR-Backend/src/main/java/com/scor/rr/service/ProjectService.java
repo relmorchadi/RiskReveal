@@ -1,13 +1,13 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.ProjectEntity;
-import com.scor.rr.domain.TargetBuild.Project.*;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
+import com.scor.rr.domain.entities.Project.*;
 import com.scor.rr.repository.ContractSearchResultRepository;
 import com.scor.rr.repository.ProjectEntityRepository;
-import com.scor.rr.repository.TargetBuild.Project.*;
+import com.scor.rr.repository.Project.*;
 import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,7 +67,7 @@ public class ProjectService {
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() ->
                         contractSearchResultRepository.findByWorkspaceIdAndUwYear(wsId, uwy)
-                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), "",
+                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), null,
                                         targetContract.getWorkspaceName(),targetContract.getCedantName())))
                                 .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))

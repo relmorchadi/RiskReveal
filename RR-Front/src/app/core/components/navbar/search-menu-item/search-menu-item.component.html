@@ -58,11 +58,10 @@
             <!--                <span class="search-history-viewAll">See All</span>-->
           </div>
           <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
-            <li scrollItem  (onTrigger)="appendSearchBadges(items)" *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)"
-                (dblclick)="selectSearchAndRedirect(items)">
-              <div class="chip-container" *ngFor="let instance of items">
-                <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase" [value]="instance.value"></app-chip-tag>
-              </div>
+            <li scrollItem  (onTrigger)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)" *ngFor="let recentSearch of state?.recentSearch" (click)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)" (dblclick)="selectSearchAndRedirect(recentSearch?.items, recentSearch?.globalSearchKeyword)">
+                <div *ngFor="let instance of recentSearch?.items" class="chip-container">
+                  <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase" [value]="instance.value"></app-chip-tag>
+                </div>
             </li>
           </ul>
 

@@ -158,7 +158,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   selectProject(selectionEvent) {
     const projectIndex = _.findIndex(this.data[this.currentWsIdentifier].projects,
-      (item: any) => item.id === selectionEvent);
+      (item: any) => item.projectId === selectionEvent);
     this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.currentWsIdentifier}));
   }
 

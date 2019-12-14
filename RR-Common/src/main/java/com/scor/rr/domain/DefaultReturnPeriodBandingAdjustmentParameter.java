@@ -8,12 +8,12 @@ import java.util.Objects;
 public class DefaultReturnPeriodBandingAdjustmentParameter {
     private Long id;
     private Integer entity;
-    private DefaultAdjustmentNode adjustmentNode;
+    private DefaultAdjustmentNode defaultAdjustmentNode;
     private double returnPeriod;
     private double adjustmentFactor;
 
     @Id
-    @Column(name = "DefaultReturnPeriodBandingAdjustmentParameterId", nullable = false)
+    @Column(name = "DefaultAdjustmentParameterId", nullable = false)
     public Long getId() {
         return id;
     }
@@ -33,12 +33,12 @@ public class DefaultReturnPeriodBandingAdjustmentParameter {
 
     @ManyToOne
     @JoinColumn(name = "DefaultAdjustmentNodeId", referencedColumnName = "DefaultAdjustmentNodeId")
-    public DefaultAdjustmentNode getAdjustmentNode() {
-        return adjustmentNode;
+    public DefaultAdjustmentNode getDefaultAdjustmentNode() {
+        return defaultAdjustmentNode;
     }
 
-    public void setAdjustmentNode(DefaultAdjustmentNode adjustmentNode) {
-        this.adjustmentNode = adjustmentNode;
+    public void setDefaultAdjustmentNode(DefaultAdjustmentNode defaultAdjustmentNode) {
+        this.defaultAdjustmentNode = defaultAdjustmentNode;
     }
 
     @Basic
@@ -67,13 +67,13 @@ public class DefaultReturnPeriodBandingAdjustmentParameter {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultReturnPeriodBandingAdjustmentParameter that = (DefaultReturnPeriodBandingAdjustmentParameter) o;
         return id == that.id &&
-                Objects.equals(adjustmentNode, that.adjustmentNode) &&
+                Objects.equals(defaultAdjustmentNode, that.defaultAdjustmentNode) &&
                 Objects.equals(returnPeriod, that.returnPeriod) &&
                 Objects.equals(adjustmentFactor, that.adjustmentFactor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, adjustmentNode, returnPeriod, adjustmentFactor);
+        return Objects.hash(id, defaultAdjustmentNode, returnPeriod, adjustmentFactor);
     }
 }

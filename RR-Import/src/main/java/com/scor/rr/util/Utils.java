@@ -8,13 +8,17 @@ import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Utils {
 
@@ -40,5 +44,28 @@ public class Utils {
         }
 
         return options;
+    }
+
+    public static void setAttribute(Object obj, String fieldName, Double value){
+        PropertyDescriptor pd;
+        try {
+            pd = new PropertyDescriptor(fieldName, obj.getClass());
+            pd.getWriteMethod().invoke(obj, value);
+        } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static List applyOffsetSizeToList(List source, int offset, int size){
+        List result = new ArrayList<>();
+        if(offset < 0 || size < 0 )
+            throw new RuntimeException("Invalid Offset / Size params");
+        for(int index: IntStream.range(offset, offset+size).toArray()){
+            if(index >= source.size()-1)
+                break;
+            result.add(source.get(index));
+        }
+        return result;
     }
 }

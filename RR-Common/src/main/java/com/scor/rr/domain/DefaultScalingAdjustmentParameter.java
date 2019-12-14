@@ -12,7 +12,7 @@ public class DefaultScalingAdjustmentParameter {
     private Double adjustmentFactor; // lmf
 
     @Id
-    @Column(name = "DefaultScalingAdjustmentParameterId", nullable = false)
+    @Column(name = "DefaultAdjustmentParameterId", nullable = false)
     public Long getId() {
         return id;
     }

@@ -56,7 +56,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
             String instanceId = bundle.getInstanceId();
 
             String modelingOptions = rmsService.getAnalysisModellingOptionSettings(instanceId, bundle.getRlAnalysis().getRdmId(),
-                    bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getAnalysisId());
+                    bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getRlId());
             log.info("modelingOptions: {}", modelingOptions);
 
             List<String> options = null;

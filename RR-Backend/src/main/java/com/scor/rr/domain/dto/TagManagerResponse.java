@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto;
 
-import com.scor.rr.domain.TargetBuild.UserTag;
+import com.scor.rr.domain.entities.UserTag;
 import lombok.Data;
 
 import java.util.List;

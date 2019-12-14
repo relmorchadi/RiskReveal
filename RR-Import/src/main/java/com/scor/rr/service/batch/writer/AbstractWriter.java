@@ -58,12 +58,12 @@ public abstract class AbstractWriter {
     private Path ihubPath;
 
     @Value("${ihub.treaty.out.path}")
-    private void setIhubPath(String path){
-        this.ihubPath= Paths.get(path);
+    private void setIhubPath(String path) {
+        this.ihubPath = Paths.get(path);
     }
 
     protected synchronized String makeELTFileName(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId,String fileExtension) {
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
@@ -271,11 +271,81 @@ public abstract class AbstractWriter {
             Files.createDirectories(fullPath);
         } catch (IOException e) {
             log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
+            throw new RuntimeException("error creating paths " + fullPath, e);
         }
         final File parent = fullPath.toFile();
 
         File file = new File(parent, filename);
         return file;
+    }
+
+    protected synchronized String makePLTEPCurveFilename(
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
+            Long uniqueId, String fileExtension) {
+        return PathUtils.makeTTFileName(
+                reinsuranceType,
+                prefix,
+                clientName,
+                contractId,
+                division,
+                uwYear,
+                XLTAssetType.PLT,
+                date,
+                sourceVendor,
+                modelSystemVersion,
+                regionPeril,
+                fp,
+                currency,
+                projectId,
+                periodBasis,
+                XLTOrigin.INTERNAL,
+                XLTSubType.EPC,
+                xltot,
+                targetRapId,
+                simulationPeriod,
+                pltPublishStatus,
+                threadNum,
+                uniqueId,
+                importSequence,
+                null,
+                null,
+                null,
+                fileExtension
+        );
+    }
+
+    protected synchronized String makePLTSummaryStatFilename(
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
+            Long uniqueId, String fileExtension) {
+        return PathUtils.makeTTFileName(
+                reinsuranceType,
+                prefix,
+                clientName,
+                contractId,
+                division,
+                uwYear,
+                XLTAssetType.PLT,
+                date,
+                sourceVendor,
+                modelSystemVersion,
+                regionPeril,
+                fp,
+                currency,
+                projectId,
+                periodBasis,
+                XLTOrigin.INTERNAL,
+                XLTSubType.EPS,
+                xltot,
+                targetRapId,
+                simulationPeriod,
+                pltPublishStatus,
+                threadNum,
+                uniqueId,
+                importSequence,
+                null,
+                null,
+                null,
+                fileExtension
+        );
     }
 }

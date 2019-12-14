@@ -1,7 +1,7 @@
 package com.scor.rr.repository.specification;
 
-import com.scor.rr.domain.TargetBuild.PLTManagerView;
-import com.scor.rr.domain.TargetBuild.PLTManagerView_;
+import com.scor.rr.domain.entities.PLTManagerView;
+import com.scor.rr.domain.entities.PLTManagerView_;
 import com.scor.rr.domain.dto.PltFilter;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

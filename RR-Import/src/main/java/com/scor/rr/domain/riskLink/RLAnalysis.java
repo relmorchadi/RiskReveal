@@ -25,7 +25,8 @@ public class RLAnalysis {
     private Long projectId;
     private Long rdmId;
     private String rdmName;
-    private Long analysisId;
+    @Column(name = "analysisId")
+    private Long rlId;
     private String analysisName;
     private String analysisDescription;
     private String defaultGrain;
@@ -60,17 +61,17 @@ public class RLAnalysis {
     //TODO : review with shaun
     private String defaultOccurrenceBasis;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "analysisScanStatus")
     private RLAnalysisScanStatus rlAnalysisScanStatus;
 
-    @OneToMany(mappedBy = "rlAnalysis", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RLImportSelection> RLImportSelection;
 
-    @OneToMany(mappedBy = "rLAnalysisId")
+    @OneToMany(mappedBy = "rLAnalysisId", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<RLSourceEpHeader> rlSourceEpHeaders;
 
-    @OneToMany(mappedBy = "rlAnalysis")
+    @OneToMany(mappedBy = "rlAnalysis", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
@@ -79,7 +80,7 @@ public class RLAnalysis {
         this.projectId = rdm.getProjectId();
         this.rdmId = Long.valueOf(rdm.getRlId());
         this.rdmName = rdm.getName();
-        this.analysisId = rdmAnalysisBasic.getAnalysisId();
+        this.rlId = rdmAnalysisBasic.getAnalysisId();
         this.analysisName = rdmAnalysisBasic.getAnalysisName();
         this.analysisDescription = rdmAnalysisBasic.getDescription();
         this.defaultGrain = null; // TO Check

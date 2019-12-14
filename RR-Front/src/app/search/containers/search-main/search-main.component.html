@@ -68,6 +68,7 @@
                                 style="padding-right: 3px">
                   </app-chip-tag>
                 </div>
+                <i class="icon-multiply deleteSearch" (click)="deleteSearchItem(search?.id)"></i>
               </div>
             </ng-container>
           </ng-container>
@@ -79,10 +80,6 @@
         </div>
         <div class="chips-wrapper" style="justify-content: space-between">
           <div style="display: flex;">
-            <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
-              <app-chip-tag (onclick)="closeGlobalSearch()" [closeStatus]="true"
-                            [value]="globalSearchItem" key='Global Search'></app-chip-tag>
-            </div>
             <ng-container *ngIf="searchContent && searchContent?.length">
               <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
                 <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="true" [key]="items.key | startCase"
@@ -116,7 +113,6 @@
                    [loading]="loading">
         </app-table>
       </div>
-
     </div>
     <app-search-main-detail-component [expandWorkspaceDetails]="expandWorkspaceDetails"
                                       [currentWorkspace]="currentWorkspace"
@@ -265,8 +261,7 @@
       </div>
       <div class="ui-g-7">
         <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
-          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key | startCase'
-                        [value]="items.value"></app-chip-tag>
+          <app-chip-tag (onclick)="closeSearchBadge($event, i, items.key)" [closeStatus]="false" [key]='items.key | startCase' [value]="items.value"></app-chip-tag>
         </div>
       </div>
     </div>

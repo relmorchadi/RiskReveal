@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.TargetBuild;
 
-import com.scor.rr.domain.TargetBuild.Tag;
+import com.scor.rr.domain.entities.Tag;
 
 import java.util.Set;
 

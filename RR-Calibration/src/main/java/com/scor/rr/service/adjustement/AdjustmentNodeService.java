@@ -1,16 +1,13 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
-import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.domain.dto.adjustement.loss.PEATDataRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.cloning.CloningScorPltHeader;
-import org.apache.commons.io.FileUtils;
+import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -38,6 +32,12 @@ public class AdjustmentNodeService {
 
     @Autowired
     private AdjustmentNodeRepository adjustmentNodeRepository;
+
+    @Autowired
+    private ScalingAdjustmentParameterRepository scalingAdjustmentParameterRepository;
+
+    @Autowired
+    private EventBasedAdjustmentParameterRepository eventBasedAdjustmentParameterRepository;
 
     @Autowired
     private AdjustmentBasisRepository adjustmentBasisRepository;
@@ -70,12 +70,19 @@ public class AdjustmentNodeService {
     private AdjustmentNodeOrderService nodeOrderService;
 
     @Autowired
-    private CloningScorPltHeader cloningScorPltHeader;
+    private CloningScorPltHeaderService cloningScorPltHeaderService;
 
     @Autowired
     private DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
 
-    //TODO: implementation for updating node
+    @Autowired
+    private DefaultScalingAdjustmentParameterRepository defaultScalingAdjustmentParameterRepository;
+
+    @Autowired
+    private DefaultReturnPeriodBandingAdjustmentParameterRepository defaultReturnPeriodBandingAdjustmentParameterRepository;
+
+    @Autowired
+    private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
         return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
@@ -99,32 +106,55 @@ public class AdjustmentNodeService {
         adjustmentNodeRepository.delete(adjustmentNodeEntity);
     }
 
+//    tien : create node from default parameters found from data tables of ref data
     public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
-                                                                             DefaultAdjustmentNode defaultAdjustmentNodeEntity) throws RRException {
+                                                                             DefaultAdjustmentNode defaultNode) throws RRException {
+        Double lmf = null; // linear, type 1
+        Double rpmf = null; // EEF frequency, type 2
+        List<DefaultReturnPeriodBandingAdjustmentParameter> defaultReturnPeriodBandings = null;
 
-        Double lmf = null;
-        Double rpmf = null;
-        List<PEATData> peatData = null; //todo
-        List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings = null; //todo
-        DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
-        if (defaultRetPerBandingParamsEntity != null) {
-            if (defaultRetPerBandingParamsEntity.getLmf() != null) {
-                lmf = defaultRetPerBandingParamsEntity.getLmf();
+        // default adjustment has only 4 types, 2 tables :
+        // scaling : linear, frequency
+        // return period banding : EEF, OEP
+        // TODO : change type id in the future
+        if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 5) {
+            DefaultScalingAdjustmentParameter defaultScalingAdjustmentParameter = defaultScalingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+            if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1) {
+                lmf = defaultScalingAdjustmentParameter.getAdjustmentFactor();
+            } else {
+                rpmf = defaultScalingAdjustmentParameter.getAdjustmentFactor();
             }
-            if (defaultRetPerBandingParamsEntity.getRpmf() != null) {
-                rpmf = defaultRetPerBandingParamsEntity.getRpmf();
+        } else if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 2 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 4) {
+            defaultReturnPeriodBandings = defaultReturnPeriodBandingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+        }
+
+        PEATDataRequest peatData = null; //todo, now default adj has not this type
+//        List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings = null; //todo
+//        DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultNode.getDefaultAdjustmentNodeId());
+//        if (defaultRetPerBandingParamsEntity != null) {
+//            if (defaultRetPerBandingParamsEntity.getLmf() != null) {
+//                lmf = defaultRetPerBandingParamsEntity.getLmf();
+//            }
+//            if (defaultRetPerBandingParamsEntity.getRpmf() != null) {
+//                rpmf = defaultRetPerBandingParamsEntity.getRpmf();
+//            }
+//        }
+        List<ReturnPeriodBandingAdjustmentParameterRequest> rpbParametersRequests = new ArrayList<>();
+        if (defaultReturnPeriodBandings != null && !defaultReturnPeriodBandings.isEmpty() ) {
+            for (DefaultReturnPeriodBandingAdjustmentParameter defaultRPB : defaultReturnPeriodBandings) {
+                rpbParametersRequests.add(new ReturnPeriodBandingAdjustmentParameterRequest(defaultRPB.getReturnPeriod(), defaultRPB.getAdjustmentFactor()));
             }
         }
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest(
-                defaultAdjustmentNodeEntity.getSequence(),
-                defaultAdjustmentNodeEntity.getCappedMaxExposure(),
-                defaultAdjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisId(),
-                defaultAdjustmentNodeEntity.getAdjustmentType().getAdjustmentTypeId(),
+                defaultNode.getSequence(),
+                defaultNode.getCappedMaxExposure(),
+                defaultNode.getAdjustmentBasis().getAdjustmentBasisId(),
+                defaultNode.getAdjustmentType().getAdjustmentTypeId(),
                 adjustmentThreadEntity.getAdjustmentThreadId(),
                 lmf,
                 rpmf,
                 peatData,
-                adjustmentReturnPeriodBandings);
+                rpbParametersRequests);
         return createAdjustmentNode(adjustmentNodeRequest);
     }
 
@@ -442,7 +472,7 @@ public class AdjustmentNodeService {
 //    }
 
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-        if (Linear.getValue().equals(node.getAdjustmentTypeCode())) {
+        if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, linear adjustment");
             if (parameterRequest.getLmf() != null) {
                 if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -454,8 +484,8 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
             }
         }
-        else if (EEFFrequency.getValue().equals(node.getAdjustmentTypeCode())) {
-            log.info("saveParameterNode, {}",EEFFrequency.getValue());
+        else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
+            log.info("saveParameterNode, {}",EEF_FREQUENCY.getValue());
             if (parameterRequest.getRpmf() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getRpmf()");
@@ -466,37 +496,37 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
             }
         }
-        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
                 }
-                log.info("saveParameterNode, {}", NonLinearEventDriven.getValue());
+                log.info("saveParameterNode, {}", NONLINEAR_EVENT_DRIVEN.getValue());
                 savePeatDataFile(node, parameterRequest);
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
-                log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
+//                log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
+                log.info("saveParameterNode, {}", NONLINEAR_EVENT_PERIOD_DRIVEN.getValue());
                 savePeatDataFile(node, parameterRequest);
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAROEP.getValue().equals(node.getAdjustmentTypeCode())) {
-            log.info("saveParameterNode, {}",NONLINEARRETURNEVENTPERIOD.getValue());
+        else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
+            log.info("saveParameterNode, {}", node.getAdjustmentTypeCode());
             if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                 for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {
                     periodBandingParameterService.save(new ReturnPeriodBandingAdjustmentParameter(adjustmentReturnPeriodBanding.getReturnPeriod(), adjustmentReturnPeriodBanding.getAdjustmentFactor(), node));
                 }
-
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
@@ -513,13 +543,9 @@ public class AdjustmentNodeService {
     void savePeatDataFile(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
         try {
             log.info("------ Saving PEAT DATA FILE ------");
-            File file = new File("src/main/resources/file/peatData"+node.getAdjustmentNodeId()+".csv");
-            FileUtils.touch(file);
-            CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-            csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
-            eventBasedParameterService.save(new AdjustmentEventBasedParameterEntity(file.getPath(),file.getName(),node));
+            eventBasedParameterService.save(new EventBasedAdjustmentParameter(parameterRequest.getPeatData().getPath(), parameterRequest.getPeatData().getFileName(), node));
             log.info("------ Success save file ------");
-        } catch (IOException | RRException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -530,7 +556,7 @@ public class AdjustmentNodeService {
             List<AdjustmentNode> nodeEntitiesCloned = new ArrayList<>();
             for (AdjustmentNode nodeParent : nodeEntities) {
                 AdjustmentNode nodeCloned = new AdjustmentNode(nodeParent);
-                nodeCloned.setAdjustmentNodeCloning(nodeParent);
+                nodeCloned.setCloningSource(nodeParent);
                 nodeCloned.setAdjustmentThread(threadClone);
                 nodeEntitiesCloned.add(adjustmentNodeRepository.save(nodeCloned));
             }

@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.util.List;
 
 @Entity
@@ -15,7 +14,7 @@ import java.util.List;
 public class GlobalExposureView {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "GlobalExposureViewId")
     private Long globalExposureViewId;
     @Column(name = "ProjectId")

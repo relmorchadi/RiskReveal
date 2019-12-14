@@ -231,7 +231,7 @@
                 <dependency>
             <groupId>com.scor.rr</groupId>
             <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${rr_version}</version>
         </dependency>
     </dependencies>
 

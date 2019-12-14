@@ -1,19 +1,33 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
-import {PatchNumberFormatAction, PatchSearchStateAction} from '../../../core/store/actions';
+import {
+  PatchDateFormatAction,
+  PatchImportDataAction,
+  PatchNumberFormatAction,
+  PatchSearchStateAction,
+  PatchWidgetDataAction,
+  PostNewConfigAction,
+  PostNewConfigFailAction,
+  PostNewConfigSuccessAction
+} from '../../../core/store/actions';
 import {GeneralConfig} from '../../../core/model';
+import {BaseContainer} from "../../../shared/base";
+import {Router} from "@angular/router";
+import {Data} from "../../../core/model/data";
+import * as fromWorkspaceStore from "../../../workspace/store";
+import {NotificationService} from "../../../shared/services";
 
 @Component({
   selector: 'app-user-preference',
   templateUrl: './user-preference.component.html',
   styleUrls: ['./user-preference.component.scss']
 })
-export class UserPreferenceComponent implements OnInit {
+export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   searchTarget: any;
   testNumber: 1231024;
@@ -26,8 +40,17 @@ export class UserPreferenceComponent implements OnInit {
     'Workspace Context'
   ];
 
-  check1 = false;
-  check2 = false;
+  financialPerspectiveELT = [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
+    {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
+    {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}];
+  financialPerspectiveEPM = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
+  targetCurrency = ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'];
+  targetAnalysisCurrency = ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'];
+  rmsInstance = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
+
+  countries: any;
+  uwUnits: any;
+
   numberCollapse = false;
   defaultImport;
 
@@ -35,7 +58,15 @@ export class UserPreferenceComponent implements OnInit {
   state$: Observable<GeneralConfig>;
   state: GeneralConfig = null;
 
-  constructor(public location: Location, public store$: Store) { }
+  constructor(public location: Location,
+              private cdRef: ChangeDetectorRef,
+              private actions$: Actions,
+              private notification: NotificationService,
+              private router$: Router, public store$: Store) {
+    super(router$, cdRef, store$);
+    this.countries = Data.countries;
+    this.uwUnits = Data.uwUnit;
+  }
 
   ngOnInit() {
     this.defaultImport = localStorage.getItem('importConfig');
@@ -43,6 +74,20 @@ export class UserPreferenceComponent implements OnInit {
     this.store$.select(SearchNavBarState.getSearchTarget).subscribe(
       value => this.searchTarget = value
     );
+
+    this.actions$.pipe(ofActionSuccessful(PostNewConfigSuccessAction)).subscribe( data => {
+        this.notification.createNotification('Information',
+        'the Current Configuration has been saved Successfully.',
+        'info', 'bottomRight', 4000);
+        this.detectChanges();
+    });
+
+    this.actions$.pipe(ofActionSuccessful(PostNewConfigFailAction)).subscribe( data => {
+      this.notification.createNotification('Warning',
+        'A failure in saving The Current Current Configuration has occurred please check your internet Connexion before Saving.',
+        'info', 'bottomRight', 4000);
+      this.detectChanges();
+    });
 
     this.state$.subscribe(value => this.state = _.merge({}, value));
   }
@@ -53,10 +98,6 @@ export class UserPreferenceComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.search, event.previousIndex, event.currentIndex);
-  }
-
-  defaultImportChange() {
-    localStorage.setItem('importConfig', this.defaultImport);
   }
 
   numberFormat() {
@@ -84,15 +125,24 @@ export class UserPreferenceComponent implements OnInit {
     return s.join(dec);
   }
 
-  changePerspective() {
+  changePerspective(event, target) {
+    this.dispatch(new PatchDateFormatAction({target, value: event}))
+  }
+
+  changeImportData(event, target) {
+    this.dispatch(new PatchImportDataAction({target, value: event}))
   }
 
   changeNumberFormat(event, target) {
-    this.store$.dispatch(new PatchNumberFormatAction({target: target, value: event}));
+    this.dispatch(new PatchNumberFormatAction({target, value: event}));
   }
 
-  changeContract(event, target) {
+  widgetConfigChange(event, target) {
+    this.dispatch(new PatchWidgetDataAction({target, value: event}));
+  }
 
+  saveChanges() {
+    this.dispatch(new PostNewConfigAction(this.state));
   }
 
   changeSearch(event) {

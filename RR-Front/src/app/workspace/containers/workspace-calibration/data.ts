@@ -43,7 +43,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 1",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: true,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 6}, {tagId: 7}],
 //           userTags: [{tagId: 1}, {tagId: 2}],
@@ -61,7 +61,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 2",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 1}],
 //           userTags: [{tagId: 1}],
@@ -79,7 +79,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_CFS PORT 3",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 2}, {tagId: 6}, {tagId: 1}],
 //           userTags: [{tagId: 1}, {tagId: 2}],
@@ -97,7 +97,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_LMF1.T1",
 //           icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 5}],
 //           userTags: [{tagId: 2}, {tagId: 1}],
@@ -115,7 +115,7 @@ export const ADJUSTMENT_TYPE = [
 //           threadName: "APEQ-ID_GU_LMF1.T11687",
 //           icon: 'icon-check-circle iconGreen',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 2}],
 //           userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
@@ -137,7 +137,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "122282", threadName: "APEQ-ID_GULM 1", icon: 'icon-lock-alt iconRed',
 //           checked: false,
-//           locked: true,
+//           isLocked: true,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 6}, {tagId: 7}],
 //           userTags: [{tagId: 2}, {tagId: 3}],
@@ -148,12 +148,12 @@ export const ADJUSTMENT_TYPE = [
 //           grain: "liberty-NAHU",
 //           vendorSystem: "RMS RiskLink",
 //           rap: "North Atlantic",
-//           status: 'locked'
+//           status: 'isLocked'
 //         },
 //         {
 //           id: "122292", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
 //           checked: false,
-//           locked: true,
+//           isLocked: true,
 //           adj: [],
 //           systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 6}],
 //           userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
@@ -164,7 +164,7 @@ export const ADJUSTMENT_TYPE = [
 //           grain: "liberty-NAHU",
 //           vendorSystem: "RMS RiskLink",
 //           rap: "North Atlantic",
-//           status: 'locked'
+//           status: 'isLocked'
 //         },
 //
 //       ]
@@ -175,7 +175,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "12299192", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 4}, {tagId: 6}, {tagId: 3}],
 //           userTags: [{tagId: 1}, {tagId: 3}],
@@ -191,7 +191,7 @@ export const ADJUSTMENT_TYPE = [
 //         {
 //           id: "12295892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
 //           checked: false,
-//           locked: false,
+//           isLocked: false,
 //           adj: [],
 //           systemTags: [{tagId: 7}, {tagId: 4}, {tagId: 5}],
 //           userTags: [{tagId: 1}, {tagId: 2}],
@@ -606,7 +606,7 @@ export const DATA = [
 export const ADJUSTMENTS_ARRAY = [
   {
     "id": 1,
-    "adjustmentBasis": "Wind Pool",
+    "adjustmentBasis": "Winds Pool",
     "category": "Base",
     "name": "Wind Pool",
     "description": "An adjustment to be applied on the basis that wind pools may relieve or contribute to losses.",
@@ -879,12 +879,13 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'userTags',
     header: 'User Tags',
-    width: '80',
+    width: '70',
     dragable: false,
     sorted: false,
     filtred: false,
@@ -893,12 +894,13 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'pltId',
     header: 'PLT ID',
-    width: '80',
+    width: '70',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -907,6 +909,7 @@ export const PLT_COLUMNS = [
     style: 'border: none !important',
     extended: true,
     frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -920,13 +923,14 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'peril',
     header: 'Peril',
-    width: '80',
+    width: '70',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -934,13 +938,14 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'regionPerilCode',
     header: 'Region Peril Code',
-    width: '80',
+    width: '150',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -948,13 +953,14 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'regionPerilName',
     header: 'Region Peril Name',
-    width: '130',
+    width: '150',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -962,13 +968,14 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'grain',
     header: 'Grain',
-    width: '160',
+    width: '170',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -976,13 +983,14 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
     fields: 'vendorSystem',
     header: 'Vendor System',
-    width: '90',
+    width: '150',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -990,7 +998,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1004,7 +1013,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1018,7 +1028,8 @@ export const PLT_COLUMNS = [
     type: 'icon',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1032,7 +1043,8 @@ export const PLT_COLUMNS = [
     type: 'icon',
     style: 'border: none !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1046,7 +1058,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: true
+    frozen: true,
+    color: '#F3F3F3'
   },
   {
     sortDir: 1,
@@ -1060,7 +1073,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1074,7 +1088,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#F3F3F3'
   },
   {
     sortDir: 1,
@@ -1088,7 +1103,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
   {
     sortDir: 1,
@@ -1102,7 +1118,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FAEBD7'
   },
   {
     sortDir: 1,
@@ -1116,7 +1133,8 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
     extended: true,
-    frozen: false
+    frozen: false,
+    color: '#FFFFFF'
   },
 ];
 export const EPM_COLUMNS = [

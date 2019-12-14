@@ -29,7 +29,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -38,7 +38,7 @@
                       </div>
                       <div (click)="toggleWorkspace('recent', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
@@ -87,7 +87,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                <td *ngFor="let col of columns"
+                <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div class="items-popover-wrapper" >
                     <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -96,7 +96,7 @@
                     </div>
                     <div (click)="toggleWorkspace('favorite', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                          class="item-popover-context">
-                      <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                      <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                       <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                         - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                     </div>
@@ -145,7 +145,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -154,7 +154,7 @@
                       </div>
                       <div (click)="toggleWorkspace('assigned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
@@ -204,7 +204,7 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
-                  <td *ngFor="let col of columns"
+                  <td *ngFor="let col of columns" (dblclick)="openSingleWorkspace(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <div class="items-popover-wrapper" >
                       <div style=" display: flex; padding-top: 5px;" *ngIf="col.type === 'select'">
@@ -213,7 +213,7 @@
                       </div>
                       <div (click)="toggleWorkspace('pinned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.cedantName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>

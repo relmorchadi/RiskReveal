@@ -9,7 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash'
-import {Select, Store} from "@ngxs/store";
+import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
   collapseTags,
@@ -20,7 +20,7 @@ import {
   extendPltSection,
   replaceAdjustement,
   saveAdjModification,
-  saveAdjustment
+  saveAdjustment, SetCurrentTab
 } from "../../store/actions";
 import {switchMap, tap} from 'rxjs/operators';
 import {WorkspaceState} from "../../store/states";
@@ -42,7 +42,7 @@ import * as tagsStore from "../../../shared/components/plt/plt-tag-manager/store
   selector: 'app-workspace-calibration',
   templateUrl: './workspace-calibration.component.html',
   styleUrls: ['./workspace-calibration.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
@@ -66,7 +66,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   filters = {
     systemTag: [],
     userTag: []
-  }
+  };
   filterData = {};
   sortData = {};
   addTagModalIndex = 0;
@@ -77,7 +77,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     tagId: null,
     tagName: '',
     tagColor: '#0700e4'
-  }
+  };
   searchAddress: string;
   listOfPltsCache: any[];
   saveTemplate = false;
@@ -126,7 +126,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   categorySelected: any;
   adjsArray: any[] = [];
   leftNavbarIsCollapsed: boolean;
-  adjutmentApplication = [];
+  adjustmentApplication = [];
   linear: boolean = false;
   dropdownVisible = false;
   workspaceId: string;
@@ -284,6 +284,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @Select(WorkspaceState) state$: Observable<any>;
   @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
   @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+  @Select(WorkspaceState.getCurrentWorkspaces) ws$;
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  @Select(WorkspaceState.getExtentState) extentState$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   activeCheckboxSort: boolean = false;
@@ -292,6 +295,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   searchSelectedTemplate: any = this.template;
   localTemplates: any = [];
   globalTemplates: any = [];
+  wsStatus: any;
+  tabStatus: any;
+  wsIdentifier;
 
   // @ViewChild('templateNameInput') templateNameInput: ElementRef;
   dropAll = (param) => null;
@@ -301,6 +307,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private nzDropdownService: NzDropdownService,
     private store$: Store,
     private zone: NgZone,
+    private actions$: Actions,
     private cdRef: ChangeDetectorRef,
     private router$: Router,
     private systemTagService: SystemTagsService,
@@ -367,12 +374,38 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
+      this.dispatch(new fromWorkspaceStore.LoadAllDefaultAdjustmentApplication());
       /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));*/
+    });
+
+    this.ws$.pipe().subscribe(value => {
+      this.wsStatus = _.get(value, 'workspaceType', null);
+      this.detectChanges();
+    });
+
+    this.extentState$.pipe().subscribe(value => {
+      this.extended = value;
+      this.detectChanges();
+    });
+
+    this.selectedProject$.pipe().subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.tabStatus === 'FAC' ? this.extend('init') : null;
+      this.detectChanges();
+    });
+
+    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+        this.extendRebase();
+        if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+        this.detectChanges();
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
@@ -383,12 +416,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.initThreadsData();
       // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
-      console.log(data);
       _.forEach(this.listOfPltsData, row => {
         this.rowKeys[row.pltId] = true;
-      })
+      });
       // this.rowKeys = this.listOfPltsData.map(e => e.pltId)
-      console.log('rowKey ===> ', this.rowKeys);
+      // console.log('rowKey ===> ', this.rowKeys);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
@@ -411,18 +443,18 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
     }));
   }
-  initTemplateList() {
-    console.log('template List ======> ', this.templateList)
 
+  initTemplateList() {
+   // console.log('template List ======> ', this.templateList);
     _.forEach(this.templateList, (row: any) => {
       if (row.type == 'Global' && !this.globalTemplates.includes(row)) {
         this.globalTemplates.push(row)
       } else if (row.type == 'Local' && !this.localTemplates.includes(row)) {
         this.localTemplates.push(row)
       }
-    })
-    console.log('local List ======> ', this.localTemplates)
-    console.log('global List ======> ', this.globalTemplates)
+    });
+   // console.log('local List ======> ', this.localTemplates)
+   // console.log('global List ======> ', this.globalTemplates)
   }
 
   initThreadsData() {
@@ -438,7 +470,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
     _.forEach(this.listOfPltsThread, value => {
       this.randomMetaData[value.pltId] = {}
-    })
+    });
     _.forEach(this.listOfPltsThread, value => {
       _.forEach(cols, col => {
         if (col == 'AAL') {
@@ -459,11 +491,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   patchState(state: any): void {
+    const {wsIdentifier} = state;
+    this.wsIdentifier = wsIdentifier;
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.collapsedTags = path.collapseTags;
-    console.log(path);
-    this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
+   // console.log(path);
+    this.adjustmentApplication = _.merge({}, path.adjustmentApplication);
     this.allAdjsArray = _.merge([], path.allAdjsArray).sort(this.dynamicSort("name"));
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
@@ -537,9 +571,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.dataColumnsCache = _.merge([], this.dataColumns);
     this.extraDataColumns = _.merge([], this.extraDataColumnsCache);
     this.initRandomMetaData();
-    console.log('dataColumns ==> ', this.dataColumns);
-    console.log('frozenColumns ==> ', this.frozenColumns);
-    console.log('extraFrozenColumns ==> ', this.extraFrozenColumns);
+   // console.log('dataColumns ==> ', this.dataColumns);
+   // console.log('frozenColumns ==> ', this.frozenColumns);
+   // console.log('extraFrozenColumns ==> ', this.extraFrozenColumns);
   }
 
   sort(sort: { key: string, value: string }): void {
@@ -598,8 +632,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   resetPath() {
-    this.filterData = _.omit(this.filterData, 'project')
-    this.projects = _.map(this.projects, p => ({...p, selected: false}))
+    this.filterData = _.omit(this.filterData, 'project');
+    this.projects = _.map(this.projects, p => ({...p, selected: false}));
     this.showDeleted = false;
   }
 
@@ -619,7 +653,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       forDeleted: this.showDeleted
     }));
     this.initThreadsData();
-    console.log(this.selectedListOfPlts);
+   // console.log(this.selectedListOfPlts);
     this.cdRef.detectChanges()
 
   }
@@ -639,14 +673,28 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   sortChange(sortData) {
     this.sortData = sortData;
-    console.log(this.sortData);
+   // console.log(this.sortData);
   }
 
-  extend() {
-    this.extended = !this.extended;
+  extendRebase() {
     if (this.extended) {
-      this.headerWidth = '1013px'
-      this.frozenWidth = '0'
+      this.headerWidth = '1013px';
+      this.frozenWidth = '0';
+      this.genericWidth = ['1019px', '33px', '157px'];
+    } else {
+      this.headerWidth = '453px';
+      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
+      this.genericWidth = ['409px', '33px', '157px '];
+    }
+    this.adjustExention();
+    this.initDataColumns();
+  }
+
+  extend(scope = 'toggle') {
+    this.dispatch(new fromWorkspaceStore.ExtendStateToggleAction({scope: scope}));
+    if (this.extended) {
+      this.headerWidth = '1013px';
+      this.frozenWidth = '0';
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
       this.headerWidth = '453px';
@@ -662,7 +710,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     if (this.extended) {
       _.forIn(this.pltColumns, function (value: any, key) {
         value.extended = true;
-      })
+      });
       _.forIn(this.EPMColumns, function (value: any, key) {
         value.extended = true;
       })
@@ -674,16 +722,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
           value.extended = false;
         }
 
-      })
+      });
       _.forIn(this.EPMColumns, function (value: any, key) {
-        if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
-          value.extended = true;
-        } else {
-          value.extended = false;
-        }
-
+        value.extended = (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable)
       })
     }
+  }
+
+  groupByPure() {
+    this.groupedByPure = !this.groupedByPure;
   }
 
   clickButtonPlus(bool, data?: any) {
@@ -752,7 +799,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     let countClient = 0;
     const baseLengthArray = [];
     const clientLengthArray = [];
-    _.forEach(this.adjutmentApplication, (plt, pKey) => {
+    _.forEach(this.adjustmentApplication, (plt, pKey) => {
       countBase = 0;
       countClient = 0;
       _.forEach(plt, (adj, aKey) => {
@@ -784,7 +831,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    console.log(this.listOfPltsThread);
+   // console.log(this.listOfPltsThread);
     this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -866,7 +913,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.columnPosition = adj.value;
     }
     this.isVisible = true;
-    console.log(this.categorySelectedFromAdjustement)
+   // console.log(this.categorySelectedFromAdjustement)
   }
 
   DeleteAdjustement(adj) {
@@ -901,9 +948,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   onDrop(col, pltId, draggedAdjs, lastpltId, application) {
-    console.log(this.draggedAdjs);
-    console.log(this.adjsArray);
-    console.log(_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id));
+   // console.log(this.draggedAdjs);
+   // console.log(this.adjsArray);
+   // console.log(_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id));
     if (_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id) > -1) {
       this.dispatch(new applyAdjustment({
         adjustementType: this.singleValue,
@@ -932,13 +979,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   collapseTags() {
-    this.store$.dispatch(new collapseTags(!this.collapsedTags))
-    this.cdRef.detectChanges();
+    this.store$.dispatch(new collapseTags());
+    this.detectChanges();
   }
 
 
   log(columns) {
-    console.log(columns);
+   // console.log(columns);
   }
 
   // Tags Component
@@ -1075,7 +1122,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     /*_.forEach(plts, pltId => {
       this.listOfPltsData[pltId].toCalibrate = false;
     });
-    console.log(this.listOfPltsData);
+   // console.log(this.listOfPltsData);
     this.store$.dispatch(new toCalibratePlts( {
       plts:this.listOfPltsData,
       wsIdentifier:this.workspaceId + "-" + this.uwy
@@ -1091,7 +1138,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   dropColumn(event: CdkDragDrop<any>) {
-    console.log(event);
+   // console.log(event);
     const {
       previousContainer,
       container
@@ -1104,7 +1151,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
           event.previousIndex + 1,
           event.currentIndex + 1
         );
-        console.log(container.id, this.frozenColumns);
+       // console.log(container.id, this.frozenColumns);
       }
     } else {
       if (this.extraFrozenColumnsCache.length > 0) {
@@ -1130,7 +1177,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     _.forEach(this.frozenColumns, value => {
       resultWidth += +value.width
     })
-    console.log(resultWidth);
+   // console.log(resultWidth);
     this.frozenWidth = resultWidth;
     this.headerWidth = this.tableType == 'adjustments' ? resultWidth - 60 + 'px' : resultWidth + 'px';
   }
@@ -1163,7 +1210,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         this.rowGroupMetadata[value.pureId].push(value.pltId)
 
       })
-      console.log(this.rowGroupMetadata);
+     // console.log(this.rowGroupMetadata);
     }
   }
 
@@ -1183,7 +1230,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   checkBoxsort() {
     this.activeCheckboxSort = !this.activeCheckboxSort;
-    console.log('checked', this.activeCheckboxSort)
+   // console.log('checked', this.activeCheckboxSort)
     if (this.activeCheckboxSort) {
       this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => !o.selected]);
     } else {
@@ -1217,7 +1264,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         /*document.getElementById('templateNameInput').focus();
         // this.templateNameInput.nativeElement.select();
         // this.cdRef.detectChanges();
-        console.log(this.templateNameInput);*/
+       // console.log(this.templateNameInput);*/
       }
 
     }
@@ -1240,7 +1287,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   leftMenuActionDispatcher(action: Message) {
-    console.log(action);
+   // console.log(action);
 
     switch (action.type) {
       case leftMenuStore.emitFilters:
@@ -1332,10 +1379,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   save() {
-    console.log({
-      selectedTags: this.tagsInputs.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
-    })
+    // console.log({
+    //   selectedTags: this.tagsInputs.toAssign,
+    //   unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
+    // })
     this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
       userId: 1,
       wsId: this.workspaceId,
@@ -1411,7 +1458,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   onDragStart(adj: any) {
-    console.log('***********DRAG START***********', adj);
+   // console.log('***********DRAG START***********', adj);
     let today = new Date();
     this.draggedAdjs = adj;
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
@@ -1421,12 +1468,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.draggedAdjs['ref'] = adj.id
     }
     this.draggedAdjs.id = numberAdjs;
-    console.log('Dragged ADJ ************', this.draggedAdjs)
+   // console.log('Dragged ADJ ************', this.draggedAdjs)
     // this.cdRef.detectChanges();
   }
 
   togglePureRow($event: any) {
-    console.log('***************************************', $event, '***********************************************')
+   // console.log('***************************************', $event, '***********************************************')
     this.rowKeys = $event;
     if (_.filter(this.rowKeys, row => row = true).length == this.rowKeys.length) {
       this.allRowsExpanded = true;
