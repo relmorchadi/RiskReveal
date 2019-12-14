@@ -1,12 +1,12 @@
 package com.scor.rr.configuration.file;
 
-
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.PLTDataNullException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileWriteException;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
@@ -21,32 +21,34 @@ import java.nio.channels.FileChannel;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.List;
-
-/**
- * Created by u004602 on 28/06/2019.
- */
+import java.util.Map;
 @Component
-public class BinaryPLTFileWriter implements PLTFileWriter {
-    public void write(List<PLTLossData> pltLossDataList, File file) throws RRException {
-        if (! "bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
+public class BinaryContributionMatrixWriter implements ContributionMatrixWriter {
+
+
+    @Autowired
+    private BinaryPLTFileWriter binaryPLTFileWriter;
+
+    public void write(Map<Integer, List<List<Double>>> contributionPerPhase, File file,int size, int lineSize) throws RRException {
+        if (!"bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
-        if (pltLossDataList == null) {
+        if (contributionPerPhase == null) {
             throw new PLTDataNullException();
         }
         FileChannel out = null;
         MappedByteBuffer buffer = null;
         try {
-            int size = pltLossDataList.size() * 26;
             out = new RandomAccessFile(file, "rw").getChannel();
-            buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size);
+            buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size*((lineSize*8)+4));
             buffer.order(ByteOrder.LITTLE_ENDIAN);
-            for (PLTLossData lossData : pltLossDataList) {
-                buffer.putInt(lossData.getSimPeriod());
-                buffer.putInt(lossData.getEventId());
-                buffer.putLong(lossData.getEventDate());
-                buffer.putShort((short) lossData.getSeq());
-                buffer.putFloat((float) lossData.getMaxExposure());
-                buffer.putFloat((float) lossData.getLoss());
+            for (Map.Entry<Integer, List<List<Double>>> entry : contributionPerPhase.entrySet()) {
+                for (List<Double> contribution : entry.getValue()) {
+                    buffer.putInt(entry.getKey());
+                    for (int i = 0; i < contribution.size(); i++) {
+                        buffer.putDouble(contribution.get(i));
+                    }
+
+                }
             }
         } catch (IOException e) {
             throw new PLTFileWriteException(file.getPath());
@@ -59,26 +61,10 @@ public class BinaryPLTFileWriter implements PLTFileWriter {
                 e.printStackTrace();
             }
             if (buffer != null) {
-                closeDirectBuffer(buffer);
+                binaryPLTFileWriter.closeDirectBuffer(buffer);
             }
-    }
+        }
 
     }
 
-    public boolean closeDirectBuffer(final ByteBuffer buffer){
-        if(!buffer.isDirect())
-            return false;
-        final DirectBuffer dbb = (DirectBuffer)buffer;
-        return AccessController.doPrivileged(
-                (PrivilegedAction<Object>) () -> {
-                    try {
-                        Cleaner cleaner = dbb.cleaner();
-                        if (cleaner != null) cleaner.clean();
-                        return null;
-                    } catch (Exception e) {
-                        return dbb;
-                    }
-                }
-        ) == null;
-    }
 }

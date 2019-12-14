@@ -429,13 +429,14 @@ public class InuringPackageService {
     public InuringPackageJsonResponse getJSON(long id) throws RRException {
 
         InuringPackageJsonResponse inuringPackageJsonResponse = new InuringPackageJsonResponse();
-        generateIndexMap(id);
 
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(id);
         if (inuringPackage == null) throw new InuringPackageNotFoundException(id);
 
         InuringFinalNode inuringFinalNode = inuringFinalNodeRepository.findByInuringPackageId(id);
         if (inuringFinalNode == null) throw new InuringFinalNodeNotFoundException(id);
+
+        generateIndexMap(id);
 
         /**Getting the Package information**/
         inuringPackageJsonResponse.setFormatCode(1);

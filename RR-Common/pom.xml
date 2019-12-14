@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <!--<rr_version>0.0.1-SNAPSHOT</rr_version>-->
+        <rr_version>0.0.1-SNAPSHOT</rr_version>
     </properties>
 
     <dependencies>
