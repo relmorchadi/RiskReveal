@@ -160,6 +160,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
+    setTimeout(()=>{
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+        instanceId: this.state.financialValidator.rmsInstance.selected,
+        keyword: '',
+        offset: 0,
+        size: 100,
+      }));
+    },500);
+
     this.serviceSubscription = [
       this.state$.pipe().subscribe(value => {
         this.state = _.merge({}, value);
@@ -214,13 +223,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       })
     ];
 
-    this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-      instanceId: this.state.financialValidator.rmsInstance.selected,
-      keyword: '',
-      offset: 0,
-      size: 100,
-    }));
-
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
@@ -237,6 +239,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.workspaceInfo = data;
     this.wsIdentifier = wsIdentifier;
   }
+
 
   lazyLoadDataSources(lazyLoadEvent) {
     console.log('Datasources lazy load', lazyLoadEvent);
