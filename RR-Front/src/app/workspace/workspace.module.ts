@@ -21,7 +21,7 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
-import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
+import {RiskLinkResSummaryComponent} from './components/import/risk-link-res-summary/risk-link-res-summary.component';
 import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component';
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {InuringCanvasTabComponent} from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
@@ -36,6 +36,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {NgxEchartsModule} from 'ngx-echarts';
 import {CreateFacProjectPopupComponent} from './containers/workspace-project/create-fac-project-popup/create-fac-project-popup.component';
 import { ParseIdPipe } from './pipes/parse-id.pipe';
+
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],

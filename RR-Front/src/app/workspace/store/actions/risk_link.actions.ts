@@ -103,8 +103,8 @@ export class AddToBasketDefaultAction {
   constructor() {}
 }
 
-export class ImportRiskLinkMainAction {
-  static readonly type = '[Risk Link] Import PLT Risk Link Import';
+export class TriggerImportAction {
+  static readonly type = '[Risk Link] Trigger Import';
   constructor(public payload?: any) {}
 }
 
@@ -265,5 +265,15 @@ export class LoadRiskLinkPortfolioDataAction {
 
 export class RunDetailedScanAction {
   static readonly type = '[Risk Link] Run detailed scan';
+  constructor(public payload: any) {}
+}
+
+export class PatchAnalysisResultAction{
+  static readonly type = '[Risk Link] Patch Analysis result';
+  constructor(public payload: any) {}
+}
+
+export class PatchPortfolioResultAction{
+  static readonly type = '[Risk Link] Patch Portfolio result';
   constructor(public payload: any) {}
 }

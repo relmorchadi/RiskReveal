@@ -324,15 +324,20 @@ export class WorkspaceState {
         }) ))
       )
     };
-
-    /*
-    return {
-      analysis: _.flatten(_.values(analysis).map(val => _.toArray(val))),
-      portfolios: _.flatten(_.values(portfolios).map(val => _.toArray(val)))
-    };
-     */
   }
 
+  @Selector()
+  static getRiskLinkSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary;
+  }
+
+  @Selector()
+  static anySelectedResults(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios}= state.content[wsIdentifier].riskLink.summary;
+    return [...analysis, ...portfolios].filter(item => item.selected).length > 0;
+  }
 
   @Selector()
   static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
@@ -943,9 +948,9 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasketDefault(ctx);
   }
 
-  @Action(fromWS.ImportRiskLinkMainAction)
-  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
-    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
+  @Action(fromWS.TriggerImportAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TriggerImportAction) {
+    return this.riskLinkFacade.triggerImport(ctx, payload);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)
@@ -1115,6 +1120,16 @@ export class WorkspaceState {
   @Action(fromWS.RunDetailedScanAction)
   runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
     return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  }
+
+  @Action(fromWS.PatchAnalysisResultAction)
+  patchAnalysisResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.patchAnalysisResult(ctx, payload);
+  }
+
+  @Action(fromWS.PatchPortfolioResultAction)
+  patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
 
   /***********************************

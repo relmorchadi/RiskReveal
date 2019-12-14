@@ -54,8 +54,8 @@
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible" pResizableColumn>
                 <ng-container *ngIf="col.type === 'selection'">
-                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'results')"
-                         [nzIndeterminate]="true"></label>
+<!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'results')"-->
+<!--                         [nzIndeterminate]="true"></label>-->
                   <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                 </ng-container>
                 <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
