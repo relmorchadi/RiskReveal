@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'analysis-result',
@@ -282,7 +283,7 @@ export class AnalysisResultComponent implements OnInit {
       {value: 'RL_AHEQ_Mv9.0_Ev11.0_S-60-LTR (Default)'},
       {value: 'RL_EUEQ_Mv11.0_Ev11.0_S-61-LTR (Default)'},
       {value: 'RL_EUWS_Mv11.2_Ev11.0_S-65-LTR'},
-    ]
+    ].map(item => ({...item, selected: false}))
   };
 
   targetRapDataTable = [

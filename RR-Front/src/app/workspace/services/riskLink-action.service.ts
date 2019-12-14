@@ -19,8 +19,155 @@ import produce from 'immer';
 import {rmdirSync} from "fs";
 
 
-const instanceId = 'RL18-1';
+//const instanceId = 'RL18-1';
 const instanceName = 'AZU-P1-RL18-SQL16';
+
+const testSummary = {
+  "analysis": [
+    {
+      "selected": false,
+      "rlAnalysisId": 3351,
+      "entity": 1,
+      "rlModelDataSourceId": 4,
+      "projectId": 10,
+      "rdmId": 131,
+      "rdmName": "AA2012_SyntheticCurve_R",
+      "rlId": 10,
+      "analysisName": "Europe, All Lines, EP Wind Only, with Loss Amp",
+      "analysisDescription": "EUWS_EP_PLA_DLM110",
+      "defaultGrain": "Europe, All Lines, EP Wind Only, with Loss Amp",
+      "exposureType": "PORTFOLIO/GROUP",
+      "exposureTypeCode": 8017,
+      "edmNameSourceLink": "ied2011_euws_pc_eur_edm110",
+      "exposureId": 1,
+      "analysisCurrency": "EUR",
+      "rlExchangeRate": null,
+      "typeCode": 102,
+      "analysisType": "Exceedance Probability",
+      "runDate": "2019-12-13T09:40:18.368+0000",
+      "region": "EU",
+      "peril": "WS",
+      "geoCode": "",
+      "rpCode": "EUWS",
+      "subPeril": "WS Wind",
+      "lossAmplification": "Bldg, Cont, BI",
+      "analysisMode": 2,
+      "engineTypeCode": 100,
+      "engineType": "DLM",
+      "engineVersion": "11.0.1411.2",
+      "engineVersionMajor": "11.0",
+      "profileName": "",
+      "profileKey": "RL_EUWS_Mv11.2",
+      "purePremium": null,
+      "exposureTIV": 5.05500640578089E13,
+      "description": null,
+      "defaultOccurrenceBasis": null,
+      "financialPerspective": "TEST",
+      "peqt":[],
+      "targetCurrency": "EUR",
+      "unitMultiplier": 1,
+      "proportion": 100,
+      "rlimportSelection": [
+
+      ]
+    },
+    {
+      "selected": false,
+      "rlAnalysisId": 3352,
+      "entity": 1,
+      "rlModelDataSourceId": 4,
+      "projectId": 10,
+      "rdmId": 131,
+      "rdmName": "AA2012_SyntheticCurve_R",
+      "rlId": 11,
+      "analysisName": "BE_Fire_Evt",
+      "analysisDescription": "Belgium Synthetic Curve Fire Per Event",
+      "defaultGrain": "BE_Fire_Evt",
+      "exposureType": "PORTFOLIO/GROUP",
+      "exposureTypeCode": 8017,
+      "edmNameSourceLink": "",
+      "exposureId": 9,
+      "analysisCurrency": "EUR",
+      "rlExchangeRate": null,
+      "typeCode": 102,
+      "analysisType": "Exceedance Probability",
+      "runDate": "2019-12-13T09:40:18.384+0000",
+      "region": "EU",
+      "peril": "WS",
+      "geoCode": "",
+      "rpCode": "EUWS",
+      "subPeril": "WS Wind",
+      "lossAmplification": "Bldg, Cont, BI",
+      "analysisMode": 2,
+      "engineTypeCode": 100,
+      "engineType": "DLM",
+      "engineVersion": "11.0.1411.2",
+      "engineVersionMajor": "11.0",
+      "profileName": "",
+      "profileKey": "RL_EUWS_Mv11.2",
+      "purePremium": null,
+      "exposureTIV": 1.5865009738729902E12,
+      "description": null,
+      "defaultOccurrenceBasis": null,
+      "financialPerspective": "TEST",
+      "peqt":[],
+      "targetCurrency": "EUR",
+      "unitMultiplier": 1,
+      "proportion": 100,
+      "rlimportSelection": [
+
+      ]
+    }
+  ],
+  "portfolios": [
+    {
+      "selected": false,
+      "rlPortfolioId": 349,
+      "entity": 1,
+      "projectId": 10,
+      "edmId": 130,
+      "edmName": "AA2012_SyntheticCurve_E",
+      "rlId": 1,
+      "number": "PT_ENG_ALL_inEUR | PT_ENG_ALL_inEUR | EQ",
+      "name": "PT_ENG_ALL_inEUR",
+      "created": "2011-11-22T11:04:45.000+0000",
+      "description": "",
+      "type": "AGG",
+      "peril": "EQ",
+      "agSource": "",
+      "agCedent": "PT_as_FIDELIDADE",
+      "agCurrency": "EUR",
+      "targetCurrency": "EUR",
+      "unitMultiplier": 1,
+      "proportion": 100,
+      "tiv": 0.00,
+      "importLocationLevel": false
+    },
+    {
+      "selected": false,
+      "rlPortfolioId": 350,
+      "entity": 1,
+      "projectId": 10,
+      "edmId": 130,
+      "edmName": "AA2012_SyntheticCurve_E",
+      "rlId": 2,
+      "number": "PT_ALL_RISK_inEUR | PT_ALL_RISK_inEUR | EQ",
+      "name": "PT_ALL_RISK_inEUR",
+      "created": "2011-11-22T11:06:06.000+0000",
+      "description": "",
+      "type": "AGG",
+      "peril": "EQ",
+      "agSource": "",
+      "agCedent": "PT_as_FIDELIDADE",
+      "agCurrency": "EUR",
+      "targetCurrency": "EUR",
+      "unitMultiplier": 1,
+      "proportion": 100,
+      "tiv": 0.00,
+      "importLocationLevel": false
+    }
+  ]
+};
 
 @Injectable({
   providedIn: 'root'
@@ -233,7 +380,7 @@ export class RiskLinkStateService {
   }
 
   dataSourcesScan(ctx: StateContext<WorkspaceModel>, payload) {
-    const {selectedDS, projectId} = payload;
+    const {selectedDS, projectId, instanceId} = payload;
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
       .pipe(mergeMap((response) => {
           console.log('data', response);
@@ -857,15 +1004,6 @@ export class RiskLinkStateService {
 
     ctx.dispatch(new fromWs.LoadDetailAnalysisFacAction(_.filter(_.toArray(results), (item: any) => item.typeWs === 'fac')));
     ctx.dispatch(new fromWs.LoadLinkingDataAction({analysis: _.toArray(results), portfolios: _.toArray(summaries)}));
-  }
-
-  importRiskLinkImport(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const selectedProject: any = _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].riskLink.importPLTs[selectedProject.projectId] = true;
-    }));
   }
 
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1623,7 +1761,7 @@ export class RiskLinkStateService {
   }
 
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, payload) {
-    const {rmsId, type, projectId} = payload;
+    const {rmsId, type, projectId, instanceId} = payload;
     return this.riskApi.loadDataSourceContent(instanceId, projectId, rmsId, type)
       .pipe(mergeMap(data => {
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -1883,7 +2021,7 @@ export class RiskLinkStateService {
 
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
   searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
-    const {keyword, offset, size} = payload;
+    const {keyword, offset, size, instanceId} = payload;
 
     return this.riskApi.searchRiskLinkData(instanceId, keyword, offset, size).pipe(
       mergeMap(
@@ -1959,6 +2097,10 @@ export class RiskLinkStateService {
                       analysis: {},
                       portfolios: {}
                     },
+                    summary: {
+                      analysis: [],
+                      portfolios: []
+                    },
                     linking: {
                       edm: null,
                       rdm: {data: null, selected: null},
@@ -2006,17 +2148,73 @@ export class RiskLinkStateService {
   }
 
   runDetailedScan(ctx, payload) {
-    const {projectId, analysis,portfolios}=payload;
+    const {projectId, analysis,portfolios,instanceId}=payload;
     return this.riskApi.runDetailedScan(instanceId, projectId, analysis,portfolios)
       .pipe(
-        mergeMap(res => {
-
+        mergeMap((res:any) => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            const {analysis, portfolios}=res;
+            const financialPerspective=draft.content[wsIdentifier].riskLink.financialValidator.financialPerspectiveELT.selected.code; /// TODO
+            draft.content[wsIdentifier].riskLink.summary={
+              ...draft.content[wsIdentifier].riskLink.summary,
+              analysis: _.map(analysis, item => ({
+                ...item,
+                selected: false,
+                financialPerspective: financialPerspective,
+                peqt:[],
+                targetCurrency: item.analysisCurrency,
+                unitMultiplier: 1,
+                proportion: 100
+              }) ),
+              portfolios: _.map(portfolios, p => ({
+                ...p,
+                selected: false,
+                targetCurrency: p.agCurrency,
+                unitMultiplier: 1,
+                proportion: 100,
+                importLocationLevel: false
+              }))
+            };
+            draft.content[wsIdentifier].riskLink.display.displayImport= true;
+          }));
           return of(res);
         })
         , catchError(err => {
           console.error('Error while doing the detailed scan', err);
           return of(err);
         }))
+  }
+
+  patchAnalysisResult(ctx, payload){
+    const {index, key,value}= payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.analysis[index][key]= value;
+    }))
+  }
+
+  patchPortfolioResult(ctx, payload){
+    const {index, key,value}= payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.portfolios[index][key]= value;
+    }))
+  }
+
+  triggerImport(ctx, payload){
+    const {projectId,instanceId,userId, analysisConfig,portfolioConfig}=payload;
+    return this.riskApi.triggerImport(instanceId, projectId,userId, analysisConfig, portfolioConfig )
+      .pipe(mergeMap(res => {
+        console.log('Import done', res);
+        alert('Import done successfully');
+        return of(res);
+      }),
+        catchError(err =>{
+          alert('Error while doing the import');
+          return of(err);
+        })
+      );
   }
 
   private _facTraitement(ctx): boolean {
