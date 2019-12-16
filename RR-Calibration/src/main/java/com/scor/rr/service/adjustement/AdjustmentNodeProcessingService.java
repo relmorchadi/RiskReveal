@@ -146,6 +146,7 @@ public class AdjustmentNodeProcessingService {
         finalPLT.setCreatedDate(RRDateUtils.getDateNow());
         pltHeaderRepository.save(finalPLT);
         thread.setFinalPLT(finalPLT);
+        thread.setThreadStatus("Valid");
         adjustmentThreadRepository.save(thread);
         return finalPLT; // return final PLT
     }
