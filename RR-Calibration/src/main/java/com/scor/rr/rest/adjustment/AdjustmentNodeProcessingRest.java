@@ -26,6 +26,5 @@ public class AdjustmentNodeProcessingRest {
     @PostMapping("adjustThread")
     public PltHeaderEntity adjustPLTsInThread(@RequestParam Integer threadId) throws RRException {
         return adjustmentNodeProcessingService.adjustPLTsInThread(threadId);
-
     }
 }
