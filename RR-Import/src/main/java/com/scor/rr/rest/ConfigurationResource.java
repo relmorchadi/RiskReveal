@@ -33,8 +33,7 @@ public class ConfigurationResource {
 
     @PostMapping("detailed-scan")
     public ResponseEntity<?> analysisDetailScan(@RequestBody DetailedScanDto detailedScanDto) {
-        rmsService.detailedScan(detailedScanDto);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(rmsService.detailedScan(detailedScanDto), HttpStatus.OK);
     }
 
     @PostMapping("save-analysis-import-selection")
@@ -74,6 +73,16 @@ public class ConfigurationResource {
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has Occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-source-ep-headers")
+    public ResponseEntity<?> getSourceEpHeaders(@RequestParam Long analysisId) {
+        try {
+            return new ResponseEntity<>(configurationService.getSourceEpHeadersForAnalysis(analysisId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

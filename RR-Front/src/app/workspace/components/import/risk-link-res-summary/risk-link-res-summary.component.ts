@@ -1,5 +1,5 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {DataTables} from '../data';
+import {ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {DataTables} from '../../../containers/workspace-risk-link/data';
 import * as fromWs from '../../../store/actions';
 import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -104,7 +104,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
   @Select(WorkspaceState.getResults) results$;
 
   @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
-  wsStatus: any;
+  wsStatus: any='wsStatus';
+
+  @Input('data')
+  data;
 
   analysis = [];
   portfolio = [];
@@ -143,7 +146,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
         }
       ),
       this.tabStatus$.subscribe(value => {
-        this.wsStatus = value;
+        //this.wsStatus = value;
         this.detectChanges();
       }),
       this.summaries$.pipe().subscribe(value => {

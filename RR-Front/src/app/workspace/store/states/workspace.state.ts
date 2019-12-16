@@ -142,7 +142,7 @@ export class WorkspaceState {
 
   @Selector()
   static getContract(state: WorkspaceModel) {
-    const wsIdentifier =  state.currentTab.wsIdentifier;
+    const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].contract;
   }
 
@@ -299,14 +299,53 @@ export class WorkspaceState {
     return state.content[wsIdentifier].riskLink.results.isValid;
   }
 
-  //
+
   @Selector()
-  static getSelectedAnalysisPortfolio(state:WorkspaceModel){
+  static getSelectedAnalysisProtfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    const {analysis,portfolios}= state.content[wsIdentifier].riskLink.selection;
+    const {analysis, portfolios, edms, rdms} = state.content[wsIdentifier].riskLink.selection;
+    return {
+      analysis: _.flatten(
+        _.keys(analysis).map(rdmId => _.map( _.toArray(analysis[rdmId]), item => ({
+          rdmId,
+          rdmName: rdms[rdmId].name,
+          analysisId: item.rlId,
+          analysisName: item.analysisName,
+        }) ))
+      ),
+      portfolios: _.flatten(
+        _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
+          edmId,
+          edmName: edms[edmId].name,
+          curreny: item.agCurrency,
+          portfolioId: item.rlId,
+          portfolioName: item.name,
+          portfolioType: item.type
+        }) ))
+      )
+    };
+  }
+
+  @Selector()
+  static getRiskLinkSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary;
+  }
+
+  @Selector()
+  static anySelectedResults(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios}= state.content[wsIdentifier].riskLink.summary;
+    return [...analysis, ...portfolios].filter(item => item.selected).length > 0;
+  }
+
+  @Selector()
+  static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios} = state.content[wsIdentifier].riskLink.selection;
     return [
-      ... _.flatten(_.values(analysis).map(val => _.toArray(val)) ),
-      ... _.flatten(_.values(portfolios).map(val => _.toArray(val)) )
+      ..._.flatten(_.values(analysis).map(val => _.toArray(val))),
+      ..._.flatten(_.values(portfolios).map(val => _.toArray(val)))
     ];
   }
 
@@ -517,7 +556,7 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.loadWorkSpaceAndPlts)
-  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts) {
     return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
   }
 
@@ -855,8 +894,8 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.DatasourceScanAction)
-  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction){
-    return this.riskLinkFacade.dataSourcesScan(ctx,payload);
+  dataSourcesScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DatasourceScanAction) {
+    return this.riskLinkFacade.dataSourcesScan(ctx, payload);
   }
 
   @Action(fromWS.ToggleRiskLinkPortfolioAction)
@@ -909,9 +948,9 @@ export class WorkspaceState {
     return this.riskLinkFacade.addToBasketDefault(ctx);
   }
 
-  @Action(fromWS.ImportRiskLinkMainAction)
-  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ImportRiskLinkMainAction) {
-    this.riskLinkFacade.importRiskLinkImport(ctx, payload);
+  @Action(fromWS.TriggerImportAction)
+  importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TriggerImportAction) {
+    return this.riskLinkFacade.triggerImport(ctx, payload);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)
@@ -1078,6 +1117,21 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 
+  @Action(fromWS.RunDetailedScanAction)
+  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  }
+
+  @Action(fromWS.PatchAnalysisResultAction)
+  patchAnalysisResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.patchAnalysisResult(ctx, payload);
+  }
+
+  @Action(fromWS.PatchPortfolioResultAction)
+  patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
+  }
+
   /***********************************
    *
    * Scope And Completeness Actions
@@ -1155,10 +1209,12 @@ export class WorkspaceState {
   AddInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInputNode) {
     return this.inuringService.AddInputNode(ctx, payload);
   }
+
   @Action(fromInuring.EditInputNode)
   EditInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInputNode) {
     return this.inuringService.EditInputNode(ctx, payload);
   }
+
   @Action(fromInuring.DeleteInputNode)
   DeleteInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInputNode) {
     return this.inuringService.DeleteInputNode(ctx, payload);

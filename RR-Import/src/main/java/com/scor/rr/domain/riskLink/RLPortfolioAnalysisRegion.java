@@ -15,7 +15,7 @@ import javax.persistence.*;
 public class RLPortfolioAnalysisRegion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rlPortfolioAnalysisRegionId;
 
     @Column(name = "AnalysisRegion")
@@ -43,13 +43,13 @@ public class RLPortfolioAnalysisRegion {
     @JoinColumn(name = "RlPortfolioId")
     private RLPortfolio rlPortfolio;
 
-    public RLPortfolioAnalysisRegion(EdmAllPortfolioAnalysisRegions portfolioAnalysisRegions, RLPortfolio rlPortfolio, String currency) {
+    public RLPortfolioAnalysisRegion(EdmAllPortfolioAnalysisRegions portfolioAnalysisRegions, RLPortfolio rlPortfolio) {
         this.analysisRegion = portfolioAnalysisRegions.getAnalysisRegion();
         this.analysisRegionName = portfolioAnalysisRegions.getAnalysisRegionDesc();
         this.peril = portfolioAnalysisRegions.getPeril();
         this.locationCount = portfolioAnalysisRegions.getLocCount();
         this.totalTIVinUSD = portfolioAnalysisRegions.getTotalTiv();
-        this.exposureCurrency = currency;
+        this.exposureCurrency = portfolioAnalysisRegions.getExpoCurrency();
         this.rlPortfolio = rlPortfolio;
     }
 }

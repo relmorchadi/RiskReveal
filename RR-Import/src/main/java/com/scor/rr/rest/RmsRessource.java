@@ -65,15 +65,15 @@ public class RmsRessource {
         return ResponseEntity.ok(rdmAnalyses);
     }
 
-    @GetMapping("listEdmPortfolio")
-    public ResponseEntity<?> listEdmPortfolio(@RequestParam String instanceId, @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
-                                              @RequestParam(value = "portfolioList", required = false) List<Long> portfolioList) {
-
-        this.logger.debug("start getting listEdmPortfolio ...");
-
-        List<EdmPortfolio> edmPortfolios = rmsService.listEdmPortfolio(instanceId, id, name, portfolioList);
-        return ResponseEntity.ok(edmPortfolios);
-    }
+//    @GetMapping("listEdmPortfolio")
+//    public ResponseEntity<?> listEdmPortfolio(@RequestParam String instanceId, @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
+//                                              @RequestParam(value = "portfolioList", required = false) List<Long> portfolioList) {
+//
+//        this.logger.debug("start getting listEdmPortfolio ...");
+//
+//        List<EdmPortfolio> edmPortfolios = rmsService.listEdmPortfolio(instanceId, id, name, portfolioList);
+//        return ResponseEntity.ok(edmPortfolios);
+//    }
 
     @GetMapping("listRdmAnalysisEpCurves")
     public ResponseEntity<?> listRdmAllAnalysisEpCurves(@RequestParam String instanceId,
@@ -151,16 +151,16 @@ public class RmsRessource {
         return ResponseEntity.ok(null);
     }
 
-    @GetMapping("EdmAllPortfolioAnalysisRegions")
-    public ResponseEntity<?> getEdmAllPortfolioAnalysisRegions(
-            @RequestParam String instanceId,
-            @RequestParam(value = "edmId") Long edmId,
-            @RequestParam(value = "edmName") String edmName,
-            @RequestParam(value = "ccy") String ccy) {
-        this.logger.debug("start getting EdmAllPortfolioAnalysisRegions ...");
-        List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegions = rmsService.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, ccy);
-        return ResponseEntity.ok(edmAllPortfolioAnalysisRegions);
-    }
+//    @GetMapping("EdmAllPortfolioAnalysisRegions")
+//    public ResponseEntity<?> getEdmAllPortfolioAnalysisRegions(
+//            @RequestParam String instanceId,
+//            @RequestParam(value = "edmId") Long edmId,
+//            @RequestParam(value = "edmName") String edmName,
+//            @RequestParam(value = "ccy") String ccy) {
+//        this.logger.debug("start getting EdmAllPortfolioAnalysisRegions ...");
+//        List<EdmAllPortfolioAnalysisRegions> edmAllPortfolioAnalysisRegions = rmsService.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, ccy);
+//        return ResponseEntity.ok(edmAllPortfolioAnalysisRegions);
+//    }
 
     @GetMapping("RdmAllAnalysisTreatyStructure")
     public ResponseEntity<?> getRdmAllAnalysisTreatyStructure(
