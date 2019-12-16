@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class RLAnalysisProfileRegion {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlAnalysisProfileRegionId")

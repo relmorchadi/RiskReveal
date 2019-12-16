@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.EdmPortfolioBasic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +18,7 @@ import java.util.List;
 public class RLPortfolio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlPortfolioId")
     private Long rlPortfolioId;
     @Column(name = "Entity")
@@ -52,14 +53,17 @@ public class RLPortfolio {
     private BigDecimal tiv;
 
     @OneToMany(mappedBy = "rlPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "portfolioScanStatus")
+    @JsonBackReference
     private RLPortfolioScanStatus rlPortfolioScanStatus;
 
     @ManyToOne
     @JoinColumn(name = "RlModelDataSourceId")
+    @JsonBackReference
     private RLModelDataSource rlModelDataSource;
 
     public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm) {

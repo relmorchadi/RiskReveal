@@ -1,6 +1,6 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.entities.ContractSearchResult;
+import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.projection.WorkspaceProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

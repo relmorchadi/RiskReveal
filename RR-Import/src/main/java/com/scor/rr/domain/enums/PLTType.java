@@ -17,7 +17,4 @@ public enum PLTType {
         this.code= code;
     }
 
-
-
-
 }

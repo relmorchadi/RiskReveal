@@ -1,7 +1,6 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.domain.RdmAnalysis;
-import com.scor.rr.domain.dto.RLAnalysisDto;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -57,7 +56,9 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
     RLAnalysis findByProjectIdAndAnalysis(@Param("projectId") Long projectId,
                                           @Param("analysis") RdmAnalysis analysis);
 
-    RLAnalysis findByRdmIdAndRdmNameAndRlId(Long rdmId, String rdmName, Long analysisId);
+    RLAnalysis findByRdmIdAndRdmNameAndRlIdAndProjectId(Long rdmId, String rdmName, Long analysisId, Long projectId);
 
     List<RLAnalysis> findByRlModelDataSourceId(Long rlModelDataSourceId);
+
+    RLAnalysis findByRlId(Long analysisId);
 }

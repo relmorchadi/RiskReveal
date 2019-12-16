@@ -26,8 +26,16 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}import/config/get-riskLink-analysis-portfolios`, {params: {instanceId, projectId, rmsId , type}});
   }
 
-  searchRiskLinkData(instanceId): Observable<any> {
-    return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId}});
+  searchRiskLinkData(instanceId, keyword, offset, size): Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId, keyword, offset, size}});
+  }
+
+  runDetailedScan(instanceId, projectId, rlAnalysisList, rlPortfolioList){
+    return this.http.post(`${this.IMPORT_URL}import/config/detailed-scan`, {instanceId, projectId, rlAnalysisList, rlPortfolioList});
+  }
+
+  triggerImport(instanceId, projectId,userId, analysisConfig, portfolioConfig){
+    return this.http.post(`${this.IMPORT_URL}import/trigger-import`, {instanceId, projectId,userId, analysisConfig, portfolioConfig});
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {

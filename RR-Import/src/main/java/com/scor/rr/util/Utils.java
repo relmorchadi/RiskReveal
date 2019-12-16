@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class Utils {
 
@@ -54,5 +55,17 @@ public class Utils {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public static List applyOffsetSizeToList(List source, int offset, int size){
+        List result = new ArrayList<>();
+        if(offset < 0 || size < 0 )
+            throw new RuntimeException("Invalid Offset / Size params");
+        for(int index: IntStream.range(offset, offset+size).toArray()){
+            if(index >= source.size()-1)
+                break;
+            result.add(source.get(index));
+        }
+        return result;
     }
 }

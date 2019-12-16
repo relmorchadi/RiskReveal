@@ -8,6 +8,7 @@ import {NodeCreationPopupComponent} from "./inuring/node-creation-popup/node-cre
 import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.component";
 import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
+import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
 
 
 
@@ -21,10 +22,13 @@ export const COMPONENTS = [
   NodeCreationPopupComponent,
   InuringGraphComponent,
   ...INURING_NODES,
-  AttachPltPopUpComponent
+  AttachPltPopUpComponent,
+  AnalysisResultComponent,
+  PortfolioResultComponent
 ];
 
 export * from './workspace-router/workspace-router.component';
 export * from './left-menu/left-menu.component';
 export * from './project/projects-list/projects-list.component';
 export * from './inuring';
+export * from './import';

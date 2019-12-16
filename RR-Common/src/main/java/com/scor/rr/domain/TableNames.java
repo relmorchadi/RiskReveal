@@ -3,7 +3,7 @@ package com.scor.rr.domain;
 public enum TableNames {
     CEDANT_CODE("cedant_code"),
     CEDANT_NAME("cedant_name"),
-    COUNTRY("country"),
+    COUNTRY_NAME("country"),
     WORKSPACE_ID("workspace_id"),
     WORKSPACE_NAME("workspace_name"),
 //    TREATY("treaty"),

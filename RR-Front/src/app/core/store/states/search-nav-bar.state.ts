@@ -23,7 +23,7 @@ import {
   showSavedSearch,
   toggleSavedSearch,
   UpdateBadges,
-  DeleteSearchItem
+  DeleteSearchItem, LoadRecentSearch
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
@@ -77,7 +77,7 @@ export class SearchNavBarState implements NgxsOnInit {
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
     ctx.dispatch(new LoadShortCuts());
-    ctx.dispatch(new LoadRecentSearchAction);
+    ctx.dispatch(new LoadRecentSearch());
     ctx.dispatch(new LoadSavedSearch());
     ctx.dispatch(new LoadMostUsedSavedSearch());
   }
@@ -133,6 +133,11 @@ export class SearchNavBarState implements NgxsOnInit {
   @Selector()
   static getMapTableNameToBadgeKey(state: SearchNavBar) {
     return state.mapTableNameToBadgeKey;
+  }
+
+  @Selector()
+  static getActualGlobalKeyword(state: SearchNavBar) {
+    return state.actualGlobalKeyword;
   }
 
 
@@ -203,7 +208,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
           return of(ctx.patchState({
             loading: false,
-            searchValue: expression,
+            searchValue: keyword,
             emptyResult: checkShortCut[0] ? _.isEmpty( _.flatten(result.content) ) : _.every(data, table => _.isEmpty( _.flatten(table) )),
             data
           }));
@@ -262,7 +267,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(LoadRecentSearchAction)
-  loadRecentSearch(ctx: StateContext<SearchNavBar>) {
+  loadRecentSearchFromLocalStorage(ctx: StateContext<SearchNavBar>) {
     ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
   }
 
@@ -321,16 +326,30 @@ export class SearchNavBarState implements NgxsOnInit {
   doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
     ctx.patchState(produce(ctx.getState(), draft => {
       if (!_.isEmpty(expression)) {
-        draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.shortcutFormKeysMapper)};
-        console.log(draft.searchContent);
-        draft.badges = _.isArray(draft.searchContent.value) ? draft.searchContent.value : [];
-      }
-      if (_.isArray(draft.searchContent.value)) {
-        // draft.badges= draft.badges;
-        draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
+        const {
+          badges,
+          newExpr
+        } = this._badgesService.generateBadges(expression, draft.shortcutFormKeysMapper);
+        console.log({
+          badges,
+          newExpr
+        });
+        draft.actualGlobalKeyword = newExpr;
+        let newBadges = [];
+        if(newExpr) {
+          newBadges = [{key: "global search", operator: "LIKE", value: newExpr}, ...badges];
+        } else {
+          let oldGlobalKeyword = _.find(ctx.getState().badges, e => e.key == "global search");
+          if(oldGlobalKeyword) {
+            newBadges = [{key: "global search", operator: "LIKE", value: oldGlobalKeyword.value}, ...badges]
+          } else {
+            newBadges = badges;
+          }
+        }
+        draft.badges = newBadges;
+        draft.searchContent = {value: newBadges};
       }
       draft.visibleSearch = false;
-      localStorage.setItem('items', JSON.stringify(draft.recentSearch));
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
@@ -362,8 +381,16 @@ export class SearchNavBarState implements NgxsOnInit {
     }))
   }
 
-  @Action([CloseGlobalSearchAction, CloseAllTagsAction])
+  @Action(CloseGlobalSearchAction)
   closeGlobalSearchAction(ctx: StateContext<SearchNavBar>) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchValue= '';
+      draft.actualGlobalKeyword= '';
+    }));
+  }
+
+  @Action(CloseAllTagsAction)
+  closeAllTagsAction(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent.value = null;
       draft.badges = [];
@@ -402,6 +429,18 @@ export class SearchNavBarState implements NgxsOnInit {
     }).pipe(
       mergeMap( () => ctx.dispatch(new LoadSavedSearch()))
     )
+  }
+
+  @Action(LoadRecentSearch)
+  loadRecentSearch(ctx: StateContext<SearchNavBar>, {payload}: LoadRecentSearch) {
+    return this._searchService.getMostRecentSearch()
+      .pipe(
+        tap(
+          (recentSearch: any) => ctx.patchState({
+            recentSearch: recentSearch
+          })
+        )
+      )
   }
 
   @Action(LoadMostUsedSavedSearch)

@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface FacSearchRepository extends JpaRepository<FacSearch, Long> {
 
-    List<FacSearch> findAllByUserId(Integer userId);
-    List<FacSearch> findTop5ByUserIdOrderByCountDesc(Integer userId);
+    List<FacSearch> findAllByUserIdOrderBySavedDateDesc(Integer userId);
+    List<FacSearch> findTop5ByUserIdOrderByCountDescSavedDateDesc(Integer userId);
 }
