@@ -239,6 +239,7 @@ public class EpCurveExtractor extends AbstractWriter {
         fPs.forEach(fp -> {
             Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve = new HashMap<>();
             Long datasourceId = riskLinkAnalysis.getRlModelDataSourceId();
+            Long rlId = riskLinkAnalysis.getRlId();
             RLModelDataSource datasource = dataSourceRepository.findById(datasourceId).orElseThrow(() -> new RuntimeException("No available datasource with ID " + datasourceId));
             String instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
 
@@ -258,7 +259,7 @@ public class EpCurveExtractor extends AbstractWriter {
 
             // @TODO : Get the treaty label regarding the FP Object
             AnalysisSummaryStats summaryStats =
-                    ofNullable(rmsService.getAnalysisSummaryStats(instanceId, rdmId, rdmName, analysisId, fp, null))
+                    ofNullable(rmsService.getAnalysisSummaryStats(instanceId, rdmId, rdmName, rlId, fp, null))
                             .map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
             result.fpToELTSumStat.put(fp, summaryStats);
         });
