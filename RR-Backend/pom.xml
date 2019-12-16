@@ -8,7 +8,7 @@
         <version>${rr_version}</version>
     </parent>
 
-    <groupId>com.scor.rr</groupId>
+<!--    <groupId>com.scor.rr</groupId>-->
     <artifactId>risk-reveal</artifactId>
     <version>${rr_version}</version>
     <name>Risk Reveal Backend</name>

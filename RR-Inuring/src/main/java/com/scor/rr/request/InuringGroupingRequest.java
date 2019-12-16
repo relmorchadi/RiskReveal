@@ -14,4 +14,5 @@ public class InuringGroupingRequest {
     private List<ExchangeRate> exchangeRate;
     private String outcomePltName;
     private String groupingCriteria;
+    private int userId;
 }
