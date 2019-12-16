@@ -130,7 +130,7 @@
                   <input placeholder="Select EDM & RDM"
                          [formControl]="datasourceKeywordFc"
                          [ngStyle]="{'display': displayDropdownRDMEDM ? 'flex' : 'none'}"
-                          #searchInput>
+                         #searchInput>
                   <div class="search-bar-text displayed-info"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
                        (click)="focusInput()" *ngIf="state.display.displayListRDMEDM">
@@ -270,7 +270,7 @@
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
                           /{{getNumberElement(itemsE, 'portfolio')}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/0</span>
-<!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
+                        <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <!--                      <ng-container *ngIf="!itemsE?.scanned">-->
@@ -405,18 +405,18 @@
                       <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
-                                <div style=" display: flex;" *ngIf="col.type === 'select'">
-                                  <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
-                                         [ngModel]="rowData.selected"></label>
-                                </div>
-                                <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                                     *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
-                                <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                                     *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
-                                <div *ngIf="col.type === 'icon'">
-                                  <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
-                                     class="icon-upload_24px"></i>
-                                </div>
+                          <div style=" display: flex;" *ngIf="col.type === 'select'">
+                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
+                                   [ngModel]="rowData.selected"></label>
+                          </div>
+                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                               *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                               *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
+                          <div *ngIf="col.type === 'icon'">
+                            <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                               class="icon-upload_24px"></i>
+                          </div>
                         </td>
                       </tr>
                     </ng-template>
@@ -430,7 +430,8 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="(selectedAnalysisPortfolio$ | async)?.length>0; else disabledAddForImportBtn" (click)="displayImported()" class="a-buttons-contained-mini">ADD
+                <button *ngIf="(flatSelectedAnalysisPortfolio$ | async)?.length>0; else disabledAddForImportBtn"
+                        (click)="runDetailedScan()" class="a-buttons-contained-mini">ADD
                   FOR IMPORT
                 </button>
                 <ng-template #disabledAddForImportBtn>
@@ -445,21 +446,37 @@
         </div>
       </div>
 
-      <app-risk-link-res-summary></app-risk-link-res-summary>
+      <!-- [data]="(summary$ | async).analysis" -->
+      <div *ngIf=" (summary$ | async) as summary">
+        <analysis-result [data]="summary.analysis"></analysis-result>
+        <portfolio-result [data]="summary.portfolios"></portfolio-result>
+        <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
+        <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
-      <div class="footer-section" *ngIf="state?.display?.displayImport">
-        <div class="body-wrap-footer">
-          <div class="body-wrap-footer-left">
-            <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
-              <nz-option *ngFor="let op of state?.financialValidator?.calibration?.data" [nzLabel]="op"
-                         [nzValue]="op"></nz-option>
-            </nz-select>
-             <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
-            <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>
-          </div>
-          <div class="body-wrap-footer-right">
-            <button style="padding: 6px 20px 7px" (click)="importMainAction()" class="a-buttons-contained-mini">IMPORT
-            </button>
+        <div class="footer-section" *ngIf="state?.display?.displayImport">
+          <div class="body-wrap-footer">
+            <div class="body-wrap-footer-left">
+              <!--
+              <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
+                <nz-option *ngFor="let op of state?.financialValidator?.calibration?.data" [nzLabel]="op"
+                           [nzValue]="op"></nz-option>
+              </nz-select>
+               <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
+              <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>
+            -->
+            </div>
+
+            <div class="body-wrap-footer-right">
+              <button *ngIf="anySelectedResults$ | async; else disabledAddForImportBtn"
+                      style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">
+                IMPORT
+              </button>
+              <ng-template #disabledAddForImportBtn>
+                <button class="a-buttons-contained-disabled-mini" disabled>
+                  IMPORT
+                </button>
+              </ng-template>
+            </div>
           </div>
         </div>
       </div>

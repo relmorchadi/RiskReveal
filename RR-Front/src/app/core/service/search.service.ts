@@ -46,12 +46,15 @@ export class SearchService {
   }
 
   expertModeSearch(filter) {
-    console.log(filter);
     return this._http.post(`${this.api}workspace/expert-mode`, filter);
   }
 
   loadShort(): Observable<any> {
     return this._http.get(`${this.api}shortcuts`);
+  }
+
+  getMostRecentSearch() {
+    return this._http.get(`${this.api}recent?userId=1`);
   }
 
   getSavedSearch(payload) : Observable<any> {
