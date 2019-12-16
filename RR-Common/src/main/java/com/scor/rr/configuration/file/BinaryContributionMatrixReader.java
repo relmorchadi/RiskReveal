@@ -1,6 +1,5 @@
 package com.scor.rr.configuration.file;
 
-
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
@@ -18,16 +17,16 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-/**
- * Created by u004602 on 24/06/2019.
- */
 @Component
-public class BinaryPLTFileReader implements PLTFileReader {
+public class BinaryContributionMatrixReader implements ContributionMatrixReader {
     @Autowired
     private BinaryPLTFileWriter binaryPLTFileWriter;
-
-    public List<PLTLossData> read(File file) throws RRException {
+    @Override
+    public Map<Integer,List<List<Double>>> read(File file, int divisionSize,int boucleSize) throws RRException {
+        Map<Integer,List<List<Double>>> map = new TreeMap<>();
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();
         if (! "bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
@@ -36,25 +35,32 @@ public class BinaryPLTFileReader implements PLTFileReader {
             FileChannel fc = new FileInputStream(file).getChannel();
             ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             ib.order(ByteOrder.LITTLE_ENDIAN);
-            if (fc.size() % 26 != 0)
+            if (fc.size() % divisionSize != 0)
                 throw new PLTFileCorruptedException();
-            List<PLTLossData> pltLossDatas = new ArrayList<>((int) fc.size() / 26);
-            while (ib.hasRemaining()) {
+
+            while (ib.hasRemaining() ) {
                 int period = ib.getInt();
-                int eventId = ib.getInt();
-                long eventDate = ib.getLong();
-                short seq = ib.getShort();
-                float exposure = ib.getFloat();
-                float loss = ib.getFloat();
-                PLTLossData lossData = new PLTLossData(period, eventId, eventDate, seq, exposure, loss);
-                pltLossDatas.add(lossData);
+                List<Double> contributionLine = new ArrayList<>();
+                for(int i=0; i< boucleSize; i++){
+                    double value = ib.getDouble();
+                    contributionLine.add(value);
+                }
+                if(map.containsKey(period)){
+                    List<List<Double>> exists = map.get(period);
+                    exists.add(contributionLine);
+                    map.put(period,exists);
+                } else{
+                    List<List<Double>> newCase = new ArrayList<>();
+                    newCase.add(contributionLine);
+                    map.put(period,newCase);
+                }
+
+
             }
-
-
             binaryPLTFileWriter.closeDirectBuffer(ib);
             fc.close();
 
-            return pltLossDatas;
+            return map;
         } catch (IOException e) {
             throw new PLTFileCorruptedException();
         }
