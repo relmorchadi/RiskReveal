@@ -17,7 +17,7 @@ export class CalibrationAPI {
   }
 
   loadDefaultAdjustement(engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId): Observable<any> {
-    return this.http.get(`${this.URL}defaultadjustment/lookupdefaultadjustment`, {params: {engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId}});
+    return this.http.get(`${this.URL}defaultAdjustment/lookupDefaultAdjustment`, {params: {engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId}});
   }
 
 }

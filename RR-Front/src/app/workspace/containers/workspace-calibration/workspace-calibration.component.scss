@@ -1550,10 +1550,6 @@ body .ui-table .ui-table-thead > tr > th {
 
 }
 
-.radio-container {
-  margin-top: 0px;
-}
-
 .title-as-tab {
   display: flex;
   flex: 0 1 auto;
@@ -1569,18 +1565,6 @@ body .ui-table .ui-table-thead > tr > th {
     border-top: 3px solid #0700e4;
     font-family: Rubik;
   }
-}
-
-
-.table-header1 {
-  height: 105px !important;
-  border-right: 5px solid #f4f6fc;
-}
-
-.table-header2 {
-  height: 105px !important;
-  display: flex;
-  flex-direction: column;
 }
 
 .threeValues {
@@ -1651,8 +1635,6 @@ body .ui-table .ui-table-thead > tr > th {
     margin: 10px 25px 10px 25px;
   }
 }
-
-
 
 ::ng-deep.ui-radiobutton-label {
   color: #0700cf !important;
@@ -1843,4 +1825,61 @@ body .ui-table .ui-table-thead > tr > th {
   flex-flow: column;
   overflow: auto;
   min-width: unset !important;
+}
+
+.table-header1 {
+  height: 105px !important;
+  border-right: 5px solid #f4f6fc;
+}
+
+.table-header2 {
+  height: 105px !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-container {
+  margin-top: 0px;
+}
+
+.radio-button-wrapper {
+  margin-left: 25px;
+
+  .button-toggle {
+    width: 480px;
+    display: flex;
+    float: left;
+  }
+}
+
+/* ================================== Responsive header CSS ========================================  */
+
+@media (max-width: 1285px) {
+  .table-header1 {
+    height: 155px !important;
+  }
+
+  .table-header2 {
+    height: 155px !important;
+  }
+
+  .radio-button-wrapper {
+    margin-left: 10px;
+    display: flex;
+
+    .button-toggle {
+      width: 95%;
+
+      .p-button-group {
+        display: flex;
+        flex-direction: column;
+
+        ::ng-deep {
+          p-radioButton {
+            height: 27px;
+          }
+        }
+      }
+    }
+  }
 }
