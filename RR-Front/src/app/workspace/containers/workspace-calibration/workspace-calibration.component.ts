@@ -375,7 +375,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
-      this.dispatch(new fromWorkspaceStore.LoadAllDefaultAdjustmentApplication());
       /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy
@@ -399,6 +398,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.tabStatus === 'FAC' ? this.extend('init') : null;
       this.detectChanges();
     });
+
+    this.actions$.pipe(ofActionDispatched(fromWorkspaceStore.LoadAllPltsFromCalibrationSuccess)).subscribe(data =>
+      this.dispatch(new fromWorkspaceStore.LoadAllDefaultAdjustmentApplication())
+    );
 
     this.actions$
       .pipe(
@@ -689,6 +692,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   extend(scope = 'toggle') {
     this.dispatch(new fromWorkspaceStore.ExtendStateToggleAction({scope: scope}));
+    console.log('fac', this.extended);
     if (this.extended) {
       this.headerWidth = '1013px';
       this.frozenWidth = '0';
