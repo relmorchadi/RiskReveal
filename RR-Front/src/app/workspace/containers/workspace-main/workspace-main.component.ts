@@ -145,7 +145,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   filterSelected() {
-    return _.filter(this.data[this.currentWsIdentifier].projects, item => item.selected)[0];
+    return _.filter(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => item.selected)[0];
   }
 
   filterSelectedDivision() {
@@ -153,7 +153,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   filterListProject() {
-    return _.filter(this.data[this.currentWsIdentifier].projects, item => !item.selected);
+    return _.filter(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => !item.selected);
   }
 
   selectProject(selectionEvent) {

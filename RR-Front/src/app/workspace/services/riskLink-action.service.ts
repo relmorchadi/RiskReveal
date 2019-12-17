@@ -328,48 +328,17 @@ export class RiskLinkStateService {
       const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
       switch (action) {
         case 'selectOne':
-          draft.content[wsIdentifier].riskLink.selection = {
-            ...draft.content[wsIdentifier].riskLink.selection,
-            edms: {},
-            rdms: {}
-          };
-
           const targetDatasource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.rmsId];
           targetDatasource.selected = !targetDatasource.selected;
-          _.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.data)
-            .filter(item => item.selected)
-            .forEach(selectedItem => {
-              const key = selectedItem.rmsId;
-              if (selectedItem.type == 'EDM')
-                draft.content[wsIdentifier].riskLink.selection.edms = {
-                  ...draft.content[wsIdentifier].riskLink.selection.edms,
-                  [key]: selectedItem
-                };
-              else if (selectedItem.type == 'RDM')
-                draft.content[wsIdentifier].riskLink.selection.rdms = {
-                  ...draft.content[wsIdentifier].riskLink.selection.rdms,
-                  [key]: selectedItem
-                }
-            });
           break;
+
         case 'selectAll':
-          draft.content[wsIdentifier].riskLink.selection = {edms: {}, rdms: {}};
           _.forEach(draft.content[wsIdentifier].riskLink.listEdmRdm.data, (value, key) => {
             value.selected = true;
-            if (value.type == 'EDM')
-              draft.content[wsIdentifier].riskLink.selection.edms = {
-                ...draft.content[wsIdentifier].riskLink.selection.edms,
-                [key]: value
-              };
-            else if (value.type == 'RDM')
-              draft.content[wsIdentifier].riskLink.selection.rdms = {
-                ...draft.content[wsIdentifier].riskLink.selection.rdms,
-                [key]: value
-              };
           });
           break;
+
         case 'unselectAll':
-          draft.content[wsIdentifier].riskLink.seection = {edms: {}, rdms: {}};
           _.forEach(draft.content[wsIdentifier].riskLink.listEdmRdm.data, (value, key) => {
             value.selected = false;
           });
@@ -387,7 +356,21 @@ export class RiskLinkStateService {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = true;
-
+            _.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.data)
+              .filter(item => item.selected)
+              .forEach(selectedItem => {
+                const key = selectedItem.rmsId;
+                if (selectedItem.type == 'EDM')
+                  draft.content[wsIdentifier].riskLink.selection.edms = {
+                    ...draft.content[wsIdentifier].riskLink.selection.edms,
+                    [key]: selectedItem
+                  };
+                else if (selectedItem.type == 'RDM')
+                  draft.content[wsIdentifier].riskLink.selection.rdms = {
+                    ...draft.content[wsIdentifier].riskLink.selection.rdms,
+                    [key]: selectedItem
+                  }
+              });
           }));
           return of(response);
         }),
@@ -398,18 +381,18 @@ export class RiskLinkStateService {
   }
 
   toggleRiskLinkPortfolio(ctx: StateContext<WorkspaceModel>, payload) {
-    const {action, value, item, from, to, data} = payload;
+    const {action, value, item, data} = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
       const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+      const {selection} = draft.content[wsIdentifier].riskLink;
       switch (action) {
         case 'selectOne':
           const targetPortfolioIndex = draft.content[wsIdentifier].riskLink.portfolios.findIndex(p => p.rlPortfolioId == item.rlPortfolioId);
           const targetPortfolio = draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex];
           draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex] = {
             ...targetPortfolio,
-            selected: targetPortfolio.selected ? false : true
+            selected: !targetPortfolio.selected
           };
-          const {selection} = draft.content[wsIdentifier].riskLink;
           const edmId = selection.currentDataSource;
           if (draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex].selected) {
             draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] =
@@ -420,23 +403,51 @@ export class RiskLinkStateService {
                 _.omit(selection.portfolios[edmId], [item.rlPortfolioId])
           }
           break;
+
+        case 'unSelectChunk':
+          _.forEach(data, portfolioItem => {
+            const targetPortfolioIndex = draft.content[wsIdentifier].riskLink.portfolios.findIndex(p => p.rlPortfolioId == portfolioItem.rlPortfolioId);
+            const targetPortfolio = draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex];
+            draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex] = {
+              ...targetPortfolio,
+              selected: false
+            };
+            const edmId = draft.content[wsIdentifier].riskLink.selection.currentDataSource;
+            draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] =
+              _.omit(selection.portfolios[edmId], [portfolioItem.rlPortfolioId])
+          });
+          break;
+
+        case 'selectChunk':
+          _.forEach(data, portfolioItem => {
+          const targetPortfolioIndex = draft.content[wsIdentifier].riskLink.portfolios.findIndex(p => p.rlPortfolioId == portfolioItem.rlPortfolioId);
+          const targetPortfolio = draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex];
+          draft.content[wsIdentifier].riskLink.portfolios[targetPortfolioIndex] = {
+            ...targetPortfolio,
+            selected: true
+          };
+          const edmId = draft.content[wsIdentifier].riskLink.selection.currentDataSource;
+            draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] =
+              _.merge(selection.portfolios[edmId], {[portfolioItem.rlPortfolioId]: portfolioItem})
+          });
+          break;
       }
     }));
   }
 
   toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
-    const {action, value, item, from, to, data} = payload;
+    const {action, value, item, data} = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
       const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+      const {selection} = draft.content[wsIdentifier].riskLink;
       switch (action) {
         case 'selectOne':
           const targetAnalysisIndex = draft.content[wsIdentifier].riskLink.analysis.findIndex(a => a.rlAnalysisId == item.rlAnalysisId);
           const targetAnalysis = draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex];
           draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex] = {
             ...targetAnalysis,
-            selected: targetAnalysis.selected ? false : true
+            selected: !targetAnalysis.selected
           };
-          const {selection} = draft.content[wsIdentifier].riskLink;
           const rdmId = selection.currentDataSource;
           if (draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex].selected) {
             draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] =
@@ -446,6 +457,34 @@ export class RiskLinkStateService {
               draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] =
                 _.omit(selection.analysis[rdmId], [item.rlAnalysisId])
           }
+          break;
+
+        case 'unSelectChunk':
+          _.forEach(data , analysisItem => {
+            const targetAnalysisIndex = draft.content[wsIdentifier].riskLink.analysis.findIndex(a => a.rlAnalysisId == analysisItem.rlAnalysisId);
+            const targetAnalysis = draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex];
+            draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex] = {
+              ...targetAnalysis,
+              selected: false
+            };
+            const rdmId = draft.content[wsIdentifier].riskLink.selection.currentDataSource;
+            draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] =
+              _.omit(selection.analysis[rdmId], [analysisItem.rlAnalysisId])
+          });
+          break;
+
+        case 'selectChunk':
+          _.forEach(data, analysisItem => {
+            const targetAnalysisIndex = draft.content[wsIdentifier].riskLink.analysis.findIndex(a => a.rlAnalysisId == analysisItem.rlAnalysisId);
+            const targetAnalysis = draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex];
+            draft.content[wsIdentifier].riskLink.analysis[targetAnalysisIndex] = {
+              ...targetAnalysis,
+              selected: true
+            };
+            const rdmId = draft.content[wsIdentifier].riskLink.selection.currentDataSource;
+            draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] =
+              _.merge(selection.analysis[rdmId], {[analysisItem.rlAnalysisId]: analysisItem})
+          });
           break;
       }
     }));
