@@ -127,6 +127,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   adjsArray: any[] = [];
   leftNavbarIsCollapsed: boolean;
   adjustmentApplication = [];
+  defaultAdjustment: any = {};
   linear: boolean = false;
   dropdownVisible = false;
   workspaceId: string;
@@ -408,27 +409,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
-      this.systemTagsCount = this.systemTagService.countSystemTags(data);
-      this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
-      this.listOfPltsData = [...this.listOfPltsCache];
-      this.listOfPltsData = _.filter(this.listOfPltsData, pure => _.some(pure.threads, thread => thread.toCalibrate));
-      this.initThreadsData();
-      // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
-      this.detectChanges();
-      _.forEach(this.listOfPltsData, row => {
-        this.rowKeys[row.pltId] = true;
-      });
-      // this.rowKeys = this.listOfPltsData.map(e => e.pltId)
-      // console.log('rowKey ===> ', this.rowKeys);
-    });
-
-    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0;
-
-      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsThread.length && this.selectedListOfPlts.length > 0;
-      this.detectChanges();
-    });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
     this.adjustColWidth();
@@ -463,6 +443,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.listOfPltsThreadCache = _.filter(this.listOfPltsThread, row => row.toCalibrate);
       this.listOfPltsThread = [...this.listOfPltsThreadCache];
       this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
+      this.detectChanges();
     }
   }
 
@@ -496,8 +477,24 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.collapsedTags = path.collapseTags;
+
+    const data = path.data[wsIdentifier];
+    this.systemTagsCount = this.systemTagService.countSystemTags(data);
+    this.listOfPltsCache = _.map(data, (v: any, k) => ({...v, pltId: k}));
+    this.listOfPltsData = [...this.listOfPltsCache];
+    this.listOfPltsData = _.filter(this.listOfPltsData, pure => _.some(pure.threads, thread => thread.toCalibrate));
+    this.initThreadsData();
+
+    _.forEach(this.listOfPltsData, row => {
+      this.rowKeys[row.pltId] = true;
+    });
+
+    this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0;
+    this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsThread.length && this.selectedListOfPlts.length > 0;
+
    // console.log(path);
     this.adjustmentApplication = _.merge({}, path.adjustmentApplication);
+    this.defaultAdjustment = _.merge({}, path.defaultAdjustement);
     this.allAdjsArray = _.merge([], path.allAdjsArray).sort(this.dynamicSort("name"));
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
@@ -654,7 +651,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }));
     this.initThreadsData();
    // console.log(this.selectedListOfPlts);
-    this.cdRef.detectChanges()
+    this.detectChanges();
 
   }
 
@@ -979,7 +976,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   collapseTags() {
-    this.store$.dispatch(new collapseTags());
+    // this.store$.dispatch(new collapseTags());
     this.detectChanges();
   }
 
@@ -1218,12 +1215,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     if (expand) {
       _.forEach(this.listOfPltsData, row => {
         this.rowKeys[row.pltId] = true;
-      })
+      });
       this.allRowsExpanded = true;
     } else {
       _.forEach(this.listOfPltsData, row => {
         this.rowKeys[row.pltId] = false;
-      })
+      });
       this.allRowsExpanded = false;
     }
   }

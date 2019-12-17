@@ -534,8 +534,7 @@ public class AdjustmentNodeService {
             } else {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : return period banding not found ----------");
             }
-        }
-        else {
+        } else {
             throw new IllegalStateException("---------- saveParameterNode, type not found ----------");
         }
     }

@@ -132,6 +132,7 @@ export class WorkspaceService {
             firstChecked: '',
             adjustments: [],
             adjustmentApplication: {},
+            defaultAdjustment: {},
             adjustementType: _.assign({}, ADJUSTMENT_TYPE),
             allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
           },

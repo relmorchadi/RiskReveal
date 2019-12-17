@@ -135,7 +135,7 @@ public class BatchExecution {
         String periodBasis = "FT"; // fixed for TT
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
         String prefix = "prefix";
-        String uwYear = myWorkspace.getWorkspaceUwYear() + "-01";
+        String uwYear = String.valueOf(myWorkspace.getWorkspaceUwYear());
         String modelSystemVersion = modellingSystemInstance.getModellingSystemVersion().getId();
 
         Long imSeq = null;

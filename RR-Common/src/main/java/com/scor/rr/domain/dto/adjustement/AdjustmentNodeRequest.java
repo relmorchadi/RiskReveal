@@ -1,7 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameterRequest;
-import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PEATDataRequest;
 
 import java.util.List;

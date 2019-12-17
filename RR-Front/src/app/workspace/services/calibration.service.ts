@@ -95,7 +95,6 @@ export class CalibrationService implements NgxsOnInit {
                           plt
                         ].map(thread => ({
                           ...thread,
-                          pltId: "SPLTH-000" + this.getRandomInt(7000,8000),
                           selected: false,
                           visible: true,
                           tagFilterActive: false,
@@ -161,8 +160,13 @@ export class CalibrationService implements NgxsOnInit {
       })
     ).pipe(
       switchMap(data => {
-      console.log(data);
-      return of();
+      return of(ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].calibration.defaultAdjustement = Object.assign({}, ..._.map(
+          _.toArray(state.content[wsIdentifier].calibration.data[wsIdentifier]), (item, key) => ({
+            [item.pltId]: [...data[key]]
+          })
+        ))
+      })));
     }),
       catchError(err => {
         return of();
@@ -183,7 +187,6 @@ export class CalibrationService implements NgxsOnInit {
     });
     console.log(plts);
     let threads = Array.prototype.concat.apply([], plts.map(row => row.threads));
-
 
     return ctx.dispatch(new applyAdjustment({
       adjustementType: null,
@@ -228,7 +231,6 @@ export class CalibrationService implements NgxsOnInit {
     }));
 
     return ctx.dispatch(new fromPlt.FilterPltsByUserTagsFromCalibration(payload));
-
   }
 
   FilterPlts(ctx: StateContext<any>, payload: any) {
@@ -267,14 +269,14 @@ export class CalibrationService implements NgxsOnInit {
       plts,
       wsIdentifier
     } = payload;
-    console.log(payload)
     const result = state.content[wsIdentifier].calibration.data[wsIdentifier];
     _.forEach(result, plt => {
       _.forEach(plt.threads, thread => {
-        if (plts[thread.pltId])
+        if (plts[thread.pltId]) {
           thread.selected = plts[thread.pltId].selected;
+        }
       })
-    })
+    });
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.data[wsIdentifier] = _.merge({}, state.content[wsIdentifier].calibration.data[wsIdentifier], result)
     }));

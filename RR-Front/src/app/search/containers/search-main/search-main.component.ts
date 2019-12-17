@@ -19,9 +19,9 @@ import * as workspaceActions from '../../../workspace/store/actions/workspace.ac
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import * as SearchActions from "../../../core/store/actions/search-nav-bar.action";
 import {BadgesService} from "../../../core/service/badges.service";
-import {distinctUntilChanged, takeUntil} from "rxjs/operators";
+import {catchError, distinctUntilChanged, takeUntil, tap} from "rxjs/operators";
 import {LoadRecentSearch} from "../../../core/store/actions";
-import {combineLatest} from "rxjs";
+import {combineLatest, of} from "rxjs";
 
 
 @Component({
@@ -336,7 +336,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       keyword
     } = this.filter;
     let params = {
-      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(keyword)),
+      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
       filter: filters,
       sort: this.getSortColumns(this.sortData),
       offset,

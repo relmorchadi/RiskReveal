@@ -1,9 +1,12 @@
 package com.scor.rr.domain.dto.adjustement.loss;
 
 
+import org.apache.commons.lang3.builder.CompareToBuilder;
+
+import java.io.Serializable;
 import java.util.Objects;
 
-public class PLTLossData implements Cloneable {
+public class PLTLossData implements Cloneable, Comparable, Serializable {
 
     private int simPeriod;
     private int eventId;
@@ -112,4 +115,19 @@ public class PLTLossData implements Cloneable {
     public int hashCode() {
         return Objects.hash(simPeriod, eventId, eventDate, seq, maxExposure, loss);
     }
+
+    @Override
+    public int compareTo(Object o) {
+        if(! (o instanceof PLTLossData))
+            return -1;
+
+        PLTLossData r = (PLTLossData)o;
+        return new CompareToBuilder()
+                .append(loss, r.loss)
+                .append(simPeriod, r.simPeriod)
+                .append(eventId, r.eventId)
+                .append(seq, r.seq)
+                .toComparison();
+    }
+
 }

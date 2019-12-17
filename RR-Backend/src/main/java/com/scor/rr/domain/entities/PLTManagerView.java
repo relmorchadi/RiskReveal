@@ -55,6 +55,9 @@ public class PLTManagerView {
     @Column(name = "minimumGrainRPCode")
     private String minimumGrainRPCode;
 
+    @Column(name = "minimumGrainRPDescription")
+    private String minimumGrainRPDescription;
+
     @Column(name = "financialPerspective")
     private String financialPerspective;
 

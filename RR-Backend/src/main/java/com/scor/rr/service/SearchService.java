@@ -235,7 +235,8 @@ public class SearchService {
                 }
             }
         }
-        String keyword = request.getKeyword().replace("%", "").trim();
+        String keyword;
+        keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
 
         if(!keyword.equals("") || request.getFilter().size() > 0) {
             List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdOrderBySearchDateDesc(1);

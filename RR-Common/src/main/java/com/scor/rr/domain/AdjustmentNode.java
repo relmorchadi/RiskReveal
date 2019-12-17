@@ -114,7 +114,7 @@ public class AdjustmentNode {
     }
 
     public void setAdjustmentTypeCode(String adjustmentTypeCode) {
-        this.adjustmentBasisCode = adjustmentTypeCode;
+        this.adjustmentTypeCode = adjustmentTypeCode;
     }
 
     @ManyToOne
