@@ -6,6 +6,7 @@ import com.scor.rr.enums.InuringElementType;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InuringContractLayerNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringContractNodeNotFoundException;
+import com.scor.rr.exceptions.inuring.InuringContractTypeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.*;
 import com.scor.rr.request.InuringContractNodeBulkDeleteRequest;
@@ -58,6 +59,9 @@ public class InuringContractNodeService {
      **/
     public void createInuringContractNode(InuringContractNodeCreationRequest request) throws RRException {
 
+        List<RefFMFContractAttribute> listOfAttributes = refFMFContractAttributeRepository.getAttributesForContract(request.getContractTypeCode());
+        if(listOfAttributes == null || listOfAttributes.isEmpty()) throw new InuringContractTypeNotFoundException(request.getContractTypeCode());
+
         InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(request.getInuringPackageId());
         if (inuringPackage == null) throw new InuringPackageNotFoundException(request.getInuringPackageId());
 
@@ -68,9 +72,6 @@ public class InuringContractNodeService {
                 inuringContractNode.getInuringContractNodeId(),
                 1, "", ""));
 
-        List<RefFMFContractAttribute> listOfAttributes = refFMFContractAttributeRepository.getAttributesForContract(inuringContractNode.getContractTypeCode());
-
-        if (listOfAttributes != null) {
 
             for (RefFMFContractAttribute attribute : listOfAttributes) {
 //                if(attribute.getUISectionName() == "layer List"){
@@ -79,7 +80,7 @@ public class InuringContractNodeService {
 
                 inuringContractLayerParamRepository.save(inuringContractLayerParam);
             }
-        }
+
     }
 
     public void deleteInuringContractNode(long inuringContractNodeId) {

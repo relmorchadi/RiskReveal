@@ -481,7 +481,7 @@ public class ChunkPLTFileReader {
 
 
     public void createFinalPlt( String pltName,Set<Integer> listOfPhases, int size,String folderPath,String targetFile) throws IOException, PLTFileWriteException {
-       File file = new File(targetFile+"\\" + pltName + ".bin");
+       File file = new File(targetFile+"/" + pltName + ".bin");
 
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -491,7 +491,7 @@ public class ChunkPLTFileReader {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             for(Integer phase: listOfPhases) {
 
-                File filephase = new File(folderPath+"\\"+ phase + ".bin");
+                File filephase = new File(folderPath+"/"+ phase + ".bin");
                 try {
                     FileChannel fc = new FileInputStream(filephase).getChannel();
                     ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -511,8 +511,8 @@ public class ChunkPLTFileReader {
                     throw new PLTFileWriteException(file.getPath());
 
                 }
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + ".bin"));
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + "-PosLossExpo.bin"));
+                Files.deleteIfExists(Paths.get(folderPath+"/" + (phase) + ".bin"));
+                Files.deleteIfExists(Paths.get(folderPath+"/" + (phase) + "-PosLossExpo.bin"));
 
             }}
     finally {
@@ -523,7 +523,7 @@ public class ChunkPLTFileReader {
     }
 
     public void createFinalContributionMatrix( String contName,Set<Integer> listOfPhases, int size,int boucleSize,String fileName,String folderPath,String targetFile) throws IOException, PLTFileWriteException, PLTFileCorruptedException {
-        File file = new File(targetFile+"\\" + contName + ".bin");
+        File file = new File(targetFile+"/" + contName + ".bin");
 
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -533,7 +533,7 @@ public class ChunkPLTFileReader {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             for(Integer phase: listOfPhases) {
 
-                File filephase = new File(folderPath+"\\"+ phase + fileName);
+                File filephase = new File(folderPath+"/"+ phase + fileName);
                 try {
                     FileChannel fc = new FileInputStream(filephase).getChannel();
                     ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -550,7 +550,7 @@ public class ChunkPLTFileReader {
                     throw new PLTFileCorruptedException();
                 }
 
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + phase + fileName));
+                Files.deleteIfExists(Paths.get(folderPath+"/" + phase + fileName));
 
             }}
         finally {
