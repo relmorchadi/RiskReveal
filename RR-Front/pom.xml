@@ -8,7 +8,6 @@
     <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal-root</artifactId>
     <version>${rr_version}</version>
-    <relativePath>..</relativePath>
   </parent>
 
   <groupId>com.scor.rr</groupId>
