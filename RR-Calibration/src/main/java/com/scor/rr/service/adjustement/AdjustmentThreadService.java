@@ -140,6 +140,8 @@ public class AdjustmentThreadService {
         }
 
         AdjustmentThreadEntity newThread = new AdjustmentThreadEntity();
+//        newThread.setThreadIndex(thread.getThreadIndex()); // todo
+        newThread.setThreadStatus(thread.getThreadStatus());
         newThread.setLocked(thread.getLocked());
         newThread.setInitialPLT(thread.getInitialPLT());
         newThread.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
@@ -290,6 +292,8 @@ public class AdjustmentThreadService {
         }
 
         AdjustmentThreadEntity newThread = new AdjustmentThreadEntity();
+        //        newThread.setThreadIndex(thread.getThreadIndex()); // todo
+        newThread.setThreadStatus(thread.getThreadStatus());
         newThread.setLocked(thread.getLocked());
         newThread.setInitialPLT(thread.getInitialPLT());
         newThread.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
