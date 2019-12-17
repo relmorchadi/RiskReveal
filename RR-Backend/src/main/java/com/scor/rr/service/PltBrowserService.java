@@ -36,8 +36,6 @@ public class PltBrowserService {
     @Autowired
     PLTManagerViewRepository pltManagerViewRepository;
     @Autowired
-    PLTManagerViewRepository pltManagerView2Repository;
-    @Autowired
     TagRepository tagRepository;
     @Autowired
     PLTHeaderTagRepository pltHeaderTagRepository;
@@ -72,8 +70,8 @@ public class PltBrowserService {
 
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
         WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
-        Set<PLTManagerView> plts = pltManagerView2Repository.findPLTs(request.getWsId(), request.getUwYear());
-        Set<PLTManagerView> deletedPlts = pltManagerView2Repository.findDeletedPLTs(request.getWsId(), request.getUwYear());
+        Set<PLTManagerView> plts = pltManagerViewRepository.findPLTs(request.getWsId(), request.getUwYear());
+        Set<PLTManagerView> deletedPlts = pltManagerViewRepository.findDeletedPLTs(request.getWsId(), request.getUwYear());
 
         PLTManagerViewHelperResponse pltManagerViewHelperResponse = appendTagsToPLTs(plts, ws);
 
