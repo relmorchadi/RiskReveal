@@ -244,7 +244,7 @@ public class EpCurveExtractor extends AbstractWriter {
             String instanceId = ofNullable(datasource).map(ds -> ds.getInstanceId()).orElse(defaultInstanceId);
 
             // @TODO : Get the treaty label regarding the FP Object
-            rmsService.getAnalysisEpCurves(instanceId, rdmId, rdmName, analysisId, fp, null)
+            rmsService.getAnalysisEpCurves(instanceId, rdmId, rdmName, rlId, fp, null)
                     .forEach(epCurve -> {
                         StatisticMetric metric = StatisticMetric.getFrom(epCurve.getEpTypeCode());
                         if (metricToEPCurve.containsKey(metric) && metricToEPCurve.get(metric) != null) {

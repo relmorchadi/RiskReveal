@@ -71,7 +71,7 @@ public class RLAnalysis {
     @JsonBackReference
     private List<RLImportSelection> RLImportSelection;
 
-    @OneToMany(mappedBy = "rLAnalysisId", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rLAnalysisId", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<RLSourceEpHeader> rlSourceEpHeaders;
 
