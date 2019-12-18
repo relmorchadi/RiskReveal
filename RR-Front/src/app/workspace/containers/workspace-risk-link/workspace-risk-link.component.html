@@ -367,11 +367,11 @@
                               *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'RDM'"
                                    nz-checkbox [ngModel]="allCheckedAnalysis"
-                                   (ngModelChange)="selectOne('analysis')"
+                                   (ngModelChange)="updateAllChecked('analysis')"
                                    [nzIndeterminate]="indeterminateAnalysis"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'EDM'"
                                    nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="selectOne('portfolio')"
+                                   (ngModelChange)="updateAllChecked('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
@@ -394,9 +394,9 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
                                    pInputText type="text" #filters [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'edm'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
                                    pInputText type="text" #filters [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
