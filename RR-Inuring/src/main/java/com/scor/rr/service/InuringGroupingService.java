@@ -67,13 +67,13 @@ public class InuringGroupingService {
             }
             if(!positiveSignExists) throw new PositivePLTNotFoundException();
 
-            String targetFile = path +"\\GroupedPltsFolder";
-            String folderPath = path +"\\"+"temp"+request.getUserId() ;
+            String targetFile = path +"GroupedPltsFolder"+"/";
+            String folderPath = path +"temp"+request.getUserId()+"/" ;
             String pltName = request.getOutcomePltName();
 
 
 
-            File checkFile = new File(targetFile+"\\" + pltName + ".bin");
+            File checkFile = new File(targetFile + pltName + ".bin");
             if(checkFile.exists()) throw new PltWithSameNameAlreadyExists(pltName);
 
 

@@ -108,10 +108,10 @@ public class ChunkPLTFileReader {
 
                         phase = rowPhase;
 
-                        File getChunkPlt = new File(folderPath+"\\" + (rowPhase) + ".bin");
-                        File getChunkContribution = new File(folderPath+"\\" + (rowPhase) + "-Con.bin");
-                        File getChunkContributionMax = new File(folderPath+"\\" + (rowPhase) + "-ConMax.bin");
-                        File getChunkPositiveLossExpo = new File(folderPath+"\\"+ (rowPhase) + "-PosLossExpo.bin");
+                        File getChunkPlt = new File(folderPath + (rowPhase) + ".bin");
+                        File getChunkContribution = new File(folderPath + (rowPhase) + "-Con.bin");
+                        File getChunkContributionMax = new File(folderPath + (rowPhase) + "-ConMax.bin");
+                        File getChunkPositiveLossExpo = new File(folderPath+ (rowPhase) + "-PosLossExpo.bin");
                         if (getChunkPlt.exists() && getChunkContribution.exists() && getChunkContributionMax.exists() && getChunkPositiveLossExpo.exists()) {
                             map = readChunkedPltIntoMap(getChunkPlt);
                             contributionMatrixMap = contributionMatrixReader.read(getChunkContribution, ((files.size() * 8) + 4), files.size());
@@ -309,18 +309,18 @@ public class ChunkPLTFileReader {
         if (writeList.size() == 0) {
             try {
 
-                Files.deleteIfExists(Paths.get(folderPath+"\\"+ (phase) + ".bin"));
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + "-Con.bin"));
-                Files.deleteIfExists(Paths.get(folderPath+"\\"+ (phase) + "-ConMax.bin"));
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + "-PosLossExpo.bin"));
+                Files.deleteIfExists(Paths.get(folderPath+ (phase) + ".bin"));
+                Files.deleteIfExists(Paths.get(folderPath + (phase) + "-Con.bin"));
+                Files.deleteIfExists(Paths.get(folderPath+ (phase) + "-ConMax.bin"));
+                Files.deleteIfExists(Paths.get(folderPath + (phase) + "-PosLossExpo.bin"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            pltFileWriter.write(writeList, new File(folderPath+"\\"+ (phase) + ".bin"));
-            contributionMatrixWriter.write(contMap, new File(folderPath+"\\" + (phase) + "-Con.bin"), writeList.size(), lineSize);
-            contributionMatrixWriter.write(contMapMax, new File(folderPath+"\\" + (phase) + "-ConMax.bin"), writeList.size(), lineSize);
-            contributionMatrixWriter.write(positiveLossExpoMap, new File(folderPath+"\\" + (phase) + "-PosLossExpo.bin"), writeList.size(), 2);
+            pltFileWriter.write(writeList, new File(folderPath+ (phase) + ".bin"));
+            contributionMatrixWriter.write(contMap, new File(folderPath + (phase) + "-Con.bin"), writeList.size(), lineSize);
+            contributionMatrixWriter.write(contMapMax, new File(folderPath + (phase) + "-ConMax.bin"), writeList.size(), lineSize);
+            contributionMatrixWriter.write(positiveLossExpoMap, new File(folderPath+ (phase) + "-PosLossExpo.bin"), writeList.size(), 2);
             size = writeList.size();
         }
         map.clear();
@@ -481,7 +481,7 @@ public class ChunkPLTFileReader {
 
 
     public void createFinalPlt( String pltName,Set<Integer> listOfPhases, int size,String folderPath,String targetFile) throws IOException, PLTFileWriteException {
-       File file = new File(targetFile+"\\" + pltName + ".bin");
+       File file = new File(targetFile + pltName + ".bin");
 
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -491,7 +491,7 @@ public class ChunkPLTFileReader {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             for(Integer phase: listOfPhases) {
 
-                File filephase = new File(folderPath+"\\"+ phase + ".bin");
+                File filephase = new File(folderPath+ phase + ".bin");
                 try {
                     FileChannel fc = new FileInputStream(filephase).getChannel();
                     ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -511,8 +511,8 @@ public class ChunkPLTFileReader {
                     throw new PLTFileWriteException(file.getPath());
 
                 }
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + ".bin"));
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + (phase) + "-PosLossExpo.bin"));
+                Files.deleteIfExists(Paths.get(folderPath + (phase) + ".bin"));
+                Files.deleteIfExists(Paths.get(folderPath + (phase) + "-PosLossExpo.bin"));
 
             }}
     finally {
@@ -523,7 +523,7 @@ public class ChunkPLTFileReader {
     }
 
     public void createFinalContributionMatrix( String contName,Set<Integer> listOfPhases, int size,int boucleSize,String fileName,String folderPath,String targetFile) throws IOException, PLTFileWriteException, PLTFileCorruptedException {
-        File file = new File(targetFile+"\\" + contName + ".bin");
+        File file = new File(targetFile + contName + ".bin");
 
         FileChannel out = null;
         MappedByteBuffer buffer = null;
@@ -533,7 +533,7 @@ public class ChunkPLTFileReader {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             for(Integer phase: listOfPhases) {
 
-                File filephase = new File(folderPath+"\\"+ phase + fileName);
+                File filephase = new File(folderPath+ phase + fileName);
                 try {
                     FileChannel fc = new FileInputStream(filephase).getChannel();
                     ByteBuffer ib = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
@@ -550,7 +550,7 @@ public class ChunkPLTFileReader {
                     throw new PLTFileCorruptedException();
                 }
 
-                Files.deleteIfExists(Paths.get(folderPath+"\\" + phase + fileName));
+                Files.deleteIfExists(Paths.get(folderPath + phase + fileName));
 
             }}
         finally {
