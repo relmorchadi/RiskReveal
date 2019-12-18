@@ -7,11 +7,8 @@ import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import {
   HeaderState,
-  OpenNewWorkspacesAction,
-  PatchWorkspace,
   PatchWorkspaceMainStateAction
 } from '../../../store/index';
-import * as fromHeader from '../../../store/actions/header.action';
 import {HelperService} from '../../../../shared/helper.service';
 import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
 import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.actions';
@@ -20,11 +17,7 @@ import {BaseContainer} from '../../../../shared/base';
 import {WorkspaceState} from "../../../../workspace/store/states";
 import {debounceTime, take, takeUntil} from "rxjs/operators";
 import {Navigate} from "@ngxs/router-plugin";
-import {promise} from "selenium-webdriver";
-import delayed = promise.delayed;
-import * as SearchActions from "../../../store/actions/search-nav-bar.action";
 import {Subject, Subscription} from "rxjs";
-import * as fromWs from "../../../../workspace/store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',

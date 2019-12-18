@@ -43,7 +43,6 @@ public class InuringGroupingService {
         List<String> signs = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
         List<Double> currencies = new ArrayList<>();
-        Long first =  System.currentTimeMillis();
         if (request.getPlts() != null) {
 
             boolean positiveSignExists = false;

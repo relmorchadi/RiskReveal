@@ -152,7 +152,8 @@ public class RmsService {
 
         if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty())
             return importSelectionDtoList.stream()
-                    .map(RLImportSelection::new)
+                    .map(importSelectionDto -> rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId())
+                            .map(rlAnalysis -> new RLImportSelection(importSelectionDto, rlAnalysis)).orElse(null))
                     .map(importSelection -> {
                         importSelection = rlImportSelectionRepository.save(importSelection);
                         return importSelection.getRlImportSelectionId();
@@ -168,7 +169,8 @@ public class RmsService {
 
         if (portfolioImportSelectionDtoList != null && !portfolioImportSelectionDtoList.isEmpty())
             return portfolioImportSelectionDtoList.stream()
-                    .map(RLPortfolioSelection::new)
+                    .map(rlPortfolioSelection -> rlPortfolioRepository.findById(rlPortfolioSelection.getRlPortfolioId())
+                            .map(rlPortfolio -> new RLPortfolioSelection(rlPortfolioSelection, rlPortfolio)).orElse(null))
                     .map(portfolioSelection -> {
                         portfolioSelection = rlPortfolioSelectionRepository.save(portfolioSelection);
                         return portfolioSelection.getRlPortfolioSelectionId();
