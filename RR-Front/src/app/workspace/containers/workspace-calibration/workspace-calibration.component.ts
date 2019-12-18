@@ -400,7 +400,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     });
 
     this.actions$.pipe(ofActionDispatched(fromWorkspaceStore.LoadAllPltsFromCalibrationSuccess)).subscribe(data =>
-      this.dispatch(new fromWorkspaceStore.LoadAllDefaultAdjustmentApplication())
+      this.tabStatus === 'FAC' ? this.extend('init') : null
     );
 
     this.actions$
