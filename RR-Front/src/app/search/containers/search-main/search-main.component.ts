@@ -179,17 +179,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
       this.detectChanges();
     });
-    /*combineLatest(
-      this.searchContent$,
-      this.store.select(SearchNavBarState.getActualGlobalKeyword)
-    )
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(([{value}, globalSearchItem]) => {
-        this.globalSearchItem = globalSearchItem;
-        this._checkSearchContent(value);
-        this._loadData();
-        this.detectChanges();
-      });*/
 
     this.searchContent$
       .pipe(this.unsubscribeOnDestroy)
