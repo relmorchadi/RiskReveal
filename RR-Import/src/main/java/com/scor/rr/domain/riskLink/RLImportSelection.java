@@ -67,7 +67,7 @@ public class RLImportSelection {
     }
 
 
-    public RLImportSelection(ImportSelectionDto importSelectionDto) {
+    public RLImportSelection(ImportSelectionDto importSelectionDto, RLAnalysis rlAnalysis) {
         this.projectId = importSelectionDto.getProjectId();
         this.entity = 1;
         this.targetCurrency = importSelectionDto.getTargetCurrency();
@@ -76,8 +76,6 @@ public class RLImportSelection {
         this.proportion = importSelectionDto.getProportion();
         this.targetRAPCode = importSelectionDto.getTargetRAPCode();
         this.financialPerspective = importSelectionDto.getFinancialPerspective();
-        RLAnalysis rlAnalysis = new RLAnalysis();
-        rlAnalysis.setRlAnalysisId(importSelectionDto.getRlAnalysisId());
         this.rlAnalysis = rlAnalysis;
     }
 }

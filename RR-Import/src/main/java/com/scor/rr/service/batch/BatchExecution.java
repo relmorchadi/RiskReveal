@@ -103,7 +103,7 @@ public class BatchExecution {
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
 
         ContractSearchResult contractSearchResult =
-                contractSearchResultRepository.findByWorkspaceIdAndUwYear(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
+                contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
         if (contractSearchResult == null) {
             log.error("Error. contract is not found");
             return null;

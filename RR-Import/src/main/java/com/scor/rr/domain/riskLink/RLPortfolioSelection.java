@@ -42,7 +42,7 @@ public class RLPortfolioSelection {
     @JoinColumn(name = "RLPortfolioId")
     private RLPortfolio rlPortfolio;
 
-    public RLPortfolioSelection(PortfolioSelectionDto portfolioImportSelection) {
+    public RLPortfolioSelection(PortfolioSelectionDto portfolioImportSelection, RLPortfolio rlPortfolio) {
         this.entity = 1L;
         this.targetCurrency = portfolioImportSelection.getTargetCurrency();
         this.unitMultiplier = portfolioImportSelection.getUnitMultiplier();
@@ -50,8 +50,6 @@ public class RLPortfolioSelection {
         this.importLocationLevel = portfolioImportSelection.isImportLocationLevel();
         this.analysisRegions = portfolioImportSelection.getAnalysisRegions();
         this.projectId = portfolioImportSelection.getProjectId();
-        RLPortfolio rlPortfolio = new RLPortfolio();
-        rlPortfolio.setRlPortfolioId(portfolioImportSelection.getRlPortfolioId());
         this.rlPortfolio = rlPortfolio;
     }
 }
