@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfRegionPerils")
+@Table(name = "vw_NumberOfRegionPerils")
 @AllArgsConstructor
 public class NumberOfRegionPerils extends NumberOfEntityForProject {
     public NumberOfRegionPerils(Long projectId, int count) {
