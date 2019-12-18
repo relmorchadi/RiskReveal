@@ -9,8 +9,6 @@ import {
   CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
-  DisableExpertMode,
-  EnableExpertMode,
   ExpertModeSearchAction, LoadMostUsedSavedSearch,
   LoadRecentSearchAction, LoadSavedSearch, LoadShortCuts,
   PatchSearchStateAction,
@@ -33,7 +31,7 @@ import {SearchService} from '../../service';
 import {Inject} from '@angular/core';
 import produce from 'immer';
 import {BadgesService} from '../../service/badges.service';
-import {Navigate} from '@ngxs/router-plugin';
+import {Navigate} from "@ngxs/router-plugin";
 import {ShortCut} from "../../model/shortcut.model";
 
 const initiaState: SearchNavBar = {
@@ -222,7 +220,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(SearchInputFocusAction)
-  searchInputFocus(ctx: StateContext<SearchNavBar>, {expertMode, inputValue}) {
+  searchInputFocus(ctx: StateContext<SearchNavBar>, {inputValue}) {
     ctx.patchState(produce(ctx.getState(), draftState => {
       draftState.showLastSearch = inputValue === '' || inputValue.length < 2;
       draftState.showResult = !(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult;
@@ -271,16 +269,6 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
   }
 
-  @Action(EnableExpertMode)
-  enableExpertMode(ctx: StateContext<SearchNavBar>) {
-    // ctx.patchState({visibleSearch: false});
-  }
-
-  @Action(DisableExpertMode)
-  disableExpertMode(ctx: StateContext<SearchNavBar>) {
-    // ctx.patchState({visibleSearch: true});
-  }
-
   @Action(DeleteLastBadgeAction)
   deleteLastBadge(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draftState => {
@@ -296,14 +284,14 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(CloseBadgeByIndexAction)
-  closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index, expertMode}: CloseBadgeByIndexAction) {
+  closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index}: CloseBadgeByIndexAction) {
     ctx.patchState(produce(ctx.getState(), draftState => {
       draftState.badges = _.toArray(_.omit(ctx.getState().badges, index));
     }));
   }
 
   @Action(SearchInputValueChange)
-  searchInputValueChange(ctx: StateContext<SearchNavBar>, {expertMode, value}) {
+  searchInputValueChange(ctx: StateContext<SearchNavBar>, {value}) {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchValue = value;
       draft.showLastSearch = value === '' || value.length < 2;
@@ -314,8 +302,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(showSavedSearch)
-  showSavedSearch(ctx: StateContext<SearchNavBar>, {payload}: showSavedSearch) {
-    const search = payload;
+  showSavedSearch(ctx: StateContext<SearchNavBar>, action: showSavedSearch) {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.visibleSearch= false;
       draft.showSavedSearch = true
@@ -367,10 +354,6 @@ export class SearchNavBarState implements NgxsOnInit {
       draft.visibleSearch = false;
     }));
     ctx.dispatch(new Navigate(['/search']));
-  }
-
-  private pushBadgesToLocalStorage(badges) {
-
   }
 
   @Action(CloseTagByIndexAction)

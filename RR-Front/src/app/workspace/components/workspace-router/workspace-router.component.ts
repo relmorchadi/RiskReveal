@@ -1,18 +1,9 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
-  WorkspaceAccumulationComponent,
-  WorkspaceActivityComponent,
   WorkspaceCalibrationComponent,
-  WorkspaceCloneDataComponent,
-  WorkspaceContractComponent,
-  WorkspaceExposuresComponent,
-  WorkspaceFileBaseImportComponent,
-  WorkspaceInuringComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
-  WorkspaceResultsComponent,
   WorkspaceRiskLinkComponent,
-  WorkspaceScopeCompletenceComponent
 } from "../../containers";
 import {WsRouterDirective} from "../../directives/ws-router.directive";
 import {StateSubscriber} from "../../model/state-subscriber";

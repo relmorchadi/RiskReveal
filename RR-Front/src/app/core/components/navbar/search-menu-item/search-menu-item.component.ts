@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service';
-import {debounceTime, distinctUntilChanged, first, takeUntil} from 'rxjs/operators';
+import { first, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
 import {closeSearch, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
-import {Actions, ofActionDispatched, Store} from '@ngxs/store';
+import {Actions, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
@@ -66,7 +66,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
               private badgeService: BadgesService
   ) {
     this.contractFilterFormGroup = this._fb.group({
-      expertModeToggle: [true],
       globalKeyword: ['']
     });
     this.subscriptions = new Subscription();
@@ -93,29 +92,11 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     });
 
     this._subscribeGlobalKeywordChanges();
-    this._subscribeToDistatchedEvents();
   }
 
   private updateShortCuts = _.memoize((shortCuts) => {
     return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable));
   });
-
-  private _subscribeToDistatchedEvents() {
-    this.actions$
-      .pipe(
-        takeUntil(this.unSubscribe$),
-        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode))
-      .subscribe(instance => {
-        if (instance instanceof SearchActions.EnableExpertMode)
-          this._notifcationService.createNotification('Information',
-            'The expert mode is now enabled',
-            'info', 'bottomRight', 2000);
-        if (instance instanceof SearchActions.DisableExpertMode)
-          this._notifcationService.createNotification('Information',
-            'The expert mode is now disabled',
-            'info', 'bottomRight', 2000);
-      });
-  }
 
 
   private _subscribeGlobalKeywordChanges() {
@@ -125,7 +106,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unSubscribe$))
       .subscribe((value) => {
         value && value.length > 1 && this.updatePossibleShortCuts(value);
-        this.store.dispatch(new SearchActions.SearchInputValueChange(this.isExpertMode, value))
+        this.store.dispatch(new SearchActions.SearchInputValueChange(value))
         this._contractChoicesSearch(value);
       });
   }
@@ -218,11 +199,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   closeSearchBadge(status, index) {
-    this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index, this.isExpertMode));
-  }
-
-  expertModeChange() {
-    this.store.dispatch(this.isExpertMode ? new SearchActions.EnableExpertMode() : new SearchActions.DisableExpertMode());
+    this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
   }
 
   appendSearchBadges(items, globalKeyword) {
@@ -240,7 +217,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     if(!this.state.visibleSearch) {
       if (this.searchConfigPopInVisible) this.searchConfigPopInVisible = false;
       this._searchService.setvisibleDropdown(false);
-      this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
+      this.store.dispatch(new SearchActions.SearchInputFocusAction(event.target.value));
       this.togglePopup();
     }
   }
@@ -254,10 +231,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
         value: !this.state.visible
       }]));
     this.togglePopup();
-  }
-
-  get isExpertMode() {
-    return this.contractFilterFormGroup.get('expertModeToggle').value;
   }
 
   get globalKeyword() {
@@ -291,15 +264,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   onChangeTagValue(badge) {
-    if (this.isExpertMode) {
-      let index = _.findIndex(this.state.badges, row => row.key == badge.key);
-      this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index, this.isExpertMode));
-      if (this.globalKeyword.length > 0) {
-        this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword));
-      }
-      this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
+    let index = _.findIndex(this.state.badges, row => row.key == badge.key);
+    this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
+    if (this.globalKeyword.length > 0) {
+      this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword));
     }
-
+    this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
   }
 
   toggleInput(event: boolean, item) {
