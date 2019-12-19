@@ -1,5 +1,6 @@
 package com.scor.rr.rest.importprocess;
 
+import com.scor.rr.domain.model.TreeNode;
 import com.scor.rr.service.importprocess.ImportFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,5 +51,15 @@ public class ImportiHubRest {
     @GetMapping("validate-PLTdata")
     public boolean validatePLTdata(String path, String peqtPath) {
         return importFileService.validatePLTdata(path, peqtPath);
+    }
+
+    @GetMapping("directoryListing")
+    public String directoryListing() {
+        return importFileService.directoryListing();
+    }
+
+    @GetMapping("retrieveTextFiles")
+    public List<String> retrieveTextFiles(String path) {
+        return importFileService.retrieveTextFiles(path);
     }
 }
