@@ -2,7 +2,6 @@
 .idea/
 *.iws
 *.iml
-*.ipr
 /RR-Front/node/
 /RR-Front/node
 /RR-Front/node/**
@@ -14,3 +13,11 @@
 /RRADJUSTMENT/target/
 */*.iml
 */target
+
+
+# Ignore propeties files
+/RR-Backend/src/main/resources/application.properties
+/RR-Calibration/src/main/resources/application.properties
+/RR-Import/src/main/resources/application.properties
+/RR-Inuring/src/main/resources/application.properties
+/RR-Proxy/src/main/resources/application.properties
