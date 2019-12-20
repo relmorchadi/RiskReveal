@@ -105,10 +105,6 @@ public class PltHeaderEntity {
     @Column(name = "InuringPackageId")
     private Long inuringPackageId;
 
-    // @TODO Review / Removed from Datamodel
-    @Column(name = "Currencyid")
-    private String currencyid;
-
     @Column(name = "SourceLossModelingBasis")
     private String sourceLossModelingBasis;
 

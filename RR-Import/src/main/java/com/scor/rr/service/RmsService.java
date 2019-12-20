@@ -671,7 +671,7 @@ public class RmsService {
         namedParameterJdbcTemplate.update(removeEDMPortfolioContextSQL, params);
     }
 
-    public boolean extractLocationLevelExposureDetails(Long edmId, String edmName, String instance, Long projectId, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, File file, String extractName, String sqlQuery) {
+    public boolean extractLocationLevelExposureDetails(Long edmId, String edmName, String instance, Long projectId, RLPortfolio rlPortfolio, ModelPortfolioEntity modelPortfolio, File file, String extractName, String sqlQuery) {
 
         //TODO : Review this method with Viet
         Map<String, Object> dataQueryParams = new HashMap<>();

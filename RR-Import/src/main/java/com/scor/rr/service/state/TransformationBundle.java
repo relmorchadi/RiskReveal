@@ -1,6 +1,5 @@
 package com.scor.rr.service.state;
 
-import com.scor.rr.domain.ModelPortfolio;
 import com.scor.rr.domain.RmsExchangeRate;
 import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.PLTBundle;

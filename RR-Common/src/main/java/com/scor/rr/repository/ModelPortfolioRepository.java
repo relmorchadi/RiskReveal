@@ -1,7 +1,7 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.ModelPortfolio;
+import com.scor.rr.domain.ModelPortfolioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ModelPortfolioRepository extends JpaRepository<ModelPortfolio, Long> {
+public interface ModelPortfolioRepository extends JpaRepository<ModelPortfolioEntity, Long> {
 }
