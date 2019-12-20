@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "RLAnalysisProfileRegion")
+@Table(name = "ZZ_RLAnalysisProfileRegion")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,6 +19,9 @@ public class RLAnalysisProfileRegion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RlAnalysisProfileRegionId")
     private Long rlAnalysisProfileRegionId;
+
+    @Column(name = "Entity")
+    private Integer entity;
 
     @Column(name = "AnalysisRegion")
     private String analysisRegion;
@@ -39,7 +42,7 @@ public class RLAnalysisProfileRegion {
     private BigDecimal aal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RlAnalysisId")
+    @JoinColumn(name = "RLModelAnalysisId")
     private RLAnalysis rlAnalysis;
 
 

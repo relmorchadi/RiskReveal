@@ -72,8 +72,14 @@ public class ELTToPLTConverter extends AbstractWriter {
     PETRepository petRepository;
 
     @Autowired
+    private PltHeaderRepository pltHeaderRepository;
+
+    @Autowired
+    private TransformationPackage transformationPackage;
+
+    @Autowired
     @Qualifier("importExecutor")
-    Executor executor;
+    private Executor executor;
 
     @Value("${ihub.treaty.peqt.path}")
     private String peqtPath;
@@ -106,9 +112,6 @@ public class ELTToPLTConverter extends AbstractWriter {
     @Value("#{jobParameters['prefix']}")
     private String prefix;
 
-    @Autowired
-    TransformationPackage transformationPackage;
-
     private ConvertFunctionFactory factory = new CMBetaConvertFunctionFactory();
 
     public RepeatStatus convertEltToPLT() {
@@ -116,7 +119,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         return RepeatStatus.FINISHED;
     }
 
-    public void batchConvert() {
+    private void batchConvert() {
         log.debug("Starting batchConvert");
         Date startDate = new Date();
         // @TODO Get TTFinancial persp Ref Table
@@ -193,7 +196,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         pltHeaderEntity.getCreatedDate(),
                         String.valueOf(pltHeaderEntity.getRegionPerilId()),
                         financialPerspective.getCode(),
-                        pltHeaderEntity.getCurrencyid(),
+                        pltHeaderEntity.getCurrencyCode(),
                         XLTOT.TARGET,
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getPltSimulationPeriods(),
@@ -297,7 +300,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             scorPltHeaderEntity.setPltSimulationPeriods(pet.getNumberSimulationPeriods());
             scorPltHeaderEntity.setPltType(PLTType.Pure.getCode());
             scorPltHeaderEntity.setProjectId(modelAnalysisEntity.getProjectId());
-            scorPltHeaderEntity.setCurrencyid(lossDataHeaderEntity.getCurrency());
+            scorPltHeaderEntity.setCurrencyCode(lossDataHeaderEntity.getCurrency());
             scorPltHeaderEntity.setTargetRAPId(targetRapEntity.getTargetRAPId());
             scorPltHeaderEntity.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
             scorPltHeaderEntity.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
@@ -314,7 +317,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             String sourceFinPersp = modelAnalysisEntity.getFinancialPerspective();
             scorPltHeaderEntity.setUdName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");
             scorPltHeaderEntity.setDefaultPltName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1");
-
+            scorPltHeaderEntity = pltHeaderRepository.save(scorPltHeaderEntity);
             pltHeaderEntities.add(scorPltHeaderEntity);
             log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPltHeaderEntity.getPltHeaderId(), targetRapEntity.getTargetRAPId(), targetRapEntity.getSourceRAPCode(), targetRapEntity.getTargetRAPCode());
         }
@@ -337,7 +340,6 @@ public class ELTToPLTConverter extends AbstractWriter {
             }
         }
     }
-
 
     private PLTModelingBasis getModelingBasis() {
         if (contractId != null && uwYear != null) {

@@ -5,20 +5,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.util.Date;
 
 @Entity
+@Table(name = "ModelPortfolio")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModelPortfolio {
+public class ModelPortfolioEntity {
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ModelPortfolioId")
     private Long modelPortfolioId;
+    @Column(name = "Entity")
+    private Integer entity;
     @Column(name = "ProjectId")
     private Long projectId;
     @Column(name = "CreationDate")

@@ -18,14 +18,16 @@ public class RLModelDataSource {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RlModelDataSourceId")
+    @Column(name = "RlDataSourceId")
     private Long rlModelDataSourceId;
     @Column(name = "Entity")
     private Integer entity;
     @Column(name = "ProjectId")
     private Long projectId;
-    @Column(name = "RlId")
+    @Column(name = "RLDatabaseId")
     private Long rlId;
+    @Column(name = "RLDataSourceName")
+    private String rlDataSourceName;
     @Column(name = "InstanceName")
     private String instanceName;
     @Column(name = "InstanceId")
@@ -34,14 +36,15 @@ public class RLModelDataSource {
     private String name;
     @Column(name = "Type")
     private String type;
-    @Column(name = "VersionId")
+    @Column(name = "RLVersionId")
     private String versionId;
-    @Column(name = "DateCreated")
+    @Column(name = "RLDateCreated")
     private Date dateCreated;
 
     public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName) {
         this.projectId = projectId;
         this.entity = 1;
+        this.rlDataSourceName = dataSource.getName();
         this.instanceId = instanceId;
         this.instanceName = instanceName;
         this.rlId = dataSource.getRmsId();

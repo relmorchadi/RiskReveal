@@ -1,6 +1,6 @@
 package com.scor.rr.service.state;
 
-import com.scor.rr.domain.ModelPortfolio;
+import com.scor.rr.domain.ModelPortfolioEntity;
 import lombok.Data;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class TransformationPackage {
 
     Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds;
-    List<ModelPortfolio> modelPortfolios;
+    List<ModelPortfolioEntity> modelPortfolios;
     private List<TransformationBundle> transformationBundles;
 
     public TransformationPackage() {
