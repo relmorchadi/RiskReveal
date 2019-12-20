@@ -12,7 +12,6 @@ import java.sql.Timestamp;
 
 
 @Entity
-@Table
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode

@@ -1,70 +1,40 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.util.Objects;
 
 @Entity
 @Table(name = "UserRR")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRrEntity {
-    private int userId;
-    private String userFirstName;
-    private String userLastName;
-    private String userRole;
 
     @Id
-    @Column(name = "UserId", nullable = false)
-    public int getUserId() {
-        return userId;
-    }
+    @Column(name = "UserId")
+    private int userId;
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
+    @Column(name = "Entity")
+    private int entity;
 
-    @Basic
-    @Column(name = "userFirstName", nullable = true, length = 255)
-    public String getUserFirstName() {
-        return userFirstName;
-    }
+    @Column(name = "FirstName", length = 15)
+    private String firstName;
 
-    public void setUserFirstName(String userFirstName) {
-        this.userFirstName = userFirstName;
-    }
+    @Column(name = "LastName", length = 15)
+    private String lastName;
 
-    @Basic
-    @Column(name = "userLastName", nullable = true, length = 255)
-    public String getUserLastName() {
-        return userLastName;
-    }
+    @Column(name = "UserCode", length = 15)
+    private String userCode;
 
-    public void setUserLastName(String userLastName) {
-        this.userLastName = userLastName;
-    }
+    @Column(name = "omegaUser", length = 15)
+    private String omegaUser;
 
-    @Basic
-    @Column(name = "userRole", nullable = true, length = 255)
-    public String getUserRole() {
-        return userRole;
-    }
+    @Column(name = "WindowsUser", length = 15)
+    private String windowsUser;
 
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserRrEntity that = (UserRrEntity) o;
-        return userId == that.userId &&
-                Objects.equals(userFirstName, that.userFirstName) &&
-                Objects.equals(userLastName, that.userLastName) &&
-                Objects.equals(userRole, that.userRole);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, userFirstName, userLastName, userRole);
-    }
 }
