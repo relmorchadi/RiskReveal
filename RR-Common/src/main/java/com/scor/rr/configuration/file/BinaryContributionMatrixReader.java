@@ -42,7 +42,7 @@ public class BinaryContributionMatrixReader implements ContributionMatrixReader 
                 int period = ib.getInt();
                 List<Double> contributionLine = new ArrayList<>();
                 for(int i=0; i< boucleSize; i++){
-                    double value = ib.getDouble();
+                    double value = ib.getFloat();
                     contributionLine.add(value);
                 }
                 if(map.containsKey(period)){
