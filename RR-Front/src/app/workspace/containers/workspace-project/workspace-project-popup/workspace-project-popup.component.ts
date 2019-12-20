@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, of, Subject, Subscription} from 'rxjs';
+import { of, Subscription} from 'rxjs';
 import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent} from 'primeng/api';
