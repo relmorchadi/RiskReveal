@@ -129,17 +129,26 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   anySelectedResults$;
 
 
-  filterAnalysis = {};
+  filterAnalysis = {
+    rlId: '',
+    name: '',
+    description: '',
+    created:  null,
+    type: '',
+    agCurrency: '',
+    agCedent: '',
+    agSource: '',
+    peril: '',
+  };
 
   filterPortfolio = {
-    dataSourceId: '',
-    number: '',
-    dataSourceName: '',
-    creationDate: '',
-    descriptionType: '',
+    rlId: '',
+    name: '',
+    description: '',
+    created:  null,
     type: '',
-    agCedent: '',
     agCurrency: '',
+    agCedent: '',
     agSource: '',
     peril: '',
   };
@@ -441,7 +450,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
           selectedDS,
           projectId
         }));
-      })
+      });
+    this.closeDropdown();
   }
 
   // Old datasource scan
@@ -523,23 +533,22 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   getSelection(event) {
     console.log('Analysis Portfolio selection', event);
-    // if (event.length > 1) {
-    //   if (this.state.selectedEDMOrRDM === 'rdm') {
-    //     this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
-    //     this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'chunk', data: event}));
-    //   } else {
-    //     this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
-    //     this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'chunk', data: event}));
-    //   }
-    // }
-    // this.UpdateCheckboxStatus();
+    if (event.length > 1) {
+      if (this.state.selectedEDMOrRDM === 'RDM') {
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectChunk', data: event}));
+      } else {
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectChunk', data: event}));
+      }
+    }
+    this.UpdateCheckboxStatus();
   }
 
   getIndeterminate() {
     const data = this.filterData(this.getTableData());
     const selection = _.filter(data, item => item.selected);
-    // return (selection.length < data.length && selection.length > 0);
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       this.indeterminateAnalysis = (selection.length < data.length && selection.length > 0);
     } else {
       this.indeterminatePortfolio = (selection.length < data.length && selection.length > 0);
@@ -550,7 +559,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   getCheckedData() {
     const data = this.filterData(this.getTableData());
     const selection = _.filter(data, item => item.selected);
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       this.allCheckedAnalysis = selection.length === data.length && selection.length > 0;
     } else {
       this.allCheckedPortolfios = selection.length === data.length && selection.length > 0;
@@ -600,8 +609,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       if (this.state.portfolios === null) {
         return 0;
       } else {
-        if (typeof this.state.portfolios[item.id] !== 'undefined') {
-          return this.state.portfolios[item.id].totalNumberElement;
+        if (typeof this.state.portfolios !== 'undefined') {
+          return this.state.portfolios.length;
         } else {
           return null;
         }
@@ -610,8 +619,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       if (this.state.analysis === null) {
         return 0;
       } else {
-        if (typeof this.state.analysis[item.id] !== 'undefined') {
-          return this.state.analysis[item.id].numberOfElement;
+        if (typeof this.state.analysis !== 'undefined') {
+          return this.state.analysis.length;
         } else {
           return null;
         }
@@ -624,13 +633,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       if (this.state.portfolios === null) {
         return 0;
       } else {
-        return _.filter(_.toArray(this.state.portfolios[item.id].data), dt => dt.selected).length;
+        return _.filter(this.state.portfolios, dt => dt.selected).length;
       }
     } else if (source === 'analysis') {
       if (this.state.analysis === null) {
         return 0;
       } else {
-        return _.filter(_.toArray(this.state.analysis[item.id].data), dt => dt.selected).length;
+        return _.filter(this.state.analysis, dt => dt.selected).length;
       }
     }
   }
@@ -659,7 +668,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     if (scope === 'analysis') {
       if (selectedInChunk === 0) {
         this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
-          action: 'chunk',
+          action: 'selectChunk',
           data: this.filterData(this.getTableData())
         }));
       } else {
@@ -672,7 +681,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     } else if (scope === 'portfolio') {
       if (selectedInChunk === 0) {
         this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
-          action: 'chunk',
+          action: 'selectChunk',
           data: this.filterData(this.getTableData())
         }));
       } else {
@@ -688,10 +697,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   selectWithUnselect(row) {
     if (this.state.selectedEDMOrRDM === 'RDM') {
-      // this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      // this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
@@ -704,8 +713,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.UpdateCheckboxStatus();
   }
 
-  checkRow(event, rowData, target) {
-    if (this.state.selectedEDMOrRDM === 'edm') {
+  checkRow(event, rowData) {
+    if (this.state.selectedEDMOrRDM === 'EDM') {
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
     } else {
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));

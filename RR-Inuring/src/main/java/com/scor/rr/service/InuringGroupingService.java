@@ -1,15 +1,13 @@
 package com.scor.rr.service;
 
+import com.scor.rr.JsonFormat.ExchangeRate;
 import com.scor.rr.JsonFormat.Plts;
 import com.scor.rr.configuration.file.ChunkPLTFileReader;
 import com.scor.rr.configuration.file.PLTFileReader;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.exceptions.inuring.InuringPltotFoundException;
-import com.scor.rr.exceptions.inuring.InvalidNumberOfPLTS;
-import com.scor.rr.exceptions.inuring.PltWithSameNameAlreadyExists;
-import com.scor.rr.exceptions.inuring.PositivePLTNotFoundException;
+import com.scor.rr.exceptions.inuring.*;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.request.InuringGroupingRequest;
 import io.swagger.models.auth.In;
@@ -37,6 +35,8 @@ public class InuringGroupingService {
     private ChunkPLTFileReader pltFileReader;
     @Value(value = "${application.inuring.path}")
     private String path;
+    @Value(value = "${application.inuring.separator}")
+    private String separator;
 
     public void groupPlts(InuringGroupingRequest request) throws RRException, NoSuchFieldException, IllegalAccessException, IOException {
 
@@ -50,10 +50,22 @@ public class InuringGroupingService {
 
             if(numberOfPLTS == 0 || numberOfPLTS == 1) throw new InvalidNumberOfPLTS(numberOfPLTS);
 
+            List<ExchangeRate> exchangeRates = request.getExchangeRate();
+
+
             for (Plts plt : request.getPlts()
                  ) {
                 signs.add(plt.getSign());
-                currencies.add(1.0); // need to get the right currency exchange rate
+                boolean checking = false;
+                for (ExchangeRate rate: exchangeRates
+                     ) {
+
+                    if(plt.getCcy().equals(rate.getCcy())){
+                        currencies.add(rate.getRateToTargeCcy());
+                        checking = true;
+                    }
+                } if(!checking) throw new PLTCurrencyExchangeRateNotSpecified(plt.getCcy());
+
                 if(plt.getSign().equals("+")){
                     positiveSignExists = true;
                 }
@@ -66,25 +78,29 @@ public class InuringGroupingService {
             }
             if(!positiveSignExists) throw new PositivePLTNotFoundException();
 
-            String targetFile = path +"GroupedPltsFolder"+"/";
-            String folderPath = path +"temp"+request.getUserId()+"/" ;
+            String targetFile = path +"GroupedPltsFolder"+ separator;
+            String folderPath = path +"temp"+request.getUserId()+ separator ;
             String pltName = request.getOutcomePltName();
+            String lossContributionPath = targetFile +pltName+"_Loss_Contribution_Matrix"+ separator;
+            String maxExpoContributionPath = targetFile +pltName+"_MaxExpo_Contribution_Matrix"+ separator;
 
 
 
             File checkFile = new File(targetFile + pltName + ".bin");
             if(checkFile.exists()) throw new PltWithSameNameAlreadyExists(pltName);
 
-
-            boolean created = new File(folderPath).mkdir();
             boolean created1 = new File(targetFile).mkdir();
+            boolean created = new File(folderPath).mkdir();
+            boolean created2 = new File(lossContributionPath).mkdir();
+            boolean created3 = new File(maxExpoContributionPath).mkdir();
 
 
 
-                Pair<Set<Integer>,Integer> par = pltFileReader.read(fileList,signs,currencies,folderPath);
+
+                Pair<Set<Integer>,Integer> par = pltFileReader.read(fileList,signs,currencies,folderPath,lossContributionPath,maxExpoContributionPath);
                 pltFileReader.createFinalPlt(pltName,par.getKey(),par.getValue(),folderPath,targetFile);
-                pltFileReader.createFinalContributionMatrix(pltName+"LossContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*8)+4),fileList.size(),"-Con.bin",folderPath,targetFile);
-                pltFileReader.createFinalContributionMatrix(pltName+"ExpoContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*8)+4),fileList.size(),"-ConMax.bin",folderPath,targetFile);
+//                pltFileReader.createFinalContributionMatrix(pltName+"LossContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*4)+4),fileList.size(),"-Con.bin",folderPath,targetFile);
+//                pltFileReader.createFinalContributionMatrix(pltName+"ExpoContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*4)+4),fileList.size(),"-ConMax.bin",folderPath,targetFile);
 
                 System.gc();
 

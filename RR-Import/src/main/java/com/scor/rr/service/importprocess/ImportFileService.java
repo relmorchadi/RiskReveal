@@ -1,11 +1,17 @@
 package com.scor.rr.service.importprocess;
 
+import com.google.gson.Gson;
 import com.scor.rr.domain.importfile.*;
+import com.scor.rr.domain.model.PathNode;
+import com.scor.rr.domain.model.TreeNode;
 import com.scor.rr.repository.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -357,11 +363,17 @@ public class ImportFileService {
 //    @Value("${nonrms.plt.root.path}")
     private String rootFilePath = "C:\\\\scor\\\\data\\\\ihub\\\\nonRMS\\\\plt\\\\";
 
+    private String rootDirectoryPath = "/scor/data/ihub/nonRMS/";
+
 //    @Value("${nonrms.peqt.path}")
     private String peqtFilePath = "/scor/data/ihub/nonRMS/peqt/";
 
     public String getRootFilePath() {
         return rootFilePath;
+    }
+
+    public String getRootDirectoryPath() {
+        return rootDirectoryPath;
     }
 
     // scan file de lay du lieu + validate 1 phan thong tin co ban, validate cac thong tin khac cua header sau (numeric, ...)
@@ -864,6 +876,68 @@ public class ImportFileService {
         }
     }
 
+    public String directoryListing() {
+        PathNode rootData = new PathNode(new File(getRootFilePath()), null);
+        com.scor.rr.domain.model.TreeNode<PathNode> root = new com.scor.rr.domain.model.TreeNode<>(rootData, null);
+        getPathList(root, new File(getRootDirectoryPath()));
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootJsonNode = objectMapper.valueToTree(root);
+        return printJsonString(rootJsonNode);
+    }
 
+    public String printJsonString(JsonNode jsonNode) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Object json = mapper.readValue(jsonNode.toString(), Object.class);
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+        } catch (Exception e) {
+            log.error("Sorry, print Json String didn't work");
+            e.printStackTrace();
+            return " ";
+        }
+    }
+
+    public void getPathList(com.scor.rr.domain.model.TreeNode node, File file) {
+        if (file.isDirectory()) {
+            log.info("DIRECTORY  -  " + file.getAbsolutePath());
+
+            File fList[] = file.listFiles();
+            if (fList != null) {
+                for (int i = 0; i < fList.length; i++) {
+                    if (fList[i].isDirectory()) {
+                        PathNode childData;
+                        if (node.getParent() == null) {
+                            childData = new PathNode(fList[i], fList[i].getName());
+                        } else {
+                            childData = new PathNode(fList[i], null);
+                        }
+
+                        TreeNode child = new com.scor.rr.domain.model.TreeNode<>(childData, node);
+
+                        node.getChildren().add(child);
+                        getPathList(child, fList[i]);
+                    }
+                }
+            } else {
+                log.info("DIRECTORY NULL -  " + file.getAbsolutePath());
+            }
+        }
+    }
+
+    public List<String> retrieveTextFiles(String path) {
+        List<String> textFiles = new ArrayList<>();
+        File repo = new File(path);
+        if (repo.isDirectory()) {
+            File fList[] = repo.listFiles();
+            if (fList != null) {
+                for (int i = 0; i < fList.length; i++) {
+                    if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName())) || "bin".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
+                        textFiles.add(fList[i].getPath());
+                    }
+                }
+            }
+        }
+        return textFiles;
+    }
 
 }

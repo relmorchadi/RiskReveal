@@ -39,13 +39,13 @@ public class BinaryContributionMatrixWriter implements ContributionMatrixWriter 
         MappedByteBuffer buffer = null;
         try {
             out = new RandomAccessFile(file, "rw").getChannel();
-            buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size*((lineSize*8)+4));
+            buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size*((lineSize*4)+4));
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             for (Map.Entry<Integer, List<List<Double>>> entry : contributionPerPhase.entrySet()) {
                 for (List<Double> contribution : entry.getValue()) {
                     buffer.putInt(entry.getKey());
                     for (int i = 0; i < contribution.size(); i++) {
-                        buffer.putDouble(contribution.get(i));
+                        buffer.putFloat(contribution.get(i).floatValue());
                     }
 
                 }

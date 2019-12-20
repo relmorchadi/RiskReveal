@@ -25,7 +25,7 @@ public class RefFMFContractTypeAttributeMap {
     @Column(name = "ContractTypeId")
     private long contractTypeId;
 
-    @Column(name = "ContractAttributeId")
+    @Column(name = "ContractAttributeID")
     private long contractAttributeId;
 
     @Column(name = "Flag")
