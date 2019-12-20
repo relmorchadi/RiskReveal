@@ -37,6 +37,7 @@ public enum ExceptionCodename {
     INURING_GROUPED_PLT_ALREADY_EXISTS("Invalid name of PLT"),
     INURING_PLT_NOT_FOUND("Inuring Plt Not found"),
     INURING_PACKAGE_NOT_FOUND("Inuring Package not found"),
+    CURRENCY_NOT_FOUND("Currency exchange rate not found "),
     CONTRACT_TYPE_NOT_FOUND("Contract type not found"),
     INURING_NOTE_NOT_FOUND("Inuring Note not found"),
     INURING_INPUT_NODE_NOT_FOUND("Inuring Input Node not found"),

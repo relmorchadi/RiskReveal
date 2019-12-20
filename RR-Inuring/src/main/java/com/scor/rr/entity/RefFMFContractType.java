@@ -46,7 +46,7 @@ public class RefFMFContractType {
     @Column(name = "IsActive")
     private boolean isActive;
 
-    @Column(name = "MultipleLayer")
+    @Column(name = "MultiLayer")
     private boolean multipleLayer;
 
     public RefFMFContractType() {
