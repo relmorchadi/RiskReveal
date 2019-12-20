@@ -162,10 +162,6 @@ export class WorkspaceService {
               collapseAnalysis: true,
               collapseResult: true,
             },
-            checked: {
-              checkedARC: false,
-              checkedPricing: false,
-            },
             financialValidator: {
               rmsInstance: {
                 data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'],
@@ -194,6 +190,7 @@ export class WorkspaceService {
             portfolioFac: null,
             results: null,
             summaries: null,
+            selection: null,
             selectedEDMOrRDM: null,
             activeAddBasket: false,
             importPLTs: {},

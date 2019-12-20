@@ -10,7 +10,7 @@ export class TableSortAndFilterPipe implements PipeTransform {
     const sortData = args[0];
     const sortDataKeys =_.keys(sortData);
     const filterData= args[1];
-    const filterDataKeys = _.keys(filterData)
+    const filterDataKeys = _.keys(filterData);
     let res=data;
 
 

@@ -9,7 +9,7 @@ import {
   PatchDateFormatAction,
   PatchImportDataAction,
   PatchNumberFormatAction,
-  PatchSearchStateAction,
+  PatchSearchStateAction, PatchTimeZoneAction,
   PatchWidgetDataAction,
   PostNewConfigAction,
   PostNewConfigFailAction,
@@ -90,6 +90,10 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     });
 
     this.state$.subscribe(value => this.state = _.merge({}, value));
+  }
+
+  changeTimeZone(event) {
+    this.dispatch(new PatchTimeZoneAction({value: event}))
   }
 
   navigateBack() {
