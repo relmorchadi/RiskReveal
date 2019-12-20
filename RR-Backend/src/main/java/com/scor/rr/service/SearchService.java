@@ -209,8 +209,6 @@ public class SearchService {
     private Integer getCount(List<Map<String, Object>> arr) {
         if( arr.size() > 0 ) {
             Map<String, Object> tmp = arr.get(0);
-            System.out.println(tmp);
-            System.out.println(tmp.get("count"));
             return (Integer) tmp.get("count");
 
         } else return 0;

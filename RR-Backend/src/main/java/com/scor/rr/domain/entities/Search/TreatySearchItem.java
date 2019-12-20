@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table
+@Table(name = "ZZ_TreatySearchItem")
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)

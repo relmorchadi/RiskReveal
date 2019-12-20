@@ -25,10 +25,10 @@ public class PublicationARC {
     @Column(name = "PLTHeaderId")
     private Long pltHeaderId;
 
-    @Column(name = "PLTLossDataFilePathHadoop")
-    private String pltLossDataFilePathHadoop;
+    @Column(name = "PLTLossDataFilePathAccumulation")
+    private String pltLossDataFilePathAccumulation;
 
-    @Column(name = "PLTLossDataFileNameHadoop")
-    private String pltLossDataFileNameHadoop;
+    @Column(name = "PLTLossDataFileNameAccumulation")
+    private String pltLossDataFileNameAccumulation;
 
 }

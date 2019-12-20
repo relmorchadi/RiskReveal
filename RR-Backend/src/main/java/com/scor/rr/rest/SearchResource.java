@@ -1,7 +1,6 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.main.ExpectedRegionPerils;
 import com.scor.rr.domain.entities.Search.ShortCut;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
@@ -13,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.Inet4Address;
 import java.util.List;
-import java.util.Map;
 
 
 @RestController
