@@ -131,14 +131,17 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   filterAnalysis = {
     rlId: '',
-    name: '',
-    description: '',
-    created:  null,
-    type: '',
-    agCurrency: '',
-    agCedent: '',
-    agSource: '',
+    analysisName: '',
+    analysisDescription: '',
+    engineType: '',
+    runDate: '',
+    analysisType: '',
     peril: '',
+    subPeril: '',
+    lossAmplification: '',
+    region: '',
+    analysisMode: '',
+    analysisCurrency: ''
   };
 
   filterPortfolio = {
@@ -274,7 +277,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   setFilterDivision() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       this.filterAnalysis['analysisName'] = this.ws.wsId + this.divisionTag[this.state.financialValidator.division.selected];
     } else {
       this.filterPortfolio['number'] = this.ws.wsId + this.divisionTag[this.state.financialValidator.division.selected];
@@ -439,11 +442,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   scanDataSources() {
-    console.log('selected EDM / RDM', this.state);
     this.selectedProject$.pipe(take(1))
       .subscribe(p => {
         const projectId = p.projectId;
-        console.log('this is project id', p);
         const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
         this.dispatch(new fromWs.DatasourceScanAction({
           instanceId: this.state.financialValidator.rmsInstance.selected,
@@ -573,7 +574,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getTableRecords() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       return _.get(this.analysis, 'totalNumberElement', 0);
     } else {
       return _.get(this.portfolios, 'totalNumberElement', 0);
@@ -581,11 +582,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getTitle() {
-    return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
+    return this.state.selectedEDMOrRDM === 'RDM' ? 'Analysis' : 'Portfolio';
   }
 
   filterData(data) {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'RDM') {
       return this.tableFilter.transform(data, [{}, this.filterAnalysis]);
     } else {
       return this.tableFilter.transform(data, [{}, this.filterPortfolio]);
@@ -593,7 +594,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   clearSelection(item, target) {
-    this.dispatch(new fromWs.DeleteEdmRdmAction({id: item.id, target: target}));
+    this.dispatch(new fromWs.DeleteEdmRdmAction({rmsId: item.rmsId, target: target}));
   }
 
   synchronizeEDMAndRDMSelection() {
@@ -705,7 +706,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
-  selectRows(row: any, index: number, target) {
+  selectRows(row: any, index: number) {
+    console.log(this.filterAnalysis, this.filterPortfolio);
     if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
       this.selectWithUnselect(row);
       this.lastSelectedIndex = index;

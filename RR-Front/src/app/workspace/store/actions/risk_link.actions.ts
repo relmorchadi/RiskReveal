@@ -208,6 +208,11 @@ export class SynchronizeEDMAndRDMSelectionAction {
   constructor(public payload?: any) {}
 }
 
+export class BasicScanEDMAndRDMAction {
+  static readonly type = '[Risk Link] Basic Scan And RDM';
+  constructor(public payload?: any) {}
+}
+
 export class CreateLinkingAction {
   static readonly type = '[Risk Link] Create Linking';
   constructor(public payload: any) {}
