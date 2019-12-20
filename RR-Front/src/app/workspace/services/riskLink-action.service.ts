@@ -349,35 +349,21 @@ export class RiskLinkStateService {
   }
 
   dataSourcesScan(ctx: StateContext<WorkspaceModel>, payload) {
-    const {selectedDS, projectId, instanceId} = payload;
-    return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
-      .pipe(mergeMap((response) => {
-          console.log('data', response);
-          ctx.patchState(produce(ctx.getState(), draft => {
-            const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
-            draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = true;
-            _.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.data)
-              .filter(item => item.selected)
-              .forEach(selectedItem => {
-                const key = selectedItem.rmsId;
-                if (selectedItem.type == 'EDM')
-                  draft.content[wsIdentifier].riskLink.selection.edms = {
-                    ...draft.content[wsIdentifier].riskLink.selection.edms,
-                    [key]: selectedItem
-                  };
-                else if (selectedItem.type == 'RDM')
-                  draft.content[wsIdentifier].riskLink.selection.rdms = {
-                    ...draft.content[wsIdentifier].riskLink.selection.rdms,
-                    [key]: selectedItem
-                  }
-              });
-          }));
-          return of(response);
-        }),
-        catchError(err => {
-          return of(err);
-        }));
-
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+      draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = true;
+      _.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.data)
+        .filter(item => item.selected)
+        .forEach(selectedItem => {
+          const key = selectedItem.rmsId;
+          if (selectedItem.type == 'EDM') {
+            draft.content[wsIdentifier].riskLink.selection.edms[key] = {...selectedItem, scanning: true}
+          } else if (selectedItem.type == 'RDM') {
+            draft.content[wsIdentifier].riskLink.selection.rdms[key] = {...selectedItem, scanning: true}
+          }
+        });
+    }));
+    ctx.dispatch(new fromWs.BasicScanEDMAndRDMAction(payload))
   }
 
   toggleRiskLinkPortfolio(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1247,6 +1233,31 @@ export class RiskLinkStateService {
     ctx.dispatch(new fromWs.SelectFacRiskLinkEDMAndRDMAction(filteredFacEDMRDM));
   }
 
+  basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
+    const {selectedDS, projectId, instanceId} = payload;
+    const state = ctx.getState();
+    console.log()
+    return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
+      .pipe(mergeMap((response) => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
+            console.log(state.content[wsIdentifier].riskLink.selection.edms, state.content[wsIdentifier].riskLink.selection.rdms);
+            draft.content[wsIdentifier].riskLink.selection.edms = Object.assign(
+              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.edms, item =>
+                ({[item.rmsId]: {...item, scanning: false}}))
+            );
+            draft.content[wsIdentifier].riskLink.selection.rdms = Object.assign(
+              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.rdms, item =>
+                ({[item.rmsId]: {...item, scanning: false}}))
+            );
+          }));
+          return of(response);
+        }),
+        catchError(err => {
+          return of(err);
+        }));
+  }
+
   createLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -1361,24 +1372,15 @@ export class RiskLinkStateService {
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const {id, target} = payload;
+    const {rmsId, target} = payload;
     if (target === 'RDM') {
       ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm = Object.assign({},
-          ..._.filter(_.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm),
-            dt => dt.id !== id).map(ws => {
-            return ({[ws.id]: {...ws}});
-          })
-        );
+        draft.content[wsIdentifier].riskLink.selection.rdms = _.omit(draft.content[wsIdentifier].riskLink.selection.rdms, rmsId);
       }));
     } else {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm = Object.assign({},
-            ..._.filter(_.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm),
-              dt => dt.id !== id).map(ws => {
-              return ({[ws.id]: {...ws}});
-            }));
+          draft.content[wsIdentifier].riskLink.selection.edms = _.omit(draft.content[wsIdentifier].riskLink.selection.edms, rmsId);
         })
       );
     }

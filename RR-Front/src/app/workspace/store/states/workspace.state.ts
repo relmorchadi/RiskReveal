@@ -1001,6 +1001,11 @@ export class WorkspaceState {
     this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
   }
 
+  @Action(fromWS.BasicScanEDMAndRDMAction)
+  basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.BasicScanEDMAndRDMAction) {
+    return this.riskLinkFacade.basicScanEDMAndRDM(ctx, payload);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);
