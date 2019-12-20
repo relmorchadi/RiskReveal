@@ -1,18 +1,9 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
-  WorkspaceAccumulationComponent,
-  WorkspaceActivityComponent,
   WorkspaceCalibrationComponent,
-  WorkspaceCloneDataComponent,
-  WorkspaceContractComponent,
-  WorkspaceExposuresComponent,
-  WorkspaceFileBaseImportComponent,
-  WorkspaceInuringComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
-  WorkspaceResultsComponent,
   WorkspaceRiskLinkComponent,
-  WorkspaceScopeCompletenceComponent
 } from "../../containers";
 import {WsRouterDirective} from "../../directives/ws-router.directive";
 import {StateSubscriber} from "../../model/state-subscriber";
@@ -20,6 +11,7 @@ import {ToggleWsLeftMenu, UpdateWsRouting} from "../../store/actions";
 import {Navigate} from "@ngxs/router-plugin";
 import {Store} from "@ngxs/store";
 import * as _ from 'lodash';
+import {WorkspaceCalibrationNewComponent} from "../../containers/workspace-calibration-new/workspace-calibration-new.component";
 
 /**
  * @Component Workspace Router
@@ -56,6 +48,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     //Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
     //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
     Calibration: {component: WorkspaceCalibrationComponent, selector: (state) => state},
+    'TB-Calibration': {component: WorkspaceCalibrationNewComponent, selector: state => state},
     //Inuring: {component: WorkspaceInuringComponent, selector: (state) => state},
     //ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
     //Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},

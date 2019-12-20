@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
-import {applyAdjustment} from "../store/actions";
+import {applyAdjustment, LoadAllDefaultAdjustmentApplication} from "../store/actions";
 import {catchError, map, mergeMap, switchMap} from "rxjs/operators";
 import {of} from 'rxjs/internal/observable/of';
 import * as _ from "lodash";
@@ -117,12 +117,6 @@ export class CalibrationService implements NgxsOnInit {
                 systemTag: [],
                 userTag: []
               }
-            } else {
-              draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
-              draft.content[this.prefix].calibration.filters = {
-                systemTag: [],
-                userTag: []
-              }
             }
            }));
            return ctx.dispatch(new fromPlt.LoadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
@@ -188,12 +182,12 @@ export class CalibrationService implements NgxsOnInit {
     console.log(plts);
     let threads = Array.prototype.concat.apply([], plts.map(row => row.threads));
 
-    return ctx.dispatch(new applyAdjustment({
+    return ctx.dispatch([new applyAdjustment({
       adjustementType: null,
       adjustement: false,
       columnPosition: null,
       pltId: threads,
-    }));
+    }), new LoadAllDefaultAdjustmentApplication()]);
   }
 
   constructUserTags(ctx: StateContext<any>, payload: any) {

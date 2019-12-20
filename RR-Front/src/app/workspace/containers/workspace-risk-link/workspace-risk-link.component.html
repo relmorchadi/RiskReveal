@@ -273,10 +273,10 @@
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
-                      <!--                      <ng-container *ngIf="!itemsE?.scanned">-->
-                      <!--                        <span class="loading">Scanning</span>-->
-                      <!--                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>-->
-                      <!--                      </ng-container>-->
+<!--                    <ng-container *ngIf="!itemsE?.scanned">
+                       <span class="loading">Scanning</span>
+                       <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
+                     </ng-container>-->
                       <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -314,8 +314,8 @@
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
-                  <span *ngIf="state?.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
-                  <span *ngIf="state?.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
+                  <span *ngIf="state?.selectedEDMOrRDM === 'RDM'">Select Analysis For Import</span>
+                  <span *ngIf="state?.selectedEDMOrRDM === 'EDM'">Select Portfolio For Import</span>
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter" (click)="filterModalVisibility = true"></i>
@@ -329,13 +329,13 @@
                       <li nz-menu-item (click)="resetsorts()">Reset Sort</li>
                       <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
                       <li nz-menu-item (click)="resetAll()">Reset Sort/Filters</li>
-                      <ng-container *ngIf="state.selectedEDMOrRDM === 'rdm'">
+                      <ng-container *ngIf="state.selectedEDMOrRDM === 'RDM'">
                         <li nz-menu-divider></li>
                         <li nz-menu-item (click)="managePopUpAnalysis = true">Manage Columns</li>
                         <li nz-menu-divider></li>
                         <li nz-menu-item (click)="unselectAllTable('analysis')">Unselect All</li>
                       </ng-container>
-                      <ng-container *ngIf="state.selectedEDMOrRDM === 'edm'">
+                      <ng-container *ngIf="state.selectedEDMOrRDM === 'EDM'">
                         <li nz-menu-divider></li>
                         <li nz-menu-item (click)="managePopUpPortfolio = true">Manage Columns</li>
                         <li nz-menu-divider></li>
@@ -349,11 +349,12 @@
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()"
                            (selectionChange)="getSelection($event)"
-                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'rdm' ? filterAnalysis : filterPortfolio]"
+                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'RDM' ? filterAnalysis : filterPortfolio] "
                            selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
-                           [dataKey]="'id'">
+                           [dataKey]="'rlId'">
+                    <!--  -->
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -366,11 +367,11 @@
                               *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'RDM'"
                                    nz-checkbox [ngModel]="allCheckedAnalysis"
-                                   (ngModelChange)="selectOne('analysis')"
+                                   (ngModelChange)="updateAllChecked('analysis')"
                                    [nzIndeterminate]="indeterminateAnalysis"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'EDM'"
                                    nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="selectOne('portfolio')"
+                                   (ngModelChange)="updateAllChecked('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
@@ -393,9 +394,9 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
                                    pInputText type="text" #filters [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'edm'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
                                    pInputText type="text" #filters [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>

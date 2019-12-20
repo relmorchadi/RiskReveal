@@ -14,6 +14,7 @@ import {WorkspaceResultsComponent} from './workspace-results/workspace-results.c
 import {WorkspaceScopeCompletenceComponent} from './workspace-scope-completence/workspace-scope-completence.component';
 import {WorkspaceProjectPopupComponent} from './workspace-project/workspace-project-popup/workspace-project-popup.component';
 import {CreateProjectPopupComponent} from './workspace-project/create-project-popup/create-project-popup.component';
+import {WorkspaceCalibrationNewComponent} from "./workspace-calibration-new/workspace-calibration-new.component";
 
 export const CONTAINERS = [
   WorkspaceMainComponent,
@@ -32,6 +33,7 @@ export const CONTAINERS = [
   WorkspaceScopeCompletenceComponent,
   WorkspaceProjectPopupComponent,
   CreateProjectPopupComponent,
+  WorkspaceCalibrationNewComponent
 ];
 
 export * from './workspace-risk-link/workspace-risk-link.component';

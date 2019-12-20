@@ -46,7 +46,7 @@ export class PltLeftMenuComponent implements OnInit {
     })
     this.actionDispatcher.emit({
       type: leftMenuStore.filterByProject,
-      payload: _.omit(this.leftMenuInputs.filterData, ['project'])
+      payload: _.omit(this.leftMenuInputs.filterData, ['projectId'])
     });
 
     this.actionDispatcher.emit({
@@ -56,11 +56,11 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   filter(key, filterData, value){
-    if (key == 'project') {
+    if (key == 'projectId') {
       this.actionDispatcher.emit({
         type: leftMenuStore.unCkeckAllPlts
       });
-      if (this.leftMenuInputs.filterData['project'] && this.leftMenuInputs.filterData['project'] != '' && value == this.leftMenuInputs.filterData['project']) {
+      if (this.leftMenuInputs.filterData['projectId'] && this.leftMenuInputs.filterData['projectId'] != '' && value == this.leftMenuInputs.filterData['projectId']) {
         this.actionDispatcher.emit({
           type: leftMenuStore.headerSelection,
           payload: true

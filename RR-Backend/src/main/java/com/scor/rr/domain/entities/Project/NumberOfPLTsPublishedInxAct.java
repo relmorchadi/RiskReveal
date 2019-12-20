@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "NumberOfPLTsPublishedInxAct")
+@Table(name = "vw_NumberOfPLTsPublishedInxAct")
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
