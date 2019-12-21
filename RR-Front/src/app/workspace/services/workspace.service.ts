@@ -113,6 +113,12 @@ export class WorkspaceService {
             loading: false,
             typeWs: null,
           },
+          calibrationNew: {
+            plts: [],
+            epMetrics: {},
+            adjustments: {},
+            loading: false
+          },
           calibration: {
             data: {},
             deleted: {},

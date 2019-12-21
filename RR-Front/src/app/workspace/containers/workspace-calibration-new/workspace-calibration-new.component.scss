@@ -1,0 +1,29 @@
+:host {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  background-color: #F4F6FC;
+
+  .plt-browser-wrapper {
+    display: flex;
+    flex-direction: row;
+    background-color: #F4F6FC;
+    width: 100%;
+    height: calc(100vh - 196px);
+  }
+
+  .my-tabs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    .tab-set-right {
+      display: flex;
+      flex-flow: column;
+      align-items: stretch;
+      flex: 1;
+      background-color: #ffffff;
+    }
+  }
+
+}

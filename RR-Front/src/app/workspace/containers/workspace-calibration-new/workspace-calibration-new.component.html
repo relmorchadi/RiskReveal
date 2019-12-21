@@ -1,3 +1,17 @@
-<p>
-  workspace-calibration-new works!
-</p>
+<div class="plt-browser-wrapper">
+  <div class="a-app-wrapper">
+    <div class="a-app-header">
+      <h4>Calibration</h4>
+    </div>
+    <div class="my-tabs">
+      <div class="tab-set-right">
+        <app-calibration-new-table
+          [data]="data"
+          [columns]="columns"
+          [rowKeys]="rowKeys"
+          [mode]="mode"
+        ></app-calibration-new-table>
+      </div>
+    </div>
+  </div>
+</div>
