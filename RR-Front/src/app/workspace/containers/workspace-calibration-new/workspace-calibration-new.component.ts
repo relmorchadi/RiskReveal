@@ -25,6 +25,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   //Table Config
   columns: any [];
   mode: 'default' | 'grouped';
+  isGrouped: boolean
   rowKeys: any;
 
   constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
@@ -32,6 +33,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.data = [];
     this.mode = "default";
+    this.isGrouped= false;
     this.columns = [
       {
         type: "arrow", width: "7"

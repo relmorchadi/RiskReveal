@@ -13,34 +13,56 @@
       </th>
     </tr>
   </ng-template>
+
+  <!--
+  BODY
+  -->
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
-    <tr>
-      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
 
-        <ng-container *ngIf="col?.type == 'arrow'">
-          <a href="#" [pRowToggler]="rowData">
-            <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-          </a>
-        </ng-container>
+    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{rowData: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}">
 
-        <ng-container *ngIf="col?.type != 'arrow'">
-          {{rowData[col?.field]}}
-        </ng-container>
+    </ng-container>
 
-      </td>
-    </tr>
   </ng-template>
-  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads">
 
-      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+  <!--
+  Grouped Template
+  -->
 
-        <ng-container *ngIf="col?.type != 'arrow'">
-          {{thread[col?.field]}}
-        </ng-container>
+  <ng-template #grouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
 
-      </td>
+          <ng-container *ngIf="col?.type == 'arrow'">
+            <a href="#" [pRowToggler]="rowData">
+              <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+            </a>
+          </ng-container>
 
-    </tr>
+          <ng-container *ngIf="col?.type != 'arrow'">
+            {{rowData[col?.field]}}
+          </ng-container>
+
+        </td>
+      </tr>
   </ng-template>
+
+  <!--
+  not grouped Template
+  -->
+
+  <ng-template #nonGrouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+      <tr *ngFor="let thread of rowData?.threads">
+
+        <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+
+          <ng-container *ngIf="col?.type != 'arrow'">
+            {{thread[col?.field]}}
+          </ng-container>
+
+        </td>
+
+      </tr>
+  </ng-template>
+
 </p-table>
