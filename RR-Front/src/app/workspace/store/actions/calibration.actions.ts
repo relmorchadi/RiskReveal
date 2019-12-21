@@ -193,3 +193,14 @@ export class deselectAll {
   }
 }
 
+//////////////////////
+// NEW
+// CALIBRATION
+/////////////////////
+
+export class LoadGroupedPltsByPure {
+  static readonly type = '[Calibration] Load Grouped Plts By Pure';
+
+  constructor(public payload: any) {
+  }
+}

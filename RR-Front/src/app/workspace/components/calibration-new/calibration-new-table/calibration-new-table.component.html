@@ -1,0 +1,46 @@
+<p-table
+  [dataKey]="'pltId'"
+  [value]="data"
+  [columns]="columns"
+  [expandedRowKeys]="rowKeys"
+  [responsive]="true"
+  [scrollable]="true"
+>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+        {{col.header}}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <a href="#" [pRowToggler]="rowData">
+            <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+          {{rowData[col?.field]}}
+        </ng-container>
+
+      </td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads">
+
+      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+          {{thread[col?.field]}}
+        </ng-container>
+
+      </td>
+
+    </tr>
+  </ng-template>
+</p-table>

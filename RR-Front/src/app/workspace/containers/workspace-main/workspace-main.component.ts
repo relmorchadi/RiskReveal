@@ -145,6 +145,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   filterSelected() {
+    console.log(this.data);
     return _.filter(this.data[this.currentWsIdentifier].projects, item => item.selected)[0];
   }
 
