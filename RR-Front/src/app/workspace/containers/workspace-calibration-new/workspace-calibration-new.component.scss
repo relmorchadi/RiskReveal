@@ -14,8 +14,30 @@
 
   .my-tabs {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
+
+    .PLTs-content {
+      padding: 0px 0px 4px 4px !important;
+      position: relative;
+      flex: 1 1 auto;
+    }
+
+    .title-as-tab {
+      display: flex;
+      flex: 0 1 auto;
+      float: left;
+      color: #585858;
+
+      span.title {
+        min-width: 101px;
+        padding: 15px 0 0 15px;
+        font-size: 15.22px;
+        font-weight: bold;
+        border-top: 3px solid #0700e4;
+        font-family: Rubik;
+      }
+    }
 
     .tab-set-right {
       display: flex;
