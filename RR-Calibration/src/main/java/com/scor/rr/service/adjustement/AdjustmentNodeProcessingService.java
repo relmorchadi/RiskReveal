@@ -15,6 +15,7 @@ import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,10 @@ public class AdjustmentNodeProcessingService {
         if (thread == null) {
             log.info("------ thread null, wrong ------");
             return null;
+        } else if (BooleanUtils.isTrue(thread.getLocked())) {
+            throw new IllegalStateException("---------- adjustPLTsInThread, thread is locked, not permitted ----------");
         }
+
         List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
         AdjustmentNodeProcessingEntity processing = null;
         if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
@@ -176,6 +180,8 @@ public class AdjustmentNodeProcessingService {
         if (adjustmentThread == null) {
             log.info("------ no adjustmentThread, wrong ------");
             return null;
+        }  else if (BooleanUtils.isTrue(adjustmentThread.getLocked())) {
+            throw new IllegalStateException("---------- adjustPLTPassingByNode, thread is locked, not permitted ----------");
         }
 
         // kiem tra xem node co PLT input ?

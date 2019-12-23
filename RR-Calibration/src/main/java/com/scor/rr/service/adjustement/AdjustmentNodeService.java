@@ -8,6 +8,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -224,6 +225,8 @@ public class AdjustmentNodeService {
             AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- createAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
             }
@@ -317,6 +320,8 @@ public class AdjustmentNodeService {
             AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- updateAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
             }
