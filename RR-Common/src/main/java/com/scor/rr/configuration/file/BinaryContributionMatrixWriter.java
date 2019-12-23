@@ -25,10 +25,6 @@ import java.util.Map;
 @Component
 public class BinaryContributionMatrixWriter implements ContributionMatrixWriter {
 
-
-    @Autowired
-    private BinaryPLTFileWriter binaryPLTFileWriter;
-
     public void write(Map<Integer, List<List<Double>>> contributionPerPhase, File file,int size, int lineSize) throws RRException {
         if (!"bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
@@ -61,7 +57,7 @@ public class BinaryContributionMatrixWriter implements ContributionMatrixWriter 
                 e.printStackTrace();
             }
             if (buffer != null) {
-                binaryPLTFileWriter.closeDirectBuffer(buffer);
+                FileUtils.closeDirectBuffer(buffer);
             }
         }
 
