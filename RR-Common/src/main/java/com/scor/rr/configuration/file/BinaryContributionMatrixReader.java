@@ -22,8 +22,6 @@ import java.util.TreeMap;
 
 @Component
 public class BinaryContributionMatrixReader implements ContributionMatrixReader {
-    @Autowired
-    private BinaryPLTFileWriter binaryPLTFileWriter;
     @Override
     public Map<Integer,List<List<Double>>> read(File file, int divisionSize,int boucleSize) throws RRException {
         Map<Integer,List<List<Double>>> map = new TreeMap<>();
@@ -57,7 +55,7 @@ public class BinaryContributionMatrixReader implements ContributionMatrixReader 
 
 
             }
-            binaryPLTFileWriter.closeDirectBuffer(ib);
+            FileUtils.closeDirectBuffer(ib);
             fc.close();
 
             return map;
