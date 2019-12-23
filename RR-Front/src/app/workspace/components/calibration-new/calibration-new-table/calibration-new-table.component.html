@@ -2,7 +2,6 @@
   [dataKey]="'pltId'"
   [value]="data"
   [columns]="columns"
-  [expandedRowKeys]="rowKeys"
   [responsive]="true"
   [scrollable]="true"
 >
@@ -50,6 +49,18 @@
   <!--
   not grouped Template
   -->
+  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads">
+
+      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+          {{thread[col?.field]}}
+        </ng-container>
+
+      </td>
+    </tr>
+  </ng-template>
 
   <ng-template #nonGrouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
       <tr *ngFor="let thread of rowData?.threads">
