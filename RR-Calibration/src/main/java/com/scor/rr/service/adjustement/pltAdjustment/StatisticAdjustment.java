@@ -51,7 +51,7 @@ public class StatisticAdjustment {
                     aepMetrics.stream().map(aepMetric -> {
                 s[0] = s[0] +1;
                 oep[0] = oep[0] + aepMetric.getLoss();
-                return new EPMetricPoint(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList()));
+                return new EPMetricPoint(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0], aepMetric.getRank() );}).collect(Collectors.toList()));
         } else {
             log.info("PLT EMPTY");
             return null;
@@ -63,10 +63,10 @@ public class StatisticAdjustment {
             final int[] s = {0};
             final double[] oep = {0};
             return new EPMetric(StatisticMetric.TVAR_OEP,
-                    oepMetrics.stream().map(aepMetric -> {
+                    oepMetrics.stream().map(oepMetric -> {
                 s[0] = s[0] +1;
-                oep[0] = oep[0] + aepMetric.getLoss();
-                return new EPMetricPoint(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList()));
+                oep[0] = oep[0] + oepMetric.getLoss();
+                return new EPMetricPoint(oepMetric.getFrequency(),oepMetric.getReturnPeriod() ,oep[0]/s[0], oepMetric.getRank() );}).collect(Collectors.toList()));
         } else {
             log.info("PLT EMPTY");
             return null;

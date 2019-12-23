@@ -28,7 +28,7 @@ public class CalculAdjustement implements ICalculAdjustment{
             return new EPMetric(StatisticMetric.OEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
                 finalI[0]++;
-                return new EPMetricPoint(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossDataVar.getLoss());
+                return new EPMetricPoint(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossDataVar.getLoss(), finalI[0]);
             }).collect(Collectors.toList()));
         } else {
             log.info("plt empty");
@@ -40,13 +40,14 @@ public class CalculAdjustement implements ICalculAdjustment{
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
             pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
-            return new EPMetric(StatisticMetric.OEP,
+            return new EPMetric(StatisticMetric.AEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {
                         finalI[0]++;
                             return new EPMetricPoint(finalI[0] / CONSTANTE,
                                     CONSTANTE / finalI[0] ,
-                                    pltLossData.getLoss());
+                                    pltLossData.getLoss(),
+                                    finalI[0]);
                     }).distinct().collect(Collectors.toList()));
         } else {
             log.info("plt empty");
