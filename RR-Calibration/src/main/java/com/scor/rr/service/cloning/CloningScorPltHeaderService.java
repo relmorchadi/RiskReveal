@@ -74,9 +74,9 @@ public class CloningScorPltHeaderService {
     public PltHeaderEntity clonePltWithAdjustment(Long pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
         PltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
         if (scorPltHeaderCloned.getPltType().equalsIgnoreCase("pure")) {
-            AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
+            AdjustmentThread threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
             if (threadCloned != null) {
-                AdjustmentThreadEntity threadParent = threadService.getByPltHeader(435L); // what ???
+                AdjustmentThread threadParent = threadService.getByPltHeader(435L); // what ???
                 List<AdjustmentNode> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
                 if (nodeEntities != null) {
                     for (AdjustmentNode adjustmentNodeCloned : nodeEntities) {

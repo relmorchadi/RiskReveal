@@ -9,8 +9,6 @@ import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.misc.Cleaner;
-import sun.nio.ch.DirectBuffer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,8 +16,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +24,9 @@ import java.util.List;
  */
 @Component
 public class BinaryPLTFileReader implements PLTFileReader {
+    @Autowired
+    private BinaryPLTFileWriter binaryPLTFileWriter;
+
     public List<PLTLossData> read(File file) throws RRException {
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();

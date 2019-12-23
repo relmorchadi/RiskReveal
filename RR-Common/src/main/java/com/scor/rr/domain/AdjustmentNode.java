@@ -8,7 +8,8 @@ import java.util.Objects;
 public class AdjustmentNode {
     private Integer adjustmentNodeId;
     private Integer entity;
-    private AdjustmentThreadEntity adjustmentThread;
+    private AdjustmentThread adjustmentThread;
+    private AdjustmentProcessingRecap adjustmentProcessingRecap;
     private AdjustmentState adjustmentState;
     private String adjustmentBasisCode;
     private String adjustmentCategoryCode;
@@ -17,6 +18,14 @@ public class AdjustmentNode {
     private String userNarrative;
     private AdjustmentNode cloningSource;
 
+    @Column(name = "UserNarrative")
+    public String getUserNarrative() {
+        return userNarrative;
+    }
+
+    public void setUserNarrative(String userNarrative) {
+        this.userNarrative = userNarrative;
+    }
 
     @Column(name = "Entity")
     public Integer getEntity() {
@@ -28,13 +37,13 @@ public class AdjustmentNode {
     }
 
     public AdjustmentNode(Boolean cappedMaxExposure,
-                          AdjustmentThreadEntity adjustmentThreadEntity,
+                          AdjustmentThread adjustmentThread,
                           String adjustmentBasisCode,
                           String adjustmentTypeCode,
                           AdjustmentState adjustmentStateEntity,
                           String adjustmentCategoryCode) {
         this.capped = cappedMaxExposure;
-        this.adjustmentThread = adjustmentThreadEntity;
+        this.adjustmentThread = adjustmentThread;
         this.adjustmentBasisCode = adjustmentBasisCode;
         this.adjustmentTypeCode = adjustmentTypeCode;
         this.adjustmentState = adjustmentStateEntity;
@@ -90,12 +99,22 @@ public class AdjustmentNode {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
-    public AdjustmentThreadEntity getAdjustmentThread() {
+    public AdjustmentThread getAdjustmentThread() {
         return adjustmentThread;
     }
 
-    public void setAdjustmentThread(AdjustmentThreadEntity adjustmentThread) {
+    public void setAdjustmentThread(AdjustmentThread adjustmentThread) {
         this.adjustmentThread = adjustmentThread;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "AdjustmentProcessingRecapId", referencedColumnName = "AdjustmentProcessingRecapId")
+    public AdjustmentProcessingRecap getAdjustmentProcessingRecap() {
+        return adjustmentProcessingRecap;
+    }
+
+    public void setAdjustmentProcessingRecap(AdjustmentProcessingRecap adjustmentProcessingRecap) {
+        this.adjustmentProcessingRecap = adjustmentProcessingRecap;
     }
 
     @Column(name = "AdjustmentBasisCode")
