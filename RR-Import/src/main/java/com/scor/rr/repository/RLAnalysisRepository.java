@@ -33,7 +33,12 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
             " ra.profileName = :#{#analysis.profileName}, " +
             " ra.profileKey = :#{#analysis.profileKey}, " +
             " ra.purePremium = :#{#analysis.purePremium}, " +
-            " ra.exposureTIV = :#{#analysis.exposureTiv} " +
+            " ra.exposureTIV = :#{#analysis.exposureTiv}, " +
+            " ra.user1 = :#{#analysis.user1}, " +
+            " ra.user2 = :#{#analysis.user2}, " +
+            " ra.user3 = :#{#analysis.user3}, " +
+            " ra.user4 = :#{#analysis.user4}, " +
+            " ra.description = :#{#analysis.description} " +
             " where ra.projectId= :projectId and " +
             " ra.rdmId= :#{#analysis.rdmId} and " +
             " ra.rdmName= :#{#analysis.rdmName} and " +

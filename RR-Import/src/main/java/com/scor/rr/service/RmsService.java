@@ -131,12 +131,6 @@ public class RmsService {
 
     //@Transactional(transactionManager = "rrTransactionManager")
     public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
-//        ExecutorService executor = Executors.newFixedThreadPool(2);
-
-//        Runnable analysisScanTask = () ->
-//        Runnable portfolioScanTask = () ->
-//        executor.execute(analysisScanTask);
-//        executor.execute(portfolioScanTask);
         return new DetailedScanResult(
                 scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()),
                 scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
@@ -211,6 +205,9 @@ public class RmsService {
                         .peek(rdmAnalysis -> this.rlAnalysisRepository.updateAnalysisById(projectId, rdmAnalysis))
                         .map(rdmAnalysis -> {
                             RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
+                            String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis.getRlAnalysisId());
+                            rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
+                            rlAnalysisRepository.save(rlAnalysis);
                             allScannedAnalysis.add(rlAnalysis);
                             return rlAnalysis;
                         })
@@ -747,7 +744,6 @@ public class RmsService {
                     rlSourceEpHeaderRepository.deleteByRLAnalysisIdAndFinancialPerspective(sourceEpHeader.getRLAnalysisId(), sourceEpHeader.getFinancialPerspective());
                     rlSourceEpHeaderRepository.save(sourceEpHeader);
                 });
-
     }
 
     private String generateEpCurveFieldName(int exceedanceProbability, int statisticMetric) throws Exception {

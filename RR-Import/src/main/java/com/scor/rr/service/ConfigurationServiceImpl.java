@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.domain.dto.RLAnalysisDto;
 import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import com.scor.rr.domain.dto.RLPortfolioDto;
+import com.scor.rr.domain.dto.RegionPerilDto;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RLSourceEpHeader;
 import com.scor.rr.repository.*;
@@ -37,6 +38,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private RLAnalysisToTargetRAPRepository rlAnalysisToTargetRAPRepository;
+
+    @Autowired
+    private RLAnalysisToRegionPerilsRepository rlAnalysisToRegionPerilsRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -74,4 +78,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 .map(element -> modelMapper.map(element, RLAnalysisToTargetRAPDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<RegionPerilDto> getRegionPeril(Long rlAnalysisId){
+        return rlAnalysisToRegionPerilsRepository.findByRlModelAnalysisId(rlAnalysisId).stream()
+                .map(element -> modelMapper.map(element, RegionPerilDto.class))
+                .collect(Collectors.toList());
+    }
+
 }

@@ -19,15 +19,15 @@ public class RLAnalysisToTargetRAP {
     @Id
     @Column(name = "Id")
     private Long id;
-    @Column(name = "rlAnalysisId")
+    @Column(name = "RLModelAnalysisId")
     private Long rlAnalysisId;
-    @Column(name = "rlModelDataSourceId")
+    @Column(name = "RLDataSourceId")
     private Long rlModelDataSourceId;
-    @Column(name = "analysisId")
+    @Column(name = "AnalysisId")
     private Long analysisId;
-    @Column(name = "analysisName")
+    @Column(name = "AnalysisName")
     private String analysisName;
-    @Column(name = "profileKey")
+    @Column(name = "ProfileKey")
     private String profileKey;
     @Column(name = "TargetRapCode")
     private String targetRapCode;
