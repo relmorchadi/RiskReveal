@@ -59,26 +59,10 @@ public class BinaryPLTFileWriter implements PLTFileWriter {
                 e.printStackTrace();
             }
             if (buffer != null) {
-                closeDirectBuffer(buffer);
+                FileUtils.closeDirectBuffer(buffer);
             }
     }
 
     }
 
-    public boolean closeDirectBuffer(final ByteBuffer buffer){
-        if(!buffer.isDirect())
-            return false;
-        final DirectBuffer dbb = (DirectBuffer)buffer;
-        return AccessController.doPrivileged(
-                (PrivilegedAction<Object>) () -> {
-                    try {
-                        Cleaner cleaner = dbb.cleaner();
-                        if (cleaner != null) cleaner.clean();
-                        return null;
-                    } catch (Exception e) {
-                        return dbb;
-                    }
-                }
-        ) == null;
-    }
 }
