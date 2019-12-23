@@ -1,8 +1,13 @@
 package com.scor.rr.repository;
 
-import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.AdjustmentThread;
+import com.scor.rr.domain.PltHeaderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AdjustmentThreadRepository extends JpaRepository<AdjustmentThreadEntity, Integer> {
-    AdjustmentThreadEntity getByFinalPLTPltHeaderId(Long pltHeaderId);
+import java.util.List;
+
+public interface AdjustmentThreadRepository extends JpaRepository<AdjustmentThread, Integer> {
+    AdjustmentThread getByFinalPLTPltHeaderId(Long pltHeaderId);
+    List<AdjustmentThread> findByInitialPLT(PltHeaderEntity plt);
+
 }

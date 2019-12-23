@@ -50,9 +50,8 @@ public class BinaryPLTFileReader implements PLTFileReader {
                 pltLossDatas.add(lossData);
             }
 
-
-            binaryPLTFileWriter.closeDirectBuffer(ib);
-            fc.close();
+//            binaryPLTFileWriter.closeDirectBuffer(ib);
+//            fc.close();
 
             return pltLossDatas;
         } catch (IOException e) {

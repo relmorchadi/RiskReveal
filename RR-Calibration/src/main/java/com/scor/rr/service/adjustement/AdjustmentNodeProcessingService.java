@@ -103,7 +103,7 @@ public class AdjustmentNodeProcessingService {
 
     public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
         log.info("------ begin thread processing ------");
-        AdjustmentThreadEntity thread = adjustmentThreadRepository.findById(threadId).get();
+        AdjustmentThread thread = adjustmentThreadRepository.findById(threadId).get();
         if (thread == null) {
             log.info("------ thread null, wrong ------");
             return null;
@@ -139,6 +139,7 @@ public class AdjustmentNodeProcessingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         finalPLT.setLossDataFilePath(dstFile.getParent());
         finalPLT.setLossDataFileName(dstFile.getName());
 
@@ -171,7 +172,7 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
 
-        AdjustmentThreadEntity adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
+        AdjustmentThread adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
         if (adjustmentThread == null) {
             log.info("------ no adjustmentThread, wrong ------");
             return null;
@@ -340,7 +341,7 @@ public class AdjustmentNodeProcessingService {
         }
     }
 
-    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNode> nodeClones, AdjustmentThreadEntity threadInitial, AdjustmentThreadEntity threadCloned) throws RRException {
+    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNode> nodeClones, AdjustmentThread threadInitial, AdjustmentThread threadCloned) throws RRException {
         if(nodeClones != null) {
             PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();

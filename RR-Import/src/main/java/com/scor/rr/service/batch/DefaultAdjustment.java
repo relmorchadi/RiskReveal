@@ -94,13 +94,13 @@ public class DefaultAdjustment extends AbstractWriter {
                         HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
                                 new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));
 
-                        ResponseEntity<AdjustmentThreadEntity> response = restTemplate
-                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThreadEntity.class);
+                        ResponseEntity<AdjustmentThread> response = restTemplate
+                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThread.class);
 
                         if (response.getStatusCode().equals(HttpStatus.OK)) {
-                            AdjustmentThreadEntity adjustmentThreadEntity = response.getBody();
+                            AdjustmentThread adjustmentThread = response.getBody();
 
-                            if (adjustmentThreadEntity != null && adjustmentThreadEntity.getAdjustmentThreadId() != null) {
+                            if (adjustmentThread != null && adjustmentThread.getAdjustmentThreadId() != null) {
 
                                 HttpHeaders requestHeaders = new HttpHeaders();
                                 requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -108,16 +108,16 @@ public class DefaultAdjustment extends AbstractWriter {
                                 HttpEntity<String> request = new HttpEntity<>(requestHeaders);
 
                                 UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
-                                        .queryParam("threadId", adjustmentThreadEntity.getAdjustmentThreadId());
+                                        .queryParam("threadId", adjustmentThread.getAdjustmentThreadId());
 
                                 ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
                                         .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
 
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
-                                    this.getAndWriteStatsForPlt(adjustmentThreadEntity.getFinalPLT(), restTemplate, true, adjustmentThreadEntity.getAdjustmentThreadId());
+                                    this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
                                 } else {
-                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThreadEntity.getAdjustmentThreadId());
+                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
 
