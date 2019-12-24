@@ -35,24 +35,22 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.mode = "default";
     this.isGrouped= false;
     this.columns = [
-      {
-        type: "arrow", width: "7"
-      },
-      {
-        field: 'pltId', header: 'PLT Id', width: "15"
-      },
-      {
-        field: 'pltName', header: 'PLT Name', width: "40"
-      },
-      {
-        field: 'regionPerilCode', header: 'Region Peril', width: "40"
-      },
-      {
-        field: 'grain', header: 'Grain', width: "45"
-      },
-      {
-        field: 'rap', header: 'RAP', width: "70"
-      }
+      {type: "arrow", width: "7"},
+      {field: 'pltId', header: 'PLT Id', width: "15"},
+      {field: 'pltName', header: 'PLT Name', width: "40"},
+      {header: 'Peril',field: 'peril', icon:'', width: "40px", filter: true, sort: true},
+      {field: 'regionPerilCode', header: 'Region Peril', width: "40"},
+      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "40px", icon:'', filter: true, sort: true},
+      {field: 'grain', header: 'Grain', width: "45"},
+      {header: 'Vendor System',field: 'vendorSystem', width: "40px", icon:'', filter: true, sort: true},
+      {field: 'rap', header: 'RAP', width: "70"},
+      {header: '',field: 'status', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Overall LMF',field: 'overallLmf', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Base',field: 'base', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Default',field: 'default', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Client',field: 'client', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Inuring',field: 'inuring', width: "40px", icon:'', filter: false, sort: false},
+      {header: 'Post-Inuring',field: 'postInuring', width: "40px", icon:'', filter: false, sort: false},
     ];
     this.rowKeys= {};
   }
