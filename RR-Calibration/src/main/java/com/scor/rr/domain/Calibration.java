@@ -29,9 +29,11 @@ public class Calibration {
     private String pltType;
 
     @Column(length = 25)
-    private String threadStatus;
+    private String status;
 
     private Long regionPerilId;
+
+    private String peril;
 
     private String regionPerilCode;
 
