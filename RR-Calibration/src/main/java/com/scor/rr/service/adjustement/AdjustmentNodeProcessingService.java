@@ -6,14 +6,12 @@ import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.EPMetric;
-import com.scor.rr.domain.dto.StaticType;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -318,87 +315,30 @@ public class AdjustmentNodeProcessingService {
         );
     }
 
-    private void getAndWriteStatsForPlt(PltHeaderEntity pltHeader, RestTemplate restTemplate, boolean isThread, Integer threadId) {
-
-        String fullFilePath = pltHeader.getLossDataFilePath() + "/" + pltHeader.getLossDataFileName();
-
-        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(pltHeader.getModelAnalysisId());
-        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(pltHeader.getRegionPerilId());
-
-        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-            HttpEntity<String> request = new HttpEntity<>(requestHeaders);
-
-            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
-
-            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-
-            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
-
-
-            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-
-            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.averageAnnualLoss, restTemplate);
-            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.CoefOfVariance, restTemplate);
-            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.stdDev, restTemplate);
-
-            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
-                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
-                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
-                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
-                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
-            }
-        } else {
-            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
-        }
-    }
-
     private List<PLTLossData> calculateProcessing(AdjustmentNode node, List<PLTLossData> pltLossData) throws RRException {
         if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
             ScalingAdjustmentParameter adjustmentScalingParameter = scalingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
-            return CalculAdjustement.linearAdjustement(pltLossData, adjustmentScalingParameter.getAdjustmentFactor(), node.getCapped());
+            return CalculateAdjustmentService.linearAdjustement(pltLossData, adjustmentScalingParameter.getAdjustmentFactor(), node.getCapped());
         } else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
             ScalingAdjustmentParameter adjustmentScalingParameter = scalingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
-            return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getAdjustmentFactor()); // getRpmf() la gi
+            return CalculateAdjustmentService.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getAdjustmentFactor()); // getRpmf() la gi
         } else if (NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = returnPeriodBandingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
 //            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // revise
-            return CalculAdjustement.OEPReturnBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // RR3
+            return CalculateAdjustmentService.OEPReturnBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // RR3
         } else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = returnPeriodBandingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
-            return CalculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
+            return CalculateAdjustmentService.eefReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
         } else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             EventBasedAdjustmentParameter parameter = eventBasedAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             File peatDataFile = new File(parameter.getInputFilePath(), parameter.getInputFileName());
             List<PEATData> peatData = UtilsMethod.getEvenDrivenPeatDataFromFile(peatDataFile.getPath());
-            return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, node.getCapped(), peatData);
+            return CalculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossData, node.getCapped(), peatData);
         } else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
             EventBasedAdjustmentParameter parameter = eventBasedAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             File peatDataFile = new File(parameter.getInputFilePath(), parameter.getInputFileName());
             List<PEATData> peatData = UtilsMethod.getEvenPeriodDrivenPeatDataFromFile(peatDataFile.getPath());
-            return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), peatData);
+            return CalculateAdjustmentService.nonLinearEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), peatData);
         } else {
             throw new com.scor.rr.exceptions.RRException(TYPE_NOT_FOUND, 1);
         }

@@ -28,7 +28,7 @@ public class StatisticAdjustment {
 
     public static double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            List<EPMetricPoint> aepMetrics = CalculAdjustement.getAEPMetric(pltLossDatas).getEpMetricPoints();
+            List<EPMetricPoint> aepMetrics = CalculateAdjustmentService.getAEPMetric(pltLossDatas).getEpMetricPoints();
             if(aepMetrics != null) {
                 double averageAnnualLoss;
                 averageAnnualLoss = averageAnnualLoss(pltLossDatas);
