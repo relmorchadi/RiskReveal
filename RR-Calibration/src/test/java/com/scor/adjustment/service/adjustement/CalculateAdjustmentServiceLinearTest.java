@@ -7,8 +7,7 @@ import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.EventDateFormatException;
 import com.scor.rr.exceptions.pltfile.PLTDataNullException;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
-import org.junit.After;
+import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -22,15 +21,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
-public class CalculAdjustementEEFFrequencyTest {
-    private static final Logger log = LoggerFactory.getLogger(CalculAdjustementEEFFrequencyTest.class);
+public class CalculateAdjustmentServiceLinearTest {
+
+    private static final Logger log = LoggerFactory.getLogger(CalculateAdjustmentServiceEEFReturnPeriodBandingTest.class);
+
     private List<PLTLossData> pltLossDataList;
-    private double rpmf;
+    private double lmf;
     private boolean cap;
 
     @Before
-    public void setUp() throws Exception {
-        log.info("Launch test for EEF Frequency Adjustment");
+    public void setUp() {
+        log.info("Launch test for Linear Adjustment");
         pltLossDataList = new ArrayList<PLTLossData>(){{
             add(new PLTLossData(36,8443694,41334,1,(double)3957801220L,(double)14240566));
             add(new PLTLossData(68,8441785,41542,1,(double)476993400L, 3455929.25));
@@ -39,40 +40,40 @@ public class CalculAdjustementEEFFrequencyTest {
             add(new PLTLossData(117,8309116,41292,1,(double)116508000000L, 12625397800L));
         }};
         cap = true;
-        rpmf =0.4;
+        lmf = 0.7;
     }
+    //when lmf <= 0
+    @Test
+    public void linearAdjustementLmfNegative() throws com.scor.rr.exceptions.RRException {
 
-    @After
-    public void tearDown() {
-        log.info("END test for EEF Frequency Adjustment");
+        log.info("Launch test for Linear Adjustment with negative lmf");
+        assertNull(CalculateAdjustmentService.linearAdjustement(pltLossDataList, -1, cap));
+
     }
+    //when PLT is empty or null
     @Test
-    public void eefFrequencyNegativeRpmf() {
-        log.info("Launch test for EEF Frequency Adjustment for negative rpmf = {}",rpmf);
-        assertNull(CalculAdjustement.eefFrequency(pltLossDataList,cap,-2));
-    }
-    @Test
-    public void eefFrequencyNullPlt() {
-        log.info("Launch test for EEF Frequency Adjustment for null plt ");
-        assertNull(CalculAdjustement.eefFrequency(null,cap,rpmf));
-    }
-    @Test
-    public void eefFrequencyEmptyPlt() {
-        log.info("Launch test for EEF Frequency Adjustment for an empty plt ");
-        assertNull(CalculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf));
+    public void linearAdjustementNullPlt() throws com.scor.rr.exceptions.RRException {
+        log.info("Launch test for Linear Adjustment with PLT NULL");
+        assertNull(CalculateAdjustmentService.linearAdjustement(null,lmf,cap));
     }
 
     @Test
-    public void eefFrequencyFileEmpty() {
+    public void linearAdjustementEmptyPlt() throws com.scor.rr.exceptions.RRException {
+        log.info("Launch test for Linear Adjustment with an EMPTY PLT");
+        assertNull(CalculateAdjustmentService.linearAdjustement(new ArrayList<>(),lmf,cap));
+    }
+
+    @Test
+    public void testLinearFileEmpty() throws com.scor.rr.exceptions.RRException {
         BinaryPLTFileReader binarypltFileReader = new BinaryPLTFileReader();
-        log.info("Launch test for EEF Frequency Adjustment for a plt file ");
+        log.info("Launch test for Linear Adjustment with an empty plt file ");
         try {
             pltLossDataList = binarypltFileReader.read(new File("src/main/resources/file/empty.bin"));
             assertThat(pltLossDataList.isEmpty(), is(true));
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = CalculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -84,9 +85,9 @@ public class CalculAdjustementEEFFrequencyTest {
     }
 
     @Test
-    public void eefFrequencyFileFormatDateWrong() {
+    public void testLinearFileFormatDateWrong() throws com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
-        log.info("Launch test for EEF Frequency Adjustment for a plt file ");
+        log.info("Launch test for Linear Adjustment for a plt file ");
         try {
             pltLossDataList = csvpltFileReader.read(new File("src/main/resources/file/event_date_format_wrong.csv"));
         } catch (EventDateFormatException ex) {
@@ -94,7 +95,7 @@ public class CalculAdjustementEEFFrequencyTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = CalculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -105,30 +106,40 @@ public class CalculAdjustementEEFFrequencyTest {
         }
     }
 
+    @Test
+    public void testLinearFile() throws RRException, com.scor.rr.exceptions.RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for Linear Adjustment for a File ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
+        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,lmf,cap);
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltLinear.csv"));
+        log.info("End test for Linear Adjustment for a File ");
+    }
 
     @Test
-    public void eefFrequencyFile() throws RRException {
+    public void testLinearFileLmf2Cap() throws RRException, com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
-        log.info("Launch test for EEF Frequency Adjustment for a plt file ");
+        log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculAdjustement.eefFrequency(pltLossData,cap,rpmf);
-        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eef frequency.csv"));
-        for(int i=0;i<pltLossData.size();i++) {
+        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,2,true);
+        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 2 cap.csv"));
+        assert pltLossData != null;
+        for(int i = 0; i<pltLossData.size(); i++) {
             assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
         }
     }
 
     @Test
-    public void eefFrequencyRPMF2Uncapped() throws RRException {
+    public void testLinearFileLmf250Uncap() throws RRException, com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
-        log.info("Launch test for EEF Frequency Adjustment for a plt file ");
+        log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculAdjustement.eefFrequency(pltLossData,false,2);
-        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/eefFrequencyRPMF2Uncapped.csv"));
-        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eefFrequencyRPMF2Uncapped.csv"));
-//        for(int i=0;i<pltLossData.size();i++) {
-//            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
-//        }
+        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,250,false);
+        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 250  uncap.csv"));
+        assert pltLossData != null;
+        for(int i = 0; i<pltLossData.size(); i++) {
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+        }
     }
 }
