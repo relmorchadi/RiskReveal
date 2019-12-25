@@ -13,7 +13,7 @@ public class RdmAnalysisEpCurves {
     private String treatyLabel;
     private int ebpTypeCode;
     private Double loss;
-    private int exceedanceProbabilty;
-    private BigDecimal returnId;
+    private float exceedanceProbabilty;
+    private Long returnPeriod;
 
 }

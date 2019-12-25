@@ -191,11 +191,13 @@ public class RegionPerilExtractor {
 
                 ModelAnalysisEntity modelAnalysisEntityLambda = rrAnalysisRepository.saveAndFlush(modelAnalysisEntity);
 
-                targetRAPRepository.findByTargetRAPCode(sourceResult.getTargetRAPCode()).ifPresent(targetRAP -> {
-                    AnalysisIncludedTargetRAPEntity analysisIncludedTargetRAPEntity = new AnalysisIncludedTargetRAPEntity();
-                    analysisIncludedTargetRAPEntity.setTargetRAPId(targetRAP.getTargetRAPId());
-                    analysisIncludedTargetRAPEntity.setModelAnalysisId(modelAnalysisEntityLambda.getRrAnalysisId());
-                    analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAPEntity);
+                sourceResult.getTargetRaps().forEach(targetRAPSelection -> {
+                    targetRAPRepository.findByTargetRAPCode(targetRAPSelection.getTargetRAPCode()).ifPresent(targetRAP -> {
+                        AnalysisIncludedTargetRAPEntity analysisIncludedTargetRAPEntity = new AnalysisIncludedTargetRAPEntity();
+                        analysisIncludedTargetRAPEntity.setTargetRAPId(targetRAP.getTargetRAPId());
+                        analysisIncludedTargetRAPEntity.setModelAnalysisId(modelAnalysisEntityLambda.getRrAnalysisId());
+                        analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAPEntity);
+                    });
                 });
 
                 fpRRAnalysis.put(sourceResult.getFinancialPerspective(), modelAnalysisEntity.getRrAnalysisId());

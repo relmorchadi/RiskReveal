@@ -78,7 +78,7 @@ public class RmsRessource {
     @GetMapping("listRdmAnalysisEpCurves")
     public ResponseEntity<?> listRdmAllAnalysisEpCurves(@RequestParam String instanceId,
                                                         @RequestParam(value = "id") Long id, @RequestParam(value = "name") String name,
-                                                        @RequestParam(value = "epPoints") List<Integer> epPoints,
+                                                        @RequestParam(value = "epPoints") List<Float> epPoints,
                                                         @RequestParam(value = "analysisIdList", required = false) List<Long> analysisIdList,
                                                         @RequestParam(value = "finPerspList", required = false) List<String> finPerspList) {
         this.logger.debug("start getting listRdmAnalysisEpCurves ...");

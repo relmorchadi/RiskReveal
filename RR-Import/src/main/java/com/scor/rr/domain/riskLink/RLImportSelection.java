@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.RdmAnalysis;
 import com.scor.rr.domain.dto.ImportSelectionDto;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -39,8 +42,8 @@ public class RLImportSelection {
     private Float unitMultiplier;
     @Column(name = "Proportion")
     private Float proportion;
-    @Column(name = "TargetRAPCode")
-    private String targetRAPCode;
+    //    @Column(name = "TargetRAPCode")
+//    private String targetRAPCode;
     // TODO : Review with shaun
     @Column(name = "ProxyScalingBasis")
     private String proxyScalingBasis;
@@ -53,9 +56,13 @@ public class RLImportSelection {
     @Column(name = "SystemRegionPeril")
     private String systemRegionPeril;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RLAnalysisId")
+    @JsonBackReference
     private RLAnalysis rlAnalysis;
+
+    @OneToMany(mappedBy = "rlImportSelection", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RLImportTargetRAPSelection> targetRaps;
 
     public RLImportSelection(RdmAnalysis analysis, Long projectId) {
         this.entity = 1;
@@ -63,18 +70,23 @@ public class RLImportSelection {
         this.targetCurrency = analysis.getAnalysisCurrency();
         //this.targetRegionPeril; // TODO: Calculate
         this.overrideRegionPerilBasis = null;
+        this.targetRaps = new ArrayList<>();
     }
 
 
-    public RLImportSelection(ImportSelectionDto importSelectionDto, RLAnalysis rlAnalysis) {
+    public RLImportSelection(ImportSelectionDto importSelectionDto, String fp, RLAnalysis rlAnalysis) {
         this.projectId = importSelectionDto.getProjectId();
         this.entity = 1;
         this.targetCurrency = importSelectionDto.getTargetCurrency();
         this.targetRegionPeril = importSelectionDto.getTargetRegionPeril();
         this.unitMultiplier = importSelectionDto.getUnitMultiplier();
         this.proportion = importSelectionDto.getProportion();
-        this.targetRAPCode = importSelectionDto.getTargetRAPCode();
-        this.financialPerspective = importSelectionDto.getFinancialPerspective();
+        this.financialPerspective = fp;
         this.rlAnalysis = rlAnalysis;
+        this.targetRaps = new ArrayList<>();
+    }
+
+    public void addTargetRap(RLImportTargetRAPSelection rlImportTargetRAPSelection) {
+        this.targetRaps.add(rlImportTargetRAPSelection);
     }
 }
