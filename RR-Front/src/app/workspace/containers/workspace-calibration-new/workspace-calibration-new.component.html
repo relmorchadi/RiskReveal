@@ -1,3 +1,27 @@
-<p>
-  workspace-calibration-new works!
-</p>
+<div class="plt-browser-wrapper">
+  <div class="a-app-wrapper">
+    <div class="a-app-header">
+      <h4>Calibration</h4>
+    </div>
+    <div class="my-tabs">
+      <div class="PLTs-content">
+        <div class="title-as-tab" style="height: 58px; justify-content: space-between;">
+          <span class="title">
+            PLTs
+          </span>
+        </div>
+        <div class="tabs-header">
+          <label (nzCheckedChange)="isGrouped = $event" [nzChecked]="isGrouped"  nz-checkbox> group By pure </label>
+        </div>
+      </div>
+      <div class="tab-set-right">
+        <app-calibration-new-table
+          [data]="data"
+          [columns]="columns"
+          [rowKeys]="rowKeys"
+          [mode]="isGrouped ? 'grouped' : 'default'"
+        ></app-calibration-new-table>
+      </div>
+    </div>
+  </div>
+</div>

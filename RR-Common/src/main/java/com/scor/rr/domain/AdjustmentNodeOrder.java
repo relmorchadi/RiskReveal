@@ -10,7 +10,7 @@ public class AdjustmentNodeOrder {
     private int adjustmentNodeOrderId;
     private Integer entity;
     private Integer adjustmentOrder;
-    private AdjustmentThreadEntity adjustmentThread;
+    private AdjustmentThread adjustmentThread;
     private AdjustmentNode adjustmentNode;
 
     @Column(name = "Entity")
@@ -59,11 +59,11 @@ public class AdjustmentNodeOrder {
 
     @ManyToOne
     @JoinColumn(name = "adjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
-    public AdjustmentThreadEntity getAdjustmentThread() {
+    public AdjustmentThread getAdjustmentThread() {
         return adjustmentThread;
     }
 
-    public void setAdjustmentThread(AdjustmentThreadEntity adjustmentThread) {
+    public void setAdjustmentThread(AdjustmentThread adjustmentThread) {
         this.adjustmentThread = adjustmentThread;
     }
 

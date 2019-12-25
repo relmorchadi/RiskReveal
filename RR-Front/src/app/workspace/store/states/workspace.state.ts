@@ -15,6 +15,7 @@ import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
+import {CalibrationNewService} from "../../services/calibration-new.service";
 
 
 const initialState: WorkspaceModel = {
@@ -46,6 +47,7 @@ export class WorkspaceState {
               private contractService: ContractService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
+              private calibrationNewService: CalibrationNewService,
               private riskLinkFacade: RiskLinkStateService,
               private inuringService: InuringService,
               private fileBasedFacade: FileBasedService,
@@ -685,6 +687,17 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadGroupedPltsByPure)
+  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadGroupedPltsByPure) {
+    return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
+  }
+
+  /***********************************
+   *
    * Calibration Actions
    *
    ***********************************/
@@ -986,6 +999,11 @@ export class WorkspaceState {
   @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
   synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
     this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
+  }
+
+  @Action(fromWS.BasicScanEDMAndRDMAction)
+  basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.BasicScanEDMAndRDMAction) {
+    return this.riskLinkFacade.basicScanEDMAndRDM(ctx, payload);
   }
 
   @Action(fromWS.CreateLinkingAction)

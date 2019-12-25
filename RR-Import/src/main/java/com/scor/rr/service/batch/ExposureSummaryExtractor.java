@@ -112,10 +112,10 @@ public class ExposureSummaryExtractor {
             List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
             ProjectImportRunEntity projectImportRun = projectImportRunRepository.findByProjectIdAndRunId(Long.valueOf(projectId), projectImportRunList.size());
 
-            List<ModelPortfolio> modelPortfolios = transformationPackage.getModelPortfolios();
+            List<ModelPortfolioEntity> modelPortfolios = transformationPackage.getModelPortfolios();
 
             if (modelPortfolios != null && !modelPortfolios.isEmpty()) {
-                Map<MultiKey, List<ModelPortfolio>> portfoliosPerEdm = new HashMap<>();
+                Map<MultiKey, List<ModelPortfolioEntity>> portfoliosPerEdm = new HashMap<>();
 
                 modelPortfolios.forEach(modelPortfolio -> {
                     MultiKey edmKey = createEdmKey(modelPortfolio.getSourceModellingSystemInstance(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
@@ -141,7 +141,7 @@ public class ExposureSummaryExtractor {
                     globalExposureViewRepository.save(globalExposureView);
                     List<ExposureViewDefinition> exposureViewDefinitions = exposureViewDefinitionRepository.findByExposureView(defaultExposureView);
 
-                    for (Map.Entry<MultiKey, List<ModelPortfolio>> entry : portfoliosPerEdm.entrySet()) {
+                    for (Map.Entry<MultiKey, List<ModelPortfolioEntity>> entry : portfoliosPerEdm.entrySet()) {
 
                         MultiKey edm = entry.getKey();
                         String instance = (String) edm.getKey(0);

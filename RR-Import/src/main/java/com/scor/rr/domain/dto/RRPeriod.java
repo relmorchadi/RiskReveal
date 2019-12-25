@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RRPeriod {
     private int nb;
-    private int[]events;
-    private int[]seqs;
+    private int[] events;
+    private int[] seqs;
     //    private float[]quantiles;
-    private double[]quantiles;
+    private double[] quantiles;
     private long[] eventDates;
 }

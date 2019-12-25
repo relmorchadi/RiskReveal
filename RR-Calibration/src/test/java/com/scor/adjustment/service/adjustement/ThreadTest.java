@@ -2,7 +2,7 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNode;
-import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.AdjustmentThread;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.exceptions.RRException;
@@ -50,7 +50,7 @@ public class ThreadTest {
 
     @Test
     public void createPurePltThread() throws RRException {
-        AdjustmentThreadEntity threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
+        AdjustmentThread threadEntity = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadCreationRequest(983L,
                 "",
                 false));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));

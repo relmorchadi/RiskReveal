@@ -15,6 +15,7 @@ import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
 import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,11 +104,14 @@ public class AdjustmentNodeProcessingService {
 
     public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
         log.info("------ begin thread processing ------");
-        AdjustmentThreadEntity thread = adjustmentThreadRepository.findById(threadId).get();
+        AdjustmentThread thread = adjustmentThreadRepository.findById(threadId).get();
         if (thread == null) {
             log.info("------ thread null, wrong ------");
             return null;
+        } else if (BooleanUtils.isTrue(thread.getLocked())) {
+            throw new IllegalStateException("---------- adjustPLTsInThread, thread is locked, not permitted ----------");
         }
+
         List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
         AdjustmentNodeProcessingEntity processing = null;
         if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
@@ -139,6 +143,7 @@ public class AdjustmentNodeProcessingService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         finalPLT.setLossDataFilePath(dstFile.getParent());
         finalPLT.setLossDataFileName(dstFile.getName());
 
@@ -171,10 +176,12 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
 
-        AdjustmentThreadEntity adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
+        AdjustmentThread adjustmentThread = adjustmentThreadRepository.findById(adjustmentNode.getAdjustmentThread().getAdjustmentThreadId()).get();
         if (adjustmentThread == null) {
             log.info("------ no adjustmentThread, wrong ------");
             return null;
+        }  else if (BooleanUtils.isTrue(adjustmentThread.getLocked())) {
+            throw new IllegalStateException("---------- adjustPLTPassingByNode, thread is locked, not permitted ----------");
         }
 
         // kiem tra xem node co PLT input ?
@@ -320,9 +327,8 @@ public class AdjustmentNodeProcessingService {
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), adjustmentScalingParameter.getAdjustmentFactor()); // getRpmf() la gi
         } else if (NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = returnPeriodBandingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
-            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // revise
-//            return CalculAdjustement.OEPReturnBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // revise
-
+//            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // revise
+            return CalculAdjustement.OEPReturnBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters); // RR3
         } else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
             List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandingParameters = returnPeriodBandingAdjustmentParameterRepository.findByAdjustmentNodeAdjustmentNodeId(node.getAdjustmentNodeId());
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), adjustmentReturnPeriodBandingParameters);
@@ -341,7 +347,7 @@ public class AdjustmentNodeProcessingService {
         }
     }
 
-    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNode> nodeClones, AdjustmentThreadEntity threadInitial, AdjustmentThreadEntity threadCloned) throws RRException {
+    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNode> nodeClones, AdjustmentThread threadInitial, AdjustmentThread threadCloned) throws RRException {
         if(nodeClones != null) {
             PltHeaderEntity inputPlt = threadCloned.getFinalPLT();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();

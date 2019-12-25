@@ -8,6 +8,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,7 @@ public class AdjustmentNodeService {
     }
 
 //    tien : create node from default parameters found from data tables of ref data
-    public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
+    public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThread adjustmentThread,
                                                                              DefaultAdjustmentNode defaultNode) throws RRException {
         Double lmf = null; // linear, type 1
         Double rpmf = null; // EEF frequency, type 2
@@ -150,7 +151,7 @@ public class AdjustmentNodeService {
                 defaultNode.getCappedMaxExposure(),
                 defaultNode.getAdjustmentBasis().getAdjustmentBasisId(),
                 defaultNode.getAdjustmentType().getAdjustmentTypeId(),
-                adjustmentThreadEntity.getAdjustmentThreadId(),
+                adjustmentThread.getAdjustmentThreadId(),
                 lmf,
                 rpmf,
                 peatData,
@@ -221,9 +222,11 @@ public class AdjustmentNodeService {
         if (adjustmentNodeRequest.getAdjustmentThreadId() == null) {
             throw new IllegalStateException("---------- createAdjustmentNode, thread id null, wrong ----------");
         } else {
-            AdjustmentThreadEntity thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
+            AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- createAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
             }
@@ -314,9 +317,11 @@ public class AdjustmentNodeService {
 
         // if update thread for node
         if (adjustmentNodeRequest.getAdjustmentThreadId() != null) {
-            AdjustmentThreadEntity thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
+            AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- updateAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
             }
@@ -549,7 +554,7 @@ public class AdjustmentNodeService {
         }
     }
 
-    public List<AdjustmentNode> cloneNode(AdjustmentThreadEntity threadClone, AdjustmentThreadEntity threadParent) {
+    public List<AdjustmentNode> cloneNode(AdjustmentThread threadClone, AdjustmentThread threadParent) {
         List<AdjustmentNode> nodeEntities = adjustmentNodeRepository.findByAdjustmentThread(threadParent);
         if(nodeEntities != null) {
             List<AdjustmentNode> nodeEntitiesCloned = new ArrayList<>();

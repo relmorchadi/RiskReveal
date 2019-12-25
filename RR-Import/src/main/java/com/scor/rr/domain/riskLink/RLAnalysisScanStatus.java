@@ -17,12 +17,18 @@ public class RLAnalysisScanStatus {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "RLAnalysisScanStatusId")
     private Long RLAnalysisScanStatusId;
+    @Column(name = "Entity")
     private Integer entity;
+    @Column(name = "RLModelAnalysisId")
     private Long rlAnalysisId;
+    @Column(name = "ScanLevel")
     private Integer scanLevel;
+    @Column(name = "ScanStatus")
     private Integer scanStatus;
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LastScan")
     private Date lastScan;
 
     public RLAnalysisScanStatus(Long rlAnalysisId, int scanStatus) {

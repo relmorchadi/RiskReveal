@@ -7,8 +7,7 @@ import java.util.Objects;
 
 @javax.persistence.Entity
 @Table(name = "AdjustmentThread")
-public class AdjustmentThreadEntity {
-    private Boolean locked;
+public class AdjustmentThread {
 //    private String createdBy;
 //    private Timestamp createdOn;
 //    private String lastModifiedBy;
@@ -16,11 +15,23 @@ public class AdjustmentThreadEntity {
 //    private Timestamp lastGeneratedOn;
 //    private Timestamp generatedOn;
     private Integer adjustmentThreadId;
+    private Integer entity;
+    private int threadIndex;
     private PltHeaderEntity initialPLT;
     private PltHeaderEntity finalPLT;
-    private int threadIndex;
-    private Integer entity;
+    private Boolean locked;
     private String threadStatus;
+
+    @Id
+    @Column(name = "AdjustmentThreadId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Integer getAdjustmentThreadId() {
+        return adjustmentThreadId;
+    }
+
+    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
+        this.adjustmentThreadId = adjustmentThreadId;
+    }
 
     @Column(name = "Entity")
     public Integer getEntity() {
@@ -39,26 +50,6 @@ public class AdjustmentThreadEntity {
 
     public void setThreadIndex(int threadIndex) {
         this.threadIndex = threadIndex;
-    }
-
-    @Basic
-    @Column(name = "isLocked")
-    public Boolean getLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-
-    @Basic
-    @Column(name = "ThreadStatus", length = 100)
-    public String getThreadStatus() {
-        return threadStatus;
-    }
-
-    public void setThreadStatus(String threadStatus) {
-        this.threadStatus = threadStatus;
     }
 
 //    @Basic
@@ -121,17 +112,6 @@ public class AdjustmentThreadEntity {
 //        this.generatedOn = generatedOn;
 //    }
 
-    @Id
-    @Column(name = "AdjustmentThreadId", nullable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getAdjustmentThreadId() {
-        return adjustmentThreadId;
-    }
-
-    public void setAdjustmentThreadId(Integer adjustmentThreadId) {
-        this.adjustmentThreadId = adjustmentThreadId;
-    }
-
 //    @Override
 //    public boolean equals(Object o) {
 //        if (this == o) return true;
@@ -163,13 +143,33 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FinalPLT", referencedColumnName = "PltHeaderId")
+    @JoinColumn(name = "FinalPLTId", referencedColumnName = "PltHeaderId")
     public PltHeaderEntity getFinalPLT() {
         return finalPLT;
     }
 
     public void setFinalPLT(PltHeaderEntity finalPLT) {
         this.finalPLT = finalPLT;
+    }
+
+    @Basic
+    @Column(name = "Locked")
+    public Boolean getLocked() {
+        return locked;
+    }
+
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    @Basic
+    @Column(name = "ThreadStatus", length = 100)
+    public String getThreadStatus() {
+        return threadStatus;
+    }
+
+    public void setThreadStatus(String threadStatus) {
+        this.threadStatus = threadStatus;
     }
 
     @Override

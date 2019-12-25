@@ -58,6 +58,12 @@ public class SummaryStatisticHeaderEntity {
     @Column(name = "EPSFileName")
     private String ePSFileName;
 
+    @Column(name = "OEP2")
+    private Double oep2;
+
+    @Column(name = "OEP5")
+    private Double oep5;
+
     @Column(name = "OEP10")
     private Double oep10;
 
@@ -75,6 +81,12 @@ public class SummaryStatisticHeaderEntity {
 
     @Column(name = "OEP1000")
     private Double oep1000;
+
+    @Column(name = "AEP2")
+    private Double aep2;
+
+    @Column(name = "AEP5")
+    private Double aep5;
 
     @Column(name = "AEP10")
     private Double aep10;

@@ -20,4 +20,8 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}defaultAdjustment/lookupDefaultAdjustment`, {params: {engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId}});
   }
 
+  loaGroupedPltsByPure(wsId: string, uwYear: number) {
+    return this.http.get(`${this.URL}plts?wsId=${wsId}&uwYear=${uwYear}`);
+  }
+
 }
