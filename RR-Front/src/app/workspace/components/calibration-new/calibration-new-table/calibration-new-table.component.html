@@ -4,7 +4,13 @@
   [columns]="columns"
   [responsive]="true"
   [scrollable]="true"
+  [style]="{width:'100%'}"
 >
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width + 'px'}">
+    </colgroup>
+  </ng-template>
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
@@ -16,6 +22,7 @@
   <!--
   BODY
   -->
+
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
 
     <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{rowData: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}">

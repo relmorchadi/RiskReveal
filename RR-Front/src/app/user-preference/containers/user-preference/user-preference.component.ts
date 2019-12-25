@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
 import {
@@ -21,6 +21,8 @@ import {Router} from "@angular/router";
 import {Data} from "../../../core/model/data";
 import * as fromWorkspaceStore from "../../../workspace/store";
 import {NotificationService} from "../../../shared/services";
+import {mergeMap} from "rxjs/operators";
+import {RiskApi} from "../../../workspace/services/api/risk.api";
 
 @Component({
   selector: 'app-user-preference',
@@ -43,10 +45,10 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
   financialPerspectiveELT = [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
     {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
     {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}];
-  financialPerspectiveEPM = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
-  targetCurrency = ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'];
-  targetAnalysisCurrency = ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'];
-  rmsInstance = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
+  financialPerspectiveEPM: any;
+  targetCurrency: any;
+  targetAnalysisCurrency: any;
+  rmsInstance: any;
 
   countries: any;
   uwUnits: any;
@@ -61,6 +63,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
   constructor(public location: Location,
               private cdRef: ChangeDetectorRef,
               private actions$: Actions,
+              private riskApi: RiskApi,
               private notification: NotificationService,
               private router$: Router, public store$: Store) {
     super(router$, cdRef, store$);
@@ -70,6 +73,15 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   ngOnInit() {
     this.defaultImport = localStorage.getItem('importConfig');
+    this.riskApi.loadImportRefData().subscribe(
+      (refData: any) => {
+        this.rmsInstance = refData.rmsInstances;
+        this.targetAnalysisCurrency = refData.currencies;
+        this.targetCurrency = refData.currencies;
+        this.financialPerspectiveEPM = _.map(refData.financialPerspectives, item => item.desc);
+        this.financialPerspectiveELT = _.map(refData.financialPerspectives, item => { return {label: item.desc, value: item.code}})
+      }
+    );
 
     this.store$.select(SearchNavBarState.getSearchTarget).subscribe(
       value => this.searchTarget = value
