@@ -26,7 +26,7 @@ public class ConfigurationResource {
     private ConfigurationService configurationService;
 
     @PostMapping("basic-scan")
-    public ResponseEntity<?> addEmdRdm(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
         rmsService.basicScan(dataSources, projectId, instanceId, instanceName);
         return ResponseEntity.ok().build();
     }

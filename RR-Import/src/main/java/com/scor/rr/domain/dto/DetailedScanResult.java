@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DetailedScanResult {
-    private List<RLAnalysis> analysis;
+    private List<RLAnalysisDetailedDto> analysis;
     private List<RLPortfolio> portfolios;
 }
