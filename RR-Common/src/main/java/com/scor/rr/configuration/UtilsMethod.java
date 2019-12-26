@@ -72,8 +72,12 @@ public class UtilsMethod {
         FileChannel source = null;
         FileChannel destination = null;
         long size = 0;
+        log.debug("source file {} dest file {}", sourceFile.getAbsolutePath(), destFile.getAbsolutePath());
         try {
             if (!destFile.exists()) {
+                if (!destFile.getParentFile().exists()) {
+                    destFile.getParentFile().mkdirs();
+                }
                 destFile.createNewFile();
             }
             log.debug("source file {} dest file {}", sourceFile, destFile);
