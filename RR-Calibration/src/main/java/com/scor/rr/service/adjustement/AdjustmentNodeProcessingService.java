@@ -91,10 +91,10 @@ public class AdjustmentNodeProcessingService {
         return adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
     }
 
-    //NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
+    // NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
     //Perhaps a refactor need to be done
 
-    //NOTE: should have the separated functions:
+    // NOTE: should have the separated functions:
     //  - Save Adjustment Node, adjustment parameters and adjustment processing into DB
     //  - Trigger adjustment processing (i.e call CalculAdjustement methods), return PLT Loss Data list and status
     //  - Persist PLT to DB
@@ -227,7 +227,7 @@ public class AdjustmentNodeProcessingService {
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
         String filename = "InterimPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".bin";
-        File binFile = savePLTFile(pltLossData, inputPLT.getLossDataFilePath(),  filename); // luu file
+        File binFile = savePLTFile(pltLossData, inputPLT.getLossDataFilePath(), filename); // luu file
         if (binFile != null) {
             log.info("success saving loss file for adjusted PLT");
             PltHeaderEntity adjustedPLT = new PltHeaderEntity(inputPLT); // tao plt moi

@@ -688,7 +688,7 @@ public class CalculateAdjustmentService {
         return nonLinearEventDrivenAdjustmentOrEventPeriodAdjustment(pltLossDatas, cap, peatDatas, true);
     }
 
-    public static List<PLTLossData> linearAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
+    public List<PLTLossData> linearAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
         if (lmf > 0) {
             if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
                 return pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),

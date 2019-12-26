@@ -90,10 +90,11 @@ public class AdjustmentThreadService {
 //        adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThread.setLocked(false);
         adjustmentThread.setThreadStatus("Initialized");
-        if(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
+        if (pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
                 adjustmentThread.setInitialPLT(pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get());
+                adjustmentThread.setThreadIndex(calculateNewThreadIndex(adjustmentThread.getInitialPLT()));
                 adjustmentThread = adjustmentThreadRepository.save(adjustmentThread);
                 if (adjustmentThreadCreationRequest.isGenerateDefaultThread()) {
                     adjustmentThread = defaultAdjustmentService.createDefaultThread(adjustmentThread);
@@ -113,12 +114,14 @@ public class AdjustmentThreadService {
 
     public AdjustmentThread updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest request) throws RRException {
         AdjustmentThread adjustmentThread = adjustmentThreadRepository.getOne(request.getAdjustmentThreadId());
-        if(adjustmentThread != null) {
-            adjustmentThread.setFinalPLT(pltHeaderRepository.getOne(request.getPltFinalId()));
+        if (adjustmentThread != null) {
+            if (request.getPltFinalId() != null) {
+                adjustmentThread.setFinalPLT(pltHeaderRepository.getOne(request.getPltFinalId()));
+            }
             adjustmentThread.setLocked(request.isLocked());
             return adjustmentThreadRepository.save(adjustmentThread);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
         }
     }
 
@@ -140,15 +143,7 @@ public class AdjustmentThreadService {
         }
 
         AdjustmentThread newThread = new AdjustmentThread();
-        List<AdjustmentThread> adjustmentThreads = adjustmentThreadRepository.findByInitialPLT(thread.getInitialPLT());
-        if (adjustmentThreads != null && !adjustmentThreads.isEmpty()) {
-            Integer maxThreadIndex = adjustmentThreads
-                    .stream()
-                    .max(Comparator.comparing(AdjustmentThread::getThreadIndex))
-                    .orElseThrow(NoSuchElementException::new).getThreadIndex();
-            newThread.setThreadIndex(maxThreadIndex + 1);
-        }
-
+        newThread.setThreadIndex(calculateNewThreadIndex(thread.getInitialPLT()));
         newThread.setThreadStatus("Initialized");
         newThread.setLocked(false);
         newThread.setInitialPLT(thread.getInitialPLT());
@@ -161,7 +156,20 @@ public class AdjustmentThreadService {
         return newThread;
     }
 
-    public void cloneListOfNodes(List<AdjustmentNode> nodes, AdjustmentThread newThread) throws RRException {
+    public int calculateNewThreadIndex(PltHeaderEntity plt) {
+        Integer maxThreadIndex = 0;
+        List<AdjustmentThread> adjustmentThreads = adjustmentThreadRepository.findByInitialPLT(plt);
+        if (adjustmentThreads != null && !adjustmentThreads.isEmpty()) {
+            maxThreadIndex = adjustmentThreads
+                    .stream()
+                    .max(Comparator.comparing(AdjustmentThread::getThreadIndex))
+                    .orElseThrow(NoSuchElementException::new).getThreadIndex();
+        }
+        return maxThreadIndex + 1;
+    }
+
+
+        public void cloneListOfNodes(List<AdjustmentNode> nodes, AdjustmentThread newThread) throws RRException {
         if (nodes != null && !nodes.isEmpty()) {
             // sort adjustmentNodes by node order from 1 to n then processing
             nodes.sort(

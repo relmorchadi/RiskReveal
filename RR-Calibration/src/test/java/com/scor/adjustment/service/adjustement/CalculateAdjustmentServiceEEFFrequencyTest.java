@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
     private List<PLTLossData> pltLossDataList;
     private double rpmf;
     private boolean cap;
+
+    @Autowired
+    CalculateAdjustmentService calculateAdjustmentService;
 
     @Before
     public void setUp() throws Exception {
@@ -49,17 +53,17 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
     @Test
     public void eefFrequencyNegativeRpmf() {
         log.info("Launch test for EEF Frequency Adjustment for negative rpmf = {}",rpmf);
-        assertNull(CalculateAdjustmentService.eefFrequency(pltLossDataList,cap,-2));
+        assertNull(calculateAdjustmentService.eefFrequency(pltLossDataList,cap,-2));
     }
     @Test
     public void eefFrequencyNullPlt() {
         log.info("Launch test for EEF Frequency Adjustment for null plt ");
-        assertNull(CalculateAdjustmentService.eefFrequency(null,cap,rpmf));
+        assertNull(calculateAdjustmentService.eefFrequency(null,cap,rpmf));
     }
     @Test
     public void eefFrequencyEmptyPlt() {
         log.info("Launch test for EEF Frequency Adjustment for an empty plt ");
-        assertNull(CalculateAdjustmentService.eefFrequency(new ArrayList<>(),cap,rpmf));
+        assertNull(calculateAdjustmentService.eefFrequency(new ArrayList<>(),cap,rpmf));
     }
 
     @Test
@@ -72,7 +76,7 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculateAdjustmentService.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = calculateAdjustmentService.eefFrequency(pltLossDataList,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -94,7 +98,7 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculateAdjustmentService.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = calculateAdjustmentService.eefFrequency(pltLossDataList,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -111,7 +115,7 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculateAdjustmentService.eefFrequency(pltLossData,cap,rpmf);
+        pltLossData = calculateAdjustmentService.eefFrequency(pltLossData,cap,rpmf);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eef frequency.csv"));
         for(int i=0;i<pltLossData.size();i++) {
             assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
@@ -123,7 +127,7 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculateAdjustmentService.eefFrequency(pltLossData,false,2);
+        pltLossData = calculateAdjustmentService.eefFrequency(pltLossData,false,2);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/eefFrequencyRPMF2Uncapped.csv"));
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eefFrequencyRPMF2Uncapped.csv"));
