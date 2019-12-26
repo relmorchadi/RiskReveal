@@ -10,16 +10,45 @@
             PLTs
           </span>
         </div>
-        <div class="tabs-header">
+        <div *ngIf="!tableConfig?.isExpanded" class="tabs-header">
           <label (nzCheckedChange)="isGrouped = $event" [nzChecked]="isGrouped"  nz-checkbox> group By pure </label>
+          <div class="radio-button-wrapper" style="position: relative;">
+            <div class="button-toggle">
+              <span style="font-weight: bold; margin-right: 10px">View: </span>
+              <div class="p-button-group">
+                <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
+                               [ngStyle]="{'padding-right':'20px'}"
+                               label="Adjustments" name="tableType"
+                               value="adjustments"></p-radioButton>
+                <p-radioButton (onClick)="onViewChange('analysis')" [ngModel]="tableConfig.view"
+                               [ngStyle]="{'padding-right':'30px'}"
+                               label="Impacts Analysis" name="tableType"
+                               value="analysis"></p-radioButton>
+                <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
+                               [ngStyle]="{'padding-right':'10px'}"
+                               label="EP Metrics" name="tableType"
+                               value="epMetrics"></p-radioButton>
+              </div>
+            </div>
+            <i class="icon-settings_24px"
+               nz-tooltip="Manage return periods"
+               style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+            <i
+              (click)="expandColumns()"
+              class="icon-chevron_right_24px"
+               style="position: absolute;top: 0;right:0"></i>
+          </div>
         </div>
       </div>
       <div class="tab-set-right">
         <app-calibration-new-table
           [data]="data"
-          [columns]="columns"
+          [epMetrics]="epMetrics"
+          [tableConfig]="tableConfig"
+          [columnsConfig]="columnsConfig"
           [rowKeys]="rowKeys"
           [mode]="isGrouped ? 'grouped' : 'default'"
+          (actionDispatcher)="handleTableActions($event)"
         ></app-calibration-new-table>
       </div>
     </div>

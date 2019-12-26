@@ -199,6 +199,22 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  static getEpMetrics(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+
+  }
+
+  @Selector()
+  static getEpMetricsColumns(wsIdentifier: string, curveType: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
+  }
+
+  /***********************************
+   *
    * Calibration Selectors
    *
    ***********************************/
@@ -694,6 +710,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadGroupedPltsByPure)
   loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadGroupedPltsByPure) {
     return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
+  }
+
+  @Action(fromWS.LoadEpMetrics)
+   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+    return this.calibrationNewService.loadEpMetrics(ctx, payload);
   }
 
   /***********************************

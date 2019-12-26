@@ -1,21 +1,37 @@
 <p-table
   [dataKey]="'pltId'"
   [value]="data"
-  [columns]="columns"
-  [responsive]="true"
+  [columns]="columnsConfig?.columns"
+  [frozenColumns]="columnsConfig?.frozenColumns"
+  [frozenWidth]="columnsConfig?.frozenColumns ? '450px' : '0px'"
+  [resizableColumns]="true"
   [scrollable]="true"
-  [style]="{width:'100%'}"
+  columnResizeMode="expand"
+  [responsive]="true"
 >
+
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
-      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width + 'px'}">
+      <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
     </colgroup>
   </ng-template>
+
   <ng-template pTemplate="header" let-columns>
+    <tr *ngIf="tableConfig?.isExpanded">
+      <ng-container *ngIf="columns?.length == columnsConfig?.columnsLength">
+        <th [attr.colspan]="columns.length" [style.height]="'100px'" [style.position]="'relative'">
+          <i
+            (click)="unexpandColumns()"
+            class="icon-chevron_left_24px"
+            style="position: absolute;top: 0;right:0"
+          ></i>
+          <label (nzCheckedChange)="setIsGrouped($event)" [nzChecked]="isGrouped"  nz-checkbox> group By pure </label>
+        </th>
+      </ng-container>
+      <ng-container *ngIf="!(columns?.length == columnsConfig?.columnsLength)" [ngTemplateOutlet]="subFrozenHeader" [ngTemplateOutletContext]="{$implicit: columns?.length}"></ng-container>
+    </tr>
     <tr>
-      <th *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
-        {{col.header}}
-      </th>
+      <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, header: col?.header, width: col?.width}"></ng-container>
     </tr>
   </ng-template>
 
@@ -25,9 +41,7 @@
 
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
 
-    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{rowData: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}">
-
-    </ng-container>
+    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
 
   </ng-template>
 
@@ -35,9 +49,9 @@
   Grouped Template
   -->
 
-  <ng-template #grouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+  <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
       <tr>
-        <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+        <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
 
           <ng-container *ngIf="col?.type == 'arrow'">
             <a href="#" [pRowToggler]="rowData">
@@ -46,7 +60,13 @@
           </ng-container>
 
           <ng-container *ngIf="col?.type != 'arrow'">
-            {{rowData[col?.field]}}
+
+            <ng-container *ngIf="columns?.length == columnsConfig?.columnsLength" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
+
+            <ng-container *ngIf="(columns?.length != columnsConfig?.columnsLength) && (tableConfig?.view == 'epMetrics')">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
+            </ng-container>
+
           </ng-container>
 
         </td>
@@ -56,26 +76,19 @@
   <!--
   not grouped Template
   -->
-  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads">
 
-      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
-
-        <ng-container *ngIf="col?.type != 'arrow'">
-          {{thread[col?.field]}}
-        </ng-container>
-
-      </td>
-    </tr>
-  </ng-template>
-
-  <ng-template #nonGrouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
       <tr *ngFor="let thread of rowData?.threads">
 
-        <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+        <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
 
           <ng-container *ngIf="col?.type != 'arrow'">
-            {{thread[col?.field]}}
+
+            <ng-container *ngIf="columns?.length == columnsConfig?.columnsLength" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+            <ng-container *ngIf="(columns?.length != columnsConfig?.columnsLength) && (tableConfig?.view == 'epMetrics')">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            </ng-container>
           </ng-container>
 
         </td>
@@ -83,4 +96,99 @@
       </tr>
   </ng-template>
 
+
+  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads">
+
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="columns?.length == columnsConfig?.columnsLength" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="(columns?.length != columnsConfig?.columnsLength) && (tableConfig?.view == 'epMetrics')">
+            {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+          </ng-container>
+
+        </ng-container>
+
+      </td>
+    </tr>
+  </ng-template>
+
+
+  <!--Frozen Template-->
+
+
+
+
+
+
+
+
+
+
+
+  <!--Helpers-->
+  <!--TEMPLATES-->
+
+
+  <!--Row Template-->
+  <ng-template #fieldTemplate let-rowData let-field="field">
+    {{ rowData[field] }}
+  </ng-template>
+
+  <!--Metric Row Template-->
+
+  <ng-template #metricTemplate let-rowData let-field="field">
+    {{ rowData[field] }}
+  </ng-template>
+
+  <!--Resizable Header-->
+
+  <ng-template #resizableTemplate let-isResizable let-header="header" let-width="width">
+
+    <ng-container *ngIf="isResizable; else nonResizableTemplate">
+      <th [style.width]="width + 'px'" pResizableColumn>
+        {{header}}
+      </th>
+    </ng-container>
+
+    <ng-template #nonResizableTemplate>
+      <th [style.width]="width + 'px'">
+        {{header}}
+      </th>
+    </ng-template>
+
+  </ng-template>
+
+
+  <!--Frozen Header-->
+
+  <ng-template #subFrozenHeader let-colspan>
+    <th [attr.colspan]="colspan" [style.height]="'100px'" class="views-cnt">
+      <div class="radio-button-wrapper" style="position: relative">
+        <div class="button-toggle">
+          <span style="font-weight: bold; margin-right: 10px">View: </span>
+          <div class="p-button-group">
+            <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
+                           [ngStyle]="{'padding-right':'20px'}"
+                           label="Adjustments" name="tableType"
+                           value="adjustments"></p-radioButton>
+            <p-radioButton (onClick)="onViewChange('analysis')" [ngModel]="tableConfig.view"
+                           [ngStyle]="{'padding-right':'30px'}"
+                           label="Impacts Analysis" name="tableType"
+                           value="analysis"></p-radioButton>
+            <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
+                           [ngStyle]="{'padding-right':'10px'}"
+                           label="EP Metrics" name="tableType"
+                           value="epMetrics"></p-radioButton>
+          </div>
+        </div>
+        <i class="icon-settings_24px"
+           nz-tooltip="Manage return periods"
+           style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+      </div>
+    </th>
+  </ng-template>
 </p-table>

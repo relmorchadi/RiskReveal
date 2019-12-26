@@ -2,9 +2,10 @@ import {Injectable} from "@angular/core";
 import {CalibrationAPI} from "./api/calibration.api";
 import {StateContext} from "@ngxs/store";
 import {WorkspaceModel} from "../model";
-import {tap} from "rxjs/operators";
+import {mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
+import * as fromWS from '../store'
 
 
 @Injectable({
@@ -26,8 +27,7 @@ export class CalibrationNewService {
       } = draft;
 
       this.getCalibState(draft, wsIdentifier).loading = true;
-      console.log("LOADING");
-    }))
+    }));
 
     return this.calibrationAPI.loaGroupedPltsByPure(wsId, uwYear)
       .pipe(
@@ -44,10 +44,43 @@ export class CalibrationNewService {
 
             innerDraft.plts = data;
             innerDraft.loading = false;
-            console.log("LOADING done");
           }))
         })
       )
   }
 
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, { wsId, uwYear, userId, curveType }: any) {
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, curveType)
+      .pipe(
+        tap( epMetrics => {
+
+          ctx.patchState(produce(ctx.getState(), draft => {
+
+            const {
+              currentTab: {
+                wsIdentifier
+              }
+            } = draft;
+
+            const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+            _.forEach(epMetrics, (metric: any, i) => {
+
+              const {
+                pltId,
+                curveType
+              } = metric;
+              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType]= {};
+              innerDraft.epMetrics[curveType][pltId] = metric;
+              if( i == '0' ) {
+                innerDraft.epMetrics.cols = _.keys(_.omit(metric, ['pltId', 'curveType']));
+              }
+            })
+
+
+          }))
+
+        })
+      )
+  }
 }

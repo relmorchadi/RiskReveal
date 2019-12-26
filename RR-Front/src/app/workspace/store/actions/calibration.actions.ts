@@ -204,3 +204,10 @@ export class LoadGroupedPltsByPure {
   constructor(public payload: any) {
   }
 }
+
+export class LoadEpMetrics {
+  static readonly type = '[Calibration] Load EpMetrics';
+
+  constructor(public payload: any) {
+  }
+}
