@@ -3,7 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.AdjustmentNodeOrder;
-import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.AdjustmentThread;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeUpdateRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
@@ -43,7 +43,7 @@ public class NodeTest {
     @Autowired
     AdjustmentNodeOrderService adjustmentNodeOrderService;
 
-    AdjustmentThreadEntity threadEntityForUpdateOrder;
+    AdjustmentThread threadEntityForUpdateOrder;
 
     AdjustmentNode nodeEntity1;
 
@@ -53,7 +53,7 @@ public class NodeTest {
 
     AdjustmentNode nodeEntity4;
     
-    AdjustmentThreadEntity threadTest;
+    AdjustmentThread threadTest;
     
     AdjustmentNode nodeTest;
     

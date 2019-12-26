@@ -329,78 +329,124 @@ public class CalculAdjustement implements ICalculAdjustment{
 
     private static final boolean DBG = false;
     private static final int nYears = 100000;
+    // ensure the list to be sorted in increasing order
+    private static List<Double> inReturnPeriods;
+    // factors can be non-increasing but the adjusted PLT must be increasing
+    private static List<Double> inFactors;
 
-//    public static List<PLTLossData> OEPReturnBanding(List<PLTLossData> sortedList, boolean isCapped, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
-//        if (!TransformationUtils.isSortedReversely(sortedList)) {
-//            log.info("PLTLossData is being resorted for adjustment");
-//            TransformationUtils.sortReverse(sortedList);
-//        }
-//
-//        List<PLTLossData> resultList = new ArrayList<>();
-//        for (PLTLossData lossData : sortedList) {
-//            resultList.add(new PLTLossData(lossData));
-//        }
-//
-//        if (DBG) log.info("Building OEP tables");
-//        Map<Integer, PLTLossData> periodToLossData = new LinkedHashMap<>(); // already sorted by loss thanks to sortedList
-//        for (PLTLossData lossData : resultList) {
-//            Integer period = Integer.valueOf(lossData.getSimPeriod());
-//
-//            boolean is30589 = period == 30589;
-//            if (periodToLossData.containsKey(period)) {
-//                if (periodToLossData.get(period).getLoss() >= lossData.getLoss()) {
-//                    if (DBG && is30589) if (DBG) log.info("skip {} - {} into oep table", period, lossData.getLoss());
-//                    continue;
-//                }
-//                if (DBG && is30589) if (DBG) log.info("override to put {} - {} into oep table", period, lossData.getLoss());
-//            }
-//            periodToLossData.put(period, lossData);
-//            if (DBG && is30589) if (DBG) log.info("put {} - {} into oep table", period, lossData.getLoss());
-//        }
-//
-//        Map<Double, PLTLossData> rpToLossData = new LinkedHashMap<>();
-//        int rank = 0;
-//        List<Double> descOEPRP = new ArrayList<>();
-//        List<Double> descOEPLoss = new ArrayList<>();
-//        for (Map.Entry<Integer, PLTLossData> entry : periodToLossData.entrySet()) {
-//            rank++;
-//            descOEPRP.add(Double.valueOf(1d * nYears / rank));
-//            descOEPLoss.add(entry.getValue().getLoss());
-//        }
-//
-//        List<Double> ascOEPRP = Lists.reverse(descOEPRP);
-//        List<Double> ascOEPLoss = Lists.reverse(descOEPLoss);
-//
-//        // TODO - removable
-//        if (TransformationUtils.isSortedReversely(ascOEPRP)) {
-//            throw new IllegalStateException("isSortedReversely oep ascOEPRP");
-//        }
-//        if (TransformationUtils.isSortedReversely(ascOEPLoss)) {
-//            throw new IllegalStateException("isSortedReversely oep ascOEPLoss");
-//        }
-//
-//        if (DBG) log.info("Extracting/interpolating OEP loss profile");
-//        List<Double> inLossProfile = TransformationUtils.lerp(inReturnPeriods, ascOEPRP, ascOEPLoss);
-//
-//        if (DBG) log.info("Interpolating lmf profile");
-//        List<Double> outFactors = lerp(resultList, inLossProfile, inFactors);
-//
-//        if (DBG) log.info("Adjusting loss");
-//        if (isCapped) {
-//            for (int i = 0; i < resultList.size(); i++) {
-//                PLTLossData lossData = resultList.get(i);
-//                lossData.setLoss(Math.min(lossData.getLoss() * outFactors.get(i), lossData.getMaxExposure()));
-//            }
-//        } else {
-//            for (int i = 0; i < resultList.size(); i++) {
-//                PLTLossData lossData = resultList.get(i);
-//                lossData.setLoss(lossData.getLoss() * outFactors.get(i));
-//                lossData.setMaxExposure(lossData.getMaxExposure() * outFactors.get(i));
-//            }
-//        }
-//
-//        return resultList;
-//    }
+    // sortedList : input PLT
+    public static List<PLTLossData> OEPReturnBanding(List<PLTLossData> sortedList, boolean isCapped, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+        SortedMap<Double, Double> inRPToLMF = new TreeMap<>();
+        for (ReturnPeriodBandingAdjustmentParameter param : adjustmentReturnPeriodBandings) {
+            inRPToLMF.put(param.getReturnPeriod(), param.getAdjustmentFactor());
+        }
+
+        inReturnPeriods = new ArrayList<>(inRPToLMF.keySet());
+        inFactors = new ArrayList<>(inRPToLMF.values());
+
+        if (!TransformationUtils.isSortedReversely(sortedList)) {
+            log.info("PLTLossData is being resorted for adjustment");
+            TransformationUtils.sortReverse(sortedList);
+        }
+
+        List<PLTLossData> resultList = new ArrayList<>();
+        for (PLTLossData lossData : sortedList) {
+            resultList.add(new PLTLossData(lossData));
+        }
+
+        if (DBG) log.info("Building OEP tables");
+        Map<Integer, PLTLossData> periodToLossData = new LinkedHashMap<>(); // already sorted by loss thanks to sortedList
+        for (PLTLossData lossData : resultList) {
+            Integer period = Integer.valueOf(lossData.getSimPeriod());
+
+            boolean is30589 = period == 30589;
+            if (periodToLossData.containsKey(period)) {
+                if (periodToLossData.get(period).getLoss() >= lossData.getLoss()) {
+                    if (DBG && is30589) if (DBG) log.info("skip {} - {} into oep table", period, lossData.getLoss());
+                    continue;
+                }
+                if (DBG && is30589) if (DBG) log.info("override to put {} - {} into oep table", period, lossData.getLoss());
+            }
+            periodToLossData.put(period, lossData);
+            if (DBG && is30589) if (DBG) log.info("put {} - {} into oep table", period, lossData.getLoss());
+        }
+
+        int rank = 0;
+        List<Double> descOEPRP = new ArrayList<>();
+        List<Double> descOEPLoss = new ArrayList<>();
+        for (Map.Entry<Integer, PLTLossData> entry : periodToLossData.entrySet()) {
+            rank++;
+            descOEPRP.add(Double.valueOf(1d * nYears / rank));
+            descOEPLoss.add(entry.getValue().getLoss());
+        }
+
+        List<Double> ascOEPRP = Lists.reverse(descOEPRP);
+        List<Double> ascOEPLoss = Lists.reverse(descOEPLoss);
+
+        // TODO - removable
+        if (TransformationUtils.isSortedReversely(ascOEPRP)) {
+            throw new IllegalStateException("isSortedReversely oep ascOEPRP");
+        }
+        if (TransformationUtils.isSortedReversely(ascOEPLoss)) {
+            throw new IllegalStateException("isSortedReversely oep ascOEPLoss");
+        }
+
+        if (DBG) log.info("Extracting/interpolating OEP loss profile");
+        List<Double> inLossProfile = TransformationUtils.lerp(inReturnPeriods, ascOEPRP, ascOEPLoss);
+
+        if (DBG) log.info("Interpolating lmf profile");
+        List<Double> outFactors = lerp(resultList, inLossProfile, inFactors);
+
+        if (DBG) log.info("Adjusting loss");
+        if (isCapped) {
+            for (int i = 0; i < resultList.size(); i++) {
+                PLTLossData lossData = resultList.get(i);
+                lossData.setLoss(Math.min(lossData.getLoss() * outFactors.get(i), lossData.getMaxExposure()));
+            }
+        } else {
+            for (int i = 0; i < resultList.size(); i++) {
+                PLTLossData lossData = resultList.get(i);
+                lossData.setLoss(lossData.getLoss() * outFactors.get(i));
+                lossData.setMaxExposure(lossData.getMaxExposure() * outFactors.get(i));
+            }
+        }
+
+        return resultList;
+    }
+
+    public static List<Double> lerp(List<PLTLossData> inputs, List<Double> ascLossOEP, List<Double> factors) {
+        if (!TransformationUtils.isSorted(ascLossOEP)) {
+            throw new IllegalStateException("Input keys not sorted ascendingly");
+        }
+        if (ascLossOEP.size() != factors.size()) {
+            throw new IllegalStateException("Input keys and values not having same size");
+        }
+        List<Double> outFactors = new ArrayList<>();
+
+        for (PLTLossData input : inputs) {
+            double loss = input.getLoss();
+            int idx = Collections.binarySearch(ascLossOEP, loss);
+            double interped;
+            if (idx == -1) { // under the referenced range
+                interped = factors.get(0);
+            } else if (idx == -1 - ascLossOEP.size()) { // beyond the referenced range
+                interped = factors.get(ascLossOEP.size() - 1);
+            } else if (idx >= 0) { // it matches one endpoint in RP input list
+                interped = factors.get(idx);
+            } else { // it falls into an interval
+                int loIdx = Math.abs(idx + 2);
+                int hiIdx = Math.abs(idx + 1);
+                Double loLoss = ascLossOEP.get(loIdx);
+                Double hiLoss = ascLossOEP.get(hiIdx);
+                Double loFactor = factors.get(loIdx);
+                Double hiFactor = factors.get(hiIdx);
+
+                interped = (loss - loLoss) * (hiFactor - loFactor) / (hiLoss - loLoss) + loFactor;
+            }
+            outFactors.add(interped);
+        }
+        return outFactors;
+    }
 
     private static PLTLossData getPltLossData(boolean cap, String oepEEF, ReturnPeriodBandingAdjustmentParameter maxReturnPeriodBanding, List<PLTLossData> finalPltLossDatas, PLTLossData pltLossData) {
         if (oepEEF.equals("OEP")) {

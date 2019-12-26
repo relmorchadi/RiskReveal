@@ -5,11 +5,11 @@
         <class>com.scor.rr.domain.AdjustmentBasis</class>
         <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
-        <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
+        <class>com.scor.rr.domain.AdjustmentThread</class>
         <class>com.scor.rr.domain.AdjustmentBasis</class>
         <class>com.scor.rr.domain.AdjustmentNode</class>
         <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
-        <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
+        <class>com.scor.rr.domain.AdjustmentThread</class>
         <class>com.scor.rr.domain.PltHeaderEntity</class>
         <class>com.scor.rr.domain.ContractEntity</class>
         <class>com.scor.rr.domain.CountryView</class>

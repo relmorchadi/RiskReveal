@@ -24,4 +24,8 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}plts?wsId=${wsId}&uwYear=${uwYear}`);
   }
 
+  loadEpMetrics(wsId: string, uwYear: number, userId: number, curveType: string) {
+    return this.http.get(`${this.URL}epMetrics?workspaceContextCode=${wsId}&uwYear=${uwYear}&userId=${userId}&curveType=${curveType}`);
+  }
+
 }

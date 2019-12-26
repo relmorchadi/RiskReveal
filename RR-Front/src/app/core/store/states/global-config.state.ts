@@ -104,6 +104,16 @@ export class GeneralConfigState implements NgxsOnInit {
         }});
   }
 
+  @Action(fromGeneralConfig.PatchTimeZoneAction)
+  patchTimeZone(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchTimeZoneAction) {
+    const state = ctx.getState();
+    const {value} = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.general.timeZone = value;
+    }));
+  }
+
   @Action(fromGeneralConfig.PatchDateFormatAction)
   patchDateTarget(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchDateFormatAction) {
     const state = ctx.getState();
@@ -155,6 +165,38 @@ export class GeneralConfigState implements NgxsOnInit {
   @Action(fromGeneralConfig.PostNewConfigAction)
   postNewConfigDetail(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PostNewConfigAction) {
     const state = ctx.getState();
+    let country = '';
+    let uwUnit = '';
+    let financialPerspective = '';
+    _.forEach(state.riskLink.financialPerspectiveELT, item => financialPerspective = financialPerspective + item + ' ');
+    _.forEach(state.contractOfInterest.country, item => country = country + item.countryCode + ' ');
+    _.forEach(state.contractOfInterest.uwUnit, item => uwUnit = uwUnit + item.id + ' ');
+
+    const newConfig = {
+      shortDate: state.general.dateFormat.shortDate,
+      longDate:  state.general.dateFormat.longDate,
+      shortTime: state.general.dateFormat.shortTime,
+      longTime: state.general.dateFormat.longTime,
+      timeZone: state.general.timeZone,
+      numberOfDecimals: state.general.numberFormat.numberOfDecimals,
+      decimalSeparator: state.general.numberFormat.decimalSeparator,
+      decimalThousandSeparator: state.general.numberFormat.decimalThousandSeparator,
+      negativeFormat: state.general.numberFormat.negativeFormat,
+      numberHistory: state.general.numberFormat.numberHistory,
+      colors: null,
+      importPage: state.riskLink.importPage,
+      financialPerspectiveELT: financialPerspective,
+      financialPerspectiveEPM: state.riskLink.financialPerspectiveEPM,
+      targetCurrency: state.riskLink.targetCurrency,
+      targetAnalysisCurrency: state.riskLink.targetAnalysisCurrency,
+      rmsInstance: state.riskLink.rmsInstance,
+      country: country,
+      uwUnit: uwUnit,
+      returnPeriod: null,
+      display: null,
+    };
+
+    console.log(newConfig);
 
     return this.globalAPI.postGlobalConfig(payload).pipe( map(prj =>
       ctx.dispatch(new fromGeneralConfig.PostNewConfigSuccessAction({}))),
