@@ -18,6 +18,9 @@ public class RLPortfolioAnalysisRegion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rlPortfolioAnalysisRegionId;
 
+    @Column(name="Entity")
+    private Integer entity;
+
     @Column(name = "AnalysisRegion")
     private String analysisRegion;
 

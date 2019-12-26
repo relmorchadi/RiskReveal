@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "ZZ_RLPortfolio")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,28 +20,28 @@ public class RLPortfolio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RlPortfolioId")
+    @Column(name = "RLPortfolioId")
     private Long rlPortfolioId;
     @Column(name = "Entity")
     private Long entity;
     @Column(name = "ProjectId")
     private Long projectId;
-    @Column(name = "EdmId")
+    @Column(name = "EDMId")
     private Long edmId;
-    @Column(name = "EdmName")
+    @Column(name = "EDMName")
     private String edmName;
     @Column(name = "PortfolioId")
     private Long rlId;
-    @Column(name = "Number")
-    private String number;
-    @Column(name = "Name")
+    @Column(name = "RLPortfolioName")
     private String name;
-    @Column(name = "Created")
-    private Date created;
+    @Column(name = "RLPortfolioNumber")
+    private String number;
+//    @Column(name = "Created")
+//    private Date created;
     @Column(name = "Description")
     private String description;
-    @Column(name = "Type")
-    private String type;
+    @Column(name = "DescriptionType")
+    private String descriptionType;
     @Column(name = "Peril")
     private String peril;
     @Column(name = "AgSource")
@@ -49,6 +50,8 @@ public class RLPortfolio {
     private String agCedent;
     @Column(name = "AgCurrency")
     private String agCurrency;
+    @Column(name = "Type")
+    private String type;
     @Column(name = "TIV")
     private BigDecimal tiv;
 
@@ -57,12 +60,12 @@ public class RLPortfolio {
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
     @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "portfolioScanStatus")
+    @JoinColumn(name = "PortfolioScanStatus")
     @JsonBackReference
     private RLPortfolioScanStatus rlPortfolioScanStatus;
 
     @ManyToOne
-    @JoinColumn(name = "RlModelDataSourceId")
+    @JoinColumn(name = "RLDataSourceId")
     @JsonBackReference
     private RLModelDataSource rlModelDataSource;
 

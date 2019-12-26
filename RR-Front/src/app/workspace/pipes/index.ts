@@ -6,6 +6,7 @@ import {ForNumberPipe} from './for-number.pipe';
 import {ParseIdPipe} from './parse-id.pipe';
 import {StatusFilterPipe} from './status-filter.pipe';
 import {RmsDatasourceTypePipe} from './rms-datasource.pipe';
+import {GetMetricPipe} from "./get-metric.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -15,7 +16,8 @@ export const PIPES = [
   ForNumberPipe,
   ParseIdPipe,
   StatusFilterPipe,
-  RmsDatasourceTypePipe
+  RmsDatasourceTypePipe,
+  GetMetricPipe
 ];
 
 export * from './filter-by-badge.pipe';

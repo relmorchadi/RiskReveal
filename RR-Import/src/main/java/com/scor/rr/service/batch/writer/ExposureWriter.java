@@ -1,6 +1,6 @@
 package com.scor.rr.service.batch.writer;
 
-import com.scor.rr.domain.ModelPortfolio;
+import com.scor.rr.domain.ModelPortfolioEntity;
 import com.scor.rr.domain.ModelPortfolioStorageEntity;
 import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.enums.XLTOT;
@@ -48,7 +48,7 @@ public class ExposureWriter extends AbstractWriter {
         }
     }
 
-    public void writeExposureSummaryHeader(Long edmId, String edmName, RLPortfolio rlPortfolio, ModelPortfolio modelPortfolio, ExposureSummaryExtractType extractType, List<ExposureSummaryExtractFile> extractFiles) {
+    public void writeExposureSummaryHeader(Long edmId, String edmName, RLPortfolio rlPortfolio, ModelPortfolioEntity modelPortfolio, ExposureSummaryExtractType extractType, List<ExposureSummaryExtractFile> extractFiles) {
         log.debug("Starting writeExposureSummaryHeader");
 
         for (ExposureSummaryExtractFile exposureSummaryExtractFile : extractFiles) {

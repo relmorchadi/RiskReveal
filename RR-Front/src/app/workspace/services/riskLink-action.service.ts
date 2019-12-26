@@ -2120,6 +2120,7 @@ export class RiskLinkStateService {
       .pipe(
         mergeMap(
           (refData: any) => {
+            console.log(refData.financialPerspectives);
             return of(ctx.patchState(
               produce(
                 ctx.getState(), draft => {

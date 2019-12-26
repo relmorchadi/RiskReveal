@@ -113,6 +113,14 @@ export class WorkspaceService {
             loading: false,
             typeWs: null,
           },
+          calibrationNew: {
+            plts: [],
+            epMetrics: {
+              cols: []
+            },
+            adjustments: {},
+            loading: false
+          },
           calibration: {
             data: {},
             deleted: {},
@@ -163,19 +171,10 @@ export class WorkspaceService {
               collapseResult: true,
             },
             financialValidator: {
-              rmsInstance: {
-                data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'],
-                selected: 'AZU-P-RL17-SQL14'
-              },
-              financialPerspectiveELT: {
-                data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
-                selected: 'Net Loss Pre Cat (RL)'
-              },
-              targetCurrency: {
-                data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
-                selected: 'Main Liability Currency (MLC)'
-              },
-              division: {data: ['Division N°1', 'Division N°2', 'Division N°3'], selected: 'Division N°1'},
+              rmsInstance: {data: [], selected: 'AZU-P-RL17-SQL14'},
+              financialPerspectiveELT: {data: [], selected: 'Net Loss Pre Cat (RL)'},
+              targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
+              division: {data: [], selected: 'Division N°1'},
             },
             financialPerspective: {
               rdm: {data: null, selected: null},

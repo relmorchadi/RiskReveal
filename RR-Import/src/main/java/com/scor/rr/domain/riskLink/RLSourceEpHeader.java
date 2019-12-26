@@ -14,7 +14,10 @@ public class RLSourceEpHeader {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "RLSourceEPHeaderId")
     private Long rLSourceEPHeaderId;
+    @Column(name = "Entity")
+    private Integer entity;
     @Column(name = "RLModelAnalysisId")
     private Long rLAnalysisId;
     @Column(name = "FinancialPerspective")

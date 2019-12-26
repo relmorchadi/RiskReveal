@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "RLImportSelection")
+@Table(name = "ZZ_RLImportSelection")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RLImportSelection {
@@ -52,7 +52,6 @@ public class RLImportSelection {
     private String multiplierNarrative;
     @Column(name = "SystemRegionPeril")
     private String systemRegionPeril;
-    //
 
     @ManyToOne
     @JoinColumn(name = "RLAnalysisId")

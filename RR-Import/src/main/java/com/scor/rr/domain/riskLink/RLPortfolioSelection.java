@@ -35,7 +35,7 @@ public class RLPortfolioSelection {
     private boolean importLocationLevel;
 
     // TODO : Review with Viet later
-    @Column(name = "AnalysisRegions")
+    @Column(name = "AnalysisRegion")
     private String analysisRegions;
 
     @ManyToOne

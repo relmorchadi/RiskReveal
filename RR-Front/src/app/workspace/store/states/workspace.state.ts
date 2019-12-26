@@ -15,6 +15,7 @@ import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
+import {CalibrationNewService} from "../../services/calibration-new.service";
 
 
 const initialState: WorkspaceModel = {
@@ -46,6 +47,7 @@ export class WorkspaceState {
               private contractService: ContractService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
+              private calibrationNewService: CalibrationNewService,
               private riskLinkFacade: RiskLinkStateService,
               private inuringService: InuringService,
               private fileBasedFacade: FileBasedService,
@@ -193,6 +195,22 @@ export class WorkspaceState {
 
   static getSummary(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.pltDetails.summary);
+  }
+
+  /***********************************
+   *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  static getEpMetrics(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+
+  }
+
+  @Selector()
+  static getEpMetricsColumns(wsIdentifier: string, curveType: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
   /***********************************
@@ -681,6 +699,22 @@ export class WorkspaceState {
   @Action(fromPlt.AssignPltsToTag)
   assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AssignPltsToTag) {
     return this.pltStateService.assignPltsToTag(ctx, payload);
+  }
+
+  /***********************************
+   *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadGroupedPltsByPure)
+  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadGroupedPltsByPure) {
+    return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
+  }
+
+  @Action(fromWS.LoadEpMetrics)
+   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+    return this.calibrationNewService.loadEpMetrics(ctx, payload);
   }
 
   /***********************************

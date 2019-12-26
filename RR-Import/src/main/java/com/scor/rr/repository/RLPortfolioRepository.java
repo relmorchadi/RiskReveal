@@ -22,10 +22,9 @@ public interface RLPortfolioRepository extends JpaRepository<RLPortfolio, Long> 
     @Transactional(transactionManager = "rrTransactionManager")
     @Query("UPDATE RLPortfolio rp" +
             " SET rp.tiv =:#{#portfolio.tiv}," +
-            " rp.number =:#{#portfolio.number}," +
-            " rp.created =:#{#portfolio.created}" +
+            " rp.number =:#{#portfolio.number}" +
             " WHERE " +
-            " rp.projectId= :projectId AND " +
+            " rp.projectId=:projectId AND " +
             " rp.edmId= :#{#portfolio.edmId} AND " +
             " rp.edmName= :#{#portfolio.edmName} AND " +
             " rp.rlId= :#{#portfolio.portfolioId} AND " +

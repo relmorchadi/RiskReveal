@@ -415,7 +415,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   resetFilters() {
-    console.log(this.tables);
     this.tables.filters = {};
     this.tables.filteredValue = null;
     this.filtersInput.nativeElement.value = '';
@@ -482,7 +481,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     //     this.showPopUp = !value;
     //   }
     // });
-    console.log('this is state', this.state)
     //Run the detail scan
     forkJoin(
       [

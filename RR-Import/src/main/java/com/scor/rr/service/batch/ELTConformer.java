@@ -91,9 +91,6 @@ public class ELTConformer {
 
             log.debug("eltLossesnBetaFunction.size = {}", eltLossesnBetaFunction.size());
 
-            bundle.setConformedRlAnalysisELT(conformedAnalysisELT);
-            bundle.setAnalysisELTnBetaFunction(analysisELTnBetaFunction);
-
             //TODO: check null ???
             double proportion = ofNullable(sourceResult.getProportion()).map(Number::doubleValue).map( val -> val / 100).orElse(1d);
             double multiplier = ofNullable(sourceResult.getUnitMultiplier()).map(Number::doubleValue).orElse(1d);
@@ -145,8 +142,8 @@ public class ELTConformer {
                 ELTLossnBetaFunction.setMinLayerAtt(0d);
             }
 
-            //@TODO Review
-            //bundle.setAnalysisELTnBetaFunction(eltLossesnBetaFunction);
+            bundle.setConformedRlAnalysisELT(conformedAnalysisELT);
+            bundle.setAnalysisELTnBetaFunction(analysisELTnBetaFunction);
 
             log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
         }

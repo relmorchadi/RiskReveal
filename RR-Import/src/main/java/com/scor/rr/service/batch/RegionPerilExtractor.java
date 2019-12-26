@@ -1,18 +1,11 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.CurrencyEntity;
-import com.scor.rr.domain.ModelPortfolio;
-import com.scor.rr.domain.ProjectEntity;
-import com.scor.rr.domain.ProjectImportRunEntity;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.ModelPortfolioEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
-import com.scor.rr.domain.AnalysisIncludedTargetRAPEntity;
-import com.scor.rr.domain.LossDataHeaderEntity;
-import com.scor.rr.domain.RegionPerilEntity;
-import com.scor.rr.domain.ModellingSystemInstanceEntity;
 import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import com.scor.rr.domain.riskLink.RLImportSelection;
-import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -111,7 +104,7 @@ public class RegionPerilExtractor {
         // build RRAnalysis ------------------------------------------------------------
         Map<String, Map<String, Long>> mapAnalysisRRAnalysisIds = new HashMap<>();
         Map<String, Long> fpRRAnalysis = new HashMap<>();
-        List<ModelPortfolio> modelPortfolios = new ArrayList<>();
+        List<ModelPortfolioEntity> modelPortfolios = new ArrayList<>();
 
         if (sourceResultIdsInput != null) {
             String[] sourceResultIds = sourceResultIdsInput.split(";");
@@ -275,7 +268,7 @@ public class RegionPerilExtractor {
                         modellingSystemInstanceRepository.findById(rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceId()).get();
 
 
-                ModelPortfolio modelPortfolio = new ModelPortfolio(null, rlPortfolioSelection.getProjectId(),
+                ModelPortfolioEntity modelPortfolio = new ModelPortfolioEntity(null,1, rlPortfolioSelection.getProjectId(),
                         new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRunEntity.getProjectImportRunId(),
                         rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
                         modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),

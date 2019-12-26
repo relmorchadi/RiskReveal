@@ -85,4 +85,23 @@ public class ConfigurationResource {
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "get-target-raps-for-analysis")
+    public ResponseEntity<?> getTargetRaps(@RequestParam Long rlAnalysisId) {
+        try {
+            return new ResponseEntity<>(configurationService.getTargetRapByAnalysisId(rlAnalysisId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-region-peril-for-analysis")
+    public ResponseEntity<?> getRegionPerils(@RequestParam Long rlAnalysisId) {
+        try {
+            return new ResponseEntity<>(configurationService.getRegionPeril(rlAnalysisId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
