@@ -36,6 +36,12 @@ public class DefaultAdjustmentService {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    WorkspaceRepository workspaceRepository;
+
+    @Autowired
     AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
@@ -116,17 +122,20 @@ public class DefaultAdjustmentService {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
+            ProjectEntity projectEntity = projectRepository.findById(pltHeaderEntity.getProjectId()).get();
+            WorkspaceEntity workspaceEntity = workspaceRepository.findById(projectEntity.getWorkspaceId()).get();
             if (modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).isPresent()) {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
-                        1, //TODO: add MarketChannelId, then replace by pltHeaderEntity.getMarketChannelId() != null ? pltHeaderEntity.getMarketChannelId() : 1,
+                        workspaceEntity.getWorkspaceMarketChannel(),
                         modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).get().getModel(),
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
         }
         return defaultAdjustmentNodeEntities;
     }
+
 
     public AdjustmentThread createDefaultThread(AdjustmentThread adjustmentThread) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThread.getInitialPLT().getPltHeaderId());

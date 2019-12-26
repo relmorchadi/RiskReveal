@@ -41,79 +41,79 @@ public class CalculateAdjustmentService {
     @Autowired
     RegionPerilRepository regionPerilRepository;
 
-    @PostMapping("calculateSummaryStatisticHeaderDetail")
-    public SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType metricType) {
-        PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
-
-        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
-
-        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
-        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
-
-        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-
-            if (MetricType.AEP.equals(metricType)) {
-
-            } else if (MetricType.OEP.equals(metricType)) {
-
-            } else if (MetricType.AEPTvAR.equals(metricType)) {
-
-            }  else if (MetricType.OEPTvAR.equals(metricType)) {
-
-            }
-
-            Map<Integer, Double> map = new HashMap<>();
-            List<String>  columns= new ArrayList<>();
-            List<String> values = new ArrayList<>();
-            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
-                columns.add("RP" + entry.getKey());
-                values.add(entry.getValue().toString());
-            }
-            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
-
-
-            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
-            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
-
-            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-
-            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
-
-
-            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-
-            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
-            else
-                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-
-            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
-            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
-            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
-
-            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
-                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
-                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
-                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
-                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
-            }
-        } else {
-            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
-        }
-    }
+//    @PostMapping("calculateSummaryStatisticHeaderDetail")
+//    public SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType metricType) {
+//        PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
+//
+//        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
+//
+//        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
+//        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
+//
+//        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
+//
+//            if (MetricType.AEP.equals(metricType)) {
+//
+//            } else if (MetricType.OEP.equals(metricType)) {
+//
+//            } else if (MetricType.AEPTvAR.equals(metricType)) {
+//
+//            }  else if (MetricType.OEPTvAR.equals(metricType)) {
+//
+//            }
+//
+//            Map<Integer, Double> map = new HashMap<>();
+//            List<String>  columns= new ArrayList<>();
+//            List<String> values = new ArrayList<>();
+//            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
+//                columns.add("RP" + entry.getKey());
+//                values.add(entry.getValue().toString());
+//            }
+//            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
+//
+//
+//            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
+//
+//            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
+//            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
+//            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
+//
+//            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
+//                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
+//                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
+//                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
+//                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
+//            }
+//        } else {
+//            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
+//        }
+//    }
 
 
     public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){
