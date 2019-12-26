@@ -17,3 +17,9 @@ export const utilityBackEndUrl: () => any = () => {
     calibration: `http://localhost:8082/api/`
   }
 };
+
+export const calibrationUrl: () => string = () => {
+  const {hostname} = window.location;
+  return environment.production ? `http://${hostname}:8980/risk-reveal-adjustment/api/`
+    : environment.CALIBRATION_URI;
+};

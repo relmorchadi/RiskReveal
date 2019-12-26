@@ -1,13 +1,13 @@
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {backendUrl, utilityBackEndUrl} from "../../../shared/api";
+import {calibrationUrl} from "../../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalibrationAPI {
-  protected URL = `${utilityBackEndUrl().calibration}`;
+  protected URL = `${calibrationUrl()}`;
 
   constructor(private http: HttpClient) {
   }
