@@ -1,42 +1,131 @@
-<p-table
-  [dataKey]="'pltId'"
-  [value]="data"
-  [columns]="columns"
-  [responsive]="true"
-  [scrollable]="true"
-  [style]="{width:'100%'}"
->
-  <ng-template pTemplate="colgroup" let-columns>
-    <colgroup>
-      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width + 'px'}">
-    </colgroup>
-  </ng-template>
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
-        {{col.header}}
-      </th>
-    </tr>
-  </ng-template>
+<div style="display: flex; flex-direction: column">
+  <p-table #dt
+           [dataKey]="'pltId'"
+           [value]="data"
+           [columns]="columns"
+           [resizableColumns]="true"
+           [columnResizeMode]="'expand'"
+           [responsive]="true"
+           [scrollable]="true"
+           scrollHeight="400px"
+           [(selection)]="selectedplts"
+           sortMode="multiple"
+           [style]="{width:'calc(((100vw - 43px) - 80px) - 177px)'}"
 
-  <!--
-  BODY
-  -->
-
-  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
-
-    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{rowData: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}">
-
-    </ng-container>
-
-  </ng-template>
-
-  <!--
-  Grouped Template
-  -->
-
-  <ng-template #grouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" [style]="{'width': col.width}">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
       <tr>
+        <th class="no-border" style="width: 3em"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+        <th pResizableColumn *ngFor="let col of columns" [pSortableColumn]="col.field" [ngStyle]="{'width': col?.width + 'px'}">
+          {{col.header}}
+          <p-sortIcon [field]="col.field" *ngIf="col.sort"></p-sortIcon>
+          <span *ngIf="col.field == 'status'" style="justify-content: space-between;width: 30px;height: 30px">
+            <nz-dropdown [nzPlacement]="'bottomLeft'">
+              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
+              <ul nz-menu>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.inProgress" (change)="statusFlilerCheckbox($event, 'inProgress')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-history-alt iconYellow"></i> In Progress
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.new" (change)="statusFlilerCheckbox($event, 'new')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-star iconBlue"></i> New
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.valid" (change)="statusFlilerCheckbox($event, 'valid')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-check-circle iconGreen"></i> Valid
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.locked" (change)="statusFlilerCheckbox($event, 'locked')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-lock-alt iconRed"></i> Locked
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.requiresRegeneration" (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.failed" (change)="statusFlilerCheckbox($event, 'failed')"
+                      nz-checkbox
+                      nzChecked
+                      style="margin-right: 12px;">
+                      <i class="icon-error_24px iconRed2"></i> Failed
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown>
+        </span>
+        </th>
+      </tr>
+      <tr>
+        <th style="width: 3em"></th>
+        <th *ngFor="let col of columns">
+          <div *ngIf="col.filter" class="">
+            <div class="ui-inputgroup" style="height: 30px">
+              <span class="ui-inputgroup-addon" style=" background-color: #f5f5f5"><i class="pi pi-search" style="line-height: 1.25;"></i></span>
+              <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, 'contains')" style="width:100%">
+            </div>
+          </div>
+
+        </th>
+      </tr>
+    </ng-template>
+
+    <!--
+    BODY
+    -->
+
+    <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+
+      <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{rowData: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}">
+
+      </ng-container>
+
+    </ng-template>
+
+    <!--
+    Grouped Template
+    -->
+
+    <ng-template #grouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+      <tr>
+        <td style="width: 3em"></td>
         <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
 
           <ng-container *ngIf="col?.type == 'arrow'">
@@ -51,27 +140,27 @@
 
         </td>
       </tr>
-  </ng-template>
+    </ng-template>
 
-  <!--
-  not grouped Template
-  -->
-  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads">
+    <!--
+    not grouped Template
+    -->
+    <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex" >
+      <tr *ngFor="let thread of rowData?.threads | statusFilter : selectedStatusFilter">
+        <td style="width: 3em"><p-tableCheckbox [value]="thread"></p-tableCheckbox></td>
+        <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
 
-      <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
+          <ng-container *ngIf="col?.type != 'arrow'">
+            {{thread[col?.field]}}
+          </ng-container>
 
-        <ng-container *ngIf="col?.type != 'arrow'">
-          {{thread[col?.field]}}
-        </ng-container>
+        </td>
+      </tr>
+    </ng-template>
 
-      </td>
-    </tr>
-  </ng-template>
-
-  <ng-template #nonGrouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
-      <tr *ngFor="let thread of rowData?.threads">
-
+    <ng-template #nonGrouped let-rowData="rowData" let-expanded="expanded" let-columns="columns">
+      <tr *ngFor="let thread of rowData?.threads | statusFilter : selectedStatusFilter">
+        <!--<td style="width: 3em"><p-tableCheckbox [value]="rowData"></p-tableCheckbox></td>-->
         <td *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}">
 
           <ng-container *ngIf="col?.type != 'arrow'">
@@ -81,6 +170,8 @@
         </td>
 
       </tr>
-  </ng-template>
+    </ng-template>
 
-</p-table>
+  </p-table>
+
+</div>
