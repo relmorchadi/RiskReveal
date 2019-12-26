@@ -48,6 +48,16 @@ export class LoadColors {
   constructor(public payload: any) {}
 }
 
+export class LoadConfiguration {
+  static readonly type = '[Global Configuration] Load Config';
+  constructor(public payload?: any) {}
+}
+
+export class LoadAfterDelete {
+  static readonly type = '[Global Configuration] Load Config After Delete';
+  constructor(public payload?: any) {}
+}
+
 export class PostNewConfigAction {
   static readonly type = '[Global Configuration Colors] Post New Config';
   constructor(public payload: any) {}

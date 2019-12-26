@@ -4,44 +4,45 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as fromGeneralConfig from '../actions';
 import {Data} from '../../model/data';
 import produce from "immer";
-import {of} from "rxjs";
+import {from, of} from "rxjs";
 import {catchError, map, mergeMap} from "rxjs/operators";
 import {GlobalConfigApi} from '../../service/api/global-config.api';
 
 const initiaState: GeneralConfig = {
-    general: {
-      dateFormat: {
-        shortDate: 'DD/MM/YYYY',
-        longDate: 'DDDD MMMM YYYY',
-        shortTime: 'HH:MM',
-        longTime: 'HH:MM:SS',
-      },
-      timeZone: '',
-      numberFormat: {
-        numberOfDecimals: 2,
-        decimalSeparator: '.',
-        decimalThousandSeparator: ',',
-        negativeFormat: 'simple',
-        numberHistory: '',
-      },
-      colors: []
+  userPreferenceId: null,
+  general: {
+    dateFormat: {
+      shortDate: 'DD/MM/YYYY',
+      longDate: 'DDDD MMMM YYYY',
+      shortTime: 'HH:MM',
+      longTime: 'HH:MM:SS',
     },
-    riskLink: {
-      importPage: '',
-      financialPerspectiveELT: ['Net Loss Pre Cat (RL)'],
-      financialPerspectiveEPM: 'Facultative Reinsurance Loss',
-      targetCurrency: 'Main Liability Currency (MLC)',
-      targetAnalysisCurrency: 'Main Liability Currency (MLC)',
-      rmsInstance: 'AZU-P-RL17-SQL14',
+    timeZone: '',
+    numberFormat: {
+      numberOfDecimals: 2,
+      decimalSeparator: '.',
+      decimalThousandSeparator: ',',
+      negativeFormat: 'simple',
+      numberHistory: '',
     },
-    contractOfInterest: {
-      country: [],
-      uwUnit: [],
-    },
-    epCurves: {
-      returnPeriod: {data: [], selected: []},
-      display: '',
-    }
+    colors: []
+  },
+  riskLink: {
+    importPage: '',
+    financialPerspectiveELT: [],
+    financialPerspectiveEPM: '',
+    targetCurrency: '',
+    targetAnalysisCurrency: '',
+    rmsInstance: '',
+  },
+  contractOfInterest: {
+    country: [],
+    uwUnit: [],
+  },
+  epCurves: {
+    returnPeriod: {data: [], selected: []},
+    display: '',
+  }
 };
 
 @State<GeneralConfig>({
@@ -70,7 +71,7 @@ export class GeneralConfigState implements NgxsOnInit {
 
   @Selector()
   static getGeneralConfigAttr(path: string, value: any) {
-    return  (state: any) =>  _.get(state.RiskLinkModel, path, value);
+    return (state: any) => _.get(state.RiskLinkModel, path, value);
   }
 
   @Selector()
@@ -92,16 +93,28 @@ export class GeneralConfigState implements NgxsOnInit {
     const state = ctx.getState();
     const {target, value} = payload;
     let newFormat = {...state.general.numberFormat};
-    if (target === 'numberOfDecimals') { newFormat = {...newFormat, numberOfDecimals: value}; }
-    if (target === 'decimalSeparator') { newFormat = {...newFormat, decimalSeparator: value}; }
-    if (target === 'decimalThousandSeparator') { newFormat = {...newFormat, decimalThousandSeparator: value}; }
-    if (target === 'negativeFormat') { newFormat = {...newFormat, negativeFormat: value}; }
-    if (target === 'numberHistory') { newFormat = {...newFormat, numberHistory: value}; }
+    if (target === 'numberOfDecimals') {
+      newFormat = {...newFormat, numberOfDecimals: value};
+    }
+    if (target === 'decimalSeparator') {
+      newFormat = {...newFormat, decimalSeparator: value};
+    }
+    if (target === 'decimalThousandSeparator') {
+      newFormat = {...newFormat, decimalThousandSeparator: value};
+    }
+    if (target === 'negativeFormat') {
+      newFormat = {...newFormat, negativeFormat: value};
+    }
+    if (target === 'numberHistory') {
+      newFormat = {...newFormat, numberHistory: value};
+    }
 
     ctx.patchState(
-      {general:  {
-            ...state.general, numberFormat: newFormat
-        }});
+      {
+        general: {
+          ...state.general, numberFormat: newFormat
+        }
+      });
   }
 
   @Action(fromGeneralConfig.PatchTimeZoneAction)
@@ -120,10 +133,18 @@ export class GeneralConfigState implements NgxsOnInit {
     const {target, value} = payload;
 
     let newFormat = {...state.general.dateFormat};
-    if (target === 'shortDate') { newFormat = {...newFormat, shortDate: value}; }
-    if (target === 'longDate') { newFormat = {...newFormat, longDate: value}; }
-    if (target === 'shortTime') { newFormat = {...newFormat, shortTime: value}; }
-    if (target === 'longTime') { newFormat = {...newFormat, longTime: value}; }
+    if (target === 'shortDate') {
+      newFormat = {...newFormat, shortDate: value};
+    }
+    if (target === 'longDate') {
+      newFormat = {...newFormat, longDate: value};
+    }
+    if (target === 'shortTime') {
+      newFormat = {...newFormat, shortTime: value};
+    }
+    if (target === 'longTime') {
+      newFormat = {...newFormat, longTime: value};
+    }
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.general.dateFormat = newFormat;
@@ -136,12 +157,24 @@ export class GeneralConfigState implements NgxsOnInit {
     const {target, value} = payload;
 
     let newFormat = {...state.riskLink};
-    if (target === 'importPage') { newFormat = {...newFormat, importPage: value}; }
-    if (target === 'financialPerspectiveELT') { newFormat = {...newFormat, financialPerspectiveELT: value}; }
-    if (target === 'financialPerspectiveEPM') { newFormat = {...newFormat, financialPerspectiveEPM: value}; }
-    if (target === 'targetCurrency') { newFormat = {...newFormat, targetCurrency: value}; }
-    if (target === 'targetAnalysisCurrency') { newFormat = {...newFormat, targetAnalysisCurrency: value}; }
-    if (target === 'rmsInstance') { newFormat = {...newFormat, rmsInstance: value}; }
+    if (target === 'importPage') {
+      newFormat = {...newFormat, importPage: value};
+    }
+    if (target === 'financialPerspectiveELT') {
+      newFormat = {...newFormat, financialPerspectiveELT: value};
+    }
+    if (target === 'financialPerspectiveEPM') {
+      newFormat = {...newFormat, financialPerspectiveEPM: value};
+    }
+    if (target === 'targetCurrency') {
+      newFormat = {...newFormat, targetCurrency: value};
+    }
+    if (target === 'targetAnalysisCurrency') {
+      newFormat = {...newFormat, targetAnalysisCurrency: value};
+    }
+    if (target === 'rmsInstance') {
+      newFormat = {...newFormat, rmsInstance: value};
+    }
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.riskLink = newFormat
@@ -154,8 +187,12 @@ export class GeneralConfigState implements NgxsOnInit {
     const {target, value} = payload;
 
     let newFormat = {...state.contractOfInterest};
-    if (target === 'country') { newFormat = {...newFormat, country: value}; }
-    if (target === 'uwUnit') { newFormat = {...newFormat, uwUnit: value}; }
+    if (target === 'country') {
+      newFormat = {...newFormat, country: value};
+    }
+    if (target === 'uwUnit') {
+      newFormat = {...newFormat, uwUnit: value};
+    }
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.contractOfInterest = newFormat
@@ -174,7 +211,7 @@ export class GeneralConfigState implements NgxsOnInit {
 
     const newConfig = {
       shortDate: state.general.dateFormat.shortDate,
-      longDate:  state.general.dateFormat.longDate,
+      longDate: state.general.dateFormat.longDate,
       shortTime: state.general.dateFormat.shortTime,
       longTime: state.general.dateFormat.longTime,
       timeZone: state.general.timeZone,
@@ -189,23 +226,92 @@ export class GeneralConfigState implements NgxsOnInit {
       financialPerspectiveEPM: state.riskLink.financialPerspectiveEPM,
       targetCurrency: state.riskLink.targetCurrency,
       targetAnalysisCurrency: state.riskLink.targetAnalysisCurrency,
-      rmsInstance: state.riskLink.rmsInstance,
-      country: country,
-      uwUnit: uwUnit,
+      defaultRmsInstance: state.riskLink.rmsInstance,
+      countryCode: country,
+      // uwUnitId: uwUnit,
+      userId: 1,
       returnPeriod: null,
       display: null,
     };
-
-    console.log(newConfig);
-
-    return this.globalAPI.postGlobalConfig(payload).pipe( map(prj =>
-      ctx.dispatch(new fromGeneralConfig.PostNewConfigSuccessAction({}))),
-      catchError(err => ctx.dispatch(new fromGeneralConfig.PostNewConfigFailAction({})))
+    if (state.userPreferenceId !== null) {
+      return this.globalAPI.delGlobalConfig(state.userPreferenceId).pipe(
+        map(data => {
+          console.log(data);
+          ctx.dispatch(new fromGeneralConfig.LoadAfterDelete(newConfig))
+        }),
+        catchError(delErr => ctx.dispatch(new fromGeneralConfig.PostNewConfigFailAction({}))));
+    } else {
+      return this.globalAPI.postGlobalConfig(newConfig).pipe(
+        map(prj =>
+          ctx.dispatch(new fromGeneralConfig.PostNewConfigSuccessAction({}))),
+        catchError(err => ctx.dispatch(new fromGeneralConfig.PostNewConfigFailAction({})))
       );
+    }
+  }
+
+  @Action(fromGeneralConfig.LoadAfterDelete)
+  LoadAfterDelete(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.LoadConfiguration) {
+    return this.globalAPI.postGlobalConfig(payload).pipe(
+      map(prj =>
+        ctx.dispatch(new fromGeneralConfig.PostNewConfigSuccessAction({}))),
+      catchError(err => ctx.dispatch(new fromGeneralConfig.PostNewConfigFailAction({})))
+    )
+  }
+
+  @Action(fromGeneralConfig.LoadConfiguration)
+  loadConfig(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.LoadConfiguration) {
+    return this.globalAPI.getGlobalConfig(1).pipe(
+      mergeMap((data: any) => {
+          return of(ctx.patchState(produce(ctx.getState(), draft => {
+              draft.userPreferenceId = data.userPreferenceId;
+              draft.general = {
+                dateFormat: {
+                  shortDate: data.shortTime,
+                  longDate: data.longDate,
+                  shortTime: data.shortTime,
+                  longTime: data.longTime,
+                },
+                timeZone: data.timeZone,
+                numberFormat: {
+                  numberOfDecimals: data.numberOfDecimals,
+                  decimalSeparator: data.decimalSeparator,
+                  decimalThousandSeparator: data.decimalThousandSeparator,
+                  negativeFormat: data.negativeFormat,
+                  numberHistory: data.numberHistory,
+                },
+                colors: data.colors,
+              };
+              draft.riskLink = {
+                importPage: data.importPage,
+                financialPerspectiveELT: data.financialPerspectiveELT.trim().split(' ') || [],
+                financialPerspectiveEPM: data.financialPerspectiveEPM,
+                targetCurrency: data.targetCurrency,
+                targetAnalysisCurrency: data.targetAnalysisCurrency,
+                rmsInstance: data.defaultRmsInstance,
+              };
+              draft.contractOfInterest = {
+                country:  data.countryCode !== null && data.countryCode !== '' ? data.countryCode.trim().split(' ') : [],
+                uwUnit: data.uwUnitId !== null && data.uwUnitId !== '' ? data.uwUnitId.trim().split(' ') : [],
+              };
+              draft.epCurves = {
+                returnPeriod: null,
+                display: null,
+              };
+            }
+            ))
+          );
+        }
+      )
+    )
   }
 
   @Action(fromGeneralConfig.AddNewColors)
-  addNewColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.AddNewColors) {
+  addNewColors(ctx
+                 :
+                 StateContext<GeneralConfig>, {payload}
+                 :
+                 fromGeneralConfig.AddNewColors
+  ) {
     const {
       colors
     } = payload;
@@ -216,13 +322,18 @@ export class GeneralConfigState implements NgxsOnInit {
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
-        draft.general.colors= general.colors.concat(colors);
+        draft.general.colors = general.colors.concat(colors);
       })
     )
   }
 
   @Action(fromGeneralConfig.RemoveColors)
-  removeColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.RemoveColors) {
+  removeColors(ctx
+                 :
+                 StateContext<GeneralConfig>, {payload}
+                 :
+                 fromGeneralConfig.RemoveColors
+  ) {
     const {
       colors
     } = payload;
@@ -233,13 +344,18 @@ export class GeneralConfigState implements NgxsOnInit {
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
-        draft.general.colors= _.filter(general.colors, color => !_.find(colors, clr => clr == color));
+        draft.general.colors = _.filter(general.colors, color => !_.find(colors, clr => clr == color));
       })
     )
   }
 
   @Action(fromGeneralConfig.ReplaceColors)
-  replaceColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.ReplaceColors) {
+  replaceColors(ctx
+                  :
+                  StateContext<GeneralConfig>, {payload}
+                  :
+                  fromGeneralConfig.ReplaceColors
+  ) {
     const {
       colors
     } = payload;
@@ -252,28 +368,33 @@ export class GeneralConfigState implements NgxsOnInit {
       produce(ctx.getState(), draft => {
 
         _.forEach(general.colors, (color, i) => {
-          let index= _.findIndex(colors, (clr: any) => clr.old == color);
-          if( index > -1 ) {
-            draft.general.colors[i]= colors[index].new;
+          let index = _.findIndex(colors, (clr: any) => clr.old == color);
+          if (index > -1) {
+            draft.general.colors[i] = colors[index].new;
           }
-          index=-1;
+          index = -1;
         })
       })
     )
   }
 
   @Action(fromGeneralConfig.LoadColors)
-  loadColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.LoadColors) {
+  loadColors(ctx
+               :
+               StateContext<GeneralConfig>, {payload}
+               :
+               fromGeneralConfig.LoadColors
+  ) {
 
     return of(JSON.parse(localStorage.getItem('colors')))
       .pipe(
         mergeMap((colors) => {
 
-          if(colors) {
+          if (colors) {
             ctx.patchState(produce(ctx.getState(), draft => {
               draft.general.colors = colors;
             }))
-          }else {
+          } else {
             localStorage.setItem('colors', JSON.stringify([]));
           }
 
