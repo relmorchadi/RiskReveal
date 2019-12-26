@@ -50,7 +50,7 @@ public class CalculAdjRest {
             pltLossData = calculateAdjustmentService.eefReturnPeriodBanding(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getAdjustmentReturnPeriodBandings());
         }
         File f = new File(calculAdjustmentDto.getNewFilePath());
-        if(!f.exists()) {
+        if (!f.exists()) {
             FileUtils.touch(f);
         }
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
@@ -58,16 +58,16 @@ public class CalculAdjRest {
         return pltLossData.stream().sorted(Comparator.comparing(PLTLossData::getLoss)).collect(Collectors.toList());
     }
 
-    @PostMapping("calculateSummaryStatisticHeaderDetail")
-    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
-        return calculateAdjustmentService.calculateSummaryStatisticHeaderDetail(pltId, type);
-    }
-
-    // todo
-    @PostMapping("calculateSummaryStatisticHeader")
-    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
-        return calculateAdjustmentService.calculateSummaryStatisticHeaderDetail(pltId, type);
-    }
+//    @PostMapping("calculateSummaryStatisticHeaderDetail")
+//    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
+//        return calculateAdjustmentService.calculateSummaryStatisticHeaderDetail(pltId, type);
+//    }
+//
+//    // todo
+//    @PostMapping("calculateSummaryStatisticHeader")
+//    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeader(Long pltId, MetricType type) {
+//        return calculateAdjustmentService.calculateSummaryStatisticHeader(pltId, type);
+//    }
 
     @GetMapping("aepMetric")
     public EPMetric aepMetric(String pathToFile) throws RRException {
