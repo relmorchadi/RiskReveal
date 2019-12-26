@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface RLPortfolioAnalysisRegionRepository extends JpaRepository<RLPortfolioAnalysisRegion, Long> {
 
-    @Transactional(transactionManager = "transactionManager")
+    @Transactional(transactionManager = "rrTransactionManager")
     @Modifying
     void deleteByRlPortfolioRlPortfolioId(Long rlPortfolioId);
 }

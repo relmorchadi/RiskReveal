@@ -2,6 +2,8 @@ package com.scor.rr.domain.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ImportSelectionDto {
 
@@ -11,6 +13,6 @@ public class ImportSelectionDto {
     private String targetRegionPeril;
     private Float unitMultiplier;
     private Float proportion;
-    private String targetRAPCode;
-    private String financialPerspective;
+    private List<String> targetRAPCodes;
+    private List<String> financialPerspectives;
 }

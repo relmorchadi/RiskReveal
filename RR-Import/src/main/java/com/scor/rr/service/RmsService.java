@@ -29,6 +29,9 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.sql.Types;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static com.scor.rr.util.Utils.applyOffsetSizeToList;
 import static java.util.stream.Collectors.toList;
@@ -76,6 +79,9 @@ public class RmsService {
 
     @Autowired
     private RegionPerilService regionPerilService;
+
+    @Autowired
+    private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
@@ -132,7 +138,9 @@ public class RmsService {
     //@Transactional(transactionManager = "rrTransactionManager")
     public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
         return new DetailedScanResult(
-                scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()),
+                scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
+                        .map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
+                        .collect(Collectors.toList()),
                 scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
     }
 
@@ -144,15 +152,27 @@ public class RmsService {
      */
     public List<Long> saveAnalysisImportSelection(List<ImportSelectionDto> importSelectionDtoList) {
 
+        List<Long> rlImportSelectionId = new ArrayList<>();
         if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty())
-            return importSelectionDtoList.stream()
-                    .map(importSelectionDto -> rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId())
-                            .map(rlAnalysis -> new RLImportSelection(importSelectionDto, rlAnalysis)).orElse(null))
-                    .map(importSelection -> {
-                        importSelection = rlImportSelectionRepository.save(importSelection);
-                        return importSelection.getRlImportSelectionId();
-                    }).collect(toList());
-        return new ArrayList<>();
+            importSelectionDtoList
+                    .forEach(importSelectionDto -> {
+                        Optional<RLAnalysis> rlAnalysisOptional = rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId());
+                        rlImportSelectionRepository.deleteByProjectId(importSelectionDto.getProjectId());
+                        if (importSelectionDto.getFinancialPerspectives() != null && !importSelectionDto.getFinancialPerspectives().isEmpty())
+                            importSelectionDto.getFinancialPerspectives().forEach(fp -> {
+                                if (rlAnalysisOptional.isPresent()) {
+                                    RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get());
+                                    rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
+                                    rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
+                                    for (String code : importSelectionDto.getTargetRAPCodes()) {
+                                        RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
+                                        rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
+                                        rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
+                                    }
+                                }
+                            });
+                    });
+        return rlImportSelectionId;
     }
 
     /**
@@ -187,18 +207,34 @@ public class RmsService {
     private List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
 
-        List<Integer> epPoints = Arrays.asList(10, 50, 100, 250, 500, 1000);
+        // TODO eppoint = 1/10 ....
+        List<Float> epPoints = Arrays.asList(1 / 10f, 1 / 50f, 1 / 100f, 1 / 250f, 1 / 500f, 1 / 1000f);
         List<String> fpCodes = financialPerspectiveRepository.findAllCodes();
+
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
+
 
         if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
             rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
                     .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
 
+            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
+
+            ExecutorService executorService = Executors.newFixedThreadPool(1);
+            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
+
             for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
 
                 Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+                this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                        .stream()
+                        .map(analysisProfileRegion -> {
+                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
+                            return new RLAnalysisProfileRegion(analysisProfileRegion, rlAnalysis);
+                        })
+                        .forEach(analysisProfileRegion -> rlAnalysisProfileRegionsRepository.save(analysisProfileRegion));
 
                 this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
                         .stream()
@@ -213,15 +249,6 @@ public class RmsService {
                         })
                         .forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
 
-                this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
-                        .stream()
-                        .map(analysisProfileRegion -> {
-                            RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
-                            return new RLAnalysisProfileRegion(analysisProfileRegion, rlAnalysis);
-                        })
-                        .forEach(analysisProfileRegion -> rlAnalysisProfileRegionsRepository.save(analysisProfileRegion));
-
-                this.extractSourceEpHeaders(instanceId, rdmId, rdmName, projectId, epPoints, multiKeyListEntry.getValue(), fpCodes);
             }
         }
 
@@ -301,6 +328,16 @@ public class RmsService {
                 }).collect(toList());
     }
 
+    private void getSourceEpHeaders(Map<MultiKey, List<Long>> analysisByRDM, List<Float> epPoints, List<String> fpCodes, Long projectId, String instanceId) {
+        for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRDM.entrySet()) {
+
+            Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
+            String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
+
+            this.extractSourceEpHeaders(instanceId, rdmId, rdmName, projectId, epPoints, multiKeyListEntry.getValue(), fpCodes);
+        }
+    }
+
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
@@ -376,7 +413,7 @@ public class RmsService {
         return edmPortfolios;
     }
 
-    public List<RdmAnalysisEpCurves> getRdmAllAnalysisEpCurves(String instanceId, Long id, String name, List<Integer> epPoints, List<Long> analysisIdList, List<String> finPerspList) {
+    public List<RdmAnalysisEpCurves> getRdmAllAnalysisEpCurves(String instanceId, Long id, String name, List<Float> epPoints, List<Long> analysisIdList, List<String> finPerspList) {
 
         String LIST = "";
         if (finPerspList != null) {
@@ -723,7 +760,7 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(this.getJdbcTemplate(instanceId));
     }
 
-    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, Long projectId, List<Integer> epPoints, List<Long> analysisIds, List<String> fpCodes) {
+    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, Long projectId, List<Float> epPoints, List<Long> analysisIds, List<String> fpCodes) {
 
         List<RdmAnalysisEpCurves> epCurves = this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIds, fpCodes);
 
@@ -735,18 +772,17 @@ public class RmsService {
                     filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
                         int statisticMetric = epC.getEbpTypeCode();
                         try {
-                            String fieldName = this.generateEpCurveFieldName(epC.getExceedanceProbabilty(), statisticMetric);
+                            String fieldName = this.generateEpCurveFieldName(epC.getReturnPeriod(), statisticMetric);
                             Utils.setAttribute(sourceEpHeader, fieldName, epC.getLoss());
                         } catch (Exception exp) {
                             exp.printStackTrace();
                         }
                     });
-                    rlSourceEpHeaderRepository.deleteByRLAnalysisIdAndFinancialPerspective(sourceEpHeader.getRLAnalysisId(), sourceEpHeader.getFinancialPerspective());
                     rlSourceEpHeaderRepository.save(sourceEpHeader);
                 });
     }
 
-    private String generateEpCurveFieldName(int exceedanceProbability, int statisticMetric) throws Exception {
+    private String generateEpCurveFieldName(Long returnPeriod, int statisticMetric) throws Exception {
         StatisticMetric statMetric = StatisticMetric.getFrom(statisticMetric);
         String fieldName = null;
         if (statMetric != null) {
@@ -762,9 +798,9 @@ public class RmsService {
             }
         }
         if (fieldName != null)
-            return fieldName.concat(String.valueOf(exceedanceProbability));
+            return fieldName.concat(String.valueOf(returnPeriod));
         else
-            throw new Exception("Non supported Return Period by RlSourceEpHeader Entity " + exceedanceProbability);
+            throw new Exception("Non supported Return Period by RlSourceEpHeader Entity " + returnPeriod);
     }
 
     private List<RdmAnalysisEpCurves> filterEpCurvesByStat(List<RdmAnalysisEpCurves> epCurves, RdmAllAnalysisSummaryStats stats) {
