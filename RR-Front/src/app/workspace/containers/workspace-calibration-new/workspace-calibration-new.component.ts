@@ -195,7 +195,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: true
     };
-    let columns = [...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns];
+    let columns = [...CalibrationTableService.frozenColsExpanded, ...this.columnsConfig.columns];
     this.columnsConfig = {
       ...this.columnsConfig,
       columns: columns,

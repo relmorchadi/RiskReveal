@@ -10,7 +10,6 @@ import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
-import {CalibrationSubHeaderComponent} from "./calibration-new/calibration-sub-header/calibration-sub-header.component";
 
 
 
@@ -27,8 +26,7 @@ export const COMPONENTS = [
   AttachPltPopUpComponent,
   AnalysisResultComponent,
   PortfolioResultComponent,
-  CalibrationNewTableComponent,
-  CalibrationSubHeaderComponent
+  CalibrationNewTableComponent
 ];
 
 
