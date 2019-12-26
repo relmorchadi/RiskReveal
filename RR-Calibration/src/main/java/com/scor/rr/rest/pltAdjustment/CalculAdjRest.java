@@ -32,7 +32,7 @@ public class CalculAdjRest {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(calculAdjustmentDto.getPathToFile()));
         if (LINEAR.equals(calculAdjustmentDto.getType()) ){
-            pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData, calculAdjustmentDto.getLmf(), calculAdjustmentDto.isCap());
+            pltLossData = calculateAdjustmentService.linearAdjustement(pltLossData, calculAdjustmentDto.getLmf(), calculAdjustmentDto.isCap());
         }
         else if (EEF_FREQUENCY.equals(calculAdjustmentDto.getType())) {
             pltLossData = calculateAdjustmentService.eefFrequency(pltLossData, calculAdjustmentDto.isCap(),calculAdjustmentDto.getRpmf());

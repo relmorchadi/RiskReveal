@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class CalculateAdjustmentServiceLinearTest {
     private List<PLTLossData> pltLossDataList;
     private double lmf;
     private boolean cap;
+
+    @Autowired
+    CalculateAdjustmentService calculateAdjustmentService;
 
     @Before
     public void setUp() {
@@ -47,20 +51,20 @@ public class CalculateAdjustmentServiceLinearTest {
     public void linearAdjustementLmfNegative() throws com.scor.rr.exceptions.RRException {
 
         log.info("Launch test for Linear Adjustment with negative lmf");
-        assertNull(CalculateAdjustmentService.linearAdjustement(pltLossDataList, -1, cap));
+        assertNull(calculateAdjustmentService.linearAdjustement(pltLossDataList, -1, cap));
 
     }
     //when PLT is empty or null
     @Test
     public void linearAdjustementNullPlt() throws com.scor.rr.exceptions.RRException {
         log.info("Launch test for Linear Adjustment with PLT NULL");
-        assertNull(CalculateAdjustmentService.linearAdjustement(null,lmf,cap));
+        assertNull(calculateAdjustmentService.linearAdjustement(null,lmf,cap));
     }
 
     @Test
     public void linearAdjustementEmptyPlt() throws com.scor.rr.exceptions.RRException {
         log.info("Launch test for Linear Adjustment with an EMPTY PLT");
-        assertNull(CalculateAdjustmentService.linearAdjustement(new ArrayList<>(),lmf,cap));
+        assertNull(calculateAdjustmentService.linearAdjustement(new ArrayList<>(),lmf,cap));
     }
 
     @Test
@@ -73,7 +77,7 @@ public class CalculateAdjustmentServiceLinearTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
+        pltLossDataList = calculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -95,7 +99,7 @@ public class CalculateAdjustmentServiceLinearTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
+        pltLossDataList = calculateAdjustmentService.linearAdjustement(pltLossDataList,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -111,7 +115,7 @@ public class CalculateAdjustmentServiceLinearTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,lmf,cap);
+        pltLossData = calculateAdjustmentService.linearAdjustement(pltLossData,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltLinear.csv"));
         log.info("End test for Linear Adjustment for a File ");
@@ -122,7 +126,7 @@ public class CalculateAdjustmentServiceLinearTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,2,true);
+        pltLossData = calculateAdjustmentService.linearAdjustement(pltLossData,2,true);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 2 cap.csv"));
         assert pltLossData != null;
         for(int i = 0; i<pltLossData.size(); i++) {
@@ -135,7 +139,7 @@ public class CalculateAdjustmentServiceLinearTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculateAdjustmentService.linearAdjustement(pltLossData,250,false);
+        pltLossData = calculateAdjustmentService.linearAdjustement(pltLossData,250,false);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 250  uncap.csv"));
         assert pltLossData != null;
         for(int i = 0; i<pltLossData.size(); i++) {

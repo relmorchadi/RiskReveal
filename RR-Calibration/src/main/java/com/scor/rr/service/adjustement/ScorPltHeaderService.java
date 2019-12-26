@@ -32,11 +32,14 @@ public class ScorPltHeaderService {
     @Autowired
     PltHeaderRepository pltHeaderRepository;
 
+    @Autowired
+    CalculateAdjustmentService calculateAdjustmentService;
+
     private static final String PATH = "RRADJUSTMENT\\src\\main\\resources\\file\\";
 
     public void persistScorPltHeaderFromPath(String path, AdjustmentManuelleParameterProcess parameterProcess) throws RRException {
         try {
-            File file = new File(PATH+new Date().getTime()+".csv");
+            File file = new File(PATH + new Date().getTime()+".csv");
             FileUtils.touch(file);
             BinaryPLTFileWriter fileWriter = new BinaryPLTFileWriter();
             fileWriter.write(calculateAdjustment(parameterProcess,getPltLossDataFromFile(path)),file);
@@ -69,22 +72,22 @@ public class ScorPltHeaderService {
 
     private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) throws com.scor.rr.exceptions.RRException {
         if (LINEAR.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
+            return calculateAdjustmentService.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
         }
         if (EEF_FREQUENCY.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());
+            return calculateAdjustmentService.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());
         }
         if (NONLINEAR_OEP_RPB.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
+            return calculateAdjustmentService.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         if (NONLINEAR_EVENT_DRIVEN.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
+            return calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
         if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
+            return calculateAdjustmentService.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
         if (NONLINEAR_EEF_RPB.getValue().equals(parameterProcess.getType())) {
-            return CalculateAdjustmentService.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
+            return calculateAdjustmentService.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBandings());
         }
         throwException(TYPE_NOT_FOUND, NOT_FOUND);
         return null;

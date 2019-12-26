@@ -13,6 +13,9 @@ public class AdjustmentNodeUpdateRequest extends AdjustmentNodeRequest {
     private Integer adjustmentNodeId;
     private Integer adjustmentState;
 
+    public AdjustmentNodeUpdateRequest() {
+    }
+
     public AdjustmentNodeUpdateRequest(Integer adjustmentNodeId,
                                        Integer sequence,
                                        Boolean capped,
