@@ -38,6 +38,10 @@ export class RiskApi {
     return this.http.post(`${this.IMPORT_URL}import/trigger-import`, {instanceId, projectId,userId, analysisConfig, portfolioConfig});
   }
 
+  loadSourceEpCurveHeaders(rlAnalysisId: any):Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}import/config/get-source-ep-headers`, {params: {rlAnalysisId} });
+  }
+
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
     return this.http.get(`${this.URL}analysis?size=20`, {params: {rdmName: paramName}});
   }
@@ -65,4 +69,5 @@ export class RiskApi {
   searchFacPortfolio(paramId, paramName, paramData) {
     return this.http.get(`${this.FURL}portfolio`, {params: {edmId: paramId, edmName: paramName, portNum: paramData}});
   }
+
 }

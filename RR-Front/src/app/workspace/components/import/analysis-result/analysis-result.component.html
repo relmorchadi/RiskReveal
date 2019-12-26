@@ -1,4 +1,4 @@
-<div *ngIf="analysis?.length>0" class="body-wrap-body">
+<div *ngIf="data?.analysis?.length>0" class="body-wrap-body">
   <div class="body-wrapper">
     <div class="body-wrapper-header">
       <div class="body-wrapper-header-left">
@@ -37,7 +37,7 @@
         </nz-dropdown>
       </div>
       <p-table [columns]="scrollableColsResults" [frozenColumns]="frozenColsResults"
-               [value]="analysis" [scrollHeight]="'175px'"
+               [value]="data.analysis" [scrollHeight]="'175px'"
                [resizableColumns]="true" columnResizeMode="expand"
                #rt [scrollable]="true" frozenWidth="445px">
         <ng-template pTemplate="colgroup" let-columns>
@@ -99,8 +99,8 @@
                                [nzWidth]="20" nzType="circle"></nz-progress>
                 </div>
                 <div class="text-data" (click)="openFinancialP(rowData)" [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'multiple'">
-                  <span>{{rowData?.financialPerspective}}</span>
+                     *ngIf="col.type === 'multiple'" >
+                  <span>{{rowData?.financialPerspectives?.length}}</span>
 <!--                  <span nzPlacement="top" nz-tooltip-->
 <!--                        *ngIf="rowData?.financialPerspective?.length == 0">Nan</span>-->
                   <!--                  <ng-template #infoFP>-->
@@ -139,7 +139,7 @@
                      *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                 <div class="text-data" style="font-weight: 500"
                      *ngIf="col.type === 'Rp' || col.type === 'Ob'"
-                     (click)="updateRow(rowData, col.type)">
+                     (click)="overrideRegionPerilOccurrenceBasis(rowData, col.type)">
                     <span class="highlighted-change">
                       {{rowData[col.field]}}
                     </span>
@@ -328,3 +328,15 @@
     </button>
   </p-footer>
 </p-dialog>
+
+
+<override-region-peril-dialog *ngIf="showOverrideRpPopup" [visible]="showOverrideRpPopup" [data]="data.analysis" (close)="showOverrideRpPopup=false"
+  (override)="overrideRegionPeril($event)">
+</override-region-peril-dialog>
+
+
+<financial-persp-selection-dialog *ngIf="showSelectFinancialPersp" [visible]="showSelectFinancialPersp"
+                                  [data]="data" (close)="showSelectFinancialPersp=false"
+                                  (loadEpCurves)="loadSourceEpCurveHeaders($event)"
+                                  (override)="overrideFinancialPersp($event)"
+></financial-persp-selection-dialog>
