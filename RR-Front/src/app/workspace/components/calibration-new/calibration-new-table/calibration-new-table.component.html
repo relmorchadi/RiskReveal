@@ -20,7 +20,7 @@
   <ng-template pTemplate="header" let-columns>
     <tr *ngIf="tableConfig?.isExpanded">
       <ng-container *ngIf="col?.isFrozen">
-        <th [attr.colspan]="columns.length" [style.height]="'100px'" [style.position]="'relative'">
+        <th class="header-cnt" [attr.colspan]="columns.length" [style.height]="'100px'" [style.position]="'relative'">
           <i
             (click)="unexpandColumns()"
             class="icon-chevron_left_24px"
