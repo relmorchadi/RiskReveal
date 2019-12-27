@@ -18,13 +18,24 @@ import java.util.Date;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriter {
 
-    public ProjectConfigurationForeWriter(Integer entity, Long projectId, String carType, String carStatus, String carName, String uwAnalysis, Date requestCreationDate, Integer requestCreationBy, String code, String narrative) {
+    public ProjectConfigurationForeWriter(Integer entity,
+                                          Long projectId,
+                                          String carType,
+                                          String carStatus,
+                                          String carName,
+                                          String uwAnalysis,
+                                          Date requestCreationDate,
+                                          Integer requestCreationBy,
+                                          String code,
+                                          String narrative) {
         this.entity = entity;
         this.projectId = projectId;
         this.carType = carType;
         this.carStatus = carStatus;
         this.carName = carName;
         this.uwAnalysis = uwAnalysis;
+        this.lastUpdateDate = requestCreationDate;
+        this.lastUpdateBy = requestCreationBy;
         this.requestCreationDate = requestCreationDate;
         this.requestCreationBy = requestCreationBy;
         this.code = code;
