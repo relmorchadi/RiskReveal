@@ -2,23 +2,119 @@ package com.scor.rr.service.adjustement.pltAdjustment;
 
 import com.google.common.collect.Lists;
 import com.scor.rr.configuration.UtilsMethod;
-import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
+import com.scor.rr.domain.dto.MetricType;
+import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.enums.StatisticMetric;
+import com.scor.rr.repository.ModelAnalysisEntityRepository;
+import com.scor.rr.repository.PltHeaderRepository;
+import com.scor.rr.repository.RegionPerilRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.scor.rr.domain.Calibration_.threadId;
 
-public class CalculAdjustement implements ICalculAdjustment{
+@Service
+public class CalculateAdjustmentService {
 
-    private static final Logger log = LoggerFactory.getLogger(CalculAdjustement.class);
-    private static final double CONSTANTE =100000;
+    private static final Logger log = LoggerFactory.getLogger(CalculateAdjustmentService.class);
+    private static final double CONSTANT = 100000;
+
+    @Autowired
+    PltHeaderRepository pltHeaderRepository;
+
+    @Autowired
+    ModelAnalysisEntityRepository modelAnalysisEntityRepository;
+
+    @Autowired
+    RegionPerilRepository regionPerilRepository;
+
+//    @PostMapping("calculateSummaryStatisticHeaderDetail")
+//    public SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType metricType) {
+//        PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
+//
+//        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
+//
+//        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
+//        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
+//
+//        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
+//
+//            if (MetricType.AEP.equals(metricType)) {
+//
+//            } else if (MetricType.OEP.equals(metricType)) {
+//
+//            } else if (MetricType.AEPTvAR.equals(metricType)) {
+//
+//            }  else if (MetricType.OEPTvAR.equals(metricType)) {
+//
+//            }
+//
+//            Map<Integer, Double> map = new HashMap<>();
+//            List<String>  columns= new ArrayList<>();
+//            List<String> values = new ArrayList<>();
+//            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
+//                columns.add("RP" + entry.getKey());
+//                values.add(entry.getValue().toString());
+//            }
+//            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
+//
+//
+//            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
+//            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
+//
+//            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//
+//            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
+//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
+//            else
+//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
+//
+//            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
+//            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
+//            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
+//
+//            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
+//                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
+//                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
+//                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
+//                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
+//            }
+//        } else {
+//            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
+//        }
+//    }
+
 
     public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
@@ -28,25 +124,27 @@ public class CalculAdjustement implements ICalculAdjustment{
             return new EPMetric(StatisticMetric.OEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
                 finalI[0]++;
-                return new EPMetricPoint(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossDataVar.getLoss());
+                return new EPMetricPoint(finalI[0] / CONSTANT, CONSTANT / finalI[0], pltLossDataVar.getLoss(), finalI[0]);
             }).collect(Collectors.toList()));
         } else {
             log.info("plt empty");
             return null;
         }
     }
+
     public static EPMetric getAEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
             pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
-            return new EPMetric(StatisticMetric.OEP,
+            return new EPMetric(StatisticMetric.AEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {
                         finalI[0]++;
-                            return new EPMetricPoint(finalI[0] / CONSTANTE,
-                                    CONSTANTE / finalI[0] ,
-                                    pltLossData.getLoss());
+                            return new EPMetricPoint(finalI[0] / CONSTANT,
+                                    CONSTANT / finalI[0] ,
+                                    pltLossData.getLoss(),
+                                    finalI[0]);
                     }).distinct().collect(Collectors.toList()));
         } else {
             log.info("plt empty");
@@ -54,14 +152,14 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private Double interpolation(double x,double yMax,double yMin,double xMin,double xMax){
+    private Double interpolation(double x, double yMax, double yMin, double xMin, double xMax){
         return yMin+((yMax-yMin)*((x-xMin)/(xMax-xMin)));
     }
 
-    public static List<PLTLossData> oepReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBendings) {
+    public List<PLTLossData> oepReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBendings) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if (adjustmentReturnPeriodBendings != null && !adjustmentReturnPeriodBendings.isEmpty()) {
-                List<EPMetricPoint> oepMetrics = CalculAdjustement.getOEPMetric(pltLossDatas).getEpMetricPoints();
+                List<EPMetricPoint> oepMetrics = CalculateAdjustmentService.getOEPMetric(pltLossDatas).getEpMetricPoints();
                 if(oepMetrics != null && !oepMetrics.isEmpty()) {
                     return pltLossDatas
                             .stream()
@@ -239,14 +337,14 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private static List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, String oepEEF) {
+    private List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings, String oepEEF) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] i = {0};
             int[] finalI = i;
             List<List<Double>> returnPeriods = pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossData -> {
                 finalI[0]++;
                 return new ArrayList<Double>() {{
-                    add((CalculAdjustement.CONSTANTE / finalI[0])); //return period
+                    add((CalculateAdjustmentService.CONSTANT / finalI[0])); //return period
                     add(pltLossData.getLoss()); //loss
                 }};
             }).collect(Collectors.toList());
@@ -467,15 +565,15 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public static List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+    public List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
         return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBandings, "OEP");
     }
 
-    public static List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
+    public List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<ReturnPeriodBandingAdjustmentParameter> adjustmentReturnPeriodBandings) {
         return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBandings, "EEF");
     }
 
-    public static List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {
+    public List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if (rpmf > 0) {
                 int[] i = {0};
@@ -484,8 +582,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                     finalI[0]++;
 
                     return new ArrayList<Double>() {{
-                        add(((CONSTANTE / finalI[0]) * rpmf));//adjusted return period
-                        add((CONSTANTE / finalI[0]));//return period
+                        add(((CONSTANT / finalI[0]) * rpmf));//adjusted return period
+                        add((CONSTANT / finalI[0]));//return period
                         add(pltLossData.getLoss());//loss
                     }};
                 }).collect(Collectors.toList());
@@ -552,7 +650,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private static List<PLTLossData> nonLinearEventDrivenAdjustmentOrEventPeriodAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas, boolean periodNoPeriod) {
+    private List<PLTLossData> nonLinearEventDrivenAdjustmentOrEventPeriodAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas, boolean periodNoPeriod) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if(peatDatas != null && !peatDatas.isEmpty()) {
                 return pltLossDatas.stream().map(pltLossData -> {
@@ -582,15 +680,15 @@ public class CalculAdjustement implements ICalculAdjustment{
 
     }
 
-    public static List<PLTLossData> nonLinearEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+    public List<PLTLossData> nonLinearEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
         return nonLinearEventDrivenAdjustmentOrEventPeriodAdjustment(pltLossDatas, cap, peatDatas, false);
     }
 
-    public static List<PLTLossData> nonLinearEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+    public List<PLTLossData> nonLinearEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
         return nonLinearEventDrivenAdjustmentOrEventPeriodAdjustment(pltLossDatas, cap, peatDatas, true);
     }
 
-    public static List<PLTLossData> linearAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
+    public List<PLTLossData> linearAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
         if (lmf > 0) {
             if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
                 return pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),

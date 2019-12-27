@@ -18,8 +18,15 @@ public class RLImportTargetRAPSelection {
     private Long RLImportTargetRAPSelectionId;
     @Column(name = "Entity")
     private Integer Entity;
-    @Column(name = "RLImportSelectionId")
-    private Long rlImportSelectionId;
     @Column(name = "TargetRAPCode")
     private String targetRAPCode;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RLImportSelectionId")
+    private RLImportSelection rlImportSelection;
+
+    public RLImportTargetRAPSelection(String code, RLImportSelection rlImportSelection) {
+        this.rlImportSelection = rlImportSelection;
+        this.targetRAPCode = code;
+    }
 }

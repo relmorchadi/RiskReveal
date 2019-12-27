@@ -1,0 +1,232 @@
+<p-dialog
+  [visible]="isVisible"
+  [closable]="false"
+  styleClass="m-dialog-modal-lg-auto"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true">
+  <p-header>
+    <div class="header">
+      <h6>Financial Perspective Selection</h6>
+      <i style="cursor: pointer" (click)="close()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="fp-main-item-wrap">
+    <div class="fp-options-wrapper">
+      <div class="summary-info summary-info-override">
+        <div class="fp-analysis">
+          <div class="fp-header">
+            <div style="display: flex">
+              <span class="subtitle-2">Analysis</span>
+              <nz-dropdown [nzTrigger]="'click'">
+                <div class="dropdown-wrap" nz-dropdown>
+                  <div class="dropdown-wrap-title">
+                    <span class="dropdown-title">Select RDM</span>
+                    <span class="dropdown-item-selected">
+                      {{rdmFilter}}
+                    </span>
+                  </div>
+                  <div class="dropdown-icon">
+                    <i nz-icon type="down"></i>
+                  </div>
+                </div>
+                <ul nz-menu>
+                  <ng-container *ngFor="let item of distinctRdms">
+                    <li nz-menu-item *ngIf="item!=rdmFilter" (click)="rdmFilter=item">{{item}}</li>
+                  </ng-container>
+                </ul>
+              </nz-dropdown>
+            </div>
+
+            <div class="menu-icon-wrap">
+              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-settings_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item>Reset Sort</li>
+                  <li nz-menu-item>Reset Filters</li>
+                  <li nz-menu-item>Reset Sort/Filters</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item >Manage Columns</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item>Unselect All</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+          </div>
+        </div>
+        <div class="resize-table">
+          <p-table #fat [columns]="colsFinancialAnalysis" [value]="data?.analysis | analysisByRdm:rdmFilter"
+                   [resizableColumns]="true" columnResizeMode="expand"
+                   [scrollable]="true" scrollHeight="232px">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns" pResizableColumn>
+                  <ng-container *ngIf="col.type === 'select'">
+<!--                    <label style="margin-top:20px" nz-checkbox [ngModel]="workingFSC?.analysis?.allChecked"-->
+<!--                           (ngModelChange)="updateAllChecked($event, 'FPAnalysis')"-->
+<!--                           [nzIndeterminate]="workingFSC?.analysis?.indeterminate"></label>-->
+                    <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                  </ng-container>
+                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
+                  <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                    {{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                    <div class="search-bar-table">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input pInputText type="text"
+                             (input)="fat.filter($event.target.value, col.field, col.filterMatchMode)">
+                    </div>
+                  </div>
+                  <div *ngIf="col.type === 'icon'">
+                    <i class="icon-menu_24px"></i>
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+              <tr>
+                <th *ngFor="let col of columns" class="ui-resizable-column"
+                    [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'select'"><label nz-checkbox (ngModelChange)="toggleAnalysisSelection(i)"
+                                                            [ngModel]="changes.analysis[i].selected"></label></div>
+                  <div class="text-data" (click)="toggleAnalysisSelection(i)" *ngIf="col.type === 'iconIndicator'">
+                    <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
+                  </div>
+                  <div class="text-data" (click)="toggleAnalysisSelection(i)" *ngIf="col.type === 'tags'"
+                       style="display: flex">
+                    <span class="tags-secondary" *ngFor="let item of changes.analysis[i].financialPerspectives">{{item}}<i
+                      (click)="removeFP(i, item)" class="icon-close_24px"></i></span>
+                  </div>
+                  <div (click)="toggleAnalysisSelection(i)" class="text-data"
+                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                       *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                </th>
+              </tr>
+            </ng-template>
+          </p-table>
+<!--          <app-manage-columns [visible]="managePopUpFPAnalysis" [columns]="cloneData(colsFinancialAnalysis)"-->
+<!--                              (onSubmit)="saveColumns($event, 'FPAnalysis')"-->
+<!--                              (onCancel)="closePopUp()"></app-manage-columns>-->
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0" class="fp-options-wrapper">
+      <nz-tabset class="tabs-standard-top">
+        <nz-tab nzTitle="Standard">
+          <div style="padding-top:0" class="summary-info resize-table">
+            <div class="menu-icon-wrap" style="position: absolute; top: 10px; right: 10px;">
+              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-settings_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item>Reset Sort</li>
+                  <li nz-menu-item>Reset Filters</li>
+                  <li nz-menu-item>Reset Sort/Filters</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item>Manage Columns</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item>Unselect All</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+            <p-table #fpt [columns]="colsFinancialStandard" [value]="data?.epCurves"
+                     [resizableColumns]="true" columnResizeMode="expand"
+                     [scrollable]="true" scrollHeight="232px">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns" pResizableColumn>
+                    <ng-container *ngIf="col.type === 'select'">
+<!--                      <label style="margin-top:20px" nz-checkbox [ngModel]="workingFSC?.standard?.allChecked"-->
+<!--                             (ngModelChange)="updateAllChecked($event, 'FPStandard')"-->
+<!--                             [nzIndeterminate]="workingFSC?.standard?.indeterminate"></label>-->
+                      <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                    </ng-container>
+                    <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
+                    <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                      {{col.header}}
+                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text"
+                               (input)="fpt.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </div>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <th *ngFor="let col of columns" class="ui-resizable-column"
+                      [ngClass]="{'selected-item': rowData?.selected}">
+                    <div *ngIf="col.type === 'select'">
+                      <label nz-checkbox
+                             (ngModelChange)="toggleEpCurveSelection(i)"
+                             [ngModel]="changes.epCurves[i].selected"></label></div>
+                    <div (click)="toggleEpCurveSelection(i)" *ngIf="col.type === 'indicator'">
+                    <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                          style="background-color: #0700CF"></span>
+                    </div>
+                    <div (click)="toggleEpCurveSelection(i)" class="text-data"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'text'">
+                      <span *ngIf="!col.number; else formattedNumber">{{rowData[col.field]}}</span>
+                      <ng-template #formattedNumber>
+                        <span>{{rowData[col.field] | number}}</span>
+                      </ng-template>
+                    </div>
+                    <div (click)="toggleEpCurveSelection(i)" class="text-data"
+                         [ngClass]="{'highlight-temp': rowData.highlight}"
+                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"></div>
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
+<!--            <app-manage-columns [visible]="managePopUpFPStandard" [columns]="cloneData(colsFinancialStandard)"-->
+<!--             (onSubmit)="saveColumns($event, 'FPStandard')"-->
+<!--             (onCancel)="closePopUp()"></app-manage-columns>-->
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Treaty" nzDisabled>
+
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+  <div class="fp-options-wrapper">
+    <span class="subtitle-2 subtitle-override">Apply Selected Financial Perspective to Analysis in:</span>
+    <div class="context-wrapper">
+      <nz-radio-group class="default-radio" (ngModelChange)="onFpApplicationChange($event)" [ngModel]="changes.fpApplication">
+        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+        <label nz-radio nzValue="currentRDM"><span class="body-2">Current RDM</span></label>
+        <label nz-radio nzValue="All"><span class="body-2">All RDM's</span></label>
+      </nz-radio-group>
+      <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
+            <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
+            <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
+      <button (click)="addFinancialPersp()" style="margin-left: 70px" class="a-buttons-outlined-mini">ADD</button>
+      <button (click)="replaceFinancialPersp()" class="a-buttons-outlined-mini">REPLACE</button>
+    </div>
+  </div>
+  <p-footer>
+    <div>
+      <button (click)="close()" class="a-button-text-cancel-mini">CANCEL</button>
+      <button (click)="applyChanges()" class="a-buttons-contained-mini">SAVE</button>
+    </div>
+  </p-footer>
+</p-dialog>

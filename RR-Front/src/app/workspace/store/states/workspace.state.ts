@@ -1171,6 +1171,21 @@ export class WorkspaceState {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
 
+  @Action(fromWS.OverrideAnalysisRegionPeril)
+  overrideAnalysisRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideAnalysisRegionPeril){
+    return this.riskLinkFacade.overrideAnalysisRegionPeril(ctx, payload);
+  }
+
+  @Action(fromWS.LoadSourceEpCurveHeaders)
+  loadSourceEpCurveHeaders(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSourceEpCurveHeaders){
+    return this.riskLinkFacade.loadSourceEpCurveHeaders(ctx, payload);
+  }
+  @Action(fromWS.OverrideFinancialPerspective)
+  overrideFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideFinancialPerspective){
+    return this.riskLinkFacade.overrideFinancialPerspective(ctx, payload);
+  }
+
+
   /***********************************
    *
    * Scope And Completeness Actions

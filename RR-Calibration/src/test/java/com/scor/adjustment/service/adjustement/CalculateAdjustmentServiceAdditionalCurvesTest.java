@@ -3,7 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.junit.After;
 import org.junit.Before;
@@ -15,8 +15,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculAdjustmentAdditionalCurvesTest {
-    private static final Logger log = LoggerFactory.getLogger(CalculAdjustmentAdditionalCurvesTest.class);
+public class CalculateAdjustmentServiceAdditionalCurvesTest {
+    private static final Logger log = LoggerFactory.getLogger(CalculateAdjustmentServiceAdditionalCurvesTest.class);
     private List<PLTLossData> pltLossDataList;
 
     @Before
@@ -54,7 +54,7 @@ public class CalculAdjustmentAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        log.info("OEP-TVaR with a plt file = {}",StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData).getEpMetricPoints()));
+        log.info("OEP-TVaR with a plt file = {}",StatisticAdjustment.AEPTVaRMetrics(CalculateAdjustmentService.getAEPMetric(pltLossData).getEpMetricPoints()));
         log.info("OEP-TVaR with a plt null = {}",StatisticAdjustment.AEPTVaRMetrics(null));
         log.info("OEP-TVaR with empty plt = {}",StatisticAdjustment.AEPTVaRMetrics(new ArrayList<>()));
     }
@@ -64,7 +64,7 @@ public class CalculAdjustmentAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        log.info("Average Annual Loss with a plt file = {}",StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData).getEpMetricPoints()));
+        log.info("Average Annual Loss with a plt file = {}",StatisticAdjustment.OEPTVaRMetrics(CalculateAdjustmentService.getOEPMetric(pltLossData).getEpMetricPoints()));
         log.info("Average Annual Loss with a plt null = {}",StatisticAdjustment.OEPTVaRMetrics(null));
         log.info("Average Annual Loss with empty plt = {}",StatisticAdjustment.OEPTVaRMetrics(new ArrayList<>()));
     }
