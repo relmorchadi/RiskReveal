@@ -11,6 +11,8 @@ import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -23,9 +25,14 @@ import java.util.*;
  * Created by u004602 on 27/06/2019.
  */
 public class CSVPLTFileReader implements PLTFileReader {
+
+    private static final Logger log = LoggerFactory.getLogger(BinaryPLTFileReader.class);
+
     public List<PLTLossData> read(File file) throws RRException {
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();
+        log.debug("file to read {}", file.getAbsolutePath());
+
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
 
