@@ -1,4 +1,4 @@
-package com.scor.rr.domain.entities.Project;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +17,19 @@ import java.util.Date;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriter {
+
+    public ProjectConfigurationForeWriter(Integer entity, Long projectId, String carType, String carStatus, String carName, String uwAnalysis, Date requestCreationDate, Integer requestCreationBy, String code, String narrative) {
+        this.entity = entity;
+        this.projectId = projectId;
+        this.carType = carType;
+        this.carStatus = carStatus;
+        this.carName = carName;
+        this.uwAnalysis = uwAnalysis;
+        this.requestCreationDate = requestCreationDate;
+        this.requestCreationBy = requestCreationBy;
+        this.code = code;
+        this.narrative = narrative;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
