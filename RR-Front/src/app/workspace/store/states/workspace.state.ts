@@ -216,10 +216,9 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
-  @Selector()
-  static getCalibrationConstants(state: WorkspaceModel) {
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].calibrationNew.constants;
+  static getCalibrationConstants(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+
   }
 
   /***********************************

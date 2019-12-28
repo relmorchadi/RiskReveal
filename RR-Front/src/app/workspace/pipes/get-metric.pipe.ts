@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as _ from 'lodash'
 
 @Pipe({
-  name: 'getMetric'
+  name: 'getMetric',
+  pure: true
 })
 export class GetMetricPipe implements PipeTransform {
 

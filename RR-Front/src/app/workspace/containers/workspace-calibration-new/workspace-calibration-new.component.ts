@@ -104,7 +104,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       //SUB
       this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
-      this.subscribeToConstants();
+      this.subscribeToConstants(wsId + "-" + uwYear);
 
       //Others
       this.loadConstants();
@@ -162,8 +162,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       })
   }
 
-  subscribeToConstants() {
-    this.select(WorkspaceState.getCalibrationConstants)
+  subscribeToConstants(wsIdentifier: string) {
+    this.select(WorkspaceState.getCalibrationConstants(wsIdentifier))
       .pipe(
         takeWhile(v => !_.isNil(v)),
         this.unsubscribeOnDestroy
@@ -244,7 +244,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleAdjustmentPopUp(action: Message) {
-    console.log(action);
+    switch (action.type) {
+      case "Hide Adjustment Pop up":
+        this.isAdjustmentPopUpVisible= false;
+        this.selectedAdjustment = null;
+        break;
+      default:
+        console.log(action);
+    }
   }
 
   expandColumns() {
@@ -264,7 +271,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   viewAdjustmentDetail(newAdjustment) {
-    this.selectedAdjustment = newAdjustment;
+    this.selectedAdjustment = {...newAdjustment};
     this.isAdjustmentPopUpVisible = true;
   }
 }

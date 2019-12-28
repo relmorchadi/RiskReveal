@@ -39,6 +39,10 @@
   Table Design
 ====================================================== **/
 
+.epMetric-delta {
+  font-size: 12px;
+}
+
 .table-design {
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
