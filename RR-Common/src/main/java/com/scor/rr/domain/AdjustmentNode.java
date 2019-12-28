@@ -1,6 +1,9 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @javax.persistence.Entity
@@ -17,6 +20,10 @@ public class AdjustmentNode {
     private Boolean capped;
     private String userNarrative;
     private AdjustmentNode cloningSource;
+
+    private List<ReturnPeriodBandingAdjustmentParameter> nonLinearAdjustment;
+
+    private List<ScalingAdjustmentParameter> linearAdjustment;
 
     @Column(name = "UserNarrative")
     public String getUserNarrative() {
@@ -60,6 +67,9 @@ public class AdjustmentNode {
         this.adjustmentBasisCode = other.adjustmentBasisCode;
         this.adjustmentTypeCode = other.adjustmentTypeCode;
         this.adjustmentState = other.adjustmentState;
+        this.adjustmentCategoryCode = other.getAdjustmentCategoryCode();
+        this.userNarrative = other.getUserNarrative();
+        this.entity = other.getEntity();
     }
 
     @Basic
@@ -156,7 +166,7 @@ public class AdjustmentNode {
         this.cloningSource = cloningSource;
     }
 
-    @Column(name = "AdjustmentCategoryCode")
+
     public String getAdjustmentCategoryCode() {
         return adjustmentCategoryCode;
     }
@@ -165,10 +175,30 @@ public class AdjustmentNode {
         this.adjustmentCategoryCode = adjustmentCategoryCode;
     }
 
+    @OneToMany(mappedBy = "adjustmentNode")
+    @JsonManagedReference
+    public List<ReturnPeriodBandingAdjustmentParameter> getNonLinearAdjustment() {
+        return nonLinearAdjustment;
+    }
+
+    public void setNonLinearAdjustment(List<ReturnPeriodBandingAdjustmentParameter> nonLinearAdjustment) {
+        this.nonLinearAdjustment = nonLinearAdjustment;
+    }
+
+    @OneToMany(mappedBy = "adjustmentNode")
+    @JsonManagedReference
+    public List<ScalingAdjustmentParameter> getLinearAdjustment() {
+        return linearAdjustment;
+    }
+
+    public void setLinearAdjustment(List<ScalingAdjustmentParameter> linearAdjustment) {
+        this.linearAdjustment = linearAdjustment;
+    }
+
     @Override
     public String toString() {
         return "AdjustmentNodeEntity{" +
-                ", adjustmentNodeId=" + adjustmentNodeId +
+                ", adjustmentNode=" + adjustmentNodeId +
                 ", adjustmentThread=" + adjustmentThread +
                 '}';
     }

@@ -12,7 +12,10 @@ export class CalibrationTableService {
   public adjustments: any[];
   public analysis: any[];
 
+  public isFac: boolean;
   constructor() {
+
+    this.isFac= false;
 
     CalibrationTableService.frozenCols = [
       {type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
@@ -37,7 +40,7 @@ export class CalibrationTableService {
     this.adjustments = [
       {header: 'Overall LMF',field: 'overallLmf', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Base',field: 'base', width: "40", unit: 'px', icon:'', filter: false, sort: false},
-      {header: 'Default',field: 'default', width: "40", unit: 'px', icon:'', filter: false, sort: false},
+      {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Client',field: 'client', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Inuring',field: 'inuring', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Post-Inuring',field: 'postInuring', width: "40", unit: 'px', icon:'', filter: false, sort: false}
@@ -49,13 +52,72 @@ export class CalibrationTableService {
 
   }
 
-  getColumns(view) {
-    return this[view];
+  columnHandler = {
+    "fac-epMetrics": (isExpanded) => {
+      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
+      const columnsLength = frozenColumns ? frozenColumns.length : null;
+
+      return ({
+        frozenColumns: frozenColumns,
+        columns: columns,
+        columnsLength: columnsLength
+      })
+    },
+    "fac-adjustments": (isExpanded) => {
+      const defaulCol = _.find(this.adjustments, col => col.header == "Default");
+      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, {...defaulCol, width: '500'}] : [defaulCol]);
+      const columnsLength = frozenColumns ? frozenColumns.length : null;
+
+      return ({
+        frozenColumns: frozenColumns,
+        columns: columns,
+        columnsLength: columnsLength
+      })
+    },
+    "treaty-epMetrics": (isExpanded) => {
+      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
+      const columnsLength = frozenColumns ? frozenColumns.length : null;
+
+      return ({
+        frozenColumns: frozenColumns,
+        columns: columns,
+        columnsLength: columnsLength
+      })
+    },
+    "treaty-adjustments": (isExpanded) => {
+      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols );
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.adjustments] : this.adjustments );
+      const columnsLength = frozenColumns ? frozenColumns.length : null;
+
+      return ({
+        frozenColumns: frozenColumns,
+        columns: columns,
+        columnsLength: columnsLength
+      })
+    }
+
+  };
+
+  getColumns(view, isExpanded) {
+    try {
+      return this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
+    } catch(e) {
+      return ({
+        frozenColumns: CalibrationTableService.frozenCols,
+        columns: this.adjustments,
+        columnsLength: CalibrationTableService.frozenCols.length
+      });
+    }
   }
 
-  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "550", icon:'', filter: false, sort: false}));
+  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "70", icon:'', filter: false, sort: false}));
 
   setCols = (cols, view) => {
     this[view] = this.generateColumns(cols);
   };
+
+  setWorkspaceType = (wsType) => this.isFac = wsType == "fac";
 }

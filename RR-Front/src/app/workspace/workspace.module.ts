@@ -37,7 +37,6 @@ import {NgxEchartsModule} from 'ngx-echarts';
 import {CreateFacProjectPopupComponent} from './containers/workspace-project/create-fac-project-popup/create-fac-project-popup.component';
 import { ParseIdPipe } from './pipes/parse-id.pipe';
 
-
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [

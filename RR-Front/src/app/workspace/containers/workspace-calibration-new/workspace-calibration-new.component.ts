@@ -20,6 +20,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   wsIdentifier: string;
   wsId: string;
   uwYear: string;
+  workspaceType: string;
 
   data: any[];
   epMetrics: any;
@@ -28,10 +29,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   //Table Config
   tableConfig: {
-    mode: 'default' | 'grouped',
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
-    isExpanded: boolean
+    isExpanded: boolean,
+    isGrouped: boolean
   };
   columnsConfig: {
     frozenColumns: any[],
@@ -50,18 +51,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.data = [];
     this.tableConfig = {
-      mode: "default",
-      view: "epMetrics",
+      view: "adjustments",
       selectedCurveType: "OEP",
-      isExpanded: false
+      isExpanded: false,
+      isGrouped: true
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.isGrouped= false;
-    this.columnsConfig = {
-      columnsLength: CalibrationTableService.frozenCols.length ,
-      columns: this.calibrationTableService.getColumns(this.tableConfig.view),
-      frozenColumns: CalibrationTableService.frozenCols
-    };
     this.rowKeys= {};
   }
 
@@ -73,29 +69,38 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.destroy();
   }
 
-  selectState = ({wsIdentifier, data : {wsId, uwYear, calibrationNew} }) => ({wsIdentifier, wsId, uwYear, calibrationNew});
+  selectState = ({wsIdentifier, data : {wsId, uwYear, calibrationNew, workspaceType} }) => ({workspaceType,wsIdentifier, wsId, uwYear, calibrationNew});
 
   patchState(state): void {
     const {
       wsIdentifier,
       wsId, uwYear,
-      calibrationNew
+      calibrationNew,
+      workspaceType
     } = this.selectState(state);
 
-    this.iniRouting(wsIdentifier, wsId, uwYear);
+    this.iniRouting(wsIdentifier, wsId, uwYear, workspaceType);
     this.initComponent(calibrationNew);
 
     this.detectChanges();
   }
 
-  iniRouting(wsIdentifier, wsId, uwYear) {
+  iniRouting(wsIdentifier, wsId, uwYear, workspaceType) {
 
     if( !this.wsId && wsId && !this.uwYear && uwYear ) {
-      //SUBS
+      //INIT
+      console.log(workspaceType);
+      this.calibrationTableService.setWorkspaceType(workspaceType);
+      this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
+
+      //SUB
+      this.subscribeToAdjustmnts(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
+
 
       //Others
       this.loadCalibrationPlts(wsId, uwYear);
+      this.loadAdjustments(wsId, uwYear);
       this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
     }
 
@@ -106,6 +111,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   loadCalibrationPlts(wsId: string, uwYear: number) {
     this.dispatch(new fromWorkspaceStore.LoadGroupedPltsByPure({wsId ,uwYear}));
+  }
+
+  loadAdjustments(wsId: string, uwYear: number) {
+    this.dispatch(new fromWorkspaceStore.LoadDefaultAdjustmentsInScope({wsId, uwYear}))
   }
 
   loadEpMetrics(wsId: string, uwYear: number, userId: number, curveType: string) {
@@ -127,6 +136,19 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     })
   }
 
+  subscribeToAdjustmnts (wsIdentifier: string) {
+    this.select(WorkspaceState.getAdjustments(wsIdentifier))
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(adjustments => {
+        this.adjustments = adjustments;
+
+        this.detectChanges();
+      })
+  }
+
   initComponent(state) {
 
     const {
@@ -145,11 +167,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       cols,
       'epMetrics'
     );
-    const columns = this.calibrationTableService.getColumns('epMetrics');
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      columns: columns
-    }
+    this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
   }
 
   onViewChange(newView) {
@@ -158,14 +176,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       view: newView
     };
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      columns: this.calibrationTableService.getColumns(newView)
-    };
+    this.columnsConfig = this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
   }
 
-  setIsGrouped(newIsGrouped) {
-    this.isGrouped = newIsGrouped;
+  toggleGrouping() {
+    this.tableConfig = {
+      ...this.tableConfig,
+      isGrouped: !this.tableConfig.isGrouped
+    };
   }
 
   handleTableActions(action: Message) {
@@ -176,13 +194,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.onViewChange(action.payload);
         break;
 
-      case 'IsGrouped Change':
+      case 'Toggle Grouping':
 
-        this.setIsGrouped(action.payload);
+        this.toggleGrouping();
         break;
 
-      case 'Expand off':
+      case "Expand columns OFF":
         this.expandColumnsOff();
+        break;
+
+      case "Expand columns ON":
+        this.expandColumns();
         break;
 
       default:
@@ -195,12 +217,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: true
     };
-    let columns = [...CalibrationTableService.frozenColsExpanded, ...this.columnsConfig.columns];
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      columns: columns,
-      frozenColumns: null
-    };
+    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
   }
 
   expandColumnsOff() {
@@ -208,10 +225,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: false
     };
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      columns: this.calibrationTableService.getColumns(this.tableConfig.view),
-      frozenColumns: CalibrationTableService.frozenCols,
-    };
+    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
   }
 }

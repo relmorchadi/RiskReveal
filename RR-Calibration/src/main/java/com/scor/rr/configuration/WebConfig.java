@@ -59,6 +59,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public ModelMapper getModelMapper(){
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+
+        return modelMapper;
     }
 }

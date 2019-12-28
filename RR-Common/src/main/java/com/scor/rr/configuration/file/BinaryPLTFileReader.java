@@ -1,12 +1,15 @@
 package com.scor.rr.configuration.file;
 
 
+import com.scor.rr.configuration.UtilsMethod;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import sun.misc.Cleaner;
@@ -28,9 +31,13 @@ import java.util.List;
  */
 @Component
 public class BinaryPLTFileReader implements PLTFileReader {
+    private static final Logger log = LoggerFactory.getLogger(BinaryPLTFileReader.class);
+
     public List<PLTLossData> read(File file) throws RRException {
         if (file == null || !file.exists())
             throw new PLTFileNotFoundException();
+        log.debug("file to read {}", file.getAbsolutePath());
+
         if (! "bin".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
             throw new PLTFileExtNotSupportedException();
         try {
@@ -50,7 +57,6 @@ public class BinaryPLTFileReader implements PLTFileReader {
                 PLTLossData lossData = new PLTLossData(period, eventId, eventDate, seq, exposure, loss);
                 pltLossDatas.add(lossData);
             }
-
 
             FileUtils.closeDirectBuffer(ib);
             fc.close();

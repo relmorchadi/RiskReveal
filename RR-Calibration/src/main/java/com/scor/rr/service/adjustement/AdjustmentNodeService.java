@@ -35,6 +35,9 @@ public class AdjustmentNodeService {
     private AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
+    private AdjustmentThreadRepository adjustmentThreadRepository;
+
+    @Autowired
     private ScalingAdjustmentParameterRepository scalingAdjustmentParameterRepository;
 
     @Autowired
@@ -71,12 +74,6 @@ public class AdjustmentNodeService {
     private AdjustmentNodeOrderService nodeOrderService;
 
     @Autowired
-    private CloningScorPltHeaderService cloningScorPltHeaderService;
-
-    @Autowired
-    private DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
-
-    @Autowired
     private DefaultScalingAdjustmentParameterRepository defaultScalingAdjustmentParameterRepository;
 
     @Autowired
@@ -86,7 +83,7 @@ public class AdjustmentNodeService {
     private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
-        return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
+        return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND, NOT_FOUND));
     }
 
     public List<AdjustmentNode> findAll(){
@@ -101,10 +98,21 @@ public class AdjustmentNodeService {
 
     public void deleteNode(Integer nodeId) {
         AdjustmentNode adjustmentNodeEntity = findOne(nodeId);
-        deleteParameterNode(nodeId);
-        processingService.deleteProcessingByNode(nodeId);
-        nodeOrderService.deleteByNodeIdAndReorder(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-        adjustmentNodeRepository.delete(adjustmentNodeEntity);
+        if (adjustmentNodeEntity != null) {
+            AdjustmentThread thread = adjustmentThreadRepository.findById(adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId()).get();
+            if (thread != null) {
+                thread.setThreadStatus("Invalid");
+            } else {
+                throw new IllegalStateException("deleteNode, thread not found, null");
+            }
+            deleteParameterNode(nodeId);
+            processingService.deleteProcessingByNode(nodeId);
+            nodeOrderService.deleteByNodeIdAndReorder(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+            adjustmentNodeRepository.delete(adjustmentNodeEntity);
+        } else {
+            throw new IllegalStateException("deleteNode, node not found, null");
+        }
+
     }
 
 //    tien : create node from default parameters found from data tables of ref data
@@ -177,16 +185,16 @@ public class AdjustmentNodeService {
 //                    if (adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
 //                        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
 //                        log.info("Thread getting successful : {}", adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() != 0) { // existing node
-//                            adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+//                        if (adjustmentNodeRequest.getAdjustmentNode() != 0) { // existing node
+//                            adjustmentNodeEntity.setAdjustmentNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNode(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
 //                        }
 //                        adjustmentNodeEntity = adjustmentNodeRepository.save(adjustmentNodeEntity);
 //
 //                        log.info(" -----  save order for node ----------");
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() == 0) { // new node
-//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
+//                        if (adjustmentNodeRequest.getAdjustmentNode() == 0) { // new node
+//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNode(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
 //                        }
 //
 //                        log.info(" -----  save parameter for node ----------");
@@ -229,6 +237,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- createAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
+                thread.setThreadStatus("Invalid");
             }
         }
 
@@ -324,6 +333,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- updateAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
+                thread.setThreadStatus("Invalid");
             }
         }
 
@@ -369,13 +379,17 @@ public class AdjustmentNodeService {
 
         // update node order
         log.info("---------- update node order ----------");
-        adjustmentNodeOrderService.updateNodeOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), node.getAdjustmentThread().getAdjustmentThreadId());
+        if (adjustmentNodeRequest.getSequence() != null) {
+            adjustmentNodeOrderService.updateNodeOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), node.getAdjustmentThread().getAdjustmentThreadId());
+        }
 
-        log.info("----------  delete old parameter for node ----------");
-        deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
+        if (adjustmentNodeRequest.getLmf() != null || adjustmentNodeRequest.getRpmf() != null || adjustmentNodeRequest.getPeatData() != null || adjustmentNodeRequest.getAdjustmentReturnPeriodBandings() != null) {
+            log.info("----------  delete old parameter for node ----------");
+            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
 
-        log.info("----------  create new parameter for node ----------");
-        saveParameterNode(node, adjustmentNodeRequest);
+            log.info("----------  create new parameter for node ----------");
+            saveParameterNode(node, adjustmentNodeRequest);
+        }
 
         node = adjustmentNodeRepository.save(node);
 
@@ -518,7 +532,6 @@ public class AdjustmentNodeService {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
-//                log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
                 log.info("saveParameterNode, {}", NONLINEAR_EVENT_PERIOD_DRIVEN.getValue());
                 savePeatDataFile(node, parameterRequest);
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");

@@ -6,7 +6,11 @@ import {ForNumberPipe} from './for-number.pipe';
 import {ParseIdPipe} from './parse-id.pipe';
 import {StatusFilterPipe} from './status-filter.pipe';
 import {RmsDatasourceTypePipe} from './rms-datasource.pipe';
+import {AnalysisByRdmPipe} from "./analysis-by-rdm.pipe";
 import {GetMetricPipe} from "./get-metric.pipe";
+import {FrozenColsLengthPipe} from "./frozen-cols-length.pipe";
+import {GetAdjustmentPipe} from "./get-adjustment.pipe";
+import {GetFactorPipe} from "./get-factor.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -16,8 +20,12 @@ export const PIPES = [
   ForNumberPipe,
   ParseIdPipe,
   StatusFilterPipe,
+  AnalysisByRdmPipe,
   RmsDatasourceTypePipe,
-  GetMetricPipe
+  GetMetricPipe,
+  FrozenColsLengthPipe,
+  GetAdjustmentPipe,
+  GetFactorPipe
 ];
 
 export * from './filter-by-badge.pipe';
@@ -28,3 +36,4 @@ export * from './for-number.pipe';
 export * from './parse-id.pipe';
 export * from './status-filter.pipe';
 export * from './rms-datasource.pipe';
+export * from './analysis-by-rdm.pipe';

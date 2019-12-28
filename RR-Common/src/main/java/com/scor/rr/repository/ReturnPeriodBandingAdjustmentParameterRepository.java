@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public interface ReturnPeriodBandingAdjustmentParameterRepository extends JpaRepository<ReturnPeriodBandingAdjustmentParameter, Integer> {
-//    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNode = n and n.adjustmentNodeId = :id")
+//    @Query("select p from AdjustmentReturnPeriodBandingParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNode = n and n.adjustmentNode = :id")
     List<ReturnPeriodBandingAdjustmentParameter> findByAdjustmentNodeAdjustmentNodeId(Integer id);
     List<ReturnPeriodBandingAdjustmentParameter> findByAdjustmentNode(AdjustmentNode node);
 

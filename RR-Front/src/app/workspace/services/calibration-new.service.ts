@@ -2,10 +2,11 @@ import {Injectable} from "@angular/core";
 import {CalibrationAPI} from "./api/calibration.api";
 import {StateContext} from "@ngxs/store";
 import {WorkspaceModel} from "../model";
-import {mergeMap, tap} from "rxjs/operators";
+import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
 import * as fromWS from '../store'
+import {EMPTY} from "rxjs";
 
 
 @Injectable({
@@ -45,6 +46,53 @@ export class CalibrationNewService {
             innerDraft.plts = data;
             innerDraft.loading = false;
           }))
+        }),
+        catchError( e => {
+          console.log(e);
+          return EMPTY;
+        })
+      )
+  }
+
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, { wsId, uwYear }: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const {
+        currentTab: {
+          wsIdentifier
+        }
+      } = draft;
+
+      this.getCalibState(draft, wsIdentifier).loading = true;
+    }));
+
+    return this.calibrationAPI.loadDefaultAdjustments(wsId, uwYear)
+      .pipe(
+        tap( defaultAdjustments => {
+          ctx.patchState(produce(ctx.getState(), (draft: WorkspaceModel) => {
+
+            const {
+              currentTab: {
+                wsIdentifier
+              }
+            } = draft;
+
+            const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+            _.forEach(defaultAdjustments, (adjustment: any, i) => {
+
+              const {
+                pltId,
+                categoryCode
+              } = adjustment;
+
+              if(!innerDraft.adjustments[categoryCode]) innerDraft.adjustments[categoryCode]= {};
+              innerDraft.adjustments[categoryCode][pltId] = adjustment;
+            })
+          }))
+        }),
+        catchError( e => {
+          console.log(e);
+          return EMPTY;
         })
       )
   }
@@ -80,6 +128,10 @@ export class CalibrationNewService {
 
           }))
 
+        }),
+        catchError( e => {
+          console.log(e);
+          return EMPTY;
         })
       )
   }

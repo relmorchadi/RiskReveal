@@ -19,13 +19,13 @@ export class CalibrationNewTableComponent implements OnInit {
 
   @Input() data: any[];
   @Input() epMetrics: any;
+  @Input() adjustments: any;
 
-  @Input() mode: 'default' | 'grouped';
   @Input() tableConfig: {
-    mode: 'default' | 'grouped',
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
-    isExpanded: boolean
+    isExpanded: boolean,
+    isGrouped: boolean
   };
   @Input() columnsConfig: {
     frozenColumns: any[],
@@ -67,29 +67,54 @@ export class CalibrationNewTableComponent implements OnInit {
     switch (type) {
       case 'inProgress':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'inProgress': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress']);
         break;
       case 'new':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'new': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new']);
         break;
       case 'valid':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'valid': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid']);
         break;
       case 'locked':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'locked': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked']);
         break;
       case 'requiresRegeneration':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'requiresRegeneration': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration']);
         break;
       case 'failed':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'failed': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed']);
         break;
     }
+  }
+
+  unexpandColumns() {
+    this.actionDispatcher.emit({
+      type: "Expand columns OFF"
+    })
+  }
+
+  expandColumns() {
+    this.actionDispatcher.emit({
+      type: "Expand columns ON"
+    })
+  }
+
+  onViewChange(newView) {
+    this.actionDispatcher.emit({
+      type: "View Change",
+      payload: newView
+    })
+  }
+
+  toggleGrouping() {
+    this.actionDispatcher.emit({
+      type: "Toggle Grouping"
+    })
   }
 
   /*toggleSelectPlts(plts: any) {
