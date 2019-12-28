@@ -185,6 +185,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.expandColumnsOff();
         break;
 
+      case "Expand columns ON":
+        this.expandColumns();
+        break;
+
       default:
         console.log(action);
     }

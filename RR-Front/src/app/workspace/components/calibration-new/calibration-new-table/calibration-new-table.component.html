@@ -18,299 +18,74 @@
   </ng-template>
 
   <ng-template pTemplate="header" let-columns>
-    <tr *ngIf="tableConfig?.isExpanded">
-      <ng-container *ngIf="col?.isFrozen">
-        <th class="header-cnt" [attr.colspan]="columns.length" [style.height]="'100px'" [style.position]="'relative'">
-          <i
-            (click)="unexpandColumns()"
-            class="icon-chevron_left_24px"
-            style="position: absolute;top: 0;right:0"
-          ></i>
-          <label (nzCheckedChange)="setIsGrouped($event)" [nzChecked]="isGrouped"  nz-checkbox> group By pure </label>
+    <tr>
+      <ng-container *ngIf="tableConfig.isExpanded">
+        <th class="header-cnt" [attr.colspan]="10" [style.height]="'120px'">
+          <div class="flex-vertical-layout spread-layout">
+            <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
+              <span class="title">PLTs</span>
+              <div class="icon-wrapper">
+                <i *ngIf="!tableConfig.isExpanded" (click)="expandColumns()"
+                   class="icon-chevron_right_24px"></i>
+                <i *ngIf="tableConfig.isExpanded" (click)="unexpandColumns()"
+                   class="icon-chevron_left_24px"></i>
+              </div>
+            </div>
+            <div class="flex-horizontal-sb-layout group-icons">
+              <div></div>
+              <div>
+                <i (click)="groupByPure()" *ngIf="!isGrouped"
+                   class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
+                <i (click)="groupByPure()" *ngIf="isGrouped"
+                   class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
+                <i class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
+              </div>
+            </div>
+          </div>
+        </th>
+        <th  class="header-cnt" [attr.colspan]="columns.length - 10" [style.height]="'120px'">
+          <div>
+            <span style="font-weight: bold; margin-right: 10px">View: </span>
+            <div class="p-button-group">
+              <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
+                             [ngStyle]="{'padding-right':'20px'}"
+                             label="Adjustments" name="tableType"
+                             value="adjustments"></p-radioButton>
+              <p-radioButton (onClick)="onViewChange('analysis')" [ngModel]="tableConfig.view"
+                             [ngStyle]="{'padding-right':'30px'}"
+                             label="Impacts Analysis" name="tableType"
+                             value="analysis"></p-radioButton>
+              <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
+                             [ngStyle]="{'padding-right':'10px'}"
+                             label="EP Metrics" name="tableType"
+                             value="epMetrics"></p-radioButton>
+            </div>
+          </div>
         </th>
       </ng-container>
-      <ng-container *ngIf="!col?.isFrozen" [ngTemplateOutlet]="subFrozenHeader" [ngTemplateOutletContext]="{$implicit: columns?.length}"></ng-container>
-    </tr>
-    <tr>
-      <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
-    </tr>
-  </ng-template>
-
-  <!--
-  BODY
-  -->
-
-  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
-
-    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
-
-  </ng-template>
-
-  <!--
-  Grouped Template
-  -->
-
-  <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
-
-          <ng-container *ngIf="col?.type == 'arrow'">
-            <a href="#" [pRowToggler]="rowData">
-              <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-            </a>
-          </ng-container>
-
-          <ng-container *ngIf="col?.type != 'arrow'">
-
-            <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
-
-            <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
-            </ng-container>
-
-          </ng-container>
-
-        </td>
-      </tr>
-  </ng-template>
-
-  <!--
-  not grouped Template
-  -->
-
-  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
-      <tr *ngFor="let thread of rowData?.threads">
-
-        <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
-
-          <ng-container *ngIf="col?.type != 'arrow'">
-
-            <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
-
-            <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
-            </ng-container>
-          </ng-container>
-
-        </td>
-
-      </tr>
-  </ng-template>
-
-
-  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter">
-
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
-
-        <ng-container *ngIf="col?.type != 'arrow'">
-
-          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
-
-          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-            {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
-          </ng-container>
-
-        </ng-container>
-
-      </td>
-    </tr>
-  </ng-template>
-
-
-  <!--Frozen Template-->
-
-
-
-
-
-
-
-
-
-
-
-  <!--Helpers-->
-  <!--TEMPLATES-->
-
-
-  <!--Row Template-->
-  <ng-template #fieldTemplate let-rowData let-field="field">
-    {{ rowData[field] }}
-  </ng-template>
-
-  <!--Metric Row Template-->
-
-  <ng-template #metricTemplate let-rowData let-field="field">
-    {{ rowData[field] }}
-  </ng-template>
-
-  <!--Resizable Header-->
-
-  <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
-
-    <ng-container *ngIf="isResizable; else nonResizableTemplate">
-      <th [style.width]="width + 'px'" pResizableColumn>
-        <ng-container *ngIf="col?.type == 'status'">
-          <span  style="justify-content: space-between;width: 30px;height: 30px">
-            <nz-dropdown [nzPlacement]="'bottomLeft'">
-              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
-              <ul nz-menu>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.inProgress" (change)="statusFlilerCheckbox($event, 'inProgress')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-history-alt iconYellow"></i> In Progress
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.new" (change)="statusFlilerCheckbox($event, 'new')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-star iconBlue"></i> New
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.valid" (change)="statusFlilerCheckbox($event, 'valid')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-check-circle iconGreen"></i> Valid
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.locked" (change)="statusFlilerCheckbox($event, 'locked')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-lock-alt iconRed"></i> Locked
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.requiresRegeneration" (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.failed" (change)="statusFlilerCheckbox($event, 'failed')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-error_24px iconRed2"></i> Failed
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </nz-dropdown>
-        </span>
-        </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
-          {{col?.header}}
-        </ng-container>
-      </th>
-    </ng-container>
-
-    <ng-template #nonResizableTemplate>
-      <th [style.width]="width + 'px'">
-        <ng-container *ngIf="col?.type == 'status'">
-          <span  style="justify-content: space-between;width: 30px;height: 30px">
-            <nz-dropdown [nzPlacement]="'bottomLeft'">
-              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
-              <ul nz-menu>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.inProgress" (change)="statusFlilerCheckbox($event, 'inProgress')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-history-alt iconYellow"></i> In Progress
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.new" (change)="statusFlilerCheckbox($event, 'new')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-star iconBlue"></i> New
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.valid" (change)="statusFlilerCheckbox($event, 'valid')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-check-circle iconGreen"></i> Valid
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.locked" (change)="statusFlilerCheckbox($event, 'locked')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-lock-alt iconRed"></i> Locked
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.requiresRegeneration" (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
-                    </label>
-                  </div>
-                </li>
-                <li nz-menu-item>
-                  <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.failed" (change)="statusFlilerCheckbox($event, 'failed')"
-                           nz-checkbox
-                           nzChecked
-                           style="margin-right: 12px;">
-                      <i class="icon-error_24px iconRed2"></i> Failed
-                    </label>
-                  </div>
-                </li>
-              </ul>
-            </nz-dropdown>
-        </span>
-        </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
-          {{col?.header}}
-        </ng-container>
-      </th>
-    </ng-template>
-
-  </ng-template>
-
-
-  <!--Frozen Header-->
-
-  <ng-template #subFrozenHeader let-colspan>
-    <th [attr.colspan]="colspan" [style.height]="'100px'" class="views-cnt">
-      <div class="radio-button-wrapper" style="position: relative">
+      <ng-container *ngIf="!tableConfig.isExpanded">
+        <th class="header-cnt" *ngIf="getColumnsState(columns)" [attr.colspan]="columns.length" [style.height]="'120px'">
+        <div class="flex-vertical-layout spread-layout">
+          <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
+            <span class="title">PLTs</span>
+            <div class="icon-wrapper">
+              <i *ngIf="!tableConfig.isExpanded" (click)="expandColumns()"
+                 class="icon-chevron_right_24px"></i>
+              <i *ngIf="tableConfig.isExpanded" (click)="unexpandColumns()"
+                 class="icon-chevron_left_24px"></i>
+            </div>
+          </div>
+          <div class="flex-horizontal-sb-layout group-icons">
+            <div></div>
+            <div>
+              <i (click)="groupByPure()" *ngIf="!isGrouped"
+                 class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
+              <i (click)="groupByPure()" *ngIf="isGrouped"
+                 class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
+              <i class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
+            </div>
+          </div>
+        </div>
         <div class="button-toggle">
           <span style="font-weight: bold; margin-right: 10px">View: </span>
           <div class="p-button-group">
@@ -328,10 +103,296 @@
                            value="epMetrics"></p-radioButton>
           </div>
         </div>
-        <i class="icon-settings_24px"
-           nz-tooltip="Manage return periods"
-           style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
-      </div>
-    </th>
+      </th>
+        <th  class="header-cnt" *ngIf="!getColumnsState(columns)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'">
+        </th>
+      </ng-container>
+
+    </tr>
+    <tr>
+      <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate"
+                    [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
+    </tr>
+  </ng-template>
+
+  <!--
+  BODY
+  -->
+
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+
+    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped"
+                  [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
+
+  </ng-template>
+
+  <!--
+  Grouped Template
+  -->
+
+  <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
+    <tr>
+      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <a href="#" [pRowToggler]="rowData">
+            <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+          </a>
+        </ng-container>
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate"
+                        [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
+            </div>
+          </ng-container>
+
+        </ng-container>
+
+      </td>
+    </tr>
+  </ng-template>
+
+  <!--
+  not grouped Template
+  -->
+
+  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
+    <tr *ngFor="let thread of rowData?.threads">
+
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate"
+                        [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            </div>
+          </ng-container>
+        </ng-container>
+
+      </td>
+
+    </tr>
+  </ng-template>
+
+
+  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter">
+
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate"
+                        [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            </div>
+          </ng-container>
+
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+
+
+  <!--Frozen Template-->
+  <!--Helpers-->
+  <!--TEMPLATES-->
+
+
+  <!--Row Template-->
+  <ng-template #fieldTemplate let-rowData let-field="field">
+    <div class="text-ellipsis">
+      {{ rowData[field] }}
+    </div>
+  </ng-template>
+
+  <!--Metric Row Template-->
+
+  <ng-template #metricTemplate let-rowData let-field="field">
+    {{ rowData[field] }}
+  </ng-template>
+
+  <!--Resizable Header-->
+
+  <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
+
+    <ng-container *ngIf="isResizable; else nonResizableTemplate">
+      <th [style.width]="width + 'px'" pResizableColumn>
+        <ng-container *ngIf="col?.type == 'status'">
+          <span style="justify-content: space-between;width: 30px;height: 30px">
+            <nz-dropdown [nzPlacement]="'bottomLeft'">
+              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
+              <ul nz-menu>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.inProgress" (change)="statusFlilerCheckbox($event, 'inProgress')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-history-alt iconYellow"></i> In Progress
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.new" (change)="statusFlilerCheckbox($event, 'new')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-star iconBlue"></i> New
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.valid" (change)="statusFlilerCheckbox($event, 'valid')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-check-circle iconGreen"></i> Valid
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.locked" (change)="statusFlilerCheckbox($event, 'locked')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-lock-alt iconRed"></i> Locked
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.requiresRegeneration"
+                           (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.failed" (change)="statusFlilerCheckbox($event, 'failed')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-error_24px iconRed2"></i> Failed
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown>
+        </span>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status'">
+          <div class="text-ellipsis">
+            {{col?.header}}
+          </div>
+        </ng-container>
+      </th>
+    </ng-container>
+
+    <ng-template #nonResizableTemplate>
+      <th [style.width]="width + 'px'">
+        <ng-container *ngIf="col?.type == 'status'">
+          <span style="justify-content: space-between;width: 30px;height: 30px">
+            <nz-dropdown [nzPlacement]="'bottomLeft'">
+              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
+              <ul nz-menu>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.inProgress" (change)="statusFlilerCheckbox($event, 'inProgress')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-history-alt iconYellow"></i> In Progress
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.new" (change)="statusFlilerCheckbox($event, 'new')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-star iconBlue"></i> New
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.valid" (change)="statusFlilerCheckbox($event, 'valid')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-check-circle iconGreen"></i> Valid
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.locked" (change)="statusFlilerCheckbox($event, 'locked')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-lock-alt iconRed"></i> Locked
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.requiresRegeneration"
+                           (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
+                    </label>
+                  </div>
+                </li>
+                <li nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [(ngModel)]="statusFilter.failed" (change)="statusFlilerCheckbox($event, 'failed')"
+                           nz-checkbox
+                           nzChecked
+                           style="margin-right: 12px;">
+                      <i class="icon-error_24px iconRed2"></i> Failed
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown>
+        </span>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status'">
+          <div class="text-ellipsis">
+          {{col?.header}}
+          </div>
+        </ng-container>
+      </th>
+    </ng-template>
+
+  </ng-template>
+
+
+  <!--Frozen Header-->
+
+  <ng-template #subFrozenHeader let-colspan>
+
   </ng-template>
 </p-table>

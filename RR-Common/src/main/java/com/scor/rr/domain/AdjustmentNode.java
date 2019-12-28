@@ -67,6 +67,9 @@ public class AdjustmentNode {
         this.adjustmentBasisCode = other.adjustmentBasisCode;
         this.adjustmentTypeCode = other.adjustmentTypeCode;
         this.adjustmentState = other.adjustmentState;
+        this.adjustmentCategoryCode = other.getAdjustmentCategoryCode();
+        this.userNarrative = other.getUserNarrative();
+        this.entity = other.getEntity();
     }
 
     @Basic

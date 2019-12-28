@@ -33,11 +33,55 @@
   font-size: 17px;
 }
 
-.ui-table .ui-table-thead > tr > th {
-  padding: 0.571em 0.857em;
-  border: 0px solid #c8c8c8 !important;
-  font-weight: 700;
-  color: #333333;
-  background-color: #fff;
+/** =======================================================
+Table Header
+======================================================= **/
+
+.title-as-tab {
+  color: #585858;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
+  }
+
+  .icon-wrapper {
+    margin-top: 10px;
+    margin-right: 4px;
+
+    .icon-chevron_right_24px, .icon-chevron_left_24px {
+      font-size: 24px;
+    }
+  }
 }
 
+.button-toggle {
+  float: right;
+  margin-right: -375px;
+  margin-top: -50px;
+}
+
+.spread-layout {
+  height: 120px;
+  justify-content: space-between;
+
+  .regenerate-all {
+    font-size: 17px;
+    margin-top: 20px;
+    margin-right: 5px;
+    color: #0700e4;
+    cursor: pointer;
+  }
+}
+
+.group-icons {
+  padding: 0 10px 16px 0;
+
+  .icon-settings_24px {
+    font-size: 20px;
+  }
+}
