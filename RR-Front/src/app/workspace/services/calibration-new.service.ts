@@ -6,7 +6,7 @@ import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
 import * as fromWS from '../store'
-import {EMPTY} from "rxjs";
+import {EMPTY, forkJoin} from "rxjs";
 
 
 @Injectable({
@@ -134,6 +134,30 @@ export class CalibrationNewService {
           return EMPTY;
         })
       )
+  }
+
+  loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
+    return forkJoin(
+      this.calibrationAPI.loadAllBasis(),
+      this.calibrationAPI.loadAllAdjustmentTypes()
+    ).pipe(
+      tap( ([basis, adjustmentTypes]) => {
+        ctx.patchState(produce(ctx.getState(), draft => {
+          const {
+            currentTab: {
+              wsIdentifier
+            }
+          } = draft;
+
+          const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+          innerDraft.constants = {
+            basis,
+            adjustmentTypes
+          }
+        }))
+      })
+    )
   }
 
   selectPlts(ctx: StateContext<WorkspaceModel>, payload){

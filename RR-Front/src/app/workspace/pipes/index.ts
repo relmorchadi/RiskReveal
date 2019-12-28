@@ -11,6 +11,7 @@ import {GetMetricPipe} from "./get-metric.pipe";
 import {FrozenColsLengthPipe} from "./frozen-cols-length.pipe";
 import {GetAdjustmentPipe} from "./get-adjustment.pipe";
 import {GetFactorPipe} from "./get-factor.pipe";
+import {GetDescriptionPipe} from "./get-description.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -25,7 +26,8 @@ export const PIPES = [
   GetMetricPipe,
   FrozenColsLengthPipe,
   GetAdjustmentPipe,
-  GetFactorPipe
+  GetFactorPipe,
+  GetDescriptionPipe
 ];
 
 export * from './filter-by-badge.pipe';

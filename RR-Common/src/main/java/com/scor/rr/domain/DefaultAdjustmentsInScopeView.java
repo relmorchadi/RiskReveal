@@ -33,9 +33,9 @@ public class DefaultAdjustmentsInScopeView {
     @JoinColumn(name = "AdjustmentNodeId")
     private AdjustmentNode adjustmentNode;
 
-    private String basicCode;
+    private String basisCode;
 
-    private String basicShortName;
+    private String basisShortName;
 
     private String categoryCode;
 

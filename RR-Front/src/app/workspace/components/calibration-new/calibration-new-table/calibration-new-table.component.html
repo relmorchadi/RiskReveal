@@ -154,10 +154,10 @@
 
 
   <ng-template #draggableTD let-adjustment>
-    <div *ngIf="adjustment" class="text-table-cell border-dragable" style="display: flex;">
+    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment)" class="text-table-cell border-dragable" style="display: flex;">
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
-          <span>{{adjustment?.basicShortName}}</span>
+          <span>{{adjustment?.basisShortName}}</span>
           <input class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
         </div>
       </div>
@@ -179,7 +179,6 @@
 
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
-
     <ng-container *ngIf="isResizable; else nonResizableTemplate">
       <th [style.width]="width + 'px'" pResizableColumn>
         <ng-container *ngIf="col?.type == 'status'">

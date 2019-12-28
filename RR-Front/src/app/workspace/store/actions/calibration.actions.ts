@@ -219,6 +219,13 @@ export class LoadEpMetrics {
   }
 }
 
+export class LoadCalibrationConstants {
+  static readonly type = '[Calibration] Load Calibration Constants';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class ToggleSelectCalibPlts {
   static readonly  type = '[Calibration] Toggle Select Plts';
   constructor(public payload?: any) {}

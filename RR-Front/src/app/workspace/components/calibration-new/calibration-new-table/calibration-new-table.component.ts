@@ -264,4 +264,11 @@ export class CalibrationNewTableComponent implements OnInit {
     this.lastClick.pure_index = pureIndex;
     this.lastClick.thread_index = threadIndex;
   }
+
+  viewAdjustmentDetail(adjustment) {
+    this.actionDispatcher.emit({
+      type: "View Adjustment Detail",
+      payload: adjustment
+    })
+  }
 }

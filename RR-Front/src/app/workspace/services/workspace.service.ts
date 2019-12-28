@@ -119,6 +119,7 @@ export class WorkspaceService {
               cols: []
             },
             adjustments: {},
+            constants: null,
             loading: false
           },
           calibration: {

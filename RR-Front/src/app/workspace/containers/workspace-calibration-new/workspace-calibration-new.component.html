@@ -18,3 +18,11 @@
     </div>
   </div>
 </div>
+
+<app-adjustment-pop-up-new
+  *ngIf="isAdjustmentPopUpVisible"
+  [adjustment]="selectedAdjustment"
+  [adjustmentTypes]="adjustmentTypes"
+  [basis]="basis"
+  (actionDispatcher)="handleAdjustmentPopUp($event)"
+></app-adjustment-pop-up-new>

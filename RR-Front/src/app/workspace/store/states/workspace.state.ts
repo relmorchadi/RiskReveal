@@ -216,6 +216,12 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
+  @Selector()
+  static getCalibrationConstants(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].calibrationNew.constants;
+  }
+
   /***********************************
    *
    * Calibration Selectors
@@ -723,6 +729,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadEpMetrics)
   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
     return this.calibrationNewService.loadEpMetrics(ctx, payload);
+  }
+
+  @Action(fromWS.LoadCalibrationConstants)
+  loadCalibrationConstants(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadCalibrationConstants) {
+    return this.calibrationNewService.loadCalibrationConstants(ctx);
   }
 
   @Action(fromWS.ToggleSelectCalibPlts)

@@ -34,4 +34,12 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}defaultAdjustment`, { params: {workspaceContextCode, uwYear}});
   }
 
+  loadAllBasis() {
+    return this.http.get(`${this.URL}basis`);
+  }
+
+  loadAllAdjustmentTypes() {
+    return this.http.get(`${this.URL}type/all`);
+  }
+
 }

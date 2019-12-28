@@ -13,9 +13,9 @@ public class DefaultAdjustmentsInScopeViewDTO {
 
     private int adjustmentNodeId;
 
-    private String basicCode;
+    private String basisCode;
 
-    private String basicShortName;
+    private String basisShortName;
 
     private String categoryCode;
 

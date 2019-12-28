@@ -25,6 +25,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   data: any[];
   epMetrics: any;
   adjustments: any;
+  adjustmentTypes: any[];
+  basis: any[];
   loading: boolean;
 
   //Table Config
@@ -40,8 +42,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columnsLength: number
   };
   curveTypes: string[];
-  isGrouped: boolean;
   rowKeys: any;
+
+  selectedAdjustment: any;
+  isAdjustmentPopUpVisible: boolean;
+
 
   constructor(
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
@@ -50,6 +55,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     super(_baseRouter, _baseCdr, _baseStore);
 
     this.data = [];
+    this.adjustmentTypes= [];
+    this.basis= [];
     this.tableConfig = {
       view: "adjustments",
       selectedCurveType: "OEP",
@@ -57,8 +64,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isGrouped: true
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
-    this.isGrouped= false;
     this.rowKeys= {};
+
+    this.isAdjustmentPopUpVisible= false;
   }
 
   ngOnInit() {
@@ -94,11 +102,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
 
       //SUB
-      this.subscribeToAdjustmnts(wsId + "-" + uwYear);
+      this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
-
+      this.subscribeToConstants();
 
       //Others
+      this.loadConstants();
       this.loadCalibrationPlts(wsId, uwYear);
       this.loadAdjustments(wsId, uwYear);
       this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
@@ -121,6 +130,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.dispatch(new fromWorkspaceStore.LoadEpMetrics({wsId, uwYear, userId, curveType}));
   }
 
+  loadConstants() {
+    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants())
+  }
+
   subscribeToEpMetrics (wsIdentifier: string) {
     this.select(WorkspaceState.getEpMetrics(wsIdentifier))
       .pipe(
@@ -136,7 +149,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     })
   }
 
-  subscribeToAdjustmnts (wsIdentifier: string) {
+  subscribeToAdjustments (wsIdentifier: string) {
     this.select(WorkspaceState.getAdjustments(wsIdentifier))
       .pipe(
         takeWhile(v => !_.isNil(v)),
@@ -144,6 +157,20 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       )
       .subscribe(adjustments => {
         this.adjustments = adjustments;
+
+        this.detectChanges();
+      })
+  }
+
+  subscribeToConstants() {
+    this.select(WorkspaceState.getCalibrationConstants)
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(({basis, adjustmentTypes}) => {
+        this.basis = basis;
+        this.adjustmentTypes = adjustmentTypes;
 
         this.detectChanges();
       })
@@ -207,9 +234,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.expandColumns();
         break;
 
+      case "View Adjustment Detail":
+        this.viewAdjustmentDetail(action.payload);
+        break;
+
       default:
         console.log(action);
     }
+  }
+
+  handleAdjustmentPopUp(action: Message) {
+    console.log(action);
   }
 
   expandColumns() {
@@ -226,5 +261,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: false
     };
     this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+  }
+
+  viewAdjustmentDetail(newAdjustment) {
+    this.selectedAdjustment = newAdjustment;
+    this.isAdjustmentPopUpVisible = true;
   }
 }
