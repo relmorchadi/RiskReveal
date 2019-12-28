@@ -712,8 +712,13 @@ export class WorkspaceState {
     return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
   }
 
+  @Action(fromWS.LoadDefaultAdjustmentsInScope)
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultAdjustmentsInScope) {
+    return this.calibrationNewService.loadDefaultAdjustmentsInScope(ctx, payload);
+  }
+
   @Action(fromWS.LoadEpMetrics)
-   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
     return this.calibrationNewService.loadEpMetrics(ctx, payload);
   }
 

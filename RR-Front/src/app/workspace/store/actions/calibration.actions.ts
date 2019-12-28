@@ -205,6 +205,13 @@ export class LoadGroupedPltsByPure {
   }
 }
 
+export class LoadDefaultAdjustmentsInScope {
+  static readonly type = '[Calibration] Load Default Adjustments In Scope';
+
+  constructor(public payload: any) {
+  }
+}
+
 export class LoadEpMetrics {
   static readonly type = '[Calibration] Load EpMetrics';
 

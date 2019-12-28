@@ -98,6 +98,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       //Others
       this.loadCalibrationPlts(wsId, uwYear);
+      this.loadAdjustments(wsId, uwYear);
       this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
     }
 
@@ -108,6 +109,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   loadCalibrationPlts(wsId: string, uwYear: number) {
     this.dispatch(new fromWorkspaceStore.LoadGroupedPltsByPure({wsId ,uwYear}));
+  }
+
+  loadAdjustments(wsId: string, uwYear: number) {
+    this.dispatch(new fromWorkspaceStore.LoadDefaultAdjustmentsInScope({wsId, uwYear}))
   }
 
   loadEpMetrics(wsId: string, uwYear: number, userId: number, curveType: string) {
