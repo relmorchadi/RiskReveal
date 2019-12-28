@@ -717,6 +717,12 @@ export class WorkspaceState {
     return this.calibrationNewService.loadEpMetrics(ctx, payload);
   }
 
+  @Action(fromWS.ToggleSelectCalibPlts)
+  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}){
+    console.log(payload)
+    return this.calibrationNewService.selectPlts(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions

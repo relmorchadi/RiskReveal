@@ -98,9 +98,15 @@
 
 
   <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter">
+    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter, let index = index"
+        (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
+          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+        </ng-container>
 
         <ng-container *ngIf="col?.type != 'arrow'">
 
@@ -219,7 +225,10 @@
             </nz-dropdown>
         </span>
         </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <label nz-checkbox [(ngModel)]="checkAll" ></label>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
           {{col?.header}}
         </ng-container>
       </th>
@@ -296,7 +305,10 @@
             </nz-dropdown>
         </span>
         </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
           {{col?.header}}
         </ng-container>
       </th>

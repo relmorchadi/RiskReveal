@@ -83,4 +83,15 @@ export class CalibrationNewService {
         })
       )
   }
+
+  selectPlts(ctx: StateContext<WorkspaceModel>, payload){
+    console.log(payload)
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].calibrationNew.plts =  plts;
+    }));
+  }
 }
