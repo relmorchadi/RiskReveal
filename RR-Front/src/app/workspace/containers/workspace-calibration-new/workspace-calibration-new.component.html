@@ -8,10 +8,10 @@
         <app-calibration-new-table
           [data]="data"
           [epMetrics]="epMetrics"
+          [adjustments]="adjustments"
           [tableConfig]="tableConfig"
           [columnsConfig]="columnsConfig"
           [rowKeys]="rowKeys"
-          [mode]="isGrouped ? 'grouped' : 'default'"
           (actionDispatcher)="handleTableActions($event)"
         ></app-calibration-new-table>
       </div>

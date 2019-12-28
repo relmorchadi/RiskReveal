@@ -43,7 +43,7 @@ public class DefaultAdjustmentsInScopeView {
 
     private Boolean capped;
 
-    public Object getAdjustments() {
+    public Object getFactors() {
         return adjustmentType.equals("Linear") ? adjustmentNode.getLinearAdjustment() : adjustmentNode.getNonLinearAdjustment();
     }
 

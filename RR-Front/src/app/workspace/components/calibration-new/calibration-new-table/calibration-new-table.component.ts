@@ -14,13 +14,13 @@ export class CalibrationNewTableComponent implements OnInit {
 
   @Input() data: any[];
   @Input() epMetrics: any;
+  @Input() adjustments: any;
 
-  @Input() mode: 'default' | 'grouped';
   @Input() tableConfig: {
-    mode: 'default' | 'grouped',
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
-    isExpanded: boolean
+    isExpanded: boolean,
+    isGrouped: boolean
   };
   @Input() columnsConfig: {
     frozenColumns: any[],
@@ -28,7 +28,6 @@ export class CalibrationNewTableComponent implements OnInit {
     columnsLength: number
   };
   @Input() rowKeys: any;
-  isGrouped = false;
 
   statusFilter: StatusFilter;
   selectedStatusFilter: any = {};
@@ -85,16 +84,14 @@ export class CalibrationNewTableComponent implements OnInit {
 
   onViewChange(newView) {
     this.actionDispatcher.emit({
-      type: 'View Change',
+      type: "View Change",
       payload: newView
     })
   }
 
-  getColumnsState(cols) {
-    return _.filter(cols, item => item.isFrozen).length > 0;
-  }
-
-  groupByPure() {
-    this.isGrouped = !this.isGrouped;
+  toggleGrouping() {
+    this.actionDispatcher.emit({
+      type: "Toggle Grouping"
+    })
   }
 }

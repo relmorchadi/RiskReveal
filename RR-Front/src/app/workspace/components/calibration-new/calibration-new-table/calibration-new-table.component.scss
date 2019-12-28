@@ -59,10 +59,13 @@ Table Header
   }
 }
 
+
 .button-toggle {
   float: right;
   margin-right: -375px;
   margin-top: -50px;
+  z-index: 1;
+  position: relative;
 }
 
 .spread-layout {
@@ -84,4 +87,52 @@ Table Header
   .icon-settings_24px {
     font-size: 20px;
   }
+}
+
+/** =======================================================
+CELL Header
+======================================================= **/
+
+
+.text-table-cell {
+  width: 100%;
+  height: 49px !important;
+  display: flex;
+  align-items: center;
+}
+
+.border-dragable {
+  border-left: 1px solid #F3F3F3 !important;
+  border-right: 1px solid #F3F3F3 !important;
+}
+
+.adjustDiv {
+  margin: 0 3px !important;
+  padding: 2px;
+  border: solid 1px #cccccc;
+  font-size: 11px;
+  background: white;
+  display: inline-block !important;
+  color: black;
+  font-weight: normal !important;
+  height: 36px;
+  max-width: 105px !important;
+  min-width: 109px !important;
+}
+
+.adjustDiv:focus {
+  border: solid 1px #028004;
+}
+
+.templateInput {
+  display: block;
+  background: white;
+  box-shadow: none;
+  border: 0;
+  width: 82%;
+  height: 35%;
+  bottom: 3px;
+  margin-left: 2px;
+  font-size: 12px !important;
+  font-weight: bold;
 }

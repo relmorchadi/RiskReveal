@@ -40,7 +40,7 @@ export class CalibrationTableService {
     this.adjustments = [
       {header: 'Overall LMF',field: 'overallLmf', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Base',field: 'base', width: "40", unit: 'px', icon:'', filter: false, sort: false},
-      {header: 'Default',field: 'default', width: "40", unit: 'px', icon:'', filter: false, sort: false},
+      {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Client',field: 'client', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Inuring',field: 'inuring', width: "40", unit: 'px', icon:'', filter: false, sort: false},
       {header: 'Post-Inuring',field: 'postInuring', width: "40", unit: 'px', icon:'', filter: false, sort: false}
@@ -65,8 +65,9 @@ export class CalibrationTableService {
       })
     },
     "fac-adjustments": (isExpanded) => {
+      const defaulCol = _.find(this.adjustments, col => col.header == "Default");
       const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ..._.slice(this.adjustments, 0, 2)] : _.slice(this.adjustments, 0, 2) );
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, defaulCol] : [defaulCol]);
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
       return ({
@@ -101,13 +102,18 @@ export class CalibrationTableService {
   };
 
   getColumns(view, isExpanded) {
-    console.log(view);
-    const columns = this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
-    console.log(columns);
-    return columns;
+    try {
+      return this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
+    } catch(e) {
+      return ({
+        frozenColumns: CalibrationTableService.frozenCols,
+        columns: this.adjustments,
+        columnsLength: CalibrationTableService.frozenCols.length
+      });
+    }
   }
 
-  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "550", icon:'', filter: false, sort: false}));
+  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "70", icon:'', filter: false, sort: false}));
 
   setCols = (cols, view) => {
     this[view] = this.generateColumns(cols);

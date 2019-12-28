@@ -23,5 +23,5 @@ public class DefaultAdjustmentsInScopeViewDTO {
 
     private Boolean capped;
 
-    private Object adjustments;
+    private Object factors;
 }

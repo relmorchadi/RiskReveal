@@ -29,10 +29,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   //Table Config
   tableConfig: {
-    mode: 'default' | 'grouped',
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
-    isExpanded: boolean
+    isExpanded: boolean,
+    isGrouped: boolean
   };
   columnsConfig: {
     frozenColumns: any[],
@@ -51,10 +51,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.data = [];
     this.tableConfig = {
-      mode: "default",
-      view: "epMetrics",
+      view: "adjustments",
       selectedCurveType: "OEP",
-      isExpanded: false
+      isExpanded: false,
+      isGrouped: true
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.isGrouped= false;
@@ -93,8 +93,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
 
-      //SUBS
+      //SUB
+      this.subscribeToAdjustmnts(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
+
 
       //Others
       this.loadCalibrationPlts(wsId, uwYear);
@@ -134,6 +136,19 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     })
   }
 
+  subscribeToAdjustmnts (wsIdentifier: string) {
+    this.select(WorkspaceState.getAdjustments(wsIdentifier))
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(adjustments => {
+        this.adjustments = adjustments;
+
+        this.detectChanges();
+      })
+  }
+
   initComponent(state) {
 
     const {
@@ -164,8 +179,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.columnsConfig = this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
   }
 
-  setIsGrouped(newIsGrouped) {
-    this.isGrouped = newIsGrouped;
+  toggleGrouping() {
+    this.tableConfig = {
+      ...this.tableConfig,
+      isGrouped: !this.tableConfig.isGrouped
+    };
   }
 
   handleTableActions(action: Message) {
@@ -176,9 +194,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.onViewChange(action.payload);
         break;
 
-      case 'IsGrouped Change':
+      case 'Toggle Grouping':
 
-        this.setIsGrouped(action.payload);
+        this.toggleGrouping();
         break;
 
       case "Expand columns OFF":

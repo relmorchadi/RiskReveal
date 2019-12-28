@@ -205,7 +205,10 @@ export class WorkspaceState {
 
   static getEpMetrics(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+  }
 
+  static getAdjustments(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.adjustments );
   }
 
   @Selector()

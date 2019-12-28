@@ -33,8 +33,11 @@ public class DefaultAdjustmentRest {
 
     @GetMapping
     public ResponseEntity<?> getDefaultAdjustmentsInScope(@RequestParam String workspaceContextCode, @RequestParam int uwYear) {
-        TypeMap<DefaultAdjustmentsInScopeView, DefaultAdjustmentsInScopeViewDTO> typeMap = modelMapper.createTypeMap(DefaultAdjustmentsInScopeView.class, DefaultAdjustmentsInScopeViewDTO.class)
-                .addMapping(src -> src.getAdjustmentNode().getAdjustmentNodeId(), DefaultAdjustmentsInScopeViewDTO::setAdjustmentNodeId);
+        TypeMap<DefaultAdjustmentsInScopeView, DefaultAdjustmentsInScopeViewDTO> typeMap = modelMapper.getTypeMap(DefaultAdjustmentsInScopeView.class, DefaultAdjustmentsInScopeViewDTO.class);
+        if (typeMap == null) { // if not  already added
+            modelMapper.createTypeMap(DefaultAdjustmentsInScopeView.class, DefaultAdjustmentsInScopeViewDTO.class)
+                    .addMapping(src -> src.getAdjustmentNode().getAdjustmentNodeId(), DefaultAdjustmentsInScopeViewDTO::setAdjustmentNodeId);
+        }
         return this.defaultAdjustmentService.getDefaultAdjustmentsInScope(workspaceContextCode, uwYear);
     }
 
