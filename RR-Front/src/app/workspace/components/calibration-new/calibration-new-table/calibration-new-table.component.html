@@ -19,6 +19,23 @@
 
   <ng-template pTemplate="header" let-columns>
     <tr>
+      <ng-container *ngIf="tableConfig.isExpanded">
+        <th class="header-cnt" [attr.colspan]="10" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
+        </th>
+        <th  class="header-cnt" [attr.colspan]="columns.length - 10" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="rightHeader" [ngTemplateOutletContext]="{ $implicit: tableConfig.isExpanded }"></ng-container>
+        </th>
+      </ng-container>
+      <ng-container *ngIf="!tableConfig.isExpanded">
+        <th class="header-cnt" *ngIf="columns | frozenColsLength" [attr.colspan]="columns.length" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
+          <ng-container [ngTemplateOutlet]="rightHeader"></ng-container>
+        </th>
+        <th  class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
+      </ng-container>
+    </tr>
+    <tr>
       <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
     </tr>
   </ng-template>
@@ -322,7 +339,6 @@
           <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
-        <ng-container *ngIf="col?.type != 'status'">
           <div class="text-ellipsis">
           {{col?.header}}
           </div>
