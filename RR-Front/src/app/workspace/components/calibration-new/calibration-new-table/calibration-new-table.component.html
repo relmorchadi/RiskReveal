@@ -19,42 +19,7 @@
 
   <ng-template pTemplate="header" let-columns>
     <tr>
-      <ng-container *ngIf="tableConfig.isExpanded">
-        <th class="header-cnt" [attr.colspan]="10" [style.height]="'120px'">
-          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
-          <ng-container [ngTemplateOutlet]="rightHeader"></ng-container>
-        </th>
-        <th  class="header-cnt" [attr.colspan]="columns.length - 10" [style.height]="'120px'">
-          <div>
-            <span style="font-weight: bold; margin-right: 10px">View: </span>
-            <div class="p-button-group">
-              <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
-                             [ngStyle]="{'padding-right':'20px'}"
-                             label="Adjustments" name="tableType"
-                             value="adjustments"></p-radioButton>
-              <p-radioButton (onClick)="onViewChange('analysis')" [ngModel]="tableConfig.view"
-                             [ngStyle]="{'padding-right':'30px'}"
-                             label="Impacts Analysis" name="tableType"
-                             value="analysis"></p-radioButton>
-              <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
-                             [ngStyle]="{'padding-right':'10px'}"
-                             label="EP Metrics" name="tableType"
-                             value="epMetrics"></p-radioButton>
-            </div>
-          </div>
-        </th>
-      </ng-container>
-      <ng-container *ngIf="!tableConfig.isExpanded">
-        <th class="header-cnt" *ngIf="columns | frozenColsLength" [attr.colspan]="columns.length" [style.height]="'120px'">
-          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
-          <ng-container [ngTemplateOutlet]="rightHeader"></ng-container>
-        </th>
-        <th  class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
-      </ng-container>
-    </tr>
-    <tr>
-      <ng-container *ngFor="let col of columns"
-                    [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
+      <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
     </tr>
   </ng-template>
 
@@ -71,7 +36,6 @@
   <!--
   Grouped Template
   -->
-
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr>
       <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
@@ -105,7 +69,6 @@
   <!--
   not grouped Template
   -->
-
   <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr *ngFor="let thread of rowData?.threads">
 
@@ -133,7 +96,9 @@
     </tr>
   </ng-template>
 
-
+  <!--
+  Row expansion
+  -->
   <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
     <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter">
 
@@ -163,6 +128,7 @@
   <!--Helpers-->
   <!--TEMPLATES-->
 
+
   <ng-template #draggableTD let-adjustment>
     <div *ngIf="adjustment" class="text-table-cell border-dragable" style="display: flex;">
       <div style="display: flex;height: max-content">
@@ -183,13 +149,11 @@
   </ng-template>
 
   <!--Metric Row Template-->
-
   <ng-template #metricTemplate let-rowData let-field="field">
     {{ rowData[field] }}
   </ng-template>
 
   <!--Resizable Header-->
-
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
 
     <ng-container *ngIf="isResizable; else nonResizableTemplate">
@@ -356,7 +320,6 @@
 
 
   <!--HEADER-->
-
   <ng-template #leftHeader>
     <div class="flex-vertical-layout spread-layout">
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
@@ -381,8 +344,8 @@
     </div>
   </ng-template>
 
-  <ng-template #rightHeader>
-    <div class="button-toggle">
+  <ng-template #rightHeader let-expanded>
+    <div [ngClass]="{ 'button-toggle' : !expanded }" >
       <span style="font-weight: bold; margin-right: 10px">View: </span>
       <div class="p-button-group">
         <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"

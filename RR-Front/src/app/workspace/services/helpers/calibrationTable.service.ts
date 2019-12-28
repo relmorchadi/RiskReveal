@@ -67,7 +67,7 @@ export class CalibrationTableService {
     "fac-adjustments": (isExpanded) => {
       const defaulCol = _.find(this.adjustments, col => col.header == "Default");
       const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, defaulCol] : [defaulCol]);
+      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, {...defaulCol, width: '500'}] : [defaulCol]);
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
       return ({
