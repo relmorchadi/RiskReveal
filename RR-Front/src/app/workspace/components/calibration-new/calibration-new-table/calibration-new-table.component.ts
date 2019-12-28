@@ -28,6 +28,7 @@ export class CalibrationNewTableComponent implements OnInit {
     columnsLength: number
   };
   @Input() rowKeys: any;
+  isGrouped = false;
 
   statusFilter: StatusFilter;
   selectedStatusFilter: any = {};
@@ -45,27 +46,27 @@ export class CalibrationNewTableComponent implements OnInit {
     switch (type) {
       case 'inProgress':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'inProgress': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress']);
         break;
       case 'new':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'new': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new']);
         break;
       case 'valid':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'valid': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid']);
         break;
       case 'locked':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'locked': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked']);
         break;
       case 'requiresRegeneration':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'requiresRegeneration': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration']);
         break;
       case 'failed':
         if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'failed': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed'])
+        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed']);
         break;
     }
   }
@@ -76,10 +77,24 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
+  expandColumns() {
+    this.actionDispatcher.emit({
+      type: "Expand columns ON"
+    })
+  }
+
   onViewChange(newView) {
     this.actionDispatcher.emit({
       type: 'View Change',
       payload: newView
     })
+  }
+
+  getColumnsState(cols) {
+    return _.filter(cols, item => item.isFrozen).length > 0;
+  }
+
+  groupByPure() {
+    this.isGrouped = !this.isGrouped;
   }
 }
