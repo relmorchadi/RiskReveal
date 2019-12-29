@@ -282,3 +282,20 @@ export class PatchPortfolioResultAction{
   static readonly type = '[Risk Link] Patch Portfolio result';
   constructor(public payload: any) {}
 }
+
+
+export class OverrideAnalysisRegionPeril{
+  static readonly type= '[Risk Link] Override Analysis Region Peril';
+  constructor(public payload: any) {}
+}
+
+export class LoadSourceEpCurveHeaders {
+  static readonly type= '[Risk Link] Load Source EP Curve Headers';
+  constructor(public payload: any) {}
+}
+
+export class OverrideFinancialPerspective {
+  static readonly type= '[Risk Link] Override Financial Perspective';
+  constructor(public payload: any) {}
+}
+

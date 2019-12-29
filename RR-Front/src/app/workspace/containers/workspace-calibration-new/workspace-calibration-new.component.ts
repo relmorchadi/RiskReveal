@@ -5,6 +5,10 @@ import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
+import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
+import {WorkspaceState} from "../../store";
+import {takeWhile} from "rxjs/operators";
+import {Message} from "../../../shared/message";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -23,35 +27,41 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   loading: boolean;
 
   //Table Config
-  columns: any [];
-  mode: 'default' | 'grouped';
-  isGrouped: boolean
+  tableConfig: {
+    mode: 'default' | 'grouped',
+    view: 'adjustments' | 'analysis' | 'epMetrics',
+    selectedCurveType: string,
+    isExpanded: boolean
+  };
+  columnsConfig: {
+    frozenColumns: any[],
+    columns: any[],
+    columnsLength: number
+  };
+  curveTypes: string[];
+  isGrouped: boolean;
   rowKeys: any;
 
-  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+    private calibrationTableService: CalibrationTableService
+  ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
     this.data = [];
-    this.mode = "default";
+    this.tableConfig = {
+      mode: "default",
+      view: "epMetrics",
+      selectedCurveType: "OEP",
+      isExpanded: false
+    };
+    this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.isGrouped= false;
-    this.columns = [
-      {type: "arrow", width: "7"},
-      {field: 'pltId', header: 'PLT Id', width: "15"},
-      {field: 'pltName', header: 'PLT Name', width: "40"},
-      {header: 'Peril',field: 'peril', icon:'', width: "40px", filter: true, sort: true},
-      {field: 'regionPerilCode', header: 'Region Peril', width: "40"},
-      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "40px", icon:'', filter: true, sort: true},
-      {field: 'grain', header: 'Grain', width: "45"},
-      {header: 'Vendor System',field: 'vendorSystem', width: "40px", icon:'', filter: true, sort: true},
-      {field: 'rap', header: 'RAP', width: "70"},
-      {header: '',field: 'status', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Overall LMF',field: 'overallLmf', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Base',field: 'base', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Default',field: 'default', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Client',field: 'client', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Inuring',field: 'inuring', width: "40px", icon:'', filter: false, sort: false},
-      {header: 'Post-Inuring',field: 'postInuring', width: "40px", icon:'', filter: false, sort: false},
-    ];
+    this.columnsConfig = {
+      columnsLength: CalibrationTableService.frozenCols.length ,
+      columns: this.calibrationTableService.getColumns(this.tableConfig.view),
+      frozenColumns: CalibrationTableService.frozenCols
+    };
     this.rowKeys= {};
   }
 
@@ -72,19 +82,21 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       calibrationNew
     } = this.selectState(state);
 
-    console.log(state);
-
     this.iniRouting(wsIdentifier, wsId, uwYear);
     this.initComponent(calibrationNew);
-
 
     this.detectChanges();
   }
 
   iniRouting(wsIdentifier, wsId, uwYear) {
 
-    if(!this.wsId && wsId && !this.uwYear && uwYear ) {
+    if( !this.wsId && wsId && !this.uwYear && uwYear ) {
+      //SUBS
+      this.subscribeToEpMetrics(wsId + "-" + uwYear);
+
+      //Others
       this.loadCalibrationPlts(wsId, uwYear);
+      this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
     }
 
     this.wsIdentifier = wsIdentifier;
@@ -96,24 +108,110 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.dispatch(new fromWorkspaceStore.LoadGroupedPltsByPure({wsId ,uwYear}));
   }
 
+  loadEpMetrics(wsId: string, uwYear: number, userId: number, curveType: string) {
+    this.dispatch(new fromWorkspaceStore.LoadEpMetrics({wsId, uwYear, userId, curveType}));
+  }
+
+  subscribeToEpMetrics (wsIdentifier: string) {
+    this.select(WorkspaceState.getEpMetrics(wsIdentifier))
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(epMetrics => {
+      this.epMetrics = epMetrics;
+
+      this.initEpMetricsCols(this.epMetrics);
+
+      this.detectChanges();
+    })
+  }
+
   initComponent(state) {
 
     const {
       plts,
-      epMetrics,
       adjustments,
       loading
     } = state;
 
     this.data = plts;
-    this.epMetrics = epMetrics;
     this.adjustments = adjustments;
     this.loading = loading;
-
-    _.forEach(this.data, row => {
-      this.rowKeys[row.pltId] = false;
-    });
-
   }
 
+  initEpMetricsCols({cols}) {
+    this.calibrationTableService.setCols(
+      cols,
+      'epMetrics'
+    );
+    const columns = this.calibrationTableService.getColumns('epMetrics');
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      columns: columns
+    }
+  }
+
+  onViewChange(newView) {
+
+    this.tableConfig = {
+      ...this.tableConfig,
+      view: newView
+    };
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      columns: this.calibrationTableService.getColumns(newView)
+    };
+  }
+
+  setIsGrouped(newIsGrouped) {
+    this.isGrouped = newIsGrouped;
+  }
+
+  handleTableActions(action: Message) {
+    switch (action.type) {
+
+      case 'View Change':
+
+        this.onViewChange(action.payload);
+        break;
+
+      case 'IsGrouped Change':
+
+        this.setIsGrouped(action.payload);
+        break;
+
+      case 'Expand off':
+        this.expandColumnsOff();
+        break;
+
+      default:
+        console.log(action);
+    }
+  }
+
+  expandColumns() {
+    this.tableConfig = {
+      ...this.tableConfig,
+      isExpanded: true
+    };
+    let columns = [...CalibrationTableService.frozenColsExpanded, ...this.columnsConfig.columns];
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      columns: columns,
+      frozenColumns: null
+    };
+  }
+
+  expandColumnsOff() {
+    this.tableConfig = {
+      ...this.tableConfig,
+      isExpanded: false
+    };
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      columns: this.calibrationTableService.getColumns(this.tableConfig.view),
+      frozenColumns: CalibrationTableService.frozenCols,
+    };
+  }
 }

@@ -199,6 +199,22 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  static getEpMetrics(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+
+  }
+
+  @Selector()
+  static getEpMetricsColumns(wsIdentifier: string, curveType: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
+  }
+
+  /***********************************
+   *
    * Calibration Selectors
    *
    ***********************************/
@@ -696,6 +712,11 @@ export class WorkspaceState {
     return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
   }
 
+  @Action(fromWS.LoadEpMetrics)
+   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+    return this.calibrationNewService.loadEpMetrics(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions
@@ -1149,6 +1170,21 @@ export class WorkspaceState {
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+
+  @Action(fromWS.OverrideAnalysisRegionPeril)
+  overrideAnalysisRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideAnalysisRegionPeril){
+    return this.riskLinkFacade.overrideAnalysisRegionPeril(ctx, payload);
+  }
+
+  @Action(fromWS.LoadSourceEpCurveHeaders)
+  loadSourceEpCurveHeaders(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSourceEpCurveHeaders){
+    return this.riskLinkFacade.loadSourceEpCurveHeaders(ctx, payload);
+  }
+  @Action(fromWS.OverrideFinancialPerspective)
+  overrideFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideFinancialPerspective){
+    return this.riskLinkFacade.overrideFinancialPerspective(ctx, payload);
+  }
+
 
   /***********************************
    *

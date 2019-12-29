@@ -27,7 +27,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import {ExcelService} from '../../../shared/services/excel.service';
 import produce from "immer";
 import {ResizedEvent} from "angular-resize-event";
-import {PltTableService} from "../../services/pltTable/plt-table.service";
+import {PltTableService} from "../../services/helpers/plt-table.service";
 
 @Component({
   selector: 'app-workspace-plt-browser',

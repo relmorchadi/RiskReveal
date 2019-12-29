@@ -1,0 +1,162 @@
+<p-dialog [visible]="isVisible"
+          [closable]="false"
+          styleClass="m-dialog-modal-m-60"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Override Region Peril</h6>
+      <i style="cursor: pointer" (click)="closeDialog()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div>
+    <div class="summary-info">
+      <div class="menu-icon-wrap">
+        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+          <a style="max-height: 28px;display: flex;" nz-dropdown>
+            <i class="icon-settings_24px"></i>
+          </a>
+          <ul nz-menu style="font-size: 12px">
+            <li nz-menu-item>Reset Sort</li>
+            <li nz-menu-item>Reset Filters</li>
+            <li nz-menu-item>Reset Sort/Filters</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item>Manage Columns</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="unselectAll()">Unselect All</li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <p-table [columns]="regionPerilDataTable"
+               [resizableColumns]="true" [scrollHeight]="'270px'"
+               [value]="analyses" #rpt [scrollable]="true">
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <ng-container *ngFor="let col of columns">
+              <col [ngStyle]="{'width': col.width}">
+            </ng-container>
+          </colgroup>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <ng-container *ngFor="let col of columns">
+              <th *ngIf="col.visible" pResizableColumn>
+                <ng-container *ngIf="col.type === 'select'">
+<!--                  <label (ngModelChange)="updateAllChecked($event, 'linkingAnalysis')" [ngModel]="allCheckedAnalysis"-->
+<!--                         [nzIndeterminate]="false" nz-checkbox-->
+<!--                         style="margin-top:20px"></label>-->
+                  <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                </ng-container>
+                <div style="white-space: nowrap;" *ngIf="col.type !== 'icon' && col.type !== 'check'">{{col.header}}
+                  <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                              ariaLabelAsc="Activate to sort in ascending order"
+                              ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
+                  <ng-container *ngIf="col.filtered">
+                    <div class="search-bar-table">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input pInputText type="text"
+                             (input)="rpt.filter($event.target.value, col.field, col.filterMatchMode)">
+                    </div>
+                  </ng-container>
+                </div>
+                <div *ngIf="col.type === 'check'">
+                  <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
+                     [ngClass]="col.icon"></i>
+                </div>
+                <div *ngIf="col.type === 'check'">
+                  <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
+                     [ngClass]="col.icon"></i>
+                </div>
+              </th>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+          <tr>
+            <ng-container *ngFor="let col of columns">
+              <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                <div class="" *ngIf="col.type === 'selection'">
+                  <label nz-checkbox [(ngModel)]="rowData.selected"></label>
+                </div>
+                <div class="text-data" (click)="selectRows(rowData, i)"
+                     [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                     [ngClass]="{'highlight-temp': col.highlight}"
+                     *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                <div style="padding-left: 10px;" *ngIf="col.type === 'comment'">
+                  <input class="a-textfield-mini" style="width: 90%" [(ngModel)]="overrideChanges[i].occurrenceBasis"/>
+                </div>
+                <div *ngIf="col.type === 'override'">
+                  <nz-select
+                    style="padding: 10px 0; width: 90%"
+                    (ngModelChange)="overrideRegionPeril($event, i)"
+                    [(ngModel)]="overrideChanges[i].rpCode"
+                    nzShowSearch
+                    class="a-dropdown-small input-wrapper"
+                    nzPlaceHolder="Select Occurence Basis"
+                  >
+                    <nz-option *ngFor="let rp of regionPerilByAnalysis[rowData.rlAnalysisId]"
+                               [nzLabel]="rp" [nzValue]="rp"></nz-option>
+<!--                    <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-AT"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-BE"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-CH"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-CZ"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-DE"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-DK"></nz-option>-->
+<!--                    <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone"-->
+<!--                               nzValue="EUET-FR"></nz-option>-->
+                  </nz-select>
+                </div>
+                <div *ngIf="col.type === 'function'">
+                  <i class="icon-download-alt" (click)="doCopyRegionPeril(i)" style="opacity: 0.7; font-size: 25px;"></i>
+                </div>
+              </th>
+            </ng-container>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+<!--    <div class="input-group-modal">-->
+<!--      <div class="row-input" *ngIf="editableRow.target === 'Ob'"><span class="label-input">Occurence Basis</span>-->
+<!--        <nz-select-->
+<!--          style="padding: 10px 0;" #obRes-->
+<!--          [ngModel]="editableRow.item.occurrenceBasis"-->
+<!--          nzShowSearch-->
+<!--          class="a-dropdown-small input-wrapper"-->
+<!--          nzPlaceHolder="Select Occurence Basis"-->
+<!--        >-->
+<!--          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>-->
+<!--          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>-->
+<!--        </nz-select>-->
+<!--      </div>-->
+
+<!--      <div style="display: flex; flex-direction: column;" *ngIf="editableRow.target !== 'Rp'">-->
+<!--        <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>-->
+<!--        <textarea></textarea>-->
+<!--      </div>-->
+<!--    </div>-->
+  </div>
+  <div style="display: flex; height: 10px"></div>
+<!--  <div *ngIf="editableRow.target !== 'Rp'" class="fp-options-wrapper">-->
+<!--    <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>-->
+<!--    <div class="context-wrapper">-->
+<!--      <nz-radio-group class="default-radio" [(ngModel)]="scopeForChanges">-->
+<!--        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Analysis</span></label>-->
+<!--        <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>-->
+<!--      </nz-radio-group>-->
+<!--    </div>-->
+<!--  </div>-->
+  <p-footer>
+    <button (click)="closeDialog()" class="a-button-text-cancel-mini">CANCEL</button>
+    <button (click)="applyOverride()" class="a-buttons-contained-mini">SAVE
+    </button>
+  </p-footer>
+</p-dialog>
