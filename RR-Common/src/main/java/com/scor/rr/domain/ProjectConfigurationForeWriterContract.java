@@ -1,4 +1,4 @@
-package com.scor.rr.domain.entities.Project;
+package com.scor.rr.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +15,22 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriterContract {
+
+    public ProjectConfigurationForeWriterContract(Integer entity, Long projectConfigurationForeWriterId, String contractId, String facNumber, Integer uwYear, Integer uwOrder, Integer endorsementNumber, String contractName, String businessType, String client, String subsidiary, String lineOfBusiness, String sector) {
+        this.entity = entity;
+        this.projectConfigurationForeWriterId = projectConfigurationForeWriterId;
+        this.contractId = contractId;
+        this.facNumber = facNumber;
+        this.uwYear = uwYear;
+        this.uwOrder = uwOrder;
+        this.endorsementNumber = endorsementNumber;
+        this.contractName = contractName;
+        this.businessType = businessType;
+        this.client = client;
+        this.subsidiary = subsidiary;
+        this.lineOfBusiness = lineOfBusiness;
+        this.sector = sector;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

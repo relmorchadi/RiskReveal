@@ -1,14 +1,13 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.MarketChannelEntity;
 import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
 import com.scor.rr.domain.entities.Project.*;
-import com.scor.rr.repository.ContractSearchResultRepository;
-import com.scor.rr.repository.ProjectEntityRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.repository.Project.*;
-import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +60,26 @@ public class ProjectService {
     @Autowired
     private ProjectCardViewRepository projectCardViewRepository;
 
+    @Autowired
+    private MarketChannelRepository marketChannelRepository;
+
+    //FIXME: need to group into one function later
+    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, ProjectEntity p) {
+        return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
+                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
+                .orElseGet(() -> {
+                            MarketChannelEntity marketChannelEntity = marketChannelRepository.findByMarketChannelCode("FAC");
+                            WorkspaceEntity newWs = workspaceEntityRepository.save(
+                                    new WorkspaceEntity(
+                                            facNum,
+                                            uwy,
+                                            marketChannelEntity != null ? marketChannelEntity.getMarketChannelId() : null,
+                                            facNum, //FIXME: workspace name and client name - check with Shaun
+                                            facNum));
+                            return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId()));
+                        }
+                );
+    }
 
     public ProjectEntity addNewProject(String wsId, Integer uwy, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)

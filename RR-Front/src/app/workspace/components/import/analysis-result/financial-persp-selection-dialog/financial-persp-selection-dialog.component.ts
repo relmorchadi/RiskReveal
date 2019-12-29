@@ -27,7 +27,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
 
   distinctRdms = [];
 
-  private changes = {analysis: {}, epCurves: {}, fpApplication: 'currentSelection'};
+  changes = {analysis: {}, epCurves: {}, fpApplication: 'currentSelection'};
 
 
   colsFinancialAnalysis = [
