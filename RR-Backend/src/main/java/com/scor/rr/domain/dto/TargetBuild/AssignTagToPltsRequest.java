@@ -9,5 +9,5 @@ public class AssignTagToPltsRequest {
     public Set<Tag> unselectedTags;
     public Set<Long> plts;
     public Long wsId;
-    public Integer userId;
+    public Long userId;
 }
