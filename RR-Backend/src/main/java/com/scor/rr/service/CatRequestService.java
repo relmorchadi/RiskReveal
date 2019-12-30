@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by u004602 on 26/12/2019.
@@ -52,6 +53,21 @@ public class CatRequestService {
         projectEntity.setCreatedBy(data.userFN + " " + data.userLN);
         projectEntity.setProjectName(data.uwAnalysisName); //FIXME: check with SHAUN
         projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, projectEntity);
+
+        List<ProjectConfigurationForeWriterContract> projectConfigurationForeWriterContracts = projectConfigurationForeWriterContractRepository.findByContractIdAndUwYear(data.facNumber, data.uwYear);
+        for (ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract : projectConfigurationForeWriterContracts) {
+            Optional<ProjectConfigurationForeWriter> projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findById(projectConfigurationForeWriterContract.getProjectConfigurationForeWriterId());
+            if (projectConfigurationForeWriter.isPresent()) {
+                if (CARStatus.CMPL.equals(projectConfigurationForeWriter.get().getCarStatus())) {
+                    projectConfigurationForeWriter.get().setCarStatus(CARStatus.SUPS);
+                } else {
+                    projectConfigurationForeWriter.get().setCarStatus(CARStatus.CANC);
+                }
+                projectConfigurationForeWriter.get().setLastUpdateDate(date);
+                projectConfigurationForeWriter.get().setLastUpdateBy(1); // SHOULD BE USER SYSTEM
+                projectConfigurationForeWriterRepository.save(projectConfigurationForeWriter.get());
+            }
+        }
 
         ProjectConfigurationForeWriter projectConfigurationForeWriter = projectConfigurationForeWriterRepository.save(new ProjectConfigurationForeWriter(1,
                 projectEntity.getProjectId(),
