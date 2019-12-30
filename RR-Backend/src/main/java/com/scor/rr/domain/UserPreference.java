@@ -4,14 +4,15 @@ package com.scor.rr.domain;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity(name = "UserPreference")
 @Data
 @NoArgsConstructor
 public class UserPreference {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserPreferenceId")
     private Long userPreferenceId;
     @Column(unique = true)
