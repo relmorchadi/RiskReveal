@@ -6,6 +6,7 @@
     <div class="my-tabs">
       <div class="tab-set-right table-design" [ngClass]="{'table-design-sp': tableConfig.isExpanded}">
         <app-calibration-new-table
+          [wsIdentifier]="wsIdentifier"
           [data]="data"
           [epMetrics]="epMetrics"
           [adjustments]="adjustments"

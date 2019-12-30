@@ -56,7 +56,7 @@ public class ProjectEntity {
     private Boolean isMGA;
 
     @Column(name = "AssignedTo")
-    private String assignedTo;
+    private Long assignedTo;
 
     @Column(name = "CreationDate")
     private Date creationDate;
@@ -97,7 +97,6 @@ public class ProjectEntity {
         this.isPostInured = false;
         this.isPublished = false;
         this.isMGA= false;
-        this.assignedTo = this.createdBy;
         this.deleted= false;
     }
 

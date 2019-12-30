@@ -17,6 +17,7 @@ export class CalibrationNewTableComponent implements OnInit {
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
+  @Input() wsIdentifier: string;
   @Input() data: any[];
   @Input() epMetrics: any;
   @Input() adjustments: any;
@@ -47,8 +48,6 @@ export class CalibrationNewTableComponent implements OnInit {
     thread_index: null
   };
   lastSelectedId: any;
-  workspaceId: any;
-  uwy: any;
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
@@ -235,22 +234,14 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   toggleSelectPlts(plts: any) {
-    console.log(plts);
-    this.dispatch(new fromWorkspaceStore.ToggleSelectCalibPlts({ // ToggleSelectPlts
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
+    this.dispatch(new fromWorkspaceStore.ToggleSelectCalibPlts({
+      wsIdentifier: this.wsIdentifier,
       plts: plts
     }));
   }
 
   protected dispatch(action: any | any[]): Observable<any> {
     return this._baseStore.dispatch(action);
-  }
-
-  observeRouteParams() {
-    return this.route$.params.pipe(tap(({wsId, year}) => {
-      this.workspaceId = wsId;
-      this.uwy = year;
-    }))
   }
 
   dispatchTableActions(payload) {

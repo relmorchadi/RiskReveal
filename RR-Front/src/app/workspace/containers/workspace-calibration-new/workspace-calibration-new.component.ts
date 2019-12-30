@@ -94,6 +94,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       workspaceType
     } = this.selectState(state);
 
+    this.wsIdentifier = wsIdentifier;
+
     this.iniRouting(wsIdentifier, wsId, uwYear, workspaceType);
     this.initComponent(calibrationNew);
 
