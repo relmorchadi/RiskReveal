@@ -65,9 +65,6 @@ public class RegionPerilExtractor {
     @Autowired
     private ModelPortfolioRepository modelPortfolioRepository;
 
-    @Autowired
-    private UserRrRepository userRrRepository;
-
     @Value("#{jobParameters['projectId']}")
     private Long projectId;
 
@@ -99,10 +96,7 @@ public class RegionPerilExtractor {
         projectImportRunEntity.setRunId(projectImportRunEntityList == null ? 1 : projectImportRunEntityList.size() + 1);
         projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
         projectImportRunEntity.setStartDate(new Date());
-        Optional<UserRrEntity> userRrEntity = userRrRepository.findById(projectEntity.getAssignedTo());
-        if (userRrEntity.isPresent()) {
-            projectImportRunEntity.setImportedBy(userRrEntity.get().getOmegaUser());
-        }
+        projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
 
         projectImportRunEntity.setSourceConfigVendor("RL");
         projectImportRunEntity = projectImportRunRepository.save(projectImportRunEntity);
