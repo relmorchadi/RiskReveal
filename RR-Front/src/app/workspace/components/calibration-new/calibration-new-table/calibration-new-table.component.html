@@ -88,7 +88,9 @@
   not grouped Template
   -->
   <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns" let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads, let index=index" (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
+    <tr *ngFor="let thread of rowData?.threads, let index=index"
+        [ngClass]="{'active_plt_item': thread.selected}"
+        (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
         <ng-container *ngIf="col?.type == 'arrow'">
@@ -124,6 +126,7 @@
   -->
   <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
     <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter, let index = index"
+        [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
