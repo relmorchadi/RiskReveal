@@ -22,6 +22,7 @@ export class CalibrationTableService {
       {field: 'pltId', header: 'PLT Id', width: "90", unit: 'px', resizable: true, isFrozen: true},
       {field: 'pltName', header: 'PLT Name', width: "180", unit: 'px', resizable: true, isFrozen: true},
       {header: 'Peril',field: 'peril', icon:'', width: "135", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
+      {header: '',field: 'status',type: 'status', width: "80", unit: 'px', icon:'', filter: false, sort: false, resizable: false, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsExpanded = [
