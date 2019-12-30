@@ -1,6 +1,12 @@
+
+/** =======================================================
+Table Body
+======================================================= **/
 td {
-  background-color: red;
   user-select: none;
+}
+.active_plt_item{
+  background-color: #fcf9d6!important
 }
 .dropdownMenu {
   margin-bottom: 150px;
@@ -233,3 +239,4 @@ CELL Header
 }
 
 /**/
+
