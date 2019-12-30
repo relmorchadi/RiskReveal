@@ -24,8 +24,6 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.scor.rr.domain.Calibration_.threadId;
-
 @Service
 public class CalculateAdjustmentService {
 
