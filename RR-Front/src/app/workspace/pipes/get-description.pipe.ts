@@ -6,9 +6,8 @@ import * as _ from 'lodash';
 })
 export class GetDescriptionPipe implements PipeTransform {
 
-  transform(basisShotName: string, basis: any[]): any {
-    console.log(basisShotName, basis);
-    return _.find(basis, item => item.basisShotName == basisShotName).description || '';
+  transform(basisShortName: string, basis: any[]): any {
+    return _.find(basis, item => item.basisShortName == basisShortName).description || '';
   }
 
 }

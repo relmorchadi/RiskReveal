@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from "../../../../shared/message";
 
 @Component({
   selector: 'app-adjustment-pop-up-new',
   templateUrl: './adjustment-pop-up-new.component.html',
-  styleUrls: ['./adjustment-pop-up-new.component.scss']
+  styleUrls: ['./adjustment-pop-up-new.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdjustmentPopUpNewComponent implements OnInit {
 
@@ -18,6 +19,12 @@ export class AdjustmentPopUpNewComponent implements OnInit {
 
   ngOnInit() {
 
+  }
+
+  hide(){
+    this.actionDispatcher.emit({
+      type: "Hide Adjustment Pop up"
+    })
   }
 
 }

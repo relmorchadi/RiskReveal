@@ -63,10 +63,19 @@ Table Header
   }
 }
 
+:host ::ng-deep .ui-table-thead {
+
+  .ui-column-resizer {
+    width: 2.6px !important;
+    border: none !important;
+    background-color: #d8cdcd;
+  }
+}
+
 
 .button-toggle {
   float: right;
-  margin-right: -375px;
+  margin-right: -230px;
   margin-top: -50px;
   z-index: 1;
   position: relative;

@@ -52,6 +52,9 @@ public class AdjustmentNodeProcessingService {
     AdjustmentThreadRepository adjustmentThreadRepository;
 
     @Autowired
+    AdjustmentStateRepository adjustmentStateRepository;
+
+    @Autowired
     AdjustmentScalingParameterService adjustmentScalingParameterService;
 
     @Autowired
@@ -87,10 +90,6 @@ public class AdjustmentNodeProcessingService {
         return adjustmentNodeProcessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity findByNode(Integer nodeId) {
-        return adjustmentNodeProcessingRepository.findByAdjustmentNodeAdjustmentNodeId(nodeId);
-    }
-
     // NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
     //Perhaps a refactor need to be done
 
@@ -99,7 +98,7 @@ public class AdjustmentNodeProcessingService {
     //  - Trigger adjustment processing (i.e call CalculAdjustement methods), return PLT Loss Data list and status
     //  - Persist PLT to DB
 
-    public PltHeaderEntity adjustPLTsInThread(Integer threadId) throws RRException {
+    public PltHeaderEntity adjustPLTsInThread(Integer threadId) {
         log.info("------ begin thread processing ------");
         AdjustmentThread thread = adjustmentThreadRepository.findById(threadId).get();
         if (thread == null) {
@@ -109,48 +108,60 @@ public class AdjustmentNodeProcessingService {
             throw new IllegalStateException("---------- adjustPLTsInThread, thread is locked, not permitted ----------");
         }
 
-        List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
-        AdjustmentNodeProcessingEntity processing = null;
-        if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
-            // sort adjustmentNodes by node order from 1 to n then processing
-            adjustmentNodes.sort(
-                    Comparator.comparing(this::findOrderOfNode));
-            for (AdjustmentNode node : adjustmentNodes) {
-                processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
-            }
-        }
-
-        PltHeaderEntity finalPLT = thread.getFinalPLT();
-
-        if (finalPLT == null) {
-            finalPLT = new PltHeaderEntity(thread.getInitialPLT());
-            finalPLT.setPltType("THREAD");
-        }
-
-        File sourceFile = null;
-        if (processing == null) {
-            sourceFile = new File(thread.getInitialPLT().getLossDataFilePath(), thread.getInitialPLT().getLossDataFileName());
-        } else {
-            sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
-        }
-
-        File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
         try {
-            UtilsMethod.copyFile(sourceFile, dstFile);
-        } catch (IOException e) {
+            AdjustmentState adjustmentState = adjustmentStateRepository.findById(2).get();
+            thread.setThreadStatus(adjustmentState.getCode());
+
+            List<AdjustmentNode> adjustmentNodes = adjustmentNodeRepository.findByAdjustmentThread(thread);
+            AdjustmentNodeProcessingEntity processing = null;
+            if (adjustmentNodes != null && !adjustmentNodes.isEmpty()) {
+                // sort adjustmentNodes by node order from 1 to n then processing
+                adjustmentNodes.sort(
+                        Comparator.comparing(this::findOrderOfNode));
+                for (AdjustmentNode node : adjustmentNodes) {
+                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
+                }
+            }
+
+            PltHeaderEntity finalPLT = thread.getFinalPLT();
+
+            if (finalPLT == null) {
+                finalPLT = new PltHeaderEntity(thread.getInitialPLT());
+                finalPLT.setPltType("THREAD");
+            }
+
+            File sourceFile = null;
+            if (processing == null) {
+                sourceFile = new File(thread.getInitialPLT().getLossDataFilePath(), thread.getInitialPLT().getLossDataFileName());
+            } else {
+                sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
+            }
+
+            File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
+            try {
+                UtilsMethod.copyFile(sourceFile, dstFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            finalPLT.setLossDataFilePath(dstFile.getParent());
+            finalPLT.setLossDataFileName(dstFile.getName());
+
+            finalPLT.setIsLocked(false);
+            finalPLT.setCreatedDate(RRDateUtils.getDateNow());
+            pltHeaderRepository.save(finalPLT);
+            thread.setFinalPLT(finalPLT);
+            adjustmentState = adjustmentStateRepository.findById(4).get();
+            thread.setThreadStatus(adjustmentState.getCode());
+            adjustmentThreadRepository.save(thread);
+            return finalPLT; // return final PLT
+        } catch (Exception e) {
             e.printStackTrace();
+            AdjustmentState adjustmentState = adjustmentStateRepository.findById(3).get();
+            thread.setThreadStatus(adjustmentState.getCode());
+            adjustmentThreadRepository.save(thread);
+            return thread.getFinalPLT();
         }
-
-        finalPLT.setLossDataFilePath(dstFile.getParent());
-        finalPLT.setLossDataFileName(dstFile.getName());
-
-        finalPLT.setIsLocked(false);
-        finalPLT.setCreatedDate(RRDateUtils.getDateNow());
-        pltHeaderRepository.save(finalPLT);
-        thread.setFinalPLT(finalPLT);
-        thread.setThreadStatus("Valid");
-        adjustmentThreadRepository.save(thread);
-        return finalPLT; // return final PLT
     }
 
     public Integer findOrderOfNode(AdjustmentNode node) {

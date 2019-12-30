@@ -21,17 +21,19 @@
       <div class="ui-g-9">
         <div class="body-wrap-dropDowns-calibration">
           <nz-select
-            [disabled]="true"
-            [ngModel]="adjustement"
+            [ngModel]="adjustment?.basisShortName"
             class="a-dropdown-small input-wrapper"
             nzPlaceHolder="Select Adjustment Basis"
-            nzShowSearch
             style="padding: 10px 0; width: 300px"
+            [disabled]="true"
+            [nzDisabled]="true"
           >
-              <nz-option *ngFor="let option of basis" [nzLabel]="option?.basisCode" [nzValue]="option"
-                         nzCustomContent>{{option?.basisCode}}<i (click)="favorise(option)"
-                                                           class="icon-star_border_24px unfavoredStar"
-                                                           style="font-size: 22px;"></i></nz-option>
+              <nz-option *ngFor="let option of basis" [nzLabel]="option?.basisShortName" [nzValue]="option?.basisShortName" nzCustomContent>
+                <i (click)="favorise(option)"
+                   class="icon-star_border_24px unfavoredStar"
+                   style="font-size: 22px;"></i>
+                {{option?.basisShortName}}
+              </nz-option>
           </nz-select>
         </div>
       </div>
@@ -50,7 +52,7 @@
         <label> Category </label>
       </div>
       <div class="ui-g-9">
-        <b>{{adjustement?.categoryCode}}</b>
+        <b>{{adjustment?.categoryCode}}</b>
       </div>
     </div>
     <div class="ui-g">
@@ -69,12 +71,13 @@
         <div class="body-wrap-dropDowns-calibration">
           <nz-select
             [disabled]="true"
-            [ngModel]="adjustement?.adjustmentType"
+            [ngModel]="adjustment?.adjustmentType"
             class="a-dropdown-small input-wrapper"
             nzPlaceHolder="Select a type"
             nzShowSearch
+            [nzDisabled]="true"
             style="padding: 10px 0; width: 300px">
-            <nz-option *ngFor="let option of adjustmentTypes" [nzLabel]="option.type" [nzValue]="option"></nz-option>
+            <nz-option *ngFor="let option of adjustmentTypes" [nzLabel]="option.type" [nzValue]="option?.type"></nz-option>
           </nz-select>
         </div>
       </div>
@@ -85,18 +88,25 @@
       </div>
       <div class="ui-g-9">
         <nz-switch
-          [ngModel]="adjustement?.capped == 'CAP'"
-          [nzDisabled]="true"
+          [ngModel]="adjustment?.capped"
           nzSize="small">
         </nz-switch>
       </div>
     </div>
-    <div *ngIf="adjustement?.adjustmentType == 'Linear'" class="ui-g">
+    <div *ngIf="adjustment?.adjustmentType == 'Linear'" class="ui-g">
       <div class="ui-g-3">
-        <label> Loss Modification Factor (LMF) </label>
+        <label> {{adjustment?.adjustmentType}} </label>
       </div>
       <div class="ui-g-9">
-        <input [(ngModel)]="columnPosition" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+      </div>
+    </div>
+    <div *ngIf="adjustment?.adjustmentType != 'Linear'" class="ui-g">
+      <div class="ui-g-3">
+        <label> {{adjustment?.adjustmentType}} </label>
+      </div>
+      <div class="ui-g-9">
+        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
       </div>
     </div>
   </div>

@@ -30,6 +30,7 @@ export class CalibrationNewTableComponent implements OnInit {
   };
   @Input() columnsConfig: {
     frozenColumns: any[],
+    frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
@@ -51,7 +52,8 @@ export class CalibrationNewTableComponent implements OnInit {
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  }
+  };
+
   selectedEPM: any = "AEP";
   EPMS: any = ["AEP", "AEP-TVAR", "OEP", "OEP-TVAR"];
   selectFinancial: any = "Million";
@@ -322,4 +324,13 @@ export class CalibrationNewTableComponent implements OnInit {
   changeFinancialUnit(financialUnit: any) {
     this.selectFinancial = financialUnit;
   }
+
+  onColumnResize({delta, element: {id}}) {
+    console.log(delta, id);
+    this.actionDispatcher.emit({
+      type: "Resize frozen Column",
+      payload: delta
+    })
+  }
+
 }
