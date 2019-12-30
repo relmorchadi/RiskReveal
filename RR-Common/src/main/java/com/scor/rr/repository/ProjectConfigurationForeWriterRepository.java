@@ -1,6 +1,6 @@
-package com.scor.rr.repository.Project;
+package com.scor.rr.repository;
 
-import com.scor.rr.domain.entities.Project.ProjectConfigurationForeWriter;
+import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectConfigurationForeWriterRepository extends JpaRepository<ProjectConfigurationForeWriter, Long> {
