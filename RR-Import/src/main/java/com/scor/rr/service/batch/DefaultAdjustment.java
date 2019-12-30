@@ -13,7 +13,7 @@ import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.EPCurveHeaderEntityRepository;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.repository.RegionPerilRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderEntityRepository;
+import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
 import com.scor.rr.service.batch.writer.EpSummaryStatWriter;
@@ -55,7 +55,7 @@ public class DefaultAdjustment extends AbstractWriter {
     private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Value(value = "${thread.creation.service}")
     private String threadCreationURL;
@@ -265,7 +265,7 @@ public class DefaultAdjustment extends AbstractWriter {
                 new SummaryStatisticHeaderEntity(1L, modelAnalysis.getFinancialPerspective(), cov, stdDev,
                         averageAnnualLoss, StatisticsType.PLT.getCode(), pltHeader.getPltHeaderId(), summaryStatFilename, file.getPath());
 
-        summaryStatisticHeaderEntityRepository.save(summaryStatisticHeaderEntity);
+        summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
     }
 
     private ResponseEntity<EPMetric> getEpStats(String url, HttpEntity request, String fullFilePath, RestTemplate restTemplate) {

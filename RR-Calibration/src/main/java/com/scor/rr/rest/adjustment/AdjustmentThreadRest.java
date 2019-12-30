@@ -21,19 +21,14 @@ public class AdjustmentThreadRest {
         return adjustmentThreadService.createNewAdjustmentThread(request);
     }
 
-    @PostMapping("update")
-    public AdjustmentThread updateAdjustmentThreadFinalPLT(@RequestBody AdjustmentThreadUpdateRequest request) throws RRException {
-        return adjustmentThreadService.updateAdjustmentThreadFinalPLT(request);
+    @PostMapping("lockUnlock")
+    public AdjustmentThread updateAdjustmentThread(@RequestBody AdjustmentThreadUpdateRequest request) throws RRException {
+        return adjustmentThreadService.lockUnlockAdjustmentThread(request);
     }
 
     @PostMapping("clone")
-    public AdjustmentThread cloneThread(@RequestParam Integer threadId) throws RRException {
-        return adjustmentThreadService.cloneThread(threadId);
-    }
-
-    @PostMapping("cloneWithoutDefaultAdjustment")
-    public AdjustmentThread cloneThreadWithoutDefaultAdjustment(@RequestParam Integer threadId) throws RRException {
-        return adjustmentThreadService.cloneThreadWithoutDefaultAdjustment(threadId);
+    public AdjustmentThread cloneThread(@RequestParam Integer threadId, @RequestParam boolean withAdjustment) throws RRException {
+        return adjustmentThreadService.cloneThread(threadId, withAdjustment);
     }
 
     @PostMapping("branch")

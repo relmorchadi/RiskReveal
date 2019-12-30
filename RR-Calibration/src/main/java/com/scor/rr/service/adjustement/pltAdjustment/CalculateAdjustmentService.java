@@ -2,17 +2,16 @@ package com.scor.rr.service.adjustement.pltAdjustment;
 
 import com.google.common.collect.Lists;
 import com.scor.rr.configuration.UtilsMethod;
+import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
-import com.scor.rr.domain.dto.MetricType;
 import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.enums.StatisticMetric;
-import com.scor.rr.repository.ModelAnalysisEntityRepository;
-import com.scor.rr.repository.PltHeaderRepository;
-import com.scor.rr.repository.RegionPerilRepository;
+import com.scor.rr.exceptions.RRException;
+import com.scor.rr.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,67 +39,24 @@ public class CalculateAdjustmentService {
     ModelAnalysisEntityRepository modelAnalysisEntityRepository;
 
     @Autowired
+    SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
+
+    @Autowired
+    SummaryStatisticsDetailRepository summaryStatisticsDetailRepository;
+
+    @Autowired
     RegionPerilRepository regionPerilRepository;
 
-//    @PostMapping("calculateSummaryStatisticHeaderDetail")
-//    public SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType metricType) {
-//        PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
-//
-//        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName();
-//
-//        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
-//        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
-//
-//        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-//
-//            if (MetricType.AEP.equals(metricType)) {
-//
-//            } else if (MetricType.OEP.equals(metricType)) {
-//
-//            } else if (MetricType.AEPTvAR.equals(metricType)) {
-//
-//            }  else if (MetricType.OEPTvAR.equals(metricType)) {
-//
-//            }
-//
-//            Map<Integer, Double> map = new HashMap<>();
-//            List<String>  columns= new ArrayList<>();
-//            List<String> values = new ArrayList<>();
-//            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
-//                columns.add("RP" + entry.getKey());
-//                values.add(entry.getValue().toString());
-//            }
-//            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
-//
-//
-//            ResponseEntity<EPMetric> aepMetricResponse = this.getEpStats(aEPMetricURL, request, fullFilePath, restTemplate);
-//            ResponseEntity<EPMetric> oepMetricResponse = this.getEpStats(oEPMetricURL, request, fullFilePath, restTemplate);
-//            ResponseEntity<EPMetric> aepTVarMetricResponse = this.getEpStats(aEPTvARMetricURL, request, fullFilePath, restTemplate);
-//            ResponseEntity<EPMetric> oepTVarMetricResponse = this.getEpStats(oEPTvARMetricURL, request, fullFilePath, restTemplate);
-//
-//            if (aepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepMetricResponse, isThread, threadId);
-//            else
-//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-//
-//
-//            if (oepMetricResponse.getStatusCode().equals(HttpStatus.OK))
-//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepMetricResponse, isThread, threadId);
-//            else
-//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/oepMetric {}", oepMetricResponse.getStatusCodeValue());
-//
-//
-//            if (aepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), aepTVarMetricResponse, isThread, threadId);
-//            else
-//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-//
-//
-//            if (oepTVarMetricResponse.getStatusCode().equals(HttpStatus.OK))
-//                writeEPStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(), oepTVarMetricResponse, isThread, threadId);
-//            else
-//                log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
-//
+    @PostMapping("calculateSummaryStatisticHeaderDetail")
+    public SummaryStatisticsDetail calculateSummaryStatisticHeaderDetail(Long pltId, StatisticMetric metricType) throws RRException {
+        PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
+
+        String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName(); // "/" linux
+
+        Optional<ModelAnalysisEntity> modelAnalysisOptional = modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
+        Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
+
+        if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
 //            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
 //            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
 //            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
@@ -110,10 +67,36 @@ public class CalculateAdjustmentService {
 //                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
 //                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
 //            }
-//        } else {
-//            log.error("no model analysis found for plt with id {}", pltHeader.getPltHeaderId());
-//        }
-//    }
+
+            MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+            List<PLTLossData> pltLossData = readPltFile.read(new File(fullFilePath));
+            EPMetric epMetric = getAEPMetric(pltLossData);
+            SummaryStatisticsDetail summaryStatisticsDetail = new SummaryStatisticsDetail();
+            summaryStatisticsDetail.setPltHeaderId(pltId);
+            summaryStatisticsDetail.setCurveType(metricType.name());
+            summaryStatisticsDetail.setLossType("PLT");
+//            summaryStatisticsDetail.setSummaryStatisticHeaderId(); // todo
+            summaryStatisticsDetailRepository.save(summaryStatisticsDetail);
+
+            Map<Integer, Double> map = new HashMap<>();
+            for (EPMetricPoint epMetricPoint : epMetric.getEpMetricPoints()) {
+
+            }
+
+            List<String> columns = new ArrayList<>();
+            List<String> values = new ArrayList<>();
+
+            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
+                columns.add("RP" + entry.getKey());
+                values.add(entry.getValue().toString());
+            }
+            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
+            return summaryStatisticsDetail;
+        } else {
+            log.error("no model analysis found for plt with id {}", plt.getPltHeaderId());
+            return null;
+        }
+    }
 
 
     public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){

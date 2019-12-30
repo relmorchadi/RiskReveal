@@ -101,7 +101,8 @@ public class AdjustmentNodeService {
         if (adjustmentNodeEntity != null) {
             AdjustmentThread thread = adjustmentThreadRepository.findById(adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId()).get();
             if (thread != null) {
-                thread.setThreadStatus("Invalid");
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
             } else {
                 throw new IllegalStateException("deleteNode, thread not found, null");
             }
@@ -237,7 +238,8 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- createAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
-                thread.setThreadStatus("Invalid");
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
             }
         }
 
@@ -333,7 +335,8 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- updateAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
-                thread.setThreadStatus("Invalid");
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
             }
         }
 
