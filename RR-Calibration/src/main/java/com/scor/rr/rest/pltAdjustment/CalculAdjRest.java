@@ -2,7 +2,7 @@ package com.scor.rr.rest.pltAdjustment;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.SummaryStatisticHeaderDetail;
+import com.scor.rr.domain.SummaryStatisticsDetail;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
@@ -59,10 +59,10 @@ public class CalculAdjRest {
     }
 
 //    @PostMapping("calculateSummaryStatisticHeaderDetail")
-//    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
+//    private SummaryStatisticsDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
 //        return calculateAdjustmentService.calculateSummaryStatisticHeaderDetail(pltId, type);
 //    }
-//
+
 //    // todo
 //    @PostMapping("calculateSummaryStatisticHeader")
 //    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeader(Long pltId, MetricType type) {
