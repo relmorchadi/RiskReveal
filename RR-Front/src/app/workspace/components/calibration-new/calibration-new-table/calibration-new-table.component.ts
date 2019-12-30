@@ -25,6 +25,7 @@ export class CalibrationNewTableComponent implements OnInit {
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     isExpanded: boolean,
+    expandedRowKeys: any,
     isGrouped: boolean
   };
   @Input() columnsConfig: {
@@ -330,6 +331,11 @@ export class CalibrationNewTableComponent implements OnInit {
         payload: delta
       })
     }
+  }
+
+  onRowExpand(event) {
+    console.log("Row Expand change", event, this.tableConfig.expandedRowKeys);
+
   }
 
 }

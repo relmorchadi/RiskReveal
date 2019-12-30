@@ -1,15 +1,16 @@
 <p-table
   [dataKey]="'pltId'"
   [value]="data"
+  [expandedRowKeys]="tableConfig?.expandedRowKeys"
   [columns]="columnsConfig?.columns"
   [frozenColumns]="columnsConfig?.frozenColumns"
   [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
   [scrollable]="true"
   [scrollHeight]="'500px'"
-  columnResizeMode="expand"
+  [columnResizeMode]="'expand'"
   (onColResize)="onColumnResize($event)"
-  [responsive]="true"
+  (onRowExpand)="onRowExpand($event)"
 >
 
   <ng-template pTemplate="colgroup" let-columns>
@@ -68,15 +69,6 @@
 
           <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field, type: col?.type}"></ng-container>
 
-          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-            <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
-            </div>
-            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
-              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
-            </span>
-          </ng-container>
-
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'adjustments')">
             <ng-container [ngTemplateOutlet]="draggableTD" [ngTemplateOutletContext]="{ $implicit: adjustments | getAdjustment : rowData?.pltId : col?.field }"></ng-container>
           </ng-container>
@@ -104,8 +96,8 @@
             <div class="text-ellipsis">
               {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
             </div>
-            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
-              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
+            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) * 100 >= 50 ? 'green' : 'red'">
+              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) * 100}}%
             </span>
           </ng-container>
 
@@ -143,8 +135,8 @@
             <div class="text-ellipsis">
               {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
             </div>
-            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
-              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
+            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) * 100 >= 50 ? 'green' : 'red'">
+              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) * 100}}%
             </span>
           </ng-container>
 
@@ -403,87 +395,90 @@
   <ng-template #rightHeader let-expanded>
 
      <!--dropdown for epMetrics-->
-    <div class="table-header2" [ngClass]="{ 'button-toggle-empetric-config' : !expanded }" style="background-color: #fff">
-      <div class="title-as-tab" style="height: 58px; width: 100% !important;">
+    <div [ngClass]="{ 'table-header-right-container' : expanded }">
+      <div class="table-header-right" [ngClass]="{ 'button-toggle-empetric-config' : !expanded }" style="background-color: #fff">
+        <div class="title-as-tab" style="height: 58px; width: 100% !important;">
         <span class="title">
          Thread Level EP Metrics
         </span>
-        <div class="body-wrap-dropDowns-calibration">
-          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-            <div class="dropdown-wrap-calibration" nz-dropdown>
-              <div class="dropdown-wrap-title-calibration">
-                <span class="dropdown-title-calibration">Change Display</span>
-                <span class="dropdown-item-selected-calibration">
+          <div class="body-wrap-dropDowns-calibration">
+            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+              <div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>
+                <div class="dropdown-wrap-title-calibration">
+                  <span class="dropdown-title-calibration">Change Display</span>
+                  <span class="dropdown-item-selected-calibration">
                   {{selectedEPM}}
                 </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
               </div>
-              <div class="dropdown-icon">
-                <i nz-icon type="down"></i>
+              <ul nz-menu>
+                <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+                </li>
+              </ul>
+            </nz-dropdown>
+          </div>
+          <div class="body-wrap-dropDowns-calibration">
+            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+              <div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>
+                <div class="dropdown-wrap-title-calibration">
+                  <span class="dropdown-title-calibration">Financial Unit</span>
+                  <span class="dropdown-item-selected-calibration">
+                  {{selectFinancial}}
+                </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
               </div>
-            </div>
-            <ul nz-menu>
-              <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
-              </li>
-            </ul>
-          </nz-dropdown>
-        </div>
-        <div class="body-wrap-dropDowns-calibration">
-          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-            <div class="dropdown-wrap-calibration" nz-dropdown>
-              <div class="dropdown-wrap-title-calibration">
-                <span class="dropdown-title-calibration">Financial Unit</span>
-                <span class="dropdown-item-selected-calibration">
-                        {{selectFinancial}}
-                      </span>
-              </div>
-              <div class="dropdown-icon">
-                <i nz-icon type="down"></i>
-              </div>
-            </div>
-            <ul nz-menu>
-              <li
+              <ul nz-menu>
+                <li
                   *ngFor="let financialUnit of financialUnits.data" nz-menu-item (click)="changeFinancialUnit(financialUnit)">
-                {{financialUnit.label}}
-              </li>
-            </ul>
-          </nz-dropdown>
-        </div>
-        <div class="body-wrap-dropDowns-calibration">
-          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-            <div class="dropdown-wrap-calibration" nz-dropdown>
-              <div class="dropdown-wrap-title-calibration">
-                <span class="dropdown-title-calibration">Change Currency</span>
-                <span class="dropdown-item-selected-calibration">
+                  {{financialUnit.label}}
+                </li>
+              </ul>
+            </nz-dropdown>
+          </div>
+          <div class="body-wrap-dropDowns-calibration">
+            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+              <div class="dropdown-wrap-calibration" nz-dropdown>
+                <div class="dropdown-wrap-title-calibration">
+                  <span class="dropdown-title-calibration">Change Currency</span>
+                  <span class="dropdown-item-selected-calibration">
                         {{selectedCurrencie}}
                       </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
               </div>
-              <div class="dropdown-icon">
-                <i nz-icon type="down"></i>
-              </div>
-            </div>
-            <ul nz-menu>
-              <li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">
-                {{currency.label}}
-              </li>
-            </ul>
-          </nz-dropdown>
+              <ul nz-menu>
+                <li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">
+                  {{currency.label}}
+                </li>
+              </ul>
+            </nz-dropdown>
+          </div>
+        </div>
+      </div>
+
+      <div [ngClass]="{ 'button-toggle' : !expanded }" style="padding-bottom: 5px;">
+        <span style="font-weight: bold; margin-right: 10px">View: </span>
+        <div class="p-button-group">
+          <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
+                         [ngStyle]="{'padding-right':'20px'}"
+                         label="Adjustments" name="tableType"
+                         value="adjustments"></p-radioButton>
+          <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
+                         [ngStyle]="{'padding-right':'10px'}"
+                         label="EP Metrics" name="tableType"
+                         value="epMetrics"></p-radioButton>
         </div>
       </div>
     </div>
 
-    <div [ngClass]="{ 'button-toggle' : !expanded }">
-      <span style="font-weight: bold; margin-right: 10px">View: </span>
-      <div class="p-button-group">
-        <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
-                       [ngStyle]="{'padding-right':'20px'}"
-                       label="Adjustments" name="tableType"
-                       value="adjustments"></p-radioButton>
-        <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
-                       [ngStyle]="{'padding-right':'10px'}"
-                       label="EP Metrics" name="tableType"
-                       value="epMetrics"></p-radioButton>
-      </div>
-    </div>
   </ng-template>
 
 </p-table>
