@@ -254,6 +254,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Resize frozen Column":
         this.resizeFrozenColumn(action.payload);
+        this.detectChanges();
         break;
 
       default:
@@ -279,6 +280,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
     this.columnsConfig = {
       ...this.columnsConfig,
+      frozenWidth: '0px',
       ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
     };
   }
@@ -290,6 +292,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
     this.columnsConfig = {
       ...this.columnsConfig,
+      frozenWidth: '450px',
       ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
     };
   }

@@ -6,7 +6,6 @@ import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
 import {tap} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
-import {CURRENCIES, UNITS} from "../../../containers/workspace-calibration/data";
 declare  const _;
 @Component({
   selector: 'app-calibration-new-table',
@@ -38,14 +37,14 @@ export class CalibrationNewTableComponent implements OnInit {
 
   statusFilter: StatusFilter;
   selectedStatusFilter: any = {};
-  lastClick: any = window['lastClick'] = {
+  lastClick: any = {
     pure_index: null,
     thread_index: null
   };
   currentClick: any = {
     pure_index: null,
     thread_index: null
-  }
+  };
   lastSelectedId: any;
   workspaceId: any;
   uwy: any;
@@ -93,7 +92,6 @@ export class CalibrationNewTableComponent implements OnInit {
 
   ngOnInit() {
     this.statusFilter = new StatusFilter();
-    this.observeRouteParams().pipe().subscribe(() => {});
   }
 
   statusFlilerCheckbox($event: any, type: string) {
@@ -326,11 +324,12 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   onColumnResize({delta, element: {id}}) {
-    console.log(delta, id);
-    this.actionDispatcher.emit({
-      type: "Resize frozen Column",
-      payload: delta
-    })
+    if(!this.tableConfig.isExpanded) {
+      this.actionDispatcher.emit({
+        type: "Resize frozen Column",
+        payload: delta
+      })
+    }
   }
 
 }
