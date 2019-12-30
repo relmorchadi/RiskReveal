@@ -34,10 +34,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     isExpanded: boolean,
+    expandedRowKeys: any,
     isGrouped: boolean
   };
   columnsConfig: {
     frozenColumns: any[],
+    frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
@@ -61,7 +63,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       view: "adjustments",
       selectedCurveType: "OEP",
       isExpanded: false,
+      expandedRowKeys: {},
       isGrouped: true
+    };
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '450px'
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.rowKeys= {};
@@ -99,7 +106,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       //INIT
       console.log(workspaceType);
       this.calibrationTableService.setWorkspaceType(workspaceType);
-      this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
+      this.columnsConfig = {
+        ...this.columnsConfig,
+        ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+      };
 
       //SUB
       this.subscribeToAdjustments(wsId + "-" + uwYear);
@@ -194,7 +204,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       cols,
       'epMetrics'
     );
-    this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
 
   onViewChange(newView) {
@@ -203,13 +216,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       view: newView
     };
-    this.columnsConfig = this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      ...this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
+    };
   }
 
   toggleGrouping() {
     this.tableConfig = {
       ...this.tableConfig,
-      isGrouped: !this.tableConfig.isGrouped
+      isGrouped: !this.tableConfig.isGrouped,
+      expandedRowKeys: this.tableConfig.isGrouped ? {} : this.tableConfig.expandedRowKeys
     };
   }
 
@@ -217,12 +234,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     switch (action.type) {
 
       case 'View Change':
-
         this.onViewChange(action.payload);
         break;
 
       case 'Toggle Grouping':
-
         this.toggleGrouping();
         break;
 
@@ -236,6 +251,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "View Adjustment Detail":
         this.viewAdjustmentDetail(action.payload);
+        break;
+
+      case "Resize frozen Column":
+        this.resizeFrozenColumn(action.payload);
+        this.detectChanges();
+        break;
+
+      case "Row Expand change":
+        this.rowExpandChange(action.payload);
         break;
 
       default:
@@ -259,7 +283,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: true
     };
-    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '0px',
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
 
   expandColumnsOff() {
@@ -267,11 +295,30 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: false
     };
-    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '450px',
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
 
   viewAdjustmentDetail(newAdjustment) {
     this.selectedAdjustment = {...newAdjustment};
     this.isAdjustmentPopUpVisible = true;
   }
+
+  resizeFrozenColumn(delta) {
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: ( _.toNumber(_.trimEnd(this.columnsConfig.frozenWidth, "px")) + delta ) + "px"
+    }
+  }
+
+  rowExpandChange(rowExpandKeys) {
+    this.tableConfig = {
+      ...this.tableConfig,
+      expandedRowKeys: rowExpandKeys
+    }
+  }
+
 }

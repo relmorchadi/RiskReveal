@@ -41,6 +41,13 @@ td {
 Table Header
 ======================================================= **/
 
+.table-header-right-container {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+  justify-content: space-between;
+}
+
 .title-as-tab {
   color: #585858;
 
@@ -63,11 +70,30 @@ Table Header
   }
 }
 
+:host ::ng-deep .ui-table-thead {
+
+  .ui-column-resizer {
+    width: 2.6px !important;
+    border: none !important;
+    background-color: #d8cdcd;
+  }
+}
+
 
 .button-toggle {
   float: right;
   margin-right: -230px;
   margin-top: -50px;
+  z-index: 1;
+  position: relative;
+}
+
+
+
+.button-toggle-empetric-config {
+  float: right;
+  margin-right: -607px;
+  margin-top: -122px;
   z-index: 1;
   position: relative;
 }
@@ -90,6 +116,27 @@ Table Header
 
   .icon-settings_24px {
     font-size: 20px;
+  }
+}
+
+.table-header-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-as-tab {
+  display: flex;
+  flex: 0 1 auto;
+  float: left;
+  color: #585858;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
   }
 }
 
@@ -140,3 +187,49 @@ CELL Header
   font-size: 12px !important;
   font-weight: bold;
 }
+
+.body-wrap-dropDowns-calibration {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    padding-right: 13px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+/**/

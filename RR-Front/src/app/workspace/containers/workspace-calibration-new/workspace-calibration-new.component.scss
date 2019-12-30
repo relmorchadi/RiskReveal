@@ -43,6 +43,12 @@
   font-size: 12px;
 }
 
+:host ::ng-deep {
+  td {
+    user-select: none;
+  }
+}
+
 .table-design {
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {

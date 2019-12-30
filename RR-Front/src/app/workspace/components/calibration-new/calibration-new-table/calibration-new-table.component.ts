@@ -25,10 +25,12 @@ export class CalibrationNewTableComponent implements OnInit {
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     isExpanded: boolean,
+    expandedRowKeys: any,
     isGrouped: boolean
   };
   @Input() columnsConfig: {
     frozenColumns: any[],
+    frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
@@ -40,13 +42,47 @@ export class CalibrationNewTableComponent implements OnInit {
     pure_index: null,
     thread_index: null
   };
+  currentClick: any = {
+    pure_index: null,
+    thread_index: null
+  };
   lastSelectedId: any;
   workspaceId: any;
   uwy: any;
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  }
+  };
+
+  selectedEPM: any = "AEP";
+  EPMS: any = ["AEP", "AEP-TVAR", "OEP", "OEP-TVAR"];
+  selectFinancial: any = "Million";
+  financialUnits: any = {
+    data:  [
+      {id: '3', label: 'Billion'},
+      {id: '1', label: 'Thousands'},
+      {id: '2', label: 'Million'},
+      {id: '4', label: 'Unit'}
+    ],
+    selected: {id: '2', label: 'Million'}
+  };
+  selectedCurrencie: any = 'EUR';
+  currencies = {
+    data: [
+      {id: '1', name: 'Euro', label: 'EUR'},
+      {id: '2', name: 'Us Dollar', label: 'USD'},
+      {id: '3', name: 'Britsh Pound', label: 'GBP'},
+      {id: '4', name: 'Canadian Dollar', label: 'CAD'},
+      {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
+      {id: '5', name: 'Swiss Franc', label: 'CHF'},
+      {id: '5', name: 'Saudi Riyal', label: 'SAR'},
+      {id: '6', name: 'Bitcoin', label: 'XBT'},
+      {id: '7', name: 'Hungarian forint', label: 'HUF'},
+      {id: '8', name: 'Singapore Dollars', label: 'SGD'}
+    ],
+    selected: {id: '1', name: 'Euro', label: 'EUR'}
+  };
+
 
 
   /*selectedThreads: any = {
@@ -57,10 +93,6 @@ export class CalibrationNewTableComponent implements OnInit {
 
   ngOnInit() {
     this.statusFilter = new StatusFilter();
-    this.observeRouteParams().pipe().subscribe(() => {});
-    setInterval(()=>{
-      console.log(this.uwy, this.workspaceId)
-    },3000)
   }
 
   statusFlilerCheckbox($event: any, type: string) {
@@ -117,15 +149,7 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
-  /*toggleSelectPlts(plts: any) {
-    console.log(plts);
-    this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      plts,
-      forDelete: this.getTableInputKey('showDeleted')
-    }));
-  }*/
-  handlepltClick($event, threadId, pureId, pureIndex, threadIndex, clickType) {
+  handlepltClick($event, pureId, threadId, pureIndex, threadIndex, clickType) {
     console.log(pureIndex);
     console.log(threadIndex);
     /*threadIndex = _.findIndex(this.data[pureIndex].threads, (row: any)=>{ row.pltId = threadId });*/
@@ -143,20 +167,19 @@ export class CalibrationNewTableComponent implements OnInit {
     } else {
       this.lastSelectedId = threadIndex;
       console.log(this.data)
-      //let plts: any = []
       this.data.forEach((pure, i) => {
         pure.threads.forEach((thread, j) => {
           if (pureIndex === i && threadIndex === j){
             thread.selected = !isSelected;
           } else {
-            thread.selected = isSelected;
+            thread.selected = false;
           }
         });
       })
       console.log(this.data)
       this.toggleSelectPlts(this.data);
       this.updateLastClick(pureIndex, threadIndex)
-      this.selectOptions.indeterminate = true;
+      this.selectOptions.indeterminate = isSelected ?  false : true;
     }
   }
 
@@ -172,24 +195,41 @@ export class CalibrationNewTableComponent implements OnInit {
       this.toggleSelectPlts(this.data);
       this.updateLastClick(pureIndex, threadIndex);
     } else if($event.shiftKey){
-      const maxpure = this.lastClick.pure_index =! null ? Math.max(pureIndex, this.lastClick.pure_index) : 0;
-      const minpure = this.lastClick.pure_index =! null ? Math.min(pureIndex, this.lastClick.pure_index) : 0;
-      const maxthread = this.lastClick.thread_index =! null ? Math.max(threadIndex, this.lastClick.thread_index) : 0;
-      const minthread = this.lastClick.thread_index  =! null ? Math.min(threadIndex, this.lastClick.thread_index) : 0;
-      console.log(maxpure, minpure, maxthread, minthread)
-      this.data.forEach((pure, i) => {
-          pure.threads.forEach((thread, j) => {
-            if ((i < maxpure && i > minpure)){
+      this.currentClick.pure_index = pureIndex;
+      this.currentClick.thread_index = threadIndex;
+      this.lastClick.pure_index = this.lastClick.pure_index != null ? this.lastClick.pure_index : 0;
+      this.lastClick.thread_index = this.lastClick.thread_index != null ? this.lastClick.thread_index : 0;
+      let maxPure = _.maxBy([this.lastClick, this.currentClick], (o)=>{ return o.pure_index })
+      let minPure = _.minBy([this.lastClick, this.currentClick], (o)=>{ return o.pure_index })
+      _.forEach(this.data, (pure, i)=>{
+        _.forEach(pure.threads, (thread, j)=>{
+          if (i<maxPure.pure_index && i>minPure.pure_index){
+            thread.selected = true;
+          } else if (i == maxPure.pure_index && i == minPure.pure_index){
+            let maxThread = _.max([this.lastClick.thread_index, this.currentClick.thread_index]);
+            let minThread = _.min([this.lastClick.thread_index, this.currentClick.thread_index]);
+            if (j <= maxThread && j >= minThread){
               thread.selected = true;
-            } else if(i === maxpure || i === minpure) {
-              if (j <= maxthread && j >= minthread) {
-                thread.selected = true;
-              }
+            }else{
+              thread.selected = false;
+            }
+          } else if(i == maxPure.pure_index){
+            if (j <= maxPure.thread_index){
+              thread.selected = true;
             } else {
               thread.selected = false;
             }
-          });
-      });
+          } else if(i == minPure.pure_index){
+            if (j >= minPure.thread_index){
+              thread.selected = true;
+            } else {
+              thread.selected = false;
+            }
+          } else {
+            thread.selected = false;
+          }
+        })
+      })
       this.toggleSelectPlts(this.data);
     }
   }
@@ -238,13 +278,13 @@ export class CalibrationNewTableComponent implements OnInit {
         }
       });
     })
-    const plts = this.data.forEach((pure) => {
+    this.data.forEach((pure) => {
       pure.threads.forEach((thread) => {
         if (isOneChecked) thread.selected = false;
         else thread.selected = true;
       })
     })
-    this.toggleSelectPlts(plts);
+    this.toggleSelectPlts(this.data);
     this.selectOptions.checkAll = isOneChecked ? false : true;
     this.selectOptions.indeterminate = false;
   }
@@ -271,4 +311,26 @@ export class CalibrationNewTableComponent implements OnInit {
       payload: adjustment
     })
   }
+
+  changeEPM(epm: any) {
+    this.selectedEPM = epm;
+  }
+
+  changeCurrencie(currency: any) {
+    this.selectedCurrencie = currency;
+  }
+
+  changeFinancialUnit(financialUnit: any) {
+    this.selectFinancial = financialUnit;
+  }
+
+  onColumnResize({delta, element: {id}}) {
+    if(!this.tableConfig.isExpanded) {
+      this.actionDispatcher.emit({
+        type: "Resize frozen Column",
+        payload: delta
+      })
+    }
+  }
+
 }
