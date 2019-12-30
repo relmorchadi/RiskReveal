@@ -65,7 +65,7 @@
 
         <ng-container *ngIf="col?.type != 'arrow'">
 
-          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field, type: col?.type}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
@@ -94,7 +94,7 @@
         <ng-container *ngIf="col?.type != 'arrow'">
 
           <ng-container *ngIf="col?.isFrozen"
-                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field, type: col?.type}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
@@ -130,7 +130,7 @@
         <ng-container *ngIf="col?.type != 'arrow'">
 
           <ng-container *ngIf="col?.isFrozen"
-                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field, type: col?.type}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
@@ -166,10 +166,27 @@
 
 
   <!--Row Template-->
-  <ng-template #fieldTemplate let-rowData let-field="field">
-    <div class="text-ellipsis">
-      {{ rowData[field] }}
-    </div>
+  <ng-template #fieldTemplate let-rowData let-field="field" let-type="type">
+    <ng-container *ngIf="type != 'status'">
+      <div class="text-ellipsis">
+        {{ rowData[field] }}
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type == 'status'">
+      <div class="td-wrapper-check">
+        <div >
+          <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
+                                         'icon-check-circle iconGreen': rowData?.status=='Valid' ,
+                                         'icon-lock-alt iconRed': rowData?.status=='locked',
+                                         'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-star iconBlue': rowData?.status=='new',
+                                         'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }"
+             [nz-tooltip]="rowData.status"
+             class="tooltipMsg">
+          </i>
+        </div>
+      </div>
+    </ng-container>
   </ng-template>
 
   <!--Metric Row Template-->
@@ -374,7 +391,77 @@
   </ng-template>
 
   <ng-template #rightHeader let-expanded>
-    <div [ngClass]="{ 'button-toggle' : !expanded }" >
+
+     <!--dropdown for epMetrics-->
+    <div class="table-header2" [ngClass]="{ 'button-toggle-empetric-config' : !expanded }" style="background-color: #fff">
+      <div class="title-as-tab" style="height: 58px; width: 100% !important;">
+        <span class="title">
+         Thread Level EP Metrics
+        </span>
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+            <div class="dropdown-wrap-calibration" nz-dropdown>
+              <div class="dropdown-wrap-title-calibration">
+                <span class="dropdown-title-calibration">Change Display</span>
+                <span class="dropdown-item-selected-calibration">
+                  {{selectedEPM}}
+                </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+              </li>
+            </ul>
+          </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+            <div class="dropdown-wrap-calibration" nz-dropdown>
+              <div class="dropdown-wrap-title-calibration">
+                <span class="dropdown-title-calibration">Financial Unit</span>
+                <span class="dropdown-item-selected-calibration">
+                        {{selectFinancial}}
+                      </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li
+                  *ngFor="let financialUnit of financialUnits.data" nz-menu-item (click)="changeFinancialUnit(financialUnit)">
+                {{financialUnit.label}}
+              </li>
+            </ul>
+          </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+            <div class="dropdown-wrap-calibration" nz-dropdown>
+              <div class="dropdown-wrap-title-calibration">
+                <span class="dropdown-title-calibration">Change Currency</span>
+                <span class="dropdown-item-selected-calibration">
+                        {{selectedCurrencie}}
+                      </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">
+                {{currency.label}}
+              </li>
+            </ul>
+          </nz-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div [ngClass]="{ 'button-toggle' : !expanded }">
       <span style="font-weight: bold; margin-right: 10px">View: </span>
       <div class="p-button-group">
         <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
