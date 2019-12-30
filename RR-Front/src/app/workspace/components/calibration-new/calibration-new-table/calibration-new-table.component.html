@@ -18,18 +18,22 @@
   </ng-template>
 
   <ng-template pTemplate="header" let-columns>
-    <tr *ngIf="tableConfig?.isExpanded">
-      <ng-container *ngIf="col?.isFrozen">
-        <th class="header-cnt" [attr.colspan]="columns.length" [style.height]="'100px'" [style.position]="'relative'">
-          <i
-            (click)="unexpandColumns()"
-            class="icon-chevron_left_24px"
-            style="position: absolute;top: 0;right:0"
-          ></i>
-          <label (nzCheckedChange)="setIsGrouped($event)" [nzChecked]="isGrouped"  nz-checkbox> group By pure </label>
+    <tr>
+      <ng-container *ngIf="tableConfig.isExpanded">
+        <th class="header-cnt" [attr.colspan]="10" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
+        </th>
+        <th  class="header-cnt" [attr.colspan]="columns.length - 10" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="rightHeader" [ngTemplateOutletContext]="{ $implicit: tableConfig.isExpanded }"></ng-container>
         </th>
       </ng-container>
-      <ng-container *ngIf="!col?.isFrozen" [ngTemplateOutlet]="subFrozenHeader" [ngTemplateOutletContext]="{$implicit: columns?.length}"></ng-container>
+      <ng-container *ngIf="!tableConfig.isExpanded">
+        <th class="header-cnt" *ngIf="columns | frozenColsLength" [attr.colspan]="columns.length" [style.height]="'120px'">
+          <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
+          <ng-container [ngTemplateOutlet]="rightHeader"></ng-container>
+        </th>
+        <th  class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
+      </ng-container>
     </tr>
     <tr>
       <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
@@ -42,73 +46,38 @@
 
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
 
-    <ng-container [ngTemplateOutlet]="mode == 'default' ? grouped : nonGrouped" [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
+    <ng-container [ngTemplateOutlet]="tableConfig?.isGrouped ? grouped : nonGrouped" [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
 
   </ng-template>
 
   <!--
   Grouped Template
   -->
-
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
+    <tr>
+      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
 
-          <ng-container *ngIf="col?.type == 'arrow'">
-            <a href="#" [pRowToggler]="rowData">
-              <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
-            </a>
-          </ng-container>
-
-          <ng-container *ngIf="col?.type != 'arrow'">
-
-            <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
-
-            <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
-            </ng-container>
-
-          </ng-container>
-
-        </td>
-      </tr>
-  </ng-template>
-
-  <!--
-  not grouped Template
-  -->
-
-  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
-      <tr *ngFor="let thread of rowData?.threads">
-
-        <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
-
-          <ng-container *ngIf="col?.type != 'arrow'">
-
-            <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
-
-            <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
-            </ng-container>
-          </ng-container>
-
-        </td>
-
-      </tr>
-  </ng-template>
-
-
-  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter">
-
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <a href="#" [pRowToggler]="rowData">
+            <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+          </a>
+        </ng-container>
 
         <ng-container *ngIf="col?.type != 'arrow'">
 
-          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-            {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
+            </div>
+            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
+              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
+            </span>
+          </ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'adjustments')">
+            <ng-container [ngTemplateOutlet]="draggableTD" [ngTemplateOutletContext]="{ $implicit: adjustments | getAdjustment : rowData?.pltId : col?.field }"></ng-container>
           </ng-container>
 
         </ng-container>
@@ -117,42 +86,112 @@
     </tr>
   </ng-template>
 
+  <!--
+  not grouped Template
+  -->
+  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
+    <tr *ngFor="let thread of rowData?.threads">
+
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="col?.isFrozen"
+                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            </div>
+            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
+              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
+            </span>
+          </ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'adjustments')">
+            <ng-container [ngTemplateOutlet]="draggableTD" [ngTemplateOutletContext]="{ $implicit: adjustments | getAdjustment : thread?.pltId : col?.field }"></ng-container>
+          </ng-container>
+
+        </ng-container>
+
+      </td>
+
+    </tr>
+  </ng-template>
+
+  <!--
+  Row expansion
+  -->
+  <ng-template pTemplate="rowexpansion" let-columns="columns" let-rowData let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter, let index = index"
+        (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
+
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
+          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+        </ng-container>
+
+        <ng-container *ngIf="col?.type != 'arrow'">
+
+          <ng-container *ngIf="col?.isFrozen"
+                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field}"></ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
+            <div class="text-ellipsis">
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field}}
+            </div>
+            <span class="epMetric-delta" [style.color]="((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) - (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1) > 50 ? 'green' : 'red'">
+              {{((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) + (epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field) ) / ((epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field) || 1)}}%
+            </span>
+          </ng-container>
+
+          <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'adjustments')">
+            <ng-container [ngTemplateOutlet]="draggableTD" [ngTemplateOutletContext]="{ $implicit: adjustments | getAdjustment : thread?.pltId : col?.field }"></ng-container>
+          </ng-container>
+
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+
 
   <!--Frozen Template-->
-
-
-
-
-
-
-
-
-
-
-
   <!--Helpers-->
   <!--TEMPLATES-->
 
 
+  <ng-template #draggableTD let-adjustment>
+    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment)" class="text-table-cell border-dragable" style="display: flex;">
+      <div style="display: flex;height: max-content">
+        <div class="adjustDiv" style="background: #f3f3f3;">
+          <span>{{adjustment?.basisShortName}}</span>
+          <input class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+
   <!--Row Template-->
   <ng-template #fieldTemplate let-rowData let-field="field">
-    {{ rowData[field] }}
+    <div class="text-ellipsis">
+      {{ rowData[field] }}
+    </div>
   </ng-template>
 
   <!--Metric Row Template-->
-
   <ng-template #metricTemplate let-rowData let-field="field">
     {{ rowData[field] }}
   </ng-template>
 
   <!--Resizable Header-->
-
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
-
     <ng-container *ngIf="isResizable; else nonResizableTemplate">
       <th [style.width]="width + 'px'" pResizableColumn>
         <ng-container *ngIf="col?.type == 'status'">
-          <span  style="justify-content: space-between;width: 30px;height: 30px">
+          <span style="justify-content: space-between;width: 30px;height: 30px">
             <nz-dropdown [nzPlacement]="'bottomLeft'">
               <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
               <ul nz-menu>
@@ -198,7 +237,8 @@
                 </li>
                 <li nz-menu-item>
                   <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.requiresRegeneration" (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
+                    <label [(ngModel)]="statusFilter.requiresRegeneration"
+                           (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
                            nz-checkbox
                            nzChecked
                            style="margin-right: 12px;">
@@ -220,8 +260,13 @@
             </nz-dropdown>
         </span>
         </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
-          {{col?.header}}
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <label nz-checkbox [(ngModel)]="checkAll" ></label>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
+          <div class="text-ellipsis">
+            {{col?.header}}
+          </div>
         </ng-container>
       </th>
     </ng-container>
@@ -229,7 +274,7 @@
     <ng-template #nonResizableTemplate>
       <th [style.width]="width + 'px'">
         <ng-container *ngIf="col?.type == 'status'">
-          <span  style="justify-content: space-between;width: 30px;height: 30px">
+          <span style="justify-content: space-between;width: 30px;height: 30px">
             <nz-dropdown [nzPlacement]="'bottomLeft'">
               <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
               <ul nz-menu>
@@ -275,7 +320,8 @@
                 </li>
                 <li nz-menu-item>
                   <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter.requiresRegeneration" (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
+                    <label [(ngModel)]="statusFilter.requiresRegeneration"
+                           (change)="statusFlilerCheckbox($event, 'requiresRegeneration')"
                            nz-checkbox
                            nzChecked
                            style="margin-right: 12px;">
@@ -297,8 +343,13 @@
             </nz-dropdown>
         </span>
         </ng-container>
-        <ng-container *ngIf="col?.type != 'status'">
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
+        </ng-container>
+        <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
+          <div class="text-ellipsis">
           {{col?.header}}
+          </div>
         </ng-container>
       </th>
     </ng-template>
@@ -306,32 +357,45 @@
   </ng-template>
 
 
-  <!--Frozen Header-->
-
-  <ng-template #subFrozenHeader let-colspan>
-    <th [attr.colspan]="colspan" [style.height]="'100px'" class="views-cnt">
-      <div class="radio-button-wrapper" style="position: relative">
-        <div class="button-toggle">
-          <span style="font-weight: bold; margin-right: 10px">View: </span>
-          <div class="p-button-group">
-            <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
-                           [ngStyle]="{'padding-right':'20px'}"
-                           label="Adjustments" name="tableType"
-                           value="adjustments"></p-radioButton>
-            <p-radioButton (onClick)="onViewChange('analysis')" [ngModel]="tableConfig.view"
-                           [ngStyle]="{'padding-right':'30px'}"
-                           label="Impacts Analysis" name="tableType"
-                           value="analysis"></p-radioButton>
-            <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
-                           [ngStyle]="{'padding-right':'10px'}"
-                           label="EP Metrics" name="tableType"
-                           value="epMetrics"></p-radioButton>
-          </div>
+  <!--HEADER-->
+  <ng-template #leftHeader>
+    <div class="flex-vertical-layout spread-layout">
+      <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
+        <span class="title">PLTs</span>
+        <div class="icon-wrapper">
+          <i *ngIf="!tableConfig.isExpanded" (click)="expandColumns()"
+             class="icon-chevron_right_24px"></i>
+          <i *ngIf="tableConfig.isExpanded" (click)="unexpandColumns()"
+             class="icon-chevron_left_24px"></i>
         </div>
-        <i class="icon-settings_24px"
-           nz-tooltip="Manage return periods"
-           style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
       </div>
-    </th>
+      <div class="flex-horizontal-sb-layout group-icons">
+        <div></div>
+        <div>
+          <i (click)="toggleGrouping()" *ngIf="!tableConfig?.isGrouped"
+             class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
+          <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
+             class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
+          <i class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
+        </div>
+      </div>
+    </div>
   </ng-template>
+
+  <ng-template #rightHeader let-expanded>
+    <div [ngClass]="{ 'button-toggle' : !expanded }" >
+      <span style="font-weight: bold; margin-right: 10px">View: </span>
+      <div class="p-button-group">
+        <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
+                       [ngStyle]="{'padding-right':'20px'}"
+                       label="Adjustments" name="tableType"
+                       value="adjustments"></p-radioButton>
+        <p-radioButton (onClick)="onViewChange('epMetrics')" [ngModel]="tableConfig.view"
+                       [ngStyle]="{'padding-right':'10px'}"
+                       label="EP Metrics" name="tableType"
+                       value="epMetrics"></p-radioButton>
+      </div>
+    </div>
+  </ng-template>
+
 </p-table>

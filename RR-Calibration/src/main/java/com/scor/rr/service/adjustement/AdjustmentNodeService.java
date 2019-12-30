@@ -186,16 +186,16 @@ public class AdjustmentNodeService {
 //                    if (adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
 //                        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
 //                        log.info("Thread getting successful : {}", adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() != 0) { // existing node
-//                            adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+//                        if (adjustmentNodeRequest.getAdjustmentNode() != 0) { // existing node
+//                            adjustmentNodeEntity.setAdjustmentNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNode(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
 //                        }
 //                        adjustmentNodeEntity = adjustmentNodeRepository.save(adjustmentNodeEntity);
 //
 //                        log.info(" -----  save order for node ----------");
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() == 0) { // new node
-//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
+//                        if (adjustmentNodeRequest.getAdjustmentNode() == 0) { // new node
+//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNode(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
 //                        }
 //
 //                        log.info(" -----  save parameter for node ----------");

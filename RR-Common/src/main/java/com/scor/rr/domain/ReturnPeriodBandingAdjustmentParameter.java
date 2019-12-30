@@ -1,7 +1,11 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.JoinFormula;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -85,6 +89,7 @@ public class ReturnPeriodBandingAdjustmentParameter {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    @JsonBackReference
     public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }
@@ -92,4 +97,5 @@ public class ReturnPeriodBandingAdjustmentParameter {
     public void setAdjustmentNode(AdjustmentNode adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
     }
+
 }

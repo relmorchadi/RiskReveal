@@ -1,0 +1,118 @@
+<p-dialog
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  (visibleChange)="visibleChange(isVisible)"
+  [styleClass]="'m-dialog-modal-m-74 adjustment-modal'"
+  [visible]="true">
+  <p-header>
+    <div class="header">
+      <h6>View Adjustment</h6>
+      <i (click)="hide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Basis </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            [ngModel]="adjustment?.basisShortName"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Adjustment Basis"
+            style="padding: 10px 0; width: 300px"
+            [disabled]="true"
+            [nzDisabled]="true"
+          >
+              <nz-option *ngFor="let option of basis" [nzLabel]="option?.basisShortName" [nzValue]="option?.basisShortName" nzCustomContent>
+                <i (click)="favorise(option)"
+                   class="icon-star_border_24px unfavoredStar"
+                   style="font-size: 22px;"></i>
+                {{option?.basisShortName}}
+              </nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-12" style="border-bottom: 1px solid #c7c7c7a6;">
+        <nz-collapse [nzBordered]="false">
+          <nz-collapse-panel [nzActive]="true" [nzHeader]="adjustment?.basisShortName">
+            <p>{{adjustment?.basisShortName | getDescription : basis }}</p>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Category </label>
+      </div>
+      <div class="ui-g-9">
+        <b>{{adjustment?.categoryCode}}</b>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Narrative </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Type </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            [disabled]="true"
+            [ngModel]="adjustment?.adjustmentType"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a type"
+            nzShowSearch
+            [nzDisabled]="true"
+            style="padding: 10px 0; width: 300px">
+            <nz-option *ngFor="let option of adjustmentTypes" [nzLabel]="option.type" [nzValue]="option?.type"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Capped </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-switch
+          [ngModel]="adjustment?.capped"
+          nzSize="small">
+        </nz-switch>
+      </div>
+    </div>
+    <div *ngIf="adjustment?.adjustmentType == 'Linear'" class="ui-g">
+      <div class="ui-g-3">
+        <label> {{adjustment?.adjustmentType}} </label>
+      </div>
+      <div class="ui-g-9">
+        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+      </div>
+    </div>
+    <div *ngIf="adjustment?.adjustmentType != 'Linear'" class="ui-g">
+      <div class="ui-g-3">
+        <label> {{adjustment?.adjustmentType}} </label>
+      </div>
+      <div class="ui-g-9">
+        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="hide()" class="a-button-text">Close</button>
+    </div>
+  </p-footer>
+</p-dialog>
