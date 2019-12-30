@@ -90,11 +90,13 @@
   <!--
   not grouped Template
   -->
-  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns">
-    <tr *ngFor="let thread of rowData?.threads">
+  <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns" let-rowIndex="rowIndex">
+    <tr *ngFor="let thread of rowData?.threads, let index=index" (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
-
+        <ng-container *ngIf="col?.type == 'arrow'">
+          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+        </ng-container>
         <ng-container *ngIf="col?.type != 'arrow'">
 
           <ng-container *ngIf="col?.isFrozen"
