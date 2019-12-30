@@ -89,8 +89,8 @@ public class AdjustmentNodeOrderService {
         AdjustmentNodeOrder order = new AdjustmentNodeOrder();
         order.setAdjustmentNode(node);
         order.setAdjustmentThread(node.getAdjustmentThread());
-        if (sequence == null) {
-            throw new IllegalStateException("---------- createNodeOrder, sequence null, wrong ----------");
+        if (sequence == null || sequence == 0) {
+            throw new IllegalStateException("---------- createNodeOrder, sequence null or 0, wrong ----------");
         }
 
         List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(node.getAdjustmentThread().getAdjustmentThreadId());

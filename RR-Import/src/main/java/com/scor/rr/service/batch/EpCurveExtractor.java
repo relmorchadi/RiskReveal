@@ -44,7 +44,7 @@ public class EpCurveExtractor extends AbstractWriter {
     private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
     private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
@@ -98,7 +98,7 @@ public class EpCurveExtractor extends AbstractWriter {
             List<SummaryStatisticHeaderEntity> summaryStats = this.generateSummaryStatsHeader(filteredFPs,modelAnalysisEntity, epCurveExtractResult, lossDataHeaderEntity);
 
             epCurveHeaderEntityRepository.saveAll(epCurves);
-            summaryStatisticHeaderEntityRepository.saveAll(summaryStats);
+            summaryStatisticHeaderRepository.saveAll(summaryStats);
 
             // Push results into the Bundle
             bundle.setEpCurves(epCurves);
@@ -215,7 +215,7 @@ public class EpCurveExtractor extends AbstractWriter {
 
 
             lossDataHeaderEntityRepository.save(conformedRRLT);
-            summaryStatisticHeaderEntityRepository.saveAll(conformedSummaryStatHeaders);
+            summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
             epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 

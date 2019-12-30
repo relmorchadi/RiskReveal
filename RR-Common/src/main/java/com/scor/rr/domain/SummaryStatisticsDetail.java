@@ -7,15 +7,15 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "SummaryStatisticHeaderDetail")
+@Table(name = "SummaryStatisticsDetail")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SummaryStatisticHeaderDetail {
+public class SummaryStatisticsDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "SummaryStatisticHeaderDetailId")
+    @Column(name = "SummaryStatisticsDetailId")
     private Long id;
 
     @Column(name = "Entity")
