@@ -41,6 +41,13 @@ td {
 Table Header
 ======================================================= **/
 
+.table-header-right-container {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+  justify-content: space-between;
+}
+
 .title-as-tab {
   color: #585858;
 
@@ -85,7 +92,7 @@ Table Header
 
 .button-toggle-empetric-config {
   float: right;
-  margin-right: -574px;
+  margin-right: -607px;
   margin-top: -122px;
   z-index: 1;
   position: relative;
@@ -109,6 +116,27 @@ Table Header
 
   .icon-settings_24px {
     font-size: 20px;
+  }
+}
+
+.table-header-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-as-tab {
+  display: flex;
+  flex: 0 1 auto;
+  float: left;
+  color: #585858;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
   }
 }
 
@@ -160,37 +188,11 @@ CELL Header
   font-weight: bold;
 }
 
-
-/*  display  */
-.table-header2 {
-  height: 105px !important;
-  display: flex;
-  flex-direction: column;
-}
-
-.title-as-tab {
-  display: flex;
-  flex: 0 1 auto;
-  width: calc(100% - 230px);
-  float: left;
-  color: #585858;
-
-  span.title {
-    min-width: 101px;
-    padding: 15px 0 0 15px;
-    font-size: 15.22px;
-    font-weight: bold;
-    border-top: 3px solid #0700e4;
-    font-family: Rubik;
-  }
-}
-
 .body-wrap-dropDowns-calibration {
   display: flex;
 
   .dropdown-wrap-calibration {
     display: flex;
-    width: 108px;
     padding-right: 13px;
     height: 35px;
     margin-right: 10px;

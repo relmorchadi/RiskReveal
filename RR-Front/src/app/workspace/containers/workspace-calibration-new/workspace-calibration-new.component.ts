@@ -34,6 +34,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     isExpanded: boolean,
+    expandedRowKeys: any,
     isGrouped: boolean
   };
   columnsConfig: {
@@ -62,6 +63,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       view: "adjustments",
       selectedCurveType: "OEP",
       isExpanded: false,
+      expandedRowKeys: {},
       isGrouped: true
     };
     this.columnsConfig = {
@@ -223,7 +225,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   toggleGrouping() {
     this.tableConfig = {
       ...this.tableConfig,
-      isGrouped: !this.tableConfig.isGrouped
+      isGrouped: !this.tableConfig.isGrouped,
+      expandedRowKeys: this.tableConfig.isGrouped ? {} : this.tableConfig.expandedRowKeys
     };
   }
 
@@ -231,12 +234,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     switch (action.type) {
 
       case 'View Change':
-
         this.onViewChange(action.payload);
         break;
 
       case 'Toggle Grouping':
-
         this.toggleGrouping();
         break;
 
@@ -255,6 +256,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       case "Resize frozen Column":
         this.resizeFrozenColumn(action.payload);
         this.detectChanges();
+        break;
+
+      case "Row Expand change":
+        this.rowExpandChange(action.payload);
         break;
 
       default:
@@ -306,6 +311,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.columnsConfig = {
       ...this.columnsConfig,
       frozenWidth: ( _.toNumber(_.trimEnd(this.columnsConfig.frozenWidth, "px")) + delta ) + "px"
+    }
+  }
+
+  rowExpandChange(rowExpandKeys) {
+    this.tableConfig = {
+      ...this.tableConfig,
+      expandedRowKeys: rowExpandKeys
     }
   }
 
