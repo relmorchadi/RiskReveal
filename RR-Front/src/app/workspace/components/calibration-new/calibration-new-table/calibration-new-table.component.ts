@@ -333,9 +333,4 @@ export class CalibrationNewTableComponent implements OnInit {
     }
   }
 
-  onRowExpand(event) {
-    console.log("Row Expand change", event, this.tableConfig.expandedRowKeys);
-
-  }
-
 }
