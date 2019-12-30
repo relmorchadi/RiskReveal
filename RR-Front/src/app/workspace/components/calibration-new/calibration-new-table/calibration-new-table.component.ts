@@ -29,6 +29,7 @@ export class CalibrationNewTableComponent implements OnInit {
   };
   @Input() columnsConfig: {
     frozenColumns: any[],
+    frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
@@ -46,12 +47,7 @@ export class CalibrationNewTableComponent implements OnInit {
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  }
-
-
-  /*selectedThreads: any = {
-
-  }*/
+  };
 
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
@@ -271,4 +267,13 @@ export class CalibrationNewTableComponent implements OnInit {
       payload: adjustment
     })
   }
+
+  onColumnResize({delta, element: {id}}) {
+    console.log(delta, id);
+    this.actionDispatcher.emit({
+      type: "Resize frozen Column",
+      payload: delta
+    })
+  }
+
 }

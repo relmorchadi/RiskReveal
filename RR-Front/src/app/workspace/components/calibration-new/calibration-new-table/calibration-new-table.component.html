@@ -3,11 +3,12 @@
   [value]="data"
   [columns]="columnsConfig?.columns"
   [frozenColumns]="columnsConfig?.frozenColumns"
-  [frozenWidth]="columnsConfig?.frozenColumns ? '450px' : '0px'"
+  [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
   [scrollable]="true"
   [scrollHeight]="'500px'"
   columnResizeMode="expand"
+  (onColResize)="onColumnResize($event)"
   [responsive]="true"
 >
 
@@ -189,7 +190,7 @@
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
     <ng-container *ngIf="isResizable; else nonResizableTemplate">
-      <th [style.width]="width + 'px'" pResizableColumn>
+      <th [id]="col?.field" [style.width]="width + 'px'" pResizableColumn>
         <ng-container *ngIf="col?.type == 'status'">
           <span style="justify-content: space-between;width: 30px;height: 30px">
             <nz-dropdown [nzPlacement]="'bottomLeft'">
@@ -272,7 +273,7 @@
     </ng-container>
 
     <ng-template #nonResizableTemplate>
-      <th [style.width]="width + 'px'">
+      <th [id]="col?.field" [style.width]="width + 'px'">
         <ng-container *ngIf="col?.type == 'status'">
           <span style="justify-content: space-between;width: 30px;height: 30px">
             <nz-dropdown [nzPlacement]="'bottomLeft'">
