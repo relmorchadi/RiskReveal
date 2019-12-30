@@ -53,7 +53,7 @@
             </li>
           </ul>
         </nz-dropdown>
-        <nz-dropdown [nzTrigger]="'click'">
+<!--        <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective EPMetrics</span>
@@ -69,7 +69,7 @@
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
                 *ngFor="let item of state?.financialValidator?.financialPerspectiveEPM?.data">{{item}}</li>
           </ul>
-        </nz-dropdown>
+        </nz-dropdown>-->
 
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
@@ -89,7 +89,7 @@
           </ul>
         </nz-dropdown>
 
-        <nz-dropdown [nzTrigger]="'click'" *ngIf="tabStatus === 'fac'">
+        <nz-dropdown [nzTrigger]="'click'" *ngIf="tabStatus === 'FAC'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Division</span>
@@ -229,7 +229,7 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
-              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'fac'"
+              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"
                       class="a-buttons-outlined-mini">Auto Attach
               </button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -447,10 +447,10 @@
         </div>
       </div>
 
-
+      <!-- [data]="(summary$ | async).analysis" -->
       <div *ngIf=" (summary$ | async) as summary">
-        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders}"></analysis-result>
         <portfolio-result [data]="summary.portfolios"></portfolio-result>
+        <analysis-result [data]="summary.analysis"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
@@ -468,15 +468,7 @@
             </div>
 
             <div class="body-wrap-footer-right">
-              <button *ngIf="anySelectedResults$ | async; else disabledAddForImportBtn"
-                      style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">
-                IMPORT
-              </button>
-              <ng-template #disabledAddForImportBtn>
-                <button class="a-buttons-contained-disabled-mini" disabled>
-                  IMPORT
-                </button>
-              </ng-template>
+              <button style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
             </div>
           </div>
         </div>

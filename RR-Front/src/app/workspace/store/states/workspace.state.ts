@@ -351,13 +351,6 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static anySelectedResults(state: WorkspaceModel){
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    const {analysis, portfolios}= state.content[wsIdentifier].riskLink.summary;
-    return [...analysis, ...portfolios].filter(item => item.selected).length > 0;
-  }
-
-  @Selector()
   static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const {analysis, portfolios} = state.content[wsIdentifier].riskLink.selection;
