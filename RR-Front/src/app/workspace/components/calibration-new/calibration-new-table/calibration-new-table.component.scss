@@ -1,0 +1,242 @@
+
+/** =======================================================
+Table Body
+======================================================= **/
+td {
+  user-select: none;
+}
+.active_plt_item{
+  background-color: #fcf9d6!important
+}
+.dropdownMenu {
+  margin-bottom: 150px;
+  margin-right: 20px;
+}
+
+.iconYellow {
+  color: #fde729;
+  font-size: 17px;
+}
+
+.iconYellow2 {
+  color: #d8880f;
+  font-size: 17px;
+}
+
+.iconGreen {
+  color: #00B396;
+  font-size: 17px;
+}
+
+.iconBlue {
+  color: #21aae6;
+  font-size: 17px;
+}
+
+.iconRed {
+  color: #b8200c;
+  font-size: 17px;
+}
+
+.iconRed2 {
+  color: #ff2126;
+  font-size: 17px;
+}
+
+/** =======================================================
+Table Header
+======================================================= **/
+
+.table-header-right-container {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+  justify-content: space-between;
+}
+
+.title-as-tab {
+  color: #585858;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
+  }
+
+  .icon-wrapper {
+    margin-top: 10px;
+    margin-right: 4px;
+
+    .icon-chevron_right_24px, .icon-chevron_left_24px {
+      font-size: 24px;
+    }
+  }
+}
+
+:host ::ng-deep .ui-table-thead {
+
+  .ui-column-resizer {
+    width: 2.6px !important;
+    border: none !important;
+    background-color: #d8cdcd;
+  }
+}
+
+
+.button-toggle {
+  float: right;
+  margin-right: -230px;
+  margin-top: -50px;
+  z-index: 1;
+  position: relative;
+}
+
+
+
+.button-toggle-empetric-config {
+  float: right;
+  margin-right: -607px;
+  margin-top: -122px;
+  z-index: 1;
+  position: relative;
+}
+
+.spread-layout {
+  height: 120px;
+  justify-content: space-between;
+
+  .regenerate-all {
+    font-size: 17px;
+    margin-top: 20px;
+    margin-right: 5px;
+    color: #0700e4;
+    cursor: pointer;
+  }
+}
+
+.group-icons {
+  padding: 0 10px 16px 0;
+
+  .icon-settings_24px {
+    font-size: 20px;
+  }
+}
+
+.table-header-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.title-as-tab {
+  display: flex;
+  flex: 0 1 auto;
+  float: left;
+  color: #585858;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
+  }
+}
+
+/** =======================================================
+CELL Header
+======================================================= **/
+
+
+.text-table-cell {
+  width: 100%;
+  height: 49px !important;
+  display: flex;
+  align-items: center;
+}
+
+.border-dragable {
+  border-left: 1px solid #F3F3F3 !important;
+  border-right: 1px solid #F3F3F3 !important;
+}
+
+.adjustDiv {
+  margin: 0 3px !important;
+  padding: 2px;
+  border: solid 1px #cccccc;
+  font-size: 11px;
+  background: white;
+  display: inline-block !important;
+  color: black;
+  font-weight: normal !important;
+  height: 36px;
+  max-width: 105px !important;
+  min-width: 109px !important;
+}
+
+.adjustDiv:focus {
+  border: solid 1px #028004;
+}
+
+.templateInput {
+  display: block;
+  background: white;
+  box-shadow: none;
+  border: 0;
+  width: 82%;
+  height: 35%;
+  bottom: 3px;
+  margin-left: 2px;
+  font-size: 12px !important;
+  font-weight: bold;
+}
+
+.body-wrap-dropDowns-calibration {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    padding-right: 13px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+/**/
+

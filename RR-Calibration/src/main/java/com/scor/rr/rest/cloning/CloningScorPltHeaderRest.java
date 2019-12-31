@@ -14,8 +14,8 @@ public class CloningScorPltHeaderRest { // not in calibration now
     @Autowired
     CloningScorPltHeaderService cloningScorPltHeaderService;
 
-    @GetMapping("clonePLT")
-    public PltHeaderEntity clonePLTWithAdjustment(Long pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
-        return cloningScorPltHeaderService.clonePltWithAdjustment(pltHeaderEntityInitialId, workspaceId);
-    }
+//    @GetMapping("clonePLT")
+//    public PltHeaderEntity clonePLTWithAdjustment(Long pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+//        return cloningScorPltHeaderService.clonePltWithAdjustment(pltHeaderEntityInitialId, workspaceId);
+//    }
 }

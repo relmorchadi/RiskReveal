@@ -271,9 +271,9 @@ export class CalibrationService implements NgxsOnInit {
         }
       })
     });
-    ctx.patchState(produce(ctx.getState(), draft => {
+    /*ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.data[wsIdentifier] = _.merge({}, state.content[wsIdentifier].calibration.data[wsIdentifier], result)
-    }));
+    }));*/
   }
 
   calibrateSelectPlts(ctx: StateContext<any>, payload: any) {

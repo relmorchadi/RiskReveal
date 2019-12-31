@@ -5,7 +5,6 @@ package com.scor.rr.domain.dto.adjustement;
  */
 public class AdjustmentThreadUpdateRequest {
     private Integer adjustmentThreadId;
-    private Long pltFinalId;
     private boolean locked;
     private String lastModifiedBy;
 
@@ -14,7 +13,6 @@ public class AdjustmentThreadUpdateRequest {
 
     public AdjustmentThreadUpdateRequest(Integer adjustmentThreadId, Long pltFinalId, boolean locked, String lastModifiedBy) {
         this.adjustmentThreadId = adjustmentThreadId;
-        this.pltFinalId = pltFinalId;
         this.locked = locked;
         this.lastModifiedBy = lastModifiedBy;
     }
@@ -25,14 +23,6 @@ public class AdjustmentThreadUpdateRequest {
 
     public void setAdjustmentThreadId(Integer adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
-    }
-
-    public Long getPltFinalId() {
-        return pltFinalId;
-    }
-
-    public void setPltFinalId(Long pltFinalId) {
-        this.pltFinalId = pltFinalId;
     }
 
     public String getLastModifiedBy() {

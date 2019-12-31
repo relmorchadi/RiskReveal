@@ -5,7 +5,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
-import com.scor.rr.domain.dto.StaticType;
+import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.enums.PLTPublishStatus;
 import com.scor.rr.domain.enums.StatisticsType;
@@ -13,7 +13,7 @@ import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.EPCurveHeaderEntityRepository;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.repository.RegionPerilRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderEntityRepository;
+import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
 import com.scor.rr.service.batch.writer.EpSummaryStatWriter;
@@ -55,7 +55,7 @@ public class DefaultAdjustment extends AbstractWriter {
     private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Value(value = "${thread.creation.service}")
     private String threadCreationURL;
@@ -94,13 +94,13 @@ public class DefaultAdjustment extends AbstractWriter {
                         HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
                                 new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));
 
-                        ResponseEntity<AdjustmentThreadEntity> response = restTemplate
-                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThreadEntity.class);
+                        ResponseEntity<AdjustmentThread> response = restTemplate
+                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThread.class);
 
                         if (response.getStatusCode().equals(HttpStatus.OK)) {
-                            AdjustmentThreadEntity adjustmentThreadEntity = response.getBody();
+                            AdjustmentThread adjustmentThread = response.getBody();
 
-                            if (adjustmentThreadEntity != null && adjustmentThreadEntity.getAdjustmentThreadId() != null) {
+                            if (adjustmentThread != null && adjustmentThread.getAdjustmentThreadId() != null) {
 
                                 HttpHeaders requestHeaders = new HttpHeaders();
                                 requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -108,16 +108,16 @@ public class DefaultAdjustment extends AbstractWriter {
                                 HttpEntity<String> request = new HttpEntity<>(requestHeaders);
 
                                 UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
-                                        .queryParam("threadId", adjustmentThreadEntity.getAdjustmentThreadId());
+                                        .queryParam("threadId", adjustmentThread.getAdjustmentThreadId());
 
                                 ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
                                         .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
 
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
-                                    this.getAndWriteStatsForPlt(adjustmentThreadEntity.getFinalPLT(), restTemplate, true, adjustmentThreadEntity.getAdjustmentThreadId());
+                                    this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
                                 } else {
-                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThreadEntity.getAdjustmentThreadId());
+                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
 
@@ -180,9 +180,9 @@ public class DefaultAdjustment extends AbstractWriter {
             else
                 log.error("An error has occurred in the service /api/nodeProcessing/adjustThread/aepMetric {}", aepMetricResponse.getStatusCodeValue());
 
-            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.averageAnnualLoss, restTemplate);
-            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.CoefOfVariance, restTemplate);
-            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, StaticType.stdDev, restTemplate);
+            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
+            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
+            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
 
             if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
                     covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
@@ -265,7 +265,7 @@ public class DefaultAdjustment extends AbstractWriter {
                 new SummaryStatisticHeaderEntity(1L, modelAnalysis.getFinancialPerspective(), cov, stdDev,
                         averageAnnualLoss, StatisticsType.PLT.getCode(), pltHeader.getPltHeaderId(), summaryStatFilename, file.getPath());
 
-        summaryStatisticHeaderEntityRepository.save(summaryStatisticHeaderEntity);
+        summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
     }
 
     private ResponseEntity<EPMetric> getEpStats(String url, HttpEntity request, String fullFilePath, RestTemplate restTemplate) {
@@ -275,7 +275,7 @@ public class DefaultAdjustment extends AbstractWriter {
                 .exchange(uriBuilder.toUriString(), HttpMethod.GET, request, EPMetric.class);
     }
 
-    private ResponseEntity<Double> getSummaryStats(String url, HttpEntity request, String fullFilePath, StaticType type, RestTemplate restTemplate) {
+    private ResponseEntity<Double> getSummaryStats(String url, HttpEntity request, String fullFilePath, SummaryStatisticType type, RestTemplate restTemplate) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("pathToFile", fullFilePath)
                 .queryParam("type", type.getValue());

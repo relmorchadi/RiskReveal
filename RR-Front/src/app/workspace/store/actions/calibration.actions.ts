@@ -204,3 +204,29 @@ export class LoadGroupedPltsByPure {
   constructor(public payload: any) {
   }
 }
+
+export class LoadDefaultAdjustmentsInScope {
+  static readonly type = '[Calibration] Load Default Adjustments In Scope';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class LoadEpMetrics {
+  static readonly type = '[Calibration] Load EpMetrics';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class LoadCalibrationConstants {
+  static readonly type = '[Calibration] Load Calibration Constants';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class ToggleSelectCalibPlts {
+  static readonly  type = '[Calibration] Toggle Select Plts';
+  constructor(public payload?: any) {}
+}

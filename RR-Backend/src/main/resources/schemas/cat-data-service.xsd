@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns:cm="http://scor.com/almf/ws/commons"
+		   targetNamespace="http://scor.com/almf/ws/cat-analysis-service"
+		   xmlns:ns="http://scor.com/almf/ws/cat-analysis-service" elementFormDefault="qualified">
+    <xs:import namespace="http://scor.com/almf/ws/commons" schemaLocation="commons.xsd"/>
+
+    <xs:complexType name="CreateCatAnalysisResponse">
+    	<xs:sequence>
+    		<xs:element name="CatAnalysisRequestID" type="ns:CatAnalysisRequestID"/>
+    		<xs:element name="ServiceCallStatus" type="ns:ServiceCallStatus"/>
+    	</xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="CreateCatAnalysisRequest">
+      <xs:sequence>
+        <xs:element name="USER" type="ns:UserType"/>
+        <xs:element name="Contract" type="ns:ContractType"/>
+      </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="CatAnalysisRequestID">
+    	<xs:sequence>
+    		<xs:element name="ID" type="xs:string"/>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="ServiceCallStatus">
+    	<xs:sequence>
+    		<xs:element name="Status" type="cm:Status"/>
+    		<xs:element name="ErrorCount" type="xs:integer"/>
+    		<xs:element name="ErrorMessage" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    	</xs:sequence>
+    </xs:complexType>
+    
+  	<xs:complexType name="UserType">
+  		<xs:sequence>
+  			<xs:element name="USER_CD" type="xs:string"/>
+  			<xs:element name="USER_FIRST_NAME" type="xs:string"/>
+  			<xs:element name="USER_LAST_NAME" type="xs:string"/>
+  		</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="ContractType">
+  		<xs:sequence>
+  			<xs:element name="General" type="ns:ContractGeneralType"/>	
+  			<xs:element name="UWanalysis" type="ns:UWanalysisType"/>
+  		</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="ContractGeneralType">
+  		<xs:sequence>
+  			<xs:element name="FAC_NUM" type="xs:string"/>
+  			<xs:element name="UW_YEAR" type="xs:integer"/>
+  			<xs:element name="ORDER_NUM" type="xs:integer"/>
+  			<xs:element name="ENDOR_NUM" type="xs:integer"/>
+  			<xs:element name="INSUR_NUM" type="xs:integer" minOccurs="0"/>
+  			<xs:element name="LABEL" type="xs:string" minOccurs="0"/>
+  			<xs:element name="SUBSIDIARY_CD" type="xs:integer"/>
+  			<xs:element name="LOB_CD" type="xs:string"/>
+  			<xs:element name="SECTOR_CD" type="xs:string"/>
+  			<xs:element name="BUSINESS_TYPE" type="xs:integer"/>
+  		</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="UWanalysisType">
+  		<xs:sequence>
+  			<xs:element name="General" type="ns:UWanalysisGeneralType"/>
+  			<xs:element name="Division" type="ns:UWanalysisDivisionType" minOccurs="1" maxOccurs="unbounded"/>
+  		</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="UWanalysisGeneralType">
+  		<xs:sequence>
+  			<xs:element name="UW_ANALYSIS_ID" type="xs:integer"/>
+  			<xs:element name="UW_ANALYSIS_NAME" type="xs:string" minOccurs="0"/>
+  		</xs:sequence>
+  	</xs:complexType>
+  	
+  	<xs:complexType name="UWanalysisDivisionType">
+  		<xs:sequence>
+  			<xs:element name="DIV_NUM" type="xs:integer"/>
+  			<xs:element name="DIV_LOB_CD" type="xs:string"/>
+  			<xs:element name="PRINCIPAL_DIVISION" type="xs:integer"/>
+  			<xs:element name="CURRENCY_CD" type="xs:string"/>
+  			<xs:element name="DIV_COVERAGE" type="xs:string"/>
+  		</xs:sequence>
+  	</xs:complexType>
+</xs:schema>

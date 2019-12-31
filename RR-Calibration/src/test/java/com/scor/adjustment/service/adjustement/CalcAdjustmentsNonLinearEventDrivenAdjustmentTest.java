@@ -9,11 +9,12 @@ import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.EventDateFormatException;
 import com.scor.rr.exceptions.pltfile.PLTDataNullException;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
     private List<PLTLossData> pltLossDataList;
     private List<PEATData> adjustmentReturnPeriodBendings;
     private boolean cap;
+
+    @Autowired
+    CalculateAdjustmentService calculateAdjustmentService;
 
     @Before
     public void setUp() {
@@ -53,24 +57,24 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
     @Test
     public void nonLineaireEventDrivenAdjustmentNullPeatData() {
         log.info("Launch test for non linear event  driven adjustment with parameter PEAT DATA NULL");
-        assertNull(CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossDataList,cap,null));
+        assertNull(calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossDataList,cap,null));
     }
     @Test
     public void nonLineaireEventDrivenAdjustmentEmptyPeatData() {
         log.info("Launch test for non linear event  driven adjustment with parameter PEAT DATA EMPTY");
-        assertNull(CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossDataList,cap,new ArrayList<>()));
+        assertNull(calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossDataList,cap,new ArrayList<>()));
     }
 
     @Test
     public void nonLineaireEventDrivenAdjustmentNullPlt() {
         log.info("Launch test for non linear event  driven adjustment with PLT NULL");
-        assertNull(CalculAdjustement.nonLinearEventDrivenAdjustment(null,cap,adjustmentReturnPeriodBendings));
+        assertNull(calculateAdjustmentService.nonLinearEventDrivenAdjustment(null,cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
     public void nonLineaireEventDrivenAdjustmentEmptyPlt() {
         log.info("Launch test for non linear event  driven adjustment with PLT Empty");
-        assertNull(CalculAdjustement.nonLinearEventDrivenAdjustment(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
+        assertNull(calculateAdjustmentService.nonLinearEventDrivenAdjustment(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
@@ -83,7 +87,7 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -106,7 +110,7 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -123,7 +127,7 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,cap,adjustmentReturnPeriodBendings);
+        pltLossData = calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossData,cap,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLineaireEventPeriodDrivenAdjustment.csv"));
         assertEquals(pltLossDataList,pltLossData);
@@ -135,7 +139,7 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,false,adjustmentReturnPeriodBendings);
+        pltLossData = calculateAdjustmentService.nonLinearEventDrivenAdjustment(pltLossData,false,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLineaireEventPeriodDrivenAdjustmentUncapped.csv"));
         assertEquals(pltLossDataList,pltLossData);

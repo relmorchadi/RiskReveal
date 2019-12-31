@@ -8,6 +8,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class AdjustmentNodeService {
 
     @Autowired
     private AdjustmentNodeRepository adjustmentNodeRepository;
+
+    @Autowired
+    private AdjustmentThreadRepository adjustmentThreadRepository;
 
     @Autowired
     private ScalingAdjustmentParameterRepository scalingAdjustmentParameterRepository;
@@ -70,12 +74,6 @@ public class AdjustmentNodeService {
     private AdjustmentNodeOrderService nodeOrderService;
 
     @Autowired
-    private CloningScorPltHeaderService cloningScorPltHeaderService;
-
-    @Autowired
-    private DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
-
-    @Autowired
     private DefaultScalingAdjustmentParameterRepository defaultScalingAdjustmentParameterRepository;
 
     @Autowired
@@ -85,7 +83,7 @@ public class AdjustmentNodeService {
     private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
-        return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
+        return adjustmentNodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND, NOT_FOUND));
     }
 
     public List<AdjustmentNode> findAll(){
@@ -100,14 +98,26 @@ public class AdjustmentNodeService {
 
     public void deleteNode(Integer nodeId) {
         AdjustmentNode adjustmentNodeEntity = findOne(nodeId);
-        deleteParameterNode(nodeId);
-        processingService.deleteProcessingByNode(nodeId);
-        nodeOrderService.deleteByNodeIdAndReorder(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-        adjustmentNodeRepository.delete(adjustmentNodeEntity);
+        if (adjustmentNodeEntity != null) {
+            AdjustmentThread thread = adjustmentThreadRepository.findById(adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId()).get();
+            if (thread != null) {
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
+            } else {
+                throw new IllegalStateException("deleteNode, thread not found, null");
+            }
+            deleteParameterNode(nodeId);
+            processingService.deleteProcessingByNode(nodeId);
+            nodeOrderService.deleteByNodeIdAndReorder(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+            adjustmentNodeRepository.delete(adjustmentNodeEntity);
+        } else {
+            throw new IllegalStateException("deleteNode, node not found, null");
+        }
+
     }
 
 //    tien : create node from default parameters found from data tables of ref data
-    public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThreadEntity adjustmentThreadEntity,
+    public AdjustmentNode createAdjustmentNodeFromDefaultAdjustmentReference(AdjustmentThread adjustmentThread,
                                                                              DefaultAdjustmentNode defaultNode) throws RRException {
         Double lmf = null; // linear, type 1
         Double rpmf = null; // EEF frequency, type 2
@@ -150,7 +160,7 @@ public class AdjustmentNodeService {
                 defaultNode.getCappedMaxExposure(),
                 defaultNode.getAdjustmentBasis().getAdjustmentBasisId(),
                 defaultNode.getAdjustmentType().getAdjustmentTypeId(),
-                adjustmentThreadEntity.getAdjustmentThreadId(),
+                adjustmentThread.getAdjustmentThreadId(),
                 lmf,
                 rpmf,
                 peatData,
@@ -176,16 +186,16 @@ public class AdjustmentNodeService {
 //                    if (adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
 //                        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
 //                        log.info("Thread getting successful : {}", adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() != 0) { // existing node
-//                            adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
-//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+//                        if (adjustmentNodeRequest.getAdjustmentNode() != 0) { // existing node
+//                            adjustmentNodeEntity.setAdjustmentNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNode());
+//                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNode(), adjustmentNodeRequest.getSequence(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
 //                        }
 //                        adjustmentNodeEntity = adjustmentNodeRepository.save(adjustmentNodeEntity);
 //
 //                        log.info(" -----  save order for node ----------");
-//                        if (adjustmentNodeRequest.getAdjustmentNodeId() == 0) { // new node
-//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
+//                        if (adjustmentNodeRequest.getAdjustmentNode() == 0) { // new node
+//                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNode(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
 //                        }
 //
 //                        log.info(" -----  save parameter for node ----------");
@@ -221,11 +231,15 @@ public class AdjustmentNodeService {
         if (adjustmentNodeRequest.getAdjustmentThreadId() == null) {
             throw new IllegalStateException("---------- createAdjustmentNode, thread id null, wrong ----------");
         } else {
-            AdjustmentThreadEntity thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
+            AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- createAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- createAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
             }
         }
 
@@ -314,11 +328,15 @@ public class AdjustmentNodeService {
 
         // if update thread for node
         if (adjustmentNodeRequest.getAdjustmentThreadId() != null) {
-            AdjustmentThreadEntity thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
+            AdjustmentThread thread = adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get();
             if (thread == null) {
                 throw new IllegalStateException("---------- updateAdjustmentNode, thread null, wrong ----------");
+            } else if (BooleanUtils.isTrue(thread.getLocked())) {
+                throw new IllegalStateException("---------- updateAdjustmentNode, thread is locked, not permitted ----------");
             } else {
                 node.setAdjustmentThread(thread);
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+                thread.setThreadStatus(adjustmentState.getCode());
             }
         }
 
@@ -364,13 +382,17 @@ public class AdjustmentNodeService {
 
         // update node order
         log.info("---------- update node order ----------");
-        adjustmentNodeOrderService.updateNodeOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), node.getAdjustmentThread().getAdjustmentThreadId());
+        if (adjustmentNodeRequest.getSequence() != null) {
+            adjustmentNodeOrderService.updateNodeOrder(adjustmentNodeRequest.getAdjustmentNodeId(), adjustmentNodeRequest.getSequence(), node.getAdjustmentThread().getAdjustmentThreadId());
+        }
 
-        log.info("----------  delete old parameter for node ----------");
-        deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
+        if (adjustmentNodeRequest.getLmf() != null || adjustmentNodeRequest.getRpmf() != null || adjustmentNodeRequest.getPeatData() != null || adjustmentNodeRequest.getAdjustmentReturnPeriodBandings() != null) {
+            log.info("----------  delete old parameter for node ----------");
+            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
 
-        log.info("----------  create new parameter for node ----------");
-        saveParameterNode(node, adjustmentNodeRequest);
+            log.info("----------  create new parameter for node ----------");
+            saveParameterNode(node, adjustmentNodeRequest);
+        }
 
         node = adjustmentNodeRepository.save(node);
 
@@ -513,7 +535,6 @@ public class AdjustmentNodeService {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
                 }
-//                log.info("saveParameterNode, {}",NONLINEARRETURNPERIOD.getValue());
                 log.info("saveParameterNode, {}", NONLINEAR_EVENT_PERIOD_DRIVEN.getValue());
                 savePeatDataFile(node, parameterRequest);
                 log.info(" ----- saveParameterNode, success saving parameter for node ----------");
@@ -549,7 +570,7 @@ public class AdjustmentNodeService {
         }
     }
 
-    public List<AdjustmentNode> cloneNode(AdjustmentThreadEntity threadClone, AdjustmentThreadEntity threadParent) {
+    public List<AdjustmentNode> cloneNode(AdjustmentThread threadClone, AdjustmentThread threadParent) {
         List<AdjustmentNode> nodeEntities = adjustmentNodeRepository.findByAdjustmentThread(threadParent);
         if(nodeEntities != null) {
             List<AdjustmentNode> nodeEntitiesCloned = new ArrayList<>();

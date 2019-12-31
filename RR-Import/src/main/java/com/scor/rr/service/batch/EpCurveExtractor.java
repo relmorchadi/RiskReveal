@@ -48,7 +48,7 @@ public class EpCurveExtractor extends AbstractWriter {
     private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
     private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
@@ -106,7 +106,7 @@ public class EpCurveExtractor extends AbstractWriter {
             List<SummaryStatisticHeaderEntity> summaryStats = this.generateSummaryStatsHeader(filteredFPs, modelAnalysisEntity, epCurveExtractResult, lossDataHeaderEntity);
 
             epCurveHeaderEntityRepository.saveAll(epCurves);
-            summaryStatisticHeaderEntityRepository.saveAll(summaryStats);
+            summaryStatisticHeaderRepository.saveAll(summaryStats);
 
             // Push results into the Bundle
             bundle.setEpCurves(epCurves);
@@ -225,9 +225,9 @@ public class EpCurveExtractor extends AbstractWriter {
                 });
 
 
-                lossDataHeaderEntityRepository.save(conformedRRLT);
-                summaryStatisticHeaderEntityRepository.saveAll(conformedSummaryStatHeaders);
-                epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
+            lossDataHeaderEntityRepository.save(conformedRRLT);
+            summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
+            epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 
                 log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
