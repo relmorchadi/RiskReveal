@@ -5,7 +5,7 @@
   [modal]="true"
   [responsive]="true"
   [styleClass]="'m-dialog-modal returned-periods'"
-  [visible]="manageReturnPeriods"
+  [visible]="true"
   appendTo="body">
   <p-header>
     <div class="header">
@@ -15,7 +15,7 @@
   </p-header>
   <div class="content" style="display: unset;">
 
-    <p-table [value]="returnPeriods" [scrollable]="true" scrollHeight="365px">
+    <p-table [value]="currentRPs" [scrollable]="true" scrollHeight="365px">
       <ng-template pTemplate="header">
       </ng-template>
       <ng-template pTemplate="body" let-rowData>

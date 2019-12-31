@@ -349,9 +349,7 @@
                          value="epMetrics"></p-radioButton>
         </div>
       </div>
-
-      <i *ngIf="tableConfig?.view == 'epMetrics'" style="position: absolute;right: 25px;top: 90px;font-size: 18px;" class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
-
+      <i (click)="openRPManager()" *ngIf="tableConfig?.view == 'epMetrics'" style="z-index: 9999;position: absolute;right: 25px;top: 90px;font-size: 18px;" class="icon-settings_24px" [nz-tooltip]="'Manage return periods'"></i>
     </div>
     <!--<div style="" [ngClass]="{ 'table-header-right-container' : expanded }">
       <i class="icon-settings_24px"></i>

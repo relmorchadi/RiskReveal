@@ -7,8 +7,7 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class ReturnPeriodPopUpComponent implements OnInit {
 
-  @Input() manageReturnPeriods: any;
-  returnPeriods: any = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
+  @Input() currentRPs: any;
   returnPeriodInput: any;
 
   constructor() { }

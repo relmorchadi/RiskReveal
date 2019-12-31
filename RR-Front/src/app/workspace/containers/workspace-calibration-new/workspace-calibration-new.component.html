@@ -29,5 +29,6 @@
 ></app-adjustment-pop-up-new>
 
 <app-return-period-pop-up
-  [manageReturnPeriods]="false"
+  *ngIf="isRPPopUpVisible"
+  [currentRPs]="currentRPs"
 ></app-return-period-pop-up>

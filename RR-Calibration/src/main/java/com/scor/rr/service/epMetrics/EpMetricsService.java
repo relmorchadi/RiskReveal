@@ -51,4 +51,12 @@ public class EpMetricsService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public ResponseEntity<?> getDefaultReturnPeriods() {
+        try {
+            return ResponseEntity.ok(this.defaultReturnPeriodRepository.findByIsTableRPOrderByReturnPeriodAsc());
+        } catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }

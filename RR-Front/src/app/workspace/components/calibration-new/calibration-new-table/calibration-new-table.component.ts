@@ -332,4 +332,10 @@ export class CalibrationNewTableComponent implements OnInit {
     }
   }
 
+  openRPManager() {
+    this.actionDispatcher.emit({
+      type: "Open return periods manager"
+    })
+  }
+
 }

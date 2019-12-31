@@ -43,11 +43,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columns: any[],
     columnsLength: number
   };
+  selectedCurveType: string;
   curveTypes: string[];
   rowKeys: any;
 
+  //POP-UPs
   selectedAdjustment: any;
   isAdjustmentPopUpVisible: boolean;
+
+  isRPPopUpVisible: boolean;
+  currentRPs: number[];
 
 
   constructor(
@@ -70,10 +75,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.columnsConfig,
       frozenWidth: '530px'
     };
+    this.selectedCurveType = 'OEP';
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.rowKeys= {};
 
     this.isAdjustmentPopUpVisible= false;
+    this.isRPPopUpVisible= false;
+    this.currentRPs= [];
   }
 
   ngOnInit() {
@@ -106,7 +114,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     if( !this.wsId && wsId && !this.uwYear && uwYear ) {
       //INIT
-      console.log(workspaceType);
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.columnsConfig = {
         ...this.columnsConfig,
@@ -122,7 +129,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.loadConstants();
       this.loadCalibrationPlts(wsId, uwYear);
       this.loadAdjustments(wsId, uwYear);
-      this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
+      this.loadEpMetrics(wsId, uwYear, 1, this.selectedCurveType);
     }
 
     this.wsIdentifier = wsIdentifier;
@@ -201,7 +208,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.loading = loading;
   }
 
-  initEpMetricsCols({cols}) {
+  initEpMetricsCols({cols, rps}) {
+    console.log(rps);
+    this.currentRPs= rps;
     this.calibrationTableService.setCols(
       cols,
       'epMetrics'
@@ -264,6 +273,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.rowExpandChange(action.payload);
         break;
 
+      case "Open return periods manager":
+        this.openRPManager();
+        break;
+
       default:
         console.log(action);
     }
@@ -323,4 +336,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  openRPManager(){
+    console.log("HEY");
+    this.isRPPopUpVisible= true;
+  }
 }
