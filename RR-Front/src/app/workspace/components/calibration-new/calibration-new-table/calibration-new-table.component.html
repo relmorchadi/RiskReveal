@@ -70,7 +70,7 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field | number:'2.'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field | number:'1.'}}
             </div>
           </ng-container>
 

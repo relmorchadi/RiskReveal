@@ -127,7 +127,7 @@ export class CalibrationNewService {
               if(resetMetrics) {
                 innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
               };
-              
+
 
               _.forEach(epMetrics, (metric: any, i) => {
 
