@@ -11,7 +11,7 @@ import com.scor.rr.domain.riskLink.RLSourceEpHeader;
 import com.scor.rr.repository.EPCurveHeaderEntityRepository;
 import com.scor.rr.repository.LossDataHeaderEntityRepository;
 import com.scor.rr.repository.RLModelDataSourceRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderEntityRepository;
+import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -48,7 +48,7 @@ public class EpCurveExtractor extends AbstractWriter {
     private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
 
     @Autowired
-    private SummaryStatisticHeaderEntityRepository summaryStatisticHeaderEntityRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
     private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
@@ -106,7 +106,7 @@ public class EpCurveExtractor extends AbstractWriter {
             List<SummaryStatisticHeaderEntity> summaryStats = this.generateSummaryStatsHeader(filteredFPs, modelAnalysisEntity, epCurveExtractResult, lossDataHeaderEntity);
 
             epCurveHeaderEntityRepository.saveAll(epCurves);
-            summaryStatisticHeaderEntityRepository.saveAll(summaryStats);
+            summaryStatisticHeaderRepository.saveAll(summaryStats);
 
             // Push results into the Bundle
             bundle.setEpCurves(epCurves);
@@ -226,7 +226,7 @@ public class EpCurveExtractor extends AbstractWriter {
 
 
                 lossDataHeaderEntityRepository.save(conformedRRLT);
-                summaryStatisticHeaderEntityRepository.saveAll(conformedSummaryStatHeaders);
+                summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
                 epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 

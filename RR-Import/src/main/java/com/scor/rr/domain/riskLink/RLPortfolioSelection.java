@@ -29,14 +29,16 @@ public class RLPortfolioSelection {
     private Double unitMultiplier;
     @Column(name = "Proportion")
     private Double proportion;
+    @Column(name = "Division")
+    private Integer division;
 
     // TODO : Review with Viet later
     @Column(name = "ImportLocationLevel")
     private boolean importLocationLevel;
 
     // TODO : Review with Viet later
-    @Column(name = "AnalysisRegion")
-    private String analysisRegions;
+//    @Column(name = "AnalysisRegion")
+//    private String analysisRegions;
 
     @ManyToOne
     @JoinColumn(name = "RLPortfolioId")
@@ -48,7 +50,7 @@ public class RLPortfolioSelection {
         this.unitMultiplier = portfolioImportSelection.getUnitMultiplier();
         this.proportion = portfolioImportSelection.getProportion();
         this.importLocationLevel = portfolioImportSelection.isImportLocationLevel();
-        this.analysisRegions = portfolioImportSelection.getAnalysisRegions();
+        //this.analysisRegions = portfolioImportSelection.getAnalysisRegions();
         this.projectId = portfolioImportSelection.getProjectId();
         this.rlPortfolio = rlPortfolio;
     }

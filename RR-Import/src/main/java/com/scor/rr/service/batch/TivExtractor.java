@@ -4,7 +4,6 @@ import com.scor.rr.domain.ModelPortfolioEntity;
 import com.scor.rr.repository.RLModelDataSourceRepository;
 import com.scor.rr.repository.RLPortfolioSelectionRepository;
 import com.scor.rr.service.RmsService;
-import com.scor.rr.service.state.FacParameters;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -28,9 +27,6 @@ public class TivExtractor {
 
     @Autowired
     private RmsService rmsService;
-
-    @Autowired
-    private FacParameters facParameters;
 
     @Autowired
     private TransformationPackage transformationPackage;
@@ -57,9 +53,9 @@ public class TivExtractor {
                 List<Map<String, Object>> tivs;
 
                 if (jobType.equals("PORTFOLIO"))
-                    tivs = rmsService.getByQuery(EmbeddedQueries.TIV_QUERY.replaceAll(":edm:", portfolioEntity.getDataSourceName()), portfolioEntity.getPortfolioName());
+                    tivs = rmsService.getByQuery(EmbeddedQueries.TIV_QUERY.replaceAll(":edm:", portfolioEntity.getDataSourceName()), instanceId, portfolioEntity.getPortfolioName());
                 else
-                    tivs = rmsService.getByQuery(EmbeddedQueries.TIV_QUERY.replaceAll(":edm:", portfolioEntity.getDataSourceName()), facParameters.getLiabilityCCY(), portfolioEntity.getPortfolioName());
+                    tivs = rmsService.getByQuery(EmbeddedQueries.TIV_QUERY.replaceAll(":edm:", portfolioEntity.getDataSourceName()), instanceId, "USD", portfolioEntity.getPortfolioName());
 
 //        for (Map<String, Object> tivMap : tivs) {
 //            final ModellingResult result = modellingResultsByRegionPeril.get(tivMap.get("RegionPerilCode"));

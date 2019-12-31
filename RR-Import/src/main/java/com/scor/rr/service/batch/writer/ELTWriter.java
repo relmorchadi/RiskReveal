@@ -57,10 +57,8 @@ public class ELTWriter extends AbstractWriter {
 
             writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
 
-            if (marketChannel.equalsIgnoreCase("Treaty")) {
-                log.debug("Starting ELTConformer");
-                writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
-            }
+            log.debug("Starting ELTConformer");
+            writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
 
             log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }

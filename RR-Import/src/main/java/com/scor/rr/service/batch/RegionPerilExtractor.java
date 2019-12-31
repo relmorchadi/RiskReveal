@@ -157,7 +157,7 @@ public class RegionPerilExtractor {
 
                 // TODO : Not sure ?
                 modelAnalysisEntity.setOverrideReasonText(sourceResult.getOverrideRegionPerilBasis());
-
+                modelAnalysisEntity.setDivision(sourceResult.getDivision());
                 modelAnalysisEntity.setDefaultOccurrenceBasis(sourceResult.getRlAnalysis().getDefaultOccurrenceBasis());
                 modelAnalysisEntity.setTargetCurrency(sourceResult.getTargetCurrency());
                 modelAnalysisEntity.setProjectId(projectEntity.getProjectId());
@@ -318,6 +318,7 @@ public class RegionPerilExtractor {
                         rlPortfolioSelection.getRlPortfolio().getType(),
                         "ALL",
                         rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
+                        1,
                         1.0d,
                         rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
                         rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,

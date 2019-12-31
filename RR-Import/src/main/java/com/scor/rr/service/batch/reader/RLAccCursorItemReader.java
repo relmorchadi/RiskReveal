@@ -13,14 +13,17 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.support.ListPreparedStatementSetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 @StepScope
+@Service
 public class RLAccCursorItemReader extends JdbcCursorItemReader {
     private static final Logger log = LoggerFactory.getLogger(RLAccCursorItemReader.class);
 
@@ -60,6 +63,7 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
         try {
             super.setDataSource(new ExtendedConnectionDataSourceProxy(rmsInstanceCache.getDataSource(instanceId)));
             super.setSql(EmbeddedQueries.RL_ACC_QUERY);
+            parameters = new ArrayList<>();
             parameters.add("PORTFOLIO");
         } catch (Exception e) {
             log.error("init error", e);
@@ -88,5 +92,6 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
 
             }
         }
+
     }
 }
