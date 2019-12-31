@@ -43,7 +43,7 @@ public class ProjectImportRunEntity {
     private Date lossImportEndDate;
 
     @Column(name = "ImportedBy")
-    private String importedBy;
+    private Long importedBy;
 
     @Column(name = "SourceConfigVendor")
     private String sourceConfigVendor;
