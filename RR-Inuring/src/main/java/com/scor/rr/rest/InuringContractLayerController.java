@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.request.InuringContractLayerCreationRequest;
+import com.scor.rr.request.InuringContractLayerUpdateRequest;
 import com.scor.rr.service.InuringContractLayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,11 @@ public class InuringContractLayerController {
     public ResponseEntity<?> createLayer(@RequestBody InuringContractLayerCreationRequest request) throws RRException {
         inuringContractLayerService.addLayersToContractNode(request);
         return ResponseEntity.ok("Created Successfully");
+    }
+
+    @PutMapping("Update")
+    public ResponseEntity<?> updateLayerParam(@RequestBody InuringContractLayerUpdateRequest request) throws RRException{
+        inuringContractLayerService.updateContractLayer(request);
+        return ResponseEntity.ok("Updated Successfully");
     }
 }

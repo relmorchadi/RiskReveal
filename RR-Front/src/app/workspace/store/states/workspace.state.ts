@@ -1,7 +1,7 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import {PatchCalibrationStateAction} from '../actions';
+import {PatchCalibrationStateAction, SaveRPs} from '../actions';
 import * as fromInuring from '../actions/inuring.actions';
 import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
@@ -736,9 +736,14 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.ToggleSelectCalibPlts)
-  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}){
+  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectCalibPlts){
     console.log(payload)
     return this.calibrationNewService.selectPlts(ctx, payload);
+  }
+
+  @Action(fromWS.SaveRPs)
+  saveRPs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveRPs){
+    return this.calibrationNewService.saveRPs(ctx, payload);
   }
 
   /***********************************

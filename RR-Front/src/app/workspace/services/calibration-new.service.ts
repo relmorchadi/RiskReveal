@@ -172,4 +172,11 @@ export class CalibrationNewService {
       draft.content[wsIdentifier].calibrationNew.plts =  plts;
     }));
   }
+
+  saveRPs(ctx: StateContext<WorkspaceModel>, { userId, rps }: any) {
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
+      .pipe(
+        tap(r => console.log(r))
+      )
+  }
 }

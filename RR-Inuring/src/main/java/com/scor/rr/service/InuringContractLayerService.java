@@ -1,23 +1,23 @@
 package com.scor.rr.service;
 
+import com.scor.rr.dto.InuringContractLayerParamDto;
 import com.scor.rr.entity.InuringContractLayer;
 import com.scor.rr.entity.InuringContractLayerParam;
 import com.scor.rr.entity.InuringContractNode;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.exceptions.inuring.DeleteOfLastLayerException;
-import com.scor.rr.exceptions.inuring.InuringContractLayerNotFoundException;
-import com.scor.rr.exceptions.inuring.InuringContractNodeNotFoundException;
-import com.scor.rr.exceptions.inuring.InuringSingleLayerContractNodeException;
+import com.scor.rr.exceptions.inuring.*;
 import com.scor.rr.repository.InuringContractLayerParamRepository;
 import com.scor.rr.repository.InuringContractLayerRepository;
 import com.scor.rr.repository.InuringContractNodeRepository;
 import com.scor.rr.repository.RefFMFContractTypeRepository;
 import com.scor.rr.request.InuringContractLayerCreationRequest;
+import com.scor.rr.request.InuringContractLayerUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -69,6 +69,26 @@ public class InuringContractLayerService {
         });
 
 
+    }
+
+    public void updateContractLayer(InuringContractLayerUpdateRequest request) throws RRException{
+        InuringContractLayer layer = inuringContractLayerRepository.findByInuringContractLayerId(request.getLayerId());
+        if(layer == null) throw new InuringContractLayerNotFoundException(request.getLayerId());
+
+        if(request.getListOfAttributes() != null && !request.getListOfAttributes().isEmpty()){
+            List<InuringContractLayerParam> listOfLayersParam = inuringContractLayerParamRepository.findByInuringContractLayerId(request.getLayerId());
+            for(InuringContractLayerParamDto item :request.getListOfAttributes()){
+                boolean check = false;
+                for(InuringContractLayerParam param : listOfLayersParam){
+                    if(item.getParamName().equals(param.getParamName())){
+                        check = true;
+                        param.setParamValue(item.getParamValue());
+                    }
+                }
+                if(!check) throw new InuringContractLayerParamNotFoundException(item.getParamName());
+                inuringContractLayerParamRepository.saveAll(listOfLayersParam);
+            }
+        }
     }
 
     public void deleteContractLayerById(long contractLayerId, long contractNodeId) throws  RRException{

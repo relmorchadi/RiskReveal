@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from "../../../../shared/message";
-
+import * as _ from 'lodash';
 @Component({
   selector: 'app-return-period-pop-up',
   templateUrl: './return-period-pop-up.component.html',
-  styleUrls: ['./return-period-pop-up.component.scss']
+  styleUrls: ['./return-period-pop-up.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReturnPeriodPopUpComponent implements OnInit {
 
@@ -14,6 +15,7 @@ export class ReturnPeriodPopUpComponent implements OnInit {
     currentRPs: number[],
     newlyAdded: number[],
     showSuggestion: boolean,
+    returnPeriodInput: number,
     message: string
   };
 
@@ -23,22 +25,23 @@ export class ReturnPeriodPopUpComponent implements OnInit {
     lowerBound: number
   };
 
-  returnPeriodInput: number;
-
   constructor() { }
 
   ngOnInit() {
 
   }
 
-  hide() {
-
-  }
+  inputChange = _.debounce((newValue) => {
+    this.actionDispatcher.emit({
+      type: "Return period popup input change",
+      payload: newValue
+    })
+  }, 150)
 
   addToReturnPeriod() {
     this.actionDispatcher.emit({
       type: "ADD Return period",
-      payload: this.returnPeriodInput
+      payload: this.returnPeriodConfig.returnPeriodInput
     })
   }
 
@@ -46,5 +49,10 @@ export class ReturnPeriodPopUpComponent implements OnInit {
     this.actionDispatcher.emit({
       type: "Save return periods"
     })
+  }
+
+
+  cancel() {
+    console.log('cancel');
   }
 }
