@@ -359,13 +359,6 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static anySelectedResults(state: WorkspaceModel){
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    const {analysis, portfolios}= state.content[wsIdentifier].riskLink.summary;
-    return [...analysis, ...portfolios].filter(item => item.selected).length > 0;
-  }
-
-  @Selector()
   static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const {analysis, portfolios} = state.content[wsIdentifier].riskLink.selection;
@@ -1204,9 +1197,29 @@ export class WorkspaceState {
   loadSourceEpCurveHeaders(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSourceEpCurveHeaders){
     return this.riskLinkFacade.loadSourceEpCurveHeaders(ctx, payload);
   }
+  @Action(fromWS.LoadTargetRaps)
+  loadTargetRaps(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadTargetRaps){
+    return this.riskLinkFacade.loadTargetRap(ctx, payload);
+  }
+
+  @Action(fromWS.OverrideTargetRaps)
+  overrideTargetRaps(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideTargetRaps){
+    return this.riskLinkFacade.overrideTargetRaps(ctx, payload);
+  }
+
+  @Action(fromWS.ClearTargetRaps)
+  clearTargetRaps(ctx: StateContext<WorkspaceModel>){
+    return this.riskLinkFacade.clearTargetRaps(ctx);
+  }
+
   @Action(fromWS.OverrideFinancialPerspective)
   overrideFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideFinancialPerspective){
     return this.riskLinkFacade.overrideFinancialPerspective(ctx, payload);
+  }
+
+  @Action(fromWS.LoadRegionPerilForAnalysis)
+  loadAnalysisRegionPerils(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRegionPerilForAnalysis){
+    return this.riskLinkFacade.loadAnalysisRegionPerils(ctx, payload);
   }
 
 

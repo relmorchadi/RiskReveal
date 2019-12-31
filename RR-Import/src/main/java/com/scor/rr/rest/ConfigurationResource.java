@@ -27,8 +27,9 @@ public class ConfigurationResource {
 
     @PostMapping("basic-scan")
     public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
-        rmsService.basicScan(dataSources, projectId, instanceId, instanceName);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                rmsService.basicScan(dataSources, projectId, instanceId, instanceName)
+        );
     }
 
     @PostMapping("detailed-scan")
@@ -114,5 +115,16 @@ public class ConfigurationResource {
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "get-region-peril-for-multi-analysis")
+    public ResponseEntity<?> getRegionPerilsForMuliAnalysis(@RequestParam List<Long> rlAnalysisIds) {
+        try {
+            return new ResponseEntity<>(configurationService.getRegionPerilForMultiAnalysis(rlAnalysisIds), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

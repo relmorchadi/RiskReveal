@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -108,5 +109,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         return carDivisions;
+    }
+
+    @Override
+    public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
+        Map<Long, List<RegionPerilDto>> result = new HashMap<>();
+        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
+        return result;
     }
 }

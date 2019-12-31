@@ -125,10 +125,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getRiskLinkSummary)
   summary$;
 
-  @Select(WorkspaceState.anySelectedResults)
-  anySelectedResults$;
-
-
   filterAnalysis = {
     rlId: '',
     analysisName: '',
@@ -387,7 +383,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
           type
         }), new fromWs.PatchAddToBasketStateAction()]);
       });
-    if (this.tabStatus === 'fac') {
+    if (this.tabStatus === 'FAC') {
       this.setFilterDivision();
     }
     this.UpdateCheckboxStatus();

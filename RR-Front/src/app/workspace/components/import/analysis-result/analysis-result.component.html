@@ -54,8 +54,8 @@
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible" pResizableColumn>
                 <ng-container *ngIf="col.type === 'selection'">
-<!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'results')"-->
-<!--                         [nzIndeterminate]="true"></label>-->
+                  <!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'results')"-->
+                  <!--                         [nzIndeterminate]="true"></label>-->
                   <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                 </ng-container>
                 <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
@@ -99,10 +99,10 @@
                                [nzWidth]="20" nzType="circle"></nz-progress>
                 </div>
                 <div class="text-data" (click)="openFinancialP(rowData)" [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'multiple'" >
+                     *ngIf="col.type === 'multiple'">
                   <span>{{rowData?.financialPerspectives?.length}}</span>
-<!--                  <span nzPlacement="top" nz-tooltip-->
-<!--                        *ngIf="rowData?.financialPerspective?.length == 0">Nan</span>-->
+                  <!--                  <span nzPlacement="top" nz-tooltip-->
+                  <!--                        *ngIf="rowData?.financialPerspective?.length == 0">Nan</span>-->
                   <!--                  <ng-template #infoFP>-->
                   <!--                    <div class="popover-menu">-->
                   <!--                      <ul style="margin-bottom: 0">-->
@@ -144,24 +144,26 @@
                       {{rowData[col.field]}}
                     </span>
                 </div>
-                <div class="text-data" (click)="openPEQTModal(i)" *ngIf="col.type === 'Peqt'">
+                <div class="text-data" (click)="showOverridePEQTDialog=true" *ngIf="col.type === 'Peqt'">
                     <span class="highlighted-change">
-                      <span nz-tooltip [nzTitle]="peqtInfo">
-                        {{rowData[col.field]}}
+                      <span *ngIf=" (rowData.targetRaps||[]).length > 0; else noSelectedPeqts" nz-tooltip [nzTitle]="peqtInfo">
+                        {{rowData.targetRaps.length}}
                       </span>
                       <ng-template #peqtInfo>
                         <div class="popover-menu">
                           <ul style="margin-bottom: 0">
-                            <ng-container *ngFor="let item of rowData.peqt">
-                              <li *ngIf="item.selected">{{item.title}}</li>
+                            <ng-container *ngFor="let item of rowData?.targetRaps">
+                              <li *ngIf="item.selected">{{item.targetRapCode}}</li>
                             </ng-container>
                           </ul>
                         </div>
                       </ng-template>
                     </span>
-                  <span *ngIf="!rowData[col.field]">
-                        <i class="icon-exclamation-triangle"></i>
-                    </span>
+                    <ng-template #noSelectedPeqts>
+                      <span>
+                          <i class="icon-exclamation-triangle"></i>
+                      </span>
+                    </ng-template>
                 </div>
                 <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
@@ -220,123 +222,20 @@
   </div>
 </div>
 
-<p-dialog
-  [visible]="showUpdatePEQTModal"
-  [closable]="false"
-  styleClass="m-dialog-modal-target-rap"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
-  (onShow)="onPEQTModalShow()"
->
-  <p-header>
-    <div class="header">
-      <h6>Target Rap Selection</h6>
-      <i style="cursor: pointer" (click)="showUpdatePEQTModal = false" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="input-group-modal" style="width:100%; padding:0;">
-    <div class="row-list">
-    </div>
-  </div>
-  <div style="display: flex; justify-content: space-between">
-    <div class="fp-options-wrapper">
-      <span class="subtitle-2">Target Rap</span>
-      <div class="menu-icon-wrap" style="position: absolute;top: 20px;font-size: 20px;right: 29px;">
-        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-          <a style="max-height: 28px;display: flex;" nz-dropdown>
-            <i class="icon-settings_24px"></i>
-          </a>
-          <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
-            <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Manage Columns</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Unselect All</li>
-          </ul>
-        </nz-dropdown>
-      </div>
-      <div class="popover-menu">
-              <div class="popover-menu absolute-menu">
-                <div class="summary-info" >
-                  <p-table [columns]="targetRapDataTable" [dataKey]="'id'"
-                           [resizableColumns]="true" [scrollHeight]="'250px'"
-                           [value]="refs.targetRaps" #peqtdatat [scrollable]="true">
-                    <ng-template pTemplate="colgroup" let-columns>
-                      <colgroup>
-                        <ng-container *ngFor="let col of columns">
-                          <col [ngStyle]="{'width': col.width}">
-                        </ng-container>
-                      </colgroup>
-                    </ng-template>
-                    <ng-template pTemplate="header" let-columns>
-                      <tr>
-                        <ng-container *ngFor="let col of columns">
-                          <th *ngIf="col.visible" pResizableColumn>
-                            <ng-container *ngIf="col.type === 'select'">
-<!--                              <label style="margin-top:20px" nz-checkbox [ngModel]="getCheckedValue(child.selectedItems)" (ngModelChange)="updateAllCheckedPeqt($event, child.selectedItems)"-->
-<!--                                     [nzIndeterminate]="getIndeterminateValue(child.selectedItems)"></label>-->
-                            </ng-container>
-                            <div style="white-space: nowrap;" *ngIf="col.type !== 'icon' && col.type !== 'check'">{{col.header}}
-                              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" *ngIf="col.sorting"
-                                          ariaLabelAsc="Activate to sort in ascending order"
-                                          ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
-                              <ng-container *ngIf="col.filtered">
-                                <div class="search-bar-table">
-                                  <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                                  <input pInputText type="text"
-                                         (input)="peqtdatat.filter($event.target.value, col.field, col.filterMatchMode)">
-                                </div>
-                              </ng-container>
-                            </div>
-                          </th>
-                        </ng-container>
-                      </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                      <tr>
-                        <ng-container *ngFor="let col of columns">
-                          <td *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                            <div class="" *ngIf="col.type === 'select'">
-                              <label nz-checkbox [(ngModel)]="rowData.selected"></label>
-                            </div>
-                            <div (click)="rowData.selected = true" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                          </td>
-                        </ng-container>
-                      </tr>
-                    </ng-template>
-                  </p-table>
-                </div>
-                <!--                  <ul>
-                                    <li *ngFor="let innerItem of child.selectedItems">
-                                      <label nz-checkbox style="margin-right: 5px"
-                                             (ngModelChange)="changeInnerPeqt(parent, child, innerItem.title, innerItem.selected)"
-                                             [(ngModel)]="innerItem.selected">
-                                        {{innerItem.title}}
-                                      </label>
-                                    </li>
-                                  </ul>-->
-              </div>
-      </div>
-    </div>
-  </div>
-  <p-footer>
-    <button (click)="showUpdatePEQTModal = false" class="a-button-text-cancel-mini">CANCEL</button>
-    <button (click)="updatePEQT()" class="a-buttons-contained-mini">SAVE
-    </button>
-  </p-footer>
-</p-dialog>
-
-
-<override-region-peril-dialog *ngIf="showOverrideRpPopup" [visible]="showOverrideRpPopup" [data]="data.analysis" (close)="showOverrideRpPopup=false"
-  (override)="overrideRegionPeril($event)">
+<override-region-peril-dialog *ngIf="showOverrideRpDialog" [visible]="showOverrideRpDialog" [data]="data.analysis"
+                              (close)="showOverrideRpDialog=false"
+                              (override)="overrideRegionPeril($event)">
 </override-region-peril-dialog>
 
 
-<financial-persp-selection-dialog *ngIf="showSelectFinancialPersp" [visible]="showSelectFinancialPersp"
-                                  [data]="data" (close)="showSelectFinancialPersp=false"
+<financial-persp-selection-dialog *ngIf="showSelectFinancialPerspDialog" [visible]="showSelectFinancialPerspDialog"
+                                  [data]="data" (close)="showSelectFinancialPerspDialog=false"
                                   (loadEpCurves)="loadSourceEpCurveHeaders($event)"
                                   (override)="overrideFinancialPersp($event)"
 ></financial-persp-selection-dialog>
+
+<override-peqt-dialog *ngIf="showOverridePEQTDialog" [visible]="showOverridePEQTDialog"
+                      [data]="{analysis: data.analysis, targetRaps: data.targetRaps}"
+                      (loadTargetRaps)="loadTargetRaps($event)" (override)="overridePEQTs($event)"
+                      (close)="closePEQTOverrideDialog()">
+</override-peqt-dialog>

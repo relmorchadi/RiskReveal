@@ -42,6 +42,14 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}import/config/get-source-ep-headers`, {params: {rlAnalysisId} });
   }
 
+  loadTargetRap(rlAnalysisId: any):Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}import/config/get-target-raps-for-analysis`, {params: {rlAnalysisId} });
+  }
+
+  loadAnalysisRegionPerils(rlAnalysisIds: any):Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
+  }
+
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
     return this.http.get(`${this.URL}analysis?size=20`, {params: {rdmName: paramName}});
   }

@@ -4,6 +4,7 @@ import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ConfigurationService {
 
@@ -18,4 +19,6 @@ public interface ConfigurationService {
     List<RLSourceEpHeaderView> getSourceEpHeadersByAnalysis(Long rlAnalysisId);
 
     List<CARDivisionDto> getDivisions(String carId);
+
+    Map<Long,List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
 }

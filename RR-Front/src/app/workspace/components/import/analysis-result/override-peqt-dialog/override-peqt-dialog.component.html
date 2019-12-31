@@ -1,0 +1,200 @@
+<p-dialog
+  [visible]="isVisible"
+  [closable]="false"
+  styleClass="m-dialog-modal-lg-auto"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true">
+  <p-header>
+    <div class="header">
+      <h6>Target Rap Selection</h6>
+      <i style="cursor: pointer" (click)="close()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="input-group-modal" style="width:100%; padding:0;">
+    <div class="row-list">
+    </div>
+  </div>
+  <div style="display: flex; justify-content: space-between">
+    <div class="fp-options-wrapper" style="width: 59%">
+      <div style="display: flex;width: 100%;justify-content: space-between;">
+        <span class="subtitle-2">Analysis</span>
+        <div class="menu-icon-wrap" style="font-size: 20px;">
+          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+            <a style="max-height: 28px;display: flex;" nz-dropdown>
+              <i class="icon-settings_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
+        </div>
+      </div>
+      <div class="summary-info" >
+        <p-table [columns]="peqtDataTable" [dataKey]="'id'" [expandedRowKeys]="expandedRows"
+                 [resizableColumns]="true" [scrollHeight]="'270px'"
+                 [value]="tree" #peqtt [scrollable]="true">
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <ng-container *ngFor="let col of columns">
+                <col [ngStyle]="{'width': col.width}">
+              </ng-container>
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible" pResizableColumn>
+                  <ng-container *ngIf="col.type === 'expand'">
+                    <label nz-checkbox></label>
+                  </ng-container>
+                  <div style="white-space: nowrap;" *ngIf="col.type !== 'icon' && col.type !== 'check'">{{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" *ngIf="col.sorting"
+                                ariaLabelAsc="Activate to sort in ascending order"
+                                ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
+                    <ng-container *ngIf="col.filtered">
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text"
+                               (input)="peqtt.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </ng-container>
+                  </div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-expanded="expanded" let-i="rowIndex" let-rowData let-columns="columns">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected, 'expanded-row': rowData?.expanded}">
+                  <div class="" *ngIf="col.type === 'select'">
+                    <label nz-checkbox [(ngModel)]="rowData.selected"></label>
+                  </div>
+                  <a *ngIf="col.type === 'expand'" [pRowToggler]="rowData" (click)="toggleRowExpansion(rowData)">
+                    <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                  </a>
+                  <div *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="rowexpansion" let-rowData>
+            <tr *ngFor="let item of rowData.children">
+              <th style="padding-left: 18px;">
+                <label nz-checkbox (ngModelChange)="selectBranch(item)" [ngModel]="item.selected"></label>
+              </th>
+              <th (click)="selectBranch(item)">{{item?.title}}</th>
+              <th (click)="selectBranch(item)">
+                <ng-conainer *ngFor="let peqt of changes[item.rlAnalysisId]">
+                  <div class="tags-stack-vertical" *ngIf="peqt?.selected">
+                    {{peqt?.targetRapCode}} <i (click)="unselectTargetRap(peqt, item.rlAnalysisId)" class="icon-close_24px"></i>
+                  </div>
+                </ng-conainer>
+              </th>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </div>
+    </div>
+    <div class="fp-options-wrapper" style="width: 40%">
+      <span class="subtitle-2">Target Rap</span>
+      <div class="menu-icon-wrap" style="position: absolute;top: 20px;font-size: 20px;right: 29px;">
+        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+          <a style="max-height: 28px;display: flex;" nz-dropdown>
+            <i class="icon-settings_24px"></i>
+          </a>
+          <ul nz-menu style="font-size: 12px">
+            <li nz-menu-item>Reset Sort</li>
+            <li nz-menu-item>Reset Filters</li>
+            <li nz-menu-item>Reset Sort/Filters</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item>Manage Columns</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item>Unselect All</li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <div class="popover-menu">
+<!--        <ng-container *ngFor="let parent of tree" style="flex-direction: column">-->
+<!--          <ng-container *ngIf="parent.expanded">-->
+<!--            <ng-container *ngFor="let child of parent.children">-->
+              <div class="popover-menu absolute-menu" *ngIf="data?.targetRaps?.length">
+                <div class="summary-info" >
+                  <p-table [columns]="targetRapDataTable" [dataKey]="'id'"
+                           [resizableColumns]="true" [scrollHeight]="'270px'"
+                           [value]="data?.targetRaps" #peqtdatat [scrollable]="true">
+                    <ng-template pTemplate="colgroup" let-columns>
+                      <colgroup>
+                        <ng-container *ngFor="let col of columns">
+                          <col [ngStyle]="{'width': col.width}">
+                        </ng-container>
+                      </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                      <tr>
+                        <ng-container *ngFor="let col of columns">
+                          <th *ngIf="col.visible" pResizableColumn>
+                            <ng-container *ngIf="col.type === 'select'">
+<!--                              <label style="margin-top:20px" nz-checkbox [ngModel]="" (ngModelChange)="updateAllCheckedPeqt($event, null)"-->
+<!--                                     [nzIndeterminate]="getIndeterminateValue(null)"></label>-->
+                            </ng-container>
+                            <div style="white-space: nowrap;" *ngIf="col.type !== 'icon' && col.type !== 'check'">{{col.header}}
+                              <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" *ngIf="col.sorting"
+                                          ariaLabelAsc="Activate to sort in ascending order"
+                                          ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
+                              <ng-container *ngIf="col.filtered">
+                                <div class="search-bar-table">
+                                  <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                  <input pInputText type="text"
+                                         (input)="peqtdatat.filter($event.target.value, col.field, col.filterMatchMode)">
+                                </div>
+                              </ng-container>
+                            </div>
+                          </th>
+                        </ng-container>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                      <tr>
+                        <ng-container *ngFor="let col of columns">
+                          <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                            <div class="" *ngIf="col.type === 'select'">
+                              <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="targetRapSelectionChange(rowData, $event)"></label>
+                            </div>
+                            <div (click)="toggleTargetRapSelection(rowData)" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                          </th>
+                        </ng-container>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <!--                  <ul>
+                                    <li *ngFor="let innerItem of child.selectedItems">
+                                      <label nz-checkbox style="margin-right: 5px"
+                                             (ngModelChange)="changeInnerPeqt(parent, child, innerItem.title, innerItem.selected)"
+                                             [(ngModel)]="innerItem.selected">
+                                        {{innerItem.title}}
+                                      </label>
+                                    </li>
+                                  </ul>-->
+              </div>
+<!--            </ng-container>-->
+<!--          </ng-container>-->
+<!--        </ng-container>-->
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <button (click)="close()" class="a-button-text-cancel-mini">CANCEL</button>
+    <button (click)="applyChanges()" class="a-buttons-contained-mini">SAVE
+    </button>
+  </p-footer>
+</p-dialog>

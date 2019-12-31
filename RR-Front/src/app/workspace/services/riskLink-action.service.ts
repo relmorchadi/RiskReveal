@@ -9,7 +9,7 @@ import {
   UpdateAnalysisAndPortfolioData
 } from '../store/actions';
 import * as _ from 'lodash';
-import {catchError, mergeMap, switchMap} from 'rxjs/operators';
+import {catchError, count, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from './api/risk.api';
 import {forkJoin} from 'rxjs';
@@ -196,6 +196,7 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
+      "targetRaps": []
     },
     {
       "selected": false,
@@ -224,6 +225,7 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
+      "targetRaps": []
     }
   ],
   "portfolios": [
@@ -1323,17 +1325,17 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     console.log()
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
-      .pipe(mergeMap((response) => {
+      .pipe(mergeMap((response: any[]) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
-            console.log(state.content[wsIdentifier].riskLink.selection.edms, state.content[wsIdentifier].riskLink.selection.rdms);
+            const parsedResponse= this._parseBasicScanResponse(response);
             draft.content[wsIdentifier].riskLink.selection.edms = Object.assign(
               {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.edms, item =>
-                ({[item.rmsId]: {...item, scanning: false}}))
+                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.edms[item.rmsId].count}}))
             );
             draft.content[wsIdentifier].riskLink.selection.rdms = Object.assign(
               {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.rdms, item =>
-                ({[item.rmsId]: {...item, scanning: false}}))
+                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.rdms[item.rmsId].count}}))
             );
           }));
           return of(response);
@@ -1341,6 +1343,18 @@ export class RiskLinkStateService {
         catchError(err => {
           return of(err);
         }));
+  }
+
+  private _parseBasicScanResponse(response:any[]){
+    const result= {edms: {}, rdms: {}};
+    _.forEach(response, (item:any) => {
+      if(item.type === 'EDM'){
+        result.edms= _.merge(result.edms, {[item.rlId]: {rmsId: item.rlId, count: item.count}});
+      } else if(item.type === 'RDM'){
+        result.rdms= _.merge(result.edms, {[item.rlId]: {rmsId: item.rlId, count: item.count}});
+      }
+    });
+    return result;
   }
 
   createLinking(ctx: StateContext<WorkspaceModel>, payload) {
@@ -2224,12 +2238,12 @@ export class RiskLinkStateService {
                       analysis: {},
                       portfolios: {}
                     },
-                    // summary: testSummary2,
-                    summary: {
-                      analysis: [],
-                      portfolios: [],
-                      sourceEpHeaders: []
-                    },
+                    summary: testSummary2,
+                    // summary: {
+                    //   analysis: [],
+                    //   portfolios: [],
+                    //   sourceEpHeaders: []
+                    // },
                     linking: {
                       edm: null,
                       rdm: {data: null, selected: null},
@@ -2276,7 +2290,7 @@ export class RiskLinkStateService {
       );
   }
 
-  runDetailedScan(ctx, payload) {
+  runDetailedScan(ctx:StateContext<WorkspaceModel>, payload) {
     const {projectId, analysis, portfolios, instanceId} = payload;
     return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios)
       .pipe(
@@ -2290,9 +2304,10 @@ export class RiskLinkStateService {
               analysis: _.map(analysis, item => ({
                 ...item,
                 selected: false,
-                financialPerspectives: [],
+                financialPerspectives: [financialPerspective],
                 peqt: [],
                 targetCurrency: item.analysisCurrency,
+                targetRaps: [],
                 unitMultiplier: 1,
                 proportion: 100
               })),
@@ -2306,6 +2321,8 @@ export class RiskLinkStateService {
               }))
             };
             draft.content[wsIdentifier].riskLink.display.displayImport = true;
+            const rlAnalysisIds= _.map(analysis, a => a.rlAnalysisId);
+            ctx.dispatch(new fromWs.LoadRegionPerilForAnalysis({rlAnalysisIds}));
           }));
           return of(res);
         })
@@ -2313,6 +2330,23 @@ export class RiskLinkStateService {
           console.error('Error while doing the detailed scan', err);
           return of(err);
         }))
+  }
+
+  loadAnalysisRegionPerils(ctx :StateContext<WorkspaceModel>, payload:any){
+    const {rlAnalysisIds}= payload;
+    return this.riskApi.loadAnalysisRegionPerils(rlAnalysisIds)
+      .pipe(mergeMap(result => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            draft.content[wsIdentifier].riskLink.summary = {
+              ...draft.content[wsIdentifier].riskLink.summary,
+              regionPerils: _.map(result,item => item.regionPerilCode)
+            };
+          }));
+        return of(result);
+      }),
+        catchError(err => of(err))
+      );
   }
 
   patchAnalysisResult(ctx, payload) {
@@ -2427,11 +2461,48 @@ export class RiskLinkStateService {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             draft.content[wsIdentifier].riskLink.summary.sourceEpHeaders= result;
-          }))
+          }));
           return result;
         }),
         catchError(err => of(err))
       );
+  }
+
+  loadTargetRap(ctx: StateContext<WorkspaceModel>, payload: any){
+    const {rlAnalysisId} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.targetRaps=[];
+    }));
+    return this.riskApi.loadTargetRap(rlAnalysisId)
+      .pipe(mergeMap(result => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            draft.content[wsIdentifier].riskLink.summary.targetRaps= result;
+          }));
+          return result;
+        }),
+        catchError(err => of(err))
+      );
+  }
+
+  overrideTargetRaps(ctx: StateContext<WorkspaceModel>, payload: any){
+    const {changes}= payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      _.forEach(
+        draft.content[wsIdentifier].riskLink.summary.analysis,
+        (analysis,index) => {
+          draft.content[wsIdentifier].riskLink.summary.analysis[index].targetRaps= changes[analysis.rlAnalysisId] || analysis.targetRaps;
+        });
+    }));
+  }
+
+  clearTargetRaps(ctx: StateContext<WorkspaceModel>){
+    return ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.targetRaps= null;
+    }));
   }
 
 
