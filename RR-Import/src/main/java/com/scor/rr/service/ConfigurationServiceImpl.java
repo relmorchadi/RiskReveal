@@ -5,7 +5,6 @@ import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import com.scor.rr.domain.dto.RLPortfolioDto;
 import com.scor.rr.domain.dto.RegionPerilDto;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
-import com.scor.rr.domain.riskLink.RLSourceEpHeader;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
@@ -15,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -86,5 +87,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public List<RLSourceEpHeaderView> getSourceEpHeadersByAnalysis(Long rlAnalysisId) {
         return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
+    }
+
+    @Override
+    public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
+        Map<Long, List<RegionPerilDto>> result = new HashMap<>();
+        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
+        return result;
     }
 }

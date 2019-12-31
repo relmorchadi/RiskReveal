@@ -196,6 +196,7 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
+      "targetRaps": []
     },
     {
       "selected": false,
@@ -224,6 +225,7 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
+      "targetRaps": []
     }
   ],
   "portfolios": [
@@ -2224,12 +2226,12 @@ export class RiskLinkStateService {
                       analysis: {},
                       portfolios: {}
                     },
-                    // summary: testSummary2,
-                    summary: {
-                      analysis: [],
-                      portfolios: [],
-                      sourceEpHeaders: []
-                    },
+                    summary: testSummary2,
+                    // summary: {
+                    //   analysis: [],
+                    //   portfolios: [],
+                    //   sourceEpHeaders: []
+                    // },
                     linking: {
                       edm: null,
                       rdm: {data: null, selected: null},
@@ -2276,7 +2278,7 @@ export class RiskLinkStateService {
       );
   }
 
-  runDetailedScan(ctx, payload) {
+  runDetailedScan(ctx:StateContext<WorkspaceModel>, payload) {
     const {projectId, analysis, portfolios, instanceId} = payload;
     return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios)
       .pipe(
@@ -2293,6 +2295,7 @@ export class RiskLinkStateService {
                 financialPerspectives: [],
                 peqt: [],
                 targetCurrency: item.analysisCurrency,
+                targetRaps: [],
                 unitMultiplier: 1,
                 proportion: 100
               })),
@@ -2306,6 +2309,8 @@ export class RiskLinkStateService {
               }))
             };
             draft.content[wsIdentifier].riskLink.display.displayImport = true;
+            const rlAnalysisIds= _.map(analysis, a => a.rlAnalysisId);
+            ctx.dispatch(new fromWs.LoadRegionPerilForAnalysis({rlAnalysisIds}));
           }));
           return of(res);
         })
@@ -2313,6 +2318,23 @@ export class RiskLinkStateService {
           console.error('Error while doing the detailed scan', err);
           return of(err);
         }))
+  }
+
+  loadAnalysisRegionPerils(ctx :StateContext<WorkspaceModel>, payload:any){
+    const {rlAnalysisIds}= payload;
+    return this.riskApi.loadAnalysisRegionPerils(rlAnalysisIds)
+      .pipe(mergeMap(result => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            draft.content[wsIdentifier].riskLink.summary = {
+              ...draft.content[wsIdentifier].riskLink.summary,
+              regionPerils: _.map(result,item => item.regionPerilCode)
+            };
+          }));
+        return of(result);
+      }),
+        catchError(err => of(err))
+      );
   }
 
   patchAnalysisResult(ctx, payload) {
@@ -2427,11 +2449,48 @@ export class RiskLinkStateService {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             draft.content[wsIdentifier].riskLink.summary.sourceEpHeaders= result;
-          }))
+          }));
           return result;
         }),
         catchError(err => of(err))
       );
+  }
+
+  loadTargetRap(ctx: StateContext<WorkspaceModel>, payload: any){
+    const {rlAnalysisId} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.targetRaps=[];
+    }));
+    return this.riskApi.loadTargetRap(rlAnalysisId)
+      .pipe(mergeMap(result => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            draft.content[wsIdentifier].riskLink.summary.targetRaps= result;
+          }));
+          return result;
+        }),
+        catchError(err => of(err))
+      );
+  }
+
+  overrideTargetRaps(ctx: StateContext<WorkspaceModel>, payload: any){
+    const {changes}= payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      _.forEach(
+        draft.content[wsIdentifier].riskLink.summary.analysis,
+        (analysis,index) => {
+          draft.content[wsIdentifier].riskLink.summary.analysis[index].targetRaps= changes[analysis.rlAnalysisId] || analysis.targetRaps;
+        });
+    }));
+  }
+
+  clearTargetRaps(ctx: StateContext<WorkspaceModel>){
+    return ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = draft.currentTab.wsIdentifier;
+      draft.content[wsIdentifier].riskLink.summary.targetRaps= null;
+    }));
   }
 
 
