@@ -56,7 +56,7 @@
   -->
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr>
-      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}">
+      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px'}" style="background-color: #ecf1f7 !important;">
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <a href="#" [pRowToggler]="rowData">
@@ -69,7 +69,7 @@
           <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: rowData, field: col?.field, type: col?.type}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
-            <div class="text-ellipsis">
+            <div class="text-ellipsis" style="text-align: end">
               {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field}}
             </div>
           </ng-container>
@@ -259,6 +259,7 @@
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
              class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
+          <i class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
         </div>
       </div>
     </div>
@@ -337,8 +338,8 @@
       </div>
 
       <div [ngClass]="{ 'button-toggle' : !expanded }" style="padding-bottom: 5px;">
-        <span style="font-weight: bold; margin-right: 10px">View: </span>
-        <div class="p-button-group">
+        <div style="display: inline-block"><span style="font-weight: bold; margin-right: 10px">View: </span></div>
+        <div class="p-button-group" style="display: inline-block">
           <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
                          [ngStyle]="{'padding-right':'20px'}"
                          label="Adjustments" name="tableType"
