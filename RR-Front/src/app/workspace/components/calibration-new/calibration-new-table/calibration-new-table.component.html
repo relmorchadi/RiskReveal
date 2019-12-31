@@ -129,7 +129,7 @@
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}">
+      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px'}" >
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
@@ -369,7 +369,7 @@
               <ul nz-menu>
                 <li *ngFor="let status of statusOptions" nz-menu-item>
                   <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter[status.field]" (change)="statusFlilerCheckbox($event, status.field)"
+                    <label [(ngModel)]="statusFilter[status.field]" (ngModelChange)="statusFlilerCheckbox($event, status.field)"
                            nz-checkbox
                            nzChecked
                            style="margin-right: 12px;">

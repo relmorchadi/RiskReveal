@@ -38,7 +38,9 @@ export class CalibrationNewTableComponent implements OnInit {
   @Input() rowKeys: any;
 
   statusFilter: StatusFilter;
-  selectedStatusFilter: any = {};
+  selectedStatusFilter: any = {
+
+  };
   lastClick: any = {
     pure_index: null,
     thread_index: null
@@ -92,43 +94,15 @@ export class CalibrationNewTableComponent implements OnInit {
 
 
 
-  /*selectedThreads: any = {
-
-  }*/
-
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
     this.statusFilter = new StatusFilter();
+    this.selectedStatusFilter = this.statusFilter;
   }
 
-  statusFlilerCheckbox($event: any, type: string) {
-    switch (type) {
-      case 'inProgress':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'inProgress': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress']);
-        break;
-      case 'new':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'new': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new']);
-        break;
-      case 'valid':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'valid': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid']);
-        break;
-      case 'locked':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'locked': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked']);
-        break;
-      case 'requiresRegeneration':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'requiresRegeneration': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration']);
-        break;
-      case 'failed':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'failed': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed']);
-        break;
-    }
+  statusFlilerCheckbox(event: any, type: string) {
+    this.selectedStatusFilter = {...this.selectedStatusFilter, [type]: event};
   }
 
   unexpandColumns() {
@@ -157,10 +131,6 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   handlepltClick($event, pureId, threadId, pureIndex, threadIndex, clickType) {
-    console.log(pureIndex);
-    console.log(threadIndex);
-    /*threadIndex = _.findIndex(this.data[pureIndex].threads, (row: any)=>{ row.pltId = threadId });*/
-    let index = -1;
     let isSelected;
     _.forEach(this.data, (plt, i)=>{
       _.forEach(plt.threads, (thread, j)=>{
@@ -173,7 +143,6 @@ export class CalibrationNewTableComponent implements OnInit {
       this.handlePLTClickWithKey(pureId, pureIndex, threadId, threadIndex, !isSelected, $event);
     } else {
       this.lastSelectedId = threadIndex;
-      console.log(this.data)
       this.data.forEach((pure, i) => {
         pure.threads.forEach((thread, j) => {
           if (pureIndex === i && threadIndex === j){
@@ -183,7 +152,6 @@ export class CalibrationNewTableComponent implements OnInit {
           }
         });
       })
-      console.log(this.data)
       this.toggleSelectPlts(this.data);
       this.updateLastClick(pureIndex, threadIndex)
       this.selectOptions.indeterminate = isSelected ?  false : true;
@@ -316,11 +284,11 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   changeCurrencie(currency: any) {
-    this.selectedCurrencie = currency;
+    this.selectedCurrencie = currency.label;
   }
 
   changeFinancialUnit(financialUnit: any) {
-    this.selectFinancial = financialUnit;
+    this.selectFinancial = financialUnit.label;
   }
 
   onColumnResize({delta, element: {id}}) {
