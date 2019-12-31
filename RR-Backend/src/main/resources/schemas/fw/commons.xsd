@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   targetNamespace="http://scor.com/schema/commons"
+		   xmlns:tns="http://scor.com/schema/commons" elementFormDefault="qualified">
+<xs:complexType name="CommunicationHeader">
+	<xs:sequence>
+		<xs:element name="uid" type="xs:string"  minOccurs="1" nillable="false" />
+		<xs:element name="user" type="xs:string"  minOccurs="1" nillable="false" />
+		<xs:element name="timestamp" type="xs:string"  minOccurs="1" nillable="false" />
+	</xs:sequence>
+</xs:complexType>
+<xs:complexType name="Division">
+	<xs:sequence>
+		<xs:element name="divNumber" type="xs:long"  minOccurs="1" nillable="false" />
+		<xs:element name="accFileName" type="xs:string"  minOccurs="1" nillable="false" />
+		<xs:element name="locFileName" type="xs:string"  minOccurs="1" nillable="false" />
+		<xs:element name="valuesFileName" type="xs:string"  minOccurs="1" nillable="false" />
+	</xs:sequence>
+</xs:complexType>
+<xs:complexType name="TechnicalResponse">
+	<xs:sequence>
+		<xs:element name="status" type="xs:string"  minOccurs="1" nillable="false" />
+		<xs:element name="errorType" type="xs:string" minOccurs="0" nillable="true" />
+		<xs:element name="errorCode" type="xs:string" minOccurs="0" nillable="true" />
+		<xs:element name="errorDescription" type="xs:string" minOccurs="0" nillable="true" />
+	</xs:sequence>
+</xs:complexType>
+<xs:simpleType name="Status">
+	<xs:restriction base="xs:string">
+		<xs:enumeration value="OK"/>
+		<xs:enumeration value="ERR"/>
+	</xs:restriction>
+</xs:simpleType>
+</xs:schema>

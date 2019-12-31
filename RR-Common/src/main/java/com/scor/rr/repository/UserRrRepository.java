@@ -8,4 +8,6 @@ public interface UserRrRepository extends JpaRepository<UserRrEntity, Integer> {
 
     @Query("select c from UserRrEntity c where c.userId= :userId")
     UserRrEntity findByUserName(int userId);
+
+    UserRrEntity findByWindowsUser(String windowsUser);
 }

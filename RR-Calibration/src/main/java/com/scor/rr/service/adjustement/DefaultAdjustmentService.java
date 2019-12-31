@@ -7,6 +7,7 @@ import com.scor.rr.repository.*;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -190,6 +191,14 @@ public class DefaultAdjustmentService {
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
+    }
+
+    public ResponseEntity<?> getDefaultAdjustmentsInScope(String workspaceContextCode, int uwYear) {
+        try {
+            return ResponseEntity.ok(this.defaultAdjustmentRepository.getDefaultAdjustmentsInScope( workspaceContextCode, uwYear));
+        } catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

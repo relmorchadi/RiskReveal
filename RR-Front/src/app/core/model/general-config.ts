@@ -1,5 +1,6 @@
 
 export class GeneralConfig {
+  userPreferenceId: any;
   general: {
     dateFormat: {
       shortDate: string;

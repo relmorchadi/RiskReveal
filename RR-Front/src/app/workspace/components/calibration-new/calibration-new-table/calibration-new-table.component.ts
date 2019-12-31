@@ -69,4 +69,17 @@ export class CalibrationNewTableComponent implements OnInit {
         break;
     }
   }
+
+  unexpandColumns() {
+    this.actionDispatcher.emit({
+      type: "Expand columns OFF"
+    })
+  }
+
+  onViewChange(newView) {
+    this.actionDispatcher.emit({
+      type: 'View Change',
+      payload: newView
+    })
+  }
 }
