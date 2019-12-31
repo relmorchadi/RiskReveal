@@ -55,6 +55,8 @@ public class ModelPortfolioEntity {
     private String exposedLocationPerils;
     @Column(name = "Currency")
     private String currency;
+    @Column(name = "Division")
+    private Integer division;
     @Column(name = "ExchangeRate")
     private Double exchangeRate;
     @Column(name = "Proportion")

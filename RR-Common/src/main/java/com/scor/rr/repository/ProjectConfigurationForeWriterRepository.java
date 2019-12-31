@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProjectConfigurationForeWriterRepository extends JpaRepository<ProjectConfigurationForeWriter, Long> {
     Boolean existsByProjectId(Long projectId);
+    ProjectConfigurationForeWriter findByProjectId(Long projectId);
 }

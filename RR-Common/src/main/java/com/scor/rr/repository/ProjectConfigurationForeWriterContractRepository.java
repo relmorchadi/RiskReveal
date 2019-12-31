@@ -11,4 +11,6 @@ import java.util.List;
  */
 public interface ProjectConfigurationForeWriterContractRepository extends JpaRepository<ProjectConfigurationForeWriterContract, Long> {
     List<ProjectConfigurationForeWriterContract> findByContractIdAndUwYear(String contractId, int uwYear);
+
+    ProjectConfigurationForeWriterContract findByProjectConfigurationForeWriterId(Long projectConfigurationForeWriterId);
 }
