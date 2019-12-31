@@ -6,6 +6,7 @@
     <div class="my-tabs">
       <div class="tab-set-right table-design" [ngClass]="{'table-design-sp': tableConfig.isExpanded}">
         <app-calibration-new-table
+          [wsIdentifier]="wsIdentifier"
           [data]="data"
           [epMetrics]="epMetrics"
           [adjustments]="adjustments"
@@ -26,3 +27,7 @@
   [basis]="basis"
   (actionDispatcher)="handleAdjustmentPopUp($event)"
 ></app-adjustment-pop-up-new>
+
+<app-return-period-pop-up
+  [manageReturnPeriods]="false"
+></app-return-period-pop-up>

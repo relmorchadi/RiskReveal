@@ -68,7 +68,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '450px'
+      frozenWidth: '530px'
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.rowKeys= {};
@@ -93,6 +93,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       calibrationNew,
       workspaceType
     } = this.selectState(state);
+
+    this.wsIdentifier = wsIdentifier;
 
     this.iniRouting(wsIdentifier, wsId, uwYear, workspaceType);
     this.initComponent(calibrationNew);
@@ -297,7 +299,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '450px',
+      frozenWidth: '530px',
       ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
     };
   }

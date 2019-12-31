@@ -12,6 +12,7 @@ import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
 import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogComponent} from "./import/analysis-result";
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
 import {AdjustmentPopUpNewComponent} from "./calibration-new/adjustment-pop-up-new/adjustment-pop-up-new.component";
+import {ReturnPeriodPopUpComponent} from "./calibration-new/return-period-pop-up/return-period-pop-up.component";
 
 
 
@@ -30,6 +31,7 @@ export const COMPONENTS = [
   PortfolioResultComponent,
   CalibrationNewTableComponent,
   AdjustmentPopUpNewComponent,
+  ReturnPeriodPopUpComponent,
   PortfolioResultComponent,
   OverrideRegionPerilDialogComponent,
   FinancialPerspSelectionDialogComponent
