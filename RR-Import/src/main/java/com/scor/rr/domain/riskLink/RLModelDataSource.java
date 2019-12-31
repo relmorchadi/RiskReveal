@@ -5,6 +5,8 @@ import com.scor.rr.domain.DataSource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JoinFormula;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -40,6 +42,12 @@ public class RLModelDataSource {
     private String versionId;
     @Column(name = "RLDateCreated")
     private Date dateCreated;
+
+    /**
+     * Case (type = RDM) stores count of Analysis else portfolios
+     */
+    @Column(name = "ModelCount")
+    private Integer count;
 
     public RLModelDataSource(DataSource dataSource, Long projectId, String instanceId, String instanceName) {
         this.projectId = projectId;

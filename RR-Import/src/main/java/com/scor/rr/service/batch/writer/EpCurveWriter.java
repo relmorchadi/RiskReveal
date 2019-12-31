@@ -34,25 +34,30 @@ public class EpCurveWriter extends AbstractWriter {
 
     private Path ihubPath;
 
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+
+    @Value("#{jobParameters['carId']}")
+    private String carId;
+
     @Value("${ihub.treaty.out.path}")
     private void setIhubPath(String path) {
         this.ihubPath = Paths.get(path);
     }
 
     public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-//        Map<StatisticMetric, List<AnalysisEpCurves>> metricToPLTEPCurve = new HashMap<>();
-
-//        for (Map.Entry<StatisticMetric, List<AnalysisEpCurves>> entry : metricToEPCurve.entrySet()) {
-//            // @TODO Review this logic With Viet
-//            metricToPLTEPCurve.put(entry.getKey(), Lists.transform(entry.getValue(), e -> new AnalysisEpCurves(e)));
-//        }
 
         return writeEPCurves(metricToEPCurve, filename);
     }
 
     private BinFile writeEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
-        return writeEPCurves(metricToEPCurve, file, null);
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeEPCurves(metricToEPCurve, file, null);
+        } else {
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId), carId), filename);
+            return writeEPCurves(metricToEPCurve, file, null);
+        }
     }
 
     public BinFile writePLTEPCurves(List<EPMetricPoint> metricToEPCurve, String filename, StatisticMetric statisticMetric) {

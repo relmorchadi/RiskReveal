@@ -27,8 +27,9 @@ public class ConfigurationResource {
 
     @PostMapping("basic-scan")
     public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
-        rmsService.basicScan(dataSources, projectId, instanceId, instanceName);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(
+                rmsService.basicScan(dataSources, projectId, instanceId, instanceName)
+        );
     }
 
     @PostMapping("detailed-scan")
@@ -99,6 +100,16 @@ public class ConfigurationResource {
     public ResponseEntity<?> getRegionPerils(@RequestParam Long rlAnalysisId) {
         try {
             return new ResponseEntity<>(configurationService.getRegionPeril(rlAnalysisId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-divisions-for-car")
+    public ResponseEntity<?> getDivisions(@RequestParam String carId) {
+        try {
+            return new ResponseEntity<>(configurationService.getDivisions(carId), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);

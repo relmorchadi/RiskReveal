@@ -104,10 +104,9 @@ public class RmsService {
     /********** Scan Basic / Detailed **********/
 
 //    @Transactional(transactionManager = "rrTransactionManager")
-    public void basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
-
+    public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
 //        ExecutorService executor = Executors.newFixedThreadPool(dataSources.size());
-        for (DataSource dataSource : dataSources) {
+        return dataSources.stream().map(dataSource -> {
 
             RLModelDataSource rlModelDataSource =
                     rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), instanceId, dataSource.getRmsId());
@@ -121,18 +120,16 @@ public class RmsService {
             }
 
 //            final RLModelDataSource rlModelDataSourceLM = rlModelDataSource;
-
+            Integer count=null;
             if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
-//                Runnable rdmScanTask = () ->
-//                executor.execute(rdmScanTask);
-                scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
+                count = scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
             } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
-//                Runnable edmScanTask = () ->
-//                executor.execute(edmScanTask);
-                scanPortfolioBasicForEdm(instanceId, rlModelDataSource);
+                count = scanPortfolioBasicForEdm(instanceId, rlModelDataSource);
             }
-        }
-
+            rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);
+            rlModelDataSource.setCount(count);
+            return rlModelDataSource;
+        }).collect(toList());
     }
 
     //@Transactional(transactionManager = "rrTransactionManager")
@@ -192,7 +189,7 @@ public class RmsService {
         return new ArrayList<>();
     }
 
-    private void scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
+    private int scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
         rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, rdm.getRlId(), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
@@ -202,6 +199,7 @@ public class RmsService {
             RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         }
+        return rdmAnalysisBasics.size();
     }
 
     private List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
@@ -255,7 +253,7 @@ public class RmsService {
         return allScannedAnalysis;
     }
 
-    private void scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
+    private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
         rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(edm.getRlModelDataSourceId());
         List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
         for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
@@ -267,6 +265,7 @@ public class RmsService {
             rlPortfolio.setRlPortfolioScanStatus(rlPortfolioScanStatus);
             rlPortfolioRepository.save(rlPortfolio);
         }
+        return edmPortfolioBasics.size();
     }
 
     private List<RLPortfolio> scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
@@ -750,6 +749,10 @@ public class RmsService {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = createNamedParameterTemplate(instanceId);
         ExposureExtractor extractor = new ExposureExtractor(descriptors, file);
         namedParameterJdbcTemplate.query(sqlQuery, dataQueryParams, extractor);
+    }
+
+    public List<Map<String, Object>> getByQuery(String query, String instanceId, Object... args) {
+        return this.getJdbcTemplate(instanceId).queryForList(query, args);
     }
 
     private JdbcTemplate getJdbcTemplate(String instanceId) {
