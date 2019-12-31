@@ -30,5 +30,7 @@
 
 <app-return-period-pop-up
   *ngIf="isRPPopUpVisible"
-  [currentRPs]="currentRPs"
+  [returnPeriodConfig]="returnPeriodConfig"
+  [rpValidation]="rpValidation"
+  (actionDispatcher)="handleReturnPeriodPopUp($event)"
 ></app-return-period-pop-up>

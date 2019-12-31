@@ -9,6 +9,8 @@ import {CalibrationTableService} from "../../services/helpers/calibrationTable.s
 import {WorkspaceState} from "../../store";
 import {takeWhile} from "rxjs/operators";
 import {Message} from "../../../shared/message";
+import {CalibrationAPI} from "../../services/api/calibration.api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -52,12 +54,26 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   isAdjustmentPopUpVisible: boolean;
 
   isRPPopUpVisible: boolean;
-  currentRPs: number[];
+  returnPeriodConfig: {
+    currentRPs: number[],
+    newlyAdded: number[],
+    showSuggestion: boolean,
+    message: string
+  };
+  rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
+  //Sub
+  validationSub: Subscription;
 
 
   constructor(
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-    private calibrationTableService: CalibrationTableService
+    private calibrationTableService: CalibrationTableService,
+    private calibrationApi: CalibrationAPI
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -81,7 +97,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.isAdjustmentPopUpVisible= false;
     this.isRPPopUpVisible= false;
-    this.currentRPs= [];
+    this.returnPeriodConfig= {
+      newlyAdded: [],
+      currentRPs: [],
+      showSuggestion: false,
+      message: null
+    };
+    this.rpValidation= {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
   }
 
   ngOnInit() {
@@ -209,8 +235,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   initEpMetricsCols({cols, rps}) {
-    console.log(rps);
-    this.currentRPs= rps;
+    this.returnPeriodConfig= {
+      ...this.returnPeriodConfig,
+      currentRPs: rps
+    };
     this.calibrationTableService.setCols(
       cols,
       'epMetrics'
@@ -293,6 +321,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  handleReturnPeriodPopUp(action: Message) {
+    switch (action.type) {
+      case "ADD Return period":
+        this.addReturnPeriod(action.payload);
+        break;
+
+      default:
+        console.log(action);
+    }
+  }
+
   expandColumns() {
     this.tableConfig = {
       ...this.tableConfig,
@@ -339,5 +378,34 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   openRPManager(){
     console.log("HEY");
     this.isRPPopUpVisible= true;
+  }
+
+  addReturnPeriod(rp) {
+
+    this.validationSub = this.calibrationApi.validateRP(rp)
+      .subscribe((validation: any) => {
+        if(validation.isValid) {
+          if(_.find([...this.returnPeriodConfig.currentRPs, ...this.returnPeriodConfig.newlyAdded], oldRp => oldRp == rp)) {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              message: "Already exists"
+            };
+          } else {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              newlyAdded: _.concat(this.returnPeriodConfig.newlyAdded, [rp])
+            };
+          }
+        } else {
+          this.returnPeriodConfig = {
+            ...this.returnPeriodConfig,
+            showSuggestion: true
+          }
+        }
+        this.rpValidation = validation;
+        this.validationSub && this.validationSub.unsubscribe()
+      })
   }
 }

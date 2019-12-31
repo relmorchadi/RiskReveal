@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Message} from "../../../../shared/message";
 
 @Component({
   selector: 'app-return-period-pop-up',
@@ -7,8 +8,22 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class ReturnPeriodPopUpComponent implements OnInit {
 
-  @Input() currentRPs: any;
-  returnPeriodInput: any;
+  @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
+
+  @Input() returnPeriodConfig: {
+    currentRPs: number[],
+    newlyAdded: number[],
+    showSuggestion: boolean,
+    message: string
+  };
+
+  @Input() rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
+  returnPeriodInput: number;
 
   constructor() { }
 
@@ -20,11 +35,16 @@ export class ReturnPeriodPopUpComponent implements OnInit {
 
   }
 
-  removeReturnPeriod(rowData) {
-
+  addToReturnPeriod() {
+    this.actionDispatcher.emit({
+      type: "ADD Return period",
+      payload: this.returnPeriodInput
+    })
   }
 
-  addToReturnPeriods() {
-
+  save() {
+    this.actionDispatcher.emit({
+      type: "Save return periods"
+    })
   }
 }
