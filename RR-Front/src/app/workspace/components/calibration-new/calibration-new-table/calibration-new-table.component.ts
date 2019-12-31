@@ -306,4 +306,7 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
+  displa(col: any) {
+    console.log(col)
+  }
 }
