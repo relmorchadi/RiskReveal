@@ -49,7 +49,7 @@
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveELT', item)"
                 *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item.desc}}
-              ({{item.desc}})
+              ({{item.code}})
             </li>
           </ul>
         </nz-dropdown>
@@ -268,8 +268,8 @@
                       <ng-container *ngIf="!itemsE.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
-                          /{{getNumberElement(itemsE, 'portfolio')}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/0</span>
+                          /{{itemsE.count}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
@@ -295,8 +295,8 @@
                       <ng-container *ngIf="!itemsR?.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
-                          /{{getNumberElement(itemsR, 'analysis')}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/0</span>
+                          /{{itemsR.count}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
                         <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
