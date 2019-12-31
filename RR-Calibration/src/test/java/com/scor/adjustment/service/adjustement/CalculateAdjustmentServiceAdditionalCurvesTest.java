@@ -83,8 +83,8 @@ public class CalculateAdjustmentServiceAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
-        log.info("Coefficient of Variance (CoV) with a plt file = {}",StatisticAdjustment.CoefOfVariance(pltLossData));
-        log.info("Coefficient of Variance (CoV) with a plt null = {}",StatisticAdjustment.CoefOfVariance(null));
-        log.info("Coefficient of Variance (CoV) with empty plt = {}",StatisticAdjustment.CoefOfVariance(new ArrayList<>()));
+        log.info("Coefficient of Variance (CoV) with a plt file = {}",StatisticAdjustment.coefOfVariance(pltLossData));
+        log.info("Coefficient of Variance (CoV) with a plt null = {}",StatisticAdjustment.coefOfVariance(null));
+        log.info("Coefficient of Variance (CoV) with empty plt = {}",StatisticAdjustment.coefOfVariance(new ArrayList<>()));
     }
 }

@@ -4,4 +4,5 @@ import com.scor.rr.domain.LossDataHeaderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LossDataHeaderEntityRepository extends JpaRepository<LossDataHeaderEntity, Long> {
+    LossDataHeaderEntity findByModelAnalysisId(Long modelAnalysisId);
 }
