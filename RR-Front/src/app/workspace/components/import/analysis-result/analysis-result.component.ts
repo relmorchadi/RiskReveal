@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Select, Store} from "@ngxs/store";
+import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import * as _ from 'lodash';
 
@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 export class AnalysisResultComponent implements OnInit {
 
   @Input('data')
-  data:{analysis, epCurves}= {analysis: [], epCurves: []};
+  data:{analysis, epCurves, targetRaps}= {analysis: [], epCurves: [], targetRaps: []};
 
   isCollapsed;
   scrollableColsResults = [
@@ -83,7 +83,7 @@ export class AnalysisResultComponent implements OnInit {
     //   edit: true
     // },
     {
-      field: 'peqt',
+      field: 'targetRaps',
       header: 'PEQT',
       width: '80px',
       type: 'Peqt',
@@ -313,8 +313,9 @@ export class AnalysisResultComponent implements OnInit {
 
   lastUpdatedAnalyisPEQTIndex=null;
 
-  showOverrideRpPopup=false;
-  showSelectFinancialPersp=false;
+  showOverrideRpDialog=false;
+  showSelectFinancialPerspDialog=false;
+  showOverridePEQTDialog=false;
 
   constructor(private store: Store) {
   }
@@ -338,7 +339,7 @@ export class AnalysisResultComponent implements OnInit {
 
   openFinancialP(fp) {
     console.log('Open Financial Perspective Popup');
-    this.showSelectFinancialPersp=true;
+    this.showSelectFinancialPerspDialog=true;
   }
 
   selectRows(rowData, i) {
@@ -347,7 +348,7 @@ export class AnalysisResultComponent implements OnInit {
 
   overrideRegionPerilOccurrenceBasis(row, colType){
     if(colType == 'Rp'){
-      this.showOverrideRpPopup=true;
+      this.showOverrideRpDialog=true;
     }
   }
 
@@ -377,7 +378,7 @@ export class AnalysisResultComponent implements OnInit {
 
   overrideRegionPeril(changes){
     this.store.dispatch(new fromRiskLink.OverrideAnalysisRegionPeril(changes));
-    this.showOverrideRpPopup=false;
+    this.showOverrideRpDialog=false;
   }
 
   loadSourceEpCurveHeaders(rlAnalysisId){
@@ -386,7 +387,20 @@ export class AnalysisResultComponent implements OnInit {
 
   overrideFinancialPersp(changes){
     this.store.dispatch(new fromRiskLink.OverrideFinancialPerspective(changes));
-    this.showSelectFinancialPersp=false;
+    this.showSelectFinancialPerspDialog=false;
+  }
+
+  loadTargetRaps(rlAnalysisId){
+    this.store.dispatch(new fromRiskLink.LoadTargetRaps({rlAnalysisId}));
+  }
+
+  overridePEQTs(changes){
+    this.store.dispatch(new fromRiskLink.OverrideTargetRaps({changes}));
+  }
+
+  closePEQTOverrideDialog(){
+    this.showOverridePEQTDialog=false;
+    this.store.dispatch(new fromRiskLink.ClearTargetRaps());
   }
 
 }
