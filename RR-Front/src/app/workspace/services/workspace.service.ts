@@ -175,8 +175,8 @@ export class WorkspaceService {
               collapseResult: true,
             },
             financialValidator: {
-              rmsInstance: {data: [], selected: 'AZU-P-RL17-SQL14'},
-              financialPerspectiveELT: {data: [], selected: 'Net Loss Pre Cat (RL)'},
+              rmsInstance: {data: [], selected: ''},
+              financialPerspectiveELT: {data: [], selected: ''},
               targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
               division: {data: [], selected: 'Division N°1'},
             },
@@ -187,16 +187,20 @@ export class WorkspaceService {
               standard: null,
               target: 'currentSelection'
             },
-            analysis: null,
-            analysisFac: null,
-            portfolios: null,
-            portfolioFac: null,
+            analysis: [],
+            portfolios: [],
             results: null,
             summaries: null,
             selection: null,
+            facSelection: {
+              'Division N°1': {analysis: {}, portfolios: {}},
+              'Division N°2': {analysis: {}, portfolios: {}},
+              'Division N°3': {analysis: {}, portfolios: {}},
+            },
+            importPLTs: {},
             selectedEDMOrRDM: null,
             activeAddBasket: false,
-            importPLTs: {},
+            synchronize: false
           },
           scopeOfCompletence: {
             data: {},

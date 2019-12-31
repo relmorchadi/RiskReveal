@@ -119,7 +119,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getFlatSelectedAnalysisPortfolio)
   flatSelectedAnalysisPortfolio$;
 
-  @Select(WorkspaceState.getSelectedAnalysisProtfolios)
+  @Select(WorkspaceState.getSelectedAnalysisPortfolios)
   selectedAnalysisPortfolios$;
 
   @Select(WorkspaceState.getRiskLinkSummary)
@@ -168,6 +168,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
+    this.dispatch(new fromWs.LoadRiskLinkDataAction());
     setTimeout(()=>{
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         instanceId: this.state.financialValidator.rmsInstance.selected,
@@ -470,20 +471,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   runDetailedScan() {
-    // this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
-    // this.dispatch(new fromWs.AddToBasketAction());
-    // this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-    //   if (value !== undefined && value !== null) {
-    //     this.showPopUp = !value;
-    //   }
-    // });
-    //Run the detail scan
     forkJoin(
       [
         this.selectedProject$,
         this.selectedAnalysisPortfolios$
-      ]
-        .map(item => item.pipe(take(1)))
+      ].map(item => item.pipe(take(1)))
     ).subscribe(data => {
       const [p, analysisPortfolioSelection] = data;
       console.log('Those are selected section', analysisPortfolioSelection);

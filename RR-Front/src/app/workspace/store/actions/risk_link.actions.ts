@@ -188,6 +188,11 @@ export class SaveFinancialPerspectiveAction {
   constructor() {}
 }
 
+export class SaveDivisionSelection {
+  static readonly type = '[Risk Link] Save Division Selection';
+  constructor(public payload?: any) {}
+}
+
 export class SaveEditAnalysisAction {
   static readonly type = '[Risk Link] Save Edit On Analysis';
   constructor(public payload: any) {}
@@ -248,8 +253,8 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
-export class LoadPortfolioFacPerDivisionAction {
-  static readonly type = '[Risk Link] Load Portfolio For Fac Per Division Ws';
+export class LoadDivisionSelection {
+  static readonly type = '[Risk Link] Load Division Selection';
   constructor(public payload?: any) {}
 }
 

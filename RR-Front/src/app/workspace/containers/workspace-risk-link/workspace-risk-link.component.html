@@ -394,9 +394,9 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
