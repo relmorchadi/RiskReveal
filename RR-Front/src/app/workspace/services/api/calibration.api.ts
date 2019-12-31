@@ -42,4 +42,8 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}type/all`);
   }
 
+  validateRP(rp){
+    return this.http.get(`${this.URL}epMetrics/validate`, { params: { rp }});
+  }
+
 }

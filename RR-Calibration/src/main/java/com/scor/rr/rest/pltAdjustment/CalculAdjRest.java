@@ -2,7 +2,7 @@ package com.scor.rr.rest.pltAdjustment;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.SummaryStatisticsDetail;
+import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
@@ -58,16 +58,10 @@ public class CalculAdjRest {
         return pltLossData.stream().sorted(Comparator.comparing(PLTLossData::getLoss)).collect(Collectors.toList());
     }
 
-//    @PostMapping("calculateSummaryStatisticHeaderDetail")
-//    private SummaryStatisticsDetail calculateSummaryStatisticHeaderDetail(Long pltId, MetricType type) {
-//        return calculateAdjustmentService.calculateSummaryStatisticHeaderDetail(pltId, type);
-//    }
-
-//    // todo
-//    @PostMapping("calculateSummaryStatisticHeader")
-//    private SummaryStatisticHeaderDetail calculateSummaryStatisticHeader(Long pltId, MetricType type) {
-//        return calculateAdjustmentService.calculateSummaryStatisticHeader(pltId, type);
-//    }
+    @PostMapping("calculateSummaryStatistic")
+    private SummaryStatisticHeaderEntity calculateSummaryStatistic(Long pltId) throws RRException {
+        return calculateAdjustmentService.calculateSummaryStatistic(pltId);
+    }
 
     @GetMapping("aepMetric")
     public EPMetric aepMetric(String pathToFile) throws RRException {
@@ -88,7 +82,7 @@ public class CalculAdjRest {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
         if(SummaryStatisticType.coefOfVariance.equals(type)) {
-            return StatisticAdjustment.CoefOfVariance(pltLossData);
+            return StatisticAdjustment.coefOfVariance(pltLossData);
         }
         if(SummaryStatisticType.stdDev.equals(type)) {
             return StatisticAdjustment.stdDev(pltLossData);

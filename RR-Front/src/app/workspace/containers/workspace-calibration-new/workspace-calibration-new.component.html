@@ -29,5 +29,8 @@
 ></app-adjustment-pop-up-new>
 
 <app-return-period-pop-up
-  [manageReturnPeriods]="false"
+  *ngIf="isRPPopUpVisible"
+  [returnPeriodConfig]="returnPeriodConfig"
+  [rpValidation]="rpValidation"
+  (actionDispatcher)="handleReturnPeriodPopUp($event)"
 ></app-return-period-pop-up>

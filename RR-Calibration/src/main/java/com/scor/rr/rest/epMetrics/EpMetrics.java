@@ -24,4 +24,7 @@ public class EpMetrics {
 
    @GetMapping("validate")
    public ResponseEntity<?> validateEpMetric(@RequestParam Integer rp) { return this.epMetricsService.validateEpMetric(rp);}
+
+   @GetMapping("defaultReturnPeriods")
+    public ResponseEntity<?> getDefaultReturnPeriods() { return this.epMetricsService.getDefaultReturnPeriods();}
 }

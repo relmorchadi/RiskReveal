@@ -9,6 +9,8 @@ import {CalibrationTableService} from "../../services/helpers/calibrationTable.s
 import {WorkspaceState} from "../../store";
 import {takeWhile} from "rxjs/operators";
 import {Message} from "../../../shared/message";
+import {CalibrationAPI} from "../../services/api/calibration.api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -43,16 +45,35 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columns: any[],
     columnsLength: number
   };
+  selectedCurveType: string;
   curveTypes: string[];
   rowKeys: any;
 
+  //POP-UPs
   selectedAdjustment: any;
   isAdjustmentPopUpVisible: boolean;
+
+  isRPPopUpVisible: boolean;
+  returnPeriodConfig: {
+    currentRPs: number[],
+    newlyAdded: number[],
+    showSuggestion: boolean,
+    message: string
+  };
+  rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
+  //Sub
+  validationSub: Subscription;
 
 
   constructor(
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-    private calibrationTableService: CalibrationTableService
+    private calibrationTableService: CalibrationTableService,
+    private calibrationApi: CalibrationAPI
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -70,10 +91,23 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.columnsConfig,
       frozenWidth: '530px'
     };
+    this.selectedCurveType = 'OEP';
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
     this.rowKeys= {};
 
     this.isAdjustmentPopUpVisible= false;
+    this.isRPPopUpVisible= false;
+    this.returnPeriodConfig= {
+      newlyAdded: [],
+      currentRPs: [],
+      showSuggestion: false,
+      message: null
+    };
+    this.rpValidation= {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
   }
 
   ngOnInit() {
@@ -106,7 +140,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     if( !this.wsId && wsId && !this.uwYear && uwYear ) {
       //INIT
-      console.log(workspaceType);
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.columnsConfig = {
         ...this.columnsConfig,
@@ -122,7 +155,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.loadConstants();
       this.loadCalibrationPlts(wsId, uwYear);
       this.loadAdjustments(wsId, uwYear);
-      this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
+      this.loadEpMetrics(wsId, uwYear, 1, this.selectedCurveType);
     }
 
     this.wsIdentifier = wsIdentifier;
@@ -201,7 +234,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.loading = loading;
   }
 
-  initEpMetricsCols({cols}) {
+  initEpMetricsCols({cols, rps}) {
+    this.returnPeriodConfig= {
+      ...this.returnPeriodConfig,
+      currentRPs: rps
+    };
     this.calibrationTableService.setCols(
       cols,
       'epMetrics'
@@ -264,6 +301,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.rowExpandChange(action.payload);
         break;
 
+      case "Open return periods manager":
+        this.openRPManager();
+        break;
+
       default:
         console.log(action);
     }
@@ -275,6 +316,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.isAdjustmentPopUpVisible= false;
         this.selectedAdjustment = null;
         break;
+      default:
+        console.log(action);
+    }
+  }
+
+  handleReturnPeriodPopUp(action: Message) {
+    switch (action.type) {
+      case "ADD Return period":
+        this.addReturnPeriod(action.payload);
+        break;
+
       default:
         console.log(action);
     }
@@ -323,4 +375,37 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  openRPManager(){
+    console.log("HEY");
+    this.isRPPopUpVisible= true;
+  }
+
+  addReturnPeriod(rp) {
+
+    this.validationSub = this.calibrationApi.validateRP(rp)
+      .subscribe((validation: any) => {
+        if(validation.isValid) {
+          if(_.find([...this.returnPeriodConfig.currentRPs, ...this.returnPeriodConfig.newlyAdded], oldRp => oldRp == rp)) {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              message: "Already exists"
+            };
+          } else {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              newlyAdded: _.concat(this.returnPeriodConfig.newlyAdded, [rp])
+            };
+          }
+        } else {
+          this.returnPeriodConfig = {
+            ...this.returnPeriodConfig,
+            showSuggestion: true
+          }
+        }
+        this.rpValidation = validation;
+        this.validationSub && this.validationSub.unsubscribe()
+      })
+  }
 }

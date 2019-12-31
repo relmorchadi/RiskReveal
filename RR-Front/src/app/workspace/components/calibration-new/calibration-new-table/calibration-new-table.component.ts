@@ -81,6 +81,14 @@ export class CalibrationNewTableComponent implements OnInit {
     ],
     selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
+  statusOptions:any = [
+    {title: 'In Progress', field: 'inProgress', class: 'icon-history-alt iconYellow'},
+    {title: 'New', field: 'new', class: 'icon-star iconBlue'},
+    {title: 'Valid', field: 'valid', class: 'icon-check-circle iconGreen'},
+    {title: 'Locked', field: 'locked', class: 'icon-lock-alt iconRed'},
+    {title: 'Requires regeneration', field: 'requiresRegeneration', class: 'icon-report_problem_24px iconYellow2'},
+    {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
+  ]
 
 
 
@@ -322,6 +330,12 @@ export class CalibrationNewTableComponent implements OnInit {
         payload: delta
       })
     }
+  }
+
+  openRPManager() {
+    this.actionDispatcher.emit({
+      type: "Open return periods manager"
+    })
   }
 
 }

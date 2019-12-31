@@ -17,7 +17,7 @@ public class StatisticAdjustment {
     private static final Logger log = LoggerFactory.getLogger(StatisticAdjustment.class);
     private static final double CONSTANTE =100000;
 
-    public static double CoefOfVariance(List<PLTLossData> pltLossDatas) {
+    public static double coefOfVariance(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty())
             return stdDev(pltLossDatas) / averageAnnualLoss(pltLossDatas);
         else {

@@ -121,7 +121,9 @@ export class CalibrationNewService {
               if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType]= {};
               innerDraft.epMetrics[curveType][pltId] = metric;
               if( i == '0' ) {
-                innerDraft.epMetrics.cols = [ 'aal', ..._.keys(_.omit(metric, ['pltId', 'curveType', 'aal']))];
+                const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'aal']));
+                innerDraft.epMetrics.rps = rps;
+                innerDraft.epMetrics.cols = [ 'aal', ...rps];
               }
             })
 

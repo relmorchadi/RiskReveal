@@ -88,6 +88,7 @@
       <div class="ui-g-9">
         <nz-switch
           [ngModel]="adjustment?.capped"
+          [nzDisabled]="true"
           nzSize="small">
         </nz-switch>
       </div>
@@ -97,7 +98,7 @@
         <label> {{adjustment?.adjustmentType}} </label>
       </div>
       <div class="ui-g-9">
-        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+        <input [disabled]="true" [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
       </div>
     </div>
     <div *ngIf="adjustment?.adjustmentType != 'Linear'" class="ui-g">
@@ -105,7 +106,7 @@
         <label> {{adjustment?.adjustmentType}} </label>
       </div>
       <div class="ui-g-9">
-        <input [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
+        <input  [disabled]="true" [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
       </div>
     </div>
   </div>
