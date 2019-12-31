@@ -294,8 +294,30 @@ export class LoadSourceEpCurveHeaders {
   constructor(public payload: any) {}
 }
 
+export class LoadTargetRaps {
+  static readonly type= '[Risk Link] Load Target Raps';
+  constructor(public payload: any) {}
+}
+
+export class OverrideTargetRaps {
+  static readonly type= '[Risk Link] Override Target Raps';
+  constructor(public payload: any) {}
+}
+
+export class ClearTargetRaps {
+  static readonly type= '[Risk Link] Clear Target Raps';
+  constructor() {}
+}
+
 export class OverrideFinancialPerspective {
   static readonly type= '[Risk Link] Override Financial Perspective';
   constructor(public payload: any) {}
 }
+
+
+export class LoadRegionPerilForAnalysis {
+  static readonly type= '[Risk Link] Load Region Perils For Analysis';
+  constructor(public payload: any) {}
+}
+
 
