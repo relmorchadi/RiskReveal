@@ -26,4 +26,6 @@ public interface DefaultReturnPeriodRepository extends JpaRepository<DefaultRetu
     @Query(value = "exec dbonew.usp_FindSingleEpMetricsByWorkspaceAndCurveTypeAndRP @workspaceContextCode=:workspaceContextCode, @uwYear=:uwYear, @curveType=:curveType, @rp=:rp", nativeQuery = true)
     List<Map<String, Object>> findSingleEpMetricsByWorkspaceAndCurveTypeAndRP(@Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear, @Param("curveType") String type, @Param("rp") Integer rp);
 
+    @Query("SELECT drp.returnPeriod FROM DefaultReturnPeriodEntity drp WHERE drp.isTableRP = 1 ORDER BY drp.returnPeriod ASC")
+    List<Integer> findByIsTableRPOrderByReturnPeriodAsc();
 }
