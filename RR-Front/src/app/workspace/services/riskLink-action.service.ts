@@ -9,7 +9,7 @@ import {
   UpdateAnalysisAndPortfolioData
 } from '../store/actions';
 import * as _ from 'lodash';
-import {catchError, mergeMap, switchMap} from 'rxjs/operators';
+import {catchError, count, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from './api/risk.api';
 import {forkJoin} from 'rxjs';
@@ -1325,17 +1325,17 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     console.log()
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
-      .pipe(mergeMap((response) => {
+      .pipe(mergeMap((response: any[]) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
-            console.log(state.content[wsIdentifier].riskLink.selection.edms, state.content[wsIdentifier].riskLink.selection.rdms);
+            const parsedResponse= this._parseBasicScanResponse(response);
             draft.content[wsIdentifier].riskLink.selection.edms = Object.assign(
               {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.edms, item =>
-                ({[item.rmsId]: {...item, scanning: false}}))
+                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.edms[item.rmsId].count}}))
             );
             draft.content[wsIdentifier].riskLink.selection.rdms = Object.assign(
               {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.rdms, item =>
-                ({[item.rmsId]: {...item, scanning: false}}))
+                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.rdms[item.rmsId].count}}))
             );
           }));
           return of(response);
@@ -1343,6 +1343,18 @@ export class RiskLinkStateService {
         catchError(err => {
           return of(err);
         }));
+  }
+
+  private _parseBasicScanResponse(response:any[]){
+    const result= {edms: {}, rdms: {}};
+    _.forEach(response, (item:any) => {
+      if(item.type === 'EDM'){
+        result.edms= _.merge(result.edms, {[item.rlId]: {rmsId: item.rlId, count: item.count}});
+      } else if(item.type === 'RDM'){
+        result.rdms= _.merge(result.edms, {[item.rlId]: {rmsId: item.rlId, count: item.count}});
+      }
+    });
+    return result;
   }
 
   createLinking(ctx: StateContext<WorkspaceModel>, payload) {
@@ -2292,7 +2304,7 @@ export class RiskLinkStateService {
               analysis: _.map(analysis, item => ({
                 ...item,
                 selected: false,
-                financialPerspectives: [],
+                financialPerspectives: [financialPerspective],
                 peqt: [],
                 targetCurrency: item.analysisCurrency,
                 targetRaps: [],
