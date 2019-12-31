@@ -164,7 +164,6 @@
   <!--Helpers-->
   <!--TEMPLATES-->
 
-
   <ng-template #draggableTD let-adjustment>
     <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment)" class="text-table-cell border-dragable" style="display: flex;">
       <div style="display: flex;height: max-content">
@@ -175,7 +174,6 @@
       </div>
     </div>
   </ng-template>
-
 
   <!--Row Template-->
   <ng-template #fieldTemplate let-rowData let-field="field" let-type="type">
@@ -208,7 +206,7 @@
 
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
-    <ng-container *ngIf="isResizable; else nonResizableTemplate">
+    <ng-container *ngIf="isResizable">
       <th [id]="col?.field" [style.width]="width + 'px'" pResizableColumn>
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="status"></ng-container>
@@ -223,25 +221,24 @@
         </ng-container>
       </th>
     </ng-container>
-
-    <ng-template #nonResizableTemplate>
-      <th [id]="col?.field" [style.width]="width + 'px'">
-        <ng-container *ngIf="col?.type == 'status'">
-          <ng-container [ngTemplateOutlet]="status"></ng-container>
-        </ng-container>
-        <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
-        </ng-container>
-        <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
-          <div class="text-ellipsis">
-          {{col?.header}}
-          </div>
-        </ng-container>
-      </th>
-    </ng-template>
-
+    <ng-container *ngIf="!isResizable" [ngTemplateOutlet]="nonResizableTemplate" [ngTemplateOutletContext]="{ $implicit: col, width: width }" ></ng-container>
   </ng-template>
 
+  <ng-template #nonResizableTemplate let-col let-width="width">
+    <th [id]="col?.field" [style.width]="width + 'px'">
+      <ng-container *ngIf="col?.type == 'status'">
+        <ng-container [ngTemplateOutlet]="status"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="col?.type == 'arrow'">
+        <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
+      </ng-container>
+      <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
+        <div class="text-ellipsis">
+          {{col?.header}}
+        </div>
+      </ng-container>
+    </th>
+  </ng-template>
 
   <!--HEADER-->
   <ng-template #leftHeader>
@@ -262,7 +259,6 @@
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
              class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
-          <i class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
         </div>
       </div>
     </div>
@@ -273,10 +269,10 @@
      <!--dropdown for epMetrics-->
     <div [ngClass]="{ 'table-header-right-container' : expanded }">
       <div class="table-header-right" [ngClass]="{ 'button-toggle-empetric-config' : !expanded }" style="background-color: #fff">
-        <div class="title-as-tab" style="height: 58px; width: 100% !important;">
-        <span class="title">
-         Thread Level EP Metrics
-        </span>
+        <div *ngIf="tableConfig?.view == 'epMetrics'" class="title-as-tab" style="height: 58px; width: 100% !important;">
+          <span class="title">
+           Thread Level EP Metrics
+          </span>
           <div class="body-wrap-dropDowns-calibration">
             <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
               <div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>
@@ -353,6 +349,8 @@
                          value="epMetrics"></p-radioButton>
         </div>
       </div>
+
+      <i *ngIf="tableConfig?.view == 'epMetrics'" style="position: absolute;right: 25px;top: 90px;font-size: 18px;" class="icon-settings_24px" nz-tooltip="Manage return periods"></i>
 
     </div>
     <!--<div style="" [ngClass]="{ 'table-header-right-container' : expanded }">
