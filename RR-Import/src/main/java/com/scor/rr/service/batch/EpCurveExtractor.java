@@ -11,7 +11,7 @@ import com.scor.rr.domain.riskLink.RLSourceEpHeader;
 import com.scor.rr.repository.EPCurveHeaderEntityRepository;
 import com.scor.rr.repository.LossDataHeaderEntityRepository;
 import com.scor.rr.repository.RLModelDataSourceRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderEntityRepository;
+import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -225,9 +225,9 @@ public class EpCurveExtractor extends AbstractWriter {
                 });
 
 
-            lossDataHeaderEntityRepository.save(conformedRRLT);
-            summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
-            epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
+                lossDataHeaderEntityRepository.save(conformedRRLT);
+                summaryStatisticHeaderRepository.saveAll(conformedSummaryStatHeaders);
+                epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
 
 
                 log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());

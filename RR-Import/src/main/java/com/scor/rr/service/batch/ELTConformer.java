@@ -45,7 +45,6 @@ public class ELTConformer {
 
     public RepeatStatus conformeELT() {
 
-        if (marketChannel.equalsIgnoreCase("Treaty")) {
             log.debug("Starting ELTConformer");
 
             Date startDate = new Date();
@@ -153,7 +152,6 @@ public class ELTConformer {
                 log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
             }
             log.debug("ELTConformer completed");
-        }
         return RepeatStatus.FINISHED;
     }
 

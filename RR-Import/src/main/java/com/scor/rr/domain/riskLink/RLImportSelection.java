@@ -43,9 +43,9 @@ public class RLImportSelection {
     @Column(name = "Proportion")
     private Float proportion;
     @Column(name = "Division")
-    private String division;
-    @Column(name = "PeriodBasis")
-    private String periodBasis;
+    private Integer division;
+//    @Column(name = "PeriodBasis")
+//    private String periodBasis;
     // TODO : Review with shaun
     @Column(name = "ProxyScalingBasis")
     private String proxyScalingBasis;

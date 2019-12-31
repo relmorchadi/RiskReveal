@@ -46,9 +46,4 @@ public class ImportResource {
         ImportLossDataParams params= new ImportLossDataParams(config, analysisIds, portfolioIds);
         return new ResponseEntity<>(batchExecution.RunImportLossData(params), HttpStatus.OK);
     }
-
-    @PostMapping("/import")
-    public ResponseEntity<?> importFac(@RequestBody ImportParamsDto params){
-        return new ResponseEntity<>(batchExecution.RunImportLossDataFac(params), HttpStatus.OK);
-    }
 }

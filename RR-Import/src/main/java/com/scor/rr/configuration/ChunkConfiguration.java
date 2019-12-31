@@ -15,9 +15,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ResourceUtils;
+
+import java.io.FileNotFoundException;
 
 @Configuration
 public class ChunkConfiguration {
+
+//    @Value("${accLocFile.path}")
+//    private Resource accLocFile;
 
     /**
      * Resources
@@ -26,19 +32,19 @@ public class ChunkConfiguration {
     @Bean("locResource")
     @StepScope
     public Resource locResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource("file:" + iHubPath + "/tmp/" + carId + "_" + division + ".loc");
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + ".loc");
     }
 
     @Bean("locFWResource")
     @StepScope
     public Resource locFWResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource("file:" + iHubPath + "/tmp/" + carId + "_" + division + "_FW.loc");
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + "_FW.loc");
     }
 
     @Bean("accResource")
     @StepScope
     public Resource accResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource("file:" + iHubPath + "/tmp/" + carId + "_" + division + ".acc");
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + ".acc");
     }
 
     /**
@@ -46,6 +52,7 @@ public class ChunkConfiguration {
      */
 
     @Bean(name = "AccReader")
+    @StepScope
     public RLAccCursorItemReader getAccReader() {
         RLAccCursorItemReader reader = new RLAccCursorItemReader();
         reader.setUseSharedExtendedConnection(true);
@@ -56,6 +63,7 @@ public class ChunkConfiguration {
     }
 
     @Bean(name = "LocReader")
+    @StepScope
     public RLLocCursorItemReader getLocReader() {
         RLLocCursorItemReader reader = new RLLocCursorItemReader();
         reader.setUseSharedExtendedConnection(true);
@@ -70,11 +78,13 @@ public class ChunkConfiguration {
      */
 
     @Bean(name = "AccProcessor")
+    @StepScope
     public AccItemProcessor getAccProcessor() {
         return new AccItemProcessor();
     }
 
     @Bean(name = "LocProcessor")
+    @StepScope
     public LocItemProcessor getLocProcessor() {
         return new LocItemProcessor();
     }
@@ -84,7 +94,8 @@ public class ChunkConfiguration {
      */
 
     @Bean(name = "AccWriter")
-    public BeanIOFlatFileItemWriter getAccWriter(@Qualifier("accResource") Resource resource) {
+    @StepScope
+    public BeanIOFlatFileItemWriter getAccWriter(@Qualifier("accResource") Resource resource) throws FileNotFoundException {
         BeanIOFlatFileItemWriter writer = new BeanIOFlatFileItemWriter();
         writer.setHeaderCallback(new RLAccAndLocItemWriter(Utils.ACC_HEADER));
         writer.setAppendAllowed(false);
@@ -98,7 +109,8 @@ public class ChunkConfiguration {
     }
 
     @Bean(name = "LocWriter")
-    public BeanIOFlatFileItemWriter getLocWriter(@Qualifier("locResource") Resource resource) {
+    @StepScope
+    public BeanIOFlatFileItemWriter getLocWriter(@Qualifier("locResource") Resource resource) throws FileNotFoundException {
         BeanIOFlatFileItemWriter writer = new BeanIOFlatFileItemWriter();
         writer.setHeaderCallback(new RLAccAndLocItemWriter(Utils.LOC_HEADER));
         writer.setResource(resource);
@@ -112,7 +124,8 @@ public class ChunkConfiguration {
     }
 
     @Bean(name = "LocWriterFW")
-    public BeanIOFlatFileItemWriter getLocWriterFW(@Qualifier("locFWResource") Resource resource) {
+    @StepScope
+    public BeanIOFlatFileItemWriter getLocWriterFW(@Qualifier("locFWResource") Resource resource) throws FileNotFoundException {
         BeanIOFlatFileItemWriter writer = new BeanIOFlatFileItemWriter();
         writer.setHeaderCallback(new RLAccAndLocItemWriter(Utils.LOC_FW_HEADER));
         writer.setAppendAllowed(false);
@@ -126,9 +139,9 @@ public class ChunkConfiguration {
     }
 
     @Bean
-    public StreamFactory getStreamFactory() {
+    public StreamFactory getStreamFactory() throws FileNotFoundException {
         StreamFactory streamFactory = StreamFactory.newInstance();
-        streamFactory.load("classpath:/beanio/accloc.xml");
+        streamFactory.load(ResourceUtils.getFile("classpath:beanio/accloc.xml"));
         return streamFactory;
     }
 

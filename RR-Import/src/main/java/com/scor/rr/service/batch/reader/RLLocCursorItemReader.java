@@ -17,6 +17,7 @@ import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
         try {
             super.setDataSource(new ExtendedConnectionDataSourceProxy(rmsInstanceCache.getDataSource(instanceId)));
             super.setSql(EmbeddedQueries.RL_LOC_QUERY);
+            parameters = new ArrayList<>();
             parameters.add("LIABILITY_CCY");
             parameters.add("PORTFOLIO");
             parameters.add("PORTFOLIO");
@@ -76,13 +78,13 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
             if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
                 String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
-                String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replace("_E", "_R");
+                String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)","_R");
 
                 setSql(StringUtils.replaceEach(getSql(), new String[]{":edm:", ":rdm:"}, new String[]{edm, rdm}));
 
                 ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
                 List<Object> queryParameters = new LinkedList<>();
-                queryParameters.add(facParameters.getLiabilityCCY());
+                queryParameters.add("USD");
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
 

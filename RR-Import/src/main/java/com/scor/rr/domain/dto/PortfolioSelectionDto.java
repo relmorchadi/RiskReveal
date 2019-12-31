@@ -13,7 +13,7 @@ public class PortfolioSelectionDto {
     private Double unitMultiplier;
     private Double proportion;
     private boolean importLocationLevel;
-    private String analysisRegions;
+    //private String analysisRegions;
     private Long rlPortfolioId;
     private Long projectId;
 }

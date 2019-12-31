@@ -31,9 +31,9 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
                 item.setCarID(carId);
 
             item.setDivision(division);
-            // TODO : review later
+            // TODO : review later & currency
 //        item.setAccuracyLevel(mappingHandler.getGeoResForCode(Integer.toString(item.getGeoResultionCode())));
-            item.setCurrencyCode(facParameters.getLiabilityCCY());
+            item.setCurrencyCode("USD");
 
             return item;
         }
