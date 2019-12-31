@@ -524,21 +524,6 @@
     </div>
   </div>
 </div>
-<app-adjustment-pop-up
-  [isVisible]="isVisible"
-  [AdjustementType]="AdjustementType"
-  [modalTitle]="modalTitle"
-  [singleValue]="singleValue"
-  [columnPosition]="columnPosition"
-  [modifyModal]="modifyModal"
-  [global]="global"
-  [categorySelected]="categorySelected"
-  [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
-  (selectCategory)="selectCategory($event)"
-  (handleCancel)="handleCancel()"
-  (addAdjustmentFromPlusIcon)="addAdjustment($event)"
-  (saveAdjModification)="saveAdjModification($event)">
-</app-adjustment-pop-up>
 <app-add-remove-pop-up
   [isVisible]="addRemoveModal"
   [selectionStep]="'plt'"

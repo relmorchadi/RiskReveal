@@ -68,7 +68,7 @@ public class AdjustmentNodeOrder {
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "adjustmentNode", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }

@@ -97,6 +97,7 @@ public class RegionPerilExtractor {
         projectImportRunEntity.setStatus(TrackingStatus.INPROGRESS.toString());
         projectImportRunEntity.setStartDate(new Date());
         projectImportRunEntity.setImportedBy(projectEntity.getAssignedTo());
+
         projectImportRunEntity.setSourceConfigVendor("RL");
         projectImportRunEntity = projectImportRunRepository.save(projectImportRunEntity);
 

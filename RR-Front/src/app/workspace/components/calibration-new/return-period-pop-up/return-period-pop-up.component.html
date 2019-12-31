@@ -1,0 +1,56 @@
+<p-dialog
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal returned-periods'"
+  [visible]="manageReturnPeriods"
+  appendTo="body">
+  <p-header>
+    <div class="header">
+      <h6>Configure Return Period</h6>
+      <i (click)="hide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: unset;">
+
+    <p-table [value]="returnPeriods" [scrollable]="true" scrollHeight="365px">
+      <ng-template pTemplate="header">
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData>
+        <tr>
+          <td pEditableColumn style="background-color: #ffffff" class="on-hover-pop-up">
+            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
+               style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
+            <p-cellEditor class="pull-right">
+              <ng-template pTemplate="input">
+                <label>
+                  <input class="a-textfield-mini" pInputText type="text" style="font-size: 14px;margin-left: 5px"
+                         [(ngModel)]="rowData">
+                </label>
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{rowData}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <th style="padding-top: 10px;">
+            <i (click)="addToReturnPeriods()" style="font-size: 14px; margin-right: 1px; margin-top: 3px" [ngStyle]="{'cursor' : 'pointer'}" class="icon-plus-circle"></i>
+            <input class="a-textfield-mini" style="width: 95%" type="text" [(ngModel)]="returnPeriodInput"
+                   name="new-field"></th>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="hide()" class="a-button-text">Cancel</button>
+      <button class="a-buttons-contained">Save</button>
+    </div>
+  </p-footer>
+</p-dialog>

@@ -205,12 +205,20 @@ export class WorkspaceState {
 
   static getEpMetrics(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+  }
 
+  static getAdjustments(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.adjustments );
   }
 
   @Selector()
   static getEpMetricsColumns(wsIdentifier: string, curveType: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
+  }
+
+  static getCalibrationConstants(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+
   }
 
   /***********************************
@@ -705,9 +713,25 @@ export class WorkspaceState {
     return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
   }
 
+  @Action(fromWS.LoadDefaultAdjustmentsInScope)
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultAdjustmentsInScope) {
+    return this.calibrationNewService.loadDefaultAdjustmentsInScope(ctx, payload);
+  }
+
   @Action(fromWS.LoadEpMetrics)
-   loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
     return this.calibrationNewService.loadEpMetrics(ctx, payload);
+  }
+
+  @Action(fromWS.LoadCalibrationConstants)
+  loadCalibrationConstants(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadCalibrationConstants) {
+    return this.calibrationNewService.loadCalibrationConstants(ctx);
+  }
+
+  @Action(fromWS.ToggleSelectCalibPlts)
+  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}){
+    console.log(payload)
+    return this.calibrationNewService.selectPlts(ctx, payload);
   }
 
   /***********************************

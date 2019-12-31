@@ -1,10 +1,13 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.DefaultAdjustmentsInScopeViewDTO;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import org.joda.time.DateTime;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +68,12 @@ public class DefaultAdjustmentService {
 
     @Autowired
     ModelAnalysisEntityRepository modelAnalysisEntityRepository;
+
+    @Autowired
+    DefaultAdjustmentsInScopeRepository defaultAdjustmentsInScopeRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     //NOTE: I think we should have two functions:
     // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
@@ -161,10 +170,10 @@ public class DefaultAdjustmentService {
 //                AdjustmentNodeEntity adjustmentNodeEntityDefaultRef = new AdjustmentNodeEntity(defaultAdjustmentNodeEntity.getSequence(), defaultAdjustmentNodeEntity.getCappedMaxExposure(), adjustmentThreadEntity, defaultAdjustmentNodeEntity.getAdjustmentBasis(), defaultAdjustmentNodeEntity.getAdjustmentType(), adjustmentStateRepository.getAdjustmentStateEntityByCodeValid());
 //                adjustmentNodeEntityDefaultRef = adjustmentnodeRepository.save(adjustmentNodeEntityDefaultRef);
 //                adjustmentNodeEntities.add(adjustmentNodeEntityDefaultRef);
-//                adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId()));
+//                adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNode()));
 //                DefaultRetPerBandingParamsEntity paramsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
 //                List<AdjustmentReturnPeriodBending> periodBendings = UtilsMethode.getReturnPeriodBendings(paramsEntity.getAdjustmentReturnPeriodPath());
-//                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId(),periodBendings ));
+//                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNode(),periodBendings ));
 //                purePlt = adjustmentNodeProcessingEntity.getAdjustedPlt();
 //            }
 //            adjustmentThreadEntity.setInitialPLT(purePlt);
@@ -193,9 +202,14 @@ public class DefaultAdjustmentService {
         );
     }
 
-    public ResponseEntity<?> getDefaultAdjustmentsInScope(String workspaceContextCode, int uwYear) {
+    public ResponseEntity<List<DefaultAdjustmentsInScopeViewDTO>> getDefaultAdjustmentsInScope(String workspaceContextCode, int uwYear) {
+
         try {
-            return ResponseEntity.ok(this.defaultAdjustmentRepository.getDefaultAdjustmentsInScope( workspaceContextCode, uwYear));
+            return ResponseEntity.ok(
+                    this.defaultAdjustmentsInScopeRepository.findByWorkspaceContextCodeAndUwYear( workspaceContextCode, uwYear)
+                            .stream()
+                            .map(element -> modelMapper.map(element,DefaultAdjustmentsInScopeViewDTO.class ))
+                            .collect(Collectors.toList()));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }

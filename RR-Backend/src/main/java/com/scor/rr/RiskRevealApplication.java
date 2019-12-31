@@ -20,7 +20,6 @@ import org.springframework.context.annotation.ImportResource;
 
 @SpringBootApplication
 @Configuration
-@EnableAutoConfiguration
 @ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
 public class RiskRevealApplication extends SpringBootServletInitializer implements CommandLineRunner {
 

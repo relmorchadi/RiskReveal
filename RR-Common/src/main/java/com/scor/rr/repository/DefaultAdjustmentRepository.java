@@ -17,8 +17,4 @@ public interface DefaultAdjustmentRepository extends JpaRepository<DefaultAdjust
             String engineType,
             int entity_entityId);
 
-    @Transactional
-    @Query(value = "exec dbonew.usp_GetDefaultAdjustmentsInScope @workspaceContextCode=:workspaceContextCode, @uwYear=:uwYear", nativeQuery = true)
-    List<Map<String, Object>> getDefaultAdjustmentsInScope(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
-
 }
