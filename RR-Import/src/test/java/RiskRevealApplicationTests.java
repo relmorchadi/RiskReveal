@@ -77,7 +77,7 @@ public class RiskRevealApplicationTests {
     private List<Long> analysisIdList = Arrays.asList(1L, 2L);
     private List<Long> idList = Arrays.asList(1L, 2L);
     private List<Long> portfolioIdList = Arrays.asList(1L, 2L);
-    private static List<Integer> epPoints = new ArrayList<>(Collections.singleton(50));
+    private static List<Float> epPoints = new ArrayList<>(Collections.singleton(1/50f));
     private static String rdmName = "AC15_RL15_AUT_R";
     private static String edmName = "IED2017_TWTY_AD2_TWD_EDM170";
     private static String ccy = "CAD";
@@ -227,7 +227,7 @@ public class RiskRevealApplicationTests {
         rdmAnalysisEpCurves1.setEbpTypeCode(0);
         rdmAnalysisEpCurves1.setLoss(0d);
         rdmAnalysisEpCurves1.setExceedanceProbabilty(50);
-        rdmAnalysisEpCurves1.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
+        rdmAnalysisEpCurves1.setReturnPeriod(200L);
 
         rdmAnalysisEpCurves2 = new RdmAnalysisEpCurves();
 
@@ -236,7 +236,7 @@ public class RiskRevealApplicationTests {
         rdmAnalysisEpCurves2.setEbpTypeCode(0);
         rdmAnalysisEpCurves2.setLoss(0d);
         rdmAnalysisEpCurves2.setExceedanceProbabilty(50);
-        rdmAnalysisEpCurves2.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
+        rdmAnalysisEpCurves2.setReturnPeriod(200L);
 
         rdmAnalysisEpCurves3 = new RdmAnalysisEpCurves();
 
@@ -245,7 +245,7 @@ public class RiskRevealApplicationTests {
         rdmAnalysisEpCurves3.setEbpTypeCode(10);
         rdmAnalysisEpCurves3.setLoss(0d);
         rdmAnalysisEpCurves3.setExceedanceProbabilty(50);
-        rdmAnalysisEpCurves3.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
+        rdmAnalysisEpCurves3.setReturnPeriod(200L);
 
         rdmAnalysisEpCurves4 = new RdmAnalysisEpCurves();
 
@@ -254,7 +254,7 @@ public class RiskRevealApplicationTests {
         rdmAnalysisEpCurves4.setEbpTypeCode(11);
         rdmAnalysisEpCurves4.setLoss(0d);
         rdmAnalysisEpCurves4.setExceedanceProbabilty(50);
-        rdmAnalysisEpCurves4.setReturnId(BigDecimal.valueOf(0.02).setScale(2));
+        rdmAnalysisEpCurves4.setReturnPeriod(200L);
 
         rdmAllAnalysisSummaryStats1 = new RdmAllAnalysisSummaryStats();
 
@@ -316,8 +316,8 @@ public class RiskRevealApplicationTests {
 
         //**************************************************
         rdmAllAnalysisProfileRegions = new RdmAllAnalysisProfileRegions();
-        rdmAllAnalysisProfileRegions.setAnalysisId(2L);
-        rdmAllAnalysisProfileRegions.setAnalysisRegion("EU-EU");
+//        rdmAllAnalysisProfileRegions.setAnalysisId(2L);
+//        rdmAllAnalysisProfileRegions.setAnalysisRegion("EU-EU");
         rdmAllAnalysisProfileRegions.setProfileRegion("EU-EU");
         rdmAllAnalysisProfileRegions.setAnalysisRegionName("Europe");
         rdmAllAnalysisProfileRegions.setProfileRegion("EU");

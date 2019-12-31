@@ -32,7 +32,7 @@ public class PLTHeaderTag {
     private Long tagId;
 
     @Column(name = "CreatedBy")
-    private Integer createdBy;
+    private Long createdBy;
 
     @CreatedDate
     @Column(name = "CreatedDate", nullable = false, updatable = false)

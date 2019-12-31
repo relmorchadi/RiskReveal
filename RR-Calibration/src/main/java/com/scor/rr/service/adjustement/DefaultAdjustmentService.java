@@ -1,12 +1,16 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.DefaultAdjustmentsInScopeViewDTO;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import org.joda.time.DateTime;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,6 +40,12 @@ public class DefaultAdjustmentService {
     PltHeaderRepository pltHeaderRepository;
 
     @Autowired
+    ProjectRepository projectRepository;
+
+    @Autowired
+    WorkspaceRepository workspaceRepository;
+
+    @Autowired
     AdjustmentNodeRepository adjustmentNodeRepository;
 
     @Autowired
@@ -58,6 +68,12 @@ public class DefaultAdjustmentService {
 
     @Autowired
     ModelAnalysisEntityRepository modelAnalysisEntityRepository;
+
+    @Autowired
+    DefaultAdjustmentsInScopeRepository defaultAdjustmentsInScopeRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     //NOTE: I think we should have two functions:
     // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
@@ -116,11 +132,13 @@ public class DefaultAdjustmentService {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         if (pltHeaderRepository.findById(scorPltHeaderId).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
+            ProjectEntity projectEntity = projectRepository.findById(pltHeaderEntity.getProjectId()).get();
+            WorkspaceEntity workspaceEntity = workspaceRepository.findById(projectEntity.getWorkspaceId()).get();
             if (modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).isPresent()) {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
-                        1, //TODO: add MarketChannelId, then replace by pltHeaderEntity.getMarketChannelId() != null ? pltHeaderEntity.getMarketChannelId() : 1,
+                        workspaceEntity.getWorkspaceMarketChannel(),
                         modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).get().getModel(),
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
@@ -128,12 +146,13 @@ public class DefaultAdjustmentService {
         return defaultAdjustmentNodeEntities;
     }
 
-    public AdjustmentThreadEntity createDefaultThread(AdjustmentThreadEntity adjustmentThreadEntity) throws RRException {
-        List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThreadEntity.getInitialPLT().getPltHeaderId());
+
+    public AdjustmentThread createDefaultThread(AdjustmentThread adjustmentThread) throws RRException {
+        List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(adjustmentThread.getInitialPLT().getPltHeaderId());
         for (DefaultAdjustmentNode defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
-            adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThreadEntity, defaultAdjustmentNodeEntity);
+            adjustmentNodeService.createAdjustmentNodeFromDefaultAdjustmentReference(adjustmentThread, defaultAdjustmentNodeEntity);
         }
-        return adjustmentThreadEntity;
+        return adjustmentThread;
     }
 
 //    private List<AdjustmentNodeEntity> createAdjustmentNodeFromDefaultAdjustmentReference(
@@ -151,10 +170,10 @@ public class DefaultAdjustmentService {
 //                AdjustmentNodeEntity adjustmentNodeEntityDefaultRef = new AdjustmentNodeEntity(defaultAdjustmentNodeEntity.getSequence(), defaultAdjustmentNodeEntity.getCappedMaxExposure(), adjustmentThreadEntity, defaultAdjustmentNodeEntity.getAdjustmentBasis(), defaultAdjustmentNodeEntity.getAdjustmentType(), adjustmentStateRepository.getAdjustmentStateEntityByCodeValid());
 //                adjustmentNodeEntityDefaultRef = adjustmentnodeRepository.save(adjustmentNodeEntityDefaultRef);
 //                adjustmentNodeEntities.add(adjustmentNodeEntityDefaultRef);
-//                adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId()));
+//                adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNode()));
 //                DefaultRetPerBandingParamsEntity paramsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultAdjustmentNodeEntity.getDefaultAdjustmentNodeId());
 //                List<AdjustmentReturnPeriodBending> periodBendings = UtilsMethode.getReturnPeriodBendings(paramsEntity.getAdjustmentReturnPeriodPath());
-//                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNodeId(),periodBendings ));
+//                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf() != null ? paramsEntity.getLmf() : 0, paramsEntity.getRpmf() != null ? paramsEntity.getRpmf() : 0, UtilsMethode.getPeatDataFromFile(paramsEntity.getPeatDataPath()), purePlt.getPltHeaderId(), adjustmentNodeEntityDefaultRef.getAdjustmentNode(),periodBendings ));
 //                purePlt = adjustmentNodeProcessingEntity.getAdjustedPlt();
 //            }
 //            adjustmentThreadEntity.setInitialPLT(purePlt);
@@ -181,6 +200,19 @@ public class DefaultAdjustmentService {
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
+    }
+
+    public ResponseEntity<List<DefaultAdjustmentsInScopeViewDTO>> getDefaultAdjustmentsInScope(String workspaceContextCode, int uwYear) {
+
+        try {
+            return ResponseEntity.ok(
+                    this.defaultAdjustmentsInScopeRepository.findByWorkspaceContextCodeAndUwYear( workspaceContextCode, uwYear)
+                            .stream()
+                            .map(element -> modelMapper.map(element,DefaultAdjustmentsInScopeViewDTO.class ))
+                            .collect(Collectors.toList()));
+        } catch(Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

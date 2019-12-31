@@ -89,13 +89,17 @@ public class AdjustmentNodeOrderService {
         AdjustmentNodeOrder order = new AdjustmentNodeOrder();
         order.setAdjustmentNode(node);
         order.setAdjustmentThread(node.getAdjustmentThread());
-        if (sequence == null) {
-            throw new IllegalStateException("---------- createNodeOrder, sequence null, wrong ----------");
+        if (sequence == null || sequence == 0) {
+            throw new IllegalStateException("---------- createNodeOrder, sequence null or 0, wrong ----------");
         }
 
         List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(node.getAdjustmentThread().getAdjustmentThreadId());
         if (orderEntities == null || orderEntities.isEmpty()) {
-            order.setAdjustmentOrder(sequence);
+            if (sequence == 1) {
+                order.setAdjustmentOrder(sequence);
+            } else {
+                throw new IllegalStateException("---------- updateNodeOrder, no node before but sequence greater than 1, wrong ----------");
+            }
         } else  {
             if (sequence > orderEntities.size() + 1) {
                 throw new IllegalStateException("---------- updateNodeOrder, sequence greater than list nodes size + 1, wrong ----------");

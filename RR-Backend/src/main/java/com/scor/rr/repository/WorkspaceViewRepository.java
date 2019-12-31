@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface WorkspaceViewRepository extends JpaRepository<WorkspaceView, WorkspaceViewId> , JpaSpecificationExecutor<WorkspaceView>  {
 
-
 }

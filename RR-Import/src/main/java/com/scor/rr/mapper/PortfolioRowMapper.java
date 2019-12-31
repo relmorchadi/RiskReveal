@@ -20,7 +20,7 @@ public class PortfolioRowMapper implements RowMapper<RLPortfolio> {
         tmp.setRlId(rs.getLong("port_id"));
         tmp.setNumber(rs.getString("port_num"));
         tmp.setName(rs.getString("port_name"));
-        tmp.setCreated(translateDate(rs.getTimestamp("port_created_dt")));
+//        tmp.setCreated(translateDate(rs.getTimestamp("port_created_dt")));
         tmp.setDescription(rs.getString("port_descr"));
         tmp.setType(rs.getString("port_type"));
         tmp.setPeril(rs.getString("peril"));

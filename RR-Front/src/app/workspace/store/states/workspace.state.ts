@@ -15,6 +15,7 @@ import {FileBasedService} from '../../services/file-based.service';
 import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
+import {CalibrationNewService} from "../../services/calibration-new.service";
 
 
 const initialState: WorkspaceModel = {
@@ -46,6 +47,7 @@ export class WorkspaceState {
               private contractService: ContractService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
+              private calibrationNewService: CalibrationNewService,
               private riskLinkFacade: RiskLinkStateService,
               private inuringService: InuringService,
               private fileBasedFacade: FileBasedService,
@@ -193,6 +195,30 @@ export class WorkspaceState {
 
   static getSummary(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.pltDetails.summary);
+  }
+
+  /***********************************
+   *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  static getEpMetrics(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics );
+  }
+
+  static getAdjustments(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.adjustments );
+  }
+
+  @Selector()
+  static getEpMetricsColumns(wsIdentifier: string, curveType: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
+  }
+
+  static getCalibrationConstants(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+
   }
 
   /***********************************
@@ -685,6 +711,38 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * NEW Calibration Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadGroupedPltsByPure)
+  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadGroupedPltsByPure) {
+    return this.calibrationNewService.loadGroupedPltsByPure(ctx, payload);
+  }
+
+  @Action(fromWS.LoadDefaultAdjustmentsInScope)
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultAdjustmentsInScope) {
+    return this.calibrationNewService.loadDefaultAdjustmentsInScope(ctx, payload);
+  }
+
+  @Action(fromWS.LoadEpMetrics)
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadEpMetrics) {
+    return this.calibrationNewService.loadEpMetrics(ctx, payload);
+  }
+
+  @Action(fromWS.LoadCalibrationConstants)
+  loadCalibrationConstants(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadCalibrationConstants) {
+    return this.calibrationNewService.loadCalibrationConstants(ctx);
+  }
+
+  @Action(fromWS.ToggleSelectCalibPlts)
+  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}){
+    console.log(payload)
+    return this.calibrationNewService.selectPlts(ctx, payload);
+  }
+
+  /***********************************
+   *
    * Calibration Actions
    *
    ***********************************/
@@ -988,6 +1046,11 @@ export class WorkspaceState {
     this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
   }
 
+  @Action(fromWS.BasicScanEDMAndRDMAction)
+  basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.BasicScanEDMAndRDMAction) {
+    return this.riskLinkFacade.basicScanEDMAndRDM(ctx, payload);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);
@@ -1131,6 +1194,21 @@ export class WorkspaceState {
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+
+  @Action(fromWS.OverrideAnalysisRegionPeril)
+  overrideAnalysisRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideAnalysisRegionPeril){
+    return this.riskLinkFacade.overrideAnalysisRegionPeril(ctx, payload);
+  }
+
+  @Action(fromWS.LoadSourceEpCurveHeaders)
+  loadSourceEpCurveHeaders(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSourceEpCurveHeaders){
+    return this.riskLinkFacade.loadSourceEpCurveHeaders(ctx, payload);
+  }
+  @Action(fromWS.OverrideFinancialPerspective)
+  overrideFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideFinancialPerspective){
+    return this.riskLinkFacade.overrideFinancialPerspective(ctx, payload);
+  }
+
 
   /***********************************
    *

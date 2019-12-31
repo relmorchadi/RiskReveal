@@ -27,7 +27,7 @@ public class RLPortfolioScanStatus {
     @Column(name = "LastScan")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastScan;
-    @Column(name = "RLPortfolio")
+    @Column(name = "RLPortfolioId")
     private Long rlPortfolio;
 
     public RLPortfolioScanStatus(RLPortfolio rlPortfolio, int scanStatus) {

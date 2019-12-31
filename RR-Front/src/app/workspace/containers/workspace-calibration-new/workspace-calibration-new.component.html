@@ -1,3 +1,33 @@
-<p>
-  workspace-calibration-new works!
-</p>
+<div class="plt-browser-wrapper">
+  <div class="a-app-wrapper">
+    <div class="a-app-header">
+      <h4>Calibration</h4>
+    </div>
+    <div class="my-tabs">
+      <div class="tab-set-right table-design" [ngClass]="{'table-design-sp': tableConfig.isExpanded}">
+        <app-calibration-new-table
+          [wsIdentifier]="wsIdentifier"
+          [data]="data"
+          [epMetrics]="epMetrics"
+          [adjustments]="adjustments"
+          [tableConfig]="tableConfig"
+          [columnsConfig]="columnsConfig"
+          [rowKeys]="rowKeys"
+          (actionDispatcher)="handleTableActions($event)"
+        ></app-calibration-new-table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-adjustment-pop-up-new
+  *ngIf="isAdjustmentPopUpVisible"
+  [adjustment]="selectedAdjustment"
+  [adjustmentTypes]="adjustmentTypes"
+  [basis]="basis"
+  (actionDispatcher)="handleAdjustmentPopUp($event)"
+></app-adjustment-pop-up-new>
+
+<app-return-period-pop-up
+  [manageReturnPeriods]="false"
+></app-return-period-pop-up>

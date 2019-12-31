@@ -19,8 +19,8 @@ public class RdmAnalysisEpCurvesRowMapper implements RowMapper<RdmAnalysisEpCurv
         rdmAnalysisEpCurves.setTreatyLabel(rs.getString("treaty_label"));
         rdmAnalysisEpCurves.setEbpTypeCode(rs.getInt("ep_type_code"));
         rdmAnalysisEpCurves.setLoss(rs.getDouble("loss"));
-        rdmAnalysisEpCurves.setExceedanceProbabilty(rs.getInt("exceedance_probability"));
-        rdmAnalysisEpCurves.setReturnId(rs.getBigDecimal("return_period").setScale(2, RoundingMode.HALF_UP));
+        rdmAnalysisEpCurves.setExceedanceProbabilty(rs.getFloat("exceedance_probability"));
+        rdmAnalysisEpCurves.setReturnPeriod(rs.getLong("return_period"));
 
         return rdmAnalysisEpCurves;
 

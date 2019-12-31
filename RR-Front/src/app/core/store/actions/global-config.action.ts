@@ -8,6 +8,11 @@ export class PatchDateFormatAction {
   constructor(public payload?: any) {}
 }
 
+export class PatchTimeZoneAction {
+  static readonly type = '[Global Configuration] Patch Time Zone';
+  constructor(public payload?: any) {}
+}
+
 export class PatchGeneralRecentAction {
   static readonly type = '[Global Configuration] Patch Global Recent Format';
   constructor(public payload?: any) {}

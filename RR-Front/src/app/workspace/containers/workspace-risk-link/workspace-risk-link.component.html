@@ -265,7 +265,7 @@
                       <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
-                      <ng-container>
+                      <ng-container *ngIf="!itemsE.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
                           /{{getNumberElement(itemsE, 'portfolio')}}</span>
@@ -273,10 +273,10 @@
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
-<!--                    <ng-container *ngIf="!itemsE?.scanned">
+                      <ng-container *ngIf="itemsE.scanning">
                        <span class="loading">Scanning</span>
-                       <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
-                     </ng-container>-->
+                       <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
+                     </ng-container>
                       <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -292,17 +292,17 @@
                       <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
-                      <ng-container>
+                      <ng-container *ngIf="!itemsR?.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
                           /{{getNumberElement(itemsR, 'analysis')}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/0</span>
                         <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
-                      <!--                      <ng-container *ngIf="!itemsR?.scanned">-->
-                      <!--                        <span class="loading">Scanning</span>-->
-                      <!--                        <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>-->
-                      <!--                      </ng-container>-->
+                      <ng-container *ngIf="itemsR?.scanning">
+                        <span class="loading">Scanning</span>
+                        <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
+                      </ng-container>
                       <i (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -349,7 +349,7 @@
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()"
                            (selectionChange)="getSelection($event)"
-                           [value]="getTableData() | tableSortAndFilter : [null, state.selectedEDMOrRDM === 'RDM' ? filterAnalysis : filterPortfolio] "
+                           [value]="filterData(getTableData())"
                            selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
@@ -395,9 +395,9 @@
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                             <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
-                                   pInputText type="text" #filters [(ngModel)]="filterAnalysis[col.field]">
+                                   type="text" [(ngModel)]="filterAnalysis[col.field]">
                             <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
-                                   pInputText type="text" #filters [(ngModel)]="filterPortfolio[col.field]">
+                                   type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
                       </tr>
@@ -407,12 +407,12 @@
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
                           <div style=" display: flex;" *ngIf="col.type === 'select'">
-                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
+                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
                                    [ngModel]="rowData.selected"></label>
                           </div>
-                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                          <div class="text-data" (click)="selectRows(rowData, i)"
                                *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
-                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                          <div class="text-data" (click)="selectRows(rowData, i)"
                                *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
                           <div *ngIf="col.type === 'icon'">
                             <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
@@ -447,9 +447,9 @@
         </div>
       </div>
 
-      <!-- [data]="(summary$ | async).analysis" -->
+
       <div *ngIf=" (summary$ | async) as summary">
-        <analysis-result [data]="summary.analysis"></analysis-result>
+        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders}"></analysis-result>
         <portfolio-result [data]="summary.portfolios"></portfolio-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->

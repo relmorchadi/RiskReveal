@@ -1,13 +1,13 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.dto.RLAnalysisDto;
+import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import com.scor.rr.domain.dto.RLPortfolioDto;
+import com.scor.rr.domain.dto.RegionPerilDto;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RLSourceEpHeader;
-import com.scor.rr.repository.RLAnalysisRepository;
-import com.scor.rr.repository.RLModelDataSourceRepository;
-import com.scor.rr.repository.RLPortfolioRepository;
-import com.scor.rr.repository.RLSourceEpHeaderRepository;
+import com.scor.rr.domain.views.RLSourceEpHeaderView;
+import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author Ayman IKAR
+ * @created 19/12/2019
+ */
 @Service
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -32,11 +36,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private RLModelDataSourceRepository rlModelDataSourceRepository;
 
     @Autowired
-    private RLSourceEpHeaderRepository rlSourceEpHeaderRepository;
+    private RLAnalysisToTargetRAPRepository rlAnalysisToTargetRAPRepository;
+
+    @Autowired
+    private RLAnalysisToRegionPerilsRepository rlAnalysisToRegionPerilsRepository;
+
+    @Autowired
+    private RLSourceEPHeaderViewRepository rlSourceEPHeaderViewRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
+    @Override
     public List<RLAnalysisDto> getRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long rmsId) {
         RLModelDataSource rlModelDataSource = rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId);
         if (rlModelDataSource != null) {
@@ -47,6 +58,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return new ArrayList<>();
     }
 
+    @Override
     public List<RLPortfolioDto> getRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long rmsId) {
         RLModelDataSource rlModelDataSource = rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId);
         if (rlModelDataSource != null) {
@@ -58,8 +70,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLSourceEpHeader> getSourceEpHeadersForAnalysis(Long rlAnalysisId) {
-        return rlSourceEpHeaderRepository.findByRLAnalysisId(rlAnalysisId);
+    public List<RLAnalysisToTargetRAPDto> getTargetRapByAnalysisId(Long rlAnalysisId) {
+        return rlAnalysisToTargetRAPRepository.findByRlAnalysisId(rlAnalysisId).stream()
+                .map(element -> modelMapper.map(element, RLAnalysisToTargetRAPDto.class))
+                .collect(Collectors.toList());
     }
 
+    @Override
+    public List<RegionPerilDto> getRegionPeril(Long rlAnalysisId) {
+        return rlAnalysisToRegionPerilsRepository.findByRlModelAnalysisId(rlAnalysisId).stream()
+                .map(element -> modelMapper.map(element, RegionPerilDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RLSourceEpHeaderView> getSourceEpHeadersByAnalysis(Long rlAnalysisId) {
+        return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
+    }
 }

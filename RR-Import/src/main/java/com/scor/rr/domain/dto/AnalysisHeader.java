@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class AnalysisHeader {
 
+    private Long rlAnalysisId;
     private Long analysisId;
     private String analysisName;
     private Long rdmId;

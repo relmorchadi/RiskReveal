@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 @Component
 public class PltBrowserService {
 
-    /*@Autowired
-    PltManagerViewRepository pltManagerViewRepository;*/
     @Autowired
     PltTableSpecification pltTableSpecification;
     @Autowired

@@ -25,9 +25,6 @@ import java.util.*;
 @Component
 public class ChunkPLTFileReader {
     @Autowired
-    private BinaryPLTFileWriter binaryPLTFileWriter;
-
-    @Autowired
     private PLTFileWriter pltFileWriter;
     @Autowired
     private ContributionMatrixReader contributionMatrixReader;
@@ -150,7 +147,7 @@ public class ChunkPLTFileReader {
                         }
                     }
                 }
-                binaryPLTFileWriter.closeDirectBuffer(ib);
+                FileUtils.closeDirectBuffer(ib);
                 fc.close();
 
                 if (map.size() != 0) {
@@ -389,7 +386,7 @@ public class ChunkPLTFileReader {
                     map.put(period, pltLossDatas);
                 }
             }
-            binaryPLTFileWriter.closeDirectBuffer(ib);
+            FileUtils.closeDirectBuffer(ib);
 
         } catch (IOException e) {
             throw new PLTFileCorruptedException();
@@ -510,7 +507,7 @@ public class ChunkPLTFileReader {
                         buffer.putFloat(ib.getFloat());
                         buffer.putFloat(ib.getFloat());
                     }
-                    binaryPLTFileWriter.closeDirectBuffer(ib);
+                    FileUtils.closeDirectBuffer(ib);
                     fc.close();
 
                 } catch (IOException e) {

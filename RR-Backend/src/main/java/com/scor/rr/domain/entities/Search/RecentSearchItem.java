@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table
+@Table(name = "ZZ_RecentSearchItem")
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = false)

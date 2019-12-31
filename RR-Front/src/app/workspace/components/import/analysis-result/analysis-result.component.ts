@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import * as _ from 'lodash';
 
@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 export class AnalysisResultComponent implements OnInit {
 
   @Input('data')
-  analysis;
+  data:{analysis, epCurves}= {analysis: [], epCurves: []};
 
   isCollapsed;
   scrollableColsResults = [
@@ -313,6 +313,9 @@ export class AnalysisResultComponent implements OnInit {
 
   lastUpdatedAnalyisPEQTIndex=null;
 
+  showOverrideRpPopup=false;
+  showSelectFinancialPersp=false;
+
   constructor(private store: Store) {
   }
 
@@ -334,11 +337,18 @@ export class AnalysisResultComponent implements OnInit {
   }
 
   openFinancialP(fp) {
-
+    console.log('Open Financial Perspective Popup');
+    this.showSelectFinancialPersp=true;
   }
 
   selectRows(rowData, i) {
     this.updateRowData('selected', rowData.selected, i);
+  }
+
+  overrideRegionPerilOccurrenceBasis(row, colType){
+    if(colType == 'Rp'){
+      this.showOverrideRpPopup=true;
+    }
   }
 
   updateRow(rowData, type) {
@@ -363,6 +373,20 @@ export class AnalysisResultComponent implements OnInit {
       ...item,
       selected: false
     }));
+  }
+
+  overrideRegionPeril(changes){
+    this.store.dispatch(new fromRiskLink.OverrideAnalysisRegionPeril(changes));
+    this.showOverrideRpPopup=false;
+  }
+
+  loadSourceEpCurveHeaders(rlAnalysisId){
+    this.store.dispatch(new fromRiskLink.LoadSourceEpCurveHeaders({rlAnalysisId}));
+  }
+
+  overrideFinancialPersp(changes){
+    this.store.dispatch(new fromRiskLink.OverrideFinancialPerspective(changes));
+    this.showSelectFinancialPersp=false;
   }
 
 }

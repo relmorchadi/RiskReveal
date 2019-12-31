@@ -34,7 +34,6 @@ public class ImportResource {
         );
     }
 
-
     @PostMapping("/rms")
     public ResponseEntity<?> doImport(@RequestBody ImportLossDataParams importLossDataParams){
         return new ResponseEntity<>(batchExecution.RunImportLossData(importLossDataParams), HttpStatus.OK);

@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "ZZ_TreatySearch")
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
