@@ -7,7 +7,7 @@
   [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
   [scrollable]="true"
-  [scrollHeight]="'500px'"
+  [scrollHeight]="'calc( 100vh - 450px )'"
   [columnResizeMode]="'expand'"
   (onColResize)="onColumnResize($event)"
 >
