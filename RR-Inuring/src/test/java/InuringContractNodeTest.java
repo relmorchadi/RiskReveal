@@ -162,10 +162,10 @@ public class InuringContractNodeTest {
             assertEquals(expectedInuringContractLayer, inuringContractLayerRepository.findByInuringContractLayerId(1));
 
 
-           assertEquals( 1,inuringContractLayerParamRepository.findByInuringContractLayerId(1).size());
-            for (InuringContractLayerParam inuringContractLayerParam : inuringContractLayerParamRepository.findByInuringContractLayerId(1)) {
-                assertEquals(1, inuringContractLayerParam.getInuringContractLayerId());
-           }
+           assertEquals( 0,inuringContractLayerParamRepository.findByInuringContractLayerId(1).size());
+//            for (InuringContractLayerParam inuringContractLayerParam : inuringContractLayerParamRepository.findByInuringContractLayerId(1)) {
+//                assertEquals(1, inuringContractLayerParam.getInuringContractLayerId());
+//           }
         } catch (RRException ex) {
             fail();
         }

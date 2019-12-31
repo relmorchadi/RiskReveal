@@ -33,9 +33,11 @@ public class ChunkPLTFileReader {
     private ContributionMatrixReader contributionMatrixReader;
     @Autowired
     private ContributionMatrixWriter contributionMatrixWriter;
+    @Autowired
+    private ContributionMatrixCSVWriter contributionMatrixCSVWriter;
 
 
-    public Pair<Set<Integer>,Integer> read(List<File> files, List<String> signs, List<Double> currencies,String folderPath,String lossContPath,String maxContPath) throws RRException {
+    public Pair<Set<Integer>,Integer> read(List<File> files, List<String> signs, List<Double> currencies,String folderPath,String lossContPath,String maxContPath,List<Long> listOfPltNames) throws RRException {
 
         Map<Integer, List<PLTLossData>> map = new TreeMap<>();
         Set<Integer> listOfPhases = new TreeSet<>();
@@ -93,14 +95,14 @@ public class ChunkPLTFileReader {
                         if (phase != 0) {
                             if (finalPhase) {
                                 groupChunkPLT(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo);
-                                int ret = writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath);
+                                int ret = writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath,true,listOfPltNames);
                                 size = size + ret;
                                 if(ret == 0){
                                     listOfPhases.remove(phase);
                                 }
 
                             }else{
-                                writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath);
+                                writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath,false,listOfPltNames);
                                 listOfPhases.add(phase);
                             }
 
@@ -154,13 +156,13 @@ public class ChunkPLTFileReader {
                 if (map.size() != 0) {
                     if (finalPhase) {
                         groupChunkPLT(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo);
-                        int ret = writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath);
+                        int ret = writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath,true,listOfPltNames);
                         size = size + ret;
                         if(ret == 0){
                             listOfPhases.remove(phase);
                         }
                     }else{
-                        writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath);
+                        writeMaps(map, contributionMatrixMap, contributionMatrixMapMax, positiveSumsLossExpo, phase, files.size(),folderPath,lossContPath,maxContPath,false,listOfPltNames);
                         listOfPhases.add(phase);
                     }
                 }
@@ -299,7 +301,7 @@ public class ChunkPLTFileReader {
         return new Pair<>(parentTarget, contributionPerPeriod);
     }
 
-    private int writeMaps(Map<Integer, List<PLTLossData>> map, Map<Integer, List<List<Double>>> contMap, Map<Integer, List<List<Double>>> contMapMax, Map<Integer, List<List<Double>>> positiveLossExpoMap, int phase, int lineSize,String folderPath,String lossContPath,String maxContPath) throws RRException {
+    private int writeMaps(Map<Integer, List<PLTLossData>> map, Map<Integer, List<List<Double>>> contMap, Map<Integer, List<List<Double>>> contMapMax, Map<Integer, List<List<Double>>> positiveLossExpoMap, int phase, int lineSize,String folderPath,String lossContPath,String maxContPath,boolean finalPhase,List<Long>listOfPltNames) throws RRException {
         List<PLTLossData> writeList = new ArrayList<>();
         int size= 0;
 
@@ -322,6 +324,10 @@ public class ChunkPLTFileReader {
             contributionMatrixWriter.write(contMapMax, new File(maxContPath + (phase) + "-ConMax.bin"), writeList.size(), lineSize);
             contributionMatrixWriter.write(positiveLossExpoMap, new File(folderPath + (phase) + "-PosLossExpo.bin"), writeList.size(), 2);
             size = writeList.size();
+            if(finalPhase){
+                contributionMatrixCSVWriter.write(writeList,contMap, new File(lossContPath + (phase) + "-Con.csv"),listOfPltNames);
+                contributionMatrixCSVWriter.write(writeList,contMapMax, new File(maxContPath + (phase) + "-ConMax.csv"),listOfPltNames);
+            }
         }
         map.clear();
         contMap.clear();
