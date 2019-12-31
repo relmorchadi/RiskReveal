@@ -1,8 +1,6 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.domain.DefaultReturnPeriodEntity;
-import com.scor.rr.domain.enums.CurveType;
-import io.swagger.models.auth.In;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

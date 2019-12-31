@@ -4,10 +4,9 @@ import com.scor.rr.domain.enums.CurveType;
 import com.scor.rr.service.epMetrics.EpMetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/epMetrics")
@@ -27,4 +26,7 @@ public class EpMetrics {
 
    @GetMapping("defaultReturnPeriods")
     public ResponseEntity<?> getDefaultReturnPeriods() { return this.epMetricsService.getDefaultReturnPeriods();}
+
+    @PostMapping("rp")
+    public ResponseEntity<?> saveListOfRPs(@RequestBody List<Integer> rps,@RequestBody Long userId) { return this.epMetricsService.saveListOfRPs(rps, userId);}
 }

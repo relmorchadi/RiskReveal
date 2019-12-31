@@ -19,9 +19,14 @@ public class UserRPEntity {
     private Integer userRPId;
 
     @Column(name = "UserId")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "rp")
     private Integer rp;
 
+
+    public UserRPEntity(Integer rp, Long userId) {
+        this.rp = rp;
+        this.userId = userId;
+    }
 }

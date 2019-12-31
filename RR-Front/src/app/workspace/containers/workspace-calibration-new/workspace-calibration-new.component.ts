@@ -57,6 +57,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   returnPeriodConfig: {
     currentRPs: number[],
     newlyAdded: number[],
+    returnPeriodInput: number,
     showSuggestion: boolean,
     message: string
   };
@@ -101,6 +102,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       newlyAdded: [],
       currentRPs: [],
       showSuggestion: false,
+      returnPeriodInput: null,
       message: null
     };
     this.rpValidation= {
@@ -323,8 +325,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   handleReturnPeriodPopUp(action: Message) {
     switch (action.type) {
+      case "Return period popup input change":
+        this.rpInputChange(action.payload);
+        break;
       case "ADD Return period":
         this.addReturnPeriod(action.payload);
+        break;
+      case "Save return periods":
+        this.saveRPs();
         break;
 
       default:
@@ -376,7 +384,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   openRPManager(){
-    console.log("HEY");
     this.isRPPopUpVisible= true;
   }
 
@@ -389,12 +396,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             this.returnPeriodConfig = {
               ...this.returnPeriodConfig,
               showSuggestion: false,
+              returnPeriodInput: null,
               message: "Already exists"
             };
           } else {
             this.returnPeriodConfig = {
               ...this.returnPeriodConfig,
               showSuggestion: false,
+              returnPeriodInput: null,
               newlyAdded: _.concat(this.returnPeriodConfig.newlyAdded, [rp])
             };
           }
@@ -404,8 +413,25 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             showSuggestion: true
           }
         }
+
         this.rpValidation = validation;
+        this.detectChanges();
+
         this.validationSub && this.validationSub.unsubscribe()
       })
+  }
+
+  rpInputChange(newValue) {
+    this.returnPeriodConfig = {
+      ...this.returnPeriodConfig,
+      returnPeriodInput: newValue,
+    }
+  }
+
+  saveRPs() {
+    this.dispatch(new fromWorkspaceStore.SaveRPs({
+      rps: this.returnPeriodConfig.newlyAdded,
+      userId: 1
+    }))
   }
 }
