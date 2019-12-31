@@ -7,6 +7,7 @@ import com.scor.rr.domain.dto.RegionPerilDto;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ConfigurationService {
 
@@ -19,4 +20,6 @@ public interface ConfigurationService {
     List<RegionPerilDto> getRegionPeril(Long rlAnalysisId);
 
     List<RLSourceEpHeaderView> getSourceEpHeadersByAnalysis(Long rlAnalysisId);
+
+    Map<Long,List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
 }
