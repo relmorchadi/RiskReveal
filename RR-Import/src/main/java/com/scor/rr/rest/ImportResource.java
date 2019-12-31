@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.domain.dto.ImportParamsAndConfig;
+import com.scor.rr.domain.dto.ImportParamsDto;
 import com.scor.rr.domain.dto.ImportReferenceData;
 import com.scor.rr.service.RefDataService;
 import com.scor.rr.service.RmsService;
@@ -46,4 +47,8 @@ public class ImportResource {
         return new ResponseEntity<>(batchExecution.RunImportLossData(params), HttpStatus.OK);
     }
 
+    @PostMapping("/import")
+    public ResponseEntity<?> importFac(@RequestBody ImportParamsDto params){
+        return new ResponseEntity<>(batchExecution.RunImportLossDataFac(params), HttpStatus.OK);
+    }
 }

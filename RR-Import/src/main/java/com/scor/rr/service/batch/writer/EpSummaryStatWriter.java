@@ -30,24 +30,34 @@ import java.security.PrivilegedAction;
 public class EpSummaryStatWriter extends AbstractWriter {
 
     private Path ihubPath;
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+    @Value("#{jobParameters['carId']}")
+    private String carId;
 
     @Value("${ihub.treaty.out.path}")
-    private void setIhubPath(String path){
-        this.ihubPath= Paths.get(path);
+    private void setIhubPath(String path) {
+        this.ihubPath = Paths.get(path);
     }
 
-    public BinFile writePLTSummaryStatistics(AnalysisSummaryStats summaryStatisticHeaders, String filename) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)),filename);
-        return writePLTSummaryStatistics(summaryStatisticHeaders, file);
+    public BinFile writeELTSummaryStatistics(AnalysisSummaryStats summaryStatisticHeaders, String filename) {
+
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeELTSummaryStatistics(summaryStatisticHeaders, file);
+        } else {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeELTSummaryStatistics(summaryStatisticHeaders, file);
+        }
     }
 
-    private BinFile writePLTSummaryStatistics(AnalysisSummaryStats summaryStatistics, File file) { // PLTSummaryStatistic
-        FileChannel out=null;
-        MappedByteBuffer buffer=null;
+    private BinFile writeELTSummaryStatistics(AnalysisSummaryStats summaryStatistics, File file) {
+        FileChannel out = null;
+        MappedByteBuffer buffer = null;
         try {
             log.info("Summary statistic file: {}", file);
             out = new RandomAccessFile(file, "rw").getChannel();
-            int size=24;
+            int size = 24;
             buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             buffer.putDouble(summaryStatistics.getPurePremium());
@@ -64,10 +74,10 @@ public class EpSummaryStatWriter extends AbstractWriter {
         }
     }
 
-    protected boolean closeDirectBuffer(final ByteBuffer buffer){
-        if(!buffer.isDirect())
+    protected boolean closeDirectBuffer(final ByteBuffer buffer) {
+        if (!buffer.isDirect())
             return false;
-        final DirectBuffer dbb = (DirectBuffer)buffer;
+        final DirectBuffer dbb = (DirectBuffer) buffer;
         return AccessController.doPrivileged(
                 new PrivilegedAction<Object>() {
                     public Object run() {

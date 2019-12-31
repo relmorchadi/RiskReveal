@@ -61,6 +61,23 @@ public class PathUtils {
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
 
+    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Long projectId, String carId) {
+        List<String> items = new ArrayList<>();
+        items.add("Facultative");
+        items.add("Cedant");
+        if (clientName != null && clientId != null)
+            items.add(new StringBuilder(clientName.replaceAll("[\\\\/:*?\"<>|]", "_")).append("-").append(clientId).toString());
+        if (contractId != null)
+            items.add(contractId);
+        if (uwYear != null)
+            items.add(String.valueOf(uwYear));
+        if (carId != null)
+            items.add(String.valueOf(carId));
+        if (projectId != null)
+            items.add(String.valueOf(projectId));
+        return org.apache.commons.lang.StringUtils.join(items, "/");
+    }
+
     public static String makeTTFileName(
             String reinsuranceType,
             String prefix,
@@ -336,4 +353,61 @@ public class PathUtils {
         return builder.toString();
     }
 
+    public static String makeTTFileName(String reinsuranceType, String jobType, String clientName, String contractId, String division, String uwYear, XLTAssetType exp, Date runDate, String sourceVendor, String modelSystemVersion, String carId, String periodBasis, XLTOrigin internal, XLTSubType xltSubType, String suffix, String fileExtension) {
+        List<String> items = new ArrayList<>();
+        if (reinsuranceType != null) {
+            items.add(reinsuranceType);
+        }
+        if (jobType != null) {
+            items.add(jobType);
+        }
+        if (clientName != null) {
+            String name = clientName.trim().replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+            items.add(String.format("%1.20s", name));
+        }
+        if (contractId != null) {
+            items.add(contractId);
+        }
+        if (division != null) {
+            items.add(division);
+        }
+        if (uwYear != null) {
+            items.add(uwYear);
+        }
+        if (exp != null) {
+            items.add(exp.toString());
+        }
+        if (runDate != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            String format = formatter.format(runDate);
+            items.add(format);
+        }
+        if (sourceVendor != null) {
+            items.add(sourceVendor);
+        }
+        if (modelSystemVersion != null) {
+            items.add(modelSystemVersion);
+        }
+        if (carId != null) {
+            items.add(carId);
+        }
+        if (periodBasis != null) {
+            items.add(periodBasis);
+        }
+        if (internal != null) {
+            items.add(internal.toString());
+        }
+        if (xltSubType != null) {
+            items.add(xltSubType.toString());
+        }
+        if (suffix != null) {
+            items.add(suffix);
+        }
+
+        String filename = StringUtils.join(items, "_");
+        StringBuilder builder = new StringBuilder(filename).append(fileExtension);
+//        String finalName = fileName.trim().replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+//        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+        return builder.toString();
+    }
 }

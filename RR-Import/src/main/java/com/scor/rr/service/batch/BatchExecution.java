@@ -2,6 +2,7 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
+import com.scor.rr.domain.dto.ImportParamsDto;
 import com.scor.rr.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,7 @@ public class BatchExecution {
                         .addString("modelSystemVersion", params.get("modelSystemVersion"))
                         .addString("periodBasis", params.get("periodBasis"))
                         .addLong("importSequence", Long.valueOf(params.get("importSequence")))
+                        .addString("jobType", params.get("jobType"))
                         .addString("userId", importLossDataParams.getUserId())
                         .addString("projectId", importLossDataParams.getProjectId())
                         .addString("sourceResultIdsInput", importLossDataParams.getRlImportSelectionIds())
@@ -101,6 +103,12 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
+        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "Fac" : "";
+
+        if (workspaceMarketChannel.equals("")) {
+            log.error("Error. workspace market channel is not found");
+            return null;
+        }
 
         ContractSearchResult contractSearchResult =
                 contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
@@ -129,13 +137,16 @@ public class BatchExecution {
 //        }
 
         // TODO: Review this
-        String reinsuranceType = "T"; // fixed for TT
-        String division = "01"; // fixed for TT
-        String sourceVendor = "RMS";
-        String periodBasis = "FT"; // fixed for TT
+        String carId = "carId" + Math.random();
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
+        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
+        String division = "01"; // fixed for TT
+        String periodBasis = "FT"; // fixed for TT
+        String sourceVendor = "RMS";
         String prefix = "prefix";
+        String jobType = "ACCOUNT";
         String uwYear = String.valueOf(myWorkspace.getWorkspaceUwYear());
+        assert modellingSystemInstance != null;
         String modelSystemVersion = modellingSystemInstance.getModellingSystemVersion().getId();
 
         Long imSeq = null;
@@ -168,6 +179,9 @@ public class BatchExecution {
         map.put("importSequence", String.valueOf(imSeq));
         map.put("projectId", String.valueOf(projectId));
         map.put("instanceId", instanceId);
+        map.put("jobType", jobType);
+        map.put("marketChannel", workspaceMarketChannel);
+        map.put("carId", carId);
 
         return map;
     }

@@ -1,8 +1,15 @@
 package com.scor.rr.configuration;
 
 import com.scor.rr.service.batch.*;
+import com.scor.rr.service.batch.processor.AccItemProcessor;
+import com.scor.rr.service.batch.processor.LocItemProcessor;
+import com.scor.rr.service.batch.processor.rows.RLLocRow;
+import com.scor.rr.service.batch.reader.RLAccCursorItemReader;
+import com.scor.rr.service.batch.reader.RLLocCursorItemReader;
+import com.scor.rr.service.batch.writer.AccLocFilesHandler;
 import com.scor.rr.service.batch.writer.ELTWriter;
 import com.scor.rr.service.batch.writer.PLTWriter;
+import org.beanio.spring.BeanIOFlatFileItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -20,29 +27,21 @@ import org.springframework.context.annotation.Configuration;
 public class ImportLossDataJob {
 
     @Autowired
+    ELTConformer eltConformer;
+    @Autowired
     private JobBuilderFactory jobBuilderFactory;
-
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
-
     @Autowired
     private RegionPerilExtractor regionPerilExtractor;
-
     @Autowired
     private ExchangeRateExtractor exchangeRateExtractor;
-
     @Autowired
     private EpCurveExtractor epCurveExtractor;
-
     @Autowired
     private ELTExtractor eltExtractor;
-
-    @Autowired
-    ELTConformer eltConformer;
-
     @Autowired
     private ELTTruncator eltTruncator;
-
 
     @Autowired
     private ELTToPLTConverter eltToPLTConverter;
@@ -60,8 +59,43 @@ public class ImportLossDataJob {
     @Autowired
     private ExposureSummaryExtractor exposureSummaryExtractor;
 
+    @Autowired
+    private TivExtractor tivExtractor;
 
-    /** Tasklet */
+    @Autowired
+    private AccLocFilesHandler accLocFilesHandler;
+
+    @Autowired
+    @Qualifier(value = "AccReader")
+    private RLAccCursorItemReader accReader;
+
+    @Autowired
+    @Qualifier(value = "LocReader")
+    private RLLocCursorItemReader locReader;
+
+    @Autowired
+    @Qualifier(value = "AccProcessor")
+    private AccItemProcessor accProcessor;
+
+    @Autowired
+    @Qualifier(value = "LocProcessor")
+    private LocItemProcessor locProcessor;
+
+    @Autowired
+    @Qualifier(value = "AccWriter")
+    private BeanIOFlatFileItemWriter accWriter;
+
+    @Autowired
+    @Qualifier(value = "LocWriter")
+    private BeanIOFlatFileItemWriter locWriter;
+
+    @Autowired
+    @Qualifier(value = "LocWriterFW")
+    private BeanIOFlatFileItemWriter locWriterFW;
+
+    /**
+     * Tasklet
+     */
     @Bean
     public Tasklet extractRegionPerilTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> {
@@ -89,7 +123,7 @@ public class ImportLossDataJob {
     }
 
     @Bean
-    public Tasklet conformeEltTasklet(){
+    public Tasklet conformeEltTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> eltConformer.conformeELT();
     }
 
@@ -133,6 +167,16 @@ public class ImportLossDataJob {
         return (StepContribution contribution, ChunkContext chunkContext) -> exposureSummaryExtractor.extract();
     }
 
+    @Bean
+    public Tasklet extractTIVTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> tivExtractor.tivExtraction();
+    }
+
+    @Bean
+    public Tasklet copyAccAndLocToIHubTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> accLocFilesHandler.copyFilesToIHub();
+    }
+
 
     /** Steps */
 
@@ -165,7 +209,7 @@ public class ImportLossDataJob {
     }
 
     @Bean
-    public Step conformeEltStep(){
+    public Step conformeEltStep() {
         return stepBuilderFactory.get("conformeELT").tasklet(conformeEltTasklet()).build();
     }
 
@@ -175,7 +219,7 @@ public class ImportLossDataJob {
     }
 
     @Bean
-    public Step getExtractModellingOptionsStep(){
+    public Step getExtractModellingOptionsStep() {
         return stepBuilderFactory.get("extractModellingOptions").tasklet(extractModellingOptionsTasklet()).build();
     }
 
@@ -209,9 +253,49 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("extractExposureSummary").tasklet(extractExposureSummaryTasklet()).build();
     }
 
+    @Bean
+    public Step extractTIVStep() {
+        return stepBuilderFactory.get("extractTiv").tasklet(extractTIVTasklet()).build();
+    }
 
+    @Bean
+    public Step extractAccStep() {
+        return this.stepBuilderFactory.get("extractAcc")
+                .<RLLocRow, RLLocRow>chunk(1000)
+                .reader(accReader)
+                .processor(accProcessor)
+                .writer(accWriter)
+                .build();
+    }
 
-    /** Job */
+    @Bean
+    public Step extractLocStep() {
+        return this.stepBuilderFactory.get("extractAcc")
+                .<RLLocRow, RLLocRow>chunk(1000)
+                .reader(locReader)
+                .processor(locProcessor)
+                .writer(locWriter)
+                .build();
+    }
+
+    @Bean
+    public Step extractLocFWStep() {
+        return this.stepBuilderFactory.get("extractAcc")
+                .<RLLocRow, RLLocRow>chunk(50000)
+                .reader(locReader)
+                .processor(locProcessor)
+                .writer(locWriterFW)
+                .build();
+    }
+
+    @Bean
+    public Step copyAccAndLocFilesStep() {
+        return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(copyAccAndLocToIHubTasklet()).build();
+    }
+
+    /**
+     * Job
+     */
 
     @Bean(value = "importLossData")
     public Job getImportLossData() {
@@ -228,7 +312,12 @@ public class ImportLossDataJob {
                 .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
                 .next(getPltWriterStep())
-                .next(extractExposureSummaryStep())
+                //.next(extractExposureSummaryStep())
+                .next(extractTIVStep())
+                .next(extractAccStep())
+                .next(extractLocStep())
+                .next(extractLocFWStep())
+                .next(copyAccAndLocFilesStep())
                 .build();
     }
 
