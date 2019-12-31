@@ -74,11 +74,27 @@ public class InuringContractNodeService {
 
 
             for (RefFMFContractAttribute attribute : listOfAttributes) {
-//                if(attribute.getUISectionName() == "layer List"){
+                if(attribute.getUISectionName().equals("layer List") || attribute.getUISectionName().equals("Layer List")){
                 InuringContractLayerParam inuringContractLayerParam = new InuringContractLayerParam(inuringContractLayer.getInuringContractLayerId(), attribute.getUIAttributeName(),
                         attribute.getDataType(), attribute.getDefaultValue());
 
                 inuringContractLayerParamRepository.save(inuringContractLayerParam);
+            }
+                if(attribute.getUIAttributeName().equals("Contract Name")){
+                    inuringContractNode.setContractName(attribute.getDefaultValue());
+                }
+                if(attribute.getUIAttributeName().equals("Occurrence Basis")){
+                    inuringContractNode.setOccurenceBasis(attribute.getDefaultValue());
+                }
+                if(attribute.getUIAttributeName().equals("Claims Basis")){
+                    inuringContractNode.setClaimsBasis(attribute.getDefaultValue());
+                }
+                if(attribute.getUIAttributeName().equals("Contract Currency Code")){
+                    inuringContractNode.setContractCurrency(attribute.getDefaultValue());
+                }
+                if(attribute.getUIAttributeName().equals("Contract Name")){
+                    inuringContractNode.setContractName(attribute.getDefaultValue());
+                }
             }
 
     }
