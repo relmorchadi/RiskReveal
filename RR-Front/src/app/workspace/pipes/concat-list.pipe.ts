@@ -6,7 +6,8 @@ import * as _ from 'lodash';
 export class ConcatListPipe implements PipeTransform {
 
   transform(arr: any, anotherArr): any {
-    return _.orderBy(_.concat(arr, anotherArr), a => a, ["asc"]);
+    console.log(arr, anotherArr);
+    return _.sortBy(_.concat(arr, anotherArr), (a) => _.toNumber(a));
   }
 
 }

@@ -280,7 +280,7 @@
                 <div class="dropdown-wrap-title-calibration">
                   <span class="dropdown-title-calibration">Change Display</span>
                   <span class="dropdown-item-selected-calibration">
-                  {{selectedEPM}}
+                  {{tableConfig?.selectedCurveType}}
                 </span>
                 </div>
                 <div class="dropdown-icon">
@@ -288,7 +288,8 @@
                 </div>
               </div>
               <ul nz-menu>
-                <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+                <li nz-menu-item *ngFor="let curveType of constants?.curveTypes" (click)="curveTypeChange(curveType)">
+                  {{curveType}}
                 </li>
               </ul>
             </nz-dropdown>
@@ -299,7 +300,7 @@
                 <div class="dropdown-wrap-title-calibration">
                   <span class="dropdown-title-calibration">Financial Unit</span>
                   <span class="dropdown-item-selected-calibration">
-                  {{selectFinancial}}
+                  {{tableConfig?.selectedFinancialUnit}}
                 </span>
                 </div>
                 <div class="dropdown-icon">
@@ -308,8 +309,8 @@
               </div>
               <ul nz-menu>
                 <li
-                  *ngFor="let financialUnit of financialUnits.data" nz-menu-item (click)="changeFinancialUnit(financialUnit)">
-                  {{financialUnit.label}}
+                  *ngFor="let financialUnit of constants?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">
+                  {{financialUnit}}
                 </li>
               </ul>
             </nz-dropdown>

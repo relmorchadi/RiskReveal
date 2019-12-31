@@ -4,7 +4,6 @@ import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
-import {tap} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
 declare  const _;
 @Component({
@@ -25,6 +24,7 @@ export class CalibrationNewTableComponent implements OnInit {
   @Input() tableConfig: {
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
+    selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean
@@ -36,6 +36,11 @@ export class CalibrationNewTableComponent implements OnInit {
     columnsLength: number
   };
   @Input() rowKeys: any;
+
+  @Input() constants: {
+    financialUnits: string[],
+    curveTypes: string[]
+  };
 
   statusFilter: StatusFilter;
   selectedStatusFilter: any = {
@@ -53,19 +58,6 @@ export class CalibrationNewTableComponent implements OnInit {
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  };
-
-  selectedEPM: any = "AEP";
-  EPMS: any = ["AEP", "AEP-TVAR", "OEP", "OEP-TVAR"];
-  selectFinancial: any = "Million";
-  financialUnits: any = {
-    data:  [
-      {id: '3', label: 'Billion'},
-      {id: '1', label: 'Thousands'},
-      {id: '2', label: 'Million'},
-      {id: '4', label: 'Unit'}
-    ],
-    selected: {id: '2', label: 'Million'}
   };
   selectedCurrencie: any = 'EUR';
   currencies = {
@@ -279,16 +271,25 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
-  changeEPM(epm: any) {
-    this.selectedEPM = epm;
+  curveTypeChange(curveType) {
+    this.actionDispatcher.emit({
+      type: "Curve Type Change",
+      payload: curveType
+    })
   }
 
   changeCurrencie(currency: any) {
-    this.selectedCurrencie = currency.label;
+    this.actionDispatcher.emit({
+      type: "Financial Unit Change",
+      payload: currency
+    })
   }
 
-  changeFinancialUnit(financialUnit: any) {
-    this.selectFinancial = financialUnit.label;
+  financialUnitChange(financialUnit: any) {
+    this.actionDispatcher.emit({
+      type: "Financial Unit Change",
+      payload: financialUnit
+    })
   }
 
   onColumnResize({delta, element: {id}}) {

@@ -1,5 +1,6 @@
 package com.scor.rr.rest.epMetrics;
 
+import com.scor.rr.domain.dto.SaveListOfRPsRequest;
 import com.scor.rr.domain.enums.CurveType;
 import com.scor.rr.service.epMetrics.EpMetricsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,5 +29,5 @@ public class EpMetrics {
     public ResponseEntity<?> getDefaultReturnPeriods() { return this.epMetricsService.getDefaultReturnPeriods();}
 
     @PostMapping("rp")
-    public ResponseEntity<?> saveListOfRPs(@RequestBody List<Integer> rps,@RequestBody Long userId) { return this.epMetricsService.saveListOfRPs(rps, userId);}
+    public ResponseEntity<?> saveListOfRPs(@RequestBody SaveListOfRPsRequest request) { return this.epMetricsService.saveListOfRPs(request);}
 }

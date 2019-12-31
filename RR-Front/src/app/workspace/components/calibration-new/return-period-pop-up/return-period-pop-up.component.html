@@ -38,7 +38,9 @@
         </tr>
         <tr *ngIf="returnPeriodConfig?.showSuggestion">
           <th>
-            {{rpValidation?.lowerBound}} - {{rpValidation?.upperBound}} are the nearest valid return periods
+            <span style="color: red;margin-left: 16px;">
+              {{rpValidation?.lowerBound}} - {{rpValidation?.upperBound}} are the nearest valid return periods
+            </span>
           </th>
         </tr>
       </ng-template>

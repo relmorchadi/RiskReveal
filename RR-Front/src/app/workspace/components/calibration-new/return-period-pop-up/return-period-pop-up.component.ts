@@ -53,6 +53,8 @@ export class ReturnPeriodPopUpComponent implements OnInit {
 
 
   cancel() {
-    console.log('cancel');
+    this.actionDispatcher.emit({
+      type: "Cancel Changes"
+    })
   }
 }

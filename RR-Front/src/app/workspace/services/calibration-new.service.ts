@@ -14,11 +14,12 @@ import {EMPTY, forkJoin} from "rxjs";
 })
 export class CalibrationNewService {
 
-  constructor(private calibrationAPI: CalibrationAPI) {}
+  constructor(private calibrationAPI: CalibrationAPI) {
+  }
 
   getCalibState = (state, wsIdentifier) => state.content[wsIdentifier].calibrationNew;
 
-  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, { wsId, uwYear }: any) {
+  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {wsId, uwYear}: any) {
 
     ctx.patchState(produce(ctx.getState(), draft => {
       const {
@@ -32,7 +33,7 @@ export class CalibrationNewService {
 
     return this.calibrationAPI.loaGroupedPltsByPure(wsId, uwYear)
       .pipe(
-        tap( data => {
+        tap(data => {
           ctx.patchState(produce(ctx.getState(), (draft: WorkspaceModel) => {
 
             const {
@@ -47,14 +48,14 @@ export class CalibrationNewService {
             innerDraft.loading = false;
           }))
         }),
-        catchError( e => {
+        catchError(e => {
           console.log(e);
           return EMPTY;
         })
       )
   }
 
-  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, { wsId, uwYear }: any) {
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, {wsId, uwYear}: any) {
     ctx.patchState(produce(ctx.getState(), draft => {
       const {
         currentTab: {
@@ -67,7 +68,7 @@ export class CalibrationNewService {
 
     return this.calibrationAPI.loadDefaultAdjustments(wsId, uwYear)
       .pipe(
-        tap( defaultAdjustments => {
+        tap(defaultAdjustments => {
           ctx.patchState(produce(ctx.getState(), (draft: WorkspaceModel) => {
 
             const {
@@ -85,57 +86,74 @@ export class CalibrationNewService {
                 categoryCode
               } = adjustment;
 
-              if(!innerDraft.adjustments[categoryCode]) innerDraft.adjustments[categoryCode]= {};
+              if (!innerDraft.adjustments[categoryCode]) innerDraft.adjustments[categoryCode] = {};
               innerDraft.adjustments[categoryCode][pltId] = adjustment;
             })
           }))
         }),
-        catchError( e => {
+        catchError(e => {
           console.log(e);
           return EMPTY;
         })
       )
   }
 
-  loadEpMetrics(ctx: StateContext<WorkspaceModel>, { wsId, uwYear, userId, curveType }: any) {
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, curveType)
-      .pipe(
-        tap( epMetrics => {
+  formatCurveType(curveType) {
+    return _.replace(curveType, /(-)/g, '');
+  }
 
-          ctx.patchState(produce(ctx.getState(), draft => {
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, userId, curveType, resetMetrics}: any) {
 
-            const {
-              currentTab: {
-                wsIdentifier
-              }
-            } = draft;
+    const {
+      currentTab: {
+        wsIdentifier
+      }
+    } = ctx.getState();
 
-            const innerDraft = this.getCalibState(draft, wsIdentifier);
+      return !this.getCalibState(ctx.getState(), wsIdentifier).epMetrics[curveType] ? this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType))
+        .pipe(
+          tap(epMetrics => {
 
-            _.forEach(epMetrics, (metric: any, i) => {
+            ctx.patchState(produce(ctx.getState(), draft => {
 
               const {
-                pltId,
-                curveType
-              } = metric;
-              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType]= {};
-              innerDraft.epMetrics[curveType][pltId] = metric;
-              if( i == '0' ) {
-                const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'aal']));
-                innerDraft.epMetrics.rps = rps;
-                innerDraft.epMetrics.cols = [ 'aal', ...rps];
-              }
-            })
+                currentTab: {
+                  wsIdentifier
+                }
+              } = draft;
+
+              const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+              if(resetMetrics) {
+                innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
+              };
+              
+
+              _.forEach(epMetrics, (metric: any, i) => {
+
+                const {
+                  pltId,
+                  curveType
+                } = metric;
+
+                innerDraft.epMetrics[curveType] = {};
+                innerDraft.epMetrics[curveType][pltId] = metric;
+                if (i == '0') {
+                  const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
+                  innerDraft.epMetrics.rps = rps;
+                  innerDraft.epMetrics.cols = ['AAL', ...rps];
+                }
+              })
 
 
-          }))
+            }))
 
-        }),
-        catchError( e => {
-          console.log(e);
-          return EMPTY;
-        })
-      )
+          }),
+          catchError(e => {
+            console.log(e);
+            return EMPTY;
+          })
+        ) : EMPTY;
   }
 
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
@@ -143,7 +161,7 @@ export class CalibrationNewService {
       this.calibrationAPI.loadAllBasis(),
       this.calibrationAPI.loadAllAdjustmentTypes()
     ).pipe(
-      tap( ([basis, adjustmentTypes]) => {
+      tap(([basis, adjustmentTypes]) => {
         ctx.patchState(produce(ctx.getState(), draft => {
           const {
             currentTab: {
@@ -162,21 +180,22 @@ export class CalibrationNewService {
     )
   }
 
-  selectPlts(ctx: StateContext<WorkspaceModel>, payload){
+  selectPlts(ctx: StateContext<WorkspaceModel>, payload) {
     console.log(payload)
     const {
       plts,
       wsIdentifier
     } = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].calibrationNew.plts =  plts;
+      draft.content[wsIdentifier].calibrationNew.plts = plts;
     }));
   }
 
-  saveRPs(ctx: StateContext<WorkspaceModel>, { userId, rps }: any) {
+  saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
     return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
       .pipe(
-        tap(r => console.log(r))
+        tap(r => console.log(r)),
+        mergeMap(() => ctx.dispatch(new fromWS.LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
   }
 }

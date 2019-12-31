@@ -1,6 +1,7 @@
 package com.scor.rr.service.epMetrics;
 
 import com.scor.rr.domain.UserRPEntity;
+import com.scor.rr.domain.dto.SaveListOfRPsRequest;
 import com.scor.rr.domain.dto.ValidateEpMetricResponse;
 import com.scor.rr.domain.enums.CurveType;
 import com.scor.rr.repository.DefaultReturnPeriodRepository;
@@ -68,13 +69,13 @@ public class EpMetricsService {
         }
     }
 
-    public ResponseEntity<?> saveListOfRPs( List<Integer> rps, Long userId) {
+    public ResponseEntity<?> saveListOfRPs(SaveListOfRPsRequest request) {
         try {
             return ResponseEntity.ok(
                     this.userRPRepository.saveAll(
-                            rps
+                            request.getRps()
                                     .stream()
-                                    .map(rp -> new UserRPEntity(rp, userId))
+                                    .map(rp -> new UserRPEntity(rp, request.getUserId()))
                                     .collect(Collectors.toList()
                             )
             ));
