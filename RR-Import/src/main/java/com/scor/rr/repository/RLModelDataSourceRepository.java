@@ -13,4 +13,6 @@ public interface RLModelDataSourceRepository extends JpaRepository<RLModelDataSo
     RLModelDataSource findByProjectIdAndTypeAndInstanceIdAndRlId(Long projectId, String type, String instanceId, Long rlId);
 
     RLModelDataSource findByInstanceIdAndProjectIdAndRlId(String instanceId, Long projectId, Long rlId);
+
+    RLModelDataSource findByRlIdAndNameAndProjectId(Long edmId,String edmName, Long projectId);
 }

@@ -42,8 +42,10 @@ public class RLImportSelection {
     private Float unitMultiplier;
     @Column(name = "Proportion")
     private Float proportion;
-    //    @Column(name = "TargetRAPCode")
-//    private String targetRAPCode;
+    @Column(name = "Division")
+    private String division;
+    @Column(name = "PeriodBasis")
+    private String periodBasis;
     // TODO : Review with shaun
     @Column(name = "ProxyScalingBasis")
     private String proxyScalingBasis;

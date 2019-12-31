@@ -257,7 +257,7 @@ public class DefaultAdjustment extends AbstractWriter {
         analysisSummaryStats.setCov(cov);
         analysisSummaryStats.setStdDev(stdDev);
 
-        BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(analysisSummaryStats, summaryStatFilename);
+        BinFile file = epSummaryStatWriter.writeELTSummaryStatistics(analysisSummaryStats, summaryStatFilename);
 
         // @TODO: review the pltHeaderId with the data modal
 

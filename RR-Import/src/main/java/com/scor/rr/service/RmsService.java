@@ -752,6 +752,10 @@ public class RmsService {
         namedParameterJdbcTemplate.query(sqlQuery, dataQueryParams, extractor);
     }
 
+    public List<Map<String, Object>> getByQuery(String query, String instanceId, Object... args) {
+        return this.getJdbcTemplate(instanceId).queryForList(query, args);
+    }
+
     private JdbcTemplate getJdbcTemplate(String instanceId) {
         return new JdbcTemplate(rmsInstanceCache.getDataSource(instanceId));
     }

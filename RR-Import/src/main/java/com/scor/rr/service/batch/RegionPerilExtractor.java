@@ -1,18 +1,22 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.ModelPortfolioEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.TrackingStatus;
-import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.domain.riskLink.RLModelDataSource;
+import com.scor.rr.domain.riskLink.RLPortfolioSelection;
+import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
+import com.scor.rr.util.EmbeddedQueries;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -65,6 +69,13 @@ public class RegionPerilExtractor {
     @Autowired
     private ModelPortfolioRepository modelPortfolioRepository;
 
+    @Autowired
+    private RmsService rmsService;
+
+    @Autowired
+    private RLAnalysisToTargetRAPRepository rlAnalysisToTargetRAPRepository;
+
+
     @Value("#{jobParameters['projectId']}")
     private Long projectId;
 
@@ -77,7 +88,10 @@ public class RegionPerilExtractor {
     @Value("#{jobParameters['instanceId']}")
     private String instanceId;
 
-    public void loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+
+    public RepeatStatus loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader() {
         log.debug("Start loading region perils");
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         ProjectEntity projectEntity;
@@ -154,7 +168,8 @@ public class RegionPerilExtractor {
                 TransformationBundle bundle = new TransformationBundle();
                 bundle.setInstanceId(instanceId);
 
-                rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId()).ifPresent(rlModelDataSourceItem -> {
+                Optional<RLModelDataSource> rlModelDataSource = rlModelDataSourceRepository.findById(sourceResult.getRlAnalysis().getRlModelDataSourceId());
+                rlModelDataSource.ifPresent(rlModelDataSourceItem -> {
                     bundle.setInstanceId(rlModelDataSourceItem.getInstanceId());
                     modelAnalysisEntity.setSourceModellingSystemInstance(rlModelDataSourceItem.getInstanceName());
                     modellingSystemInstanceRepository.findById(rlModelDataSourceItem.getInstanceId()).ifPresent(modellingSystemInstance -> {
@@ -191,14 +206,36 @@ public class RegionPerilExtractor {
 
                 ModelAnalysisEntity modelAnalysisEntityLambda = rrAnalysisRepository.saveAndFlush(modelAnalysisEntity);
 
-                sourceResult.getTargetRaps().forEach(targetRAPSelection -> {
-                    targetRAPRepository.findByTargetRAPCode(targetRAPSelection.getTargetRAPCode()).ifPresent(targetRAP -> {
-                        AnalysisIncludedTargetRAPEntity analysisIncludedTargetRAPEntity = new AnalysisIncludedTargetRAPEntity();
-                        analysisIncludedTargetRAPEntity.setTargetRAPId(targetRAP.getTargetRAPId());
-                        analysisIncludedTargetRAPEntity.setModelAnalysisId(modelAnalysisEntityLambda.getRrAnalysisId());
-                        analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAPEntity);
+                if (marketChannel.equalsIgnoreCase("Fac")) {
+                    List<Map<String, Object>> analysis = rmsService.getByQuery(EmbeddedQueries.REGION_PERIL_QUERY.replaceAll(":rdm:", sourceResult.getRlAnalysis().getRdmName()),
+                            rlModelDataSource.isPresent() ? rlModelDataSource.get().getInstanceId() : instanceId,
+                            sourceResult.getRlAnalysis().getRlId());
+                    if (analysis != null && !analysis.isEmpty()) {
+                        modelAnalysisEntity.setProfileName((String) analysis.get(0).get("DLM_PROFILE_NAME"));
+
+                        // TODO : REVIEW LATER
+                        List<RLAnalysisToTargetRAP> targetRap = rlAnalysisToTargetRAPRepository.findByRlAnalysisId(sourceResult.getRlAnalysis().getRlAnalysisId());
+                        if (targetRap != null && !targetRap.isEmpty()) {
+                            AnalysisIncludedTargetRAPEntity analysisIncludedTargetRAPEntity = new AnalysisIncludedTargetRAPEntity();
+                            analysisIncludedTargetRAPEntity.setTargetRAPId(targetRap.get(0).getTargetRapId());
+                            analysisIncludedTargetRAPEntity.setModelAnalysisId(modelAnalysisEntityLambda.getRrAnalysisId());
+                            analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAPEntity);
+                        } else {
+                            log.error("No targetRAP/ModelRAP has been found");
+                            return RepeatStatus.valueOf("failed");
+                        }
+                    }
+                } else if (marketChannel.equalsIgnoreCase("Treaty")) {
+
+                    sourceResult.getTargetRaps().forEach(targetRAPSelection -> {
+                        targetRAPRepository.findByTargetRAPCode(targetRAPSelection.getTargetRAPCode()).ifPresent(targetRAP -> {
+                            AnalysisIncludedTargetRAPEntity analysisIncludedTargetRAPEntity = new AnalysisIncludedTargetRAPEntity();
+                            analysisIncludedTargetRAPEntity.setTargetRAPId(targetRAP.getTargetRAPId());
+                            analysisIncludedTargetRAPEntity.setModelAnalysisId(modelAnalysisEntityLambda.getRrAnalysisId());
+                            analysisIncludedTargetRAPRepository.save(analysisIncludedTargetRAPEntity);
+                        });
                     });
-                });
+                }
 
                 fpRRAnalysis.put(sourceResult.getFinancialPerspective(), modelAnalysisEntity.getRrAnalysisId());
 
@@ -222,9 +259,6 @@ public class RegionPerilExtractor {
 
                 LossDataHeaderEntity conformedRRLT = makeConformedRRLT(modelAnalysisEntity, sourceRRLT, targetCurrencyEntity);
 
-
-                // TODO :  Review Later with viet
-//                bundle.setSourceRapMapping(sourceRapMapping);
                 bundle.setFinancialPerspective(sourceResult.getFinancialPerspective());
                 bundle.setSourceResult(sourceResult);
                 bundle.setRlAnalysis(sourceResult.getRlAnalysis());
@@ -270,7 +304,7 @@ public class RegionPerilExtractor {
                         modellingSystemInstanceRepository.findById(rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceId()).get();
 
 
-                ModelPortfolioEntity modelPortfolio = new ModelPortfolioEntity(null,1, rlPortfolioSelection.getProjectId(),
+                ModelPortfolioEntity modelPortfolio = new ModelPortfolioEntity(null, 1, rlPortfolioSelection.getProjectId(),
                         new Date(), new Date(), TrackingStatus.INPROGRESS.toString(), projectImportRunEntity.getProjectImportRunId(),
                         rlPortfolioSelection.getRlPortfolio().getRlModelDataSource().getInstanceName(),
                         modellingSystemInstance.getModellingSystemVersion().getModellingSystem().getVendor().getName(),
@@ -295,10 +329,14 @@ public class RegionPerilExtractor {
             }
             transformationPackage.setModelPortfolios(modelPortfolios);
         }
+        return RepeatStatus.FINISHED;
     }
 
     private RegionPerilEntity getRegionPeril(RLImportSelection sourceResult) {
         String rpCode = sourceResult.getTargetRegionPeril();
+        if (rpCode == null || rpCode.isEmpty()) {
+            rpCode = sourceResult.getRlAnalysis().getSystemRegionPeril();
+        }
         if (rpCode == null || rpCode.isEmpty()) {
             rpCode = sourceResult.getRlAnalysis().getRpCode();
         }

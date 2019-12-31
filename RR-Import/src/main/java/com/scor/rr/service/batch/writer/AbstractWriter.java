@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @StepScope
@@ -54,6 +56,9 @@ public abstract class AbstractWriter {
 
     @Value("#{jobParameters['importSequence']}")
     protected Long importSequence;
+
+    @Value("#{jobParameters['carId']}")
+    protected String carId;
 
     private Path ihubPath;
 
@@ -345,6 +350,27 @@ public abstract class AbstractWriter {
                 null,
                 null,
                 null,
+                fileExtension
+        );
+    }
+
+    protected synchronized String makeFacFilename(String jobType, Date runDate, XLTSubType xltSubType, String suffix, String fileExtension){
+        return PathUtils.makeTTFileName(
+                reinsuranceType,
+                jobType,
+                clientName,
+                contractId,
+                division,
+                uwYear,
+                XLTAssetType.EXP,
+                runDate,
+                sourceVendor,
+                modelSystemVersion,
+                carId,
+                periodBasis,
+                XLTOrigin.INTERNAL,
+                xltSubType,
+                suffix,
                 fileExtension
         );
     }
