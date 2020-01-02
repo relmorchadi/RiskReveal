@@ -1,0 +1,51 @@
+<p-dialog [visible]="isVisible"
+          [closable]="false"
+          styleClass="m-dialog-modal-sm-l"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Override Occurrence Basis</h6>
+      <i style="cursor: pointer" (click)="close()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div>
+    <div class="input-group-modal">
+      <div class="row-input"><span class="label-input">Occurence Basis</span>
+        <nz-select
+          style="padding: 10px 0;" #obRes
+          [ngModel]="changes.occurrenceBasis"
+          nzShowSearch
+          class="a-dropdown-small input-wrapper"
+          nzPlaceHolder="Select Occurence Basis"
+        >
+          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
+          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
+        </nz-select>
+      </div>
+
+      <div style="display: flex; flex-direction: column;">
+        <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>
+        <textarea [(ngModel)]="changes.overrideReason"></textarea>
+      </div>
+    </div>
+  </div>
+  <div style="display: flex; height: 10px"></div>
+  <div class="fp-options-wrapper">
+    <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>
+    <div class="context-wrapper">
+      <nz-radio-group class="default-radio" [(ngModel)]="changes.scopeOfOverride">
+        <label nz-radio nzValue="current"><span class="body-2">Current Analysis</span></label>
+        <label nz-radio nzValue="all"><span class="body-2">All Analysis</span></label>
+      </nz-radio-group>
+    </div>
+  </div>
+  <p-footer>
+    <button (click)="close()" class="a-button-text-cancel-mini">CANCEL</button>
+    <button (click)="override()" class="a-buttons-contained-mini">SAVE
+    </button>
+  </p-footer>
+</p-dialog>

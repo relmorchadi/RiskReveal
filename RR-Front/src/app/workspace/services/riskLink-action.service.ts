@@ -21,152 +21,6 @@ import produce from 'immer';
 //const instanceId = 'RL18-1';
 const instanceName = 'AZU-P1-RL18-SQL16';
 
-const testSummary = {
-  "analysis": [
-    {
-      "selected": false,
-      "rlAnalysisId": 3351,
-      "entity": 1,
-      "rlModelDataSourceId": 4,
-      "projectId": 10,
-      "rdmId": 131,
-      "rdmName": "AA2012_SyntheticCurve_R",
-      "rlId": 10,
-      "analysisName": "Europe, All Lines, EP Wind Only, with Loss Amp",
-      "analysisDescription": "EUWS_EP_PLA_DLM110",
-      "defaultGrain": "Europe, All Lines, EP Wind Only, with Loss Amp",
-      "exposureType": "PORTFOLIO/GROUP",
-      "exposureTypeCode": 8017,
-      "edmNameSourceLink": "ied2011_euws_pc_eur_edm110",
-      "exposureId": 1,
-      "analysisCurrency": "EUR",
-      "rlExchangeRate": null,
-      "typeCode": 102,
-      "analysisType": "Exceedance Probability",
-      "runDate": "2019-12-13T09:40:18.368+0000",
-      "region": "EU",
-      "peril": "WS",
-      "geoCode": "",
-      "rpCode": "EUWS",
-      "subPeril": "WS Wind",
-      "lossAmplification": "Bldg, Cont, BI",
-      "analysisMode": 2,
-      "engineTypeCode": 100,
-      "engineType": "DLM",
-      "engineVersion": "11.0.1411.2",
-      "engineVersionMajor": "11.0",
-      "profileName": "",
-      "profileKey": "RL_EUWS_Mv11.2",
-      "purePremium": null,
-      "exposureTIV": 5.05500640578089E13,
-      "description": null,
-      "defaultOccurrenceBasis": null,
-      "financialPerspective": "TEST",
-      "peqt": [],
-      "targetCurrency": "EUR",
-      "unitMultiplier": 1,
-      "proportion": 100,
-      "financialPerspectives": [], // to review
-      "rlimportSelection": []
-    },
-    {
-      "selected": false,
-      "rlAnalysisId": 3352,
-      "entity": 1,
-      "rlModelDataSourceId": 4,
-      "projectId": 10,
-      "rdmId": 131,
-      "rdmName": "AA2012_SyntheticCurve_R",
-      "rlId": 11,
-      "analysisName": "BE_Fire_Evt",
-      "analysisDescription": "Belgium Synthetic Curve Fire Per Event",
-      "defaultGrain": "BE_Fire_Evt",
-      "exposureType": "PORTFOLIO/GROUP",
-      "exposureTypeCode": 8017,
-      "edmNameSourceLink": "",
-      "exposureId": 9,
-      "analysisCurrency": "EUR",
-      "rlExchangeRate": null,
-      "typeCode": 102,
-      "analysisType": "Exceedance Probability",
-      "runDate": "2019-12-13T09:40:18.384+0000",
-      "region": "EU",
-      "peril": "WS",
-      "geoCode": "",
-      "rpCode": "EUWS",
-      "subPeril": "WS Wind",
-      "lossAmplification": "Bldg, Cont, BI",
-      "analysisMode": 2,
-      "engineTypeCode": 100,
-      "engineType": "DLM",
-      "engineVersion": "11.0.1411.2",
-      "engineVersionMajor": "11.0",
-      "profileName": "",
-      "profileKey": "RL_EUWS_Mv11.2",
-      "purePremium": null,
-      "exposureTIV": 1.5865009738729902E12,
-      "description": null,
-      "defaultOccurrenceBasis": null,
-      "financialPerspective": "TEST",
-      "peqt": [],
-      "targetCurrency": "EUR",
-      "unitMultiplier": 1,
-      "proportion": 100,
-      "financialPerspectives": [], // to review
-      "rlimportSelection": []
-    }
-  ],
-  "portfolios": [
-    {
-      "selected": false,
-      "rlPortfolioId": 349,
-      "entity": 1,
-      "projectId": 10,
-      "edmId": 130,
-      "edmName": "AA2012_SyntheticCurve_E",
-      "rlId": 1,
-      "number": "PT_ENG_ALL_inEUR | PT_ENG_ALL_inEUR | EQ",
-      "name": "PT_ENG_ALL_inEUR",
-      "created": "2011-11-22T11:04:45.000+0000",
-      "description": "",
-      "type": "AGG",
-      "peril": "EQ",
-      "agSource": "",
-      "agCedent": "PT_as_FIDELIDADE",
-      "agCurrency": "EUR",
-      "targetCurrency": "EUR",
-      "unitMultiplier": 1,
-      "proportion": 100,
-      "tiv": 0.00,
-      "importLocationLevel": false,
-
-    },
-    {
-      "selected": false,
-      "rlPortfolioId": 350,
-      "entity": 1,
-      "projectId": 10,
-      "edmId": 130,
-      "edmName": "AA2012_SyntheticCurve_E",
-      "rlId": 2,
-      "number": "PT_ALL_RISK_inEUR | PT_ALL_RISK_inEUR | EQ",
-      "name": "PT_ALL_RISK_inEUR",
-      "created": "2011-11-22T11:06:06.000+0000",
-      "description": "",
-      "type": "AGG",
-      "peril": "EQ",
-      "agSource": "",
-      "agCedent": "PT_as_FIDELIDADE",
-      "agCurrency": "EUR",
-      "targetCurrency": "EUR",
-      "unitMultiplier": 1,
-      "proportion": 100,
-      "tiv": 0.00,
-      "importLocationLevel": false
-    }
-  ]
-};
-
 const testSummary2 = {
   "analysis": [
     {
@@ -196,7 +50,9 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
-      "targetRaps": []
+      "targetRaps": [],
+      "overrideReason": null,
+      "occurrenceBasis": null
     },
     {
       "selected": false,
@@ -225,7 +81,9 @@ const testSummary2 = {
       "peqt": [],
       "unitMultiplier": 1,
       "proportion": 100,
-      "targetRaps": []
+      "targetRaps": [],
+      "overrideReason": null,
+      "occurrenceBasis": null
     }
   ],
   "portfolios": [
@@ -1322,8 +1180,6 @@ export class RiskLinkStateService {
 
   basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
     const {selectedDS, projectId, instanceId} = payload;
-    const state = ctx.getState();
-    console.log()
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
       .pipe(mergeMap((response: any[]) => {
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -2238,12 +2094,12 @@ export class RiskLinkStateService {
                       analysis: {},
                       portfolios: {}
                     },
-                    summary: testSummary2,
-                    // summary: {
-                    //   analysis: [],
-                    //   portfolios: [],
-                    //   sourceEpHeaders: []
-                    // },
+                    // summary: testSummary2,
+                    summary: {
+                      analysis: [],
+                      portfolios: [],
+                      sourceEpHeaders: []
+                    },
                     linking: {
                       edm: null,
                       rdm: {data: null, selected: null},
@@ -2309,7 +2165,10 @@ export class RiskLinkStateService {
                 targetCurrency: item.analysisCurrency,
                 targetRaps: [],
                 unitMultiplier: 1,
-                proportion: 100
+                proportion: 100,
+                occurrenceBasis: null,
+                overrideReason: null
+
               })),
               portfolios: _.map(portfolios, p => ({
                 ...p,
@@ -2506,4 +2365,49 @@ export class RiskLinkStateService {
   }
 
 
+  rescanDataSource(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {datasource, projectId, instanceId} = payload;
+    return this.riskApi.rescanDataSource(datasource, projectId, instanceId, instanceName)
+      .pipe(mergeMap((response: any) => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
+            if(datasource.type == 'EDM'){
+              draft.content[wsIdentifier].riskLink.selection.edms[datasource.rmsId]= {...datasource, ...response};
+            }else if(datasource.type == 'RDM'){
+              draft.content[wsIdentifier].riskLink.selection.rdms[datasource.rmsId]= {...datasource, ...response};
+            }
+          }));
+          return of(response);
+        }),
+        catchError(err => {
+          return of(err);
+        }));
+  }
+
+  overrideOccurrenceBasis(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {occurrenceBasis, analysisIndex} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
+      if(occurrenceBasis.scopeOfOverride=='all'){
+          draft.content[wsIdentifier].riskLink.summary.analysis=
+            _.map(draft.content[wsIdentifier].riskLink.summary.analysis,
+                item => ({
+                  ...item,
+                  occurrenceBasis: occurrenceBasis.occurrenceBasis,
+                  overrideReason: occurrenceBasis.overrideReason
+                }));
+      }else if(occurrenceBasis.scopeOfOverride=='current') {
+        draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex]={
+          ...draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex],
+          occurrenceBasis: occurrenceBasis.occurrenceBasis,
+          overrideReason: occurrenceBasis.overrideReason
+        };
+      }
+
+    }));
+
+  }
 }
+
+
+
