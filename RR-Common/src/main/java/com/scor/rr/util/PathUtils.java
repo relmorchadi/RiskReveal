@@ -1,6 +1,10 @@
 package com.scor.rr.util;
 
+import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.enums.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -178,6 +182,36 @@ public class PathUtils {
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();
     }
+    public static String makePLTFileName(WorkspaceEntity workspaceEntity, ModelAnalysisEntity modelAnalysis, PltHeaderEntity plt, Integer threadId, String fileExtension) {
+        return PathUtils.makePLTFileName(1 == workspaceEntity.getWorkspaceMarketChannel() ? "T" : "F",
+                null,
+                workspaceEntity != null ? workspaceEntity.getClientName() : null,
+                workspaceEntity != null ? workspaceEntity.getWorkspaceContextCode() : null,
+                null,
+                workspaceEntity.getWorkspaceUwYear().toString(),
+                XLTAssetType.PLT,
+                new Date(),
+                modelAnalysis.getSourceModellingVendor(),
+                modelAnalysis.getSourceModellingSystemVersion(),
+                modelAnalysis.getRegionPeril(),
+                "UF",
+                plt.getCurrencyCode(),
+                plt.getProjectId(),
+                "FT",
+                XLTOrigin.INTERNAL,
+                XLTSubType.DAT,
+                XLTOT.TARGET,
+                plt.getTargetRAPId(),
+                plt.getPltSimulationPeriods(),
+                PLTPublishStatus.PURE,
+                threadId,
+                plt.getPltHeaderId(),
+                plt.getImportSequence(),
+                null,
+                null,
+                null,
+                fileExtension);
+    }
 
     public static String makePLTFileName(
             String reinsuranceType,
@@ -193,17 +227,17 @@ public class PathUtils {
             String regionPeril,
             String fp,
             String currency,
-            String projectId,
+            Long projectId,
             String periodBasis,
             XLTOrigin origin,
             XLTSubType subType,
             XLTOT currencySource,
-            Integer targetRapId,
+            Long targetRapId,
             Integer simulationPeriod,
             PLTPublishStatus pltPublishStatus,
             Integer threadNum, // 0 for pure PLT
-            String uniqueId,
-            Long importSequence,
+            Long uniqueId,
+            Integer importSequence,
             String edmName,
             Long portfolioId,
             String fileNature,
@@ -253,7 +287,7 @@ public class PathUtils {
             items.add(currency);
         }
         if (projectId != null) {
-            items.add(projectId);
+            items.add(projectId.toString());
         }
         if (periodBasis != null) {
             items.add(periodBasis);
