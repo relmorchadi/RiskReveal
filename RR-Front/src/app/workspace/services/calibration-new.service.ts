@@ -5,8 +5,8 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
-import * as fromWS from '../store'
 import {EMPTY, forkJoin} from "rxjs";
+import {LoadEpMetrics} from "../store/actions";
 
 
 @Injectable({
@@ -181,7 +181,6 @@ export class CalibrationNewService {
   }
 
   selectPlts(ctx: StateContext<WorkspaceModel>, payload) {
-    console.log(payload)
     const {
       plts,
       wsIdentifier
@@ -194,8 +193,7 @@ export class CalibrationNewService {
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
     return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
       .pipe(
-        tap(r => console.log(r)),
-        mergeMap(() => ctx.dispatch(new fromWS.LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
   }
 }
