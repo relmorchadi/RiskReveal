@@ -23,7 +23,7 @@ public class BatchConfiguration {
     private DataSource dataSource;
 
     @Bean(name = "rrTransactionManager")
-    public DataSourceTransactionManager getDataSourceTransactionManager(){
+    public DataSourceTransactionManager getDataSourceTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);
         return dataSourceTransactionManager;
@@ -31,7 +31,7 @@ public class BatchConfiguration {
 
 
     @Bean(name = "rrJobRepository")
-    public JobRepository getJobRepository() throws Exception{
+    public JobRepository getJobRepository() throws Exception {
         JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
         factory.setTransactionManager(getDataSourceTransactionManager());
         factory.setDataSource(dataSource);
@@ -40,7 +40,7 @@ public class BatchConfiguration {
 
 
     @Bean
-    public SimpleJobLauncher getJobLauncher() throws Exception{
+    public SimpleJobLauncher getJobLauncher() throws Exception {
 
         SimpleJobLauncher simpleJobLauncher = new SimpleJobLauncher();
         simpleJobLauncher.setJobRepository(getJobRepository());
@@ -48,7 +48,8 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Gson getGson(){
+    public Gson getGson() {
         return new Gson();
     }
+
 }

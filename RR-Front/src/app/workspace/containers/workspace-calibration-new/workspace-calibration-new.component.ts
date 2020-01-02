@@ -25,23 +25,30 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   data: any[];
   epMetrics: any;
   adjustments: any;
+  adjustmentTypes: any[];
+  basis: any[];
   loading: boolean;
 
   //Table Config
   tableConfig: {
-    mode: 'default' | 'grouped',
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
-    isExpanded: boolean
+    isExpanded: boolean,
+    expandedRowKeys: any,
+    isGrouped: boolean
   };
   columnsConfig: {
     frozenColumns: any[],
+    frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
   curveTypes: string[];
-  isGrouped: boolean;
   rowKeys: any;
+
+  selectedAdjustment: any;
+  isAdjustmentPopUpVisible: boolean;
+
 
   constructor(
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
@@ -50,15 +57,23 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     super(_baseRouter, _baseCdr, _baseStore);
 
     this.data = [];
+    this.adjustmentTypes= [];
+    this.basis= [];
     this.tableConfig = {
-      mode: "default",
-      view: "epMetrics",
+      view: "adjustments",
       selectedCurveType: "OEP",
-      isExpanded: false
+      isExpanded: false,
+      expandedRowKeys: {},
+      isGrouped: true
+    };
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '530px'
     };
     this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
-    this.isGrouped= false;
     this.rowKeys= {};
+
+    this.isAdjustmentPopUpVisible= false;
   }
 
   ngOnInit() {
@@ -79,6 +94,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       workspaceType
     } = this.selectState(state);
 
+    this.wsIdentifier = wsIdentifier;
+
     this.iniRouting(wsIdentifier, wsId, uwYear, workspaceType);
     this.initComponent(calibrationNew);
 
@@ -91,13 +108,20 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       //INIT
       console.log(workspaceType);
       this.calibrationTableService.setWorkspaceType(workspaceType);
-      this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
+      this.columnsConfig = {
+        ...this.columnsConfig,
+        ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+      };
 
-      //SUBS
+      //SUB
+      this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
+      this.subscribeToConstants(wsId + "-" + uwYear);
 
       //Others
+      this.loadConstants();
       this.loadCalibrationPlts(wsId, uwYear);
+      this.loadAdjustments(wsId, uwYear);
       this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
     }
 
@@ -110,8 +134,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.dispatch(new fromWorkspaceStore.LoadGroupedPltsByPure({wsId ,uwYear}));
   }
 
+  loadAdjustments(wsId: string, uwYear: number) {
+    this.dispatch(new fromWorkspaceStore.LoadDefaultAdjustmentsInScope({wsId, uwYear}))
+  }
+
   loadEpMetrics(wsId: string, uwYear: number, userId: number, curveType: string) {
     this.dispatch(new fromWorkspaceStore.LoadEpMetrics({wsId, uwYear, userId, curveType}));
+  }
+
+  loadConstants() {
+    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants())
   }
 
   subscribeToEpMetrics (wsIdentifier: string) {
@@ -127,6 +159,33 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       this.detectChanges();
     })
+  }
+
+  subscribeToAdjustments (wsIdentifier: string) {
+    this.select(WorkspaceState.getAdjustments(wsIdentifier))
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(adjustments => {
+        this.adjustments = adjustments;
+
+        this.detectChanges();
+      })
+  }
+
+  subscribeToConstants(wsIdentifier: string) {
+    this.select(WorkspaceState.getCalibrationConstants(wsIdentifier))
+      .pipe(
+        takeWhile(v => !_.isNil(v)),
+        this.unsubscribeOnDestroy
+      )
+      .subscribe(({basis, adjustmentTypes}) => {
+        this.basis = basis;
+        this.adjustmentTypes = adjustmentTypes;
+
+        this.detectChanges();
+      })
   }
 
   initComponent(state) {
@@ -147,7 +206,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       cols,
       'epMetrics'
     );
-    this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
 
   onViewChange(newView) {
@@ -156,30 +218,63 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       view: newView
     };
-    this.columnsConfig = this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      ...this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
+    };
   }
 
-  setIsGrouped(newIsGrouped) {
-    this.isGrouped = newIsGrouped;
+  toggleGrouping() {
+    this.tableConfig = {
+      ...this.tableConfig,
+      isGrouped: !this.tableConfig.isGrouped,
+      expandedRowKeys: this.tableConfig.isGrouped ? {} : this.tableConfig.expandedRowKeys
+    };
   }
 
   handleTableActions(action: Message) {
     switch (action.type) {
 
       case 'View Change':
-
         this.onViewChange(action.payload);
         break;
 
-      case 'IsGrouped Change':
-
-        this.setIsGrouped(action.payload);
+      case 'Toggle Grouping':
+        this.toggleGrouping();
         break;
 
       case "Expand columns OFF":
         this.expandColumnsOff();
         break;
 
+      case "Expand columns ON":
+        this.expandColumns();
+        break;
+
+      case "View Adjustment Detail":
+        this.viewAdjustmentDetail(action.payload);
+        break;
+
+      case "Resize frozen Column":
+        this.resizeFrozenColumn(action.payload);
+        this.detectChanges();
+        break;
+
+      case "Row Expand change":
+        this.rowExpandChange(action.payload);
+        break;
+
+      default:
+        console.log(action);
+    }
+  }
+
+  handleAdjustmentPopUp(action: Message) {
+    switch (action.type) {
+      case "Hide Adjustment Pop up":
+        this.isAdjustmentPopUpVisible= false;
+        this.selectedAdjustment = null;
+        break;
       default:
         console.log(action);
     }
@@ -190,7 +285,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: true
     };
-    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '0px',
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
 
   expandColumnsOff() {
@@ -198,6 +297,30 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: false
     };
-    this.columnsConfig = this.columnsConfig = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: '530px',
+      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+    };
   }
+
+  viewAdjustmentDetail(newAdjustment) {
+    this.selectedAdjustment = {...newAdjustment};
+    this.isAdjustmentPopUpVisible = true;
+  }
+
+  resizeFrozenColumn(delta) {
+    this.columnsConfig = {
+      ...this.columnsConfig,
+      frozenWidth: ( _.toNumber(_.trimEnd(this.columnsConfig.frozenWidth, "px")) + delta ) + "px"
+    }
+  }
+
+  rowExpandChange(rowExpandKeys) {
+    this.tableConfig = {
+      ...this.tableConfig,
+      expandedRowKeys: rowExpandKeys
+    }
+  }
+
 }

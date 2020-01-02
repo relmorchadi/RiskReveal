@@ -11,6 +11,8 @@ import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/atta
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
 import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogComponent, OverridePeqtDialogComponent, OverrideOccurenceBasisDialogComponent} from "./import/analysis-result";
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
+import {AdjustmentPopUpNewComponent} from "./calibration-new/adjustment-pop-up-new/adjustment-pop-up-new.component";
+import {ReturnPeriodPopUpComponent} from "./calibration-new/return-period-pop-up/return-period-pop-up.component";
 
 export const COMPONENTS = [
   LeftMenuComponent,
@@ -26,6 +28,8 @@ export const COMPONENTS = [
   AnalysisResultComponent,
   PortfolioResultComponent,
   CalibrationNewTableComponent,
+  AdjustmentPopUpNewComponent,
+  ReturnPeriodPopUpComponent,
   PortfolioResultComponent,
   OverrideRegionPerilDialogComponent,
   FinancialPerspSelectionDialogComponent,

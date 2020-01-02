@@ -1,9 +1,6 @@
 package com.scor.rr.service.abstraction;
 
-import com.scor.rr.domain.dto.RLAnalysisDto;
-import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
-import com.scor.rr.domain.dto.RLPortfolioDto;
-import com.scor.rr.domain.dto.RegionPerilDto;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 
 import java.util.List;
@@ -20,6 +17,8 @@ public interface ConfigurationService {
     List<RegionPerilDto> getRegionPeril(Long rlAnalysisId);
 
     List<RLSourceEpHeaderView> getSourceEpHeadersByAnalysis(Long rlAnalysisId);
+
+    List<CARDivisionDto> getDivisions(String carId);
 
     Map<Long,List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
 }

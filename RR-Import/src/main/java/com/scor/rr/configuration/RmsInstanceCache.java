@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class RmsInstanceCache {
 
-
     private LoadingCache<String, DataSource> cache;
 
     @Value("${ds.cache.params.duration}")

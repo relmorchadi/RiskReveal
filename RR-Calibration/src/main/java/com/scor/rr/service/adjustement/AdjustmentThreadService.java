@@ -69,6 +69,9 @@ public class AdjustmentThreadService {
     private PltHeaderRepository pltHeaderRepository;
 
     @Autowired
+    private AdjustmentStateRepository adjustmentStateRepository;
+
+    @Autowired
     private DefaultAdjustmentService defaultAdjustmentService;
 
     public AdjustmentThread findOne(Integer id){
@@ -89,7 +92,8 @@ public class AdjustmentThreadService {
 //        adjustmentThreadEntity.setLastModifiedOn(adjustmentThreadEntity.getCreatedOn());
 //        adjustmentThreadEntity.setCreatedBy(adjustmentThreadCreationRequest.getCreatedBy());
         adjustmentThread.setLocked(false);
-        adjustmentThread.setThreadStatus("Initialized");
+        AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+        adjustmentThread.setThreadStatus(adjustmentState.getCode());
         if (pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).isPresent()) {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(adjustmentThreadCreationRequest.getPltPureId()).get();
             if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
@@ -108,20 +112,25 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThread getByPltHeader(Long pltHeaderId){
-        return adjustmentThreadRepository.getByFinalPLTPltHeaderId(pltHeaderId);
-    }
-
-    public AdjustmentThread updateAdjustmentThreadFinalPLT(AdjustmentThreadUpdateRequest request) throws RRException {
+    public AdjustmentThread lockUnlockAdjustmentThread(AdjustmentThreadUpdateRequest request) {
         AdjustmentThread adjustmentThread = adjustmentThreadRepository.getOne(request.getAdjustmentThreadId());
         if (adjustmentThread != null) {
-            if (request.getPltFinalId() != null) {
-                adjustmentThread.setFinalPLT(pltHeaderRepository.getOne(request.getPltFinalId()));
+            if (request.isLocked()) {
+                if ("Valid".equals(adjustmentThread.getThreadStatus())) {
+                    adjustmentThread.setLocked(true);
+                    AdjustmentState adjustmentState = adjustmentStateRepository.findById(5).get(); // status Locked
+                    adjustmentThread.setThreadStatus(adjustmentState.getCode());
+                } else {
+                    throw new IllegalStateException("---------- updateAdjustmentThread, thread not valid, cannot lock, wrong ----------");
+                }
+            } else {
+                adjustmentThread.setLocked(false);
+                AdjustmentState adjustmentState = adjustmentStateRepository.findById(4).get(); // thread unlocked --> valid
+                adjustmentThread.setThreadStatus(adjustmentState.getCode());
             }
-            adjustmentThread.setLocked(request.isLocked());
             return adjustmentThreadRepository.save(adjustmentThread);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
+            throw new IllegalStateException("---------- updateAdjustmentThread, thread not found, wrong ----------");
         }
     }
 
@@ -131,7 +140,7 @@ public class AdjustmentThreadService {
         return nodeOrder.getAdjustmentOrder();
     }
 
-    public AdjustmentThread cloneThread(Integer threadId) throws RRException {
+    public AdjustmentThread cloneThreadWithAdjustment(Integer threadId) throws RRException {
         AdjustmentThread thread = adjustmentThreadRepository.getOne(threadId);
 
         if (thread == null) {
@@ -144,7 +153,8 @@ public class AdjustmentThreadService {
 
         AdjustmentThread newThread = new AdjustmentThread();
         newThread.setThreadIndex(calculateNewThreadIndex(thread.getInitialPLT()));
-        newThread.setThreadStatus("Initialized");
+        AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+        newThread.setThreadStatus(adjustmentState.getCode());
         newThread.setLocked(false);
         newThread.setInitialPLT(thread.getInitialPLT());
 //        newThread.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
@@ -296,7 +306,16 @@ public class AdjustmentThreadService {
         }
     }
 
-    public AdjustmentThread cloneThreadWithoutDefaultAdjustment(Integer threadId) throws RRException {
+    public AdjustmentThread cloneThread(Integer threadId, boolean withAdjustment) throws RRException {
+        if (withAdjustment) {
+            return cloneThreadWithAdjustment(threadId);
+        } else {
+            return cloneThreadWithoutAdjustment(threadId);
+        }
+    }
+
+
+    public AdjustmentThread cloneThreadWithoutAdjustment (Integer threadId) throws RRException {
         AdjustmentThread thread = adjustmentThreadRepository.getOne(threadId);
 
         if (thread == null) {
@@ -308,11 +327,11 @@ public class AdjustmentThreadService {
         }
 
         AdjustmentThread newThread = new AdjustmentThread();
-        //        newThread.setThreadIndex(thread.getThreadIndex()); // todo
-        newThread.setThreadStatus("Initialized");
+        AdjustmentState adjustmentState = adjustmentStateRepository.findById(1).get();
+        newThread.setThreadStatus(adjustmentState.getCode());
+        newThread.setThreadIndex(calculateNewThreadIndex(thread.getInitialPLT()));
         newThread.setLocked(false);
         newThread.setInitialPLT(thread.getInitialPLT());
-//        newThread.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
         adjustmentThreadRepository.save(newThread); // save to take id
 
         // clone nodes
@@ -354,18 +373,18 @@ public class AdjustmentThreadService {
        return createNewAdjustmentThread(new AdjustmentThreadCreationRequest(adjustmentThread.getInitialPLT().getPltHeaderId(), request.getCreatedBy(), request.isGenerateDefaultThread()));
     }
 
-    public AdjustmentThread cloneThread(Long initialPlt, PltHeaderEntity clonedPlt) throws RRException {
-       AdjustmentThread thread =  adjustmentThreadRepository.getByFinalPLTPltHeaderId(initialPlt);
-       if (thread!=null) {
-           AdjustmentThread threadClone = new AdjustmentThread();
-           threadClone.setLocked(thread.getLocked());
-           threadClone.setInitialPLT(clonedPlt);
-           threadClone.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
-           return adjustmentThreadRepository.save(threadClone);
-       } else {
-           throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
-       }
-    }
+//    public AdjustmentThread cloneThread(Long initialPlt, PltHeaderEntity clonedPlt) throws RRException {
+//       AdjustmentThread thread =  adjustmentThreadRepository.getByFinalPLTPltHeaderId(initialPlt);
+//       if (thread!=null) {
+//           AdjustmentThread threadClone = new AdjustmentThread();
+//           threadClone.setLocked(thread.getLocked());
+//           threadClone.setInitialPLT(clonedPlt);
+//           threadClone.setFinalPLT(cloningScorPltHeaderService.cloneScorPltHeader(thread.getFinalPLT().getPltHeaderId()));
+//           return adjustmentThreadRepository.save(threadClone);
+//       } else {
+//           throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
+//       }
+//    }
 
     public void delete(Integer id) {
         this.adjustmentThreadRepository.delete(

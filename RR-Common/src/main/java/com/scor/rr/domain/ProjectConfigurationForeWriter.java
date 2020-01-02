@@ -69,7 +69,7 @@ public class ProjectConfigurationForeWriter {
     private String uwAnalysis;
 
     @Column(name = "AssignedTo")
-    private Integer assignedTo;
+    private Long assignedTo;
 
     @Column(name = "LastUpdateBy", nullable = false)
     private Integer lastUpdateBy;

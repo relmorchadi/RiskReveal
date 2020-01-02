@@ -17,7 +17,7 @@ public class UserRrEntity {
 
     @Id
     @Column(name = "UserId")
-    private int userId;
+    private Long userId;
 
     @Column(name = "Entity")
     private int entity;

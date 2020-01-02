@@ -1,12 +1,9 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JoinFormula;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Calibration {
+public class CalibrationView {
 
     private String workspaceContextCode;
     private Integer uwYear;
@@ -88,5 +85,5 @@ public class Calibration {
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "pureId")
-    private List<Calibration> threads;
+    private List<CalibrationView> threads;
 }

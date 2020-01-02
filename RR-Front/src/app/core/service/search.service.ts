@@ -53,6 +53,10 @@ export class SearchService {
     return this._http.get(`${this.api}shortcuts`);
   }
 
+  getDivision() {
+
+  }
+
   getMostRecentSearch() {
     return this._http.get(`${this.api}recent?userId=1`);
   }

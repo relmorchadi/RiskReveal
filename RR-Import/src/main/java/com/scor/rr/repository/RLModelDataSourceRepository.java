@@ -18,6 +18,8 @@ public interface RLModelDataSourceRepository extends JpaRepository<RLModelDataSo
 
     RLModelDataSource findByInstanceIdAndProjectIdAndRlId(String instanceId, Long projectId, Long rlId);
 
+    RLModelDataSource findByRlIdAndNameAndProjectId(Long edmId,String edmName, Long projectId);
+
     @Modifying
     @Query("update RLModelDataSource rlmd set rlmd.count=:count where rlmd.rlModelDataSourceId=:rlModelDataSourceId")
     @Transactional(transactionManager = "rrTransactionManager")

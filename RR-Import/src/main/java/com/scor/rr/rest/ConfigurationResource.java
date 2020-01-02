@@ -113,6 +113,16 @@ public class ConfigurationResource {
         }
     }
 
+    @GetMapping(value = "get-divisions-for-car")
+    public ResponseEntity<?> getDivisions(@RequestParam String carId) {
+        try {
+            return new ResponseEntity<>(configurationService.getDivisions(carId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "get-region-peril-for-multi-analysis")
     public ResponseEntity<?> getRegionPerilsForMuliAnalysis(@RequestParam List<Long> rlAnalysisIds) {
         try {

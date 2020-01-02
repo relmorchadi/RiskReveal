@@ -25,7 +25,7 @@ public class UserTag {
     private Long tagId;
 
     @Column(name = "UserId")
-    private Integer user;
+    private Long user;
 
     @Column(name = "UserOverrideColour", length = 8)
     private String userOverrideColour;

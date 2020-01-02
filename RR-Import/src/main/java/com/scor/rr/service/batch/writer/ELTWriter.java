@@ -1,11 +1,11 @@
 package com.scor.rr.service.batch.writer;
 
+import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
-import com.scor.rr.domain.LossDataHeaderEntity;
-import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.repository.LossDataHeaderEntityRepository;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -44,6 +44,9 @@ public class ELTWriter extends AbstractWriter {
     @Value("${ihub.treaty.out.path}")
     private String iHub;
 
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+
     public RepeatStatus writeBinary() {
 
         log.debug("Starting ELTBinaryWriter");
@@ -53,6 +56,8 @@ public class ELTWriter extends AbstractWriter {
             log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getRlId());
 
             writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
+
+            log.debug("Starting ELTConformer");
             writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
 
             log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
@@ -65,20 +70,30 @@ public class ELTWriter extends AbstractWriter {
 
         log.debug("Starting write RRLT");
 
-        String filename = makeELTFileName(
-                modelAnalysisEntity.getCreationDate(),
-                modelAnalysisEntity.getRegionPeril(),
-                modelAnalysisEntity.getFinancialPerspective(),
-                rrImportedLossData.getCurrency(),
-                rrImportedLossData.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
-                rrImportedLossData.getLossDataHeaderId(),
-                ".bin");
-
+        String filename = "";
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            filename = makeELTFileName(
+                    modelAnalysisEntity.getCreationDate(),
+                    modelAnalysisEntity.getRegionPeril(),
+                    modelAnalysisEntity.getFinancialPerspective(),
+                    rrImportedLossData.getCurrency(),
+                    rrImportedLossData.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
+                    rrImportedLossData.getLossDataHeaderId(),
+                    ".bin");
+        } else {
+            filename = makeELTFileName(
+                    modelAnalysisEntity.getCreationDate(),
+                    modelAnalysisEntity.getRegionPeril(),
+                    modelAnalysisEntity.getFinancialPerspective(),
+                    rrImportedLossData.getCurrency(),
+                    XLTOT.ORIGINAL,
+                    rrImportedLossData.getLossDataHeaderId(),
+                    ".bin");
+        }
         log.debug("write ELT filename = {} elt lost list size = {}", filename, eltLossList.size());
 
         File file = writeELTFile(filename, rrImportedLossData, eltLossList);
         if (file != null) {
-
             rrImportedLossData.setLossDataFileName(new BinFile(file).getFileName()); // Set file name and persist ELTHeader
             rrImportedLossData.setLossDataFilePath(new BinFile(file).getPath()); // Set file name and persist ELTHeader
         }
@@ -130,10 +145,11 @@ public class ELTWriter extends AbstractWriter {
             LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
             lossDataHeaderEntityRepository.save(sourceRRLT);
 
-            LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
-            lossDataHeaderEntityRepository.save(conformedRRLT);
-
-            log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
+            if (marketChannel.equalsIgnoreCase("Treaty")) {
+                LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
+                lossDataHeaderEntityRepository.save(conformedRRLT);
+                log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
+            }
 
             log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
         }
