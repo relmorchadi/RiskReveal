@@ -294,47 +294,47 @@
               </ul>
             </nz-dropdown>
           </div>
-          <div class="body-wrap-dropDowns-calibration">
-            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-              <div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>
-                <div class="dropdown-wrap-title-calibration">
-                  <span class="dropdown-title-calibration">Financial Unit</span>
-                  <span class="dropdown-item-selected-calibration">
-                  {{tableConfig?.selectedFinancialUnit}}
-                </span>
-                </div>
-                <div class="dropdown-icon">
-                  <i nz-icon type="down"></i>
-                </div>
-              </div>
-              <ul nz-menu>
-                <li
-                  *ngFor="let financialUnit of constants?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">
-                  {{financialUnit}}
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
-          <div class="body-wrap-dropDowns-calibration">
-            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-              <div class="dropdown-wrap-calibration" nz-dropdown>
-                <div class="dropdown-wrap-title-calibration">
-                  <span class="dropdown-title-calibration">Change Currency</span>
-                  <span class="dropdown-item-selected-calibration">
-                        {{selectedCurrencie}}
-                      </span>
-                </div>
-                <div class="dropdown-icon">
-                  <i nz-icon type="down"></i>
-                </div>
-              </div>
-              <ul nz-menu>
-                <li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">
-                  {{currency.label}}
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
+          <!--<div class="body-wrap-dropDowns-calibration">-->
+            <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
+              <!--<div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>-->
+                <!--<div class="dropdown-wrap-title-calibration">-->
+                  <!--<span class="dropdown-title-calibration">Financial Unit</span>-->
+                  <!--<span class="dropdown-item-selected-calibration">-->
+                  <!--{{tableConfig?.selectedFinancialUnit}}-->
+                <!--</span>-->
+                <!--</div>-->
+                <!--<div class="dropdown-icon">-->
+                  <!--<i nz-icon type="down"></i>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<ul nz-menu>-->
+                <!--<li-->
+                  <!--*ngFor="let financialUnit of constants?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">-->
+                  <!--{{financialUnit}}-->
+                <!--</li>-->
+              <!--</ul>-->
+            <!--</nz-dropdown>-->
+          <!--</div>-->
+          <!--<div class="body-wrap-dropDowns-calibration">-->
+            <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
+              <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
+                <!--<div class="dropdown-wrap-title-calibration">-->
+                  <!--<span class="dropdown-title-calibration">Change Currency</span>-->
+                  <!--<span class="dropdown-item-selected-calibration">-->
+                        <!--{{selectedCurrencie}}-->
+                      <!--</span>-->
+                <!--</div>-->
+                <!--<div class="dropdown-icon">-->
+                  <!--<i nz-icon type="down"></i>-->
+                <!--</div>-->
+              <!--</div>-->
+              <!--<ul nz-menu>-->
+                <!--<li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">-->
+                  <!--{{currency.label}}-->
+                <!--</li>-->
+              <!--</ul>-->
+            <!--</nz-dropdown>-->
+          <!--</div>-->
         </div>
       </div>
 
