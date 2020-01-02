@@ -49,7 +49,7 @@ public class ScorPltHeaderService {
     }
 
     public Double CoefOfVariance(String path) throws RRException {
-        return StatisticAdjustment.CoefOfVariance(getPltLossDataFromFile(path));
+        return StatisticAdjustment.coefOfVariance(getPltLossDataFromFile(path));
     }
 
     public EPMetric AEPTVaRMetrics(String path) throws RRException {

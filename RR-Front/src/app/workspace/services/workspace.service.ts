@@ -116,7 +116,8 @@ export class WorkspaceService {
           calibrationNew: {
             plts: [],
             epMetrics: {
-              cols: []
+              cols: [],
+              rps: []
             },
             adjustments: {},
             constants: {

@@ -43,6 +43,7 @@ public class InuringGroupingService {
         List<String> signs = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
         List<Double> currencies = new ArrayList<>();
+        List<Long> listOfPltNames = new ArrayList<>();
         if (request.getPlts() != null) {
 
             boolean positiveSignExists = false;
@@ -56,6 +57,7 @@ public class InuringGroupingService {
             for (Plts plt : request.getPlts()
                  ) {
                 signs.add(plt.getSign());
+                listOfPltNames.add(plt.getPltId());
                 boolean checking = false;
                 for (ExchangeRate rate: exchangeRates
                      ) {
@@ -97,7 +99,7 @@ public class InuringGroupingService {
 
 
 
-                Pair<Set<Integer>,Integer> par = pltFileReader.read(fileList,signs,currencies,folderPath,lossContributionPath,maxExpoContributionPath);
+                Pair<Set<Integer>,Integer> par = pltFileReader.read(fileList,signs,currencies,folderPath,lossContributionPath,maxExpoContributionPath,listOfPltNames);
                 pltFileReader.createFinalPlt(pltName,par.getKey(),par.getValue(),folderPath,targetFile);
 //                pltFileReader.createFinalContributionMatrix(pltName+"LossContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*4)+4),fileList.size(),"-Con.bin",folderPath,targetFile);
 //                pltFileReader.createFinalContributionMatrix(pltName+"ExpoContributionMatrix",par.getKey(),par.getValue()*((fileList.size()*4)+4),fileList.size(),"-ConMax.bin",folderPath,targetFile);

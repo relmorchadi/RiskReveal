@@ -22,6 +22,8 @@ public class DefaultReturnPeriodEntity {
     private Long defaultReturnPeriodId;
     @Column(name = "ReturnPeriod")
     private Integer returnPeriod;
+    @Column(name = "Rank")
+    private Integer rank;
     @Column(name = "ExceedanceProbability")
     private Double exceedanceProbability;
     @Column(name = "IsTableRP")

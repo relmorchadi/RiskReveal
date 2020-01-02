@@ -243,18 +243,7 @@ public class AdjustmentNodeService {
             }
         }
 
-//        if (adjustmentNodeRequest.getAdjustmentState() == null) {
-//            throw new IllegalStateException("---------- createAdjustmentNode, state id null, wrong ----------");
-//        } else {
-//            AdjustmentState state = adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get();
-//            if (state == null) {
-//                throw new IllegalStateException("---------- createAdjustmentNode, state null, wrong ----------");
-//            } else {
-//                node.setAdjustmentState(state);
-//            }
-//        }
-
-        AdjustmentState state = adjustmentStateRepository.getAdjustmentStateEntityByCodeInvalid();
+        AdjustmentState state = adjustmentStateRepository.findById(1).get();
         if (state == null) {
             throw new IllegalStateException("---------- createAdjustmentNode, state null, wrong ----------");
         } else {

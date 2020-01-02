@@ -4,7 +4,6 @@ import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
-import {tap} from "rxjs/operators";
 import {ActivatedRoute} from "@angular/router";
 declare  const _;
 @Component({
@@ -25,6 +24,7 @@ export class CalibrationNewTableComponent implements OnInit {
   @Input() tableConfig: {
     view: 'adjustment' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
+    selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean
@@ -37,8 +37,15 @@ export class CalibrationNewTableComponent implements OnInit {
   };
   @Input() rowKeys: any;
 
+  @Input() constants: {
+    financialUnits: string[],
+    curveTypes: string[]
+  };
+
   statusFilter: StatusFilter;
-  selectedStatusFilter: any = {};
+  selectedStatusFilter: any = {
+
+  };
   lastClick: any = {
     pure_index: null,
     thread_index: null
@@ -51,19 +58,6 @@ export class CalibrationNewTableComponent implements OnInit {
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  };
-
-  selectedEPM: any = "AEP";
-  EPMS: any = ["AEP", "AEP-TVAR", "OEP", "OEP-TVAR"];
-  selectFinancial: any = "Million";
-  financialUnits: any = {
-    data:  [
-      {id: '3', label: 'Billion'},
-      {id: '1', label: 'Thousands'},
-      {id: '2', label: 'Million'},
-      {id: '4', label: 'Unit'}
-    ],
-    selected: {id: '2', label: 'Million'}
   };
   selectedCurrencie: any = 'EUR';
   currencies = {
@@ -81,46 +75,26 @@ export class CalibrationNewTableComponent implements OnInit {
     ],
     selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
+  statusOptions:any = [
+    {title: 'In Progress', field: 'inProgress', class: 'icon-history-alt iconYellow'},
+    {title: 'New', field: 'new', class: 'icon-star iconBlue'},
+    {title: 'Valid', field: 'valid', class: 'icon-check-circle iconGreen'},
+    {title: 'Locked', field: 'locked', class: 'icon-lock-alt iconRed'},
+    {title: 'Requires regeneration', field: 'requiresRegeneration', class: 'icon-report_problem_24px iconYellow2'},
+    {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
+  ]
 
 
-
-  /*selectedThreads: any = {
-
-  }*/
 
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
     this.statusFilter = new StatusFilter();
+    this.selectedStatusFilter = this.statusFilter;
   }
 
-  statusFlilerCheckbox($event: any, type: string) {
-    switch (type) {
-      case 'inProgress':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'inProgress': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['inProgress']);
-        break;
-      case 'new':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'new': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['new']);
-        break;
-      case 'valid':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'valid': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['valid']);
-        break;
-      case 'locked':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'locked': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['locked']);
-        break;
-      case 'requiresRegeneration':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'requiresRegeneration': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['requiresRegeneration']);
-        break;
-      case 'failed':
-        if (event.target['checked']) this.selectedStatusFilter = {...this.selectedStatusFilter, 'failed': true};
-        else this.selectedStatusFilter = _.omit(this.selectedStatusFilter, ['failed']);
-        break;
-    }
+  statusFlilerCheckbox(event: any, type: string) {
+    this.selectedStatusFilter = {...this.selectedStatusFilter, [type]: event};
   }
 
   unexpandColumns() {
@@ -149,10 +123,6 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   handlepltClick($event, pureId, threadId, pureIndex, threadIndex, clickType) {
-    console.log(pureIndex);
-    console.log(threadIndex);
-    /*threadIndex = _.findIndex(this.data[pureIndex].threads, (row: any)=>{ row.pltId = threadId });*/
-    let index = -1;
     let isSelected;
     _.forEach(this.data, (plt, i)=>{
       _.forEach(plt.threads, (thread, j)=>{
@@ -165,7 +135,6 @@ export class CalibrationNewTableComponent implements OnInit {
       this.handlePLTClickWithKey(pureId, pureIndex, threadId, threadIndex, !isSelected, $event);
     } else {
       this.lastSelectedId = threadIndex;
-      console.log(this.data)
       this.data.forEach((pure, i) => {
         pure.threads.forEach((thread, j) => {
           if (pureIndex === i && threadIndex === j){
@@ -175,7 +144,6 @@ export class CalibrationNewTableComponent implements OnInit {
           }
         });
       })
-      console.log(this.data)
       this.toggleSelectPlts(this.data);
       this.updateLastClick(pureIndex, threadIndex)
       this.selectOptions.indeterminate = isSelected ?  false : true;
@@ -303,16 +271,25 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
-  changeEPM(epm: any) {
-    this.selectedEPM = epm;
+  curveTypeChange(curveType) {
+    this.actionDispatcher.emit({
+      type: "Curve Type Change",
+      payload: curveType
+    })
   }
 
   changeCurrencie(currency: any) {
-    this.selectedCurrencie = currency;
+    this.actionDispatcher.emit({
+      type: "Financial Unit Change",
+      payload: currency
+    })
   }
 
-  changeFinancialUnit(financialUnit: any) {
-    this.selectFinancial = financialUnit;
+  financialUnitChange(financialUnit: any) {
+    this.actionDispatcher.emit({
+      type: "Financial Unit Change",
+      payload: financialUnit
+    })
   }
 
   onColumnResize({delta, element: {id}}) {
@@ -324,4 +301,13 @@ export class CalibrationNewTableComponent implements OnInit {
     }
   }
 
+  openRPManager() {
+    this.actionDispatcher.emit({
+      type: "Open return periods manager"
+    })
+  }
+
+  displa(col: any) {
+    console.log(col)
+  }
 }
