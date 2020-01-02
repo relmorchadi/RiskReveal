@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.RlEltLoss;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.domain.LossDataHeaderEntity;

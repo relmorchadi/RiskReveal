@@ -1,4 +1,4 @@
-package com.scor.rr.domain.dto;
+package com.scor.rr.configuration.file;
 
 import java.io.File;
 import java.util.Objects;
