@@ -91,13 +91,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
-        Map<Long, List<RegionPerilDto>> result = new HashMap<>();
-        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
-        return result;
-    }
-
-    @Override
     public List<CARDivisionDto> getDivisions(String carId) {
         List<Map<String, Object>> divisions = projectConfigurationForeWriterDivisionRepository.findByCARId(carId);
         List<CARDivisionDto> carDivisions = new ArrayList<>();
@@ -116,5 +109,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
 
         return carDivisions;
+    }
+
+    @Override
+    public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
+        Map<Long, List<RegionPerilDto>> result = new HashMap<>();
+        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
+        return result;
     }
 }
