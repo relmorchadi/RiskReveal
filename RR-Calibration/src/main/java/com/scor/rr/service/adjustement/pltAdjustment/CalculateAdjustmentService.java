@@ -60,15 +60,9 @@ public class CalculateAdjustmentService {
         Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
 
         if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-            if (plt.getModelAnalysisId() == null) {
-                throw new IllegalStateException("calculateSummaryStatisticHeaderDetail, plt.getModelAnalysisId() null, wrong");
-            }
-            if (plt.getModelAnalysisId() == null) {
-                throw new IllegalStateException("calculateSummaryStatisticHeaderDetail, lossDataHeader null, wrong");
-            }
-            LossDataHeaderEntity lossDataHeader = lossDataHeaderEntityRepository.findByModelAnalysisId(plt.getModelAnalysisId());
+            // LossDataHeaderEntity : ELT
 
-            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeader.getLossDataHeaderId(), "PLT");
+            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltId, "PLT");
             if (summaryStatisticHeaders != null && !summaryStatisticHeaders.isEmpty()) {
                 return summaryStatisticHeaders.get(0);
             }
@@ -83,7 +77,7 @@ public class CalculateAdjustmentService {
             summaryStatisticHeaderEntity.setCov(StatisticAdjustment.coefOfVariance(pltLossData));
             summaryStatisticHeaderEntity.setStandardDeviation(StatisticAdjustment.stdDev(pltLossData));
             summaryStatisticHeaderEntity.setLossDataType("PLT");
-            summaryStatisticHeaderEntity.setLossDataId(lossDataHeader.getLossDataHeaderId()); // todo right ?
+            summaryStatisticHeaderEntity.setLossDataId(plt.getPltHeaderId());
             summaryStatisticHeaderEntity.setFinancialPerspective("FP"); // todo right ?
             summaryStatisticHeaderEntity.setEntity(1L);
             summaryStatisticHeaderEntity.setCurrency(plt.getCurrencyCode());
