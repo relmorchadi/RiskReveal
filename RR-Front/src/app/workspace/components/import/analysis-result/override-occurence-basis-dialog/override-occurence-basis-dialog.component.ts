@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'override-occurence-basis-dialog',
