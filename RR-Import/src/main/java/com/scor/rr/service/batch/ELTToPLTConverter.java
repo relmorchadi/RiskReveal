@@ -2,6 +2,7 @@ package com.scor.rr.service.batch;
 
 
 import com.codahale.metrics.Timer;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
