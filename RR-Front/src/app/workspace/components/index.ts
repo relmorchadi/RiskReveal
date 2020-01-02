@@ -9,10 +9,8 @@ import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.compo
 import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
-import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogComponent, OverridePeqtDialogComponent} from "./import/analysis-result";
+import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogComponent, OverridePeqtDialogComponent, OverrideOccurenceBasisDialogComponent} from "./import/analysis-result";
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
-
-
 
 export const COMPONENTS = [
   LeftMenuComponent,
@@ -31,7 +29,8 @@ export const COMPONENTS = [
   PortfolioResultComponent,
   OverrideRegionPerilDialogComponent,
   FinancialPerspSelectionDialogComponent,
-  OverridePeqtDialogComponent
+  OverridePeqtDialogComponent,
+  OverrideOccurenceBasisDialogComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

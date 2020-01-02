@@ -22,6 +22,10 @@ export class RiskApi {
     return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {params: {projectId, instanceId, instanceName}});
   }
 
+  rescanDataSource(dataSource:any, projectId, instanceId,instanceName){
+    return this.http.post(`${this.IMPORT_URL}import/config/single-basic-scan`, dataSource, {params: {projectId, instanceId, instanceName}});
+  }
+
   loadDataSourceContent(instanceId, projectId, rmsId , type){
     return this.http.get(`${this.IMPORT_URL}import/config/get-riskLink-analysis-portfolios`, {params: {instanceId, projectId, rmsId , type}});
   }

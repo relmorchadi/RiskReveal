@@ -60,17 +60,17 @@ export class AnalysisResultComponent implements OnInit {
       visible: true,
       edit: false
     },
-    // {
-    //   field: 'occurrenceBasis',
-    //   header: 'Occurrence Basis',
-    //   width: '100px',
-    //   type: 'Ob',
-    //   sorting: '',
-    //   filtered: true,
-    //   highlight: true,
-    //   visible: true,
-    //   edit: false
-    // },
+    {
+      field: 'occurrenceBasis',
+      header: 'Occurrence Basis',
+      width: '100px',
+      type: 'Ob',
+      sorting: '',
+      filtered: true,
+      highlight: true,
+      visible: true,
+      edit: false
+    },
     // {
     //   field: 'targetRap',
     //   header: 'Target RAP',
@@ -286,36 +286,11 @@ export class AnalysisResultComponent implements OnInit {
     ].map(item => ({...item, selected: false}))
   };
 
-  targetRapDataTable = [
-    {
-      field: 'selected',
-      header: '',
-      width: '20px',
-      type: 'select',
-      sorting: false,
-      filtered: false,
-      highlight: false,
-      visible: true
-    },
-    {
-      field: 'value',
-      header: 'target Rap',
-      width: '160px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true
-    },
-  ];
-
-  showUpdatePEQTModal = false;
-
-  lastUpdatedAnalyisPEQTIndex=null;
-
   showOverrideRpDialog=false;
   showSelectFinancialPerspDialog=false;
   showOverridePEQTDialog=false;
+  showOverrideOccurrenceBasisDialog=false;
+  lastAnalysisIndex= null;
 
   constructor(private store: Store) {
   }
@@ -346,34 +321,13 @@ export class AnalysisResultComponent implements OnInit {
     this.updateRowData('selected', rowData.selected, i);
   }
 
-  overrideRegionPerilOccurrenceBasis(row, colType){
+  overrideRegionPerilOccurrenceBasis(row, colType, index){
+    this.lastAnalysisIndex= index;
     if(colType == 'Rp'){
       this.showOverrideRpDialog=true;
+    }else if(colType == 'Ob'){
+      this.showOverrideOccurrenceBasisDialog=true;
     }
-  }
-
-  updateRow(rowData, type) {
-
-  }
-
-  updatePEQT() {
-    this.updateRowData('peqt',
-      this.refs.targetRaps.filter(item => item.selected).map(item => item.value),
-      this.lastUpdatedAnalyisPEQTIndex);
-    this.showUpdatePEQTModal = false;
-  }
-
-  openPEQTModal(i) {
-    this.lastUpdatedAnalyisPEQTIndex=i;
-    this.showUpdatePEQTModal=true;
-  }
-
-  onPEQTModalShow(){
-    console.log('On PEQT modal show');
-    this.refs.targetRaps= _.map(this.refs.targetRaps, item => ({
-      ...item,
-      selected: false
-    }));
   }
 
   overrideRegionPeril(changes){
@@ -395,6 +349,7 @@ export class AnalysisResultComponent implements OnInit {
   }
 
   overridePEQTs(changes){
+    this.closePEQTOverrideDialog();
     this.store.dispatch(new fromRiskLink.OverrideTargetRaps({changes}));
   }
 
@@ -403,4 +358,11 @@ export class AnalysisResultComponent implements OnInit {
     this.store.dispatch(new fromRiskLink.ClearTargetRaps());
   }
 
+  overrideOccurrenceBasis(occurrenceBasis: any) {
+    this.showOverrideOccurrenceBasisDialog=false;
+    this.store.dispatch(new fromRiskLink.OverrideOccurrenceBasis({
+      occurrenceBasis,
+      analysisIndex: this.lastAnalysisIndex
+    }));
+  }
 }

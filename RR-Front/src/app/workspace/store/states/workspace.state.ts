@@ -1198,6 +1198,15 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadAnalysisRegionPerils(ctx, payload);
   }
 
+  @Action(fromWS.ReScanDataSource)
+  reScanDataSource(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ReScanDataSource){
+    return this.riskLinkFacade.rescanDataSource(ctx, payload);
+  }
+  @Action(fromWS.OverrideOccurrenceBasis)
+  overrideOccurrenceBasis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.overrideOccurrenceBasis(ctx, payload);
+  }
+
 
   /***********************************
    *
