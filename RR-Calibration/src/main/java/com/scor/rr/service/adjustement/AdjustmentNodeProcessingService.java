@@ -149,7 +149,7 @@ public class AdjustmentNodeProcessingService {
                 adjustmentNodes.sort(
                         Comparator.comparing(this::findOrderOfNode));
                 for (AdjustmentNode node : adjustmentNodes) {
-                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
+                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId(), workspaceEntity, modelAnalysis, threadId);
                 }
             }
 

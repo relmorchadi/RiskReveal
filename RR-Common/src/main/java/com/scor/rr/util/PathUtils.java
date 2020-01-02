@@ -183,7 +183,7 @@ public class PathUtils {
         return builder.toString();
     }
     public static String makePLTFileName(WorkspaceEntity workspaceEntity, ModelAnalysisEntity modelAnalysis, PltHeaderEntity plt, Integer threadId, String fileExtension) {
-        return PathUtils.makePLTFileName(1 == workspaceEntity.getWorkspaceMarketChannel() ? "T" : "F",
+        return PathUtils.makePLTFileName(workspaceEntity != null && workspaceEntity.getWorkspaceMarketChannel() != null && 2 == workspaceEntity.getWorkspaceMarketChannel() ? "F" : "T",
                 null,
                 workspaceEntity != null ? workspaceEntity.getClientName() : null,
                 workspaceEntity != null ? workspaceEntity.getWorkspaceContextCode() : null,
