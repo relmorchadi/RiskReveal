@@ -168,7 +168,7 @@ public class AdjustmentNodeProcessingService {
                 sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
             }
 
-            String threadPLTFilename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, finalPLT, threadId, FilenameUtils.getExtension(sourceFile.getName()));
+            String threadPLTFilename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, finalPLT, threadId, null, FilenameUtils.getExtension(sourceFile.getName()));
             File dstFile = new File(sourceFile.getParent(), threadPLTFilename);
             try {
                 UtilsMethod.copyFile(sourceFile, dstFile);
@@ -276,7 +276,7 @@ public class AdjustmentNodeProcessingService {
         List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(inputPLT); // input lay ra List<PLTLossData>
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
-        String filename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, adjustedPLT, threadId, FilenameUtils.getExtension(inputPLT.getLossDataFileName()));
+        String filename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, adjustedPLT, threadId, nodeId, FilenameUtils.getExtension(inputPLT.getLossDataFileName()));
         File binFile = savePLTFile(pltLossData, inputPLT.getLossDataFilePath(), filename); // luu file
         if (binFile != null) {
             log.info("success saving loss file for adjusted PLT");

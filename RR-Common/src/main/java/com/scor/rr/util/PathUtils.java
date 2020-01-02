@@ -182,7 +182,12 @@ public class PathUtils {
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();
     }
-    public static String makePLTFileName(WorkspaceEntity workspaceEntity, ModelAnalysisEntity modelAnalysis, PltHeaderEntity plt, Integer threadId, String fileExtension) {
+    public static String makePLTFileName(WorkspaceEntity workspaceEntity,
+                                         ModelAnalysisEntity modelAnalysis,
+                                         PltHeaderEntity plt,
+                                         Integer threadId,
+                                         Integer nodeId,
+                                         String fileExtension) {
         return PathUtils.makePLTFileName(workspaceEntity != null && workspaceEntity.getWorkspaceMarketChannel() != null && 2 == workspaceEntity.getWorkspaceMarketChannel() ? "F" : "T",
                 null,
                 workspaceEntity != null ? workspaceEntity.getClientName() : null,
@@ -207,8 +212,7 @@ public class PathUtils {
                 threadId,
                 plt.getPltHeaderId(),
                 plt.getImportSequence(),
-                null,
-                null,
+                nodeId,
                 null,
                 fileExtension);
     }
@@ -238,8 +242,7 @@ public class PathUtils {
             Integer threadNum, // 0 for pure PLT
             Long uniqueId,
             Integer importSequence,
-            String edmName,
-            Long portfolioId,
+            Integer nodeId,
             String fileNature,
             String fileExtension) {
         String simBasis = PLTSimulationPeriod.SIM800K.getCode().equals(simulationPeriod) ? "M".concat("-").concat("800") : "N".concat("-").concat("100");
@@ -318,12 +321,10 @@ public class PathUtils {
         } else {
             items.add("Job-X");
         }
-        if (edmName != null) {
-            items.add(edmName);
+        if (nodeId != null) {
+            items.add("Node_" + nodeId.toString());
         }
-        if (portfolioId != null) {
-            items.add("P" + portfolioId);
-        }
+
         if (fileNature != null) {
             items.add(fileNature);
         }
