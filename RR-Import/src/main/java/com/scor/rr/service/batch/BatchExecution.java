@@ -69,6 +69,7 @@ public class BatchExecution {
                         .addString("jobType", params.get("jobType"))
                         .addString("marketChannel", params.get("marketChannel"))
                         .addString("carId", params.get("carId"))
+                        .addString("lob", params.get("lob"))
                         .addString("userId", importLossDataParams.getUserId())
                         .addString("projectId", importLossDataParams.getProjectId())
                         .addString("sourceResultIdsInput", importLossDataParams.getRlImportSelectionIds())
@@ -132,7 +133,7 @@ public class BatchExecution {
 
         if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
             projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(projectId);
-            if(projectConfigurationForeWriter != null) {
+            if (projectConfigurationForeWriter != null) {
                 projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
                         .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
             }
@@ -144,6 +145,7 @@ public class BatchExecution {
         String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
+        String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
         String division = "01"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT
         String sourceVendor = "RMS";
@@ -184,6 +186,7 @@ public class BatchExecution {
         map.put("jobType", jobType);
         map.put("marketChannel", workspaceMarketChannel);
         map.put("carId", carId);
+        map.put("lob", lob);
 
         return map;
     }

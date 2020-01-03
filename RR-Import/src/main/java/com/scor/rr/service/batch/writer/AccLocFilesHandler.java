@@ -1,5 +1,7 @@
 package com.scor.rr.service.batch.writer;
 
+import com.scor.rr.domain.ProjectConfigurationForeWriter;
+import com.scor.rr.domain.ProjectConfigurationForeWriterFiles;
 import com.scor.rr.domain.enums.XLTSubType;
 import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +61,8 @@ public class AccLocFilesHandler extends AbstractWriter {
             ex.printStackTrace();
             return RepeatStatus.valueOf("failed");
         }
+
+        ProjectConfigurationForeWriterFiles accLocFile = new ProjectConfigurationForeWriterFiles();
 
         return RepeatStatus.FINISHED;
     }
