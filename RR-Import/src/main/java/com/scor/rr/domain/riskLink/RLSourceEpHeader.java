@@ -1,5 +1,6 @@
 package com.scor.rr.domain.riskLink;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.RdmAllAnalysisSummaryStats;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,6 @@ public class RLSourceEpHeader {
     private Long rLSourceEPHeaderId;
     @Column(name = "Entity")
     private Integer entity;
-    @Column(name = "RLModelAnalysisId")
-    private Long rLAnalysisId;
     @Column(name = "FinancialPerspective")
     private String financialPerspective;
     @Column(name = "OEP10")
@@ -52,6 +51,11 @@ public class RLSourceEpHeader {
     private Double stdDev;
     @Column(name = "CoV")
     private Double coV;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RLModelAnalysisId")
+    @JsonBackReference
+    private RLAnalysis rlAnalysis;
 
     public RLSourceEpHeader(RdmAllAnalysisSummaryStats stat) {
         financialPerspective = stat.getFinPerspCode();
