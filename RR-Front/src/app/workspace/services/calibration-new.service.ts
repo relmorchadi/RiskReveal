@@ -5,7 +5,7 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
-import {EMPTY, forkJoin} from "rxjs";
+import {EMPTY, forkJoin, of} from "rxjs";
 import {LoadEpMetrics} from "../store/actions";
 
 
@@ -110,50 +110,53 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-      return !this.getCalibState(ctx.getState(), wsIdentifier).epMetrics[curveType] ? this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType))
-        .pipe(
-          tap(epMetrics => {
+    return resetMetrics ?
+      this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)) : (
+        !this.getCalibState(ctx.getState(), wsIdentifier).epMetrics[curveType] ? this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)) : EMPTY
+      ).pipe(
+        tap(epMetrics => {
 
-            ctx.patchState(produce(ctx.getState(), draft => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+
+            const {
+              currentTab: {
+                wsIdentifier
+              }
+            } = draft;
+
+            const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+            if(resetMetrics) {
+              innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
+            };
+
+
+            _.forEach(epMetrics, (metric: any, i) => {
 
               const {
-                currentTab: {
-                  wsIdentifier
-                }
-              } = draft;
+                pltId,
+                curveType
+              } = metric;
 
-              const innerDraft = this.getCalibState(draft, wsIdentifier);
+              if (i == '0') {
+                const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
+                innerDraft.epMetrics.rps = rps;
+                innerDraft.epMetrics.cols = ['AAL', ...rps];
+              }
 
-              if(resetMetrics) {
-                innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
-              };
-
-
-              _.forEach(epMetrics, (metric: any, i) => {
-
-                const {
-                  pltId,
-                  curveType
-                } = metric;
-
-                innerDraft.epMetrics[curveType] = {};
-                innerDraft.epMetrics[curveType][pltId] = metric;
-                if (i == '0') {
-                  const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
-                  innerDraft.epMetrics.rps = rps;
-                  innerDraft.epMetrics.cols = ['AAL', ...rps];
-                }
-              })
+              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType] = {};
+              innerDraft.epMetrics[curveType][pltId] = metric;
+            })
 
 
-            }))
+          }))
 
-          }),
-          catchError(e => {
-            console.log(e);
-            return EMPTY;
-          })
-        ) : EMPTY;
+        }),
+        catchError(e => {
+          console.log(e);
+          return EMPTY;
+        })
+      )
   }
 
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
