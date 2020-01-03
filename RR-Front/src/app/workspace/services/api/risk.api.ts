@@ -22,6 +22,10 @@ export class RiskApi {
     return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {params: {projectId, instanceId, instanceName}});
   }
 
+  rescanDataSource(dataSource:any, projectId, instanceId,instanceName){
+    return this.http.post(`${this.IMPORT_URL}import/config/single-basic-scan`, dataSource, {params: {projectId, instanceId, instanceName}});
+  }
+
   loadDataSourceContent(instanceId, projectId, rmsId , type){
     return this.http.get(`${this.IMPORT_URL}import/config/get-riskLink-analysis-portfolios`, {params: {instanceId, projectId, rmsId , type}});
   }
@@ -40,6 +44,14 @@ export class RiskApi {
 
   loadSourceEpCurveHeaders(rlAnalysisId: any):Observable<any> {
     return this.http.get(`${this.IMPORT_URL}import/config/get-source-ep-headers`, {params: {rlAnalysisId} });
+  }
+
+  loadTargetRap(rlAnalysisId: any):Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}import/config/get-target-raps-for-analysis`, {params: {rlAnalysisId} });
+  }
+
+  loadAnalysisRegionPerils(rlAnalysisIds: any):Observable<any> {
+    return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {

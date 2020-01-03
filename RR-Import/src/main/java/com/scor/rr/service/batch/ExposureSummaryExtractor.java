@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
@@ -37,69 +37,48 @@ import java.util.zip.ZipOutputStream;
 public class ExposureSummaryExtractor {
 
     private static final Logger log = LoggerFactory.getLogger(ExposureSummaryExtractor.class);
-
-    @Autowired
-    private ExposureViewDefinitionRepository exposureViewDefinitionRepository;
-
-    @Autowired
-    private ExposureViewVersionRepository exposureViewVersionRepository;
-
-    @Autowired
-    private ExposureViewQueryRepository exposureViewQueryRepository;
-
-    @Autowired
-    private GlobalExposureViewRepository globalExposureViewRepository;
-
-    @Autowired
-    private ProjectImportRunRepository projectImportRunRepository;
-
-    @Autowired
-    private ExposureViewRepository exposureViewRepository;
-
-    @Autowired
-    private GlobalViewSummaryRepository globalViewSummaryRepository;
-
-    @Autowired
-    private TransformationPackage transformationPackage;
-
-    @Autowired
-    private RegionPerilService regionPerilService;
-
-    @Autowired
-    private ExposureSummaryConformerReferenceRepository exposureSummaryConformerReferenceRepository;
-
-    @Autowired
-    private RLModelDataSourceRepository rlModelDataSourceRepository;
-
-    @Autowired
-    private ExposureSummaryDataRepository exposureSummaryDataRepository;
-
-    @Autowired
-    private RLExposureSummaryItemRepository exposureSummaryItemRepository;
-
-    @Autowired
-    private RmsService rmsService;
-
-    @Autowired
-    private ExposureWriter exposureWriter;
-
-    @Autowired
-    private LocationLevelExposure locationLevelExposure;
-
-    @Autowired
-    private RLPortfolioRepository rlPortfolioRepository;
-
     @Value("#{jobParameters['projectId']}")
     protected String projectId;
-
     @Value("#{jobParameters['division']}")
     protected String division;
-
     @Value("#{jobParameters['periodBasis']}")
     protected String periodBasis;
-
     @Value("#{jobParameters['importSequence']}")
     protected Long importSequence;
+    @Autowired
+    private ExposureViewDefinitionRepository exposureViewDefinitionRepository;
+    @Autowired
+    private ExposureViewVersionRepository exposureViewVersionRepository;
+    @Autowired
+    private ExposureViewQueryRepository exposureViewQueryRepository;
+    @Autowired
+    private GlobalExposureViewRepository globalExposureViewRepository;
+    @Autowired
+    private ProjectImportRunRepository projectImportRunRepository;
+    @Autowired
+    private ExposureViewRepository exposureViewRepository;
+    @Autowired
+    private GlobalViewSummaryRepository globalViewSummaryRepository;
+    @Autowired
+    private TransformationPackage transformationPackage;
+    @Autowired
+    private RegionPerilService regionPerilService;
+    @Autowired
+    private ExposureSummaryConformerReferenceRepository exposureSummaryConformerReferenceRepository;
+    @Autowired
+    private RLModelDataSourceRepository rlModelDataSourceRepository;
+    @Autowired
+    private ExposureSummaryDataRepository exposureSummaryDataRepository;
+    @Autowired
+    private RLExposureSummaryItemRepository exposureSummaryItemRepository;
+    @Autowired
+    private RmsService rmsService;
+    @Autowired
+    private ExposureWriter exposureWriter;
+    @Autowired
+    private LocationLevelExposure locationLevelExposure;
+    @Autowired
+    private RLPortfolioRepository rlPortfolioRepository;
 
     private MultiKey createEdmKey(String instance, Long edmId, String edmName) {
         return new MultiKey(instance, edmId, edmName);

@@ -1,9 +1,9 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.enums.RRLossTableType;
-import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.domain.enums.RRLossTableType;
+import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.batch.writer.AbstractWriter;
@@ -47,36 +47,44 @@ public class ModellingOptionsExtractor extends AbstractWriter {
     @Value("${ihub.treaty.out.path}")
     private String iHub;
 
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+
+
     public RepeatStatus extractModellingOptions() {
 
-        log.debug("Starting ModelingOptionsExtractor.extract");
 
-        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            log.debug("Starting ELTConformer");
+            log.debug("Starting ModelingOptionsExtractor.extract");
 
-            String instanceId = bundle.getInstanceId();
+            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            String modelingOptions = rmsService.getAnalysisModellingOptionSettings(instanceId, bundle.getRlAnalysis().getRdmId(),
-                    bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getRlId());
-            log.info("modelingOptions: {}", modelingOptions);
+                String instanceId = bundle.getInstanceId();
 
-            List<String> options = null;
-            try {
-                options = Utils.parseXMLForModelingOptions(modelingOptions);
-            } catch (DocumentException e) {
-                log.error("modelingOptions DocumentException");
-                e.printStackTrace();
-            } catch (Exception e){
-                log.error("An exception has occurred while parsing modelling options xml");
-                e.printStackTrace();
+                String modelingOptions = rmsService.getAnalysisModellingOptionSettings(instanceId, bundle.getRlAnalysis().getRdmId(),
+                        bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getRlId());
+                log.info("modelingOptions: {}", modelingOptions);
+
+                List<String> options = null;
+                try {
+                    options = Utils.parseXMLForModelingOptions(modelingOptions);
+                } catch (DocumentException e) {
+                    log.error("modelingOptions DocumentException");
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    log.error("An exception has occurred while parsing modelling options xml");
+                    e.printStackTrace();
+                }
+
+                bundle.setModelingOptionsOfRRLT(options);
+
+                writeFile(bundle.getModelAnalysis(), bundle.getConformedRRLT(), modelingOptions);
+
+                log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
             }
-
-            bundle.setModelingOptionsOfRRLT(options);
-
-            writeFile(bundle.getModelAnalysis(), bundle.getConformedRRLT(), modelingOptions);
-
-            log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+            log.debug("ModelingOptionsExtractor.extract completed");
         }
-        log.debug("ModelingOptionsExtractor.extract completed");
         return RepeatStatus.FINISHED;
     }
 

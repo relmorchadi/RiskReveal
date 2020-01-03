@@ -1,4 +1,3 @@
-
 export class WorkspaceMain {
   leftNavbarIsCollapsed: boolean;
   collapseWorkspaceDetail: boolean;

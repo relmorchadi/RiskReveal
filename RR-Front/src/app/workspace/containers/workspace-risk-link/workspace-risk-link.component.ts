@@ -119,15 +119,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   @Select(WorkspaceState.getFlatSelectedAnalysisPortfolio)
   flatSelectedAnalysisPortfolio$;
 
-  @Select(WorkspaceState.getSelectedAnalysisProtfolios)
+  @Select(WorkspaceState.getSelectedAnalysisPortfolios)
   selectedAnalysisPortfolios$;
 
   @Select(WorkspaceState.getRiskLinkSummary)
   summary$;
-
-  @Select(WorkspaceState.anySelectedResults)
-  anySelectedResults$;
-
 
   filterAnalysis = {
     rlId: '',
@@ -172,6 +168,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
+    this.dispatch(new fromWs.LoadRiskLinkDataAction());
     setTimeout(()=>{
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         instanceId: this.state.financialValidator.rmsInstance.selected,
@@ -300,10 +297,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.detectChanges();
   }
 
-  loadDataOnScroll(event) {
-    console.log(event);
-  }
-
   /** Manage Columns Method's */
 
   saveColumns(event, scope) {
@@ -333,46 +326,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
-  getDateValue(date) {
-    if (_.isNumber(date)) {
-      const newDate = moment(date);
-      return newDate.format('DD/MM/YYYY');
-    }
-    const updateDate = date.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    const dateFormat = moment(updateDate, 'MMM DD YYYY HH:mm');
-    if (dateFormat.isValid()) {
-      return dateFormat.format('DD/MM/YYYY');
-    } else {
-      const regularDate = moment(date);
-      return regularDate.format('DD/MM/YYYY');
-    }
-  }
-
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.columnsForConfig, event.previousIndex, event.currentIndex);
-  }
-
-  toggleCol(i: number) {
-    this.columnsForConfig = _.merge(
-      [],
-      this.columnsForConfig,
-      {[i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible}}
-    );
   }
 
   /** */
   focusInput() {
     this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
     this.searchInput.nativeElement.focus();
-  }
-
-  dataList(data, filter = null) {
-    const array = _.toArray(data);
-    if (filter === null) {
-      return array;
-    } else {
-      return array.filter(dt => dt.type === filter);
-    }
   }
 
   toggleItemsListRDM(datasource) {
@@ -387,7 +348,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
           type
         }), new fromWs.PatchAddToBasketStateAction()]);
       });
-    if (this.tabStatus === 'fac') {
+    if (this.tabStatus === 'FAC') {
       this.setFilterDivision();
     }
     this.UpdateCheckboxStatus();
@@ -431,15 +392,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.displayDropdownRDMEDM = false;
   }
 
-  /** */
-  fillLists() {
-    this.dispatch(new fromWs.SelectRiskLinkEDMAndRDMAction());
-  }
-
-  fillFacLists() {
-
-  }
-
   scanDataSources() {
     this.selectedProject$.pipe(take(1))
       .subscribe(p => {
@@ -454,40 +406,26 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.closeDropdown();
   }
 
-  // Old datasource scan
-  selectedItem() {
-    this.fillLists();
-    this.closeDropdown();
-    const array = [..._.toArray(this.state.listEdmRdm.selectedListEDMAndRDM.edm), ..._.toArray(this.state.listEdmRdm.selectedListEDMAndRDM.rdm)];
-    if (array.length > 0) {
-      this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
-    } else {
-      this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
-    }
-  }
-
-  scanItem(item) {
-    item.scanned = false;
-    setTimeout(() =>
-      item.scanned = true, 1000
-    );
+  rescanItem(datasource) {
+    console.log('Rescan Datasource', datasource)
+    datasource.scanned = false;
+    this.selectedProject$.pipe(take(1))
+      .subscribe(p => {
+        const projectId = p.projectId;
+        this.dispatch(new fromWs.ReScanDataSource({
+          instanceId: this.state.financialValidator.rmsInstance.selected,
+          datasource,
+          projectId
+        }));
+      });
   }
 
   runDetailedScan() {
-    // this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
-    // this.dispatch(new fromWs.AddToBasketAction());
-    // this.validate$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-    //   if (value !== undefined && value !== null) {
-    //     this.showPopUp = !value;
-    //   }
-    // });
-    //Run the detail scan
     forkJoin(
       [
         this.selectedProject$,
         this.selectedAnalysisPortfolios$
-      ]
-        .map(item => item.pipe(take(1)))
+      ].map(item => item.pipe(take(1)))
     ).subscribe(data => {
       const [p, analysisPortfolioSelection] = data;
       console.log('Those are selected section', analysisPortfolioSelection);
@@ -499,9 +437,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         analysis,
         portfolios
       }));
-      // To be in import success !!
-      // this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
-      // this.dispatch(new fromWs.AddToBasketAction());
     });
 
   }
@@ -569,14 +504,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   UpdateCheckboxStatus() {
     this.getCheckedData();
     this.getIndeterminate();
-  }
-
-  getTableRecords() {
-    if (this.state.selectedEDMOrRDM === 'RDM') {
-      return _.get(this.analysis, 'totalNumberElement', 0);
-    } else {
-      return _.get(this.portfolios, 'totalNumberElement', 0);
-    }
   }
 
   getTitle() {
@@ -750,14 +677,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   rowTrackBy = (index, item) => {
     return item.id;
-  }
+  };
 
   ngOnDestroy(): void {
     this.destroy();
   }
 
   triggerImport() {
-    const analysisConfigFields = ['financialPerspective', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCode', 'targetRegionPeril', 'unitMultiplier'];
+    const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier'];
     const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier'];
 
     forkJoin(
@@ -781,17 +708,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   private transformAnalysisResultForImport(analysis, projectId, toBePicked) {
     return _.map(
-      _.flatMap(analysis,
-        an => _.map(an.peqt,
-          peqt => ({
-            ...an,
-            targetRAPCode: peqt,
-            targetRegionPeril: an.rpCode,
-            projectId,
-            peqt: undefined
-          })
-        )
-      ),
+      _.map(
+        analysis,
+          an => ({
+              ...an,
+              targetRAPCodes: an.targetRaps,
+              targetRegionPeril: an.rpCode,
+              projectId
+            })
+        ),
       item => _.pick(item, toBePicked)
     );
   }

@@ -3,7 +3,6 @@ import {Observable, of, Subject} from 'rxjs';
 import * as _ from 'lodash';
 import {map} from 'rxjs/operators';
 import {Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from "../../core/store/states/workspace-main.state";
 import {WorkspaceMain} from "../../core/model/workspace-main";
 
 
@@ -13,14 +12,11 @@ export class HelperService {
   collapseLeftMenu$ = new Subject<void>();
   public scrollSubject: Subject<{ topic: string, scroll: number }> = new Subject();
 
-  @Select(WorkspaceMainState)
-  state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
 
   constructor(private store: Store) {
     const obs$: any = of(localStorage.getItem('usedWorkspaces')).pipe(map(ls => JSON.parse(ls)));
     this.recentWorkspaces$ = obs$;
-    this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
   public static upperFirstWordsInSetence(sentence) {

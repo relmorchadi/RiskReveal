@@ -6,6 +6,7 @@ import {Observable, of} from 'rxjs';
 import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
 import {
+  LoadConfiguration,
   PatchDateFormatAction,
   PatchImportDataAction,
   PatchNumberFormatAction,
@@ -42,9 +43,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     'Workspace Context'
   ];
 
-  financialPerspectiveELT = [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
-    {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
-    {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}];
+  financialPerspectiveELT: any;
   financialPerspectiveEPM: any;
   targetCurrency: any;
   targetAnalysisCurrency: any;
@@ -54,7 +53,6 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
   uwUnits: any;
 
   numberCollapse = false;
-  defaultImport;
 
   @Select(GeneralConfigState)
   state$: Observable<GeneralConfig>;
@@ -72,7 +70,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.defaultImport = localStorage.getItem('importConfig');
+    this.dispatch(new LoadConfiguration());
     this.riskApi.loadImportRefData().subscribe(
       (refData: any) => {
         this.rmsInstance = refData.rmsInstances;
@@ -88,6 +86,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     );
 
     this.actions$.pipe(ofActionSuccessful(PostNewConfigSuccessAction)).subscribe( data => {
+        this.dispatch(new LoadConfiguration());
         this.notification.createNotification('Information',
         'the Current Configuration has been saved Successfully.',
         'info', 'bottomRight', 4000);

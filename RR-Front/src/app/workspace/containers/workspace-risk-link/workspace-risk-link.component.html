@@ -49,11 +49,11 @@
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveELT', item)"
                 *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item.desc}}
-              ({{item.desc}})
+              ({{item.code}})
             </li>
           </ul>
         </nz-dropdown>
-        <nz-dropdown [nzTrigger]="'click'">
+<!--        <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective EPMetrics</span>
@@ -69,7 +69,7 @@
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
                 *ngFor="let item of state?.financialValidator?.financialPerspectiveEPM?.data">{{item}}</li>
           </ul>
-        </nz-dropdown>
+        </nz-dropdown>-->
 
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
@@ -89,7 +89,7 @@
           </ul>
         </nz-dropdown>
 
-        <nz-dropdown [nzTrigger]="'click'" *ngIf="tabStatus === 'fac'">
+        <nz-dropdown [nzTrigger]="'click'" *ngIf="tabStatus === 'FAC'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Division</span>
@@ -229,7 +229,7 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
-              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'fac'"
+              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"
                       class="a-buttons-outlined-mini">Auto Attach
               </button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -268,10 +268,10 @@
                       <ng-container *ngIf="!itemsE.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
-                          /{{getNumberElement(itemsE, 'portfolio')}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/0</span>
+                          /{{itemsE.count}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
-                        <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
+                        <i (click)="rescanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsE.scanning">
                        <span class="loading">Scanning</span>
@@ -295,9 +295,9 @@
                       <ng-container *ngIf="!itemsR?.scanning">
                         <span class="reference"
                               *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
-                          /{{getNumberElement(itemsR, 'analysis')}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/0</span>
-                        <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
+                          /{{itemsR.count}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
+                        <i (click)="rescanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
                         <span class="loading">Scanning</span>
@@ -394,9 +394,9 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
@@ -449,8 +449,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders}"></analysis-result>
         <portfolio-result [data]="summary.portfolios"></portfolio-result>
+        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
@@ -468,15 +468,7 @@
             </div>
 
             <div class="body-wrap-footer-right">
-              <button *ngIf="anySelectedResults$ | async; else disabledAddForImportBtn"
-                      style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">
-                IMPORT
-              </button>
-              <ng-template #disabledAddForImportBtn>
-                <button class="a-buttons-contained-disabled-mini" disabled>
-                  IMPORT
-                </button>
-              </ng-template>
+              <button style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
             </div>
           </div>
         </div>

@@ -20,7 +20,7 @@
             <field name="CatLimiit" type="string" trim="true" default="CatLimiit"/>
         </record>
 
-        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSAccRow" minOccurs="0" maxOccurs="unbounded" >
+        <record name="object" class="com.scor.rr.service.batch.processor.rows.RLAccRow" minOccurs="0" maxOccurs="unbounded" >
             <field name="carID" type="string" trim="true" />
             <field name="division" type="string" trim="true" />
             <field name="inceptionDate" type="date" trim="true" format="dd/MM/yyyy" />
@@ -31,32 +31,32 @@
         </record>
     </stream>
 
-    <stream name="valuesStream" format="csv">
-        <parser>
-            <property name="delimiter" value="|" />
-            <property name="multilineEnabled" value="true"/>
-        </parser>
-        <record name="header" minOccurs="1" maxOccurs="1" >
-            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID" />
-            <field name="DivisionNumber" type="string" trim="true"  default="DivisionNumber" />
-            <field name="RegionPerilCode" type="string" trim="true"  default="RegionPerilCode" />
-            <field name="ReturnPeriod" type="string" trim="true"    default="ReturnPeriod" />
-            <field name="Currencycode" type="string" trim="true"    default="Currencycode" />
-            <field name="GroundUpLoss" type="string" trim="true"    default="GroundUpLoss" />
-            <field name="GrossLoss" type="string" trim="true"    default="GrossLoss" />
-            <field name="periodBasis" type="string" trim="true"    default="periodBasis" />
-        </record>
-        <record name="object" class="com.scor.almf.ihub.processing.domain.FWValue" minOccurs="0" maxOccurs="unbounded" >
-            <field name="CatAnalysisRequestID" type="string" trim="true" />
-            <field name="DivisionNumber" type="integer" trim="true" format="###############" />
-            <field name="RegionPerilCode" type="string" trim="true" />
-            <field name="ReturnPeriod" type="integer" trim="true" format="###############" />
-            <field name="Currencycode" type="string" trim="true"   />
-            <field name="GroundUpLoss" type="double" trim="true" typeHandler="usDoubleHandler" />
-            <field name="GrossLoss" type="double" trim="true"  typeHandler="usDoubleHandler" />
-            <field name="periodBasis" type="string" trim="true"   />
-        </record>
-    </stream>
+<!--    <stream name="valuesStream" format="csv">-->
+<!--        <parser>-->
+<!--            <property name="delimiter" value="|" />-->
+<!--            <property name="multilineEnabled" value="true"/>-->
+<!--        </parser>-->
+<!--        <record name="header" minOccurs="1" maxOccurs="1" >-->
+<!--            <field name="CatAnalysisRequestID" type="string" trim="true" default="CatAnalysisRequestID" />-->
+<!--            <field name="DivisionNumber" type="string" trim="true"  default="DivisionNumber" />-->
+<!--            <field name="RegionPerilCode" type="string" trim="true"  default="RegionPerilCode" />-->
+<!--            <field name="ReturnPeriod" type="string" trim="true"    default="ReturnPeriod" />-->
+<!--            <field name="Currencycode" type="string" trim="true"    default="Currencycode" />-->
+<!--            <field name="GroundUpLoss" type="string" trim="true"    default="GroundUpLoss" />-->
+<!--            <field name="GrossLoss" type="string" trim="true"    default="GrossLoss" />-->
+<!--            <field name="periodBasis" type="string" trim="true"    default="periodBasis" />-->
+<!--        </record>-->
+<!--        <record name="object" class="com.scor.almf.ihub.processing.domain.FWValue" minOccurs="0" maxOccurs="unbounded" >-->
+<!--            <field name="CatAnalysisRequestID" type="string" trim="true" />-->
+<!--            <field name="DivisionNumber" type="integer" trim="true" format="###############" />-->
+<!--            <field name="RegionPerilCode" type="string" trim="true" />-->
+<!--            <field name="ReturnPeriod" type="integer" trim="true" format="###############" />-->
+<!--            <field name="Currencycode" type="string" trim="true"   />-->
+<!--            <field name="GroundUpLoss" type="double" trim="true" typeHandler="usDoubleHandler" />-->
+<!--            <field name="GrossLoss" type="double" trim="true"  typeHandler="usDoubleHandler" />-->
+<!--            <field name="periodBasis" type="string" trim="true"   />-->
+<!--        </record>-->
+<!--    </stream>-->
 
     <stream name="locStream" format="csv">
         <parser>
@@ -102,7 +102,7 @@
             <field name="LandslideMatchLevel" type="string" nillable="true" default="LandslideMatchLevel" />
         </record>
 
-        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSLocRow" minOccurs="0" maxOccurs="unbounded" >
+        <record name="object" class="com.scor.rr.service.batch.processor.rows.RLLocRow" minOccurs="0" maxOccurs="unbounded" >
             <field name="carID" type="string" trim="true" />
             <field name="division" type="string" trim="true" />
             <field name="regionPerilCode" type="string" trim="true" />
@@ -171,7 +171,7 @@
             <field name="AnnualProbabilityofFlooding" type="string" nillable="true" default="AnnualProbabilityofFlooding" />
         </record>
 
-        <record name="object" class="com.scor.almf.ihub.processing.domain.rms.RMSLocRow" minOccurs="0" maxOccurs="unbounded" >
+        <record name="object" class="com.scor.rr.service.batch.processor.rows.RLLocRow" minOccurs="0" maxOccurs="unbounded" >
             <field name="carID" type="string" trim="true" />
             <field name="division" type="string" trim="true" />
             <field name="regionPerilCode" type="string" trim="true" />

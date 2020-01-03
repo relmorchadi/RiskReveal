@@ -31,6 +31,8 @@ public class RLAnalysisToTargetRAP {
     private String profileKey;
     @Column(name = "TargetRapCode")
     private String targetRapCode;
+    @Column(name = "TargetRapId")
+    private Long targetRapId;
     @Column(name = "TargetRapDesc")
     private String targetRapDesc;
     @Column(name = "IsSCORCurrent")

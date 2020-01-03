@@ -23,7 +23,7 @@ export class DashboardEntryComponent implements OnInit {
       name: 'Dashboard N°1',
       visible: true,
       items: [
-        {
+/*        {
           id: 1,
           name: 'Renewal Contract Scope',
           selected: true,
@@ -62,7 +62,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: false,
           componentName: 'Renewal Tracker',
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }
+        }*/
       ],
       fac: [
         {
@@ -80,7 +80,7 @@ export class DashboardEntryComponent implements OnInit {
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
-        {
+        /*{
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -89,7 +89,7 @@ export class DashboardEntryComponent implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }
+        }*/
       ]
     },
     {
@@ -97,7 +97,7 @@ export class DashboardEntryComponent implements OnInit {
       name: 'Fac Dashboard',
       visible: true,
       items: [
-        {
+        /*{
           id: 1,
           name: 'Renewal Contract Scope',
           selected: false,
@@ -136,7 +136,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: false,
           componentName: 'Renewal Tracker',
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }
+        }*/
       ],
       fac: [
         {
@@ -154,7 +154,7 @@ export class DashboardEntryComponent implements OnInit {
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
-        {
+       /* {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -163,7 +163,7 @@ export class DashboardEntryComponent implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }
+        }*/
       ]
     },
   ];
@@ -177,7 +177,7 @@ export class DashboardEntryComponent implements OnInit {
 
   widgetsMockData = {
     treaty: [
-      {
+/*      {
         id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
         componentName: 'RenewalContractScopeComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -201,7 +201,7 @@ export class DashboardEntryComponent implements OnInit {
         id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
         componentName: 'Renewal Tracker', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
-      },
+      },*/
     ],
     fac: [
       {
@@ -219,7 +219,7 @@ export class DashboardEntryComponent implements OnInit {
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
-      {
+     /* {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -228,7 +228,7 @@ export class DashboardEntryComponent implements OnInit {
         id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
         componentName: 'facSubsidiaryChartComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
-      }
+      }*/
     ]
   };
   previousUrl: string;

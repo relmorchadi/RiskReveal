@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.domain.dto.ImportParamsAndConfig;
+import com.scor.rr.domain.dto.ImportParamsDto;
 import com.scor.rr.domain.dto.ImportReferenceData;
 import com.scor.rr.service.RefDataService;
 import com.scor.rr.service.RmsService;
@@ -45,5 +46,4 @@ public class ImportResource {
         ImportLossDataParams params= new ImportLossDataParams(config, analysisIds, portfolioIds);
         return new ResponseEntity<>(batchExecution.RunImportLossData(params), HttpStatus.OK);
     }
-
 }

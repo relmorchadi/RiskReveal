@@ -5,6 +5,7 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
+// import * as fromWS from '../store'
 import {EMPTY, forkJoin} from "rxjs";
 import {LoadEpMetrics} from "../store/actions";
 
@@ -126,7 +127,7 @@ export class CalibrationNewService {
 
               if(resetMetrics) {
                 innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
-              }
+              };
 
 
               _.forEach(epMetrics, (metric: any, i) => {
@@ -181,6 +182,7 @@ export class CalibrationNewService {
   }
 
   selectPlts(ctx: StateContext<WorkspaceModel>, payload) {
+    console.log(payload)
     const {
       plts,
       wsIdentifier
@@ -193,14 +195,8 @@ export class CalibrationNewService {
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
     return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
       .pipe(
-        mergeMap(() => {
-          console.log('hey');
-          return ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true}))
-        }),
-        catchError(e => {
-          console.log(e);
-          return EMPTY;
-        })
+        tap(r => console.log(r)),
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
   }
 }
