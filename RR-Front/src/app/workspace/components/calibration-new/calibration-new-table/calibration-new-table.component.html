@@ -33,7 +33,7 @@
           <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
           <ng-container [ngTemplateOutlet]="rightHeader"></ng-container>
         </th>
-        <th  class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
+        <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
       </ng-container>
     </tr>
     <tr>
@@ -88,7 +88,7 @@
   not grouped Template
   -->
   <ng-template #nonGrouped let-rowData let-expanded="expanded" let-columns="columns" let-rowIndex="rowIndex">
-    <tr *ngFor="let thread of rowData?.threads, let index=index"
+    <tr *ngFor="let thread of rowData?.threads | statusFilter: selectedStatusFilter, let index=index"
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
@@ -185,7 +185,7 @@
     <ng-container *ngIf="type == 'status'">
       <div class="td-wrapper-check">
         <div >
-          <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
+          <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='In progress',
                                          'icon-check-circle iconGreen': rowData?.status=='Valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='Locked',
                                          'icon-error_24px iconRed2': rowData?.status=='Fail',
@@ -209,7 +209,7 @@
     <ng-container *ngIf="isResizable">
       <th [id]="col?.field" [style.width]="width + 'px'" pResizableColumn>
         <ng-container *ngIf="col?.type == 'status'">
-          <ng-container [ngTemplateOutlet]="status"></ng-container>
+          <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
         </ng-container>
         <ng-container *ngIf="col?.type == 'arrow'">
           <label nz-checkbox [(ngModel)]="checkAll" ></label>
@@ -246,9 +246,9 @@
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
         <span class="title">PLTs</span>
         <div class="icon-wrapper">
-          <i *ngIf="!tableConfig.isExpanded" (click)="expandColumns()"
+          <i style="cursor: pointer" *ngIf="!tableConfig.isExpanded" (click)="expandColumns()"
              class="icon-chevron_right_24px"></i>
-          <i *ngIf="tableConfig.isExpanded" (click)="unexpandColumns()"
+          <i style="cursor: pointer" *ngIf="tableConfig.isExpanded" (click)="unexpandColumns()"
              class="icon-chevron_left_24px"></i>
         </div>
       </div>

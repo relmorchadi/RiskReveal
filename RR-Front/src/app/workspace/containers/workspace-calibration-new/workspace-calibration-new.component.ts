@@ -388,7 +388,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '0px',
+      frozenWidth: '1px',
       ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
     };
   }
@@ -398,11 +398,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: false
     };
+    const a = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
     this.columnsConfig = {
       ...this.columnsConfig,
       frozenWidth: '530px',
-      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
+      ...a
     };
+    console.log(a, this.tableConfig, this.columnsConfig);
+    this.detectChanges();
   }
 
   viewAdjustmentDetail(newAdjustment) {

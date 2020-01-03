@@ -110,10 +110,7 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-    return resetMetrics ?
-      this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)) : (
-        !this.getCalibState(ctx.getState(), wsIdentifier).epMetrics[curveType] ? this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)) : EMPTY
-      ).pipe(
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)).pipe(
         tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -126,10 +123,7 @@ export class CalibrationNewService {
 
             const innerDraft = this.getCalibState(draft, wsIdentifier);
 
-            if(resetMetrics) {
-              innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
-            };
-
+            console.log(epMetrics);
 
             _.forEach(epMetrics, (metric: any, i) => {
 
