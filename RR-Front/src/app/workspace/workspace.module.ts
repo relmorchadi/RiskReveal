@@ -37,6 +37,7 @@ import {NgxEchartsModule} from 'ngx-echarts';
 import {CreateFacProjectPopupComponent} from './containers/workspace-project/create-fac-project-popup/create-fac-project-popup.component';
 import { ParseIdPipe } from './pipes/parse-id.pipe';
 import {ReturnPeriodPopUpComponent} from "./components/calibration-new/return-period-pop-up/return-period-pop-up.component";
+import {GetMetricPipe} from "./pipes/get-metric.pipe";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -70,7 +71,7 @@ import {ReturnPeriodPopUpComponent} from "./components/calibration-new/return-pe
     RouterModule
   ],
   providers: [
-    ...SERVICE,
+    ...SERVICE, GetMetricPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
