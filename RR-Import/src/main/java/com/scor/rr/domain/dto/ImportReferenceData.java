@@ -13,5 +13,6 @@ public class ImportReferenceData {
     List<Map<String,String>> financialPerspectives;
     List<String> rmsInstances;
     String[] currencies;
+    List<CARDivisionDto> division;
 
 }

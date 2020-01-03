@@ -14,8 +14,8 @@ export class RiskApi {
   constructor(private http: HttpClient) {
   }
 
-  loadImportRefData(){
-    return this.http.get(`${this.IMPORT_URL}import/refs`);
+  loadImportRefData(carId){
+    return this.http.get(`${this.IMPORT_URL}import/refs`, {params: {carId: carId || undefined }});
   }
 
   scanDatasources(dataSources:any[], projectId, instanceId,instanceName){
