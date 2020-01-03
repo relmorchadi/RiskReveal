@@ -126,7 +126,7 @@ export class CalibrationNewService {
 
               if(resetMetrics) {
                 innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
-              };
+              }
 
 
               _.forEach(epMetrics, (metric: any, i) => {
@@ -193,7 +193,14 @@ export class CalibrationNewService {
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
     return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
       .pipe(
-        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => {
+          console.log('hey');
+          return ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true}))
+        }),
+        catchError(e => {
+          console.log(e);
+          return EMPTY;
+        })
       )
   }
 }

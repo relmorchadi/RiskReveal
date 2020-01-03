@@ -31,7 +31,7 @@ public abstract class BaseSpecification<T, U> {
         return (root, query, cb) -> {
             if(val == null) return null;
             // if(val.isEmpty()) return cb.isNull(root.get(attribute));
-            if(val.size()==0)  return null;
+            if(val.size() == 0)  return null;
             return cb.lower(root.get(attribute)).in(val.stream().map(String::toLowerCase).collect(Collectors.toList()));
         };
     }
