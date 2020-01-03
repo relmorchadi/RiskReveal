@@ -162,9 +162,10 @@ export class CalibrationNewService {
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
     return forkJoin(
       this.calibrationAPI.loadAllBasis(),
-      this.calibrationAPI.loadAllAdjustmentTypes()
+      this.calibrationAPI.loadAllAdjustmentTypes(),
+      this.calibrationAPI.loadAllAdjustmentStates()
     ).pipe(
-      tap(([basis, adjustmentTypes]) => {
+      tap(([basis, adjustmentTypes, status]) => {
         ctx.patchState(produce(ctx.getState(), draft => {
           const {
             currentTab: {
@@ -176,7 +177,8 @@ export class CalibrationNewService {
 
           innerDraft.constants = {
             basis,
-            adjustmentTypes
+            adjustmentTypes,
+            status
           }
         }))
       })
