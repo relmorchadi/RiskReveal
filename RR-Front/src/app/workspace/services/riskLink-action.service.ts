@@ -2233,6 +2233,3 @@ export class RiskLinkStateService {
 
   }
 }
-
-
-
