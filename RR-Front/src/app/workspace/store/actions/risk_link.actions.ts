@@ -325,4 +325,12 @@ export class LoadRegionPerilForAnalysis {
   constructor(public payload: any) {}
 }
 
+export class ReScanDataSource{
+  static readonly type= '[Risk Link] ReScan Datasource';
+  constructor(public payload: any) {}
+}
 
+export class OverrideOccurrenceBasis {
+  static readonly type= '[Risk Link] Override Occurrence Basis';
+  constructor(public payload: any) {}
+}

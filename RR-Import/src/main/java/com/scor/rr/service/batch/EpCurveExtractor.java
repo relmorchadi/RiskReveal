@@ -2,8 +2,8 @@ package com.scor.rr.service.batch;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.BinFile;
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLModelDataSource;

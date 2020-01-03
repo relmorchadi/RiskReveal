@@ -6,7 +6,6 @@ import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
-import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.enums.StatisticMetric;
@@ -16,9 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.File;
 import java.util.*;
@@ -60,15 +57,9 @@ public class CalculateAdjustmentService {
         Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
 
         if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-            if (plt.getModelAnalysisId() == null) {
-                throw new IllegalStateException("calculateSummaryStatisticHeaderDetail, plt.getModelAnalysisId() null, wrong");
-            }
-            if (plt.getModelAnalysisId() == null) {
-                throw new IllegalStateException("calculateSummaryStatisticHeaderDetail, lossDataHeader null, wrong");
-            }
-            LossDataHeaderEntity lossDataHeader = lossDataHeaderEntityRepository.findByModelAnalysisId(plt.getModelAnalysisId());
+            // LossDataHeaderEntity : ELT
 
-            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeader.getLossDataHeaderId(), "PLT");
+            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltId, "PLT");
             if (summaryStatisticHeaders != null && !summaryStatisticHeaders.isEmpty()) {
                 return summaryStatisticHeaders.get(0);
             }
@@ -83,7 +74,7 @@ public class CalculateAdjustmentService {
             summaryStatisticHeaderEntity.setCov(StatisticAdjustment.coefOfVariance(pltLossData));
             summaryStatisticHeaderEntity.setStandardDeviation(StatisticAdjustment.stdDev(pltLossData));
             summaryStatisticHeaderEntity.setLossDataType("PLT");
-            summaryStatisticHeaderEntity.setLossDataId(lossDataHeader.getLossDataHeaderId()); // todo right ?
+            summaryStatisticHeaderEntity.setLossDataId(plt.getPltHeaderId());
             summaryStatisticHeaderEntity.setFinancialPerspective("FP"); // todo right ?
             summaryStatisticHeaderEntity.setEntity(1L);
             summaryStatisticHeaderEntity.setCurrency(plt.getCurrencyCode());
@@ -187,10 +178,13 @@ public class CalculateAdjustmentService {
     }
 
     public static EPMetric getAEPMetric(List<PLTLossData> pltLossDatas){
-        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+        if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
+                    finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum()))
+                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas.size();
             return new EPMetric(StatisticMetric.AEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {

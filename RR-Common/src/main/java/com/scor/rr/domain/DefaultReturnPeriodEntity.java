@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Data
 @Entity
-@Table(name = "DefaultReturnPeriod")
+@Table(name = "ZZ_DefaultReturnPeriod")
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefaultReturnPeriodEntity {

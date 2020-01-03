@@ -132,6 +132,15 @@ public class RmsService {
         }).collect(toList());
     }
 
+    public RLModelDataSource singleBasicScan(DataSource dataSource, Long projectId, String instanceId, String instanceName) {
+        return this.basicScan(
+                new ArrayList<>(Collections.singleton(dataSource)),
+                projectId,
+                instanceId,
+                instanceName
+        ).get(0);
+    }
+
     //@Transactional(transactionManager = "rrTransactionManager")
     public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
         return new DetailedScanResult(
@@ -971,6 +980,8 @@ public class RmsService {
             return null;
         }
     }
+
+
 
     private static class CreateEdmSummaryStoredProc extends StoredProcedure {
         private String sqlProc;

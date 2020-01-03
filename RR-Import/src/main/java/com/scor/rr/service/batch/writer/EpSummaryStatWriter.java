@@ -2,7 +2,7 @@ package com.scor.rr.service.batch.writer;
 
 
 import com.scor.rr.domain.AnalysisSummaryStats;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;

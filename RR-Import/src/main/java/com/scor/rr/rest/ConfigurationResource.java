@@ -32,6 +32,13 @@ public class ConfigurationResource {
         );
     }
 
+    @PostMapping("single-basic-scan")
+    public ResponseEntity<?> singleBasicScan(@RequestBody DataSource dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+        return ResponseEntity.ok(
+                rmsService.singleBasicScan(dataSources, projectId, instanceId, instanceName)
+        );
+    }
+
     @PostMapping("detailed-scan")
     public ResponseEntity<?> analysisDetailScan(@RequestBody DetailedScanDto detailedScanDto) {
         return new ResponseEntity<>(rmsService.detailedScan(detailedScanDto), HttpStatus.OK);
