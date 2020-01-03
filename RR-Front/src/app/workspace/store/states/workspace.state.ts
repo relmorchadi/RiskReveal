@@ -341,13 +341,14 @@ export class WorkspaceState {
           rdmName: rdms[rdmId].name,
           analysisId: item.rlId,
           analysisName: item.analysisName,
+          rlAnalysisId: item.rlAnalysisId
         }) ))
       ),
       portfolios: _.flatten(
         _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
           edmId,
           edmName: edms[edmId].name,
-          curreny: item.agCurrency,
+          currency: item.agCurrency,
           portfolioId: item.rlId,
           portfolioName: item.name,
           portfolioType: item.type
@@ -1168,7 +1169,7 @@ export class WorkspaceState {
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(fromWS.LoadRiskLinkDataAction)
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkDataAction) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 

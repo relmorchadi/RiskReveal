@@ -1897,8 +1897,9 @@ export class RiskLinkStateService {
   }
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
-    return this.riskApi.loadImportRefData()
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, payload?) {
+    const carId= payload ? payload.carId : null;
+    return this.riskApi.loadImportRefData(carId)
       .pipe(
         mergeMap(
           (refData: any) => {
@@ -2013,7 +2014,7 @@ export class RiskLinkStateService {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             draft.content[wsIdentifier].riskLink.summary = {
               ...draft.content[wsIdentifier].riskLink.summary,
-              regionPerils: _.map(result,item => item.regionPerilCode)
+              regionPerils: result
             };
           }));
         return of(result);

@@ -277,7 +277,6 @@ export class WorkspaceService {
           return of();
         })
     )
-
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {

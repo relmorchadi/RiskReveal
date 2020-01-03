@@ -29,9 +29,9 @@ public class ImportResource {
     private RmsService rmsService;
 
     @GetMapping("refs")
-    public ResponseEntity<ImportReferenceData> getRefData(){
+    public ResponseEntity<ImportReferenceData> getRefData(@RequestParam("carId") String carId){
         return ResponseEntity.ok(
-                refDataService.getImportRefs()
+                refDataService.getImportRefs(carId)
         );
     }
 
