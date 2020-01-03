@@ -3,7 +3,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import * as _ from 'lodash'
-import {backendUrl} from "../../shared/api";
+import {backendUrl, importUrl} from "../../shared/api";
+import set = Reflect.set;
+import {filter} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -51,10 +53,6 @@ export class SearchService {
 
   loadShort(): Observable<any> {
     return this._http.get(`${this.api}shortcuts`);
-  }
-
-  getDivision() {
-
   }
 
   getMostRecentSearch() {
