@@ -87,6 +87,8 @@ public class DashboardView {
     @Column(length = 10)
     private String carStatus;
 
+    private Boolean isFavorite;
+
     /* PublishedDate ??*/
 
     /* PublishedBy ??*/
