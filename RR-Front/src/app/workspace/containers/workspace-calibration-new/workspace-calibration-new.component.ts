@@ -7,7 +7,7 @@ import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
 import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
 import {WorkspaceState} from "../../store";
-import {takeWhile} from "rxjs/operators";
+import {first, take, takeWhile} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {Subscription} from "rxjs";
@@ -29,6 +29,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   adjustments: any;
   adjustmentTypes: any[];
   basis: any[];
+  status: any[];
   loading: boolean;
 
   //Table Config
@@ -54,6 +55,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   //POP-UPs
   selectedAdjustment: any;
+  selectedStatusFilter: any;
   isAdjustmentPopUpVisible: boolean;
 
   isRPPopUpVisible: boolean;
@@ -117,7 +119,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isValid: false,
       lowerBound: null,
       upperBound: null
-    }
+    };
+    this.selectedStatusFilter= {};
   }
 
   ngOnInit() {
@@ -228,11 +231,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.select(WorkspaceState.getCalibrationConstants(wsIdentifier))
       .pipe(
         takeWhile(v => !_.isNil(v)),
+        take(2),
         this.unsubscribeOnDestroy
       )
-      .subscribe(({basis, adjustmentTypes}) => {
+      .subscribe(({basis, adjustmentTypes, status}) => {
         this.basis = basis;
         this.adjustmentTypes = adjustmentTypes;
+        this.status = status;
+        this.initFilterStatus(status);
 
         this.detectChanges();
       })
@@ -264,6 +270,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.columnsConfig,
       ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
     };
+  }
+
+  initFilterStatus(status) {
+    if(_.keys(status).length) {
+      _.forEach(status, st => {
+        this.selectedStatusFilter[st.code] = true;
+      })
+    }
   }
 
   onViewChange(newView) {
@@ -324,6 +338,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Curve Type Change":
         this.curveTypeChange(action.payload);
+        break;
+
+      case "Toggle Status Filter":
+        this.toggleStatusFilter(action.payload);
         break;
 
       default:
@@ -442,6 +460,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
         this.validationSub && this.validationSub.unsubscribe()
       })
+
   }
 
   rpInputChange(newValue) {
@@ -485,4 +504,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.loadEpMetrics(this.wsId, this.uwYear, 1, curveType);
 
   }
+
+  toggleStatusFilter({value, status}) {
+    if(value) {
+      this.selectedStatusFilter= {
+        ...this.selectedStatusFilter,
+        [status]: true
+      }
+    } else {
+      this.selectedStatusFilter = _.omit(this.selectedStatusFilter, [`${status}`]);
+    }
+  }
+
+
 }

@@ -122,7 +122,8 @@ export class WorkspaceService {
             adjustments: {},
             constants: {
               basis: [],
-              adjustmentTypes: []
+              adjustmentTypes: [],
+              status: []
             },
             loading: false
           },

@@ -187,10 +187,10 @@
         <div >
           <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
                                          'icon-check-circle iconGreen': rowData?.status=='Valid' ,
-                                         'icon-lock-alt iconRed': rowData?.status=='locked',
-                                         'icon-error_24px iconRed2': rowData?.status=='failed',
-                                         'icon-star iconBlue': rowData?.status=='new',
-                                         'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }"
+                                         'icon-lock-alt iconRed': rowData?.status=='Locked',
+                                         'icon-error_24px iconRed2': rowData?.status=='Fail',
+                                         'icon-star iconBlue': rowData?.status=='Pending',
+                                         'icon-report_problem_24px iconYellow2': rowData?.status=='Requires Regeneration' }"
              [nz-tooltip]="rowData.status"
              class="tooltipMsg">
           </i>
@@ -227,7 +227,7 @@
   <ng-template #nonResizableTemplate let-col let-width="width">
     <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" >
       <ng-container *ngIf="col?.type == 'status'">
-        <ng-container [ngTemplateOutlet]="status"></ng-container>
+        <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
       </ng-container>
       <ng-container *ngIf="col?.type == 'arrow'">
         <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
@@ -360,18 +360,24 @@
   </ng-template>
 
   <!-- status template-->
-  <ng-template #status>
+  <ng-template #statusIcons>
     <span style="justify-content: space-between;width: 30px;height: 30px">
             <nz-dropdown [nzPlacement]="'bottomLeft'">
               <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
               <ul nz-menu>
-                <li *ngFor="let status of statusOptions" nz-menu-item>
+                <li *ngFor="let st of status" nz-menu-item>
                   <div class="checkboxInput">
-                    <label [(ngModel)]="statusFilter[status.field]" (ngModelChange)="statusFlilerCheckbox($event, status.field)"
+                    <label [ngModel]="selectedStatusFilter[st?.code]"
+                           (ngModelChange)="toggleStatusFilter($event, st?.code)"
                            nz-checkbox
                            nzChecked
                            style="margin-right: 12px;">
-                      <i class="{{status.class}}"></i> {{status.title}}
+                      <i [ngClass]="{ 'icon-history-alt iconYellow': st?.code=='in progress',
+                                         'icon-check-circle iconGreen': st?.code=='Valid' ,
+                                         'icon-lock-alt iconRed': st?.code=='Locked',
+                                         'icon-error_24px iconRed2': st?.code=='Fail',
+                                         'icon-star iconBlue': st?.code=='Pending',
+                                         'icon-report_problem_24px iconYellow2': st?.code=='Requires Regeneration' }"></i> {{st?.stateName}}
                     </label>
                   </div>
                 </li>

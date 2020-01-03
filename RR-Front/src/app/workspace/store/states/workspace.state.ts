@@ -216,8 +216,13 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
+  //Higher State Order
   static getCalibrationConstants(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+  }
+
+  static getCalibrationStatus(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants.status );
 
   }
 
