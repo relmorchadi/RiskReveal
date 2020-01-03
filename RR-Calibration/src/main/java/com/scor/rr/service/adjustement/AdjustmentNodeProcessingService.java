@@ -8,11 +8,13 @@ import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.domain.enums.*;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import com.scor.rr.service.cloning.CloningScorPltHeaderService;
+import com.scor.rr.util.PathUtils;
 import com.scor.rr.utils.RRDateUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -78,9 +80,17 @@ public class AdjustmentNodeProcessingService {
     @Autowired
     CloningScorPltHeaderService cloningScorPltHeaderService;
 
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private WorkspaceRepository workspaceRepository;
+
+    @Autowired
+    private ModelAnalysisEntityRepository modelAnalysisEntityRepository;
+
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
-    private final static String pathbin = "src/main/resources/file/plt.bin";
 
     public AdjustmentNodeProcessingEntity findOne(Integer id) {
         return adjustmentNodeProcessingRepository.getOne(id);
@@ -108,6 +118,26 @@ public class AdjustmentNodeProcessingService {
             throw new IllegalStateException("---------- adjustPLTsInThread, thread is locked, not permitted ----------");
         }
 
+        ProjectEntity projectEntity = null;
+        if (thread.getInitialPLT() != null && thread.getInitialPLT().getProjectId() != null) {
+            if (projectRepository.findById(thread.getInitialPLT().getProjectId()).isPresent()) {
+                projectEntity = projectRepository.findById(thread.getInitialPLT().getProjectId()).get();
+            }
+        }
+        WorkspaceEntity workspaceEntity = null;
+        if (projectEntity != null && projectEntity.getWorkspaceId() != null) {
+            if (workspaceRepository.findById(projectEntity.getWorkspaceId()).isPresent()) {
+                workspaceEntity = workspaceRepository.findById(projectEntity.getWorkspaceId()).get();
+            }
+        }
+
+        ModelAnalysisEntity modelAnalysis = null;
+        if (thread.getInitialPLT() != null && thread.getInitialPLT().getModelAnalysisId() != null) {
+            if (modelAnalysisEntityRepository.findById(thread.getInitialPLT().getModelAnalysisId()).isPresent()) {
+                modelAnalysis = modelAnalysisEntityRepository.findById(thread.getInitialPLT().getModelAnalysisId()).get();
+            }
+        }
+
         try {
             AdjustmentState adjustmentState = adjustmentStateRepository.findById(2).get();
             thread.setThreadStatus(adjustmentState.getCode());
@@ -119,7 +149,7 @@ public class AdjustmentNodeProcessingService {
                 adjustmentNodes.sort(
                         Comparator.comparing(this::findOrderOfNode));
                 for (AdjustmentNode node : adjustmentNodes) {
-                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId());
+                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId(), workspaceEntity, modelAnalysis, threadId);
                 }
             }
 
@@ -128,6 +158,7 @@ public class AdjustmentNodeProcessingService {
             if (finalPLT == null) {
                 finalPLT = new PltHeaderEntity(thread.getInitialPLT());
                 finalPLT.setPltType("THREAD");
+                finalPLT = pltHeaderRepository.save(finalPLT);
             }
 
             File sourceFile = null;
@@ -137,7 +168,8 @@ public class AdjustmentNodeProcessingService {
                 sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
             }
 
-            File dstFile = new File(sourceFile.getParent(), "ThreadPLT_Thread_" + thread.getAdjustmentThreadId() + "_" + sdf.format(new Date()) + ".bin");
+            String threadPLTFilename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, finalPLT, threadId, null, FilenameUtils.getExtension(sourceFile.getName()));
+            File dstFile = new File(sourceFile.getParent(), threadPLTFilename);
             try {
                 UtilsMethod.copyFile(sourceFile, dstFile);
             } catch (IOException e) {
@@ -171,6 +203,10 @@ public class AdjustmentNodeProcessingService {
     }
 
     public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId) throws RRException {
+        return adjustPLTPassingByNode(nodeId, null, null, null);
+    }
+
+    public AdjustmentNodeProcessingEntity adjustPLTPassingByNode(Integer nodeId, WorkspaceEntity workspaceEntity, ModelAnalysisEntity modelAnalysis, Integer threadId) throws RRException {
         log.info("------ begin adjusting PLT processing ------");
 
         AdjustmentNode adjustmentNode = adjustmentNodeRepository.findById(nodeId).get();
@@ -234,14 +270,16 @@ public class AdjustmentNodeProcessingService {
         nodeProcessing.setInputPLT(inputPLT);
 
         // tinh adjusted plt
+        PltHeaderEntity adjustedPLT = new PltHeaderEntity(inputPLT); // tao plt moi
+        adjustedPLT = pltHeaderRepository.save(adjustedPLT);
+
         List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(inputPLT); // input lay ra List<PLTLossData>
         pltLossData = calculateProcessing(adjustmentNode, pltLossData); // tinh toan
         log.info("saving loss file for adjusted PLT");
-        String filename = "InterimPLT_Node" + adjustmentNode.getAdjustmentNodeId() + "_" +  sdf.format(new Date()) + ".bin";
+        String filename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, adjustedPLT, threadId, nodeId, FilenameUtils.getExtension(inputPLT.getLossDataFileName()));
         File binFile = savePLTFile(pltLossData, inputPLT.getLossDataFilePath(), filename); // luu file
         if (binFile != null) {
             log.info("success saving loss file for adjusted PLT");
-            PltHeaderEntity adjustedPLT = new PltHeaderEntity(inputPLT); // tao plt moi
             adjustedPLT.setLossDataFilePath(binFile.getParent());
             adjustedPLT.setLossDataFileName(binFile.getName());
             adjustedPLT.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));

@@ -2,13 +2,13 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
-import {catchError, map, mergeMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
 import {Navigate} from '@ngxs/router-plugin';
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
-import {EMPTY} from 'rxjs';
+import {EMPTY, forkJoin, of} from 'rxjs';
 import {defaultInuringState} from './inuring.service';
 import {ProjectApi} from "./api/project.api";
 
@@ -116,7 +116,8 @@ export class WorkspaceService {
           calibrationNew: {
             plts: [],
             epMetrics: {
-              cols: []
+              cols: [],
+              rps: []
             },
             adjustments: {},
             constants: {
@@ -175,8 +176,8 @@ export class WorkspaceService {
               collapseResult: true,
             },
             financialValidator: {
-              rmsInstance: {data: [], selected: 'AZU-P-RL17-SQL14'},
-              financialPerspectiveELT: {data: [], selected: 'Net Loss Pre Cat (RL)'},
+              rmsInstance: {data: [], selected: ''},
+              financialPerspectiveELT: {data: [], selected: ''},
               targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
               division: {data: [], selected: 'Division N°1'},
             },
@@ -187,16 +188,20 @@ export class WorkspaceService {
               standard: null,
               target: 'currentSelection'
             },
-            analysis: null,
-            analysisFac: null,
-            portfolios: null,
-            portfolioFac: null,
+            analysis: [],
+            portfolios: [],
             results: null,
             summaries: null,
             selection: null,
+            facSelection: {
+              'Division N°1': {analysis: {}, portfolios: {}},
+              'Division N°2': {analysis: {}, portfolios: {}},
+              'Division N°3': {analysis: {}, portfolios: {}},
+            },
+            importPLTs: {},
             selectedEDMOrRDM: null,
             activeAddBasket: false,
-            importPLTs: {},
+            synchronize: false
           },
           scopeOfCompletence: {
             data: {},
@@ -212,10 +217,10 @@ export class WorkspaceService {
         }
       });
       draft.loading = false;
-      ctx.dispatch(new fromWS.SetCurrentTab({
+      ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
         wsIdentifier
-      }));
+      }), new fromWS.LoadFacProjectData()]);
     }));
   }
 
@@ -258,6 +263,20 @@ export class WorkspaceService {
         draft.content[wsIdentifier].projects[0].selected = true;
       }
     ));
+  }
+
+  loadProjectData(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    return forkJoin(
+        state.content[wsIdentifier].projects.map(item =>this.wsApi.getDivision(item.carRequestId))
+    ).pipe(
+        switchMap( data => {
+          console.log(data);
+          return of();
+        })
+    )
+
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {

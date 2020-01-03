@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.AnalysisEpCurves;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.dto.EPMetricPoint;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.util.PathUtils;

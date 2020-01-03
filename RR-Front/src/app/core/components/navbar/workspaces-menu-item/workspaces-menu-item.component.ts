@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import {
   HeaderState,
-  PatchWorkspaceMainStateAction
 } from '../../../store/index';
 import {HelperService} from '../../../../shared/helper.service';
 import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
@@ -429,10 +428,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   searchWorkspace(value) {
     this.togglePopup();
     const paginationOption = this.recent.workspacePagination.paginationList.filter(page => page.id === value);
-    this.store.dispatch(new PatchWorkspaceMainStateAction({
-      key: 'appliedFilter',
-      value: {shownElement: paginationOption[0].shownElement}
-    }));
   }
 
   initForm() {

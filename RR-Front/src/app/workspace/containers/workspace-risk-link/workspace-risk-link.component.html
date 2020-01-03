@@ -271,7 +271,7 @@
                           /{{itemsE.count}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
-                        <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
+                        <i (click)="rescanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsE.scanning">
                        <span class="loading">Scanning</span>
@@ -297,7 +297,7 @@
                               *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
                           /{{itemsR.count}}</span>
                         <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
-                        <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
+                        <i (click)="rescanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
                         <span class="loading">Scanning</span>
@@ -394,9 +394,9 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'"
+                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'" (ngModelChange)="UpdateCheckboxStatus()"
                                    type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
@@ -449,8 +449,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps}"></analysis-result>
         <portfolio-result [data]="summary.portfolios"></portfolio-result>
+        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 

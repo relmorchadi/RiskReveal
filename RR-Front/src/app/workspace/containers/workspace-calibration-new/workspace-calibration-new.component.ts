@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {BaseContainer} from "../../../shared/base";
 import {StateSubscriber} from "../../model/state-subscriber";
-import {Store} from "@ngxs/store";
+import {Actions, ofActionCompleted, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
@@ -9,6 +9,8 @@ import {CalibrationTableService} from "../../services/helpers/calibrationTable.s
 import {WorkspaceState} from "../../store";
 import {takeWhile} from "rxjs/operators";
 import {Message} from "../../../shared/message";
+import {CalibrationAPI} from "../../services/api/calibration.api";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -19,7 +21,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   wsIdentifier: string;
   wsId: string;
-  uwYear: string;
+  uwYear: number;
   workspaceType: string;
 
   data: any[];
@@ -33,9 +35,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   tableConfig: {
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
+    selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean
+  };
+  constants: {
+    financialUnits: string[],
+    curveTypes: string[]
   };
   columnsConfig: {
     frozenColumns: any[],
@@ -43,16 +50,35 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columns: any[],
     columnsLength: number
   };
-  curveTypes: string[];
   rowKeys: any;
 
+  //POP-UPs
   selectedAdjustment: any;
   isAdjustmentPopUpVisible: boolean;
+
+  isRPPopUpVisible: boolean;
+  returnPeriodConfig: {
+    currentRPs: number[],
+    newlyAdded: number[],
+    returnPeriodInput: number,
+    showSuggestion: boolean,
+    message: string
+  };
+  rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
+  //Sub
+  validationSub: Subscription;
 
 
   constructor(
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-    private calibrationTableService: CalibrationTableService
+    private calibrationTableService: CalibrationTableService,
+    private calibrationApi: CalibrationAPI,
+    private actions$: Actions
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -62,6 +88,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.tableConfig = {
       view: "adjustments",
       selectedCurveType: "OEP",
+      selectedFinancialUnit: "M",
       isExpanded: false,
       expandedRowKeys: {},
       isGrouped: true
@@ -70,14 +97,38 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.columnsConfig,
       frozenWidth: '530px'
     };
-    this.curveTypes = ['OEP', 'AEP', 'OEP-TVAR', 'OEP-TVAR'];
+
+    this.constants = {
+      curveTypes: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
+      financialUnits: ['M','B']
+    };
     this.rowKeys= {};
 
     this.isAdjustmentPopUpVisible= false;
+    this.isRPPopUpVisible= false;
+    this.returnPeriodConfig= {
+      newlyAdded: [],
+      currentRPs: [],
+      showSuggestion: false,
+      returnPeriodInput: null,
+      message: null
+    };
+    this.rpValidation= {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
   }
 
   ngOnInit() {
-
+    this.actions$
+      .pipe(
+        ofActionCompleted(fromWorkspaceStore.SaveRPs),
+        this.unsubscribeOnDestroy
+      ).subscribe( () => {
+        this.cancelRPPopup();
+        this.detectChanges();
+    })
   }
 
   ngOnDestroy(): void {
@@ -106,7 +157,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     if( !this.wsId && wsId && !this.uwYear && uwYear ) {
       //INIT
-      console.log(workspaceType);
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.columnsConfig = {
         ...this.columnsConfig,
@@ -122,7 +172,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.loadConstants();
       this.loadCalibrationPlts(wsId, uwYear);
       this.loadAdjustments(wsId, uwYear);
-      this.loadEpMetrics(wsId, uwYear, 1, 'OEP');
+      this.loadEpMetrics(wsId, uwYear, 1, this.tableConfig.selectedCurveType);
     }
 
     this.wsIdentifier = wsIdentifier;
@@ -201,7 +251,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.loading = loading;
   }
 
-  initEpMetricsCols({cols}) {
+  initEpMetricsCols({cols, rps}) {
+    this.returnPeriodConfig= {
+      ...this.returnPeriodConfig,
+      currentRPs: rps
+    };
     this.calibrationTableService.setCols(
       cols,
       'epMetrics'
@@ -264,6 +318,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.rowExpandChange(action.payload);
         break;
 
+      case "Open return periods manager":
+        this.openRPManager();
+        break;
+
+      case "Curve Type Change":
+        this.curveTypeChange(action.payload);
+        break;
+
       default:
         console.log(action);
     }
@@ -275,6 +337,27 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.isAdjustmentPopUpVisible= false;
         this.selectedAdjustment = null;
         break;
+      default:
+        console.log(action);
+    }
+  }
+
+  handleReturnPeriodPopUp(action: Message) {
+    switch (action.type) {
+      case "Return period popup input change":
+        this.rpInputChange(action.payload);
+        break;
+      case "ADD Return period":
+        this.addReturnPeriod(action.payload);
+        break;
+      case "Save return periods":
+        this.saveRPs();
+        break;
+
+      case "Cancel Changes":
+        this.cancelRPPopup();
+        break;
+
       default:
         console.log(action);
     }
@@ -323,4 +406,83 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  openRPManager(){
+    this.isRPPopUpVisible= true;
+  }
+
+  addReturnPeriod(rp) {
+
+    this.validationSub = this.calibrationApi.validateRP(rp)
+      .subscribe((validation: any) => {
+        if(validation.isValid) {
+          if(_.find([...this.returnPeriodConfig.currentRPs, ...this.returnPeriodConfig.newlyAdded], oldRp => oldRp == rp)) {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              returnPeriodInput: null,
+              message: "Already exists"
+            };
+          } else {
+            this.returnPeriodConfig = {
+              ...this.returnPeriodConfig,
+              showSuggestion: false,
+              returnPeriodInput: null,
+              newlyAdded: _.concat(this.returnPeriodConfig.newlyAdded, [rp])
+            };
+          }
+        } else {
+          this.returnPeriodConfig = {
+            ...this.returnPeriodConfig,
+            showSuggestion: true
+          }
+        }
+
+        this.rpValidation = validation;
+        this.detectChanges();
+
+        this.validationSub && this.validationSub.unsubscribe()
+      })
+  }
+
+  rpInputChange(newValue) {
+    this.returnPeriodConfig = {
+      ...this.returnPeriodConfig,
+      returnPeriodInput: newValue,
+    }
+  }
+
+  saveRPs() {
+    this.dispatch(new fromWorkspaceStore.SaveRPs({
+      rps: this.returnPeriodConfig.newlyAdded,
+      userId: 1,
+      wsId: this.wsId,
+      uwYear: this.uwYear,
+      curveType: this.tableConfig.selectedCurveType
+    }))
+  }
+
+  cancelRPPopup() {
+    this.isRPPopUpVisible = false;
+    this.returnPeriodConfig= {
+      ...this.returnPeriodConfig,
+      showSuggestion: false,
+      returnPeriodInput: null,
+      message: null
+    };
+    this.rpValidation= {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
+  }
+
+  curveTypeChange(curveType) {
+    this.tableConfig = {
+      ...this.tableConfig,
+      selectedCurveType: curveType
+    };
+
+    this.loadEpMetrics(this.wsId, this.uwYear, 1, curveType);
+
+  }
 }

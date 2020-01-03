@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;

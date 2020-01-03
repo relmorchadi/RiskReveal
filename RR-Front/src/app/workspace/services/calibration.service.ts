@@ -150,7 +150,7 @@ export class CalibrationService implements NgxsOnInit {
     const marketChannel = state.content[wsIdentifier].marketChannel;
     return forkJoin(
       _.toArray(state.content[wsIdentifier].calibration.data[wsIdentifier]).map(item => {
-        return this.calibrationAPI.loadDefaultAdjustement('AGG', marketChannel, item.pltId, item.regionPerilId, item.targetRapId)
+        return this.calibrationAPI.loadDefaultAdjustment('AGG', marketChannel, item.pltId, item.regionPerilId, item.targetRapId)
       })
     ).pipe(
       switchMap(data => {

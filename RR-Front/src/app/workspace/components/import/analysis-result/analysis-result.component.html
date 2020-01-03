@@ -139,7 +139,7 @@
                      *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                 <div class="text-data" style="font-weight: 500"
                      *ngIf="col.type === 'Rp' || col.type === 'Ob'"
-                     (click)="overrideRegionPerilOccurrenceBasis(rowData, col.type)">
+                     (click)="overrideRegionPerilOccurrenceBasis(rowData, col.type,i)">
                     <span class="highlighted-change">
                       {{rowData[col.field]}}
                     </span>
@@ -239,3 +239,10 @@
                       (loadTargetRaps)="loadTargetRaps($event)" (override)="overridePEQTs($event)"
                       (close)="closePEQTOverrideDialog()">
 </override-peqt-dialog>
+
+
+<override-occurence-basis-dialog [visible]="showOverrideOccurrenceBasisDialog"
+  (override)="overrideOccurrenceBasis($event)"
+  (close)="showOverrideOccurrenceBasisDialog=false">
+
+</override-occurence-basis-dialog>

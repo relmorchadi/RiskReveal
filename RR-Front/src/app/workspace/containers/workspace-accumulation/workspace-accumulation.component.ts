@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
-import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
@@ -22,7 +21,6 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
 
   check = true;
   @Select(WorkspaceState.getPlts) data$;
-  @Select(WorkspaceMainState.getData) wsData$;
 
   dataSource: any;
 
@@ -37,7 +35,6 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   ngOnInit() {
     //   this.dataSource = dataTable.dataSource;
     combineLatest(
-      this.wsData$,
       this.route.params
     ).pipe(this.unsubscribeOnDestroy)
       .subscribe(([data, {wsId, year}]: any) => {

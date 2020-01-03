@@ -1,6 +1,6 @@
-<!--<div class="dashboard-wrapper">
+<div class="dashboard-wrapper">
   <nz-content>
-    &lt;!&ndash;
+    <!--
     <nz-tabset class="dashboard-content">
       <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
         <div style="height: 1000px" nz-row>
@@ -19,7 +19,7 @@
 
         </div>
       </nz-tab>
-    </nz-tabset> &ndash;&gt;
+    </nz-tabset> -->
     <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
       <ng-container *ngFor="let dashboard of dashboardsMockData">
         <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
@@ -34,20 +34,20 @@
             <gridster  [options]="options" style="background-color: transparent" >
               <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
-                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
+<!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
                                           (changeName)="changeName(dashboard.id, $event)"
                                           (duplicate)="duplicate(dashboard.id, $event)"
                                           class="no-drag">
-                  </renewal-contract-scope>
+                  </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
-                  <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
+   <!--               <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                         (delete)="deleteItemFac(dashboard.id, $event)"
                                         (changeName)="changeNameFac(dashboard.id, $event)"
@@ -58,7 +58,7 @@
                                             (delete)="deleteItemFac(dashboard.id, $event)"
                                             (changeName)="changeNameFac(dashboard.id, $event)"
                                             (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
-                  </app-fac-subsidiary-chart>
+                  </app-fac-subsidiary-chart>-->
                 </gridster-item>
               </ng-container>
             </gridster>
@@ -139,9 +139,9 @@
         <div class="highlight">
           Display selected widgets on dashboard
           <br><br>
-          <span class="title">TREATY</span>
+<!--          <span class="title">TREATY</span>-->
         </div>
-        <ul class="widgets-list">
+<!--        <ul class="widgets-list">
           <ng-container *ngFor="let treaty of selectedDashboard.items; let i = index">
             <li *ngIf="i < 5" class="widget-item"
                 (click)="addRemoveItem(treaty, selectedDashboard)"
@@ -152,16 +152,16 @@
                  [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
             </li>
           </ng-container>
-        </ul>
+        </ul>-->
         <div class="highlight" style="margin-top: 10px">
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
         <ul class="widgets-list" style="height: 160px;">
-          <ng-container *ngFor="let fac of selectedDashboard.fac;let i = index">
+          <ng-container *ngFor="let fac of selectedDashboard.fac; let i = index">
             <li *ngIf="i < 5"
                 (click)="addRemoveItemFac(fac, selectedDashboard)"
                 class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
-              &lt;!&ndash;            <i [ngClass]="fac.icon"></i>&ndash;&gt;
+              <!--            <i [ngClass]="fac.icon"></i>-->
               {{fac?.name}}
               <i class="float-right mr-1 mt-1"
                  [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
@@ -169,12 +169,10 @@
           </ng-container>
         </ul>
       </div>
-      &lt;!&ndash;        <div style="margin-bottom: 15px">
+      <!--        <div style="margin-bottom: 15px">
                 <button class="button-apply-function">Apply</button>
-              </div>&ndash;&gt;
+              </div>-->
 
     </div>
   </div>
-</div>-->
-
-
+</div>

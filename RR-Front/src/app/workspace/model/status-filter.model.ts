@@ -6,11 +6,11 @@ export class StatusFilter {
   requiresRegeneration: boolean;
   failed: boolean;
   constructor() {
-    this.inProgress = false;
-    this.new = false;
-    this.valid = false;
-    this.locked = false;
-    this.requiresRegeneration = false;
-    this.failed = false;
+    this.inProgress = true;
+    this.new = true;
+    this.valid = true;
+    this.locked = true;
+    this.requiresRegeneration = true;
+    this.failed = true;
   }
 }

@@ -1,5 +1,5 @@
 import {Pipe, PipeTransform} from '@angular/core';
-
+declare const _;
 
 @Pipe({
   name: 'statusFilter'
@@ -9,43 +9,20 @@ export class StatusFilterPipe implements PipeTransform {
     let res = [];
     let status = args[0];
     let isFilter = false;
-    for (let elm in status){
-      if (status[elm]){
+    _.forEach(status, (v, k)=>{
+      if (v){
         isFilter = true;
       }
-    }
-    if (!isFilter) return value;
-    value.forEach((thread) => {
-      for (let elm in status){
-        if(status[elm]){
-          switch (elm) {
-            case 'inProgress':
-              if (thread.status == 'in Progress')
-                res.push(thread)
-              break;
-            case 'failed':
-              if (thread.status == 'failed')
-                res.push(thread);
-              break;
-            case 'locked':
-              if (thread.status == 'locked')
-                res.push(thread)
-              break;
-            case 'new':
-              if (thread.status == 'new')
-                res.push(thread);
-              break;
-            case 'requiresRegeneration':
-              if (thread.status == 'requires regeneration')
-                res.push(thread)
-              break;
-            case 'valid':
-              if (thread.status == 'Valid')
-                res.push(thread);
-              break;
-          }
+    })
+    if (!isFilter) return res;
+    _.forEach(value, (thread)=>{
+      _.forEach(status, (v, k)=>{
+        if (v){
+          if (thread.status.replace(' ','').toLowerCase() ==
+            k.replace(' ','').toLowerCase()) res = [...res, thread];
+
         }
-      }
+      })
     })
     return res;
   }

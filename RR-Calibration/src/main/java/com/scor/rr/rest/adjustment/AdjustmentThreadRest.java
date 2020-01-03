@@ -35,9 +35,4 @@ public class AdjustmentThreadRest {
     public AdjustmentThread branchNewAdjustmentThread(@RequestBody AdjustmentThreadBranchingRequest request) throws RRException {
         return adjustmentThreadService.branchNewAdjustmentThread(request);
     }
-
-    @GetMapping
-    public AdjustmentThread findById(Integer id){
-        return adjustmentThreadService.findOne(id);
-    }
 }

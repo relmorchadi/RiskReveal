@@ -1,6 +1,5 @@
 :host {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   background-color: #F4F6FC;
 
@@ -63,10 +62,6 @@
 
     .ui-table-scrollable-view.ui-table-frozen-view {
       border-right: 5px solid #E3E3E3;
-    }
-
-    .ui-table-frozen-view {
-      min-height: 610px;
     }
 
     .icon-check {
@@ -195,7 +190,7 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          display: flex;
+          /*display: flex;*/
           align-items: center;
         }
 

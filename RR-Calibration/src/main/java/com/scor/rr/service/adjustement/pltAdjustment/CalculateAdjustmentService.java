@@ -6,7 +6,6 @@ import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.EPMetricPoint;
-import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.enums.StatisticMetric;
@@ -16,9 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.File;
 import java.util.*;
@@ -40,13 +37,18 @@ public class CalculateAdjustmentService {
     SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
+    LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
+
+    @Autowired
     SummaryStatisticsDetailRepository summaryStatisticsDetailRepository;
+
+    @Autowired
+    DefaultReturnPeriodRepository defaultReturnPeriodRepository;
 
     @Autowired
     RegionPerilRepository regionPerilRepository;
 
-    @PostMapping("calculateSummaryStatisticHeaderDetail")
-    public SummaryStatisticsDetail calculateSummaryStatisticHeaderDetail(Long pltId, StatisticMetric metricType) throws RRException {
+    public SummaryStatisticHeaderEntity calculateSummaryStatistic(Long pltId) throws RRException {
         PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(pltId);
 
         String fullFilePath = plt.getLossDataFilePath() + "/" + plt.getLossDataFileName(); // "/" linux
@@ -55,47 +57,109 @@ public class CalculateAdjustmentService {
         Optional<RegionPerilEntity> regionPerilEntityOptional = regionPerilRepository.findById(plt.getRegionPerilId());
 
         if (modelAnalysisOptional.isPresent() && regionPerilEntityOptional.isPresent()) {
-//            ResponseEntity<Double> averageAnnualLossResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.averageAnnualLoss, restTemplate);
-//            ResponseEntity<Double> covResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.coefOfVariance, restTemplate);
-//            ResponseEntity<Double> stdDevResponse = this.getSummaryStats(summaryStatURL, request, fullFilePath, SummaryStatisticType.stdDev, restTemplate);
-//
-//            if (averageAnnualLossResponse.getStatusCode().equals(HttpStatus.OK) && averageAnnualLossResponse.getBody() != null &&
-//                    covResponse.getStatusCode().equals(HttpStatus.OK) && covResponse.getBody() != null &&
-//                    stdDevResponse.getStatusCode().equals(HttpStatus.OK) && stdDevResponse.getBody() != null) {
-//                this.writeSummaryStat(pltHeader, modelAnalysisOptional.get(), regionPerilEntityOptional.get(),
-//                        averageAnnualLossResponse.getBody(), covResponse.getBody(), stdDevResponse.getBody(), isThread, threadId);
-//            }
+            // LossDataHeaderEntity : ELT
+
+            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltId, "PLT");
+            if (summaryStatisticHeaders != null && !summaryStatisticHeaders.isEmpty()) {
+                return summaryStatisticHeaders.get(0);
+            }
+
+            SummaryStatisticHeaderEntity summaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity();
 
             MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
             List<PLTLossData> pltLossData = readPltFile.read(new File(fullFilePath));
-            EPMetric epMetric = getAEPMetric(pltLossData);
-            SummaryStatisticsDetail summaryStatisticsDetail = new SummaryStatisticsDetail();
-            summaryStatisticsDetail.setPltHeaderId(pltId);
-            summaryStatisticsDetail.setCurveType(metricType.name());
-            summaryStatisticsDetail.setLossType("PLT");
-//            summaryStatisticsDetail.setSummaryStatisticHeaderId(); // todo
-            summaryStatisticsDetailRepository.save(summaryStatisticsDetail);
 
-            Map<Integer, Double> map = new HashMap<>();
-            for (EPMetricPoint epMetricPoint : epMetric.getEpMetricPoints()) {
+            // todo writeSummaryStat
+            summaryStatisticHeaderEntity.setPurePremium(StatisticAdjustment.averageAnnualLoss(pltLossData));
+            summaryStatisticHeaderEntity.setCov(StatisticAdjustment.coefOfVariance(pltLossData));
+            summaryStatisticHeaderEntity.setStandardDeviation(StatisticAdjustment.stdDev(pltLossData));
+            summaryStatisticHeaderEntity.setLossDataType("PLT");
+            summaryStatisticHeaderEntity.setLossDataId(plt.getPltHeaderId());
+            summaryStatisticHeaderEntity.setFinancialPerspective("FP"); // todo right ?
+            summaryStatisticHeaderEntity.setEntity(1L);
+            summaryStatisticHeaderEntity.setCurrency(plt.getCurrencyCode());
+            summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
 
-            }
+            // summaryStatisticsDetail
+            EPMetric aepMetric = getAEPMetric(pltLossData);
+            EPMetric oepMetric = getOEPMetric(pltLossData);
+            EPMetric aepTvarMetric = StatisticAdjustment.AEPTVaRMetrics(getAEPMetric(pltLossData).getEpMetricPoints());
+            EPMetric oepTvarMetric = StatisticAdjustment.OEPTVaRMetrics(getAEPMetric(pltLossData).getEpMetricPoints());
 
-            List<String> columns = new ArrayList<>();
-            List<String> values = new ArrayList<>();
+            SummaryStatisticsDetail aepSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, aepMetric, "AEP", summaryStatisticHeaderEntity);
+            SummaryStatisticsDetail oepSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, oepMetric, "OEP", summaryStatisticHeaderEntity);
+            SummaryStatisticsDetail aepTvarSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, aepTvarMetric, "AEPTVAR", summaryStatisticHeaderEntity);
+            SummaryStatisticsDetail oepTvarSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, oepTvarMetric, "OEPTVAR", summaryStatisticHeaderEntity);
 
-            for (Map.Entry<Integer, Double> entry : map.entrySet()) {
-                columns.add("RP" + entry.getKey());
-                values.add(entry.getValue().toString());
-            }
-            String query = "insert into SummaryStatisticHeaderDetail (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
-            return summaryStatisticsDetail;
+            return summaryStatisticHeaderEntity;
+
         } else {
             log.error("no model analysis found for plt with id {}", plt.getPltHeaderId());
             return null;
         }
     }
 
+    public SummaryStatisticsDetail getSummaryStatisticsDetail(Long pltId, EPMetric epMetric, String curveType, SummaryStatisticHeaderEntity summaryStatisticHeaderEntity) {
+        SummaryStatisticsDetail summaryStatisticsDetail = summaryStatisticsDetailRepository.findByPltHeaderIdAndCurveTypeAndLossType(pltId, curveType, "PLT");
+        if (summaryStatisticsDetail != null) {
+            return summaryStatisticsDetail;
+        }
+        summaryStatisticsDetail = new SummaryStatisticsDetail();
+        summaryStatisticsDetail.setPltHeaderId(pltId);
+        summaryStatisticsDetail.setCurveType(curveType);
+        summaryStatisticsDetail.setLossType("PLT");
+        summaryStatisticsDetail.setSummaryStatisticHeaderId(summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
+
+        Map<Integer, Integer> mapRef = new HashMap<>();
+        List<DefaultReturnPeriodEntity> defaultReturnPeriodEntities = defaultReturnPeriodRepository.findAll();
+        if (defaultReturnPeriodEntities == null || defaultReturnPeriodEntities.isEmpty()) {
+            throw new IllegalStateException("calculateSummaryStatistic, no defaultReturnPeriodEntities, wrong");
+        }
+        for (DefaultReturnPeriodEntity defaultReturnPeriodEntity : defaultReturnPeriodEntities) {
+            mapRef.put(defaultReturnPeriodEntity.getRank(), defaultReturnPeriodEntity.getReturnPeriod());
+        }
+
+        Map<Integer, Double> map = new HashMap<>();
+        for (EPMetricPoint epMetricPoint : epMetric.getEpMetricPoints()) {
+            if (mapRef.get(epMetricPoint.getRank()) != null) {
+                map.put(mapRef.get(epMetricPoint.getRank()), epMetricPoint.getLoss());
+            }
+        }
+
+        // for summaryStatisticHeader 8 points
+        if ("AEP".equals(curveType)) {
+            summaryStatisticHeaderEntity.setAep2(map.get(2));
+            summaryStatisticHeaderEntity.setAep5(map.get(5));
+            summaryStatisticHeaderEntity.setAep10(map.get(10));
+            summaryStatisticHeaderEntity.setAep50(map.get(50));
+            summaryStatisticHeaderEntity.setAep100(map.get(100));
+            summaryStatisticHeaderEntity.setAep250(map.get(250));
+            summaryStatisticHeaderEntity.setAep500(map.get(500));
+            summaryStatisticHeaderEntity.setAep1000(map.get(1000));
+        } else if ("OEP".equals(curveType)) {
+            summaryStatisticHeaderEntity.setOep2(map.get(2));
+            summaryStatisticHeaderEntity.setOep5(map.get(5));
+            summaryStatisticHeaderEntity.setOep10(map.get(10));
+            summaryStatisticHeaderEntity.setOep50(map.get(50));
+            summaryStatisticHeaderEntity.setOep100(map.get(100));
+            summaryStatisticHeaderEntity.setOep250(map.get(250));
+            summaryStatisticHeaderEntity.setOep500(map.get(500));
+            summaryStatisticHeaderEntity.setOep1000(map.get(1000));
+        }
+        summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+
+        // todo : for summaryStatisticsDetail 630 points
+        List<String> columns = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        for (Map.Entry<Integer, Double> entry : map.entrySet()) {
+            columns.add("RP" + entry.getKey());
+            values.add(entry.getValue().toString());
+        }
+
+        String query = "insert SummaryStatisticHeaderDetail  (" + StringUtils.join(columns, ",") + ") values (" + StringUtils.join(values, ",") + ");";
+        summaryStatisticsDetailRepository.save(summaryStatisticsDetail);
+        return summaryStatisticsDetail;
+    }
 
     public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
@@ -114,10 +178,13 @@ public class CalculateAdjustmentService {
     }
 
     public static EPMetric getAEPMetric(List<PLTLossData> pltLossDatas){
-        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+        if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
+                    finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum()))
+                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            pltLossDatas.size();
             return new EPMetric(StatisticMetric.AEP,
                     pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {
