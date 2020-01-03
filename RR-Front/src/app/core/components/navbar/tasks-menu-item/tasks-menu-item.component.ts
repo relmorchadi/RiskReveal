@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {SearchService} from '../../../service/search.service';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
-import {HeaderState, WorkspaceMainState} from '../../../store/states';
+import {HeaderState} from '../../../store/states';
 import {Observable} from 'rxjs';
 /*import {WorkspaceMain} from '../../../model/workspace-main';*/
 import {HelperService} from '../../../../shared/helper.service';

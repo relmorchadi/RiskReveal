@@ -32,9 +32,6 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
     private RmsInstanceCache rmsInstanceCache;
 
     @Autowired
-    private FacParameters facParameters;
-
-    @Autowired
     private TransformationPackage transformationPackage;
 
     @Value("#{jobParameters['instanceId']}")

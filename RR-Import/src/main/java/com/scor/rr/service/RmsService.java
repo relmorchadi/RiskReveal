@@ -120,7 +120,7 @@ public class RmsService {
             }
 
 //            final RLModelDataSource rlModelDataSourceLM = rlModelDataSource;
-            Integer count=null;
+            Integer count = null;
             if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
                 count = scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
             } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
@@ -298,7 +298,12 @@ public class RmsService {
                 runId = createEDMPortfolioContext(instanceId, edmId, edmName, multiKeyListEntry.getValue(), new ArrayList<String>());
 
                 this.listEdmPortfolio(instanceId, edmId, edmName, multiKeyListEntry.getValue())
-                        .forEach(edmPortfolio -> this.rlPortfolioRepository.updatePortfolioById(projectId, edmPortfolio));
+                        .forEach(edmPortfolio -> {
+                            this.rlPortfolioRepository.updatePortfolioById(projectId, edmPortfolio);
+                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmPortfolio.getEdmId(),
+                                    edmPortfolio.getEdmName(), edmPortfolio.getPortfolioId(), projectId);
+                            allScannedPortfolios.add(rlPortfolio);
+                        });
 
                 this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, runId)
                         .stream()
@@ -307,7 +312,6 @@ public class RmsService {
                             rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
                             rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
                             rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
-                            allScannedPortfolios.add(rlPortfolio);
                             return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
                         })
                         .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
@@ -780,7 +784,7 @@ public class RmsService {
                 .forEach(stat -> {
                     RLSourceEpHeader sourceEpHeader = new RLSourceEpHeader(stat);
                     RLAnalysis rlAnalysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, stat.getAnalysisId(), projectId);
-                    sourceEpHeader.setRLAnalysisId(rlAnalysis.getRlAnalysisId());
+                    sourceEpHeader.setRlAnalysis(rlAnalysis);
                     filterEpCurvesByStat(epCurves, stat).forEach(epC -> {
                         int statisticMetric = epC.getEbpTypeCode();
                         try {
@@ -806,13 +810,16 @@ public class RmsService {
                     fieldName = "oEP";
                     break;
                 default:
-                    throw new Exception("Non supported Stat Metric by RlSourceEpHeader Entity " + statisticMetric);
+                    logger.error("Non supported Stat Metric by RlSourceEpHeader Entity " + statisticMetric);
             }
         }
-        if (fieldName != null)
+        if (fieldName != null) {
             return fieldName.concat(String.valueOf(returnPeriod));
-        else
-            throw new Exception("Non supported Return Period by RlSourceEpHeader Entity " + returnPeriod);
+        }
+        else {
+            logger.error("Non supported Return Period by RlSourceEpHeader Entity " + returnPeriod);
+            return null;
+        }
     }
 
     private List<RdmAnalysisEpCurves> filterEpCurvesByStat(List<RdmAnalysisEpCurves> epCurves, RdmAllAnalysisSummaryStats stats) {

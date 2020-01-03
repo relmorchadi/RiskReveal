@@ -7,7 +7,6 @@ import * as fromWs from '../../store/actions';
 import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions';
 import {BaseContainer} from '../../../shared/base';
 import {WorkspaceState} from '../../store/states';
-import {PatchWorkspaceMainStateAction} from '../../../core/store/actions';
 import {Navigate} from '@ngxs/router-plugin';
 import {map} from 'rxjs/operators';
 import * as fromHeader from 'src/app/core/store/actions/header.action';
@@ -116,10 +115,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
       return content;
     }
   }
-
+/*
   patchSliceValue(value) {
     this.dispatch(new PatchWorkspaceMainStateAction({key: 'sliceValidator', value: value}));
   }
+*/
 
   patchWorkspaceDetail(wsId: string) {
     this.dispatch(new ToggleWsDetails(wsId));

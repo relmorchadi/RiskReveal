@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import * as fromWS from '../actions';
 import {PatchCalibrationStateAction, SaveRPs} from '../actions';
 import * as fromInuring from '../actions/inuring.actions';
-import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
@@ -261,7 +260,7 @@ export class WorkspaceState {
   }
 
   static getLeftNavbarIsCollapsed() {
-    return createSelector([WorkspaceState], (state: WorkspaceMain) => {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.get(state, "leftNavbarIsCollapsed");
     });
   }
@@ -453,6 +452,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadProjectForWs)
   loadProjectForWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectForWs) {
     this.wsService.loadProjectForWs(ctx, payload);
+  }
+
+  @Action(fromWS.LoadFacProjectData)
+  loadFacProjectData(ctx: StateContext<WorkspaceModel>) {
+    return this.wsService.loadProjectData(ctx);
   }
 
   @Action(fromWS.OpenWS)

@@ -1,6 +1,8 @@
 package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
+import com.scor.rr.domain.dto.CARDivisionDto;
+import com.scor.rr.service.abstraction.ConfigurationService;
 import com.scor.rr.service.state.FacParameters;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
@@ -34,6 +36,9 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
     @Autowired
     private TransformationPackage transformationPackage;
 
+    @Autowired
+    private ConfigurationService configurationService;
+
     @Value("#{jobParameters['instanceId']}")
     private String instanceId;
 
@@ -42,6 +47,10 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
 
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
+
+    @Value("#{jobParameters['carId']}")
+    private String carId;
+
 
     private List<String> parameters;
 
@@ -82,9 +91,14 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
 
                 setSql(StringUtils.replaceEach(getSql(), new String[]{":edm:", ":rdm:"}, new String[]{edm, rdm}));
 
+                Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
                 ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
                 List<Object> queryParameters = new LinkedList<>();
-                queryParameters.add("USD");
+
+                queryParameters.add(
+                        configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                        .map(CARDivisionDto::getCurrency)
+                        .findFirst().orElse("USD"));
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
 

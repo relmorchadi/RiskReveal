@@ -8,7 +8,7 @@ import {from, of} from "rxjs";
 import {catchError, map, mergeMap} from "rxjs/operators";
 import {GlobalConfigApi} from '../../service/api/global-config.api';
 
-const initiaState: GeneralConfig = {
+const initiateState: GeneralConfig = {
   userPreferenceId: null,
   general: {
     dateFormat: {
@@ -47,7 +47,7 @@ const initiaState: GeneralConfig = {
 
 @State<GeneralConfig>({
   name: 'generalConfig',
-  defaults: initiaState
+  defaults: initiateState
 })
 export class GeneralConfigState implements NgxsOnInit {
 
