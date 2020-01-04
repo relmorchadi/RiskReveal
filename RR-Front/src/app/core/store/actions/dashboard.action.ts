@@ -12,3 +12,8 @@ export class LoadDashboardFacDataSuccessAction {
     static readonly type = '[Dashboard] Dashboard Fac Load Data Success';
     constructor(public payload?: any) {}
 }
+
+export class FilterFacData {
+    static readonly type = '[Dashboard] Filter Data';
+    constructor(public payload?: any) {}
+}
