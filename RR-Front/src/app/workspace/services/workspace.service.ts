@@ -90,7 +90,8 @@ export class WorkspaceService {
             adjustments: {},
             constants: {
               basis: [],
-              adjustmentTypes: []
+              adjustmentTypes: [],
+              status: []
             },
             loading: false
           },
@@ -203,7 +204,6 @@ export class WorkspaceService {
           return of();
         })
     )
-
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {

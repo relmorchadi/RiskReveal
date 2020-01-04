@@ -215,8 +215,13 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
+  //Higher State Order
   static getCalibrationConstants(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+  }
+
+  static getCalibrationStatus(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants.status );
 
   }
 
@@ -336,13 +341,14 @@ export class WorkspaceState {
           rdmName: rdms[rdmId].name,
           analysisId: item.rlId,
           analysisName: item.analysisName,
+          rlAnalysisId: item.rlAnalysisId
         }) ))
       ),
       portfolios: _.flatten(
         _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
           edmId,
           edmName: edms[edmId].name,
-          curreny: item.agCurrency,
+          currency: item.agCurrency,
           portfolioId: item.rlId,
           portfolioName: item.name,
           portfolioType: item.type
@@ -1148,7 +1154,7 @@ export class WorkspaceState {
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(fromWS.LoadRiskLinkDataAction)
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkDataAction) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 

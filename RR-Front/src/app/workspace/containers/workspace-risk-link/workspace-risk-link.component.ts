@@ -144,7 +144,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     rlId: '',
     name: '',
     description: '',
-    created:  null,
+    created: null,
     type: '',
     agCurrency: '',
     agCedent: '',
@@ -169,68 +169,69 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   ngOnInit() {
     this.dispatch(new fromWs.LoadRiskLinkDataAction());
-    setTimeout(()=>{
+    setTimeout(() => {
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         instanceId: this.state.financialValidator.rmsInstance.selected,
         keyword: '',
         offset: 0,
         size: 100,
       }));
-    },500);
+    }, 500);
 
-    this.serviceSubscription = [
-      this.state$.pipe().subscribe(value => {
-        this.state = _.merge({}, value);
-        this.detectChanges();
-      }),
-      this.listEdmRdm$.pipe().subscribe(value => {
-        this.listEdmRdm = _.merge({}, value);
-        this.detectChanges();
-      }),
-      this.ws$.pipe().subscribe(value => {
-        this.ws = _.merge({}, value);
-        this.wsStatus = this.ws.workspaceType;
-        this.detectChanges();
-      }),
-      this.analysis$.pipe().subscribe(value => {
-        this.analysis = _.merge({}, value);
-        this.detectChanges();
-      }),
-      this.portfolios$.pipe().subscribe(value => {
-        this.portfolios = _.merge({}, value);
-        this.detectChanges();
-      }),
-      this.selectedProject$.pipe().subscribe(value => {
-        this.tabStatus = _.get(value, 'projectType', null);
-        this.detectChanges();
-        if (this.wsStatus === 'fac') {
-          if (this.tabStatus === 'fac') {
-            this.dispatch([new fromWs.LoadFacDataAction()]);
-          } else if (this.tabStatus === 'treaty') {
-            this.dispatch(new fromWs.LoadRiskLinkDataAction());
-          }
+
+    this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.state = _.merge({}, value);
+      this.detectChanges();
+    });
+    this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.listEdmRdm = _.merge({}, value);
+      this.detectChanges();
+    });
+    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.ws = _.merge({}, value);
+      this.wsStatus = this.ws.workspaceType;
+      this.detectChanges();
+    });
+    this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.analysis = _.merge({}, value);
+      this.detectChanges();
+    });
+    this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.portfolios = _.merge({}, value);
+      this.detectChanges();
+    });
+    this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.tabStatus = _.get(value, 'projectType', null);
+      this.detectChanges();
+      if (this.wsStatus === 'fac') {
+        if (this.tabStatus === 'fac') {
+          this.dispatch([new fromWs.LoadFacDataAction()]);
+        } else if (this.tabStatus === 'treaty') {
+          this.dispatch(new fromWs.LoadRiskLinkDataAction());
         }
-      }),
-      this.route.params.pipe().subscribe(({wsId, year}) => {
-        this.hyperLinksConfig = {wsId, uwYear: year};
-        this.dispatch(new fromWs.LoadRiskLinkDataAction());
-        if (this.wsStatus === 'fac') {
-          if (this.tabStatus === 'fac') {
-            this.dispatch([new fromWs.LoadFacDataAction()]);
-          } else if (this.tabStatus === 'treaty') {
-            this.dispatch(new fromWs.LoadRiskLinkDataAction());
-          }
+      }
+    });
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+      this.hyperLinksConfig = {wsId, uwYear: year};
+      this.dispatch(new fromWs.LoadRiskLinkDataAction());
+      if (this.wsStatus === 'fac') {
+        if (this.tabStatus === 'fac') {
+          this.dispatch([new fromWs.LoadFacDataAction()]);
+        } else if (this.tabStatus === 'treaty') {
+          this.dispatch(new fromWs.LoadRiskLinkDataAction());
         }
-        this.detectChanges();
-      }),
-      this.actions$
-        .pipe(
-          ofActionDispatched(SetCurrentTab)
-        ).subscribe(({payload}) => {
-        if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
-        this.detectChanges();
-      })
-    ];
+      }
+      this.detectChanges();
+    });
+    this.actions$
+      .pipe(
+        this.unsubscribeOnDestroy,
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+      if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
+      this.detectChanges();
+    });
+
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
@@ -238,6 +239,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
 
     this.datasourceKeywordFc.valueChanges
+      .pipe(this.unsubscribeOnDestroy)
       .pipe(debounceTime(500))
       .subscribe(val => {
         this.onInputSearch(val);
@@ -251,7 +253,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
 
   lazyLoadDataSources(lazyLoadEvent) {
-    console.log('Datasources lazy load', lazyLoadEvent);
     const {first, rows} = lazyLoadEvent;
     if (first + rows < this.state.listEdmRdm.totalElements) {
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
@@ -426,18 +427,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.selectedProject$,
         this.selectedAnalysisPortfolios$
       ].map(item => item.pipe(take(1)))
-    ).subscribe(data => {
-      const [p, analysisPortfolioSelection] = data;
-      console.log('Those are selected section', analysisPortfolioSelection);
-      console.log('Project', p);
-      const {analysis, portfolios} = analysisPortfolioSelection;
-      this.dispatch(new fromWs.RunDetailedScanAction({
-        instanceId: this.state.financialValidator.rmsInstance.selected,
-        projectId: p.projectId,
-        analysis,
-        portfolios
-      }));
-    });
+    ).pipe(this.unsubscribeOnDestroy)
+      .subscribe(data => {
+        const [p, analysisPortfolioSelection] = data;
+        console.log('Those are selected section', analysisPortfolioSelection);
+        console.log('Project', p);
+        const {analysis, portfolios} = analysisPortfolioSelection;
+        this.dispatch(new fromWs.RunDetailedScanAction({
+          instanceId: this.state.financialValidator.rmsInstance.selected,
+          projectId: p.projectId,
+          analysis,
+          portfolios
+        }));
+      });
 
   }
 
@@ -469,10 +471,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     console.log('Analysis Portfolio selection', event);
     if (event.length > 1) {
       if (this.state.selectedEDMOrRDM === 'RDM') {
-        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+          action: 'unSelectChunk',
+          data: this.filterData(this.getTableData())
+        }));
         this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectChunk', data: event}));
       } else {
-        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+          action: 'unSelectChunk',
+          data: this.filterData(this.getTableData())
+        }));
         this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectChunk', data: event}));
       }
     }
@@ -623,10 +631,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   selectWithUnselect(row) {
     if (this.state.selectedEDMOrRDM === 'RDM') {
-      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+        action: 'unSelectChunk',
+        data: this.filterData(this.getTableData())
+      }));
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unSelectChunk', data: this.filterData( this.getTableData())}));
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+        action: 'unSelectChunk',
+        data: this.filterData(this.getTableData())
+      }));
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
@@ -693,30 +707,32 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.summary$
       ]
         .map(item => item.pipe(take(1)))
-    ).subscribe(data => {
-      const [p, summary] = data;
-      const {projectId} = p;
-      this.dispatch(new fromWs.TriggerImportAction({
-        instanceId: this.state.financialValidator.rmsInstance.selected,
-        projectId,
-        userId: 1,
-        analysisConfig: this.transformAnalysisResultForImport(summary.analysis, projectId, analysisConfigFields),
-        portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, portfolioConfigFields)
-      }));
-    });
+    )
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(data => {
+        const [p, summary] = data;
+        const {projectId} = p;
+        this.dispatch(new fromWs.TriggerImportAction({
+          instanceId: this.state.financialValidator.rmsInstance.selected,
+          projectId,
+          userId: 1,
+          analysisConfig: this.transformAnalysisResultForImport(summary.analysis, projectId, analysisConfigFields),
+          portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, portfolioConfigFields)
+        }));
+      });
   }
 
   private transformAnalysisResultForImport(analysis, projectId, toBePicked) {
     return _.map(
       _.map(
         analysis,
-          an => ({
-              ...an,
-              targetRAPCodes: an.targetRaps,
-              targetRegionPeril: an.rpCode,
-              projectId
-            })
-        ),
+        an => ({
+          ...an,
+          targetRAPCodes: an.targetRaps,
+          targetRegionPeril: an.rpCode,
+          projectId
+        })
+      ),
       item => _.pick(item, toBePicked)
     );
   }

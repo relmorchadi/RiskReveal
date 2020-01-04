@@ -11,7 +11,8 @@ import * as _ from 'lodash';
 export class AnalysisResultComponent implements OnInit {
 
   @Input('data')
-  data:{analysis, epCurves, targetRaps}= {analysis: [], epCurves: [], targetRaps: []};
+  data:{analysis, epCurves, targetRaps, regionPerilsByAnalysis}= {analysis: [], epCurves: [], targetRaps: [], regionPerilsByAnalysis: {}};
+
 
   isCollapsed;
   scrollableColsResults = [
