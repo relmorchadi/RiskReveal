@@ -450,11 +450,6 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.LoadFacProjectData)
-  loadFacProjectData(ctx: StateContext<WorkspaceModel>) {
-    return this.wsService.loadProjectData(ctx);
-  }
-
   @Action(fromWS.OpenWS)
   openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);

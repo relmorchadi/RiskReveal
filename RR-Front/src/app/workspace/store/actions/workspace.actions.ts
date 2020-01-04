@@ -23,11 +23,6 @@ export class LoadWsFail {
   constructor(public payload?: any) {}
 }
 
-export class LoadFacProjectData {
-  static readonly type = '[Workspace] Load Project FAC Data';
-  constructor(public payload?: any) {}
-}
-
 export class OpenWS {
   static readonly type = '[Workspace] OpenWS';
   constructor(public payload?: any) {}

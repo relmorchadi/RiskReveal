@@ -189,21 +189,8 @@ export class WorkspaceService {
       ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
         wsIdentifier
-      }), new fromWS.LoadFacProjectData()]);
+      })]);
     }));
-  }
-
-  loadProjectData(ctx: StateContext<WorkspaceModel>) {
-    const state = ctx.getState();
-    const {wsIdentifier} = state.currentTab;
-    return forkJoin(
-        state.content[wsIdentifier].projects.map(item =>this.wsApi.getDivision(item.carRequestId))
-    ).pipe(
-        switchMap( data => {
-          console.log(data);
-          return of();
-        })
-    )
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
