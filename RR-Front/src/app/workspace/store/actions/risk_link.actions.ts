@@ -223,10 +223,10 @@ export class CreateLinkingAction {
   constructor(public payload: any) {}
 }
 
-export class LoadFacDataAction {
-  static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
-  constructor(public payload?: any) {}
-}
+// export class LoadFacDataAction {
+//   static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
+//   constructor(public payload?: any) {}
+// }
 
 export class LoadLinkingDataAction {
   static readonly type = '[Risk Link] Load Linking Data';

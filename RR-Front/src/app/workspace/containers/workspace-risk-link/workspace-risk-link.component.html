@@ -12,7 +12,7 @@
           <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
-          <span class="header-wrap-text">Project P - 00723</span>
+          <span class="header-wrap-text">Project P - {{selectedProject?.projectId}}</span>
         </div>
       </div>
       <div class="body-wrap-dropDowns">
@@ -229,9 +229,9 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
-              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"
-                      class="a-buttons-outlined-mini">Auto Attach
-              </button>
+<!--              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"-->
+<!--                      class="a-buttons-outlined-mini">Auto Attach-->
+<!--              </button>-->
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"

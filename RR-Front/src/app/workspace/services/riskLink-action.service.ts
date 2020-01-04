@@ -1354,146 +1354,146 @@ export class RiskLinkStateService {
     }
   }
 
-  deleteLink(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].riskLink.linking.linked.splice(
-        _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, payload), 1);
-    }));
-  }
+  // deleteLink(ctx: StateContext<WorkspaceModel>, payload) {
+  //   const state = ctx.getState();
+  //   const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  //   ctx.patchState(produce(ctx.getState(), draft => {
+  //     draft.content[wsIdentifier].riskLink.linking.linked.splice(
+  //       _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, payload), 1);
+  //   }));
+  // }
 
-  deleteInnerLink(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const {item, link, target} = payload;
-    if (target === 'portfolio') {
-      ctx.patchState(produce(ctx.getState(), draft => {
-        const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
-        if (draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.length === 1) {
-          draft.content[wsIdentifier].riskLink.linking.linked.splice(
-            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
-        } else {
-          draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.splice(
-            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio, item), 1);
-        }
-      }));
-    } else if (target === 'analysis') {
-      ctx.patchState(produce(ctx.getState(), draft => {
-        const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
-        if (draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.length === 1) {
-          draft.content[wsIdentifier].riskLink.linking.linked.splice(
-            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
-        } else {
-          draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.splice(
-            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].analysis, item), 1);
-        }
-      }));
-    }
-  }
+  // deleteInnerLink(ctx: StateContext<WorkspaceModel>, payload) {
+  //   const state = ctx.getState();
+  //   const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  //   const {item, link, target} = payload;
+  //   if (target === 'portfolio') {
+  //     ctx.patchState(produce(ctx.getState(), draft => {
+  //       const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
+  //       if (draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.length === 1) {
+  //         draft.content[wsIdentifier].riskLink.linking.linked.splice(
+  //           _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
+  //       } else {
+  //         draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.splice(
+  //           _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio, item), 1);
+  //       }
+  //     }));
+  //   } else if (target === 'analysis') {
+  //     ctx.patchState(produce(ctx.getState(), draft => {
+  //       const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
+  //       if (draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.length === 1) {
+  //         draft.content[wsIdentifier].riskLink.linking.linked.splice(
+  //           _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
+  //       } else {
+  //         draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.splice(
+  //           _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].analysis, item), 1);
+  //       }
+  //     }));
+  //   }
+  // }
 
-  loadLinkingDataAction(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const {analysis, portfolios} = payload;
-    const rdm = _.uniqBy(analysis.map(item => ({name: item.rdmName, id: item.rdmId, selected: false, type: 'rdm'})),
-      (dt: any) => dt.id);
-    const edm = _.uniqBy(portfolios.map(item => ({name: item.edmName, id: item.edmId, selected: false, type: 'edm'})),
-      (dt: any) => dt.id);
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].riskLink.linking = {
-        ...draft.content[wsIdentifier].riskLink.linking,
-        rdm: {
-          data: Object.assign({}, ...rdm.map(item => ({[item.id]: {...item}}))),
-          selected: null
-        },
-        edm: Object.assign({}, ...edm.map(item => ({[item.id]: {...item}}))),
-        analysis: {
-          data: Object.assign({}, ...analysis.map(dt => ({[dt.id]: {...dt, selected: false}}))),
-          allChecked: false, indeterminate: false, numberOfElement: analysis.length
-        },
-        portfolio: {
-          data: Object.assign({}, ...portfolios.map(dt => ({[dt.id]: {...dt, selected: false}}))),
-          allChecked: false, indeterminate: false, numberOfElement: portfolios.length
-        }
-      };
-    }));
-  }
+  // loadLinkingDataAction(ctx: StateContext<WorkspaceModel>, payload) {
+  //   const state = ctx.getState();
+  //   const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  //   const {analysis, portfolios} = payload;
+  //   const rdm = _.uniqBy(analysis.map(item => ({name: item.rdmName, id: item.rdmId, selected: false, type: 'rdm'})),
+  //     (dt: any) => dt.id);
+  //   const edm = _.uniqBy(portfolios.map(item => ({name: item.edmName, id: item.edmId, selected: false, type: 'edm'})),
+  //     (dt: any) => dt.id);
+  //   ctx.patchState(produce(ctx.getState(), draft => {
+  //     draft.content[wsIdentifier].riskLink.linking = {
+  //       ...draft.content[wsIdentifier].riskLink.linking,
+  //       rdm: {
+  //         data: Object.assign({}, ...rdm.map(item => ({[item.id]: {...item}}))),
+  //         selected: null
+  //       },
+  //       edm: Object.assign({}, ...edm.map(item => ({[item.id]: {...item}}))),
+  //       analysis: {
+  //         data: Object.assign({}, ...analysis.map(dt => ({[dt.id]: {...dt, selected: false}}))),
+  //         allChecked: false, indeterminate: false, numberOfElement: analysis.length
+  //       },
+  //       portfolio: {
+  //         data: Object.assign({}, ...portfolios.map(dt => ({[dt.id]: {...dt, selected: false}}))),
+  //         allChecked: false, indeterminate: false, numberOfElement: portfolios.length
+  //       }
+  //     };
+  //   }));
+  // }
 
-  loadFacData(ctx: StateContext<WorkspaceModel>) {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    return this.riskApi.searchFacData().pipe(
-      mergeMap(
-        (dt: any) => {
-          const dataModel = dt.map(item => {
-            return {
-              id: item.databaseId,
-              name: item.name,
-              createDt: '19/01/2018 19:01:50',
-              type: this._getTypeData(item.name) ? 'rdm' : 'edm',
-              versionNum: 17,
-              selected: item.name === 'SBS_RR_2019_08_MELANIE_E' || item.name === 'SBS_RR_2019_08_MELANIE_R',
-              typeWs: 'fac',
-              source: ''
-            };
-          });
-          let selectedData = {
-            rdm: Object.assign({},
-              ..._.filter(dataModel, item => item.type === 'rdm' && item.selected).map((ds: any) =>
-                ({[ds.id]: {...ds, selected: false, scanned: true}}))),
-            edm: Object.assign({},
-              ..._.filter(dataModel, item => item.type === 'edm' && item.selected).map((ds: any) =>
-                ({[ds.id]: {...ds, selected: false, scanned: true}})))
-          };
-          if (!state.content[wsIdentifier].riskLink.synchronize) {
-            selectedData = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, selectedData);
-          }
-          ctx.dispatch([
-              new LoadPortfolioFacAction(_.toArray(selectedData.edm)),
-              new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true})
-            ]
-          );
-          return of(ctx.patchState(produce(
-            ctx.getState(), draft => {
-              draft.content[wsIdentifier].riskLink.listEdmRdm = {
-                ...draft.content[wsIdentifier].riskLink.listEdmRdm,
-                data: _.merge({},
-                  draft.content[wsIdentifier].riskLink.listEdmRdm.data,
-                  Object.assign({}, ...dataModel.map(ds => ({[ds.id]: {...ds}})))
-                ),
-                selectedListEDMAndRDM: selectedData,
-                totalNumberElement: draft.content[wsIdentifier].riskLink.listEdmRdm.totalNumberElement + dataModel.length,
-                numberOfElement: draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement + dataModel.length
-              };
-              draft.content[wsIdentifier].riskLink.synchronize = false;
-            }))
-          );
-        }
-      )
-    );
-  }
+  // loadFacData(ctx: StateContext<WorkspaceModel>) {
+  //   const state = ctx.getState();
+  //   const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  //   return this.riskApi.searchFacData().pipe(
+  //     mergeMap(
+  //       (dt: any) => {
+  //         const dataModel = dt.map(item => {
+  //           return {
+  //             id: item.databaseId,
+  //             name: item.name,
+  //             createDt: '19/01/2018 19:01:50',
+  //             type: this._getTypeData(item.name) ? 'rdm' : 'edm',
+  //             versionNum: 17,
+  //             selected: item.name === 'SBS_RR_2019_08_MELANIE_E' || item.name === 'SBS_RR_2019_08_MELANIE_R',
+  //             typeWs: 'fac',
+  //             source: ''
+  //           };
+  //         });
+  //         let selectedData = {
+  //           rdm: Object.assign({},
+  //             ..._.filter(dataModel, item => item.type === 'rdm' && item.selected).map((ds: any) =>
+  //               ({[ds.id]: {...ds, selected: false, scanned: true}}))),
+  //           edm: Object.assign({},
+  //             ..._.filter(dataModel, item => item.type === 'edm' && item.selected).map((ds: any) =>
+  //               ({[ds.id]: {...ds, selected: false, scanned: true}})))
+  //         };
+  //         if (!state.content[wsIdentifier].riskLink.synchronize) {
+  //           selectedData = _.get(state.savedData.riskLink.edmrdmSelection, `${wsIdentifier}`, selectedData);
+  //         }
+  //         ctx.dispatch([
+  //             new LoadPortfolioFacAction(_.toArray(selectedData.edm)),
+  //             new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true})
+  //           ]
+  //         );
+  //         return of(ctx.patchState(produce(
+  //           ctx.getState(), draft => {
+  //             draft.content[wsIdentifier].riskLink.listEdmRdm = {
+  //               ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+  //               data: _.merge({},
+  //                 draft.content[wsIdentifier].riskLink.listEdmRdm.data,
+  //                 Object.assign({}, ...dataModel.map(ds => ({[ds.id]: {...ds}})))
+  //               ),
+  //               selectedListEDMAndRDM: selectedData,
+  //               totalNumberElement: draft.content[wsIdentifier].riskLink.listEdmRdm.totalNumberElement + dataModel.length,
+  //               numberOfElement: draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement + dataModel.length
+  //             };
+  //             draft.content[wsIdentifier].riskLink.synchronize = false;
+  //           }))
+  //         );
+  //       }
+  //     )
+  //   );
+  // }
 
-  loadDivisionSelection(ctx: StateContext<WorkspaceModel>) {
-    const state = ctx.getState();
-    const {wsIdentifier} = state.currentTab;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const currentSelection = _.get(state.content[wsIdentifier].riskLink.selection, 'currentDataSource', null);
-      const currentDivision = state.content[wsIdentifier].riskLink.financialValidator.division.selected;
-      if (currentSelection !== null) {
-        if (state.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
-          // console.log(_.get(state.content[wsIdentifier].riskLink.facSelection, currentDivision, {}));
-          draft.content[wsIdentifier].riskLink.analysis = this._facDataFactor(state.content[wsIdentifier].riskLink.analysis,
-              state.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentSelection, 'RDM'
-          );
-        } else {
-          draft.content[wsIdentifier].riskLink.portfolios = this._facDataFactor(state.content[wsIdentifier].riskLink.portfolios,
-              state.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentSelection, 'EDM'
-          );
-        }
-      }
-    }))
-  }
+  // loadDivisionSelection(ctx: StateContext<WorkspaceModel>) {
+  //   const state = ctx.getState();
+  //   const {wsIdentifier} = state.currentTab;
+  //   ctx.patchState(produce(ctx.getState(), draft => {
+  //     const currentSelection = _.get(state.content[wsIdentifier].riskLink.selection, 'currentDataSource', null);
+  //     const currentDivision = state.content[wsIdentifier].riskLink.financialValidator.division.selected;
+  //     if (currentSelection !== null) {
+  //       if (state.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
+  //         // console.log(_.get(state.content[wsIdentifier].riskLink.facSelection, currentDivision, {}));
+  //         draft.content[wsIdentifier].riskLink.analysis = this._facDataFactor(state.content[wsIdentifier].riskLink.analysis,
+  //             state.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentSelection, 'RDM'
+  //         );
+  //       } else {
+  //         draft.content[wsIdentifier].riskLink.portfolios = this._facDataFactor(state.content[wsIdentifier].riskLink.portfolios,
+  //             state.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentSelection, 'EDM'
+  //         );
+  //       }
+  //     }
+  //   }))
+  // }
 
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
@@ -1897,8 +1897,8 @@ export class RiskLinkStateService {
   }
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, payload?) {
-    const carId= payload ? payload.carId : null;
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, payload) {
+    const { type, carId }= payload;
     return this.riskApi.loadImportRefData(carId)
       .pipe(
         mergeMap(
@@ -1910,6 +1910,7 @@ export class RiskLinkStateService {
                   const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
                   draft.content[wsIdentifier].riskLink = {
                     ...draft.content[wsIdentifier].riskLink,
+                    type,
                     listEdmRdm: {
                       ...draft.content[wsIdentifier].riskLink.listEdmRdm,
                       data: {},
@@ -2054,22 +2055,22 @@ export class RiskLinkStateService {
       );
   }
 
-  private _facTraitement(ctx): boolean {
-    const state = ctx.getState();
-    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    return state.content[wsIdentifier].workspaceType === 'fac';
-  }
+  // private _facTraitement(ctx): boolean {
+  //   const state = ctx.getState();
+  //   const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  //   return state.content[wsIdentifier].workspaceType === 'fac';
+  // }
 
-  private _facDataFactor(data, selection, id, scope) {
-    if(_.includes(_.keys(selection), `${id}`)) {
-        if (scope === 'RDM') {
-            return _.map(data, item => {return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlAnalysisId}`)}});
-        } else {
-            return _.map(data, item => {return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlPortfolioId}`)}});
-        }
-    }
-    return _.map(data, item => {return {...item, selected: false}});
-  }
+  // private _facDataFactor(data, selection, id, scope) {
+  //   if(_.includes(_.keys(selection), `${id}`)) {
+  //       if (scope === 'RDM') {
+  //           return _.map(data, item => {return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlAnalysisId}`)}});
+  //       } else {
+  //           return _.map(data, item => {return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlPortfolioId}`)}});
+  //       }
+  //   }
+  //   return _.map(data, item => {return {...item, selected: false}});
+  // }
 
   private _update(source, list) {
     const mergedList = [..._.toArray(list.edm), ..._.toArray(list.rdm)].map(item => item.id);

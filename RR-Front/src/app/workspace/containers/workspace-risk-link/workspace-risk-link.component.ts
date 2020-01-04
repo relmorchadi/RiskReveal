@@ -94,6 +94,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   ws: any;
 
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
+  selectedProject = null;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
@@ -168,7 +169,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
-    this.dispatch(new fromWs.LoadRiskLinkDataAction());
+    this.loadRefsData();
     setTimeout(() => {
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         instanceId: this.state.financialValidator.rmsInstance.selected,
@@ -177,7 +178,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         size: 100,
       }));
     }, 500);
-
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = _.merge({}, value);
@@ -201,26 +201,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.detectChanges();
     });
     this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.selectedProject = value;
       this.tabStatus = _.get(value, 'projectType', null);
+      this.loadRefsData();
       this.detectChanges();
-      if (this.wsStatus === 'fac') {
-        if (this.tabStatus === 'fac') {
-          this.dispatch([new fromWs.LoadFacDataAction()]);
-        } else if (this.tabStatus === 'treaty') {
-          this.dispatch(new fromWs.LoadRiskLinkDataAction());
-        }
-      }
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig = {wsId, uwYear: year};
-      this.dispatch(new fromWs.LoadRiskLinkDataAction());
-      if (this.wsStatus === 'fac') {
-        if (this.tabStatus === 'fac') {
-          this.dispatch([new fromWs.LoadFacDataAction()]);
-        } else if (this.tabStatus === 'treaty') {
-          this.dispatch(new fromWs.LoadRiskLinkDataAction());
-        }
-      }
+      this.loadRefsData();
       this.detectChanges();
     });
     this.actions$
@@ -745,5 +733,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     );
   }
 
+  private loadRefsData() {
+    console.log('LoadRefs Data', this);
+    console.log('Selected Project', this.selectedProject);
+    if(! this.selectedProject){
+      console.error('No selected Project');
+      return;
+    }
+    if (this.tabStatus == 'FAC') {
+      const carId = this.selectedProject.carRequestId;
+      this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId}));
+    } else {
+      this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null}));
+    }
+  }
 
 }
