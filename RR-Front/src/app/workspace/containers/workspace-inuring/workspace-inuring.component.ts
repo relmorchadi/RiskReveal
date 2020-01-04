@@ -148,7 +148,11 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   inuringPackageFG: FormGroup;
   newPackageId: any;
 
-  constructor(private actions: Actions, private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef, private _fb: FormBuilder) {
+  constructor(private actions: Actions, private route: ActivatedRoute,
+              _baseStore: Store,
+              _baseRouter: Router,
+              _baseCdr: ChangeDetectorRef,
+              private _fb: FormBuilder) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.inuringPackageFG = this._fb.group({
       'id': [, Validators.required],

@@ -39,26 +39,53 @@ export class FacWidgetComponent implements OnInit {
   widgetIndex: number;
   @Input()
   type: any;
+  @Input()
+  data: any;
   newDashboard: any;
   editName = false;
 
   cols = [
     {field: 'favorite', header: '', width: '20px', display: true, sorted: false, filtered: false, type: 'favStatus'},
-    {field: 'id', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'carRequestId', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'contractName', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwAnalysisProjectId', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'projectId', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwYear', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractSector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'subsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'sector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'businessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'assignedAnalyst', header: 'Assigned Analyst', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'requestCreationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
   ];
+
+/*  carRequestId: 'CAR-5',
+  lastUpdateDate: 1577468593466,
+  lastUpdatedBy: 1,
+  requestedByFirstName: 'DEV',
+  requestedByLastName: 'DEV',
+  requestedByFullName: 'DEV DEV',
+  creationDate: 1577468593466,
+  cedantName: '1000432897',
+  uwAnalysis: 'Submission data',
+  facSource: 'Submission data',
+  businessType: '2',
+  endorsementNumber: 0,
+  sector: '701',
+  subsidiary: '10',
+  uwYear: 2020,
+  assignedAnalyst: ' ',
+  uwOrder: 1,
+  label: '10F150512',
+  facNumber: '10F150512',
+  projectId: 24,
+  contractId: '10F150512',
+  contractName: '10F150512',
+  carStatus: 'NEW',
+  lob: '01'*/
   mockData = [];
   private defaultCountry: string;
   private defaultUwUnit: string;
@@ -66,8 +93,7 @@ export class FacWidgetComponent implements OnInit {
   private mockDataCache;
   tabIndex = 1;
 
-  @Select(WorkspaceState.getFacData) facData$;
-  data: any[];
+  filters = {};
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef,
@@ -90,9 +116,6 @@ export class FacWidgetComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    this.facData$.subscribe(value => {
-      this.data = value;
-    });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
       uwUnit: ''
@@ -101,41 +124,17 @@ export class FacWidgetComponent implements OnInit {
       this.defaultUwUnit = coi.defaultUwUnit;
       this.detectChanges();
     });
-    this.setFilters();
-  }
-
-  setFilters() {
-    if (this.type === 'newCar') {
-      this.filterNew = true;
-    } else if (this.type === 'inProgressCar') {
-      this.filterCurrent = true;
-    } else if (this.type === 'archivedCar') {
-      this.filterArchive = true;
-    }
   }
 
   selectTab(index) {
     this.tabIndex = index;
   }
 
-  applyFilters(data) {
-    let filteredData = [...(data || [])];
-    if (this.filterCurrent) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
-    } else if (this.filterNew) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
-    } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus !== 'In Progress' && item.carStatus !== 'New');
-    }
-    return filteredData;
-  }
-
   openFacItem(event) {
-    console.log(event);
-    this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwAnalysisContractDate, route: 'Project', type: 'fac', item: event}));
-    this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwAnalysisContractDate}));
+    this.store.dispatch(new workspaceActions.OpenWS({
+      wsId: event.contractName,
+      uwYear: event.uwYear,
+      route: 'projects'}))
   }
 
   filterAssign() {
@@ -143,6 +142,15 @@ export class FacWidgetComponent implements OnInit {
   }
 
   valueFavChange(event) {
+
+  }
+
+  filterData($event) {
+    if ($event[_.keys($event)[0]]) {
+      this.filters =  _.merge({}, this.filters, $event) ;
+    } else {
+      this.filters =  _.omit(this.filters, _.keys($event)[0]);
+    }
   }
 
   duplicateItem(itemName: any): void {

@@ -325,7 +325,7 @@ export class LoadRegionPerilForAnalysis {
   constructor(public payload: any) {}
 }
 
-export class ReScanDataSource{
+export class ReScanDataSource {
   static readonly type= '[Risk Link] ReScan Datasource';
   constructor(public payload: any) {}
 }

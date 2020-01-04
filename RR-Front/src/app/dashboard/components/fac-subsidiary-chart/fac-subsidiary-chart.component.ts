@@ -157,20 +157,6 @@ export class FacSubsidiaryChartComponent implements OnInit {
     });
   }
 
-  selectTab(index) {
-    this.tabIndex = index;
-  }
-
-  openFacItem(event) {
-    this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwAnalysisContractDate, route: 'Project', type: 'fac', item: event}));
-    this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwAnalysisContractDate}));
-  }
-
-  valueFavChange(event) {
-  }
-
   duplicateItem(itemName: any): void {
     this.duplicate.emit(itemName);
   }
@@ -247,107 +233,6 @@ export class FacSubsidiaryChartComponent implements OnInit {
       series: this.alternateSeriesData
     });
     this.alternateSeriesData = switchedSeries;
-  }
-
-  drawBarChart(divId: string, data, data2, data3, data4) {
-    const dom: any = document.getElementById(divId);
-    const myChart = echarts.init(dom);
-    let option = null;
-    option = {
-      title: {
-        text: ''
-      },
-      tooltip : {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          label: {
-            backgroundColor: '#6495ED'
-          }
-        },
-/*        formatter: (params) => {
-          const colorSpan = color => {
-            return '<span style="display:inline-block;border-radius:10px;width:9px;height:9px;background-color:' + color + '"></span>';
-          };
-          let rez = params[0].axisValue + '</br>';
-          // console.log(params); //quite useful for debug
-          params.forEach(item => {
-            // console.log(item); //quite useful for debug
-            const xx = colorSpan(item.color) + ' ' + item.seriesName + ': ' + item.data + 's' + '</br>';
-            rez += xx;
-          });
-          return rez;
-        },*/
-      },
-      legend: {
-        data: []
-      },
-      dataZoom: [{
-        type: 'inside'
-      }, {
-        type: 'slider'
-      }],
-      toolbox: {
-        show: true,
-        orient: 'horizontal',
-        left: 'right',
-        top: 'center',
-        itemSize: 25,
-        itemGap: 15,
-        feature: {
-          saveAsImage: {show: true, title: 'Save'},
-        }
-      },
-      grid: {
-        bottom: 60
-      },
-      xAxis : [
-        {
-          type : 'category',
-          boundaryGap : false,
-          data : data,
-        }
-      ],
-      yAxis: [{
-        type: 'value',
-        axisLabel: {
-          formatter: '{value} s'
-        }
-      }],
-      series : [
-        {
-          name: 'Max Time',
-          type: 'line',
-          color: '#4682B4',
-          areaStyle: {color: '#4682B4'},
-          label: {
-            normal: {
-              show: true
-              //     position: 'top'
-            }
-          },
-          data: data2,
-        },
-        {
-          name: 'Average Time',
-          type: 'line',
-          color: '#008080',
-          areaStyle: {color: '#008080' },
-          data: data3,
-        },
-        {
-          name: 'Min Time',
-          type: 'line',
-          color: '#FFD700',
-          areaStyle: {color: '#FFD700'},
-          zlevel: 2,
-          data: data4,
-        }
-      ]
-    };
-    if (option && typeof option === 'object') {
-      myChart.setOption(option, true);
-    }
   }
 
   setFilter(col: string, $event: {}) {

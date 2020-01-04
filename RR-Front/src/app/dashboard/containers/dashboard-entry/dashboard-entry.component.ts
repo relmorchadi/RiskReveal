@@ -1,17 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from '../../../shared/notification.service';
 import {NavigationStart, Router} from '@angular/router';
+import {BaseContainer} from "../../../shared/base";
+import {Select, Store} from "@ngxs/store";
+import * as fromHD from "../../../core/store/actions";
+import {DashboardState} from "../../../core/store/states";
 
 @Component({
   selector: 'app-dashboard-entry',
   templateUrl: './dashboard-entry.component.html',
   styleUrls: ['./dashboard-entry.component.scss']
 })
-export class DashboardEntryComponent implements OnInit {
+export class DashboardEntryComponent extends BaseContainer implements OnInit {
   protected options: GridsterConfig;
   protected item: any = {x: 0, y: 0, cols: 3, rows: 2};
   newDashboardTitle: any;
@@ -67,17 +71,17 @@ export class DashboardEntryComponent implements OnInit {
       fac: [
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'NewFacWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'InProgressFacWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'ArchivedFacWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         /*{
@@ -141,17 +145,17 @@ export class DashboardEntryComponent implements OnInit {
       fac: [
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'facWidgetComponent', selected: true,
+          componentName: 'NewFacWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'facWidgetComponent', selected: true,
+          componentName: 'InProgressFacWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'facWidgetComponent', selected: true,
+          componentName: 'ArchivedFacWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
        /* {
@@ -206,17 +210,17 @@ export class DashboardEntryComponent implements OnInit {
     fac: [
       {
         id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
-        componentName: 'facWidgetComponent', selected: true,
+        componentName: 'NewFacWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
         id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
-        componentName: 'facWidgetComponent', selected: true,
+        componentName: 'InProgressFacWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
       {
         id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
-        componentName: 'facWidgetComponent', selected: true,
+        componentName: 'ArchivedFacWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0}
       },
      /* {
@@ -233,14 +237,26 @@ export class DashboardEntryComponent implements OnInit {
   };
   previousUrl: string;
 
+  @Select(DashboardState.getFacData) facData$;
+  newFacCars: any;
+  inProgressFacCars: any;
+  archivedFacCars: any;
+
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
-
   constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService,
-              private router: Router) {
+              private router: Router, _baseStore: Store,
+              _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
+    this.dispatch(new fromHD.LoadDashboardFacDataAction());
+    this.facData$.pipe().subscribe(value => {
+      this.newFacCars = _.get(value, 'new', []);
+      this.inProgressFacCars = _.get(value, 'inProgress', []);
+      this.archivedFacCars = _.get(value, 'archived', []);
+    });
     this.options = {
       gridType: GridType.VerticalFixed,
       enableEmptyCellDrop: true,

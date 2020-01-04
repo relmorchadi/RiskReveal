@@ -13,11 +13,6 @@ export class LoadWS {
   constructor(public payload?: any) {}
 }
 
-export class LoadFacWs {
-  static readonly type = '[Workspace] Load Fac WS';
-  constructor(public payload?: any) {}
-}
-
 export class LoadWsSuccess {
   static readonly type = '[Workspace] Load WS Success';
   constructor(public payload?: any) {}
@@ -38,11 +33,6 @@ export class OpenWS {
   constructor(public payload?: any) {}
 }
 
-export class OpenFacWS {
-  static readonly type = '[Workspace] Open Fac Workspace';
-  constructor(public payload?: any) {}
-}
-
 export class OpenMultiWS {
   static readonly type = '[Workspace] Multiple OpenWS';
   constructor(public payload?: any[]) {}
@@ -60,11 +50,6 @@ export class SetCurrentTab {
 
 export class CreateNewFac {
   static readonly type = '[Workspace] New Fac Data';
-  constructor(public payload?: any) {}
-}
-
-export class LoadProjectForWs {
-  static readonly type = '[Workspace] Load Project For Fac Workspace';
   constructor(public payload?: any) {}
 }
 
