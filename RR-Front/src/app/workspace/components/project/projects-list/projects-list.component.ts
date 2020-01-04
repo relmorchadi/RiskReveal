@@ -16,12 +16,12 @@ export class ProjectsListComponent implements OnInit {
   @Output('edit') editEmitter;
 
   backgroundPalet = {
-    "New": 'lightblue',
-    "In Progress": 'linear-gradient(to right, rgb(222, 109, 130) 0%, rgb(228, 158, 92) 100%)',
-    "Completed": 'linear-gradient(to top, rgb(113, 226, 116) 0%, rgb(0, 227, 174) 100%)',
-    "Superseded": 'linear-gradient(#b7b7b7 0%, #c6c6c6 1%, rgb(195, 195, 195) 26%,' +
+    "NEW": 'lightblue',
+    "IN PROGRESS": 'linear-gradient(to right, rgb(222, 109, 130) 0%, rgb(228, 158, 92) 100%)',
+    "COMPLETED": 'linear-gradient(to top, rgb(113, 226, 116) 0%, rgb(0, 227, 174) 100%)',
+    "SUPERSEDED": 'linear-gradient(#b7b7b7 0%, #c6c6c6 1%, rgb(195, 195, 195) 26%,' +
       ' rgb(191, 191, 191) 48%, rgb(201, 201, 201) 75%, rgb(165, 165, 165) 100%)',
-    "Canceled": 'linear-gradient(-225deg, rgb(158, 17, 96) 0%, rgb(117, 16, 91) 29%, rgb(151, 17, 96) 67%, rgb(163, 17, 96) 100%)',
+    "CANCELED": 'linear-gradient(-225deg, rgb(158, 17, 96) 0%, rgb(117, 16, 91) 29%, rgb(151, 17, 96) 67%, rgb(163, 17, 96) 100%)',
     "Priced": 'linear-gradient(to top, rgb(0, 118, 66) 0%, rgb(26, 192, 139) 100%)'
   };
 
@@ -40,6 +40,10 @@ export class ProjectsListComponent implements OnInit {
 
   setBackground(scope) {
     return _.get(this.backgroundPalet, `${scope}`, 'lightblue');
+  }
+
+  capitalize(string) {
+    return _.capitalize(string);
   }
 
 }

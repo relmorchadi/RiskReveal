@@ -24,52 +24,20 @@ export class WorkspaceService {
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {
-      wsId, uwYear, route, type
-    } = payload;
+      wsId, uwYear, route} = payload;
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId, uwYear, ws, route, type
+          wsId, uwYear, ws, route
         }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
 
-  loadWsFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFacWs) {
-    const {
-      wsId, uwYear, route, type, item
-    } = payload;
-    ctx.patchState({loading: true});
-
-    const ws = {
-      id: wsId,
-      workspaceName: item.contractName,
-      cedantCode: '22231',
-      cedantName: item.cedantName,
-      subsidiaryId: '2',
-      subsidiaryName: 'SCOR REASS.',
-      ledgerName: 'MADRID',
-      inceptionDate: 1546297200000,
-      expiryDate: 1577746800000,
-      subsidiaryLedgerId: '2',
-      contractSource: 'ForeWriter',
-      treatySections: [
-        'CFS-SCOR REASS.-MADRID RCC000022/ 1'
-      ],
-      years: [
-        uwYear
-      ],
-      projects: []
-    };
-    ctx.dispatch(new fromWS.LoadWsSuccess({
-      wsId, uwYear, ws, route, type
-    }));
-  }
-
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route, type} = payload;
+    const {wsId, uwYear, ws, route} = payload;
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
@@ -122,7 +90,8 @@ export class WorkspaceService {
             adjustments: {},
             constants: {
               basis: [],
-              adjustmentTypes: []
+              adjustmentTypes: [],
+              status: []
             },
             loading: false
           },
@@ -220,67 +189,12 @@ export class WorkspaceService {
       ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
         wsIdentifier
-      }), new fromWS.LoadFacProjectData()]);
+      })]);
     }));
   }
 
-  loadProjectForWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectForWs) {
-    const state = ctx.getState();
-    const {wsId, uwYear} = payload;
-    const wsIdentifier = wsId + '-' + uwYear;
-    const projects = _.filter(state.facWs.data,
-      item => item.uwanalysisContractFacNumber === wsId && item.uwAnalysisContractDate === uwYear);
-    ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].projects = projects.map(item => {
-          return {
-            ...item,
-            workspaceId: item.uwanalysisContractFacNumber,
-            uwy: item.uwanalysisContractYear,
-            projectId: item.uwAnalysisProjectId,
-            name: item.id,
-            description: null,
-            assignedTo: null,
-            createdBy: item.requestedByFullName,
-            creationDate: item.requestCreationDate,
-            dueDate: 1559922195933,
-            linkFlag: true,
-            postInuredFlag: null,
-            publishFlag: false,
-            pltSum: null,
-            pltThreadSum: 0,
-            regionPerilSum: 0,
-            xactSum: 0,
-            sourceProjectId: null,
-            sourceProjectName: null,
-            sourceWsId: null,
-            sourceWsName: null,
-            locking: null,
-            selected: false,
-            projectFacSource: 'specific',
-            projectType: 'fac'
-          };
-        });
-        draft.content[wsIdentifier].projects[0].selected = true;
-      }
-    ));
-  }
-
-  loadProjectData(ctx: StateContext<WorkspaceModel>) {
-    const state = ctx.getState();
-    const {wsIdentifier} = state.currentTab;
-    return forkJoin(
-        state.content[wsIdentifier].projects.map(item =>this.wsApi.getDivision(item.carRequestId))
-    ).pipe(
-        switchMap( data => {
-          console.log(data);
-          return of();
-        })
-    )
-
-  }
-
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
-    const {wsId, uwYear, route, type} = payload;
+    const {wsId, uwYear, route} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -294,9 +208,7 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
-        route,
-        type
-      }));
+        route}));
     }
   }
 
@@ -313,26 +225,6 @@ export class WorkspaceService {
       });
       draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
-  }
-
-  openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {
-    const {wsId, uwYear, route, type, item} = payload;
-    const state = ctx.getState();
-    const wsIdentifier = wsId + '-' + uwYear;
-
-    if (state.content[wsIdentifier]) {
-      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      return ctx.dispatch(new fromWS.SetCurrentTab({
-        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-        wsIdentifier
-      }));
-    } else {
-      return ctx.dispatch(new fromWS.LoadFacWs({
-        wsId,
-        uwYear,
-        route, type, item
-      }));
-    }
   }
 
   openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenMultiWS) {

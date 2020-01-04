@@ -5,8 +5,7 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
-// import * as fromWS from '../store'
-import {EMPTY, forkJoin} from "rxjs";
+import {EMPTY, forkJoin, of} from "rxjs";
 import {LoadEpMetrics} from "../store/actions";
 
 
@@ -111,58 +110,56 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-      return !this.getCalibState(ctx.getState(), wsIdentifier).epMetrics[curveType] ? this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType))
-        .pipe(
-          tap(epMetrics => {
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)).pipe(
+        tap(epMetrics => {
 
-            ctx.patchState(produce(ctx.getState(), draft => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+
+            const {
+              currentTab: {
+                wsIdentifier
+              }
+            } = draft;
+
+            const innerDraft = this.getCalibState(draft, wsIdentifier);
+
+            console.log(epMetrics);
+
+            _.forEach(epMetrics, (metric: any, i) => {
 
               const {
-                currentTab: {
-                  wsIdentifier
-                }
-              } = draft;
+                pltId,
+                curveType
+              } = metric;
 
-              const innerDraft = this.getCalibState(draft, wsIdentifier);
+              if (i == '0') {
+                const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
+                innerDraft.epMetrics.rps = rps;
+                innerDraft.epMetrics.cols = ['AAL', ...rps];
+              }
 
-              if(resetMetrics) {
-                innerDraft.epMetrics = _.pick(innerDraft.epMetrics, ['rps', 'cols']);
-              };
-
-
-              _.forEach(epMetrics, (metric: any, i) => {
-
-                const {
-                  pltId,
-                  curveType
-                } = metric;
-
-                innerDraft.epMetrics[curveType] = {};
-                innerDraft.epMetrics[curveType][pltId] = metric;
-                if (i == '0') {
-                  const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
-                  innerDraft.epMetrics.rps = rps;
-                  innerDraft.epMetrics.cols = ['AAL', ...rps];
-                }
-              })
+              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType] = {};
+              innerDraft.epMetrics[curveType][pltId] = metric;
+            })
 
 
-            }))
+          }))
 
-          }),
-          catchError(e => {
-            console.log(e);
-            return EMPTY;
-          })
-        ) : EMPTY;
+        }),
+        catchError(e => {
+          console.log(e);
+          return EMPTY;
+        })
+      )
   }
 
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
     return forkJoin(
       this.calibrationAPI.loadAllBasis(),
-      this.calibrationAPI.loadAllAdjustmentTypes()
+      this.calibrationAPI.loadAllAdjustmentTypes(),
+      this.calibrationAPI.loadAllAdjustmentStates()
     ).pipe(
-      tap(([basis, adjustmentTypes]) => {
+      tap(([basis, adjustmentTypes, status]) => {
         ctx.patchState(produce(ctx.getState(), draft => {
           const {
             currentTab: {
@@ -174,7 +171,8 @@ export class CalibrationNewService {
 
           innerDraft.constants = {
             basis,
-            adjustmentTypes
+            adjustmentTypes,
+            status
           }
         }))
       })
@@ -182,7 +180,6 @@ export class CalibrationNewService {
   }
 
   selectPlts(ctx: StateContext<WorkspaceModel>, payload) {
-    console.log(payload)
     const {
       plts,
       wsIdentifier
@@ -195,7 +192,6 @@ export class CalibrationNewService {
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
     return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
       .pipe(
-        tap(r => console.log(r)),
         mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
   }

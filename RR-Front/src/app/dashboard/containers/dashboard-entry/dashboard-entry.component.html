@@ -41,8 +41,23 @@
                                           (duplicate)="duplicate(dashboard.id, $event)"
                                           class="no-drag">
                   </renewal-contract-scope>-->
-                  <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
+                  <app-fac-widget *ngIf="item.componentName === 'NewFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                  [data]="newFacCars"
+                                  (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
+                                  (changeName)="changeNameFac(dashboard.id, $event)"
+                                  (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
+                  </app-fac-widget>
+                  <app-fac-widget *ngIf="item.componentName === 'InProgressFacWidgetComponent'"
+                                  [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                  [data]="inProgressFacCars"
+                                  (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
+                                  (changeName)="changeNameFac(dashboard.id, $event)"
+                                  (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
+                  </app-fac-widget>
+                  <app-fac-widget *ngIf="item.componentName === 'ArchivedFacWidgetComponent'"
+                                  [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                  [data]="archivedFacCars"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">

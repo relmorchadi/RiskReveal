@@ -260,7 +260,7 @@ export class LoadDivisionSelection {
 
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';
-  constructor() {}
+  constructor(public payload?) {}
 }
 
 export class LoadRiskLinkAnalysisDataAction {
@@ -325,7 +325,7 @@ export class LoadRegionPerilForAnalysis {
   constructor(public payload: any) {}
 }
 
-export class ReScanDataSource{
+export class ReScanDataSource {
   static readonly type= '[Risk Link] ReScan Datasource';
   constructor(public payload: any) {}
 }

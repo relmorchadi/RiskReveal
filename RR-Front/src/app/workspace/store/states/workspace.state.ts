@@ -215,8 +215,13 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
+  //Higher State Order
   static getCalibrationConstants(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+  }
+
+  static getCalibrationStatus(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants.status );
 
   }
 
@@ -336,13 +341,14 @@ export class WorkspaceState {
           rdmName: rdms[rdmId].name,
           analysisId: item.rlId,
           analysisName: item.analysisName,
+          rlAnalysisId: item.rlAnalysisId
         }) ))
       ),
       portfolios: _.flatten(
         _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
           edmId,
           edmName: edms[edmId].name,
-          curreny: item.agCurrency,
+          currency: item.agCurrency,
           portfolioId: item.rlId,
           portfolioName: item.name,
           portfolioType: item.type
@@ -439,24 +445,9 @@ export class WorkspaceState {
     return this.wsService.loadWs(ctx, payload);
   }
 
-  @Action(fromWS.LoadFacWs)
-  loadFacWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadFacWs) {
-    return this.wsService.loadWsFac(ctx, payload);
-  }
-
   @Action(fromWS.LoadWsSuccess)
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
-  }
-
-  @Action(fromWS.LoadProjectForWs)
-  loadProjectForWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectForWs) {
-    this.wsService.loadProjectForWs(ctx, payload);
-  }
-
-  @Action(fromWS.LoadFacProjectData)
-  loadFacProjectData(ctx: StateContext<WorkspaceModel>) {
-    return this.wsService.loadProjectData(ctx);
   }
 
   @Action(fromWS.OpenWS)
@@ -467,11 +458,6 @@ export class WorkspaceState {
   @Action(fromWS.CreateNewFac)
   createNewFac(ctx: StateContext<WorkspaceModel>, payload: fromWS.CreateNewFac) {
     this.wsService.createNewFac(ctx, payload);
-  }
-
-  @Action(fromWS.OpenFacWS)
-  openFacWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenFacWS) {
-    return this.wsService.openFacWorkspace(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)
@@ -1163,7 +1149,7 @@ export class WorkspaceState {
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(fromWS.LoadRiskLinkDataAction)
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkDataAction) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 

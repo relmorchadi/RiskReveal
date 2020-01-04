@@ -223,6 +223,7 @@
 </div>
 
 <override-region-peril-dialog *ngIf="showOverrideRpDialog" [visible]="showOverrideRpDialog" [data]="data.analysis"
+                              [regionPerilByAnalysis]="data.regionPerilsByAnalysis"
                               (close)="showOverrideRpDialog=false"
                               (override)="overrideRegionPeril($event)">
 </override-region-peril-dialog>

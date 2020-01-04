@@ -13,7 +13,7 @@ export class StatusFilterPipe implements PipeTransform {
       if (v){
         isFilter = true;
       }
-    })
+    });
     if (!isFilter) return res;
     _.forEach(value, (thread)=>{
       _.forEach(status, (v, k)=>{

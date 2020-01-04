@@ -29,12 +29,14 @@ export class CalibrationNewTableComponent implements OnInit {
     expandedRowKeys: any,
     isGrouped: boolean
   };
+
   @Input() columnsConfig: {
     frozenColumns: any[],
     frozenWidth: string,
     columns: any[],
     columnsLength: number
   };
+
   @Input() rowKeys: any;
 
   @Input() constants: {
@@ -42,10 +44,8 @@ export class CalibrationNewTableComponent implements OnInit {
     curveTypes: string[]
   };
 
-  statusFilter: StatusFilter;
-  selectedStatusFilter: any = {
-
-  };
+  @Input() status: any[];
+  @Input() selectedStatusFilter: any;
   lastClick: any = {
     pure_index: null,
     thread_index: null
@@ -89,8 +89,6 @@ export class CalibrationNewTableComponent implements OnInit {
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
-    this.statusFilter = new StatusFilter();
-    this.selectedStatusFilter = this.statusFilter;
   }
 
   statusFlilerCheckbox(event: any, type: string) {
@@ -309,5 +307,15 @@ export class CalibrationNewTableComponent implements OnInit {
 
   displa(col: any) {
     console.log(col)
+  }
+
+  toggleStatusFilter(value, status: any) {
+    this.actionDispatcher.emit({
+      type: "Toggle Status Filter",
+      payload: {
+        value,
+        status
+      }
+    })
   }
 }

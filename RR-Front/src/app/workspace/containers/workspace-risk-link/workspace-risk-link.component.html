@@ -450,7 +450,7 @@
 
       <div *ngIf=" (summary$ | async) as summary">
         <portfolio-result [data]="summary.portfolios"></portfolio-result>
-        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps}"></analysis-result>
+        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
