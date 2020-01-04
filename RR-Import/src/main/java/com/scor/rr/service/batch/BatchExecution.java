@@ -48,6 +48,10 @@ public class BatchExecution {
     @Qualifier(value = "importLossData")
     private Job importLossData;
 
+    @Autowired
+    @Qualifier(value = "importLossDataFac")
+    private Job importLossDataFac;
+
     public Long RunImportLossData(ImportLossDataParams importLossDataParams) {
 
         try {
@@ -80,7 +84,13 @@ public class BatchExecution {
 
                 log.info("Starting import batch: userId {}, projectId {}, sourceResultIds {}", importLossDataParams.getUserId(), importLossDataParams.getProjectId(), importLossDataParams.getRlImportSelectionIds());
 
-                JobExecution execution = jobLauncher.run(importLossData, builder.toJobParameters());
+                JobExecution execution = null;
+
+                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                    execution = jobLauncher.run(importLossData, builder.toJobParameters());
+                else
+                    execution = jobLauncher.run(importLossDataFac, builder.toJobParameters());
+
                 return execution.getId();
             } else {
                 log.error("parameters are empty");
@@ -146,7 +156,7 @@ public class BatchExecution {
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
         String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
-        String division = "01"; // fixed for TT
+        String division = "1"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT
         String sourceVendor = "RMS";
         String prefix = "prefix";

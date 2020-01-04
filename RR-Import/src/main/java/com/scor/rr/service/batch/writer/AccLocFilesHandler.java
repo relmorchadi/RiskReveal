@@ -1,12 +1,13 @@
 package com.scor.rr.service.batch.writer;
 
-import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.ProjectConfigurationForeWriterFiles;
 import com.scor.rr.domain.enums.XLTSubType;
+import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +22,17 @@ import java.util.Date;
 @Service
 public class AccLocFilesHandler extends AbstractWriter {
 
+    @Autowired
+    private TransformationPackage transformationPackage;
+
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
 
-    @Value("#{jobParameters['division']}")
-    private String division;
-
     @Value("#{jobParameters['carId']}")
     private String carId;
+
+    @Value("#{jobParameters['division']}")
+    private String division;
 
     @Value("#{jobParameters['jobType']}")
     private String jobType;
@@ -38,32 +42,37 @@ public class AccLocFilesHandler extends AbstractWriter {
 
     public RepeatStatus copyFilesToIHub() {
 
-        String targetAccFileName = this.makeFacFilename("A", new Date(), XLTSubType.ACC, "", ".txt");
-        String targetLocFileName = this.makeFacFilename("A", new Date(), XLTSubType.LOC, "", ".txt");
+        if (transformationPackage.getModelPortfolios() != null && !transformationPackage.getModelPortfolios().isEmpty()) {
 
-        String sourceAccFileName = division + "_" + carId;
-        String sourceLocFileName = division + "_" + carId;
+            Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
 
-        final Path iHubPath = Paths.get(iHub);
+            String targetAccFileName = this.makeFacFilename("A", new Date(), XLTSubType.ACC, "", ".txt", division);
+            String targetLocFileName = this.makeFacFilename("A", new Date(), XLTSubType.LOC, "", ".txt", division);
 
-        final Path sourcePath = iHubPath.resolve("tmp");
-        final Path targetPath = iHubPath.resolve(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId), carId));
+            // TODO: Review this later
+            String sourceAccFileName = carId + "_" + this.division;
+            String sourceLocFileName = carId + "_" + this.division;
 
-        try {
-            this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath);
-            this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath);
-        } catch (IOException ex) {
-            log.error("reading/writing error has occurred while copying forewriter files to the iHub");
-            ex.printStackTrace();
-            return RepeatStatus.valueOf("failed");
-        } catch (Exception ex) {
-            log.error("unknown error has occurred while copying forewriter files to the iHub");
-            ex.printStackTrace();
-            return RepeatStatus.valueOf("failed");
+            final Path iHubPath = Paths.get(iHub);
+
+            final Path sourcePath = iHubPath.resolve("tmp");
+            final Path targetPath = iHubPath.resolve(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId));
+
+            try {
+                this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath);
+                this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath);
+            } catch (IOException ex) {
+                log.error("reading/writing error has occurred while copying forewriter files to the iHub");
+                ex.printStackTrace();
+                return RepeatStatus.CONTINUABLE;
+            } catch (Exception ex) {
+                log.error("unknown error has occurred while copying forewriter files to the iHub");
+                ex.printStackTrace();
+                return RepeatStatus.CONTINUABLE;
+            }
+
+            ProjectConfigurationForeWriterFiles accLocFile = new ProjectConfigurationForeWriterFiles();
         }
-
-        ProjectConfigurationForeWriterFiles accLocFile = new ProjectConfigurationForeWriterFiles();
-
         return RepeatStatus.FINISHED;
     }
 

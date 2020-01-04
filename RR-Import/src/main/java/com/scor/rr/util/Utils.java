@@ -55,7 +55,7 @@ public class Utils {
             pd.getWriteMethod().invoke(obj, value);
         } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

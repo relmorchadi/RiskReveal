@@ -45,24 +45,33 @@ public class EpCurveWriter extends AbstractWriter {
         this.ihubPath = Paths.get(path);
     }
 
-    public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
+    public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename, Integer division) {
 
-        return writeEPCurves(metricToEPCurve, filename);
+        return writeEPCurves(metricToEPCurve, filename, division);
     }
 
-    private BinFile writeEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
+    private BinFile writeEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename, Integer division) {
         if (marketChannel.equalsIgnoreCase("Treaty")) {
             File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
             return writeEPCurves(metricToEPCurve, file, null);
         } else {
-            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId), carId), filename);
+            division = division != null ? division : Integer.valueOf(this.division);
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
             return writeEPCurves(metricToEPCurve, file, null);
         }
     }
 
-    public BinFile writePLTEPCurves(List<EPMetricPoint> metricToEPCurve, String filename, StatisticMetric statisticMetric) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
-        return writeEPCurves(metricToEPCurve, file, statisticMetric);
+    public BinFile writePLTEPCurves(List<EPMetricPoint> metricToEPCurve, String filename, StatisticMetric statisticMetric, Integer division) {
+
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeEPCurves(metricToEPCurve, file, statisticMetric);
+        } else {
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            return writeEPCurves(metricToEPCurve, file, statisticMetric);
+        }
+
+
     }
 
     private BinFile writeEPCurves(List<?> epCurves, File file, StatisticMetric statisticMetric) {
