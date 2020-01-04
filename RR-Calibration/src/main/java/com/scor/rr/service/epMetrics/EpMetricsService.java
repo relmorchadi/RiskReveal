@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -76,9 +77,10 @@ public class EpMetricsService {
                             request.getRps()
                                     .stream()
                                     .map(rp -> new UserRPEntity(rp, request.getUserId()))
-                                    .collect(Collectors.toList()
-                            )
-            ));
+                                    .filter(userRP -> !this.userRPRepository.findByUserIdAndRp(userRP.getUserId(), userRP.getRp()).isPresent())
+                                    .collect(Collectors.toList())
+                    )
+            );
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }

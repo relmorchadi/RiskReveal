@@ -2197,9 +2197,9 @@ export class RiskLinkStateService {
       .pipe(mergeMap((response: any) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
-            if(datasource.type == 'EDM'){
+            if(datasource.type == 'EDM') {
               draft.content[wsIdentifier].riskLink.selection.edms[datasource.rmsId]= {...datasource, ...response};
-            }else if(datasource.type == 'RDM'){
+            } else if(datasource.type == 'RDM') {
               draft.content[wsIdentifier].riskLink.selection.rdms[datasource.rmsId]= {...datasource, ...response};
             }
           }));
@@ -2214,7 +2214,7 @@ export class RiskLinkStateService {
     const {occurrenceBasis, analysisIndex} = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
       const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
-      if(occurrenceBasis.scopeOfOverride=='all'){
+      if (occurrenceBasis.scopeOfOverride=='all') {
           draft.content[wsIdentifier].riskLink.summary.analysis=
             _.map(draft.content[wsIdentifier].riskLink.summary.analysis,
                 item => ({
@@ -2222,7 +2222,7 @@ export class RiskLinkStateService {
                   occurrenceBasis: occurrenceBasis.occurrenceBasis,
                   overrideReason: occurrenceBasis.overrideReason
                 }));
-      }else if(occurrenceBasis.scopeOfOverride=='current') {
+      } else if (occurrenceBasis.scopeOfOverride=='current') {
         draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex]={
           ...draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex],
           occurrenceBasis: occurrenceBasis.occurrenceBasis,

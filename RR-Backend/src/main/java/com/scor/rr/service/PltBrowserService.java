@@ -9,7 +9,6 @@ import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.repository.*;
-import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,8 +19,6 @@ import java.util.stream.Collectors;
 @Component
 public class PltBrowserService {
 
-    @Autowired
-    PltTableSpecification pltTableSpecification;
     @Autowired
     UserTagRepository userTagRepository;
     @Autowired

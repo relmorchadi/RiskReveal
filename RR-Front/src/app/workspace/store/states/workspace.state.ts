@@ -445,24 +445,9 @@ export class WorkspaceState {
     return this.wsService.loadWs(ctx, payload);
   }
 
-  @Action(fromWS.LoadFacWs)
-  loadFacWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadFacWs) {
-    return this.wsService.loadWsFac(ctx, payload);
-  }
-
   @Action(fromWS.LoadWsSuccess)
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
-  }
-
-  @Action(fromWS.LoadProjectForWs)
-  loadProjectForWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectForWs) {
-    this.wsService.loadProjectForWs(ctx, payload);
-  }
-
-  @Action(fromWS.LoadFacProjectData)
-  loadFacProjectData(ctx: StateContext<WorkspaceModel>) {
-    return this.wsService.loadProjectData(ctx);
   }
 
   @Action(fromWS.OpenWS)
@@ -473,11 +458,6 @@ export class WorkspaceState {
   @Action(fromWS.CreateNewFac)
   createNewFac(ctx: StateContext<WorkspaceModel>, payload: fromWS.CreateNewFac) {
     this.wsService.createNewFac(ctx, payload);
-  }
-
-  @Action(fromWS.OpenFacWS)
-  openFacWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenFacWS) {
-    return this.wsService.openFacWorkspace(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)

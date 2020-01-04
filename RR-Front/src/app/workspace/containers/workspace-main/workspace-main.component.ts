@@ -99,9 +99,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     this.dispatch(new fromWs.OpenWS({
       wsId,
       uwYear,
-      route: 'projects',
-      type: 'treaty'
-    }));
+      route: 'projects'}));
   }
 
   generateYear(year, years, title = '') {
