@@ -61,7 +61,7 @@ public class PathUtils {
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
 
-    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Long projectId, String carId) {
+    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Integer division, String carId) {
         List<String> items = new ArrayList<>();
         items.add("Facultative");
         items.add("Cedant");
@@ -73,8 +73,9 @@ public class PathUtils {
             items.add(String.valueOf(uwYear));
         if (carId != null)
             items.add(String.valueOf(carId));
-        if (projectId != null)
-            items.add(String.valueOf(projectId));
+        if (division != null)
+            items.add(String.valueOf(division));
+
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
 

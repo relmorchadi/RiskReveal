@@ -15,6 +15,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.SimpleJobBuilder;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -297,8 +298,27 @@ public class ImportLossDataJob {
      * Job
      */
 
+    @Bean(value = "importLossDataFac")
+    public Job getImportLossDataFac(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
+        return simpleJobBuilder
+                //.next(extractExposureSummaryStep())
+                .next(extractTIVStep())
+                .next(extractAccStep())
+                .next(extractLocStep())
+                .next(extractLocFWStep())
+                .next(copyAccAndLocFilesStep())
+                .build();
+    }
+
     @Bean(value = "importLossData")
-    public Job getImportLossData() {
+    public Job getImportLossData(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
+        return simpleJobBuilder
+                //.next(extractExposureSummaryStep())
+                .build();
+    }
+
+    @Bean(value = "jobBuilder")
+    public SimpleJobBuilder getJobBuilder(){
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPerilStep())
                 .next(getExtractEpCurveStatsStep())
@@ -311,15 +331,6 @@ public class ImportLossDataJob {
                 .next(getEltHeaderWritingStep())
                 .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
-                .next(getPltWriterStep())
-                //.next(extractExposureSummaryStep())
-                .next(extractTIVStep())
-                .next(extractAccStep())
-                .next(extractLocStep())
-                .next(extractLocFWStep())
-                .next(copyAccAndLocFilesStep())
-                .build();
+                .next(getPltWriterStep());
     }
-
-
 }

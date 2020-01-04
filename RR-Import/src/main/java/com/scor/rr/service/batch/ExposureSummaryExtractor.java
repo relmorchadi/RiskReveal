@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.*;
 import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.ExposureSummaryExtractType;
 import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
@@ -205,7 +205,7 @@ public class ExposureSummaryExtractor {
                             entry.getValue().forEach(modelPortfolio -> {
 
                                 RLPortfolio rLPortfolio = rlPortfolioRepository.findByRlId(modelPortfolio.getPortfolioId());
-                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getRlId());
+                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getRlId(), modelPortfolio.getDivision());
                                 if (f == null) {
                                     log.error("Error while creating detail exposure file !");
                                 } else {
@@ -260,9 +260,9 @@ public class ExposureSummaryExtractor {
                                         }
                                         File file = null;
                                         if (rLPortfolio != null)
-                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, rLPortfolio.getRlPortfolioAnalysisRegions());
+                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, rLPortfolio.getRlPortfolioAnalysisRegions(), modelPortfolio.getDivision());
                                         else
-                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, null);
+                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, null, modelPortfolio.getDivision());
 
                                         if (file == null) {
                                             log.error("Error while creating location level exposure details file for {}!", schema);

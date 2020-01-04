@@ -98,6 +98,7 @@ public class ModellingOptionsExtractor extends AbstractWriter {
                 rrLossTable.getCurrency(),
                 rrLossTable.getOriginalTarget().equals(RRLossTableType.CONFORMED.toString()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                 rrLossTable.getLossDataHeaderId(),
+                modelAnalysisEntity.getDivision(),
                 ".xml");
         Path iHubPath = Paths.get(iHub);
         File file = PathUtils.makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename, iHubPath);

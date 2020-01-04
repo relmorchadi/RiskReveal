@@ -79,6 +79,7 @@ public class ELTWriter extends AbstractWriter {
                     rrImportedLossData.getCurrency(),
                     rrImportedLossData.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                     rrImportedLossData.getLossDataHeaderId(),
+                    modelAnalysisEntity.getDivision(),
                     ".bin");
         } else {
             filename = makeELTFileName(
@@ -88,6 +89,7 @@ public class ELTWriter extends AbstractWriter {
                     rrImportedLossData.getCurrency(),
                     XLTOT.ORIGINAL,
                     rrImportedLossData.getLossDataHeaderId(),
+                    modelAnalysisEntity.getDivision(),
                     ".bin");
         }
         log.debug("write ELT filename = {} elt lost list size = {}", filename, eltLossList.size());

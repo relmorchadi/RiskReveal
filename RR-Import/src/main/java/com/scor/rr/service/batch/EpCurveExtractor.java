@@ -93,7 +93,7 @@ public class EpCurveExtractor extends AbstractWriter {
 
             LossDataHeaderEntity lossDataHeaderEntity = bundle.getSourceRRLT();
 
-            List<String> sourceFPs = epHeaders.stream().map(item -> item.getFinancialPerspective()).collect(toList());
+            List<String> sourceFPs = epHeaders.stream().map(RLSourceEpHeader::getFinancialPerspective).collect(toList());
             List<String> filteredFPs = sourceFPs.stream().filter(fp -> !StringUtils.equalsIgnoreCase(fp, FinancialPerspectiveCodeEnum.TY.getCode())).collect(toList());
 
             if (!StringUtils.equalsIgnoreCase(selectedFp, FinancialPerspectiveCodeEnum.TY.getCode()))
@@ -175,8 +175,9 @@ public class EpCurveExtractor extends AbstractWriter {
                             conformedRRLT.getCurrency(),
                             conformedRRLT.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                             conformedRRLT.getLossDataHeaderId(),
+                            bundle.getModelAnalysis().getDivision(),
                             ".bin");
-                    BinFile fileSummaryStat = epSummaryStatWriter.writeELTSummaryStatistics(analysisSummaryStats, fileName);
+                    BinFile fileSummaryStat = epSummaryStatWriter.writeELTSummaryStatistics(analysisSummaryStats, fileName, bundle.getModelAnalysis().getDivision());
 
                     confSumStat.setEPSFilePath(fileSummaryStat.getPath());
                     confSumStat.setEPSFileName(fileSummaryStat.getFileName());
@@ -216,8 +217,9 @@ public class EpCurveExtractor extends AbstractWriter {
                         conformedRRLT.getCurrency(),
                         conformedRRLT.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                         conformedRRLT.getLossDataHeaderId(),
+                        bundle.getModelAnalysis().getDivision(),
                         ".bin");
-                BinFile file = epCurveWriter.writeELTEPCurves(confEPCurvesList, makeEpCurveFileName);
+                BinFile file = epCurveWriter.writeELTEPCurves(confEPCurvesList, makeEpCurveFileName, bundle.getModelAnalysis().getDivision());
 
                 conformedEpCurvesHeaders.forEach(epCurveHeaderEntity -> {
                     epCurveHeaderEntity.setEPCFilePath(file.getPath());
@@ -272,7 +274,7 @@ public class EpCurveExtractor extends AbstractWriter {
             // @TODO : Get the treaty label regarding the FP Object
             AnalysisSummaryStats summaryStats =
                     ofNullable(rmsService.getAnalysisSummaryStats(instanceId, rdmId, rdmName, rlId, fp, null))
-                            .map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
+                            .map(l -> l.isEmpty() ? null : l ).map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
             result.fpToELTSumStat.put(fp, summaryStats);
         });
         return result;
@@ -290,8 +292,9 @@ public class EpCurveExtractor extends AbstractWriter {
                         lossDataHeader.getCurrency(),
                         lossDataHeader.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                         lossDataHeader.getLossDataHeaderId(),
+                        modelAnalysis.getDivision(),
                         ".bin");
-                BinFile file = epCurveWriter.writeELTEPCurves(metricToEPCurves.get(statisticMetric), makeEpCurveFileName);
+                BinFile file = epCurveWriter.writeELTEPCurves(metricToEPCurves.get(statisticMetric), makeEpCurveFileName, modelAnalysis.getDivision());
                 epCurves.add(
                         EPCurveHeaderEntity.builder()
                                 .ePCurveHeaderId(null)
@@ -322,8 +325,9 @@ public class EpCurveExtractor extends AbstractWriter {
                     lossDataHeader.getCurrency(),
                     lossDataHeader.getOriginalTarget().equals(RRLossTableType.SOURCE.getCode()) ? XLTOT.ORIGINAL : XLTOT.TARGET,
                     lossDataHeader.getLossDataHeaderId(),
+                    modelAnalysis.getDivision(),
                     ".bin");
-            BinFile file = epSummaryStatWriter.writeELTSummaryStatistics(summaryStats, fileName);
+            BinFile file = epSummaryStatWriter.writeELTSummaryStatistics(summaryStats, fileName, modelAnalysis.getDivision());
             return new SummaryStatisticHeaderEntity(1L, fp, summaryStats.getCov(), summaryStats.getStdDev(),
                     summaryStats.getPurePremium(), StatisticsType.ELT.getCode(), lossDataHeader.getLossDataHeaderId(), fileName, file.getPath());
         }).collect(toList());

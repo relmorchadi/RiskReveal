@@ -28,12 +28,12 @@ public class ExposureWriter extends AbstractWriter {
     @Autowired
     private ModelPortfolioStorageRepository modelPortfolioStorageRepository;
 
-    public File makeDetailExposureFile(String edmName, Long portfolioId) {
+    public File makeDetailExposureFile(String edmName, Long portfolioId, Integer division) {
         String path = PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)) + "/" + "Exposures";
-        return makeDetailExposureFile(path, edmName, portfolioId);
+        return makeDetailExposureFile(path, edmName, portfolioId, division);
     }
 
-    public File makeDetailExposureFile(String path, String edmName, Long portfolioId) {
+    public File makeDetailExposureFile(String path, String edmName, Long portfolioId, Integer division) {
 
         try {
             Date now = new Date();
@@ -41,7 +41,7 @@ public class ExposureWriter extends AbstractWriter {
             String fp = "GU";
             XLTOT currencySource = XLTOT.ORIGINAL;
             String currency = "YYY";
-            return makeFullFile(path, makeExposureFileName(XLTSubType.DES, now, regionPeril, fp, currency, currencySource, edmName, portfolioId, null, ".bin"));
+            return makeFullFile(path, makeExposureFileName(XLTSubType.DES, now, regionPeril, fp, currency, currencySource, edmName, portfolioId, null, division, ".bin"));
         } catch (Throwable th) {
             log.error("{}", th);
             return null;
@@ -69,7 +69,7 @@ public class ExposureWriter extends AbstractWriter {
         }
     }
 
-    public File makeLocLevelExposureFile(String edmName, Long rlPortfolioId, String extractType, List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions) {
+    public File makeLocLevelExposureFile(String edmName, Long rlPortfolioId, String extractType, List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions, Integer division) {
         String path = PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)) + "/" + "Exposures";
         try {
             Date now = new Date();
@@ -77,7 +77,7 @@ public class ExposureWriter extends AbstractWriter {
             String fp = "GU";
             XLTOT currencySource = XLTOT.ORIGINAL;
             String currency = exposureCurrencyImportData(rlPortfolioAnalysisRegions);
-            return makeFullFile(path, makeExposureFileName(XLTSubType.LOC, now, regionPeril, fp, currency, currencySource, edmName, rlPortfolioId, extractType, ".csv"));
+            return makeFullFile(path, makeExposureFileName(XLTSubType.LOC, now, regionPeril, fp, currency, currencySource, edmName, rlPortfolioId, extractType, division,".csv"));
         } catch (Throwable th) {
             th.printStackTrace();
             return null;
