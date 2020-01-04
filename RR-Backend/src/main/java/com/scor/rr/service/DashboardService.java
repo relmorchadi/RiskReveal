@@ -26,13 +26,11 @@ public class DashboardService {
         if (request.getSortConfig() != null && !request.getSortConfig().isEmpty()) {
             SortConfig firstCol = request.getSortConfig().get(0);
 
-            if (!(firstCol == null)) {
-                s = new Sort(firstCol.getDirection().equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, firstCol.getField());
+            s = new Sort(firstCol.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, firstCol.getField());
 
-                for (int i = 0; i < request.getSortConfig().size(); i++) {
-                    SortConfig tmp = request.getSortConfig().get(i);
-                    s = s.and(new Sort(tmp.getDirection().equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, tmp.getField()));
-                }
+            for (int i = 0; i < request.getSortConfig().size(); i++) {
+                SortConfig tmp = request.getSortConfig().get(i);
+                s = s.and(new Sort(tmp.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, tmp.getField()));
             }
         }
 
