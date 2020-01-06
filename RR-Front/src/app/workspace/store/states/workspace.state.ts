@@ -1079,25 +1079,25 @@ export class WorkspaceState {
     this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
-  @Action(fromWS.DeleteLinkAction)
-  deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
-    this.riskLinkFacade.deleteLink(ctx, payload);
-  }
-
-  @Action(fromWS.DeleteInnerLinkAction)
-  deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
-    this.riskLinkFacade.deleteInnerLink(ctx, payload);
-  }
-
-  @Action(fromWS.LoadLinkingDataAction)
-  loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
-    this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
-  }
-
-  @Action(fromWS.LoadFacDataAction)
-  loadFacData(ctx: StateContext<WorkspaceModel>) {
-    return this.riskLinkFacade.loadFacData(ctx);
-  }
+  // @Action(fromWS.DeleteLinkAction)
+  // deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
+  //   this.riskLinkFacade.deleteLink(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.DeleteInnerLinkAction)
+  // deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
+  //   this.riskLinkFacade.deleteInnerLink(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.LoadLinkingDataAction)
+  // loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
+  //   this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.LoadFacDataAction)
+  // loadFacData(ctx: StateContext<WorkspaceModel>) {
+  //   return this.riskLinkFacade.loadFacData(ctx);
+  // }
 
   @Action(fromWS.LoadDivisionSelection)
   loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
@@ -1150,12 +1150,17 @@ export class WorkspaceState {
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(fromWS.LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkDataAction) {
-    return this.riskLinkFacade.loadRiskLinkData(ctx);
+    return this.riskLinkFacade.loadRiskLinkData(ctx, payload);
   }
 
-  @Action(fromWS.RunDetailedScanAction)
-  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
-    return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  @Action(fromWS.RunDetailedScanForTreatyAction)
+  runDetailedScanForTreaty(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForTreaty(ctx, payload);
+  }
+
+  @Action(fromWS.RunDetailedScanForFacAction)
+  runDetailedScanForFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForFAC(ctx, payload);
   }
 
   @Action(fromWS.PatchAnalysisResultAction)

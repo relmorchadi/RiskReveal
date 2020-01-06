@@ -93,9 +93,11 @@
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr>
                 <th *ngFor="let col of columns" class="ui-resizable-column"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <div *ngIf="col.type === 'select'"><label nz-checkbox (ngModelChange)="toggleAnalysisSelection(i)"
-                                                            [ngModel]="changes.analysis[i].selected"></label></div>
+                    [ngClass]="{'selected-item': changes.analysis[i].selected}">
+                  <div *ngIf="col.type === 'select'">
+                    <label nz-checkbox (ngModelChange)="toggleAnalysisSelection(i)"
+                           [ngModel]="changes.analysis[i].selected"></label>
+                  </div>
                   <div class="text-data" (click)="toggleAnalysisSelection(i)" *ngIf="col.type === 'iconIndicator'">
                     <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
                   </div>
@@ -120,7 +122,7 @@
     <div style="padding: 0" class="fp-options-wrapper">
       <nz-tabset class="tabs-standard-top">
         <nz-tab nzTitle="Standard">
-          <div style="padding-top:0" class="summary-info resize-table">
+          <div style="padding: 0 1px 20px" class="summary-info resize-table">
             <div class="menu-icon-wrap" style="position: absolute; top: 10px; right: 10px;">
               <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
@@ -173,7 +175,7 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
                   <th *ngFor="let col of columns" class="ui-resizable-column"
-                      [ngClass]="{'selected-item': rowData?.selected}">
+                      [ngClass]="{'selected-item': changes.epCurves[i].selected}">
                     <div *ngIf="col.type === 'select'">
                       <label nz-checkbox
                              (ngModelChange)="toggleEpCurveSelection(i)"

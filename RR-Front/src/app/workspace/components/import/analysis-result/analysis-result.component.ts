@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import * as _ from 'lodash';
+import componentData from "./data";
 
 @Component({
   selector: 'analysis-result',
@@ -10,251 +11,16 @@ import * as _ from 'lodash';
 })
 export class AnalysisResultComponent implements OnInit {
 
+  @Input('context')
+  context;
+
   @Input('data')
   data:{analysis, epCurves, targetRaps, regionPerilsByAnalysis}= {analysis: [], epCurves: [], targetRaps: [], regionPerilsByAnalysis: {}};
 
 
   isCollapsed;
-  scrollableColsResults = [
-    {field: '', header: '', width: '80px', type: '', filtered: false, visible: false, highlight: false, edit: false},
-    {
-      field: 'rpCode',
-      header: 'Region Peril',
-      width: '80px',
-      type: 'Rp',
-      sorting: '',
-      filtered: true,
-      highlight: true,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'analysisCurrency',
-      header: 'Source Currency',
-      width: '90px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'targetCurrency',
-      header: 'Target Currency',
-      width: '80px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: true,
-      visible: true,
-      edit: true
-    },
-    {
-      field: 'financialPerspective',
-      header: 'ELT FIN PERSP',
-      width: '80px',
-      type: 'multiple',
-      sorting: '',
-      filtered: true,
-      highlight: true,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'occurrenceBasis',
-      header: 'Occurrence Basis',
-      width: '100px',
-      type: 'Ob',
-      sorting: '',
-      filtered: true,
-      highlight: true,
-      visible: true,
-      edit: false
-    },
-    // {
-    //   field: 'targetRap',
-    //   header: 'Target RAP',
-    //   width: '180px',
-    //   type: 'text',
-    //   sorting: '',
-    //   filtered: true,
-    //   highlight: false,
-    //   visible: true,
-    //   edit: true
-    // },
-    {
-      field: 'targetRaps',
-      header: 'PEQT',
-      width: '80px',
-      type: 'Peqt',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'unitMultiplier',
-      header: 'Unit Multiplier',
-      width: '80px',
-      type: 'number',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'proportion',
-      header: 'Proportion',
-      width: '70px',
-      type: 'percentage',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'rdmName',
-      header: 'RDM',
-      width: '210px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'importId',
-      header: 'Import ID',
-      width: '80px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'dateImport',
-      header: 'Date Import',
-      width: '70px',
-      type: 'date',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'user',
-      header: 'User',
-      width: '70px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'publishAcc',
-      header: 'Publish For Accumulation',
-      width: '30px',
-      type: 'check',
-      icon: 'icon-focus-add',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'publishPri',
-      header: 'Publish For Pricing',
-      width: '30px',
-      type: 'check',
-      icon: 'icon-note',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    /*  {field: 'action', header: '', width: '25px', type: 'icon', sorting: ', filtered: false, highlight: false},*/
-  ];
-
-  frozenColsResults = [
-    {
-      field: 'selected',
-      header: '',
-      width: '25px',
-      type: 'selection',
-      sorting: '',
-      filtered: false,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'scan',
-      header: '',
-      width: '25px',
-      type: 'scan',
-      sorting: '',
-      filtered: false,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'status',
-      header: 'Status',
-      width: '40px',
-      type: 'progress',
-      sorting: '',
-      filtered: false,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'analysisId',
-      header: 'ID',
-      width: '40px',
-      type: 'text',
-      sorting: '',
-      filtered: false,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'analysisName',
-      header: 'Name',
-      width: '170px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'analysisDescription',
-      header: 'Description',
-      width: '200px',
-      type: 'text',
-      sorting: '',
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-  ];
+  scrollableColsResults;
+  frozenColsResults;
 
   refs = {
     currencies: [
@@ -272,6 +38,21 @@ export class AnalysisResultComponent implements OnInit {
       {label: "USD", value: "USD"},
       {label: "XXC", value: "XXC"}
     ],
+    financialPerspective: {
+      'CL': 'Client Loss',
+      'FA': 'Facultative Reinsurance Loss',
+      'GR': 'Gross Loss',
+      'GU': 'Ground Up Loss',
+      'QS': 'Quota Share Treaty Loss',
+      'RC': 'Net Loss Post Corporate Cat',
+      'RG': 'Reinsurance Gross Loss',
+      'RL': 'Net Loss Pre Cat',
+      'RN': 'Reinsurance Net Loss',
+      'RP': 'Net Loss Post Cat',
+      'SS': 'Surplus Share Treaty Loss',
+      'TY': 'Treaty Loss',
+      'WX': 'Working Excess Treaty Loss'
+    },
     targetRaps: [
       {value: 'RL_ACEQ_Mv9.0_Ev10.0_S-56-LTR (Default)'},
       {value: 'RL_ACEQ_Mv9.0_Ev11.0_S-56-LTR (Default)'},
@@ -297,6 +78,13 @@ export class AnalysisResultComponent implements OnInit {
   }
 
   ngOnInit() {
+    if(this.context == 'FAC'){
+      this.scrollableColsResults= componentData.FAC.scrollableCols;
+      this.frozenColsResults= componentData.FAC.fixedCols;
+    } else {
+      this.scrollableColsResults= componentData.Treaty.scrollableCols;
+      this.frozenColsResults= componentData.Treaty.fixedCols;
+    }
   }
 
   updateAllChecked(evt, target) {

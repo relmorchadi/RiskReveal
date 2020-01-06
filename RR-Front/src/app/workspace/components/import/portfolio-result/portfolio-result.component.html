@@ -120,6 +120,19 @@
                 <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
                      [ngClass]="{'highlight-temp': col.highlight}"
                      class="text-data"><span>{{rowData[col.field]}}</span></div>
+                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
+                     class="highlight-temp text-data">
+                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length}}</span>
+                  <ng-template #DivisionInfo>
+                    <div class="popover-menu">
+                      <ul style="margin-bottom: 0">
+                        <ng-container *ngFor="let item of rowData[col.field]">
+                          <li> Division N {{item}}</li>
+                        </ng-container>
+                      </ul>
+                    </div>
+                  </ng-template>
+                </div>
                 <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                      class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
                 <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"

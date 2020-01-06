@@ -162,11 +162,7 @@ export class WorkspaceService {
             results: null,
             summaries: null,
             selection: null,
-            facSelection: {
-              'Division N°1': {analysis: {}, portfolios: {}},
-              'Division N°2': {analysis: {}, portfolios: {}},
-              'Division N°3': {analysis: {}, portfolios: {}},
-            },
+            facSelection: {},
             importPLTs: {},
             selectedEDMOrRDM: null,
             activeAddBasket: false,

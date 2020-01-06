@@ -12,7 +12,7 @@
           <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
-          <span class="header-wrap-text">Project P - 00723</span>
+          <span class="header-wrap-text">Project P - {{selectedProject?.projectId}}</span>
         </div>
       </div>
       <div class="body-wrap-dropDowns">
@@ -21,7 +21,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">RMS Instance</span>
               <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.rmsInstance?.selected">
-                {{state?.financialValidator?.rmsInstance?.selected}}
+                {{state?.financialValidator?.rmsInstance?.selected?.instanceName}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -30,7 +30,7 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('rmsInstance', item)"
-                *ngFor="let item of state?.financialValidator?.rmsInstance?.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.rmsInstance?.data">{{item?.instanceName}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
@@ -94,7 +94,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Division</span>
               <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.division?.selected">
-                {{state?.financialValidator?.division?.selected}}
+                Division N° {{state?.financialValidator?.division?.selected.divisionNumber}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -104,7 +104,7 @@
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('division', item)"
                 *ngFor="let item of state?.financialValidator?.division?.data">
-              {{item}}</li>
+              Division N° {{item?.divisionNumber}}</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -137,7 +137,7 @@
                     <span class="search-bar-text-title">EDM & RDM</span>
                     <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                   </div>
-                  <i class="search-bar-icon-down" (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" nz-icon
+                  <i class="search-bar-icon-down" (click)="toggleDatasourcesDisplay()" nz-icon
                      nzType="down"
                      nzTheme="outline"></i>
                 </div>
@@ -229,9 +229,9 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
-              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"
-                      class="a-buttons-outlined-mini">Auto Attach
-              </button>
+<!--              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"-->
+<!--                      class="a-buttons-outlined-mini">Auto Attach-->
+<!--              </button>-->
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -266,10 +266,8 @@
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
                       <ng-container *ngIf="!itemsE.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
-                          /{{itemsE.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsE, 'portfolio')}}/{{itemsE.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>-->
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="rescanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
@@ -293,10 +291,8 @@
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
                       <ng-container *ngIf="!itemsR?.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
-                          /{{itemsR.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsR, 'analysis')}}/{{itemsR.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>-->
                         <i (click)="rescanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
@@ -449,8 +445,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [data]="summary.portfolios"></portfolio-result>
-        <analysis-result [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="tabStatus" [data]="summary.portfolios"></portfolio-result>
+        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
