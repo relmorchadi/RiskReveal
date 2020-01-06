@@ -144,6 +144,19 @@
                       {{rowData[col.field]}}
                     </span>
                 </div>
+                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
+                     class="highlight-temp text-data">
+                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length}}</span>
+                  <ng-template #DivisionInfo>
+                    <div class="popover-menu">
+                      <ul style="margin-bottom: 0">
+                        <ng-container *ngFor="let item of rowData[col.field]">
+                          <li> Division N {{item}}</li>
+                        </ng-container>
+                      </ul>
+                    </div>
+                  </ng-template>
+                </div>
                 <div class="text-data" (click)="showOverridePEQTDialog=true" *ngIf="col.type === 'Peqt'">
                     <span class="highlighted-change">
                       <span *ngIf=" (rowData.targetRaps||[]).length > 0; else noSelectedPeqts" nz-tooltip [nzTitle]="peqtInfo">

@@ -45,11 +45,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   workspaceInfo: any;
 
   tree = [];
-  divisionTag = {
-    'Division N°1': '_01',
-    'Division N°2': '_02',
-    'Division N°3': '_03'
-  };
 
   selectedRows: any;
 
@@ -170,14 +165,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   ngOnInit() {
     this.loadRefsData();
-    setTimeout(() => {
-      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-        instanceId: this.state.financialValidator.rmsInstance.selected,
-        keyword: '',
-        offset: 0,
-        size: 100,
-      }));
-    }, 500);
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = _.merge({}, value);
@@ -252,6 +239,18 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
+  toggleDatasourcesDisplay(){
+    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    if(this.displayDropdownRDMEDM){
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+        instanceId: this.state.financialValidator.rmsInstance.selected,
+        keyword: '',
+        offset: 0,
+        size: 100,
+      }));
+    }
+  }
+
   autoLinkAnalysis() {
     this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     this.dispatch(new fromWs.AddToBasketDefaultAction());
@@ -263,10 +262,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   setFilterDivision() {
+    if(! this.state.financialValidator.division.selected ){
+      console.error('No selected Division');
+      return;
+    }
+    const keyword= `${this.ws.wsId}_${("0" + this.state.financialValidator.division.selected.divisionNumber).slice(-2)}`;
     if (this.state.selectedEDMOrRDM === 'RDM') {
-      this.filterAnalysis['analysisName'] = this.ws.wsId + this.divisionTag[this.state.financialValidator.division.selected];
+      this.filterAnalysis['analysisName'] = keyword;
     } else {
-      this.filterPortfolio['number'] = this.ws.wsId + this.divisionTag[this.state.financialValidator.division.selected];
+      this.filterPortfolio['number'] = keyword;
     }
   }
 
@@ -321,7 +325,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   /** */
   focusInput() {
-    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    this.toggleDatasourcesDisplay();
     this.searchInput.nativeElement.focus();
   }
 
@@ -418,14 +422,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     ).pipe(this.unsubscribeOnDestroy)
       .subscribe(data => {
         const [p, analysisPortfolioSelection] = data;
-        console.log('Those are selected section', analysisPortfolioSelection);
-        console.log('Project', p);
         const {analysis, portfolios} = analysisPortfolioSelection;
         this.dispatch(new fromWs.RunDetailedScanAction({
           instanceId: this.state.financialValidator.rmsInstance.selected,
           projectId: p.projectId,
           analysis,
-          portfolios
+          portfolios,
+          context: this.tabStatus
         }));
       });
 
@@ -686,8 +689,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   triggerImport() {
-    const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier'];
-    const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier'];
+    const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions'];
+    const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
 
     forkJoin(
       [
@@ -716,7 +719,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         analysis,
         an => ({
           ...an,
-          targetRAPCodes: an.targetRaps,
+          targetRAPCodes: _.map(an.targetRaps, item => item.targetRapCode),
           targetRegionPeril: an.rpCode,
           projectId
         })

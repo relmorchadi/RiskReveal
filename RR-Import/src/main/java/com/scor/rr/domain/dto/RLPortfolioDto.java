@@ -13,6 +13,7 @@ import java.util.Date;
 public class RLPortfolioDto {
 
     private Long rlPortfolioId;
+    private String number;
     private Long rlId;
     private String name;
     private String description;
