@@ -34,7 +34,9 @@ public enum ExceptionCodename {
         This section is delegated to Inuring Exceptions
      */
     INURING_INVALID_NUMBER_PLTS("Invalid number of PLTS"),
+    INURING_FINAL_ATTACHED_PLT_NOT_FOUND("plt not found"),
     EXCHANGE_RATE_TYPE_NOT_FOUND("ExchangeRate Type not found"),
+    INURING_STRUCTURE_NOT_VALID("Inuring structure not valid"),
     INURING_CONTRACT_LAYER_PARAM_NOT_FOUND("Inuring contractLayer Param not found"),
     INURING_GROUPED_PLT_ALREADY_EXISTS("Invalid name of PLT"),
     INURING_PLT_NOT_FOUND("Inuring Plt Not found"),
