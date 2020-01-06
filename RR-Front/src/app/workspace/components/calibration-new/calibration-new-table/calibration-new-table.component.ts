@@ -83,6 +83,8 @@ export class CalibrationNewTableComponent implements OnInit {
     {title: 'Requires regeneration', field: 'requiresRegeneration', class: 'icon-report_problem_24px iconYellow2'},
     {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
   ]
+  private selectedFinancialUnit: any = 'Unit';
+
 
 
 
@@ -247,13 +249,21 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   singleCheck(event, pureId, threadId){
+    let isAllSelected: boolean = true;
+    let isNoOneSelected: boolean = true;
     this.data.forEach((pure)=>{
       pure.threads.forEach((thread)=>{
         if (pure.pltId === pureId && thread.pltId === threadId){
           thread.selected = event.target.checked;
         }
+        if (!thread.selected) isAllSelected = false;
+        if (thread.selected) isNoOneSelected = false;
       })
     })
+    if (isAllSelected || isNoOneSelected) this.selectOptions.indeterminate = false;
+    else this.selectOptions.indeterminate = true
+    //this.selectOptions.indeterminate = isAllSelected ? false : true;
+    this.selectOptions.checkAll = isAllSelected ? true : false;
     this.toggleSelectPlts(this.data);
   }
 
@@ -284,6 +294,7 @@ export class CalibrationNewTableComponent implements OnInit {
   }
 
   financialUnitChange(financialUnit: any) {
+    this.selectedFinancialUnit = financialUnit;
     this.actionDispatcher.emit({
       type: "Financial Unit Change",
       payload: financialUnit
@@ -305,9 +316,6 @@ export class CalibrationNewTableComponent implements OnInit {
     })
   }
 
-  displa(col: any) {
-    console.log(col)
-  }
 
   toggleStatusFilter(value, status: any) {
     this.actionDispatcher.emit({
