@@ -1,14 +1,12 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -41,6 +39,14 @@ public class WorkspaceDetailsDTO {
     private int expectedPriced;
     private int expectedAccumulation;
 
+    public WorkspaceDetailsDTO(WorkspaceEntity workspaceEntity) {
+        this.id = workspaceEntity.getWorkspaceContextCode();
+        this.workspaceName = workspaceEntity.getWorkspaceName();
+        this.cedantCode = workspaceEntity.getWorkspaceContextCode();
+        this.cedantName = workspaceEntity.getClientName();
+        this.marketChannel = workspaceEntity.getWorkspaceMarketChannel();
+    }
+
 
     public WorkspaceDetailsDTO(ContractSearchResult contract, Long marketChannel) {
         this.id = contract.getId();
@@ -60,6 +66,14 @@ public class WorkspaceDetailsDTO {
     public void setTreatySections(List<ContractSearchResult> items) {
         this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
         ).distinct().collect(Collectors.toList());
+    }
+
+    public void setTreatySection(String treatySection) {
+        this.treatySections = Arrays.asList(treatySection);
+    }
+
+    public void setYear(int year) {
+        this.years = Arrays.asList(year);
     }
 
     /**
