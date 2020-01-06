@@ -3,21 +3,26 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.domain.DefaultReturnPeriodEntity;
+import com.scor.rr.domain.dto.EPMetricPoint;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.EventDateFormatException;
 import com.scor.rr.exceptions.pltfile.PLTDataNullException;
+import com.scor.rr.repository.DefaultReturnPeriodRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -108,7 +113,6 @@ public class CalculateAdjustmentServiceEEFFrequencyTest {
             fail();
         }
     }
-
 
     @Test
     public void eefFrequencyFile() throws RRException {
