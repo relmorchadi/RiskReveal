@@ -55,6 +55,9 @@ public abstract class AbstractWriter {
     @Value("#{jobParameters['importSequence']}")
     protected Long importSequence;
 
+    @Value("#{jobParameters['carId']}")
+    protected String carId;
+
     private Path ihubPath;
 
     @Value("${ihub.treaty.out.path}")
@@ -63,13 +66,13 @@ public abstract class AbstractWriter {
     }
 
     protected synchronized String makeELTFileName(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.ELT,
                 date,
@@ -97,13 +100,13 @@ public abstract class AbstractWriter {
     }
 
     protected synchronized String makeAPSFileName(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.ELT,
                 date,
@@ -133,13 +136,13 @@ public abstract class AbstractWriter {
     protected synchronized String makePLTFileName(
             Date date, String regionPeril, String fp, String currency, XLTOT currencySource, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus,
             Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
+            Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.PLT,
                 date,
@@ -167,13 +170,13 @@ public abstract class AbstractWriter {
     }
 
     protected synchronized String makeELTEPCurveFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.ELT,
                 date,
@@ -201,13 +204,13 @@ public abstract class AbstractWriter {
     }
 
     protected synchronized String makeELTSummaryStatFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, String fileExtension) {
+            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.ELT,
                 date,
@@ -234,12 +237,12 @@ public abstract class AbstractWriter {
         );
     }
 
-    protected synchronized String makeExposureFileName(XLTSubType subType, Date date, String regionPeril, String fp, String currency, XLTOT currencySource, String edmName, Long portfolioId, String fileNature, String fileExtension) {
+    protected synchronized String makeExposureFileName(XLTSubType subType, Date date, String regionPeril, String fp, String currency, XLTOT currencySource, String edmName, Long portfolioId, String fileNature, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.EXP,
                 date,
@@ -281,13 +284,13 @@ public abstract class AbstractWriter {
 
     protected synchronized String makePLTEPCurveFilename(
             Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
+            Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.PLT,
                 date,
@@ -316,13 +319,13 @@ public abstract class AbstractWriter {
 
     protected synchronized String makePLTSummaryStatFilename(
             Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
+            Long uniqueId, Integer myDivision, String fileExtension) {
         return PathUtils.makeTTFileName(
                 reinsuranceType,
                 prefix,
                 clientName,
                 contractId,
-                division,
+                myDivision != null ? String.valueOf(myDivision) : division,
                 uwYear,
                 XLTAssetType.PLT,
                 date,
@@ -345,6 +348,27 @@ public abstract class AbstractWriter {
                 null,
                 null,
                 null,
+                fileExtension
+        );
+    }
+
+    protected synchronized String makeFacFilename(String jobType, Date runDate, XLTSubType xltSubType, String suffix, String fileExtension, Integer myDivision) {
+        return PathUtils.makeTTFileName(
+                reinsuranceType,
+                jobType,
+                clientName,
+                contractId,
+                myDivision != null ? String.valueOf(myDivision) : division,
+                uwYear,
+                XLTAssetType.EXP,
+                runDate,
+                sourceVendor,
+                modelSystemVersion,
+                carId,
+                periodBasis,
+                XLTOrigin.INTERNAL,
+                xltSubType,
+                suffix,
                 fileExtension
         );
     }

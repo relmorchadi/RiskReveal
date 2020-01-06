@@ -1,8 +1,6 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.domain.DefaultReturnPeriodEntity;
-import com.scor.rr.domain.enums.CurveType;
-import io.swagger.models.auth.In;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +24,6 @@ public interface DefaultReturnPeriodRepository extends JpaRepository<DefaultRetu
     @Query(value = "exec dbonew.usp_FindSingleEpMetricsByWorkspaceAndCurveTypeAndRP @workspaceContextCode=:workspaceContextCode, @uwYear=:uwYear, @curveType=:curveType, @rp=:rp", nativeQuery = true)
     List<Map<String, Object>> findSingleEpMetricsByWorkspaceAndCurveTypeAndRP(@Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear, @Param("curveType") String type, @Param("rp") Integer rp);
 
+    @Query("SELECT drp.returnPeriod FROM DefaultReturnPeriodEntity drp WHERE drp.isTableRP = 1 ORDER BY drp.returnPeriod ASC")
+    List<Integer> findByIsTableRPOrderByReturnPeriodAsc();
 }

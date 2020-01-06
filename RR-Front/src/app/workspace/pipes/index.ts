@@ -12,6 +12,9 @@ import {FrozenColsLengthPipe} from "./frozen-cols-length.pipe";
 import {GetAdjustmentPipe} from "./get-adjustment.pipe";
 import {GetFactorPipe} from "./get-factor.pipe";
 import {GetDescriptionPipe} from "./get-description.pipe";
+import {ConcatListPipe} from "./concat-list.pipe";
+import {FinancialUnitPipe} from "./financial-unit.pipe";
+import {GetDeltaPipe} from "./get-delta.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -27,7 +30,10 @@ export const PIPES = [
   FrozenColsLengthPipe,
   GetAdjustmentPipe,
   GetFactorPipe,
-  GetDescriptionPipe
+  GetDescriptionPipe,
+  ConcatListPipe,
+  FinancialUnitPipe,
+  GetDeltaPipe
 ];
 
 export * from './filter-by-badge.pipe';

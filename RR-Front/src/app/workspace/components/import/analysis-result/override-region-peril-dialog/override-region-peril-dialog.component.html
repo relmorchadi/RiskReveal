@@ -98,21 +98,7 @@
                     nzPlaceHolder="Select Occurence Basis"
                   >
                     <nz-option *ngFor="let rp of regionPerilByAnalysis[rowData.rlAnalysisId]"
-                               [nzLabel]="rp" [nzValue]="rp"></nz-option>
-<!--                    <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-AT"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-BE"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-CH"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-CZ"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-DE"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-DK"></nz-option>-->
-<!--                    <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone"-->
-<!--                               nzValue="EUET-FR"></nz-option>-->
+                               [nzLabel]="rp.regionPerilCode" [nzValue]="rp.regionPerilCode"></nz-option>
                   </nz-select>
                 </div>
                 <div *ngIf="col.type === 'function'">

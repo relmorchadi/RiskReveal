@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.AnalysisEpCurves;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.dto.EPMetricPoint;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.util.PathUtils;
@@ -34,30 +34,44 @@ public class EpCurveWriter extends AbstractWriter {
 
     private Path ihubPath;
 
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
+
+    @Value("#{jobParameters['carId']}")
+    private String carId;
+
     @Value("${ihub.treaty.out.path}")
     private void setIhubPath(String path) {
         this.ihubPath = Paths.get(path);
     }
 
-    public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-//        Map<StatisticMetric, List<AnalysisEpCurves>> metricToPLTEPCurve = new HashMap<>();
+    public BinFile writeELTEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename, Integer division) {
 
-//        for (Map.Entry<StatisticMetric, List<AnalysisEpCurves>> entry : metricToEPCurve.entrySet()) {
-//            // @TODO Review this logic With Viet
-//            metricToPLTEPCurve.put(entry.getKey(), Lists.transform(entry.getValue(), e -> new AnalysisEpCurves(e)));
-//        }
-
-        return writeEPCurves(metricToEPCurve, filename);
+        return writeEPCurves(metricToEPCurve, filename, division);
     }
 
-    private BinFile writeEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
-        return writeEPCurves(metricToEPCurve, file, null);
+    private BinFile writeEPCurves(List<AnalysisEpCurves> metricToEPCurve, String filename, Integer division) {
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeEPCurves(metricToEPCurve, file, null);
+        } else {
+            division = division != null ? division : Integer.valueOf(this.division);
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            return writeEPCurves(metricToEPCurve, file, null);
+        }
     }
 
-    public BinFile writePLTEPCurves(List<EPMetricPoint> metricToEPCurve, String filename, StatisticMetric statisticMetric) {
-        File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
-        return writeEPCurves(metricToEPCurve, file, statisticMetric);
+    public BinFile writePLTEPCurves(List<EPMetricPoint> metricToEPCurve, String filename, StatisticMetric statisticMetric, Integer division) {
+
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+            return writeEPCurves(metricToEPCurve, file, statisticMetric);
+        } else {
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            return writeEPCurves(metricToEPCurve, file, statisticMetric);
+        }
+
+
     }
 
     private BinFile writeEPCurves(List<?> epCurves, File file, StatisticMetric statisticMetric) {

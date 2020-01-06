@@ -42,8 +42,10 @@ public class RLImportSelection {
     private Float unitMultiplier;
     @Column(name = "Proportion")
     private Float proportion;
-    //    @Column(name = "TargetRAPCode")
-//    private String targetRAPCode;
+    @Column(name = "Division")
+    private Integer division;
+    //    @Column(name = "PeriodBasis")
+//    private String periodBasis;
     // TODO : Review with shaun
     @Column(name = "ProxyScalingBasis")
     private String proxyScalingBasis;
@@ -84,6 +86,11 @@ public class RLImportSelection {
         this.financialPerspective = fp;
         this.rlAnalysis = rlAnalysis;
         this.targetRaps = new ArrayList<>();
+    }
+
+    public RLImportSelection(ImportSelectionDto importSelectionDto, String fp, RLAnalysis rlAnalysis, Integer division) {
+        this(importSelectionDto, fp, rlAnalysis);
+        this.division = division;
     }
 
     public void addTargetRap(RLImportTargetRAPSelection rlImportTargetRAPSelection) {

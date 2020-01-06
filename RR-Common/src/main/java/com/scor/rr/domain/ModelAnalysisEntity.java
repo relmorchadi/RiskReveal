@@ -107,6 +107,9 @@ public class ModelAnalysisEntity {
     @Column(name = "ExchangeRate")
     private Double exchangeRate;
 
+    @Column(name = "Division")
+    private Integer division;
+
     @Column(name = "DefaultOccurrenceBasis")
     private String defaultOccurrenceBasis;
 

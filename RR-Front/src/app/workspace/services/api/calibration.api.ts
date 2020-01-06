@@ -16,7 +16,7 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}basis`)
   }
 
-  loadDefaultAdjustement(engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId): Observable<any> {
+  loadDefaultAdjustment(engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId): Observable<any> {
     return this.http.get(`${this.URL}defaultAdjustment/lookupDefaultAdjustment`, {params: {engineType, marketChannelId, pltEntityId, regionPerilId, targetRapId}});
   }
 
@@ -40,6 +40,18 @@ export class CalibrationAPI {
 
   loadAllAdjustmentTypes() {
     return this.http.get(`${this.URL}type/all`);
+  }
+
+  loadAllAdjustmentStates() {
+    return this.http.get(`${this.URL}state/all`);
+  }
+
+  validateRP(rp){
+    return this.http.get(`${this.URL}epMetrics/validate`, { params: { rp }});
+  }
+
+  saveListOfRPsByUserId(rps: number[], userId: number) {
+    return this.http.post(`${this.URL}epMetrics/rp`, {rps, userId})
   }
 
 }

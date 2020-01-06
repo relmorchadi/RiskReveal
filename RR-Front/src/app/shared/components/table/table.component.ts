@@ -32,11 +32,35 @@ export class TableComponent implements OnInit {
 
   contextSelectedItem: any;
   FilterData: any = {};
+
   @Input('sortData') sortData;
   filterInput: any;
 
-  @Input() loading: boolean;
+  @Input()
+  loading: boolean;
+  @Input()
+  rows;
+  @Input()
+  totalRecords;
+  @Input()
+  sortable = false;
+  @Input()
+  listOfData: any[];
+  @Input()
+  virtualScroll: boolean;
+  @Input()
+  tableColumn: any[];
+  @Input()
+  tableHeight: string;
+  @Input()
+  tableWidth: string;
+  @Input()
+  selectionMode: string = null;
+  @Input()
+  filterModeFront: boolean = true;
+
   _activateContextMenu: boolean;
+
   get activateContextMenu(): boolean {
     return this._activateContextMenu;
   }
@@ -44,6 +68,7 @@ export class TableComponent implements OnInit {
   set activateContextMenu(value: boolean) {
     if (!_.isNil(value)) { this._activateContextMenu = value;  } else { this._activateContextMenu = true; }
   }
+
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -73,24 +98,6 @@ export class TableComponent implements OnInit {
       command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
     },
   ];
-  @Input()
-  rows;
-  @Input()
-  totalRecords;
-  @Input()
-  sortable = false;
-  @Input()
-  listOfData: any[];
-  @Input()
-  virtualScroll: boolean;
-  @Input()
-  tableColumn: any[];
-  @Input()
-  tableHeight: string;
-  @Input()
-  tableWidth: string;
-  @Input()
-  selectionMode: string = null;
 
   event: any;
   selectedRows: any = [];
@@ -257,8 +264,9 @@ export class TableComponent implements OnInit {
     } else {
       this.FilterData =  _.omit(this.FilterData, [key]);
     }
-    console.log('this.FilterData', this.FilterData);
-
+    if (!this.filterModeFront) {
+      this.filterData.emit({[key]: value});
+    }
   }
 
   log(dt: HTMLElement) {

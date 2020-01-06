@@ -14,5 +14,6 @@ public class ImportSelectionDto {
     private Float unitMultiplier;
     private Float proportion;
     private List<String> targetRAPCodes;
+    private List<Integer> divisions;
     private List<String> financialPerspectives;
 }

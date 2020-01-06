@@ -55,7 +55,7 @@ export class CalibrationTableService {
 
   columnHandler = {
     "fac-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
       const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
@@ -67,7 +67,7 @@ export class CalibrationTableService {
     },
     "fac-adjustments": (isExpanded) => {
       const defaulCol = _.find(this.adjustments, col => col.header == "Default");
-      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
       const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, {...defaulCol, width: '562'}] : [defaulCol]);
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
@@ -78,7 +78,7 @@ export class CalibrationTableService {
       })
     },
     "treaty-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols);
+      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
       const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
@@ -89,7 +89,7 @@ export class CalibrationTableService {
       })
     },
     "treaty-adjustments": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? null : CalibrationTableService.frozenCols );
+      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols );
       const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.adjustments] : this.adjustments );
       const columnsLength = frozenColumns ? frozenColumns.length : null;
 
@@ -114,7 +114,7 @@ export class CalibrationTableService {
     }
   }
 
-  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "70", icon:'', filter: false, sort: false}));
+  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "100", icon:'', filter: false, sort: false, align: 'right'}));
 
   setCols = (cols, view) => {
     this[view] = this.generateColumns(cols);

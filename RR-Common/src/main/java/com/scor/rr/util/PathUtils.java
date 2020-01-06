@@ -1,6 +1,10 @@
 package com.scor.rr.util;
 
+import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.enums.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -54,6 +58,24 @@ public class PathUtils {
             items.add(String.valueOf(uwYear));
         if (projectId != null)
             items.add(String.valueOf(projectId));
+        return org.apache.commons.lang.StringUtils.join(items, "/");
+    }
+
+    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Integer division, String carId) {
+        List<String> items = new ArrayList<>();
+        items.add("Facultative");
+        items.add("Cedant");
+        if (clientName != null && clientId != null)
+            items.add(new StringBuilder(clientName.replaceAll("[\\\\/:*?\"<>|]", "_")).append("-").append(clientId).toString());
+        if (contractId != null)
+            items.add(contractId);
+        if (uwYear != null)
+            items.add(String.valueOf(uwYear));
+        if (carId != null)
+            items.add(String.valueOf(carId));
+        if (division != null)
+            items.add(String.valueOf(division));
+
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
 
@@ -178,6 +200,40 @@ public class PathUtils {
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();
     }
+    public static String makePLTFileName(WorkspaceEntity workspaceEntity,
+                                         ModelAnalysisEntity modelAnalysis,
+                                         PltHeaderEntity plt,
+                                         Integer threadId,
+                                         Integer nodeId,
+                                         String fileExtension) {
+        return PathUtils.makePLTFileName(workspaceEntity != null && workspaceEntity.getWorkspaceMarketChannel() != null && 2 == workspaceEntity.getWorkspaceMarketChannel() ? "F" : "T",
+                null,
+                workspaceEntity != null ? workspaceEntity.getClientName() : null,
+                workspaceEntity != null ? workspaceEntity.getWorkspaceContextCode() : null,
+                null,
+                workspaceEntity.getWorkspaceUwYear().toString(),
+                XLTAssetType.PLT,
+                new Date(),
+                modelAnalysis.getSourceModellingVendor(),
+                modelAnalysis.getSourceModellingSystemVersion(),
+                modelAnalysis.getRegionPeril(),
+                "UF",
+                plt.getCurrencyCode(),
+                plt.getProjectId(),
+                "FT",
+                XLTOrigin.INTERNAL,
+                XLTSubType.DAT,
+                XLTOT.TARGET,
+                plt.getTargetRAPId(),
+                plt.getPltSimulationPeriods(),
+                PLTPublishStatus.PURE,
+                threadId,
+                plt.getPltHeaderId(),
+                plt.getImportSequence(),
+                nodeId,
+                null,
+                fileExtension);
+    }
 
     public static String makePLTFileName(
             String reinsuranceType,
@@ -193,19 +249,18 @@ public class PathUtils {
             String regionPeril,
             String fp,
             String currency,
-            String projectId,
+            Long projectId,
             String periodBasis,
             XLTOrigin origin,
             XLTSubType subType,
             XLTOT currencySource,
-            Integer targetRapId,
+            Long targetRapId,
             Integer simulationPeriod,
             PLTPublishStatus pltPublishStatus,
             Integer threadNum, // 0 for pure PLT
-            String uniqueId,
-            Long importSequence,
-            String edmName,
-            Long portfolioId,
+            Long uniqueId,
+            Integer importSequence,
+            Integer nodeId,
             String fileNature,
             String fileExtension) {
         String simBasis = PLTSimulationPeriod.SIM800K.getCode().equals(simulationPeriod) ? "M".concat("-").concat("800") : "N".concat("-").concat("100");
@@ -253,7 +308,7 @@ public class PathUtils {
             items.add(currency);
         }
         if (projectId != null) {
-            items.add(projectId);
+            items.add(projectId.toString());
         }
         if (periodBasis != null) {
             items.add(periodBasis);
@@ -284,12 +339,10 @@ public class PathUtils {
         } else {
             items.add("Job-X");
         }
-        if (edmName != null) {
-            items.add(edmName);
+        if (nodeId != null) {
+            items.add("Node_" + nodeId.toString());
         }
-        if (portfolioId != null) {
-            items.add("P" + portfolioId);
-        }
+
         if (fileNature != null) {
             items.add(fileNature);
         }
@@ -301,4 +354,61 @@ public class PathUtils {
         return builder.toString();
     }
 
+    public static String makeTTFileName(String reinsuranceType, String jobType, String clientName, String contractId, String division, String uwYear, XLTAssetType exp, Date runDate, String sourceVendor, String modelSystemVersion, String carId, String periodBasis, XLTOrigin internal, XLTSubType xltSubType, String suffix, String fileExtension) {
+        List<String> items = new ArrayList<>();
+        if (reinsuranceType != null) {
+            items.add(reinsuranceType);
+        }
+        if (jobType != null) {
+            items.add(jobType);
+        }
+        if (clientName != null) {
+            String name = clientName.trim().replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+            items.add(String.format("%1.20s", name));
+        }
+        if (contractId != null) {
+            items.add(contractId);
+        }
+        if (division != null) {
+            items.add(division);
+        }
+        if (uwYear != null) {
+            items.add(uwYear);
+        }
+        if (exp != null) {
+            items.add(exp.toString());
+        }
+        if (runDate != null) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd-HHmmss");
+            String format = formatter.format(runDate);
+            items.add(format);
+        }
+        if (sourceVendor != null) {
+            items.add(sourceVendor);
+        }
+        if (modelSystemVersion != null) {
+            items.add(modelSystemVersion);
+        }
+        if (carId != null) {
+            items.add(carId);
+        }
+        if (periodBasis != null) {
+            items.add(periodBasis);
+        }
+        if (internal != null) {
+            items.add(internal.toString());
+        }
+        if (xltSubType != null) {
+            items.add(xltSubType.toString());
+        }
+        if (suffix != null) {
+            items.add(suffix);
+        }
+
+        String filename = StringUtils.join(items, "_");
+        StringBuilder builder = new StringBuilder(filename).append(fileExtension);
+//        String finalName = fileName.trim().replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+//        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
+        return builder.toString();
+    }
 }

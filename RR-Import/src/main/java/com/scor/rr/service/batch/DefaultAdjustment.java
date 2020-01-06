@@ -2,7 +2,7 @@ package com.scor.rr.service.batch;
 
 import com.google.gson.Gson;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.BinFile;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.SummaryStatisticType;
@@ -196,7 +196,12 @@ public class DefaultAdjustment extends AbstractWriter {
         }
     }
 
-    private void writeEPStat(PltHeaderEntity pltHeader, ModelAnalysisEntity modelAnalysis, RegionPerilEntity regionPeril, ResponseEntity<EPMetric> response, boolean isThread, Integer threadId) {
+    private void writeEPStat(PltHeaderEntity pltHeader,
+                             ModelAnalysisEntity modelAnalysis,
+                             RegionPerilEntity regionPeril,
+                             ResponseEntity<EPMetric> response,
+                             boolean isThread,
+                             Integer threadId) {
         EPMetric oepMetric = response.getBody();
         Gson gson = new Gson();
 
@@ -213,8 +218,9 @@ public class DefaultAdjustment extends AbstractWriter {
                     PLTPublishStatus.PURE,
                     isThread ? threadId : 0, // pure PLT
                     pltHeader.getPltHeaderId(),
+                    modelAnalysis.getDivision(),
                     "bin");
-            BinFile file = epCurveWriter.writePLTEPCurves(oepMetric.getEpMetricPoints(), epCurveFilename, oepMetric.getMetric());
+            BinFile file = epCurveWriter.writePLTEPCurves(oepMetric.getEpMetricPoints(), epCurveFilename, oepMetric.getMetric(), modelAnalysis.getDivision());
 
             EPCurveHeaderEntity epCurveHeader = EPCurveHeaderEntity.builder()
                     .entity(1)
@@ -235,8 +241,14 @@ public class DefaultAdjustment extends AbstractWriter {
         }
     }
 
-    private void writeSummaryStat(PltHeaderEntity pltHeader, ModelAnalysisEntity modelAnalysis, RegionPerilEntity regionPeril,
-                                  double averageAnnualLoss, double cov, double stdDev, boolean isThread, Integer threadId) {
+    private void writeSummaryStat(PltHeaderEntity pltHeader,
+                                  ModelAnalysisEntity modelAnalysis,
+                                  RegionPerilEntity regionPeril,
+                                  double averageAnnualLoss,
+                                  double cov,
+                                  double stdDev,
+                                  boolean isThread,
+                                  Integer threadId) {
 
         String summaryStatFilename = makePLTSummaryStatFilename(
                 pltHeader.getCreatedDate(),
@@ -249,6 +261,7 @@ public class DefaultAdjustment extends AbstractWriter {
                 PLTPublishStatus.PURE,
                 isThread ? threadId : 0, // pure PLT
                 pltHeader.getPltHeaderId(),
+                modelAnalysis.getDivision(),
                 "bin");
 
         AnalysisSummaryStats analysisSummaryStats = new AnalysisSummaryStats();
@@ -257,7 +270,7 @@ public class DefaultAdjustment extends AbstractWriter {
         analysisSummaryStats.setCov(cov);
         analysisSummaryStats.setStdDev(stdDev);
 
-        BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(analysisSummaryStats, summaryStatFilename);
+        BinFile file = epSummaryStatWriter.writeELTSummaryStatistics(analysisSummaryStats, summaryStatFilename, modelAnalysis.getDivision());
 
         // @TODO: review the pltHeaderId with the data modal
 

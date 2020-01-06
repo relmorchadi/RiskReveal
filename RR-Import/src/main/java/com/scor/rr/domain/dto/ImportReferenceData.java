@@ -11,7 +11,8 @@ import java.util.Map;
 public class ImportReferenceData {
 
     List<Map<String,String>> financialPerspectives;
-    List<String> rmsInstances;
+    List<RmsInstanceDto> rmsInstances;
     String[] currencies;
+    List<CARDivisionDto> division;
 
 }

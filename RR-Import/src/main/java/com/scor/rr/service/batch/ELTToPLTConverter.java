@@ -2,11 +2,10 @@ package com.scor.rr.service.batch;
 
 
 import com.codahale.metrics.Timer;
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
-import com.scor.rr.domain.PetEntity;
-import com.scor.rr.domain.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.repository.*;
@@ -85,34 +84,26 @@ public class ELTToPLTConverter extends AbstractWriter {
     private String peqtPath;
 
     private Path ihubPath;
+    @Value("${convert.executor.chunk.size}")
+    private int chunkSize;
+    @Value("${convert.executor.buffer.size}")
+    private int bufferSize;
+    @Value("${convert.executor.queue.size}")
+    private int queueSize;
+    @Value("#{jobParameters['importSequence']}")
+    private Integer importSequence;
+    @Value("#{jobParameters['contractId']}")
+    private String contractId;
+    @Value("#{jobParameters['uwYear']}")
+    private Integer uwYear;
+    @Value("#{jobParameters['prefix']}")
+    private String prefix;
+    private ConvertFunctionFactory factory = new CMBetaConvertFunctionFactory();
 
     @Value("${ihub.treaty.out.path}")
     private void setIhubPath(String path) {
         this.ihubPath = Paths.get(path);
     }
-
-    @Value("${convert.executor.chunk.size}")
-    private int chunkSize;
-
-    @Value("${convert.executor.buffer.size}")
-    private int bufferSize;
-
-    @Value("${convert.executor.queue.size}")
-    private int queueSize;
-
-    @Value("#{jobParameters['importSequence']}")
-    private Integer importSequence;
-
-    @Value("#{jobParameters['contractId']}")
-    private String contractId;
-
-    @Value("#{jobParameters['uwYear']}")
-    private Integer uwYear;
-
-    @Value("#{jobParameters['prefix']}")
-    private String prefix;
-
-    private ConvertFunctionFactory factory = new CMBetaConvertFunctionFactory();
 
     public RepeatStatus convertEltToPLT() {
         batchConvert();
@@ -192,19 +183,21 @@ public class ELTToPLTConverter extends AbstractWriter {
 //                pltHeader.setTruncationThresholdEur(truncator.getThresholdInEur());
                 //@TODO Review With Vier
                 //pltHeader.setTruncationThresholdEur(threshold);
-                String filename = makePLTFileName(
-                        pltHeaderEntity.getCreatedDate(),
-                        String.valueOf(pltHeaderEntity.getRegionPerilId()),
-                        financialPerspective.getCode(),
-                        pltHeaderEntity.getCurrencyCode(),
-                        XLTOT.TARGET,
-                        pltHeaderEntity.getTargetRAPId(),
-                        pltHeaderEntity.getPltSimulationPeriods(),
-                        PLTPublishStatus.PURE,
-                        0, // pure PLT, no thread number
-                        pltHeaderEntity.getPltHeaderId(),
-                        ".bin"
-                );
+                String filename =
+                        makePLTFileName(
+                                pltHeaderEntity.getCreatedDate(),
+                                String.valueOf(pltHeaderEntity.getRegionPerilId()),
+                                financialPerspective.getCode(),
+                                pltHeaderEntity.getCurrencyCode(),
+                                XLTOT.TARGET,
+                                pltHeaderEntity.getTargetRAPId(),
+                                pltHeaderEntity.getPltSimulationPeriods(),
+                                PLTPublishStatus.PURE,
+                                0, // pure PLT, no thread number
+                                pltHeaderEntity.getPltHeaderId(),
+                                modelAnalysisEntity.getDivision(),
+                                ".bin"
+                        );
                 File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
                 BinFile binFile = new BinFile(file);
                 pltHeaderEntity.setLossDataFilePath(binFile.getPath());
@@ -356,15 +349,16 @@ public class ELTToPLTConverter extends AbstractWriter {
     }
 
     private class TreatyBatchLauncher implements Runnable {
+        private final static int PERIOD_HEADER_SIZE = 8;
+        private final static int PERIOD_EVENT_SIZE = 21;
         private final int id;
+        Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
         private BlockingQueue<RRPeriod> queue;
         private CountDownLatch latch;
         private BinFile peqtFile;
         private List<PltHeaderEntity> scorPLTHeaderEntities;
-        Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
         private Boolean[] finished = {Boolean.FALSE};
         private int nbWorkers;
-
         public TreatyBatchLauncher(CountDownLatch latch, BinFile peqtFile, List<PltHeaderEntity> scorPLTHeaderEntities,
                                    Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT) {
             this.id = hashCode();
@@ -375,9 +369,6 @@ public class ELTToPLTConverter extends AbstractWriter {
             this.convertFunctionMapForPLT = convertFunctionMapForPLT;
             nbWorkers = 1;
         }
-
-        private final static int PERIOD_HEADER_SIZE = 8;
-        private final static int PERIOD_EVENT_SIZE = 21;
 
         private void closeDirectBuffer(ByteBuffer cb) {
             if (cb == null || !cb.isDirect()) return;
@@ -538,9 +529,9 @@ public class ELTToPLTConverter extends AbstractWriter {
     private class TreatyBatchWorker implements Runnable {
         private final int masterId;
         private final int id;
-        private Boolean[] finished;
         private final BlockingQueue<RRPeriod> queue;
         private final CountDownLatch workerLatch;
+        private Boolean[] finished;
         private List<PltHeaderEntity> scorPLTHeaderEntities;
         private Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT;
         private Map<Long, FileOutputStream> outputStreamForPLT;

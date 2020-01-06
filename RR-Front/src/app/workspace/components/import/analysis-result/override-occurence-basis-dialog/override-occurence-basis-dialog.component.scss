@@ -1,0 +1,85 @@
+.fp-options-wrapper {
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 5px;
+
+  .context-wrapper {
+    button {
+      margin: 0 5px;
+    }
+  }
+
+  .subtitle-override {
+    padding-bottom: 10px;
+    display: flex;
+  }
+
+  ::ng-deep {
+    label.ui-radiobutton-label {
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      font-size: 14.22px;
+      letter-spacing: 0.25px;
+      line-height: 20px;
+    }
+
+    p-radiobutton {
+      margin-right: 15px;
+    }
+  }
+
+  .tags-stack-vertical {
+    margin: 2px 0;
+  }
+}
+
+.input-group-modal {
+  display: flex;
+  flex-direction: column;
+  width: 580px;
+  margin: 0 auto;
+
+  .row-input {
+    display: flex;
+    align-items: center;
+  }
+
+  .row-list {
+    display: flex;
+
+    .popover-menu {
+      width: 50%;
+    }
+  }
+
+  .label-input {
+    display: flex;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .input-wrapper {
+    margin: 5px 0;
+    padding: 10px 15px;
+    width: 78%;
+  }
+
+  .radio-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+
+    ::ng-deep {
+      .ant-radio-group {
+        display: flex !important;
+        justify-content: space-between;
+      }
+
+      .ant-radio-wrapper {
+        align-items: center;
+        display: flex;
+      }
+    }
+  }
+}

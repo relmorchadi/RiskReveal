@@ -5,8 +5,8 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
-import * as fromWS from '../store'
-import {EMPTY, forkJoin} from "rxjs";
+import {EMPTY, forkJoin, of} from "rxjs";
+import {LoadEpMetrics} from "../store/actions";
 
 
 @Injectable({
@@ -14,11 +14,12 @@ import {EMPTY, forkJoin} from "rxjs";
 })
 export class CalibrationNewService {
 
-  constructor(private calibrationAPI: CalibrationAPI) {}
+  constructor(private calibrationAPI: CalibrationAPI) {
+  }
 
   getCalibState = (state, wsIdentifier) => state.content[wsIdentifier].calibrationNew;
 
-  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, { wsId, uwYear }: any) {
+  loadGroupedPltsByPure(ctx: StateContext<WorkspaceModel>, {wsId, uwYear}: any) {
 
     ctx.patchState(produce(ctx.getState(), draft => {
       const {
@@ -32,7 +33,7 @@ export class CalibrationNewService {
 
     return this.calibrationAPI.loaGroupedPltsByPure(wsId, uwYear)
       .pipe(
-        tap( data => {
+        tap(data => {
           ctx.patchState(produce(ctx.getState(), (draft: WorkspaceModel) => {
 
             const {
@@ -47,14 +48,14 @@ export class CalibrationNewService {
             innerDraft.loading = false;
           }))
         }),
-        catchError( e => {
+        catchError(e => {
           console.log(e);
           return EMPTY;
         })
       )
   }
 
-  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, { wsId, uwYear }: any) {
+  loadDefaultAdjustmentsInScope(ctx: StateContext<WorkspaceModel>, {wsId, uwYear}: any) {
     ctx.patchState(produce(ctx.getState(), draft => {
       const {
         currentTab: {
@@ -67,7 +68,7 @@ export class CalibrationNewService {
 
     return this.calibrationAPI.loadDefaultAdjustments(wsId, uwYear)
       .pipe(
-        tap( defaultAdjustments => {
+        tap(defaultAdjustments => {
           ctx.patchState(produce(ctx.getState(), (draft: WorkspaceModel) => {
 
             const {
@@ -85,22 +86,32 @@ export class CalibrationNewService {
                 categoryCode
               } = adjustment;
 
-              if(!innerDraft.adjustments[categoryCode]) innerDraft.adjustments[categoryCode]= {};
+              if (!innerDraft.adjustments[categoryCode]) innerDraft.adjustments[categoryCode] = {};
               innerDraft.adjustments[categoryCode][pltId] = adjustment;
             })
           }))
         }),
-        catchError( e => {
+        catchError(e => {
           console.log(e);
           return EMPTY;
         })
       )
   }
 
-  loadEpMetrics(ctx: StateContext<WorkspaceModel>, { wsId, uwYear, userId, curveType }: any) {
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, curveType)
-      .pipe(
-        tap( epMetrics => {
+  formatCurveType(curveType) {
+    return _.replace(curveType, /(-)/g, '');
+  }
+
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, userId, curveType, resetMetrics}: any) {
+
+    const {
+      currentTab: {
+        wsIdentifier
+      }
+    } = ctx.getState();
+
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)).pipe(
+        tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
 
@@ -112,24 +123,30 @@ export class CalibrationNewService {
 
             const innerDraft = this.getCalibState(draft, wsIdentifier);
 
+            console.log(epMetrics);
+
             _.forEach(epMetrics, (metric: any, i) => {
 
               const {
                 pltId,
                 curveType
               } = metric;
-              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType]= {};
-              innerDraft.epMetrics[curveType][pltId] = metric;
-              if( i == '0' ) {
-                innerDraft.epMetrics.cols = [ 'aal', ..._.keys(_.omit(metric, ['pltId', 'curveType', 'aal']))];
+
+              if (i == '0') {
+                const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
+                innerDraft.epMetrics.rps = rps;
+                innerDraft.epMetrics.cols = ['AAL', ...rps];
               }
+
+              if(!innerDraft.epMetrics[curveType]) innerDraft.epMetrics[curveType] = {};
+              innerDraft.epMetrics[curveType][pltId] = metric;
             })
 
 
           }))
 
         }),
-        catchError( e => {
+        catchError(e => {
           console.log(e);
           return EMPTY;
         })
@@ -139,9 +156,10 @@ export class CalibrationNewService {
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
     return forkJoin(
       this.calibrationAPI.loadAllBasis(),
-      this.calibrationAPI.loadAllAdjustmentTypes()
+      this.calibrationAPI.loadAllAdjustmentTypes(),
+      this.calibrationAPI.loadAllAdjustmentStates()
     ).pipe(
-      tap( ([basis, adjustmentTypes]) => {
+      tap(([basis, adjustmentTypes, status]) => {
         ctx.patchState(produce(ctx.getState(), draft => {
           const {
             currentTab: {
@@ -153,21 +171,28 @@ export class CalibrationNewService {
 
           innerDraft.constants = {
             basis,
-            adjustmentTypes
+            adjustmentTypes,
+            status
           }
         }))
       })
     )
   }
 
-  selectPlts(ctx: StateContext<WorkspaceModel>, payload){
-    console.log(payload)
+  selectPlts(ctx: StateContext<WorkspaceModel>, payload) {
     const {
       plts,
       wsIdentifier
     } = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].calibrationNew.plts =  plts;
+      draft.content[wsIdentifier].calibrationNew.plts = plts;
     }));
+  }
+
+  saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
+      .pipe(
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+      )
   }
 }

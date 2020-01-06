@@ -49,7 +49,7 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
 
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
-    @Query("delete from RLAnalysis rla where rla.rlModelDataSourceId= :rlModelDatasourceId")
+    @Query(value = "Exec dbonew.usp_DeleteRLModelAnalysisByRLModelDataSourceId @ModelDataSourceId =:rlModelDatasourceId", nativeQuery = true)
     void deleteByRlModelDataSourceId(@Param("rlModelDatasourceId") Long rlModelDatasourceId);
 
     @Query("select rla from RLAnalysis rla " +

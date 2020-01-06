@@ -188,6 +188,11 @@ export class SaveFinancialPerspectiveAction {
   constructor() {}
 }
 
+export class SaveDivisionSelection {
+  static readonly type = '[Risk Link] Save Division Selection';
+  constructor(public payload?: any) {}
+}
+
 export class SaveEditAnalysisAction {
   static readonly type = '[Risk Link] Save Edit On Analysis';
   constructor(public payload: any) {}
@@ -218,10 +223,10 @@ export class CreateLinkingAction {
   constructor(public payload: any) {}
 }
 
-export class LoadFacDataAction {
-  static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
-  constructor(public payload?: any) {}
-}
+// export class LoadFacDataAction {
+//   static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
+//   constructor(public payload?: any) {}
+// }
 
 export class LoadLinkingDataAction {
   static readonly type = '[Risk Link] Load Linking Data';
@@ -248,14 +253,10 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
-export class LoadPortfolioFacPerDivisionAction {
-  static readonly type = '[Risk Link] Load Portfolio For Fac Per Division Ws';
-  constructor(public payload?: any) {}
-}
 
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';
-  constructor() {}
+  constructor(public payload?) {}
 }
 
 export class LoadRiskLinkAnalysisDataAction {
@@ -268,8 +269,13 @@ export class LoadRiskLinkPortfolioDataAction {
   constructor(public payload: any) {}
 }
 
-export class RunDetailedScanAction {
-  static readonly type = '[Risk Link] Run detailed scan';
+export class RunDetailedScanForTreatyAction {
+  static readonly type = '[Risk Link] Run detailed scan for Treaty';
+  constructor(public payload: any) {}
+}
+
+export class RunDetailedScanForFacAction {
+  static readonly type = '[Risk Link] Run detailed scan for FAC';
   constructor(public payload: any) {}
 }
 
@@ -294,8 +300,38 @@ export class LoadSourceEpCurveHeaders {
   constructor(public payload: any) {}
 }
 
+export class LoadTargetRaps {
+  static readonly type= '[Risk Link] Load Target Raps';
+  constructor(public payload: any) {}
+}
+
+export class OverrideTargetRaps {
+  static readonly type= '[Risk Link] Override Target Raps';
+  constructor(public payload: any) {}
+}
+
+export class ClearTargetRaps {
+  static readonly type= '[Risk Link] Clear Target Raps';
+  constructor() {}
+}
+
 export class OverrideFinancialPerspective {
   static readonly type= '[Risk Link] Override Financial Perspective';
   constructor(public payload: any) {}
 }
 
+
+export class LoadRegionPerilForAnalysis {
+  static readonly type= '[Risk Link] Load Region Perils For Analysis';
+  constructor(public payload: any) {}
+}
+
+export class ReScanDataSource {
+  static readonly type= '[Risk Link] ReScan Datasource';
+  constructor(public payload: any) {}
+}
+
+export class OverrideOccurrenceBasis {
+  static readonly type= '[Risk Link] Override Occurrence Basis';
+  constructor(public payload: any) {}
+}

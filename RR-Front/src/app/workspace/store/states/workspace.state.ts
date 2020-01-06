@@ -1,9 +1,8 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import {PatchCalibrationStateAction} from '../actions';
+import {PatchCalibrationStateAction, SaveRPs} from '../actions';
 import * as fromInuring from '../actions/inuring.actions';
-import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
@@ -216,8 +215,13 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.epMetrics.cols );
   }
 
+  //Higher State Order
   static getCalibrationConstants(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+  }
+
+  static getCalibrationStatus(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants.status );
 
   }
 
@@ -261,7 +265,7 @@ export class WorkspaceState {
   }
 
   static getLeftNavbarIsCollapsed() {
-    return createSelector([WorkspaceState], (state: WorkspaceMain) => {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.get(state, "leftNavbarIsCollapsed");
     });
   }
@@ -327,7 +331,7 @@ export class WorkspaceState {
 
 
   @Selector()
-  static getSelectedAnalysisProtfolios(state: WorkspaceModel) {
+  static getSelectedAnalysisPortfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const {analysis, portfolios, edms, rdms} = state.content[wsIdentifier].riskLink.selection;
     return {
@@ -337,13 +341,14 @@ export class WorkspaceState {
           rdmName: rdms[rdmId].name,
           analysisId: item.rlId,
           analysisName: item.analysisName,
+          rlAnalysisId: item.rlAnalysisId
         }) ))
       ),
       portfolios: _.flatten(
         _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
           edmId,
           edmName: edms[edmId].name,
-          curreny: item.agCurrency,
+          currency: item.agCurrency,
           portfolioId: item.rlId,
           portfolioName: item.name,
           portfolioType: item.type
@@ -356,13 +361,6 @@ export class WorkspaceState {
   static getRiskLinkSummary(state: WorkspaceModel){
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.summary;
-  }
-
-  @Selector()
-  static anySelectedResults(state: WorkspaceModel){
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    const {analysis, portfolios}= state.content[wsIdentifier].riskLink.summary;
-    return [...analysis, ...portfolios].filter(item => item.selected).length > 0;
   }
 
   @Selector()
@@ -447,19 +445,9 @@ export class WorkspaceState {
     return this.wsService.loadWs(ctx, payload);
   }
 
-  @Action(fromWS.LoadFacWs)
-  loadFacWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadFacWs) {
-    return this.wsService.loadWsFac(ctx, payload);
-  }
-
   @Action(fromWS.LoadWsSuccess)
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
-  }
-
-  @Action(fromWS.LoadProjectForWs)
-  loadProjectForWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectForWs) {
-    this.wsService.loadProjectForWs(ctx, payload);
   }
 
   @Action(fromWS.OpenWS)
@@ -470,11 +458,6 @@ export class WorkspaceState {
   @Action(fromWS.CreateNewFac)
   createNewFac(ctx: StateContext<WorkspaceModel>, payload: fromWS.CreateNewFac) {
     this.wsService.createNewFac(ctx, payload);
-  }
-
-  @Action(fromWS.OpenFacWS)
-  openFacWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenFacWS) {
-    return this.wsService.openFacWorkspace(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)
@@ -736,9 +719,14 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.ToggleSelectCalibPlts)
-  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}){
+  ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectCalibPlts){
     console.log(payload)
     return this.calibrationNewService.selectPlts(ctx, payload);
+  }
+
+  @Action(fromWS.SaveRPs)
+  saveRPs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveRPs){
+    return this.calibrationNewService.saveRPs(ctx, payload);
   }
 
   /***********************************
@@ -1026,6 +1014,11 @@ export class WorkspaceState {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
   }
 
+  @Action(fromWS.SaveDivisionSelection)
+  saveDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveDivisionSelection) {
+    this.riskLinkFacade.saveDivisionSelection(ctx, payload);
+  }
+
   @Action(fromWS.SaveEditAnalysisAction)
   saveEditAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveEditAnalysisAction) {
     this.riskLinkFacade.saveEditAnalysis(ctx, payload);
@@ -1086,50 +1079,30 @@ export class WorkspaceState {
     this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
-  @Action(fromWS.DeleteLinkAction)
-  deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
-    this.riskLinkFacade.deleteLink(ctx, payload);
-  }
-
-  @Action(fromWS.DeleteInnerLinkAction)
-  deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
-    this.riskLinkFacade.deleteInnerLink(ctx, payload);
-  }
-
-  @Action(fromWS.LoadLinkingDataAction)
-  loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
-    this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
-  }
-
-  @Action(fromWS.LoadFacDataAction)
-  loadFacData(ctx: StateContext<WorkspaceModel>) {
-    return this.riskLinkFacade.loadFacData(ctx);
-  }
-
-  @Action(fromWS.LoadBasicAnalysisFacAction)
-  loadBasicAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacAction) {
-    return this.riskLinkFacade.loadBasicAnalysisFac(ctx, payload);
-  }
-
-  @Action(fromWS.LoadBasicAnalysisFacPerDivisionAction)
-  loadBasicAnalysisPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacPerDivisionAction) {
-    this.riskLinkFacade.loadBasicAnalysisFacPerDivision(ctx, payload);
-  }
-
-  @Action(fromWS.LoadDetailAnalysisFacAction)
-  loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDetailAnalysisFacAction) {
-    return this.riskLinkFacade.loadDetailAnalysisFac(ctx, payload);
-  }
-
-  @Action(fromWS.LoadPortfolioFacAction)
-  loadPortfolioFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacAction) {
-    return this.riskLinkFacade.loadBasicPortfolioFac(ctx, payload);
-  }
-
-  @Action(fromWS.LoadPortfolioFacPerDivisionAction)
-  loadPortfolioFacPerDivision(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacPerDivisionAction) {
-    this.riskLinkFacade.loadBasicPortfolioFacPerDivision(ctx, payload);
-  }
+  // @Action(fromWS.DeleteLinkAction)
+  // deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
+  //   this.riskLinkFacade.deleteLink(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.DeleteInnerLinkAction)
+  // deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
+  //   this.riskLinkFacade.deleteInnerLink(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.LoadLinkingDataAction)
+  // loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
+  //   this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
+  // }
+  //
+  // @Action(fromWS.LoadFacDataAction)
+  // loadFacData(ctx: StateContext<WorkspaceModel>) {
+  //   return this.riskLinkFacade.loadFacData(ctx);
+  // }
+  //
+  // @Action(fromWS.LoadDivisionSelection)
+  // loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
+  //   this.riskLinkFacade.loadDivisionSelection(ctx);
+  // }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkAnalysisDataAction) {
@@ -1176,13 +1149,18 @@ export class WorkspaceState {
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(fromWS.LoadRiskLinkDataAction)
-  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
-    return this.riskLinkFacade.loadRiskLinkData(ctx);
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkDataAction) {
+    return this.riskLinkFacade.loadRiskLinkData(ctx, payload);
   }
 
-  @Action(fromWS.RunDetailedScanAction)
-  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
-    return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  @Action(fromWS.RunDetailedScanForTreatyAction)
+  runDetailedScanForTreaty(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForTreaty(ctx, payload);
+  }
+
+  @Action(fromWS.RunDetailedScanForFacAction)
+  runDetailedScanForFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForFAC(ctx, payload);
   }
 
   @Action(fromWS.PatchAnalysisResultAction)
@@ -1204,9 +1182,38 @@ export class WorkspaceState {
   loadSourceEpCurveHeaders(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSourceEpCurveHeaders){
     return this.riskLinkFacade.loadSourceEpCurveHeaders(ctx, payload);
   }
+  @Action(fromWS.LoadTargetRaps)
+  loadTargetRaps(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadTargetRaps){
+    return this.riskLinkFacade.loadTargetRap(ctx, payload);
+  }
+
+  @Action(fromWS.OverrideTargetRaps)
+  overrideTargetRaps(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideTargetRaps){
+    return this.riskLinkFacade.overrideTargetRaps(ctx, payload);
+  }
+
+  @Action(fromWS.ClearTargetRaps)
+  clearTargetRaps(ctx: StateContext<WorkspaceModel>){
+    return this.riskLinkFacade.clearTargetRaps(ctx);
+  }
+
   @Action(fromWS.OverrideFinancialPerspective)
   overrideFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideFinancialPerspective){
     return this.riskLinkFacade.overrideFinancialPerspective(ctx, payload);
+  }
+
+  @Action(fromWS.LoadRegionPerilForAnalysis)
+  loadAnalysisRegionPerils(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRegionPerilForAnalysis){
+    return this.riskLinkFacade.loadAnalysisRegionPerils(ctx, payload);
+  }
+
+  @Action(fromWS.ReScanDataSource)
+  reScanDataSource(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ReScanDataSource){
+    return this.riskLinkFacade.rescanDataSource(ctx, payload);
+  }
+  @Action(fromWS.OverrideOccurrenceBasis)
+  overrideOccurrenceBasis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.overrideOccurrenceBasis(ctx, payload);
   }
 
 

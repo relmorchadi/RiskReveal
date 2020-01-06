@@ -3,7 +3,6 @@ import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import { of, Subscription} from 'rxjs';
 import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
@@ -30,9 +29,6 @@ import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/
 export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   leftMenuInputs: leftMenuStore.Input;
-
-  @Select(WorkspaceMainState.getData) selectWsData$;
-  @Select(WorkspaceMainState.getProjects) projects$;
 
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();

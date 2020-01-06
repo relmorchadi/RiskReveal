@@ -230,3 +230,10 @@ export class ToggleSelectCalibPlts {
   static readonly  type = '[Calibration] Toggle Select Plts';
   constructor(public payload?: any) {}
 }
+
+export class SaveRPs {
+  static readonly type = '[Calibration] Save RPs';
+
+  constructor(public payload?: any) {
+  }
+}
