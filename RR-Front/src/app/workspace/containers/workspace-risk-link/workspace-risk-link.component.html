@@ -266,10 +266,8 @@
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
                       <ng-container *ngIf="!itemsE.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
-                          /{{itemsE.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsE, 'portfolio')}}/{{itemsE.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>-->
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="rescanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
@@ -293,10 +291,8 @@
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
                       <ng-container *ngIf="!itemsR?.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
-                          /{{itemsR.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsR, 'analysis')}}/{{itemsR.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>-->
                         <i (click)="rescanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
