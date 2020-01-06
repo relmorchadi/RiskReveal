@@ -149,7 +149,7 @@ public class AdjustmentNodeProcessingService {
                 adjustmentNodes.sort(
                         Comparator.comparing(this::findOrderOfNode));
                 for (AdjustmentNode node : adjustmentNodes) {
-                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId(), workspaceEntity, modelAnalysis, threadId);
+                    processing = adjustPLTPassingByNode(node.getAdjustmentNodeId(), workspaceEntity, modelAnalysis, thread.getThreadIndex());
                 }
             }
 
@@ -168,7 +168,7 @@ public class AdjustmentNodeProcessingService {
                 sourceFile = new File(processing.getAdjustedPLT().getLossDataFilePath(), processing.getAdjustedPLT().getLossDataFileName());
             }
 
-            String threadPLTFilename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, finalPLT, threadId, null, FilenameUtils.getExtension(sourceFile.getName()));
+            String threadPLTFilename = PathUtils.makePLTFileName(workspaceEntity, modelAnalysis, finalPLT, thread.getThreadIndex(), null, FilenameUtils.getExtension(sourceFile.getName()));
             File dstFile = new File(sourceFile.getParent(), threadPLTFilename);
             try {
                 UtilsMethod.copyFile(sourceFile, dstFile);
