@@ -1,8 +1,8 @@
 package com.scor.rr.service.batch;
 
 import com.google.gson.Gson;
-import com.scor.rr.domain.*;
 import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.SummaryStatisticType;
@@ -75,7 +75,7 @@ public class DefaultAdjustment extends AbstractWriter {
     @Value(value = "${thread.calculation.service.oepTvAR}")
     private String oEPTvARMetricURL;
 
-    @Value(value = "${thread.calculation.service.summary}")
+    //@Value(value = "${thread.calculation.service.summary}")
     private String summaryStatURL;
 
 
@@ -115,13 +115,13 @@ public class DefaultAdjustment extends AbstractWriter {
 
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
-                                    this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
+                                    //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
                                 } else {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
 
-                            this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
+                            //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
                         }
