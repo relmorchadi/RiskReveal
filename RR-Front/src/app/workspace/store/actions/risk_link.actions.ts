@@ -269,8 +269,13 @@ export class LoadRiskLinkPortfolioDataAction {
   constructor(public payload: any) {}
 }
 
-export class RunDetailedScanAction {
-  static readonly type = '[Risk Link] Run detailed scan';
+export class RunDetailedScanForTreatyAction {
+  static readonly type = '[Risk Link] Run detailed scan for Treaty';
+  constructor(public payload: any) {}
+}
+
+export class RunDetailedScanForFacAction {
+  static readonly type = '[Risk Link] Run detailed scan for FAC';
   constructor(public payload: any) {}
 }
 

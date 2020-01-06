@@ -21,7 +21,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">RMS Instance</span>
               <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.rmsInstance?.selected">
-                {{state?.financialValidator?.rmsInstance?.selected}}
+                {{state?.financialValidator?.rmsInstance?.selected?.instanceName}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -30,7 +30,7 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('rmsInstance', item)"
-                *ngFor="let item of state?.financialValidator?.rmsInstance?.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.rmsInstance?.data">{{item?.instanceName}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">

@@ -231,7 +231,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     const {first, rows} = lazyLoadEvent;
     if (first + rows < this.state.listEdmRdm.totalElements) {
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-        instanceId: this.state.financialValidator.rmsInstance.selected,
+        instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
         keyword: this.datasourceKeywordFc.value,
         offset: first,
         size: rows,
@@ -243,7 +243,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
     if(this.displayDropdownRDMEDM){
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-        instanceId: this.state.financialValidator.rmsInstance.selected,
+        instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
         keyword: '',
         offset: 0,
         size: 100,
@@ -284,7 +284,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   onInputSearch(keyword) {
     this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-      instanceId: this.state.financialValidator.rmsInstance.selected,
+      instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
       keyword, offset: 0, size: '100'
     }));
     this.detectChanges();
@@ -335,7 +335,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         const {projectId} = p;
         const {rmsId, type} = datasource;
         this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction({
-          instanceId: this.state.financialValidator.rmsInstance.selected,
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
           projectId,
           rmsId,
           type
@@ -391,7 +391,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         const projectId = p.projectId;
         const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
         this.dispatch(new fromWs.DatasourceScanAction({
-          instanceId: this.state.financialValidator.rmsInstance.selected,
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
           selectedDS,
           projectId
         }));
@@ -406,7 +406,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       .subscribe(p => {
         const projectId = p.projectId;
         this.dispatch(new fromWs.ReScanDataSource({
-          instanceId: this.state.financialValidator.rmsInstance.selected,
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
           datasource,
           projectId
         }));
@@ -423,13 +423,18 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       .subscribe(data => {
         const [p, analysisPortfolioSelection] = data;
         const {analysis, portfolios} = analysisPortfolioSelection;
-        this.dispatch(new fromWs.RunDetailedScanAction({
-          instanceId: this.state.financialValidator.rmsInstance.selected,
+        const payload= {
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
           projectId: p.projectId,
           analysis,
           portfolios,
           context: this.tabStatus
-        }));
+        };
+        if(this.tabStatus == 'FAC'){
+          this.dispatch(new fromWs.RunDetailedScanForFacAction(payload));
+        }else {
+          this.dispatch(new fromWs.RunDetailedScanForTreatyAction(payload));
+        }
       });
 
   }
@@ -704,7 +709,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         const [p, summary] = data;
         const {projectId} = p;
         this.dispatch(new fromWs.TriggerImportAction({
-          instanceId: this.state.financialValidator.rmsInstance.selected,
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
           projectId,
           userId: 1,
           analysisConfig: this.transformAnalysisResultForImport(summary.analysis, projectId, analysisConfigFields),

@@ -1153,9 +1153,14 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadRiskLinkData(ctx, payload);
   }
 
-  @Action(fromWS.RunDetailedScanAction)
-  runDetailedScan(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
-    return this.riskLinkFacade.runDetailedScan(ctx, payload);
+  @Action(fromWS.RunDetailedScanForTreatyAction)
+  runDetailedScanForTreaty(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForTreaty(ctx, payload);
+  }
+
+  @Action(fromWS.RunDetailedScanForFacAction)
+  runDetailedScanForFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.runDetailedScanForFAC(ctx, payload);
   }
 
   @Action(fromWS.PatchAnalysisResultAction)
