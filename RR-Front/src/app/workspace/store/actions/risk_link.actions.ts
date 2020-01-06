@@ -253,6 +253,10 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
+export class LoadDivisionSelection {
+  static readonly type = '[Risk Link] Load Division Selection';
+  constructor(public payload?: any) {}
+}
 
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';
