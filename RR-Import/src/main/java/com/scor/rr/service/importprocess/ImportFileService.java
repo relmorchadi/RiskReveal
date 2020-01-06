@@ -41,6 +41,9 @@ public class ImportFileService {
     @Autowired
     RegionPerilRepository regionperilRepository;
 
+    @Autowired
+    FileBasedImportConfigRepository fileBasedImportConfigRepository;
+
 //    @Autowired
 //    UserRrRepository userRrRepository;
 
@@ -931,7 +934,7 @@ public class ImportFileService {
             File fList[] = repo.listFiles();
             if (fList != null) {
                 for (int i = 0; i < fList.length; i++) {
-                    if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName())) || "bin".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
+                    if ("txt".equalsIgnoreCase(FilenameUtils.getExtension(fList[i].getName()))) {
                         textFiles.add(fList[i].getPath());
                     }
                 }
@@ -940,4 +943,33 @@ public class ImportFileService {
         return textFiles;
     }
 
+    public String retrieveFileBasedConfig(String projectId) {
+        String fileBasedConfigStr = "";
+
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(projectId));
+        if (fileBasedImportConfigDB == null) {
+            fileBasedImportConfigDB = createFileBasedImportConfigIfNotExist(projectId);
+        }
+
+        if (fileBasedImportConfigDB != null) {
+            fileBasedConfigStr = fileBasedImportConfigDB.toString();
+        }
+
+        return fileBasedConfigStr;
+    }
+
+    private FileBasedImportConfig createFileBasedImportConfigIfNotExist(String projectId) {
+        FileBasedImportConfig fileBasedImportConfig = new FileBasedImportConfig();
+        fileBasedImportConfig.setFileBasedImportConfig(Integer.valueOf(projectId));
+        fileBasedImportConfig.setProjectId(Integer.valueOf(projectId));
+        fileBasedImportConfig.setImportLocked(false);
+
+        fileBasedImportConfig.setSelectedFolderSourcePath("");
+        fileBasedImportConfig.setSelectedFileSourcePath("");
+        fileBasedImportConfig.setLastUnlockDateForImport(null);
+
+//        fileBasedImportConfigRepository.save(fileBasedImportConfig);
+
+        return fileBasedImportConfig;
+    }
 }

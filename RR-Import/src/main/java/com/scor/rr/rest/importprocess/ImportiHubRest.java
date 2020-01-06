@@ -62,4 +62,9 @@ public class ImportiHubRest {
     public List<String> retrieveTextFiles(String path) {
         return importFileService.retrieveTextFiles(path);
     }
+
+    @GetMapping("retrieveFileBasedConfig")
+    public String retrieveFileBasedConfig(String projectId) {
+        return importFileService.retrieveFileBasedConfig(projectId);
+    }
 }
