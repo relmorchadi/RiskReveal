@@ -47,3 +47,21 @@
     margin: 2px 0;
   }
 }
+
+.override-table {
+  min-height: 400px;
+
+  ::ng-deep {
+    .ui-table-tbody th, .summary-info .ui-table-tbody td {
+      height: 45px;
+    }
+  }
+}
+
+.override-table-secondary {
+  ::ng-deep {
+    .ui-table-tbody th, .summary-info .ui-table-tbody td {
+      height: 37px;
+    }
+  }
+}

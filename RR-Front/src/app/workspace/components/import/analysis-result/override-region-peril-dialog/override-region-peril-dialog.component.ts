@@ -37,7 +37,7 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
 
   regionPerilDataTable = [
     {
-      field: 'analysisId',
+      field: 'rlAnalysisId',
       header: 'ID',
       width: '50px',
       type: 'text',
@@ -57,7 +57,7 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
       visible: true
     },
     {
-      field: 'regionPeril',
+      field: 'rpCode',
       header: 'Region Peril',
       width: '80px',
       type: 'text',

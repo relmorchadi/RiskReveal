@@ -217,7 +217,7 @@ export default {
         edit: false
       },
       {
-        field: 'rlId',
+        field: 'analysisId',
         header: 'ID',
         width: '40px',
         type: 'text',
@@ -458,7 +458,7 @@ export default {
         edit: false
       },
       {
-        field: 'rlId',
+        field: 'analysisId',
         header: 'ID',
         width: '40px',
         type: 'text',
