@@ -13,6 +13,8 @@ public class ImportSelectionDto {
     private String targetRegionPeril;
     private Float unitMultiplier;
     private Float proportion;
+    private String occurrenceBasis;
+    private String occurrenceBasisOverrideReason;
     private List<String> targetRAPCodes;
     private List<Integer> divisions;
     private List<String> financialPerspectives;
