@@ -400,8 +400,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   rescanItem(datasource) {
-    console.log('Rescan Datasource', datasource)
-    datasource.scanned = false;
+    console.log('Rescan Datasource', datasource);
+    datasource.scanning = true;
     this.selectedProject$.pipe(take(1))
       .subscribe(p => {
         const projectId = p.projectId;
@@ -534,43 +534,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.dispatch(new fromWs.RemoveEDMAndRDMSelectionAction());
   }
 
-  getNumberElement(item, source) {
-    if (source === 'portfolio') {
-      if (this.state.portfolios === null) {
-        return 0;
-      } else {
-        if (typeof this.state.portfolios !== 'undefined') {
-          return this.state.portfolios.length;
-        } else {
-          return null;
-        }
-      }
-    } else if (source === 'analysis') {
-      if (this.state.analysis === null) {
-        return 0;
-      } else {
-        if (typeof this.state.analysis !== 'undefined') {
-          return this.state.analysis.length;
-        } else {
-          return null;
-        }
-      }
-    }
-  }
-
   getNumberOfSelected(item, source) {
+    const selectionPortfolio = _.get(this.state.selection.portfolios, `${item.rmsId}`, null);
+    const selectionAnalysis = _.get(this.state.selection.analysis, `${item.rmsId}`, null);
     if (source === 'portfolio') {
-      if (this.state.portfolios === null) {
-        return 0;
-      } else {
-        return _.filter(this.state.portfolios, dt => dt.selected).length;
-      }
+      return selectionPortfolio === null ? 0 : _.toArray(selectionPortfolio).length;
     } else if (source === 'analysis') {
-      if (this.state.analysis === null) {
-        return 0;
-      } else {
-        return _.filter(this.state.analysis, dt => dt.selected).length;
-      }
+      return selectionAnalysis === null ? 0 : _.toArray(selectionAnalysis).length;
     }
   }
 
@@ -742,8 +712,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   private loadRefsData() {
-    console.log('LoadRefs Data', this);
-    console.log('Selected Project', this.selectedProject);
     if(! this.selectedProject){
       console.error('No selected Project');
       return;

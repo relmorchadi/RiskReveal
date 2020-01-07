@@ -293,7 +293,7 @@ public class InuringPackageService {
                                 layerFilterList.add(layerFilter);
                             }
                         }
-                        innerObject.add("filterCriteriaList",layerFilterList);
+                        innerObject.add("FilterCriteriaList",layerFilterList);
 
                         Gson gson = new Gson();
                         attributes.add(gson.fromJson(innerObject.toString(),Object.class));

@@ -38,6 +38,21 @@ export class AnalysisResultComponent implements OnInit {
       {label: "USD", value: "USD"},
       {label: "XXC", value: "XXC"}
     ],
+    financialPerspective: {
+      'CL': 'Client Loss',
+      'FA': 'Facultative Reinsurance Loss',
+      'GR': 'Gross Loss',
+      'GU': 'Ground Up Loss',
+      'QS': 'Quota Share Treaty Loss',
+      'RC': 'Net Loss Post Corporate Cat',
+      'RG': 'Reinsurance Gross Loss',
+      'RL': 'Net Loss Pre Cat',
+      'RN': 'Reinsurance Net Loss',
+      'RP': 'Net Loss Post Cat',
+      'SS': 'Surplus Share Treaty Loss',
+      'TY': 'Treaty Loss',
+      'WX': 'Working Excess Treaty Loss'
+    },
     targetRaps: [
       {value: 'RL_ACEQ_Mv9.0_Ev10.0_S-56-LTR (Default)'},
       {value: 'RL_ACEQ_Mv9.0_Ev11.0_S-56-LTR (Default)'},

@@ -1,9 +1,9 @@
 package com.scor.rr.service.batch.writer;
 
+import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.domain.RlEltLoss;
-import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.LossDataHeaderEntityRepository;
@@ -94,7 +94,7 @@ public class ELTWriter extends AbstractWriter {
         }
         log.debug("write ELT filename = {} elt lost list size = {}", filename, eltLossList.size());
 
-        File file = writeELTFile(filename, rrImportedLossData, eltLossList);
+        File file = writeELTFile(filename, rrImportedLossData, eltLossList, modelAnalysisEntity.getDivision());
         if (file != null) {
             rrImportedLossData.setLossDataFileName(new BinFile(file).getFileName()); // Set file name and persist ELTHeader
             rrImportedLossData.setLossDataFilePath(new BinFile(file).getPath()); // Set file name and persist ELTHeader
@@ -103,12 +103,19 @@ public class ELTWriter extends AbstractWriter {
         log.debug("writeELT completed");
     }
 
-    private File writeELTFile(String filename, LossDataHeaderEntity rrImportedLossData, List<RlEltLoss> eltLossList) {
+    private File writeELTFile(String filename, LossDataHeaderEntity rrImportedLossData, List<RlEltLoss> eltLossList, Integer division) {
         log.debug("Starting write RRLT File");
         FileChannel out = null;
         MappedByteBuffer buffer = null;
         Path iHubPath = Paths.get(iHub);
-        File file = PathUtils.makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename, iHubPath);
+        File file = null;
+        if (marketChannel.equalsIgnoreCase("Treaty")) {
+            file = PathUtils.makeFullFile(
+                    PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename, iHubPath);
+        } else {
+            file = PathUtils.makeFullFile(
+                    PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename, iHubPath);
+        }
         int eventCount = 0;
         try {
             out = new RandomAccessFile(file, "rw").getChannel();

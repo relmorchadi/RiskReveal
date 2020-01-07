@@ -186,6 +186,7 @@ public class AdjustmentNodeProcessingService {
             adjustmentState = adjustmentStateRepository.findById(4).get();
             thread.setThreadStatus(adjustmentState.getCode());
             adjustmentThreadRepository.save(thread);
+            calculateAdjustmentService.calculateSummaryStatistic(finalPLT.getPltHeaderId());
             return finalPLT; // return final PLT
         } catch (Exception e) {
             e.printStackTrace();
@@ -285,6 +286,7 @@ public class AdjustmentNodeProcessingService {
             adjustedPLT.setCreatedDate(new java.sql.Date(new java.util.Date().getTime()));
             adjustedPLT.setPltType("Interim");
             adjustedPLT = pltHeaderRepository.save(adjustedPLT);
+            calculateAdjustmentService.calculateSummaryStatistic(adjustedPLT.getPltHeaderId());
             log.info("success saving adjustedPLT");
             nodeProcessing.setAdjustedPLT(adjustedPLT);
             nodeProcessing.setAdjustmentNode(adjustmentNode);

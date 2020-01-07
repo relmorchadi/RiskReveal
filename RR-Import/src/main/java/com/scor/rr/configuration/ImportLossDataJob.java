@@ -29,18 +29,25 @@ public class ImportLossDataJob {
 
     @Autowired
     ELTConformer eltConformer;
+
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
+
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
+
     @Autowired
     private RegionPerilExtractor regionPerilExtractor;
+
     @Autowired
     private ExchangeRateExtractor exchangeRateExtractor;
+
     @Autowired
     private EpCurveExtractor epCurveExtractor;
+
     @Autowired
     private ELTExtractor eltExtractor;
+
     @Autowired
     private ELTTruncator eltTruncator;
 
@@ -53,6 +60,9 @@ public class ImportLossDataJob {
 
     @Autowired
     private PLTWriter pltWriter;
+
+    @Autowired
+    private DefaultAdjustment defaultAdjustment;
 
     @Autowired
     private ModellingOptionsExtractor modellingOptionsExtractor;
@@ -164,6 +174,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet defaultAdjustmentTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> defaultAdjustment.defaultAdjustment();
+    }
+
+    @Bean
     public Tasklet extractExposureSummaryTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> exposureSummaryExtractor.extract();
     }
@@ -250,6 +265,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Step defaultAdjustmentStep() {
+        return stepBuilderFactory.get("defaultAdjustment").tasklet(defaultAdjustmentTasklet()).build();
+    }
+
+    @Bean
     public Step extractExposureSummaryStep() {
         return stepBuilderFactory.get("extractExposureSummary").tasklet(extractExposureSummaryTasklet()).build();
     }
@@ -318,7 +338,7 @@ public class ImportLossDataJob {
     }
 
     @Bean(value = "jobBuilder")
-    public SimpleJobBuilder getJobBuilder(){
+    public SimpleJobBuilder getJobBuilder() {
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPerilStep())
                 .next(getExtractEpCurveStatsStep())
@@ -331,6 +351,7 @@ public class ImportLossDataJob {
                 .next(getEltHeaderWritingStep())
                 .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
-                .next(getPltWriterStep());
+                .next(getPltWriterStep())
+                .next(defaultAdjustmentStep());
     }
 }
