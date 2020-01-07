@@ -98,6 +98,8 @@ public class ELTToPLTConverter extends AbstractWriter {
     private Integer uwYear;
     @Value("#{jobParameters['prefix']}")
     private String prefix;
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
     private ConvertFunctionFactory factory = new CMBetaConvertFunctionFactory();
 
     @Value("${ihub.treaty.out.path}")
@@ -198,7 +200,14 @@ public class ELTToPLTConverter extends AbstractWriter {
                                 modelAnalysisEntity.getDivision(),
                                 ".bin"
                         );
-                File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+
+                File file = null;
+
+                if (marketChannel.equalsIgnoreCase("Treaty"))
+                    file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
+                else
+                    file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), bundle.getModelAnalysis().getDivision(), carId), filename);
+
                 BinFile binFile = new BinFile(file);
                 pltHeaderEntity.setLossDataFilePath(binFile.getPath());
                 pltHeaderEntity.setLossDataFileName(binFile.getFileName());
@@ -359,6 +368,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         private List<PltHeaderEntity> scorPLTHeaderEntities;
         private Boolean[] finished = {Boolean.FALSE};
         private int nbWorkers;
+
         public TreatyBatchLauncher(CountDownLatch latch, BinFile peqtFile, List<PltHeaderEntity> scorPLTHeaderEntities,
                                    Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT) {
             this.id = hashCode();

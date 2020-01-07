@@ -114,7 +114,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
         Map<Long, List<RegionPerilDto>> result = new HashMap<>();
-        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
+        rlAnalysisIds.forEach(id -> result.put(id, this.getRegionPeril(id)));
         return result;
     }
 }

@@ -100,19 +100,22 @@
                 </div>
                 <div class="text-data" (click)="openFinancialP(rowData)" [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'multiple'">
-                  <span>{{rowData?.financialPerspectives?.length}}</span>
+                  <span  nz-tooltip [nzTitle]="infoFP" *ngIf="rowData?.financialPerspectives?.length > 1">M*</span>
+                  <span *ngIf="rowData?.financialPerspectives?.length === 1">{{rowData?.financialPerspectives[0]}}</span>
+                  <span *ngIf="rowData?.financialPerspectives?.length === 0">Nan</span>
+
                   <!--                  <span nzPlacement="top" nz-tooltip-->
                   <!--                        *ngIf="rowData?.financialPerspective?.length == 0">Nan</span>-->
-                  <!--                  <ng-template #infoFP>-->
-                  <!--                    <div class="popover-menu">-->
-                  <!--                      <ul style="margin-bottom: 0">-->
-                  <!--                        <li *ngFor="let item of rowData?.financialPerspective" style="border: none;">-->
-                  <!--                            <span style="display: flex; width: 100%;">-->
-                  <!--                              <span style="display: inline-flex; width: 23px;">{{item}}</span>: {{item}}</span>-->
-                  <!--                        </li>-->
-                  <!--                      </ul>-->
-                  <!--                    </div>-->
-                  <!--                  </ng-template>-->
+                  <ng-template #infoFP>
+                    <div class="popover-menu">
+                      <ul style="margin-bottom: 0">
+                        <li *ngFor="let item of rowData?.financialPerspectives" style="border: none;">
+                          <span style="display: flex; width: 100%;">
+                            <span style="display: inline-flex; width: 23px;">{{item}}</span>: {{refs.financialPerspective[item]}}</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </ng-template>
                 </div>
                 <div class="text-data" (click)="selectRows(rowData, i)"
                      [ngClass]="{'highlight-temp': col.highlight}"
@@ -160,7 +163,7 @@
                 <div class="text-data" (click)="showOverridePEQTDialog=true" *ngIf="col.type === 'Peqt'">
                     <span class="highlighted-change">
                       <span *ngIf=" (rowData.targetRaps||[]).length > 0; else noSelectedPeqts" nz-tooltip [nzTitle]="peqtInfo">
-                        {{rowData.targetRaps.length}}
+                        {{rowData.targetRaps.length}}/3
                       </span>
                       <ng-template #peqtInfo>
                         <div class="popover-menu">
@@ -174,7 +177,7 @@
                     </span>
                     <ng-template #noSelectedPeqts>
                       <span>
-                          <i class="icon-exclamation-triangle"></i>
+                         0/3 <i class="icon-exclamation-triangle"></i>
                       </span>
                     </ng-template>
                 </div>

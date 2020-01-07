@@ -47,11 +47,11 @@ export class FacWidgetComponent implements OnInit {
   cols = [
     {field: 'favorite', header: '', width: '20px', display: true, sorted: false, filtered: false, type: 'favStatus'},
     {field: 'carRequestId', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'contractName', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'contractID', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'projectId', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwYear', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'contractName', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'subsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'sector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},

@@ -1098,11 +1098,11 @@ export class WorkspaceState {
   // loadFacData(ctx: StateContext<WorkspaceModel>) {
   //   return this.riskLinkFacade.loadFacData(ctx);
   // }
-  //
-  // @Action(fromWS.LoadDivisionSelection)
-  // loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
-  //   this.riskLinkFacade.loadDivisionSelection(ctx);
-  // }
+
+  @Action(fromWS.LoadDivisionSelection)
+  loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
+    this.riskLinkFacade.loadDivisionSelection(ctx);
+  }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkAnalysisDataAction) {
