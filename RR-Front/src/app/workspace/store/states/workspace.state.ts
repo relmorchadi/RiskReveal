@@ -1216,6 +1216,15 @@ export class WorkspaceState {
     return this.riskLinkFacade.overrideOccurrenceBasis(ctx, payload);
   }
 
+  @Action(fromWS.SaveDefaultDataSourcesAction)
+  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.saveDefaultDataSources(ctx, payload);
+  }
+
+  @Action(fromWS.LoadDefaultDataSourcesAction)
+  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
+  }
 
   /***********************************
    *

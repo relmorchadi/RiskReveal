@@ -339,3 +339,28 @@ export class OverrideOccurrenceBasis {
   static readonly type= '[Risk Link] Override Occurrence Basis';
   constructor(public payload: any) {}
 }
+
+export class LoadDefaultDataSourcesAction {
+  static readonly type= '[Risk Link] Load default data sources action';
+  constructor(public payload: any) {}
+}
+
+export class SaveDefaultDataSourcesAction {
+  static readonly type= '[Risk Link] Save default data sources action';
+  constructor(public payload: any) {}
+}
+
+export class SaveDefaultDataSourcesSuccessAction {
+  static readonly type= '[Risk Link] Save default data sources success action';
+  constructor(public payload: any) {}
+}
+
+export class ClearDefaultDataSourcesSuccessAction {
+  static readonly type= '[Risk Link] Clear default data sources success action';
+  constructor(public payload: any) {}
+}
+
+export class SaveDefaultDataSourcesErrorAction {
+  static readonly type= '[Risk Link] Save default data sources error action';
+  constructor(public payload: any) {}
+}

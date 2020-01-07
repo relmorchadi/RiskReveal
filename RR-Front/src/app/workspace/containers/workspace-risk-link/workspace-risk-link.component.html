@@ -246,11 +246,11 @@
                 <div class="body-wrap-menu-header" style="flex-direction: column">
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
-                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveDefaultSelection()"
                        style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="synchronizeEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadDefaultDataSources()"
                        class="icon-sync_24px"></i>
-                    <i nz-tooltip nzTitle="Clear default settings" (click)="removeEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Clear default settings" (click)="clearDefaultSelection()"
                        class="icon-close_24px"></i>
                   </div>
                 </div>
