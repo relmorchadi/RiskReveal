@@ -44,6 +44,7 @@ export class PortfolioResultComponent implements OnInit {
   constructor(private store:Store) { }
 
   ngOnInit() {
+    console.log('')
     if(this.context == 'FAC'){
       this.scrollableColsSummary= componentData.FAC.scrollableCols;
       this.frozenColsSummary= componentData.FAC.fixedCols;
