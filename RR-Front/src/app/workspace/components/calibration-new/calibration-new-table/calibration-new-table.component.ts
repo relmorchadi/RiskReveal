@@ -328,4 +328,5 @@ export class CalibrationNewTableComponent implements OnInit {
   stopPropagation(event) {
     event.stopPropagation();
   }
+
 }

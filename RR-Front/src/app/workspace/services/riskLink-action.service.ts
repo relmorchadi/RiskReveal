@@ -1192,23 +1192,30 @@ export class RiskLinkStateService {
 
   basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
     const {selectedDS, projectId, instanceId} = payload;
+    const state = ctx.getState();
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
       .pipe(mergeMap((response: any[]) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
             const parsedResponse = this._parseBasicScanResponse(response);
-            draft.content[wsIdentifier].riskLink.selection.edms = Object.assign(
-              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.edms, item =>
-                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.edms[item.rmsId].count}}))
-            );
-            draft.content[wsIdentifier].riskLink.selection.rdms = Object.assign(
-              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.rdms, item =>
-                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.rdms[item.rmsId].count}}))
-            );
+            const edms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.edms), item =>
+                _.includes(_.keys(parsedResponse.edms), `${item.rmsId}`));
+            const rdms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.rdms), item =>
+                _.includes(_.keys(parsedResponse.rdms), `${item.rmsId}`));
+            console.log('answer', response, parsedResponse, rdms, edms);
+            draft.content[wsIdentifier].riskLink.selection.edms = {...draft.content[wsIdentifier].riskLink.selection.edms, ...Object.assign(
+              {}, ..._.map(edms, item =>
+                ({[item.rmsId]: {...item, scanning: false, count: _.get(parsedResponse.edms, `${item.rmsId}.count`, 0)}}))
+            )};
+            draft.content[wsIdentifier].riskLink.selection.rdms = { ...draft.content[wsIdentifier].riskLink.selection.rdms,
+              ...Object.assign({}, ..._.map(rdms, item =>
+                ({[item.rmsId]: {...item, scanning: false, count: _.get(parsedResponse.rdms, `${item.rmsId}.count`, 0)}}))
+            )};
           }));
           return of(response);
         }),
-        catchError(err => {
+        catchError((err, response) => {
+          console.log(err, response);
           return of(err);
         }));
   }
