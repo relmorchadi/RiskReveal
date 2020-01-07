@@ -36,6 +36,8 @@ public class RLImportSelection {
     private String overrideRegionPerilBasis;
     @Column(name = "OccurrenceBasis")
     private String occurrenceBasis;
+    @Column(name = "OccurrenceBasisOverrideReason")
+    private String occurrenceBasisOverrideReason;
     @Column(name = "FinancialPerspective")
     private String financialPerspective;
     @Column(name = "UnitMultiplier")
@@ -44,9 +46,9 @@ public class RLImportSelection {
     private Float proportion;
     @Column(name = "Division")
     private Integer division;
-    //    @Column(name = "PeriodBasis")
-//    private String periodBasis;
+
     // TODO : Review with shaun
+
     @Column(name = "ProxyScalingBasis")
     private String proxyScalingBasis;
     @Column(name = "ProxyScalingNarrative")
@@ -55,6 +57,9 @@ public class RLImportSelection {
     private String multiplierBasis;
     @Column(name = "MultiplierNarrative")
     private String multiplierNarrative;
+
+    //
+
     @Column(name = "SystemRegionPeril")
     private String systemRegionPeril;
 
@@ -86,6 +91,7 @@ public class RLImportSelection {
         this.financialPerspective = fp;
         this.rlAnalysis = rlAnalysis;
         this.targetRaps = new ArrayList<>();
+        this.occurrenceBasis = importSelectionDto.getOccurrenceBasis();
     }
 
     public RLImportSelection(ImportSelectionDto importSelectionDto, String fp, RLAnalysis rlAnalysis, Integer division) {

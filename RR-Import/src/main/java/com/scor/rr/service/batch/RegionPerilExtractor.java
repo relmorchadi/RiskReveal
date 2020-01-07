@@ -154,6 +154,8 @@ public class RegionPerilExtractor {
                 modelAnalysisEntity.setMultiplierBasis(sourceResult.getMultiplierBasis());
                 modelAnalysisEntity.setMultiplierNarrative(sourceResult.getMultiplierNarrative());
                 modelAnalysisEntity.setDescription(sourceResult.getRlAnalysis().getDescription());
+                modelAnalysisEntity.setUserOccurrenceBasis(sourceResult.getOccurrenceBasis());
+                modelAnalysisEntity.setOccurrenceBasisOverrideReason(sourceResult.getOccurrenceBasisOverrideReason());
 
                 // TODO : Not sure ?
                 modelAnalysisEntity.setOverrideReasonText(sourceResult.getOverrideRegionPerilBasis());
