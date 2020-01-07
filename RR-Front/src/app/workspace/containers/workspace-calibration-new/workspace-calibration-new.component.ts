@@ -90,7 +90,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.tableConfig = {
       view: "adjustments",
       selectedCurveType: "OEP",
-      selectedFinancialUnit: "M",
+      selectedFinancialUnit: "Unit",
       isExpanded: false,
       expandedRowKeys: {},
       isGrouped: true
@@ -102,7 +102,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.constants = {
       curveTypes: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
-      financialUnits: ['M','B']
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion']
     };
     this.rowKeys= {};
 
@@ -344,6 +344,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.toggleStatusFilter(action.payload);
         break;
 
+      case "Financial Unit Change":
+              this.financialUnitChange(action.payload);
+              break;
+
       default:
         console.log(action);
     }
@@ -520,4 +524,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
 
+  private financialUnitChange(financialUnit) {
+    this.tableConfig = {
+      ...this.tableConfig,
+      selectedFinancialUnit: financialUnit
+    }
+  }
 }

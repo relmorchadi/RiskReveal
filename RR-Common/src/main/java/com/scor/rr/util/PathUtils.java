@@ -348,7 +348,7 @@ public class PathUtils {
         }
 
         String filename = StringUtils.join(items, "_");
-        StringBuilder builder = new StringBuilder(filename).append(fileExtension);
+        StringBuilder builder = new StringBuilder(filename).append("." + fileExtension);
 //        String finalName = fileName.trim().replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();

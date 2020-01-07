@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "selectedPlt")
+@Table(name = "vw_SelectedPlt")
 public class SelectedPLTView {
     @Id
     @Column(name = "pltId", nullable = false)

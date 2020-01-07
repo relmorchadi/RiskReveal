@@ -10,6 +10,7 @@ import com.scor.rr.service.adjustement.pltAdjustment.CalculateAdjustmentService;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
@@ -59,9 +60,15 @@ public class CalculAdjRest {
     }
 
     @PostMapping("calculateSummaryStatistic")
-    private SummaryStatisticHeaderEntity calculateSummaryStatistic(Long pltId) throws RRException {
+    @Transactional
+    public SummaryStatisticHeaderEntity calculateSummaryStatistic(Long pltId) throws RRException {
         return calculateAdjustmentService.calculateSummaryStatistic(pltId);
     }
+
+//    @PostMapping("divers")
+//    private String divers() {
+//        return calculateAdjustmentService.divers();
+//    }
 
     @GetMapping("aepMetric")
     public EPMetric aepMetric(String pathToFile) throws RRException {

@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "ZZ_InuringFinalAttachedPLT")
-public class InuringFinalAttachedPLT {
+public class    InuringFinalAttachedPLT {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +17,7 @@ public class InuringFinalAttachedPLT {
     @Column(name = "Entity")
     private int Entity;
 
-    @Column(name = "inuringFinalNodeId")
+    @Column(name = "InuringFinalNodeId")
     private long inuringFinalNodeId;
 
     @Column(name = "PLTCcy")
@@ -25,4 +25,25 @@ public class InuringFinalAttachedPLT {
 
     @Column(name = "PLTHeaderId")
     private long PLTHeaderId;
+
+    @Column(name = "IsGrouped")
+    private boolean isGrouped;
+
+    @Column(name = "OriginalPLTId")
+    private long originalPLTId;
+
+    @Column(name = "TargetRapId")
+    private long targetRapId;
+
+    @Column(name = "MinimumGrainRegionPerilCode")
+    private String minimumGrainRegionPerilCode;
+
+    @Column(name = "Peril")
+    private String peril;
+
+    @Column(name = "PLTName")
+    private String pltName;
+
+    @Column(name = "OccurrenceBasisCode")
+    private String occurrenceBasisCode;
 }
