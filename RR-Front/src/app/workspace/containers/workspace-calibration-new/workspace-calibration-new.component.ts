@@ -102,7 +102,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.constants = {
       curveTypes: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
-      financialUnits: ['Billion','Thousands', 'Million', 'Unit']
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion']
     };
     this.rowKeys= {};
 
