@@ -43,6 +43,8 @@ public class CatRequestService {
     @Autowired
     private ProjectConfigurationForeWriterDivisionRepository projectConfigurationForeWriterDivisionRepository;
 
+    private static final long CAR_ID_OFFSET = 100000;
+
     public String createRequest(CatRequestData data){
         log.debug("{}", data);
         final Date date = new Date();
@@ -81,7 +83,7 @@ public class CatRequestService {
                 null));
 
         //FIXME: must define a Counter table to controll CAR ID
-        projectConfigurationForeWriter.setCaRequestId("CAR-" + projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
+        projectConfigurationForeWriter.setCaRequestId("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
         UserRrEntity userRrEntity = userRrRepository.findByWindowsUser(data.userID);
         if (userRrEntity != null) {
             projectConfigurationForeWriter.setAssignedTo(userRrEntity.getUserId());

@@ -1,7 +1,7 @@
 <i style="position: absolute;right: 0px;top:5px; cursor: grab;  z-index: 9999999;color: black;font-size: 1.5em;"
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
-<ng-container *ngIf="!filterNew">
+<ng-container *ngIf="type !== 'newCar'">
   <nz-tabset
     [(nzSelectedIndex)]="tabIndex"
     class="tabs-standard-top">
@@ -9,7 +9,7 @@
       <div class="renewal-contract-table">
         <app-table [sortable]="true"
                    [tableColumn]="cols"
-                   [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
+                   [listOfData]="data" [tableHeight]="'330px'"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
@@ -22,7 +22,7 @@
       <div class="renewal-contract-table">
         <app-table [sortable]="true"
                    [tableColumn]="cols"
-                   [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
+                   [listOfData]="filterAssign()" [tableHeight]="'330px'"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
@@ -33,15 +33,15 @@
     </nz-tab>
   </nz-tabset>
 </ng-container>
-<ng-container *ngIf="filterNew">
+<ng-container *ngIf="type === 'newCar'">
   <div class="renewal-contract-table">
     <app-table [sortable]="true"
                [tableColumn]="cols"
-               [listOfData]="applyFilters(data)" [tableHeight]="'330px'"
-               [virtualScroll]="false"
+               [listOfData]="data" [tableHeight]="'330px'"
+               [virtualScroll]="false" [filterModeFront]="false"
                (dbClickItem)="openFacItem($event)"
                (updateFavStatus)="valueFavChange($event)"
-               [sortData]="{}"
+               [sortData]="{}" (filterData)="filterData($event)"
                [totalRecords]="data?.length">
     </app-table>
   </div>
@@ -114,7 +114,7 @@
         </nz-dropdown>
       </div>
     </div>
-    <div style="display: flex; align-items: center" *ngIf="!filterNew">
+    <div style="display: flex; align-items: center" *ngIf="type !== 'newCar'">
       <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}"
             nz-tooltip [nzTitle]="'ALL'"
             class="tab-index">

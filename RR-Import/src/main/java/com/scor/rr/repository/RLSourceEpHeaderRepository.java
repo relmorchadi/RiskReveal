@@ -12,12 +12,12 @@ import java.util.List;
 public interface RLSourceEpHeaderRepository extends JpaRepository<RLSourceEpHeader, Long> {
 
     @Transactional(transactionManager = "rrTransactionManager")
-    void deleteByRLAnalysisIdAndFinancialPerspective(Long rlAnalysisId, String financialPerspective);
+    void deleteByRlAnalysisRlAnalysisIdAndFinancialPerspective(Long rlAnalysisId, String financialPerspective);
 
-    List<RLSourceEpHeader> findByRLAnalysisId(Long rlAnalysisId);
+    List<RLSourceEpHeader> findByRlAnalysisRlAnalysisId(Long rlAnalysisId);
 
     @Transactional(transactionManager = "rrTransactionManager")
     @Modifying
-    @Query(value = "DELETE FROM RLSourceEpHeader WHERE rLAnalysisId IN (:analysisIds)")
+    @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId IN (:analysisIds)")
     void deleteByRLAnalysisIdList(List<Long> analysisIds);
 }

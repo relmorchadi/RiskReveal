@@ -1,4 +1,3 @@
-
 const countries = [
   {shortName: 'ARUBA', countryCode: 'ABW'},
   {shortName: 'AFGHANISTAN', countryCode: 'AFG'},

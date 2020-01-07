@@ -2,13 +2,13 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
-import {catchError, map, mergeMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
 import {Navigate} from '@ngxs/router-plugin';
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
-import {EMPTY} from 'rxjs';
+import {EMPTY, forkJoin, of} from 'rxjs';
 import {defaultInuringState} from './inuring.service';
 import {ProjectApi} from "./api/project.api";
 
@@ -24,52 +24,20 @@ export class WorkspaceService {
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {
-      wsId, uwYear, route, type
-    } = payload;
+      wsId, uwYear, route} = payload;
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId, uwYear, ws, route, type
+          wsId, uwYear, ws, route
         }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
 
-  loadWsFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFacWs) {
-    const {
-      wsId, uwYear, route, type, item
-    } = payload;
-    ctx.patchState({loading: true});
-
-    const ws = {
-      id: wsId,
-      workspaceName: item.contractName,
-      cedantCode: '22231',
-      cedantName: item.cedantName,
-      subsidiaryId: '2',
-      subsidiaryName: 'SCOR REASS.',
-      ledgerName: 'MADRID',
-      inceptionDate: 1546297200000,
-      expiryDate: 1577746800000,
-      subsidiaryLedgerId: '2',
-      contractSource: 'ForeWriter',
-      treatySections: [
-        'CFS-SCOR REASS.-MADRID RCC000022/ 1'
-      ],
-      years: [
-        uwYear
-      ],
-      projects: []
-    };
-    ctx.dispatch(new fromWS.LoadWsSuccess({
-      wsId, uwYear, ws, route, type
-    }));
-  }
-
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route, type} = payload;
+    const {wsId, uwYear, ws, route} = payload;
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
@@ -177,8 +145,8 @@ export class WorkspaceService {
               collapseResult: true,
             },
             financialValidator: {
-              rmsInstance: {data: [], selected: 'AZU-P-RL17-SQL14'},
-              financialPerspectiveELT: {data: [], selected: 'Net Loss Pre Cat (RL)'},
+              rmsInstance: {data: [], selected: ''},
+              financialPerspectiveELT: {data: [], selected: ''},
               targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
               division: {data: [], selected: 'Division N°1'},
             },
@@ -189,16 +157,16 @@ export class WorkspaceService {
               standard: null,
               target: 'currentSelection'
             },
-            analysis: null,
-            analysisFac: null,
-            portfolios: null,
-            portfolioFac: null,
+            analysis: [],
+            portfolios: [],
             results: null,
             summaries: null,
             selection: null,
+            facSelection: {},
+            importPLTs: {},
             selectedEDMOrRDM: null,
             activeAddBasket: false,
-            importPLTs: {},
+            synchronize: false
           },
           scopeOfCompletence: {
             data: {},
@@ -214,56 +182,15 @@ export class WorkspaceService {
         }
       });
       draft.loading = false;
-      ctx.dispatch(new fromWS.SetCurrentTab({
+      ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
         wsIdentifier
-      }));
+      })]);
     }));
   }
 
-  loadProjectForWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectForWs) {
-    const state = ctx.getState();
-    const {wsId, uwYear} = payload;
-    const wsIdentifier = wsId + '-' + uwYear;
-    const projects = _.filter(state.facWs.data,
-      item => item.uwanalysisContractFacNumber === wsId && item.uwAnalysisContractDate === uwYear);
-    ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].projects = projects.map(item => {
-          return {
-            ...item,
-            workspaceId: item.uwanalysisContractFacNumber,
-            uwy: item.uwanalysisContractYear,
-            projectId: item.uwAnalysisProjectId,
-            name: item.id,
-            description: null,
-            assignedTo: null,
-            createdBy: item.requestedByFullName,
-            creationDate: item.requestCreationDate,
-            dueDate: 1559922195933,
-            linkFlag: true,
-            postInuredFlag: null,
-            publishFlag: false,
-            pltSum: null,
-            pltThreadSum: 0,
-            regionPerilSum: 0,
-            xactSum: 0,
-            sourceProjectId: null,
-            sourceProjectName: null,
-            sourceWsId: null,
-            sourceWsName: null,
-            locking: null,
-            selected: false,
-            projectFacSource: 'specific',
-            projectType: 'fac'
-          };
-        });
-        draft.content[wsIdentifier].projects[0].selected = true;
-      }
-    ));
-  }
-
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
-    const {wsId, uwYear, route, type} = payload;
+    const {wsId, uwYear, route} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -277,9 +204,7 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
-        route,
-        type
-      }));
+        route}));
     }
   }
 
@@ -296,26 +221,6 @@ export class WorkspaceService {
       });
       draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
-  }
-
-  openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {
-    const {wsId, uwYear, route, type, item} = payload;
-    const state = ctx.getState();
-    const wsIdentifier = wsId + '-' + uwYear;
-
-    if (state.content[wsIdentifier]) {
-      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      return ctx.dispatch(new fromWS.SetCurrentTab({
-        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-        wsIdentifier
-      }));
-    } else {
-      return ctx.dispatch(new fromWS.LoadFacWs({
-        wsId,
-        uwYear,
-        route, type, item
-      }));
-    }
   }
 
   openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenMultiWS) {

@@ -1,0 +1,49 @@
+.parent-node {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  word-spacing: 3px;
+}
+
+.absolute-menu {
+  //position: absolute;
+  right: 24px;
+  //width: 37% !important;
+  top: 40px;
+}
+
+.fp-options-wrapper {
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 5px;
+
+  .context-wrapper {
+    button {
+      margin: 0 5px;
+    }
+  }
+
+  .subtitle-override {
+    padding-bottom: 10px;
+    display: flex;
+  }
+
+  ::ng-deep {
+    label.ui-radiobutton-label {
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      font-size: 14.22px;
+      letter-spacing: 0.25px;
+      line-height: 20px;
+    }
+
+    p-radiobutton {
+      margin-right: 15px;
+    }
+  }
+
+  .tags-stack-vertical {
+    margin: 2px 0;
+  }
+}

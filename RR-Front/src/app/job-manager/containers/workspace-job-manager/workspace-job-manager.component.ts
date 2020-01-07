@@ -6,7 +6,6 @@ import {SearchService} from '../../../core/service';
 import {Select, Store} from '@ngxs/store';
 import {HeaderState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
-import {WorkspaceMain} from '../../../core/model';
 import {HelperService} from '../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeleteTask, PauseTask, ResumeTask} from '../../../core/store/actions/header.action';

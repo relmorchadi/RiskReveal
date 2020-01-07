@@ -1,7 +1,7 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.domain.RmsExchangeRate;
 import com.scor.rr.domain.LossDataHeaderEntity;
+import com.scor.rr.domain.RmsExchangeRate;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,9 +29,10 @@ public class ExchangeRateExtractor {
     @Autowired
     private RmsService rmsService;
 
+    @Value("#{jobParameters['marketChannel']}")
+    private String marketChannel;
 
     public void runExchangeRateExtraction() {
-
         log.debug("Starting RmsExchangeRatesExtractor");
 
         /**

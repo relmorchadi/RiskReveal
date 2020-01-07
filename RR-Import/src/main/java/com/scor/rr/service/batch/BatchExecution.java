@@ -39,8 +39,18 @@ public class BatchExecution {
     private ProjectImportRunRepository projectImportRunRepository;
 
     @Autowired
+    private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
+
+    @Autowired
+    private ProjectConfigurationForeWriterContractRepository projectConfigurationForeWriterContractRepository;
+
+    @Autowired
     @Qualifier(value = "importLossData")
     private Job importLossData;
+
+    @Autowired
+    @Qualifier(value = "importLossDataFac")
+    private Job importLossDataFac;
 
     public Long RunImportLossData(ImportLossDataParams importLossDataParams) {
 
@@ -60,16 +70,27 @@ public class BatchExecution {
                         .addString("modelSystemVersion", params.get("modelSystemVersion"))
                         .addString("periodBasis", params.get("periodBasis"))
                         .addLong("importSequence", Long.valueOf(params.get("importSequence")))
+                        .addString("jobType", params.get("jobType"))
+                        .addString("marketChannel", params.get("marketChannel"))
+                        .addString("carId", params.get("carId"))
+                        .addString("lob", params.get("lob"))
                         .addString("userId", importLossDataParams.getUserId())
                         .addString("projectId", importLossDataParams.getProjectId())
                         .addString("sourceResultIdsInput", importLossDataParams.getRlImportSelectionIds())
                         .addString("rlPortfolioSelectionIds", importLossDataParams.getRlPortfolioSelectionIds())
                         .addString("instanceId", importLossDataParams.getInstanceId())
+
                         .addDate("runDate", new Date());
 
                 log.info("Starting import batch: userId {}, projectId {}, sourceResultIds {}", importLossDataParams.getUserId(), importLossDataParams.getProjectId(), importLossDataParams.getRlImportSelectionIds());
 
-                JobExecution execution = jobLauncher.run(importLossData, builder.toJobParameters());
+                JobExecution execution = null;
+
+                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                    execution = jobLauncher.run(importLossData, builder.toJobParameters());
+                else
+                    execution = jobLauncher.run(importLossDataFac, builder.toJobParameters());
+
                 return execution.getId();
             } else {
                 log.error("parameters are empty");
@@ -101,41 +122,47 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
+        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "Fac" : "";
+
+        if (workspaceMarketChannel.equalsIgnoreCase("")) {
+            log.error("Error. workspace market channel is not found");
+            return null;
+        }
 
         ContractSearchResult contractSearchResult =
                 contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
-        if (contractSearchResult == null) {
+        if (contractSearchResult == null && workspaceCode.equalsIgnoreCase("Treaty")) {
             log.error("Error. contract is not found");
             return null;
         }
-        String contractId = contractSearchResult.getId();
 
         ModellingSystemInstanceEntity modellingSystemInstance = modellingSystemInstanceRepository.findById(instanceId).orElse(null);
 
-//        Section section = sectionRepository.findOne(contractId);
-//        if (section == null) {
-//            log.error("Error. No section found");
-//            return null;
-//        }
-//        Contract contract = contractRepository.findOne(section.getContract().getId());
-//        if (contract == null) {
-//            log.error("Error. No contract found");
-//            return null;
-//        }
-//        Client client = clientRepository.findOne(contract.getClient().getId());
-//        if (client == null) {
-//            log.error("Error. No client found");
-//            return null;
-//        }
+        ProjectConfigurationForeWriter projectConfigurationForeWriter = null;
+        ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
 
+        if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
+            projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(projectId);
+            if (projectConfigurationForeWriter != null) {
+                projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
+                        .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
+            }
+        }
         // TODO: Review this
-        String reinsuranceType = "T"; // fixed for TT
-        String division = "01"; // fixed for TT
-        String sourceVendor = "RMS";
-        String periodBasis = "FT"; // fixed for TT
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
+        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult.getId();
+        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult.getCedantName();
+        String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
+        String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
+        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
+        String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
+        String division = "1"; // fixed for TT
+        String periodBasis = "FT"; // fixed for TT
+        String sourceVendor = "RMS";
         String prefix = "prefix";
+        String jobType = "ACCOUNT";
         String uwYear = String.valueOf(myWorkspace.getWorkspaceUwYear());
+        assert modellingSystemInstance != null;
         String modelSystemVersion = modellingSystemInstance.getModellingSystemVersion().getId();
 
         Long imSeq = null;
@@ -148,8 +175,6 @@ public class BatchExecution {
             imSeq = lastProjectImportRuns.size() + 1L;
         }
 
-        String clientName = contractSearchResult.getCedantName();
-        String clientId = contractSearchResult.getCedantCode();
 
         log.info("reinsuranceType {}, prefix {}, clientName {}, clientId {}, contractId {}, division {}, uwYear {}, sourceVendor {}, modelSystemVersion {}, periodBasis {}, importSequence {}",
                 reinsuranceType, prefix, clientName, clientId, contractId, division, uwYear, sourceVendor, modelSystemVersion, periodBasis, imSeq);
@@ -168,6 +193,10 @@ public class BatchExecution {
         map.put("importSequence", String.valueOf(imSeq));
         map.put("projectId", String.valueOf(projectId));
         map.put("instanceId", instanceId);
+        map.put("jobType", jobType);
+        map.put("marketChannel", workspaceMarketChannel);
+        map.put("carId", carId);
+        map.put("lob", lob);
 
         return map;
     }

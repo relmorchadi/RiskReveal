@@ -15,6 +15,8 @@ public interface FinancialPerspectiveRepository extends JpaRepository<FinancialP
     @Query("SELECT DISTINCT code FROM FinancialPerspective WHERE userSelectableForElt='1'")
     List<String> findAllCodes();
 
-    @Query("SELECT fp.code as code, fp.description as desc  FROM FinancialPerspective fp")
+    @Query("SELECT distinct fp.code as code, fp.description as desc  FROM FinancialPerspective fp " +
+            " where fp.userSelectableForElt=true " +
+            " order by fp.code asc ")
     List<Map<String, String>> findAllCodesAndDesc();
 }

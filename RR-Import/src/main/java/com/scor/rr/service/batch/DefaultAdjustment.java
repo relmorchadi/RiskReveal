@@ -218,8 +218,9 @@ public class DefaultAdjustment extends AbstractWriter {
                     PLTPublishStatus.PURE,
                     isThread ? threadId : 0, // pure PLT
                     pltHeader.getPltHeaderId(),
+                    modelAnalysis.getDivision(),
                     "bin");
-            BinFile file = epCurveWriter.writePLTEPCurves(oepMetric.getEpMetricPoints(), epCurveFilename, oepMetric.getMetric());
+            BinFile file = epCurveWriter.writePLTEPCurves(oepMetric.getEpMetricPoints(), epCurveFilename, oepMetric.getMetric(), modelAnalysis.getDivision());
 
             EPCurveHeaderEntity epCurveHeader = EPCurveHeaderEntity.builder()
                     .entity(1)
@@ -260,6 +261,7 @@ public class DefaultAdjustment extends AbstractWriter {
                 PLTPublishStatus.PURE,
                 isThread ? threadId : 0, // pure PLT
                 pltHeader.getPltHeaderId(),
+                modelAnalysis.getDivision(),
                 "bin");
 
         AnalysisSummaryStats analysisSummaryStats = new AnalysisSummaryStats();
@@ -268,7 +270,7 @@ public class DefaultAdjustment extends AbstractWriter {
         analysisSummaryStats.setCov(cov);
         analysisSummaryStats.setStdDev(stdDev);
 
-        BinFile file = epSummaryStatWriter.writePLTSummaryStatistics(analysisSummaryStats, summaryStatFilename);
+        BinFile file = epSummaryStatWriter.writeELTSummaryStatistics(analysisSummaryStats, summaryStatFilename, modelAnalysis.getDivision());
 
         // @TODO: review the pltHeaderId with the data modal
 
