@@ -17,10 +17,10 @@ export default {
         field: 'rpCode',
         header: 'Region Peril',
         width: '80px',
-        type: 'Rp',
+        type: 'text',
         sorting: '',
         filtered: true,
-        highlight: true,
+        highlight: false,
         visible: true,
         edit: false
       },
@@ -217,7 +217,7 @@ export default {
         edit: false
       },
       {
-        field: 'analysisId',
+        field: 'rlId',
         header: 'ID',
         width: '40px',
         type: 'text',
@@ -458,7 +458,7 @@ export default {
         edit: false
       },
       {
-        field: 'analysisId',
+        field: 'rlId',
         header: 'ID',
         width: '40px',
         type: 'text',

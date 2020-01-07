@@ -90,6 +90,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
     }
 
+    // TODO : Review this later
     @Override
     public List<CARDivisionDto> getDivisions(String carId) {
         List<Map<String, Object>> divisions = projectConfigurationForeWriterDivisionRepository.findByCARId(carId);

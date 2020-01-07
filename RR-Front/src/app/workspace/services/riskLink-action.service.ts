@@ -2322,13 +2322,13 @@ export class RiskLinkStateService {
             item => ({
               ...item,
               occurrenceBasis: occurrenceBasis.occurrenceBasis,
-              overrideReason: occurrenceBasis.overrideReason
+              occurrenceBasisOverrideReason: occurrenceBasis.occurrenceBasisOverrideReason
             }));
       } else if (occurrenceBasis.scopeOfOverride == 'current') {
         draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex] = {
           ...draft.content[wsIdentifier].riskLink.summary.analysis[analysisIndex],
           occurrenceBasis: occurrenceBasis.occurrenceBasis,
-          overrideReason: occurrenceBasis.overrideReason
+          occurrenceBasisOverrideReason: occurrenceBasis.occurrenceBasisOverrideReason
         };
       }
 
