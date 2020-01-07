@@ -17,10 +17,10 @@ export default {
         field: 'rpCode',
         header: 'Region Peril',
         width: '80px',
-        type: 'Rp',
+        type: 'text',
         sorting: '',
         filtered: true,
-        highlight: true,
+        highlight: false,
         visible: true,
         edit: false
       },
