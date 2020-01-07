@@ -260,9 +260,7 @@ export class CalibrationNewTableComponent implements OnInit {
         if (thread.selected) isNoOneSelected = false;
       })
     })
-    if (isAllSelected || isNoOneSelected) this.selectOptions.indeterminate = false;
-    else this.selectOptions.indeterminate = true
-    //this.selectOptions.indeterminate = isAllSelected ? false : true;
+    this.selectOptions.indeterminate = (isAllSelected || isNoOneSelected) ? false : true;
     this.selectOptions.checkAll = isAllSelected ? true : false;
     this.toggleSelectPlts(this.data);
   }
@@ -325,5 +323,9 @@ export class CalibrationNewTableComponent implements OnInit {
         status
       }
     })
+  }
+
+  stopPropagation(event) {
+    event.stopPropagation();
   }
 }

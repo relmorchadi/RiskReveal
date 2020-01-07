@@ -56,10 +56,12 @@
   -->
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr>
-      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="background-color: #ecf1f7 !important;">
+      <td *ngFor="let col of columns; let i =index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align, 'margin-right': i == last ? '9px':'0px'}"
+          style="background-color: #ecf1f7 !important;">
 
         <ng-container *ngIf="col?.type == 'arrow'">
-          <a href="#" [pRowToggler]="rowData">
+          <a href="#" [pRowToggler]="rowData" class="left-margin-checkbox-column">
             <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
           </a>
         </ng-container>
@@ -92,9 +94,13 @@
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}">
-        <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+      <td *ngFor="let col of columns; let i=index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align,  'margin-right': i == last ? '9px':'0px'}">
+        <ng-container *ngIf="col?.type == 'arrow'" >
+          <label nz-checkbox [(ngModel)]="thread.selected"
+                 (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"
+                 class="left-margin-checkbox-column">
+          </label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'arrow'">
 
@@ -129,11 +135,14 @@
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" >
+      <td *ngFor="let col of columns; let i=index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align,  'margin-right': i == last ? '9px':'0px'}" >
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
-          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+          <label nz-checkbox [(ngModel)]="thread.selected"
+                 (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"
+                 class="left-margin-checkbox-column"></label>
         </ng-container>
 
         <ng-container *ngIf="col?.type != 'arrow'">
@@ -165,7 +174,7 @@
   <!--TEMPLATES-->
 
   <ng-template #draggableTD let-adjustment>
-    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment)" class="text-table-cell border-dragable" style="display: flex;">
+    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment); stopPropagation($event)" class="text-table-cell border-dragable" style="display: flex;">
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
           <span>{{adjustment?.basisShortName}}</span>
@@ -212,7 +221,7 @@
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
         </ng-container>
         <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="checkAll" ></label>
+          <label nz-checkbox [(ngModel)]="checkAll" class="left-margin-checkbox-column"></label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
           <div class="text-ellipsis">
@@ -230,7 +239,11 @@
         <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
       </ng-container>
       <ng-container *ngIf="col?.type == 'arrow'">
-        <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
+        <label nz-checkbox [(ngModel)]="selectOptions.checkAll"
+               [nzIndeterminate]="selectOptions.indeterminate"
+               (change)="dispatchTableActions({type: 'check_all'})"
+               class="left-margin-checkbox-column">
+        </label>
       </ng-container>
       <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
         <div class="text-ellipsis">
