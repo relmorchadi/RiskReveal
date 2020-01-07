@@ -1,6 +1,7 @@
 package com.scor.rr.service.abstraction;
 
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.riskLink.RLSavedDataSource;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 
 import java.util.List;
@@ -20,5 +21,9 @@ public interface ConfigurationService {
 
     List<CARDivisionDto> getDivisions(String carId);
 
-    Map<Long,List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
+    Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
+
+    void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
+
+    List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId);
 }
