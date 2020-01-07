@@ -114,7 +114,7 @@ public class ELTWriter extends AbstractWriter {
                     PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename, iHubPath);
         } else {
             file = PathUtils.makeFullFile(
-                    PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename, iHubPath);
+                    PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence), filename, iHubPath);
         }
         int eventCount = 0;
         try {
