@@ -65,10 +65,10 @@ public class CalculAdjRest {
         return calculateAdjustmentService.calculateSummaryStatistic(pltId);
     }
 
-    @PostMapping("divers")
-    private String divers() {
-        return calculateAdjustmentService.divers();
-    }
+//    @PostMapping("divers")
+//    private String divers() {
+//        return calculateAdjustmentService.divers();
+//    }
 
     @GetMapping("aepMetric")
     public EPMetric aepMetric(String pathToFile) throws RRException {
