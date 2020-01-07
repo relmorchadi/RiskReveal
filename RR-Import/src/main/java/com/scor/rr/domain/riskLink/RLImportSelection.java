@@ -92,6 +92,7 @@ public class RLImportSelection {
         this.rlAnalysis = rlAnalysis;
         this.targetRaps = new ArrayList<>();
         this.occurrenceBasis = importSelectionDto.getOccurrenceBasis();
+        this.occurrenceBasisOverrideReason = importSelectionDto.getOccurrenceBasisOverrideReason();
     }
 
     public RLImportSelection(ImportSelectionDto importSelectionDto, String fp, RLAnalysis rlAnalysis, Integer division) {
