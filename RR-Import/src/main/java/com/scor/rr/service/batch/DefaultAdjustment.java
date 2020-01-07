@@ -75,7 +75,7 @@ public class DefaultAdjustment extends AbstractWriter {
     @Value(value = "${thread.calculation.service.oepTvAR}")
     private String oEPTvARMetricURL;
 
-    //@Value(value = "${thread.calculation.service.summary}")
+    @Value(value = "${thread.calculation.service.summary}")
     private String summaryStatURL;
 
 
@@ -116,6 +116,7 @@ public class DefaultAdjustment extends AbstractWriter {
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
                                     //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
+                                    this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                                 } else {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
@@ -136,6 +137,19 @@ public class DefaultAdjustment extends AbstractWriter {
         log.debug("Default adjustment completed");
 
         return RepeatStatus.FINISHED;
+    }
+
+    private void calculateSummaryStat(PltHeaderEntity pltHeader, RestTemplate restTemplate) {
+        HttpEntity<Long> calculateSummaryStats =
+                new HttpEntity<>(pltHeader.getPltHeaderId());
+
+        ResponseEntity<SummaryStatisticHeaderEntity> response = restTemplate
+                .exchange(summaryStatURL, HttpMethod.POST, calculateSummaryStats, SummaryStatisticHeaderEntity.class);
+
+        if(response.getStatusCode().equals(HttpStatus.OK))
+            log.info("stats calculation has ended successfully for the PLT with Id {}", pltHeader.getPltHeaderId());
+        else
+            log.info("stats calculation has failed for the PLT with Id {}", pltHeader.getPltHeaderId());
     }
 
     private void getAndWriteStatsForPlt(PltHeaderEntity pltHeader, RestTemplate restTemplate, boolean isThread, Integer threadId) {
