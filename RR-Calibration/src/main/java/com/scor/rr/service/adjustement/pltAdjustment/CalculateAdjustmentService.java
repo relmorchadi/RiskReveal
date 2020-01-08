@@ -299,49 +299,88 @@ public class CalculateAdjustmentService {
         return query;
     }
 
-
     public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+            Map<Integer, Double> losses = new HashMap<>();
+            for (PLTLossData pltLossData : pltLossDatas) {
+                losses.put(pltLossData.getSimPeriod(), Math.max(pltLossData.getLoss(), losses.getOrDefault(pltLossData.getSimPeriod(), 0.0)));
+            }
+
             int[] finalI = new int[]{0};
-            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData ->
-                    new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
-                            finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss()))
-                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod))
-                    .collect(Collectors.toList());
             return new EPMetric(StatisticMetric.OEP,
-                    pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
-                finalI[0]++;
-                return new EPMetricPoint(finalI[0] / CONSTANT, CONSTANT / finalI[0], pltLossDataVar.getLoss(), finalI[0]);
-            }).collect(Collectors.toList()));
+                    losses.values().stream().sorted(Comparator.reverseOrder()).map(loss -> {
+                        finalI[0]++;
+                        return new EPMetricPoint(finalI[0] / CONSTANT, CONSTANT / finalI[0], loss, finalI[0]);
+                    }).collect(Collectors.toList()));
         } else {
             log.info("plt empty");
             return null;
         }
     }
 
+
+//    public static EPMetric getOEPMetric(List<PLTLossData> pltLossDatas){
+//        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+//            int[] finalI = new int[]{0};
+//            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
+//            pltLossDatas = pltLossDatas.stream().map(pltLossData ->
+//                    new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
+//                            finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss()))
+//                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod))
+//                    .collect(Collectors.toList());
+//            return new EPMetric(StatisticMetric.OEP,
+//                    pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
+//                finalI[0]++;
+//                return new EPMetricPoint(finalI[0] / CONSTANT, CONSTANT / finalI[0], pltLossDataVar.getLoss(), finalI[0]);
+//            }).collect(Collectors.toList()));
+//        } else {
+//            log.info("plt empty");
+//            return null;
+//        }
+//    }
     public static EPMetric getAEPMetric(List<PLTLossData> pltLossDatas){
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
+            Map<Integer, Double> losses = new HashMap<>();
+            for (PLTLossData pltLossData : pltLossDatas) {
+                losses.put(pltLossData.getSimPeriod(), pltLossData.getLoss() + losses.getOrDefault(pltLossData.getSimPeriod(), 0.0));
+            }
             int[] finalI = new int[]{0};
-            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
-            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
-                    finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum()))
-                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
-            pltLossDatas.size();
             return new EPMetric(StatisticMetric.AEP,
-                    pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
-                    pltLossData -> {
-                        finalI[0]++;
-                            return new EPMetricPoint(finalI[0] / CONSTANT,
-                                    CONSTANT / finalI[0] ,
-                                    pltLossData.getLoss(),
-                                    finalI[0]);
-                    }).distinct().collect(Collectors.toList()));
+                    losses.values().stream().sorted(Comparator.reverseOrder()).map(loss -> {
+                                finalI[0]++;
+                                return new EPMetricPoint(finalI[0] / CONSTANT,
+                                        CONSTANT / finalI[0] ,
+                                        loss,
+                                        finalI[0]);
+                            }).distinct().collect(Collectors.toList()));
         } else {
             log.info("plt empty");
             return null;
         }
     }
+
+//    public static EPMetric getAEPMetric(List<PLTLossData> pltLossDatas){
+//        if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
+//            int[] finalI = new int[]{0};
+//            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
+//            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(),
+//                    finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod() == pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum()))
+//                    .filter(UtilsMethod.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+//            pltLossDatas.size();
+//            return new EPMetric(StatisticMetric.AEP,
+//                    pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
+//                    pltLossData -> {
+//                        finalI[0]++;
+//                            return new EPMetricPoint(finalI[0] / CONSTANT,
+//                                    CONSTANT / finalI[0] ,
+//                                    pltLossData.getLoss(),
+//                                    finalI[0]);
+//                    }).distinct().collect(Collectors.toList()));
+//        } else {
+//            log.info("plt empty");
+//            return null;
+//        }
+//    }
 
     private Double interpolation(double x, double yMax, double yMin, double xMin, double xMax){
         return yMin+((yMax-yMin)*((x-xMin)/(xMax-xMin)));
