@@ -1,6 +1,5 @@
-package com.scor.rr.service.importprocess;
+package com.scor.rr.service.fileBasedImport;
 
-import com.google.gson.Gson;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
