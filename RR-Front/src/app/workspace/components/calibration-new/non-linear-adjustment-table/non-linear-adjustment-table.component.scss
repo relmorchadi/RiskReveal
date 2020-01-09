@@ -1,0 +1,9 @@
+:host {
+  ::ng-deep .non-linear-adjustment-table {
+    ::ng-deep {
+      .ui-table-tbody > tr, .ui-table-tbody > tr:nth-child(even) {
+        background-color: #ffffff !important;
+      }
+    }
+  }
+}
