@@ -93,7 +93,7 @@
         </nz-switch>
       </div>
     </div>
-    <div *ngIf="adjustment?.adjustmentType == 'Linear'" class="ui-g">
+    <div *ngIf="adjustment?.adjustmentType == 'Linear' || adjustment?.adjustmentType == 'EEF Frequency'" class="ui-g">
       <div class="ui-g-3">
         <label> LMF </label>
       </div>
@@ -101,7 +101,7 @@
         <input [disabled]="true" [ngModel]="adjustment?.factors | getFactor: adjustment?.adjustmentType" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip style="width: 300px; !important;"/>
       </div>
     </div>
-    <div *ngIf="adjustment?.adjustmentType != 'Linear'" class="ui-g">
+    <div *ngIf="adjustment?.adjustmentType != 'Linear' && adjustment?.adjustmentType != 'EEF Frequency'" class="ui-g">
       <div class="ui-g-3">
         <label> Parameters </label>
       </div>
