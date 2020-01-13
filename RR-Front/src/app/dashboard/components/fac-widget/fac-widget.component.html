@@ -6,10 +6,10 @@
     [(nzSelectedIndex)]="tabIndex"
     class="tabs-standard-top">
     <nz-tab>
-      <div class="renewal-contract-table">
+      <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
                    [tableColumn]="cols"
-                   [listOfData]="data" [tableHeight]="'330px'"
+                   [listOfData]="data"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
@@ -19,10 +19,10 @@
       </div>
     </nz-tab>
     <nz-tab>
-      <div class="renewal-contract-table">
+      <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
                    [tableColumn]="cols"
-                   [listOfData]="filterAssign()" [tableHeight]="'330px'"
+                   [listOfData]="filterAssign()"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
@@ -37,7 +37,7 @@
   <div class="renewal-contract-table">
     <app-table [sortable]="true"
                [tableColumn]="cols"
-               [listOfData]="data" [tableHeight]="'330px'"
+               [listOfData]="data"
                [virtualScroll]="false" [filterModeFront]="false"
                (dbClickItem)="openFacItem($event)"
                (updateFavStatus)="valueFavChange($event)"

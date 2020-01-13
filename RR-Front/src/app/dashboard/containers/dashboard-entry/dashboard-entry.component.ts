@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {GridsterConfig, GridType} from 'angular-gridster2';
+import {CompactType, DisplayGrid, GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
@@ -9,6 +9,7 @@ import {BaseContainer} from "../../../shared/base";
 import {Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
+import {elementStylingMap} from "@angular/core/src/render3";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -21,6 +22,11 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   newDashboardTitle: any;
   selectedDashboard: any;
   searchMode = 'Treaty';
+
+  newFacHeight = '115px';
+  inProgressFacHeight = '115px';
+  archivedFacHeight = '115px';
+
   dashboards: any = [
     {
       id: 0,
@@ -146,17 +152,17 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'NewFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'InProgressFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'ArchivedFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
         },
        /* {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
@@ -211,17 +217,17 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       {
         id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
         componentName: 'NewFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
       },
       {
         id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
         componentName: 'InProgressFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
       },
       {
         id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
         componentName: 'ArchivedFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
       },
      /* {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
@@ -259,14 +265,40 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     });
     this.options = {
       gridType: GridType.VerticalFixed,
-      enableEmptyCellDrop: true,
-      emptyCellDropCallback: () => {
-      },
-      pushItems: true,
-      swap: true,
-      pushDirections: {north: true, east: true, south: true, west: true},
-      resizable: {enabled: true},
-      // itemChangeCallback: this.changeItemPosition.bind(this),
+      margin: 10,
+      outerMargin: true,
+      outerMarginTop: null,
+      outerMarginRight: null,
+      outerMarginBottom: null,
+      outerMarginLeft: null,
+      // useTransformPositioning: true,
+      // mobileBreakpoint: 640,
+      minCols: 1,
+      maxCols: 3,
+      minRows: 1,
+      maxRows: 15,
+      maxItemCols: 3,
+      minItemCols: 1,
+      maxItemRows: 100,
+      minItemRows: 1,
+      maxItemArea: 2500,
+      minItemArea: 1,
+      defaultItemCols: 1,
+      defaultItemRows: 1,
+      // fixedColWidth: 105,
+      fixedRowHeight: 245,
+      keepFixedHeightInMobile: true,
+      // keepFixedWidthInMobile: false,
+      scrollVertical: true,
+      disableScrollHorizontal: true,
+      scrollSensitivity: 10,
+      scrollSpeed: 20,
+      enableEmptyCellClick: false,
+      enableEmptyCellContextMenu: false,
+      enableEmptyCellDrop: false,
+      enableEmptyCellDrag: false,
+      enableOccupiedCellDrop: false,
+      ignoreMarginInRow: false,
       draggable: {
         enabled: true,
         ignoreContent: true,
@@ -274,12 +306,23 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
       },
-      displayGrid: 'always',
-      minCols: 3,
-      minRows: 10,
-      maxItemRows: 3,
-      //minItemRows:4,
-      maxCols: 3,
+      resizable: {
+        enabled: true,
+        stop: (event, element, widget) => {
+          console.log(event, element, widget);
+          this.changeWidgetHeight(event.componentName, element.$item.rows);
+        }
+      },
+      swap: true,
+      pushItems: true,
+      disablePushOnDrag: true,
+      disablePushOnResize: false,
+      pushDirections: {north: true, east: true, south: true, west: true},
+      pushResizeItems: true,
+      displayGrid: DisplayGrid.Always,
+      disableWindowResize: true,
+      disableWarnings: false,
+      scrollToNewItems: false
     };
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
@@ -300,6 +343,32 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (data === '/CreateNewFile') {
       // this.idTab = 1;
       this.dashboardChange(1);
+    }
+  }
+
+  changeWidgetScrollHeight(rows) {
+    switch (rows) {
+      case 1:
+        return '115px';
+      case 2:
+        return '330px';
+      case 3:
+        return '520px';
+    }
+  }
+
+  changeWidgetHeight(widget, rows) {
+    console.log(widget, rows);
+    switch (widget) {
+      case 'NewFacWidgetComponent':
+        this.newFacHeight = this.changeWidgetScrollHeight(rows);
+        break;
+      case 'InProgressFacWidgetComponent':
+        this.inProgressFacHeight = this.changeWidgetScrollHeight(rows);
+        break;
+      case 'ArchivedFacWidgetComponent':
+        this.archivedFacHeight = this.changeWidgetScrollHeight(rows);
+        break;
     }
   }
 
@@ -341,6 +410,10 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
       this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
     }
+  }
+
+  consoleLog(event) {
+    console.log(event);
   }
 
   deleteDashboard() {

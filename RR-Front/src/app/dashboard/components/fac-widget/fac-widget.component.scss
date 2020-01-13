@@ -70,6 +70,20 @@
       background-color: white;
     }
   }
+
+  nz-tabset.tabs-standard-top.ant-tabs.ant-tabs-top.ant-tabs-line {
+    height: calc(100% - 77px);
+  }
+
+  ::ng-deep {
+    .ant-tabs-content.ant-tabs-top-content.ant-tabs-content-animated {
+      height: 100%;
+
+      .ant-tabs-tabpane.ng-star-inserted.ant-tabs-tabpane-active {
+        height: 100%;
+      }
+    }
+  }
 }
 
 .uw-units {
@@ -144,11 +158,17 @@
 }
 
 .renewal-contract-table {
-  height: 100%;
+  height: calc(100% - 77px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   justify-content: space-between;
+
+  ::ng-deep {
+    .ui-table.ui-widget.ui-table-resizable {
+      height: calc(100% - 60px);
+    }
+  }
 
   i.icon-menu_24px {
     color: rgba(0, 0, 0, 0.38);
