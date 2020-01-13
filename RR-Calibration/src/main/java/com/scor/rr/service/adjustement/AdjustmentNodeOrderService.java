@@ -95,8 +95,8 @@ public class AdjustmentNodeOrderService {
 
         List<AdjustmentNodeOrder> orderEntities = adjustmentNodeOrderRepository.findByAdjustmentThreadAdjustmentThreadId(node.getAdjustmentThread().getAdjustmentThreadId());
         if (orderEntities == null || orderEntities.isEmpty()) {
-            if (sequence == 1) {
-                order.setAdjustmentOrder(sequence);
+            if (sequence == null || sequence == 1) {
+                order.setAdjustmentOrder(1);
             } else {
                 throw new IllegalStateException("---------- updateNodeOrder, no node before but sequence greater than 1, wrong ----------");
             }
