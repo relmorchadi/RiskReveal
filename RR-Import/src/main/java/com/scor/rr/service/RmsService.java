@@ -225,7 +225,7 @@ public class RmsService {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm)
             );
-            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         }
         return rdmAnalysisBasics.size();
