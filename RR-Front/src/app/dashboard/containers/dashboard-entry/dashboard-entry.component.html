@@ -30,10 +30,10 @@
               <i nz-icon type="close" style="visibility: hidden" (click)="closeTab(dashboard)" class="ant-tabs-close-x"></i>
             </div>
           </ng-template>
-          <div style="height:100%;width:100%">
-            <gridster  [options]="options" style="background-color: transparent" >
+          <div style="height: calc(100vh - 150px); width:100%">
+            <gridster  [options]="options" style="background-color: transparent">
               <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
-                <gridster-item *ngIf="item.selected" [item]="item?.position ">
+                <gridster-item *ngIf="item.selected" [item]="item?.position">
 <!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
@@ -43,21 +43,21 @@
                   </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item.componentName === 'NewFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="newFacCars"
+                                  [data]="newFacCars" [tableHeight]="'calc(100% - 62px)'"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item.componentName === 'InProgressFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="inProgressFacCars"
+                                  [data]="inProgressFacCars" [tableHeight]="inProgressFacHeight"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item.componentName === 'ArchivedFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="archivedFacCars"
+                                  [data]="archivedFacCars" [tableHeight]="archivedFacHeight"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">

@@ -13,6 +13,7 @@ import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogCompone
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
 import {AdjustmentPopUpNewComponent} from "./calibration-new/adjustment-pop-up-new/adjustment-pop-up-new.component";
 import {ReturnPeriodPopUpComponent} from "./calibration-new/return-period-pop-up/return-period-pop-up.component";
+import {NonLinearAdjustmentTableComponent} from "./calibration-new/non-linear-adjustment-table/non-linear-adjustment-table.component";
 
 export const COMPONENTS = [
   LeftMenuComponent,
@@ -34,7 +35,8 @@ export const COMPONENTS = [
   OverrideRegionPerilDialogComponent,
   FinancialPerspSelectionDialogComponent,
   OverridePeqtDialogComponent,
-  OverrideOccurenceBasisDialogComponent
+  OverrideOccurenceBasisDialogComponent,
+    NonLinearAdjustmentTableComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

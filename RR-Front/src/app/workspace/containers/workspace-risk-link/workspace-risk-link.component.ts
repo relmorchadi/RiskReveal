@@ -166,28 +166,28 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   ngOnInit() {
     this.loadRefsData();
 
-    this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.state$.pipe().subscribe(value => {
       this.state = _.merge({}, value);
       this.detectChanges();
     });
-    this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.listEdmRdm$.pipe().subscribe(value => {
       this.listEdmRdm = _.merge({}, value);
       this.detectChanges();
     });
-    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.ws$.pipe().subscribe(value => {
       this.ws = _.merge({}, value);
       this.wsStatus = this.ws.workspaceType;
       this.detectChanges();
     });
-    this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.analysis$.pipe().subscribe(value => {
       this.analysis = _.merge({}, value);
       this.detectChanges();
     });
-    this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.portfolios$.pipe().subscribe(value => {
       this.portfolios = _.merge({}, value);
       this.detectChanges();
     });
-    this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.selectedProject$.pipe().subscribe(value => {
       this.selectedProject = value;
       this.tabStatus = _.get(value, 'projectType', null);
       console.log('selected project change', value);
@@ -264,30 +264,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   saveDefaultSelection() {
-    const {edms, rdms}= this.state.selection;
-    const dataSources = _.map(
-        _.concat(_.values(edms), _.values(rdms)),
-        item => ({
-          dataSourceId: item.rmsId,
-          dataSourceName: item.name,
-          dataSourceType: item.type
-        })
-    );
-    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({
-      projectId: this.selectedProject.projectId,
-      instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-      userId: 1,
-      dataSources
-    }));
+    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({empty: false}));
   }
 
   clearDefaultSelection() {
-    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({
-      projectId: this.selectedProject.projectId,
-      instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-      userId: 1,
-      dataSources: []
-    }));
+    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({empty: true}));
   }
 
   patchState({wsIdentifier, data}: any): void {
