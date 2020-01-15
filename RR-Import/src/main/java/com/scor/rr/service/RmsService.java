@@ -157,33 +157,32 @@ public class RmsService {
 
         List<Long> rlImportSelectionId = new ArrayList<>();
         if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty())
-            importSelectionDtoList
-                    .forEach(importSelectionDto -> {
-                        Optional<RLAnalysis> rlAnalysisOptional = rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId());
-                        rlImportSelectionRepository.deleteByProjectId(importSelectionDto.getProjectId());
-                        if (importSelectionDto.getFinancialPerspectives() != null && !importSelectionDto.getFinancialPerspectives().isEmpty())
-                            importSelectionDto.getFinancialPerspectives().forEach(fp -> {
-                                if (rlAnalysisOptional.isPresent()) {
-                                    if (importSelectionDto.getDivisions() == null || importSelectionDto.getDivisions().isEmpty()) {
-                                        RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get());
+            rlImportSelectionRepository.deleteByProjectId(importSelectionDtoList.get(0).getProjectId());
+        importSelectionDtoList
+                .forEach(importSelectionDto -> {
+                    Optional<RLAnalysis> rlAnalysisOptional = rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId());
+                    if (importSelectionDto.getFinancialPerspectives() != null && !importSelectionDto.getFinancialPerspectives().isEmpty())
+                        importSelectionDto.getFinancialPerspectives().forEach(fp -> {
+                            if (rlAnalysisOptional.isPresent()) {
+                                if (importSelectionDto.getDivisions() == null || importSelectionDto.getDivisions().isEmpty()) {
+                                    RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get());
+                                    rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
+                                    rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
+                                    for (String code : importSelectionDto.getTargetRAPCodes()) {
+                                        RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
+                                        rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
+                                        rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
+                                    }
+                                } else {
+                                    importSelectionDto.getDivisions().forEach(division -> {
+                                        RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get(), division);
                                         rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
                                         rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
-                                        for (String code : importSelectionDto.getTargetRAPCodes()) {
-                                            RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
-                                            rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
-                                            rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
-                                        }
-                                    } else {
-                                        importSelectionDto.getDivisions().forEach(division -> {
-                                            RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get(), division);
-                                            rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
-                                            rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
-                                        });
-
-                                    }
+                                    });
                                 }
-                            });
-                    });
+                            }
+                        });
+                });
         return rlImportSelectionId;
     }
 
@@ -281,7 +280,7 @@ public class RmsService {
         return allScannedAnalysis;
     }
 
-    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysis rdmAnalysis){
+    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysis rdmAnalysis) {
         rlAnalysis.setRpCode(rdmAnalysis.getRpCode());
         rlAnalysis.setDefaultGrain(rdmAnalysis.getDefaultGrain());
         rlAnalysis.setExposureType(rdmAnalysis.getExposureType());
