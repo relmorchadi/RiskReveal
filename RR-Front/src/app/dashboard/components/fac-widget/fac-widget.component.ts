@@ -73,6 +73,9 @@ export class FacWidgetComponent implements OnInit {
 
   filters = {};
 
+  newSort = {};
+  globalSort = {};
+
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef,
               private wsApi: WsApi) {
@@ -123,6 +126,11 @@ export class FacWidgetComponent implements OnInit {
 
   valueFavChange(event) {
 
+  }
+
+  sortChange(event) {
+    console.log(event);
+    this.type === 'newCar' ? this.newSort = event : this.globalSort = event;
   }
 
   filterData($event) {
