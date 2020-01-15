@@ -195,10 +195,10 @@ public class RmsService {
         List<Long> portfolioSelectionIds = new ArrayList<>();
 
         if (portfolioImportSelectionDtoList != null && !portfolioImportSelectionDtoList.isEmpty()) {
+            rlPortfolioSelectionRepository.deleteByProjectId(portfolioImportSelectionDtoList.get(0).getProjectId());
             portfolioImportSelectionDtoList
                     .forEach(rlPortfolioSelection -> {
                         RLPortfolio rlPortfolio = rlPortfolioRepository.findById(rlPortfolioSelection.getRlPortfolioId()).orElse(null);
-                        rlPortfolioSelectionRepository.deleteByProjectId(rlPortfolioSelection.getProjectId());
                         if (rlPortfolio != null) {
                             if (rlPortfolioSelection.getDivisions() != null && !rlPortfolioSelection.getDivisions().isEmpty()) {
                                 rlPortfolioSelection.getDivisions().forEach(division -> {
@@ -225,7 +225,7 @@ public class RmsService {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm)
             );
-            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis.getRlAnalysisId(), 0);
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         }
         return rdmAnalysisBasics.size();

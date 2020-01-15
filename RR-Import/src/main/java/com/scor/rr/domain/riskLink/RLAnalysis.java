@@ -122,8 +122,7 @@ public class RLAnalysis {
     @Column(name = "Grouping")
     private String grouping;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "analysisScanStatus")
+    @OneToOne(mappedBy = "rlAnalysisId")
     @JsonBackReference
     private RLAnalysisScanStatus rlAnalysisScanStatus;
 

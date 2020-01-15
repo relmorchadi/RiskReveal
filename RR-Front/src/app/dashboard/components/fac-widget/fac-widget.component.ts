@@ -41,6 +41,8 @@ export class FacWidgetComponent implements OnInit {
   type: any;
   @Input()
   data: any;
+  @Input()
+  tableHeight: any;
   newDashboard: any;
   editName = false;
 
@@ -62,30 +64,6 @@ export class FacWidgetComponent implements OnInit {
     {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
   ];
 
-/*  carRequestId: 'CAR-5',
-  lastUpdateDate: 1577468593466,
-  lastUpdatedBy: 1,
-  requestedByFirstName: 'DEV',
-  requestedByLastName: 'DEV',
-  requestedByFullName: 'DEV DEV',
-  creationDate: 1577468593466,
-  cedantName: '1000432897',
-  uwAnalysis: 'Submission data',
-  facSource: 'Submission data',
-  businessType: '2',
-  endorsementNumber: 0,
-  sector: '701',
-  subsidiary: '10',
-  uwYear: 2020,
-  assignedAnalyst: ' ',
-  uwOrder: 1,
-  label: '10F150512',
-  facNumber: '10F150512',
-  projectId: 24,
-  contractId: '10F150512',
-  contractName: '10F150512',
-  carStatus: 'NEW',
-  lob: '01'*/
   mockData = [];
   private defaultCountry: string;
   private defaultUwUnit: string;
