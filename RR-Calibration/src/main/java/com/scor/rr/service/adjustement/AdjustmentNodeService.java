@@ -146,6 +146,7 @@ public class AdjustmentNodeService {
             if (parameter == null) {
                 throw new IllegalStateException("createAdjustmentNodeFromDefaultAdjustmentReference, can't find DefaultEventBasedAdjustmentParameter from defaultNode, wrong");
             }
+            peatData = new PEATDataRequest();
             peatData.setFileName(parameter.getInputFileName());
             peatData.setPath(parameter.getInputFilePath());
         }
