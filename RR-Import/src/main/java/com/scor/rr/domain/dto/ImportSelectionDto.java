@@ -2,13 +2,17 @@ package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.domain.riskLink.RLImportTargetRAPSelection;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImportSelectionDto {
 
     private Long projectId;
