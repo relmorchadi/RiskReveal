@@ -5,7 +5,7 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../../workspace/store/states';
 import {WsApi} from '../../../workspace/services/api/workspace.api';
 import * as _ from 'lodash';
-import {GeneralConfigState} from '../../../core/store/states';
+import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 
 @Component({
@@ -40,7 +40,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   chartOption: any = {
     legend: {
-      data: ['New', 'In Progress', 'Canceled', 'Superseded', 'Completed', 'Priced'],
+      data: ['New', 'In Progress', 'Cancelled', 'Superseded', 'Completed', 'Priced'],
       align: 'left',
       left: 10
     },
@@ -63,54 +63,13 @@ export class FacChartWidgetComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
-    series: [
-      {
-        name: 'New',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'In Progress',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Canceled',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Superseded',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Completed',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      },
-      {
-        name: 'Priced',
-        data: [],
-        type: 'bar',
-        stack: 'one',
-        itemStyle: this.itemStyle,
-      }
-    ],
+    series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
   };
 
-  @ViewChild('chart') chart;
+  myChart: any;
+
+  @ViewChild('chartA') chart;
 
   @Input()
   itemName = 'Car Widget';
@@ -130,7 +89,7 @@ export class FacChartWidgetComponent implements OnInit {
   private mockDataCache;
   tabIndex = 1;
 
-  @Select(WorkspaceState.getFacData) facData$;
+  @Select(DashboardState.getFacData) facData$;
   data: any[];
   filteredData: any[];
 
@@ -148,12 +107,15 @@ export class FacChartWidgetComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    this.facData$.subscribe(value => {
+    this.facData$.subscribe(rValue => {
+      const newD = _.get(rValue, 'new', []);
+      const inPD = _.get(rValue, 'inProgress', []);
+      const archiveD = _.get(rValue, 'archived', []);
+      const value = [...newD, ...inPD, ...archiveD];
       this.data = value;
       this.filteredData = value;
-      this.chartOption.xAxis.data = _.uniq(value.map(item => item.assignedAnalyst));
       this.analystList = [..._.uniq(value.map(item => item.assignedAnalyst)), 'ALL'];
-      this.setValues();
+      this.detectChanges();
     });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
@@ -163,6 +125,13 @@ export class FacChartWidgetComponent implements OnInit {
       this.defaultUwUnit = coi.defaultUwUnit;
       this.detectChanges();
     });
+  }
+
+  onChartInit(instance) {
+    setTimeout(() => {
+      this.myChart = instance;
+      this.setValues();
+    }, 1000);
   }
 
   selectTab(index) {
@@ -214,30 +183,80 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   setValues() {
-    _.forEach(this.chartOption.xAxis.data,
-        item => this.chartOption.series[0].data =
-          [...this.chartOption.series[0].data, _.filter(this.filteredData, fac =>
-            fac.assignedAnalyst === item && fac.carStatus === 'New').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[1].data =
-        [...this.chartOption.series[1].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'In Progress').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[2].data =
-        [...this.chartOption.series[2].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Canceled').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[3].data =
-        [...this.chartOption.series[3].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Superseded').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[4].data =
-        [...this.chartOption.series[4].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Completed').length]);
-    _.forEach(this.chartOption.xAxis.data,
-      item => this.chartOption.series[5].data =
-        [...this.chartOption.series[5].data, _.filter(this.filteredData, fac =>
-          fac.assignedAnalyst === item && fac.carStatus === 'Priced').length]);
+    const dataChart = _.uniq(this.filteredData.map(item => item.assignedAnalyst)) || [];
+    let newData = [];
+    let inProgressData = [];
+    let cancelledData = [];
+    let supersededData = [];
+    let completedData = [];
+    let pricedData = [];
+    _.forEach(dataChart,
+        item => newData = [...newData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'New').length]);
+    _.forEach(dataChart,
+        item => inProgressData = [...inProgressData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'In Progress').length]);
+    _.forEach(dataChart,
+        item => cancelledData = [...cancelledData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'Cancelled').length]);
+    _.forEach(dataChart,
+        item => supersededData = [...supersededData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'Superseded').length]);
+    _.forEach(dataChart,
+        item => completedData = [...completedData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'Completed').length]);
+    _.forEach(dataChart,
+        item => pricedData = [...pricedData, _.filter(this.filteredData, fac =>
+                fac.assignedAnalyst == item && fac.carStatus === 'Priced').length]);
+    this.myChart.setOption({
+      xAxis: {
+        data: dataChart
+      },
+      series: [
+        {
+          name: 'New',
+          data: newData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'In Progress',
+          data: inProgressData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Cancelled',
+          data: cancelledData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Superseded',
+          data: supersededData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Completed',
+          data: completedData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Priced',
+          data: pricedData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        }
+      ],
+    });
   }
 
   setFilter(col: string, $event: {}) {
