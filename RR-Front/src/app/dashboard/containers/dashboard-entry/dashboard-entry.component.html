@@ -20,6 +20,7 @@
         </div>
       </nz-tab>
     </nz-tabset> -->
+
     <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
       <ng-container *ngFor="let dashboard of dashboardsMockData">
         <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
@@ -62,7 +63,7 @@
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
-   <!--               <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
+                  <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                         (delete)="deleteItemFac(dashboard.id, $event)"
                                         (changeName)="changeNameFac(dashboard.id, $event)"
@@ -73,7 +74,7 @@
                                             (delete)="deleteItemFac(dashboard.id, $event)"
                                             (changeName)="changeNameFac(dashboard.id, $event)"
                                             (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
-                  </app-fac-subsidiary-chart>-->
+                  </app-fac-subsidiary-chart>
                 </gridster-item>
               </ng-container>
             </gridster>

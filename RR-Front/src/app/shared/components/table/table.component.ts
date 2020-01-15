@@ -249,11 +249,12 @@ export class TableComponent implements OnInit {
   }
 
   sortChange(field: any, sortCol: any) {
+    console.log('called for sort', sortCol);
     if (!sortCol) {
-      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'ASC'}));
-    } else if (sortCol === 'ASC') {
-      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'DESC'}));
-    } else if (sortCol === 'DESC') {
+      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'asc'}));
+    } else if (sortCol === 'asc') {
+      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'desc'}));
+    } else if (sortCol === 'desc') {
         this.sortDataChange.emit(_.omit(this.sortData, `${field}`));
     }
   }
