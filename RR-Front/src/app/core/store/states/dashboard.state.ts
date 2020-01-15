@@ -47,11 +47,12 @@ export class DashboardState implements NgxsOnInit {
         };
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
             mergeMap((data: any) => {
+                const fixData = _.map(data.content, item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
                     draft.data.fac = {
-                        new: _.filter(data.content, item => item.carStatus === 'NEW'),
-                        inProgress: _.filter(data.content, item => item.carStatus === 'IN PROGRESS'),
-                        archived: _.filter(data.content, item => item.carStatus !== 'NEW' && item.carStatus !== 'IN PROGRESS')
+                        new: _.filter(fixData, item => item.carStatus === 'New'),
+                        inProgress: _.filter(fixData, item => item.carStatus === 'In Progress'),
+                        archived: _.filter(fixData, item => item.carStatus !== 'New' && item.carStatus !== 'In Progress')
                     };
                 }));
                 return of(ctx.dispatch(new fromHD.LoadDashboardFacDataSuccessAction()));
@@ -73,16 +74,17 @@ export class DashboardState implements NgxsOnInit {
         };
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
             mergeMap((data: any) => {
+                const fixData = _.map(data.content, item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
                     switch(scope) {
                         case 'New':
-                            draft.data.fac.new = _.filter(data.content, item => item.carStatus === 'NEW');
+                            draft.data.fac.new = _.filter(fixData, item => item.carStatus === 'New');
                             break;
                         case 'In Progress':
-                            draft.data.fac.inProgress = _.filter(data.content, item => item.carStatus === 'IN PROGRESS');
+                            draft.data.fac.inProgress = _.filter(fixData, item => item.carStatus === 'In Progress');
                             break;
                         case 'archived':
-                            draft.data.fac.archived = _.filter(data.content, item => item.carStatus !== 'NEW' && item.carStatus !== 'IN PROGRESS');
+                            draft.data.fac.archived = _.filter(fixData, item => item.carStatus !== 'New' && item.carStatus !== 'In Progress');
                             break;
                     }
                 }));

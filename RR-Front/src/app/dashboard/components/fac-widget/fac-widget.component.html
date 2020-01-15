@@ -13,7 +13,8 @@
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
-                   [sortData]="{}"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="globalSort"
                    [totalRecords]="data?.length">
         </app-table>
       </div>
@@ -26,7 +27,8 @@
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
                    (updateFavStatus)="valueFavChange($event)"
-                   [sortData]="{}"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="globalSort"
                    [totalRecords]="data?.length">
         </app-table>
       </div>
@@ -39,9 +41,10 @@
                [tableColumn]="cols"
                [listOfData]="data"
                [virtualScroll]="false" [filterModeFront]="false"
+               (sortDataChange)="sortChange($event)"
                (dbClickItem)="openFacItem($event)"
                (updateFavStatus)="valueFavChange($event)"
-               [sortData]="{}" (filterData)="filterData($event)"
+               [sortData]="newSort" (filterData)="filterData($event)"
                [totalRecords]="data?.length">
     </app-table>
   </div>
