@@ -595,19 +595,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         break;
 
       case rightMenuStore.loadTab:
-        this.loadPLTDetailsTab(action.payload);
+        this.loadPLTDetailsTab();
         break;
       default:
         console.log('default right menu action');
     }
   }
 
-  loadPLTDetailsTab(tabIndex) {
-    switch (tabIndex) {
-      case 0:
-        this.loadSummaryTab(this.getRightMenuKey('pltHeaderId'))
-        break;
-    }
+  loadPLTDetailsTab() {
+    this.loadSummaryTab(this.getRightMenuKey('pltHeaderId'));
   }
 
   loadSummaryTab(pltHeaderId) {
@@ -916,7 +912,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   onTableContainerResize($event: ResizedEvent) {
-    console.log($event)
     this.updateTable('scrollConfig', {
       containerHeight: $event.newHeight,
       containerGap: '49px',

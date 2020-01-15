@@ -15,6 +15,7 @@ import {GetDescriptionPipe} from "./get-description.pipe";
 import {ConcatListPipe} from "./concat-list.pipe";
 import {FinancialUnitPipe} from "./financial-unit.pipe";
 import {GetDeltaPipe} from "./get-delta.pipe";
+import {FilterRPPipe} from "./filter-rp.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -32,8 +33,8 @@ export const PIPES = [
   GetFactorPipe,
   GetDescriptionPipe,
   ConcatListPipe,
-  FinancialUnitPipe,
-  GetDeltaPipe
+  GetDeltaPipe,
+  FilterRPPipe
 ];
 
 export * from './filter-by-badge.pipe';

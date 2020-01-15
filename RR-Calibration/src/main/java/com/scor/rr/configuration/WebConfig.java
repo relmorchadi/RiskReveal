@@ -1,6 +1,9 @@
 package com.scor.rr.configuration;
 
+import com.scor.rr.domain.DefaultAdjustmentsInScopeView;
+import com.scor.rr.domain.dto.DefaultAdjustmentsInScopeViewDTO;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -60,6 +63,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public ModelMapper getModelMapper(){
         ModelMapper modelMapper = new ModelMapper();
+
+        TypeMap<DefaultAdjustmentsInScopeView, DefaultAdjustmentsInScopeViewDTO> typeMap = modelMapper.getTypeMap(DefaultAdjustmentsInScopeView.class, DefaultAdjustmentsInScopeViewDTO.class);
+        if (typeMap == null) { // if not  already added
+            modelMapper.createTypeMap(DefaultAdjustmentsInScopeView.class, DefaultAdjustmentsInScopeViewDTO.class)
+                    .addMapping(src -> src.getAdjustmentNode().getAdjustmentNodeId(), DefaultAdjustmentsInScopeViewDTO::setAdjustmentNodeId);
+        }
 
         return modelMapper;
     }

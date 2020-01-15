@@ -29,7 +29,7 @@ export class PltMainTableComponent implements OnInit {
     'FL': '#0b99cc',
     'WS': '#62ec07',
     'CS': '#62ec07'
-  }
+  };
 
   @ViewChild('cm') cm: TemplateRef<any>;
 
@@ -38,7 +38,7 @@ export class PltMainTableComponent implements OnInit {
 
   selectedDropDown: any;
   selectedDropDownTs: any;
-  initContainer: [];
+  initContainer: any[];
 
   @Output() setTagModalVisibility = new EventEmitter();
 

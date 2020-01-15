@@ -22,12 +22,13 @@ export class CalibrationNewTableComponent implements OnInit {
   @Input() adjustments: any;
 
   @Input() tableConfig: {
-    view: 'adjustment' | 'analysis' | 'epMetrics',
+    view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
-    isGrouped: boolean
+    isGrouped: boolean,
+    isDeltaByAmount: boolean
   };
 
   @Input() columnsConfig: {
@@ -327,6 +328,21 @@ export class CalibrationNewTableComponent implements OnInit {
 
   stopPropagation(event) {
     event.stopPropagation();
+  }
+
+  exportEPMetrics() {
+    this.actionDispatcher.emit( {
+      type: "Export EP Metrics",
+      payload: [ ...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns ]
+    } )
+  }
+
+  onDeltaChange(newValue) {
+    console.log(this.tableConfig.isDeltaByAmount);
+    this.actionDispatcher.emit({
+      type: "Delta Change",
+      payload: newValue
+    })
   }
 
 }

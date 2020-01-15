@@ -23,6 +23,12 @@ const initialState: WorkspaceModel = {
     index: 0,
     wsIdentifier: null,
   },
+  constants: {
+    basis: [],
+    adjustmentTypes: [],
+    status: [],
+    defaultRPs: []
+  },
   facWs: {
     data: Data.facWs,
     sequence: 137
@@ -217,7 +223,7 @@ export class WorkspaceState {
 
   //Higher State Order
   static getCalibrationConstants(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].calibrationNew.constants );
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.constants );
   }
 
   static getCalibrationStatus(wsIdentifier: string) {
@@ -727,6 +733,11 @@ export class WorkspaceState {
   @Action(fromWS.SaveRPs)
   saveRPs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveRPs){
     return this.calibrationNewService.saveRPs(ctx, payload);
+  }
+
+  @Action(fromWS.SaveOrDeleteRPs)
+  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveOrDeleteRPs) {
+    return this.calibrationNewService.saveOrDeleteRPs(ctx, payload);
   }
 
   /***********************************
