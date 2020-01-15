@@ -80,6 +80,9 @@ public class AdjustmentNodeService {
     private DefaultReturnPeriodBandingAdjustmentParameterRepository defaultReturnPeriodBandingAdjustmentParameterRepository;
 
     @Autowired
+    private DefaultEventBasedAdjustmentParameterRepository defaultEventBasedAdjustmentParameterRepository;
+
+    @Autowired
     private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
@@ -121,12 +124,14 @@ public class AdjustmentNodeService {
                                                                              DefaultAdjustmentNode defaultNode) throws RRException {
         Double lmf = null; // linear, type 1
         Double rpmf = null; // EEF frequency, type 2
+        PEATDataRequest peatData = null; //todo, now default adj has not this type 3, 6
         List<DefaultReturnPeriodBandingAdjustmentParameter> defaultReturnPeriodBandings = null;
 
         // default adjustment has only 4 types, 2 tables :
         // scaling : linear, frequency
         // return period banding : EEF, OEP
         // TODO : change type id in the future
+
         if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 5) {
             DefaultScalingAdjustmentParameter defaultScalingAdjustmentParameter = defaultScalingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
             if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1) {
@@ -136,9 +141,16 @@ public class AdjustmentNodeService {
             }
         } else if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 2 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 4) {
             defaultReturnPeriodBandings = defaultReturnPeriodBandingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+        } else if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 3 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 6) {
+            DefaultEventBasedAdjustmentParameter parameter = defaultEventBasedAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+            if (parameter == null) {
+                throw new IllegalStateException("createAdjustmentNodeFromDefaultAdjustmentReference, can't find DefaultEventBasedAdjustmentParameter from defaultNode, wrong");
+            }
+            peatData.setFileName(parameter.getInputFileName());
+            peatData.setPath(parameter.getInputFilePath());
         }
 
-        PEATDataRequest peatData = null; //todo, now default adj has not this type
+        // todo type 3, 6 not treated
 //        List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings = null; //todo
 //        DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultNode.getDefaultAdjustmentNodeId());
 //        if (defaultRetPerBandingParamsEntity != null) {
