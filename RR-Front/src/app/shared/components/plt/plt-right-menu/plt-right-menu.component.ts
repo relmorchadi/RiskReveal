@@ -1,15 +1,19 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Message} from '../../../message';
 import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
 import * as _ from 'lodash';
+import {BaseContainer} from "../../../base";
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
 
 @Component({
   selector: 'app-plt-right-menu',
   templateUrl: './plt-right-menu.component.html',
   styleUrls: ['./plt-right-menu.component.scss']
 })
-export class PltRightMenuComponent implements OnInit {
+export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDestroy {
 
   @Input('Inputs') inputs: rightMenuStore.Input;
   pltDetailsItemsInput: pltDetailsPopUpItemStore.Input;
@@ -186,7 +190,37 @@ export class PltRightMenuComponent implements OnInit {
   currentFullView: any;
   activeTabIndex: number;
 
-  constructor() {
+  //Summary EPMetrics
+
+  constants: {
+    financialUnits: string[],
+    curveTypes: any[],
+    currencies: string[]
+  };
+
+  summaryEpMetricsConfig: {
+    selectedCurrency: string;
+    selectedFinancialUnit: string;
+    selectedCurveType: any[];
+  };
+
+  epMetricsTableConfig: {
+    columns: any[];
+  };
+
+  epMetrics;
+
+  epMetricsSubscriptions: any;
+
+  rps;
+
+  epMetricsLosses;
+
+  constructor(
+      _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+      private calibrationAPI: CalibrationAPI
+  ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.pltPopUpItemConfig= [
       {
         title: "PLT Thread",
@@ -246,7 +280,7 @@ export class PltRightMenuComponent implements OnInit {
         cloningSource: true,
         cols: {
           summary: [
-            {header: "Clone Source PLT", field: "ClonedSourcePlt"}, {header: "Clone Source Project", field: "ClonedSourceProject"}, {header: "Clone Source Workspace", field: "ClonedSourceWorkspace"}
+            {header: "Clone Source PLT", field: "clonedSourcePlt"}, {header: "Clone Source Project", field: "clonedSourceProject"}, {header: "Clone Source Workspace", field: "clonedSourceWorkspace"}
           ]
         }
       },
@@ -254,11 +288,11 @@ export class PltRightMenuComponent implements OnInit {
         title: "Project",
         cols: {
           summary: [
-            {header: "Project ID", field: "projectId"}, {header: "Project Name", field: "projectName"}, {header: "Project Description", field: "projectDescription"}, {header: "Project Type", field: "projectType"}, {header: "Assigned Analyst", field: "assignedTo"}, {header: "Created Date", field: "createdDate"}, {header: "Created By", field: "createdBy"}, {header: "Car ID", field: "carId"}, {header: "CAR Source System", field: "carSourceSystem"}, {header: "CAR Source System Ref", field: "carSourceSystemRef"}, {header: "CAR Raised Ref", field: "carRaisedRef"}, {header: "Master Project ID", field: "masterProjectId"}, {header: "Master Project Name", field: "masterProjectName"}, {header: "Master Project Description", field: "masterProjectDescription"}, {header: "Master Project Workspace", field: "masterProjectWorkspace"}, {header: "Master Project Client", field: "masterProjectClient"}, {header: "MGA Details", field: ""}
+            {header: "Project ID", field: "projectId"}, {header: "Project Name", field: "projectName"}, {header: "Project Description", field: "projectDescription"}, {header: "Project Type", field: "projectType"}, {header: "Assigned Analyst", field: "assignedTo"}, {header: "Created Date", field: "projectCreatedDate", type: "date"}, {header: "Created By", field: "createdBy"}, {header: "Car ID", field: "carId"}, {header: "CAR Source System", field: "carSourceSystem"}, {header: "CAR Source System Ref", field: "carSourceSystemRef"}, {header: "CAR Raised Ref", field: "carRaisedRef"}, {header: "Master Project ID", field: "masterProjectId"}, {header: "Master Project Name", field: "masterProjectName"}, {header: "Master Project Description", field: "masterProjectDescription"}, {header: "Master Project Workspace", field: "masterProjectWorkspace"}, {header: "Master Project Client", field: "masterProjectClient"}, {header: "MGA Details", field: ""}
           ],
           sections: [
             {
-              title: "Project", rows: [{label: "Project ID", field: "projectId"}, {label: "Project Name", field: "projectName"}, {label: "Project Description", field: "projectDescription"}, {label: "Project Type", field: "projectType"}, {label: "Assigned Analyst", field: "assignedTo"}, {label: "Created Date", field: "createdDate"}, {label: "Created By", field: "createdBy"}
+              title: "Project", rows: [{label: "Project ID", field: "projectId"}, {label: "Project Name", field: "projectName"}, {label: "Project Description", field: "projectDescription"}, {label: "Project Type", field: "projectType"}, {label: "Assigned Analyst", field: "assignedTo"}, {label: "Created Date", field: "projectCreatedDate", type: "date"}, {label: "Created By", field: "createdBy"}
             ],
             },
             {
@@ -274,10 +308,10 @@ export class PltRightMenuComponent implements OnInit {
         title: "Publishing Status",
         cols: {
           summary: [
-            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
+            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate", type: "date"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
           ],
           sections: [
-            { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
+            { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate", type: "date"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
             { title: "Accumulation", rows: [{label: "(A) Published to ARC", field: "arcPublication"}, {label: "Published to ARC Date", field: ""}, {label: "Published to ARC By", field: ""}]}
           ]
         }
@@ -313,7 +347,7 @@ export class PltRightMenuComponent implements OnInit {
         title: "Source Loss Table",
         cols: {
           summary: [
-            {header: "Loss Table Type", field: "lossTableType"}, {header: "Loss Table Id", field: "lossTypeId"}, {header: "Vendor System", field: "vendorSystem"}, {header: "Modelling Data Source", field: "modellingDataSource"}, {header: "Source Analaysis Id", field: "sourceAnalysisId"}, {header: "Source Analysis Name", field: "sourceAnalysisName"}, {header: "Source Analysis Description", field: "sourceAnalysisDescription"}, {header: "Source Financial Perspective", field: "sourceFinancialPerspective"}
+            {header: "Loss Table Type", field: "lossTableType"}, {header: "Loss Table Id", field: "lossTypeId"}, {header: "Vendor System", field: "vendorSystem"}, {header: "Modelling Data Source", field: "modellingDataSource"}, {header: "Source Analysis Id", field: "sourceAnalysisId"}, {header: "Source Analysis Name", field: "sourceAnalysisName"}, {header: "Source Analysis Description", field: "sourceAnalysisDescription"}, {header: "Source Financial Perspective", field: "sourceFinancialPerspective"}
           ],
           sections: [
             {
@@ -326,7 +360,7 @@ export class PltRightMenuComponent implements OnInit {
         title: "Inuring Package",
         cols: {
           summary: [
-            {header: "ID", field: "inuringPackageId"}, {header: "Name", field: "inuringPackageName"}, {header: "Description", field: "inuringPackageDescription"}, {header: "Package Status", field: "inuringPackageStatus"}, {header: "Locked Indicator", field: "inuringPackageLocked"}, {header: "Created On", field: "inuringCreatedOn"}, {header: "Last Updated", field: "inuringLastModifiedOn"}, {header: "Last Updated By", field: "inuringLastModifiedBy"},
+            {header: "ID", field: "inuringPackageId"}, {header: "Name", field: "inuringPackageName"}, {header: "Description", field: "inuringPackageDescription"}, {header: "Package Status", field: "inuringPackageStatus"}, {header: "Locked Indicator", field: "inuringPackageLocked"}, {header: "Created On", field: "inuringCreatedOn"}, {header: "Last Updated", field: "inuringLastModifiedOn", type: "date"}, {header: "Last Updated By", field: "inuringLastModifiedBy"},
           ],
           sections: [
             {
@@ -338,11 +372,40 @@ export class PltRightMenuComponent implements OnInit {
     ];
     this.fullViewActive= false;
     this.currentFullView= {};
+
+    //Summary EpMetrics
+
+    this.constants = {
+      curveTypes: [{ label: 'OEP', value: 'OEP'}, { label: 'OEP-TVAR', value: 'OEP-TVAR' }, { label: 'AEP', value: 'AEP'} , { label: 'AEP-TVAR', value: 'AEP-TVAR'} ],
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
+      currencies: ['USD', 'EUR', 'MAD']
+    };
+
+    this.summaryEpMetricsConfig = {
+      selectedCurrency: 'USD',
+      selectedCurveType: ['OEP'],
+      selectedFinancialUnit: 'Unit'
+    };
+
+    this.epMetricsTableConfig = {
+      columns: []
+    };
+
+    this.epMetricsLosses= {};
+    this.epMetrics= {};
+    this.epMetricsSubscriptions= {};
+    this.rps= [];
   }
 
   ngOnInit() {
     this.activeTabIndex =0;
     this.loadTab(this.activeTabIndex);
+  }
+
+  ngOnDestroy() {
+    _.forEach(this.epMetricsSubscriptions, sub =>{
+      sub.unsubscribe();
+    })
   }
 
   closeDrawer() {
@@ -408,10 +471,121 @@ export class PltRightMenuComponent implements OnInit {
   }
 
   loadTab(tabIndex: number) {
-    console.log(tabIndex);
-    this.actionDispatcher.emit({
-      type: rightMenuStore.loadTab,
-      payload: tabIndex
-    })
+    if(!tabIndex) {
+      this.actionDispatcher.emit({
+        type: rightMenuStore.loadTab,
+        payload: tabIndex
+      })
+    } else {
+      this.handleLazyTabs(tabIndex);
+    }
+  }
+
+  handleLazyTabs(tabIndex) {
+    switch (tabIndex) {
+      case 1:
+        this.epMetrics['OEP']= {};
+        this.handleEpMetricsTabLoading('OEP');
+        break;
+      default:
+        console.log(tabIndex);
+        break;
+    }
+  }
+
+  handleEpMetricsTabLoading(curve) {
+    this.appendColumn(curve);
+    console.log(this.epMetrics[curve]);
+    if(!_.keys(this.epMetrics[curve]).length) {
+      this.epMetrics[curve]= {};
+      this.epMetricsSubscriptions[curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''))
+          .subscribe((data: any[]) => {
+            console.log(data);
+            if(data.length) {
+
+              const metrics = _.get(data, '0');
+
+              const {
+                pltId,
+                curveType
+              } = metrics;
+
+              if(!this.rps.length) this.rps = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+
+              if(curveType && (pltId || pltId === 0)) {
+                this.epMetrics= {
+                  ...this.epMetrics,
+                  [curveType]: metrics
+                };
+              }
+
+              this.detectChanges();
+              this.epMetricsSubscriptions[curveType] && this.epMetricsSubscriptions[curveType].unsubscribe();
+            }
+            this.detectChanges();
+          });
+    }
+  }
+
+  handleEpMetrics(action: Message) {
+
+    switch (action.type) {
+      case "Show Metric":
+        this.showMetric(action.payload);
+        break;
+
+      case "Hide Metric":
+        this.hideMetric(action.payload);
+        break;
+
+      case "Select Financial Unit":
+        this.selectFinancialUnit(action.payload);
+        break;
+
+      default:
+        console.log(action);
+        break;
+    }
+
+    console.log(this.epMetricsTableConfig, this.epMetrics);
+
+  }
+
+  generateCol(header) {
+    return {field: header, header};
+  }
+
+  appendColumn(curveType) {
+    this.epMetricsTableConfig= {
+      columns: [...this.epMetricsTableConfig.columns, this.generateCol(curveType)]
+    }
+  }
+
+  showMetric({curveTypes, difference}) {
+
+    _.forEach(difference, curveType => {
+      this.handleEpMetricsTabLoading(curveType);
+    });
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: curveTypes
+    };
+  }
+
+  hideMetric({curveTypes, difference}) {
+    this.epMetricsTableConfig= {
+      columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(difference, column => column == col.header))
+    };
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: curveTypes
+    };
+  }
+
+  selectFinancialUnit(financialUnit) {
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedFinancialUnit: financialUnit
+    };
   }
 }

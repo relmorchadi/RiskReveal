@@ -9,12 +9,14 @@ export class GetDeltaPipe implements PipeTransform {
 
   constructor(public getEpMetric: GetMetricPipe) {}
 
-  transform(epMetrics: any, threadId, pureId, metric, curveType): any {
+  transform(epMetrics: any, threadId, pureId, metric, curveType, isDeltaByAmount): any {
 
-    const threadMteric = this.getEpMetric.transform(epMetrics, curveType, threadId, metric);
-    const pureMteric = this.getEpMetric.transform(epMetrics, curveType, pureId, metric);
+    const threadMetric = this.getEpMetric.transform(epMetrics, curveType, threadId, metric);
+    const pureMetric = this.getEpMetric.transform(epMetrics, curveType, pureId, metric);
 
-    return ( threadMteric - pureMteric ) / (pureMteric || 1) * 100;
+    const diff = threadMetric - pureMetric;
+
+    return !isDeltaByAmount ?  ( diff / (pureMetric || 1) * 100 ) : diff;
   }
 
 }

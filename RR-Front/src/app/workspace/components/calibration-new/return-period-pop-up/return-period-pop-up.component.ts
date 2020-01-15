@@ -14,6 +14,7 @@ export class ReturnPeriodPopUpComponent implements OnInit {
   @Input() returnPeriodConfig: {
     currentRPs: number[],
     newlyAdded: number[],
+    deletedRPs: number[],
     showSuggestion: boolean,
     returnPeriodInput: number,
     message: string
@@ -51,10 +52,16 @@ export class ReturnPeriodPopUpComponent implements OnInit {
     })
   }
 
-
   cancel() {
     this.actionDispatcher.emit({
       type: "Cancel Changes"
+    })
+  }
+
+  removeReturnPeriod(rp) {
+    this.actionDispatcher.emit({
+      type: "Delete RP",
+      payload: rp
     })
   }
 }

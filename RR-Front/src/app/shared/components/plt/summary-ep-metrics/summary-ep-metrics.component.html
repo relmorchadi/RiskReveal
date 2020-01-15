@@ -1,0 +1,119 @@
+<div class="summary-epMetrics-container">
+  <div class="dropdown-container">
+    <div class="left">
+      <div class="body-wrap-dropDowns">
+        <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+          <a nz-dropdown>
+            <div class="dropdown-wrap" [style.width]="'108px'">
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">Display Currency</span>
+                <span class="dropdown-item-selected">
+                  USD
+              </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+          </a>
+          <ul nz-menu>
+            <li nz-menu-item *ngFor="let currency of constants?.currencies">
+              {{currency}}
+            </li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <div class="body-wrap-dropDowns">
+        <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+          <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Financial Unit</span>
+              <span class="dropdown-item-selected">
+                  Unit
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item *ngFor="let financialUnit of constants?.financialUnits" (click)="selectFinancialUnit(financialUnit)">
+              {{financialUnit}}
+            </li>
+          </ul>
+        </nz-dropdown>
+      </div>
+    </div>
+    <p-multiSelect [ngModel]="summaryEpMetricsConfig?.selectedCurveType"
+                   (ngModelChange)="curveTypeSelectChange($event)"
+                   [options]="constants?.curveTypes"
+                   [style]="{width: '108px', marginRight: '16px'}"
+                   defaultLabel="EP Metrics"
+                   [filter]="false"
+                   [displaySelectedLabel]="false"
+                   ></p-multiSelect>
+  </div>
+  <div class="ep-metrics-content">
+    <div class="ep-metric-tabset">
+      <nz-tabset>
+        <nz-tab [nzTitle]="table">
+          <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+          <div class="metric-table-content">
+            <table class="table metric-table">
+              <thead>
+                <tr>
+                  <th>Return Period</th>
+                  <th *ngFor="let col of epMetricsTableConfig.columns">{{col?.header}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rp of rps">
+                  <td>{{rp}}</td>
+                  <td *ngFor="let col of epMetricsTableConfig.columns">
+                    {{epMetrics[col.field][rp] | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td><i class="icon-plus-circle"></i></td>
+                <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                </td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="metric-table-footer">
+            <div nz-row>
+              <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
+              <div nz-col nzSpan="1">&nbsp;</div>
+              <div nz-col nzSpan="5">323,849</div>
+              <div nz-col nzSpan="3">&nbsp;</div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
+              <div nz-col nzSpan="1">&nbsp;</div>
+              <div nz-col nzSpan="5">5,806,767</div>
+              <div nz-col nzSpan="3">&nbsp;</div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="5" style="text-align: right">CoV</div>
+              <div nz-col nzSpan="1">&nbsp;</div>
+              <div nz-col nzSpan="5">17.83</div>
+              <div nz-col nzSpan="3">&nbsp;</div>
+            </div>
+
+          </div>
+        </nz-tab>
+        <nz-tab [nzTitle]="chart">
+          <ng-template #chart><i class="icon-show_chart_24px"
+                                 style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+          </ng-template>
+          <div class="metric-chart-content">
+            <img src="../../../../assets/images/RRchartInVision.png">
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</div>

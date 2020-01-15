@@ -237,3 +237,17 @@ export class SaveRPs {
   constructor(public payload?: any) {
   }
 }
+
+export class DeleteRPs {
+  static readonly type = '[Calibration] Delete RPs';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class SaveOrDeleteRPs {
+  static readonly type = '[Calibration] SaveOrDeleteRPs RPs';
+
+  constructor(public payload?: any) {
+  }
+}

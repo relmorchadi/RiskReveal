@@ -428,6 +428,7 @@
   ::ng-deep {
 
     .plt-details-container {
+      z-index: 70;
       position: absolute;
       right: 0;
       height: 100%;
@@ -435,7 +436,6 @@
       padding: 7px 7px;
       background: #fff;
       box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
-      z-index: 9999;
       display: flex;
       flex-flow: column;
 
