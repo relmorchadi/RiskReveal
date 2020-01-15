@@ -47,8 +47,8 @@ public class DefaultAdjustmentRest {
                                                                                       int regionPerilId,
                                                                                       int marketChannelId,
                                                                                       String engineType,
-                                                                                      int pltEntityId) throws RRException {
-        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(targetRapId, regionPerilId, marketChannelId, engineType, pltEntityId);
+                                                                                      int entityId) throws RRException {
+        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(targetRapId, regionPerilId, marketChannelId, engineType, entityId);
     }
 
 
