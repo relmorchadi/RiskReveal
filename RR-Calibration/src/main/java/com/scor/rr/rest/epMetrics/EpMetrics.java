@@ -20,6 +20,9 @@ public class EpMetrics {
     @GetMapping("singlePLT")
     public ResponseEntity<?> getSinglePLTEpMetrics(@RequestParam Long pltHeaderId, @RequestParam CurveType curveType, @RequestParam Integer userId) { return this.epMetricsService.getSinglePLTEpMetrics(userId, pltHeaderId, curveType);}
 
+    @GetMapping("singlePLTSummaryStats")
+    public ResponseEntity<?> getSinglePLTSummaryStats(@RequestParam Long pltHeaderId, @RequestParam CurveType curveType) { return this.epMetricsService.getSinglePLTSummaryStats(pltHeaderId, curveType);}
+
     @GetMapping("single")
     public ResponseEntity<?> getSingleEpMetric(@RequestParam String workspaceContextCode, @RequestParam Integer uwYear, @RequestParam CurveType curveType, @RequestParam Integer rp) { return this.epMetricsService.getSingleEpMetric(workspaceContextCode, uwYear, curveType, rp);}
 
