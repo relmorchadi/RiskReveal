@@ -1,5 +1,6 @@
 package com.scor.rr.service.abstraction;
 
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.RLSavedDataSource;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
@@ -26,4 +27,10 @@ public interface ConfigurationService {
     void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
 
     List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId);
+
+    ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
+
+    List<RLImportedDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
+
+    List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId);
 }

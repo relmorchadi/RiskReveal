@@ -10,6 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RLAnalysisScanStatusRepository extends JpaRepository<RLAnalysisScanStatus, Long> {
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
-    @Query("update RLAnalysisScanStatus ss set ss.scanLevel=1 where ss.rlAnalysisId= :rlModelAnalysisId")
+    @Query("update RLAnalysisScanStatus ss set ss.scanLevel=1 where ss.rlAnalysis.rlAnalysisId= :rlModelAnalysisId")
     void updateScanLevelByRlModelAnalysisId(@Param("rlModelAnalysisId") Long rlModelAnalysisId);
 }

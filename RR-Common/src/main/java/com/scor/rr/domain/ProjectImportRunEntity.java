@@ -26,7 +26,6 @@ public class ProjectImportRunEntity {
     @Column(name = "RunId")
     private Integer runId;
 
-    // @TODO Aymane algin in import Module
     @Column(name = "ProjectId")
     private Long projectId;
 

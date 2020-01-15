@@ -1347,17 +1347,20 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const {rmsId, target} = payload;
-    if (target === 'RDM') {
-      ctx.patchState(produce(ctx.getState(), draft => {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      if (target === 'RDM') {
         draft.content[wsIdentifier].riskLink.selection.rdms = _.omit(draft.content[wsIdentifier].riskLink.selection.rdms, rmsId);
-      }));
-    } else {
-      ctx.patchState(
-        produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.selection.edms = _.omit(draft.content[wsIdentifier].riskLink.selection.edms, rmsId);
-        })
-      );
-    }
+      } else {
+        draft.content[wsIdentifier].riskLink.selection.edms = _.omit(draft.content[wsIdentifier].riskLink.selection.edms, rmsId);
+      }
+      const dataTable = [..._.toArray(draft.content[wsIdentifier].riskLink.selection.rdms),
+        ..._.toArray(draft.content[wsIdentifier].riskLink.selection.edms)];
+      draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = dataTable.length > 0;
+      if (state.content[wsIdentifier].riskLink.selection.currentDataSource === rmsId) {
+        draft.content[wsIdentifier].riskLink.selection.currentDataSource = null;
+        draft.content[wsIdentifier].riskLink.display.displayTable = false;
+      }
+    }));
   }
 
   // deleteLink(ctx: StateContext<WorkspaceModel>, payload) {

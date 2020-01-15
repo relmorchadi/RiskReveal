@@ -154,4 +154,32 @@ public class ConfigurationResource {
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "check-if-project-has-been-imported")
+    public ResponseEntity<?> checkIfProjectHasBeenImported(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.checkIfProjectHasBeenImportedBefore(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-imported-data-sources")
+    public ResponseEntity<?> getImportedDataSources(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @GetMapping(value = "get-imported-analysis-configuration")
+    public ResponseEntity<?> getImportedAnalysisConfiguration(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getRLModelAnalysisConfigs(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

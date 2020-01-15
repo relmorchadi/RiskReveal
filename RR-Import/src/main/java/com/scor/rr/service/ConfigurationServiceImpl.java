@@ -1,8 +1,12 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.domain.riskLink.RLImportTargetRAPSelection;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.domain.riskLink.RLSavedDataSource;
+import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
@@ -50,6 +54,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private RLSavedDataSourceRepository rlSavedDataSourceRepository;
+
+    @Autowired
+    private ProjectImportRunRepository projectImportRunRepository;
+
+    @Autowired
+    private RLImportedDataSourcesAndAnalysisRepository rlImportedDataSourcesAndAnalysisRepository;
+
+    @Autowired
+    private RLImportSelectionRepository rlImportSelectionRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -141,8 +154,73 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             });
         }
     }
+
     @Override
-    public List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId){
+    public List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
         return rlSavedDataSourceRepository.findByProjectIdAndInstanceIdAndUserId(projectId, instanceId, userId);
+    }
+
+    @Override
+    public ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId) {
+        return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+    }
+
+    @Override
+    public List<RLImportedDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
+
+        List<RLImportedDataSourcesAndAnalysis> data = rlImportedDataSourcesAndAnalysisRepository.findByProjectId(projectId);
+        List<RLImportedDataSourcesDto> importedDataSources = new ArrayList<>();
+
+        if (data != null && !data.isEmpty()) {
+            data.forEach(element -> {
+
+                RLImportedDataSourcesDto importedDataSourceDto = importedDataSources.stream()
+                        .filter(ele -> ele.getRlDataSourceId().equals(element.getRlDataSourceId())
+                                && ele.getRlDataSourceName().equals(element.getRlDataSourceName())
+                                && ele.getRlDatabaseId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
+
+                if (importedDataSourceDto == null) {
+                    importedDataSourceDto = new RLImportedDataSourcesDto(element);
+                    importedDataSources.add(importedDataSourceDto);
+                } else
+                    importedDataSourceDto.addToRlModelIdList(element.getRlModelId());
+
+            });
+        }
+        return importedDataSources;
+    }
+
+    @Override
+    public List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId) {
+        List<RLImportSelection> data = rlImportSelectionRepository.findByProjectId(projectId);
+        List<ImportSelectionDto> importedDataSources = new ArrayList<>();
+
+        if (data != null && !data.isEmpty()) {
+            data.forEach(element -> {
+                ImportSelectionDto rlImportSelection = importedDataSources.stream()
+                        .filter(ele -> ele.getRlAnalysisId().equals(element.getRlAnalysis().getRlAnalysisId())
+                                && ele.getProjectId().equals(element.getProjectId())).findFirst().orElse(null);
+
+                if (rlImportSelection == null) {
+                    rlImportSelection = new ImportSelectionDto(element);
+                    importedDataSources.add(rlImportSelection);
+                } else {
+
+                    if (element.getDivision() != null)
+                        rlImportSelection.addToDivisionList(element.getDivision());
+
+                    if (element.getTargetRaps() != null && !element.getTargetRaps().isEmpty()) {
+                        for (RLImportTargetRAPSelection targetRap : element.getTargetRaps()) {
+                            if (!rlImportSelection.getTargetRAPCodes().contains(targetRap.getTargetRAPCode()))
+                                rlImportSelection.addToTargetRapsList(targetRap.getTargetRAPCode());
+                        }
+                    }
+
+                    if (element.getFinancialPerspective() != null && !rlImportSelection.getFinancialPerspectives().contains(element.getFinancialPerspective()))
+                        rlImportSelection.addToFPList(element.getFinancialPerspective());
+                }
+            });
+        }
+        return importedDataSources;
     }
 }

@@ -15,5 +15,7 @@ public interface ProjectImportRunRepository extends JpaRepository<ProjectImportR
     List<ProjectImportRunEntity> findByProjectIdOrderedByStartDate(@Param("projectId") Long projectId);
 
     ProjectImportRunEntity findByProjectIdAndRunId(Long projectId, Integer runId);
+
+    ProjectImportRunEntity findFirstByProjectIdOrderByRunId(Long projectId);
 }
 
