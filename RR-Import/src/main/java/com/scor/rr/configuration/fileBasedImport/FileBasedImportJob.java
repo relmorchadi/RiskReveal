@@ -77,7 +77,7 @@ public class FileBasedImportJob {
     private AccLocFilesHandler accLocFilesHandler;
 
     @Autowired
-    private CarStatus carStatus;
+    private ProjectImportRunStatus carStatus;
 
     @Autowired
     @Qualifier(value = "AccReader")
@@ -197,8 +197,8 @@ public class FileBasedImportJob {
     }
 
     @Bean
-    public Tasklet carStatusTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> carStatus.changeCARStatus();
+    public Tasklet projectImportRunStatusTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> carStatus.changeProjectImportRunStatus();
     }
 
     /** Steps */
@@ -322,8 +322,8 @@ public class FileBasedImportJob {
     }
 
     @Bean
-    public Step carStatusStep() {
-        return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(carStatusTasklet()).build();
+    public Step projectImportRunStatusChangeStep() {
+        return stepBuilderFactory.get("projectImportRunStatus").tasklet(projectImportRunStatusTasklet()).build();
     }
 
     /**
