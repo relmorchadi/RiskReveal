@@ -160,14 +160,13 @@ export class CalibrationNewService {
         this.calibrationAPI.loadAllAdjustmentStates(),
         this.calibrationAPI.loadDefaultRPs()
     ).pipe(
-      tap(([basis, adjustmentTypes, status, defaultRPs]) => {
+      tap(([basis, adjustmentTypes, status]: any) => {
         ctx.patchState(produce(ctx.getState(), draft => {
 
           draft.constants = {
             basis,
             adjustmentTypes,
-            status,
-            defaultRPs
+            status
           }
         }))
       })

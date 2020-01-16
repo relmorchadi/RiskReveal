@@ -1,4 +1,15 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {Message} from '../../../message';
 import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
@@ -7,16 +18,18 @@ import {BaseContainer} from "../../../base";
 import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
+import {PltApi} from "../../../../workspace/services/api/plt.api";
+import {filter} from "rxjs/operators";
 
 @Component({
   selector: 'app-plt-right-menu',
   templateUrl: './plt-right-menu.component.html',
-  styleUrls: ['./plt-right-menu.component.scss']
+  styleUrls: ['./plt-right-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDestroy {
+export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDestroy, OnChanges  {
 
   @Input('Inputs') inputs: rightMenuStore.Input;
-  pltDetailsItemsInput: pltDetailsPopUpItemStore.Input;
 
   pltPopUpItemConfig: pltDetailsPopUpItemStore.Input[];
 
@@ -137,58 +150,19 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     }
   ];
 
-  theads = [
-    {
-      title: '', cards: [
-        {
-          chip: 'ID: 222881',
-          content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
-          borderColor: '#6e6cc0',
-          selected: false
-        },
-      ]
-    },
-    {
-      title: 'Base', cards: [
-        {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Default', cards: [
-        {chip: 'Event', content: 'Tsunami', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Analyst', cards: [
-        {chip: '1.13', content: 'ALAE', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: '', cards: [
-        {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
-      ]
-    }
-  ];
-
   dependencies = [
     {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
     {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
   ];
-
-  epMetricsCurrencySelected: any = 'EUR';
-  CalibrationImpactCurrencySelected: any = 'EUR';
-  epMetricsFinancialUnitSelected: any = 'Million';
-  CalibrationImpactFinancialUnitSelected: any = 'Million';
   fullViewActive: boolean;
   currentFullView: any;
-  activeTabIndex: number;
+
+  //Summary
+
+  selectedPLT: any;
+  pltCache: any;
 
   //Summary EPMetrics
 
@@ -216,11 +190,17 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   epMetricsLosses;
 
+  epMetricsLossesSubscriptions: any;
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-      private calibrationAPI: CalibrationAPI
+      private calibrationAPI: CalibrationAPI,
+      private pltAPI: PltApi
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    console.log("init");
+    this.selectedPLT= {};
+    this.pltCache= {};
     this.pltPopUpItemConfig= [
       {
         title: "PLT Thread",
@@ -392,51 +372,45 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     };
 
     this.epMetricsLosses= {};
+    this.epMetricsLossesSubscriptions= {};
     this.epMetrics= {};
     this.epMetricsSubscriptions= {};
-    this.rps= [];
+    this.rps= {};
   }
 
   ngOnInit() {
-    this.activeTabIndex =0;
-    this.loadTab(this.activeTabIndex);
   }
 
   ngOnDestroy() {
-    _.forEach(this.epMetricsSubscriptions, sub =>{
-      sub.unsubscribe();
-    })
+    this.destroy();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    const {
+      inputs: {
+        currentValue,
+        previousValue
+      }
+    } = changes;
+
+    if(!previousValue) {
+      this.loadSummary(currentValue.pltHeaderId);
+      this.loadTab(currentValue.selectedTab.index);
+    } else {
+      if(previousValue.pltHeaderId != currentValue.pltHeaderId) {
+        console.log(this.epMetricsTableConfig.columns);
+        this.appendColumn('OEP');
+        console.log(this.epMetricsTableConfig.columns);
+        this.loadSummary(currentValue.pltHeaderId);
+        this.loadTab(currentValue.selectedTab.index);
+      }
+    }
+
   }
 
   closeDrawer() {
     this.actionDispatcher.emit({
       type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
-    })
-  }
-
-  selectCardThead(card) {
-    this.theads.forEach(thead => {
-      thead.cards.forEach(card => {
-        card.selected = false;
-      });
-    });
-    card.selected = true;
-  }
-
-  getCardBackground(selected) {
-    if (selected) return '#FFF';
-    else return '#f4f6fc';
-  }
-
-  getBoxShadow(selected) {
-    if (selected) return '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
-    else return 'none';
-  }
-
-  unselectPlt(pltId: any) {
-    this.actionDispatcher.emit({
-      type: rightMenuStore.unselectPlt,
-      payload: pltId
     })
   }
 
@@ -463,29 +437,24 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.currentFullView= {};
   }
 
-  selectTab($event: void) {
+  selectTab(index, title) {
     this.actionDispatcher.emit({
       type: rightMenuStore.setSelectedTabByIndex,
-      payload: $event
+      payload: {index, title}
     })
   }
 
-  loadTab(tabIndex: number) {
-    if(!tabIndex) {
-      this.actionDispatcher.emit({
-        type: rightMenuStore.loadTab,
-        payload: tabIndex
-      })
-    } else {
-      this.handleLazyTabs(tabIndex);
-    }
+  loadTab(index: number) {
+    this.handleLazyTabs(index);
   }
 
   handleLazyTabs(tabIndex) {
     switch (tabIndex) {
+      case 0:
+        this.loadSummary(this.inputs.pltHeaderId);
+        break;
       case 1:
-        this.epMetrics['OEP']= {};
-        this.handleEpMetricsTabLoading('OEP');
+        this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, 'OEP');
         break;
       default:
         console.log(tabIndex);
@@ -493,16 +462,38 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     }
   }
 
-  handleEpMetricsTabLoading(curve) {
-    this.appendColumn(curve);
-    console.log(this.epMetrics[curve]);
-    if(!_.keys(this.epMetrics[curve]).length) {
-      this.epMetrics[curve]= {};
-      this.epMetricsSubscriptions[curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''))
+  loadSummary(pltHeaderId) {
+    if(!this.pltCache[pltHeaderId]) {
+      this.pltAPI.getSummary(pltHeaderId)
+          .pipe(this.unsubscribeOnDestroy)
+          .subscribe(summary => {
+            this.pltCache[summary.pltId] = summary;
+            this.selectedPLT= summary;
+            this.detectChanges();
+          })
+    } else {
+      this.selectedPLT = this.pltCache[pltHeaderId];
+    }
+  }
+
+  handleEpMetricsTabLoading(pltHeaderId,curve) {
+    this.loadEpMetrics(pltHeaderId, curve);
+    this.loadEpMetricsLosses(pltHeaderId);
+  }
+
+  loadEpMetrics(pltHeaderId, curve) {
+    if(!this.epMetrics[pltHeaderId]) this.epMetrics[pltHeaderId] = {};
+    if(!this.epMetrics[pltHeaderId] || !_.keys(this.epMetrics[pltHeaderId][curve]).length) {
+      this.epMetrics[pltHeaderId][curve]= {};
+      this.rps[pltHeaderId]= [];
+      if(!this.epMetricsSubscriptions[pltHeaderId]) this.epMetricsSubscriptions[pltHeaderId]= {};
+      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''))
+          .pipe(
+              this.unsubscribeOnDestroy,
+          )
           .subscribe((data: any[]) => {
             console.log(data);
             if(data.length) {
-
               const metrics = _.get(data, '0');
 
               const {
@@ -510,21 +501,52 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                 curveType
               } = metrics;
 
-              if(!this.rps.length) this.rps = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+              if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
 
               if(curveType && (pltId || pltId === 0)) {
-                this.epMetrics= {
+                this.epMetrics[pltId]= {
                   ...this.epMetrics,
                   [curveType]: metrics
                 };
+                this.appendColumn(curveType);
+                console.log(this.epMetricsTableConfig.columns);
+                console.log(this.epMetrics[pltId])
               }
 
-              this.detectChanges();
-              this.epMetricsSubscriptions[curveType] && this.epMetricsSubscriptions[curveType].unsubscribe();
+
+            } else {
+              if(curve && (pltHeaderId || pltHeaderId === 0)) {
+                this.epMetrics[pltHeaderId]= {
+                  ...this.epMetrics,
+                  [curve]: {}
+                };
+                this.appendColumn(curve);
+                console.log(this.epMetricsTableConfig.columns);
+                console.log(this.epMetrics[pltHeaderId])
+              }
             }
             this.detectChanges();
+            this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
           });
     }
+  }
+
+  loadEpMetricsLosses(pltHeaderId) {
+    if(!this.epMetricsLosses[pltHeaderId]) {
+      this.epMetricsLosses[pltHeaderId]= {};
+
+      this.calibrationAPI.loadSinglePLTSummaryStats(pltHeaderId)
+          .pipe(
+              this.unsubscribeOnDestroy
+          )
+          .subscribe(losses => {
+            this.epMetricsLosses[pltHeaderId]= _.get(losses, '0');
+            this.detectChanges();
+          })
+
+    }
+
+
   }
 
   handleEpMetrics(action: Message) {
@@ -557,14 +579,14 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   appendColumn(curveType) {
     this.epMetricsTableConfig= {
-      columns: [...this.epMetricsTableConfig.columns, this.generateCol(curveType)]
+      columns: _.uniqBy([...this.epMetricsTableConfig.columns, this.generateCol(curveType)], col => col.field)
     }
   }
 
   showMetric({curveTypes, difference}) {
 
     _.forEach(difference, curveType => {
-      this.handleEpMetricsTabLoading(curveType);
+      this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
     });
     this.summaryEpMetricsConfig = {
       ...this.summaryEpMetricsConfig,

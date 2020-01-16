@@ -34,6 +34,10 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}epMetrics/singlePLT`, { params: {pltHeaderId, userId, curveType}});
   }
 
+  loadSinglePLTSummaryStats(pltHeaderId) {
+    return this.http.get(`${this.URL}epMetrics/singlePLTSummaryStats`, { params: {pltHeaderId}});
+  }
+
   loadDefaultAdjustments(workspaceContextCode, uwYear) {
     return this.http.get(`${this.URL}defaultAdjustment`, { params: {workspaceContextCode, uwYear}});
   }
