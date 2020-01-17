@@ -9,6 +9,7 @@ import com.scor.rr.service.batch.reader.RLLocCursorItemReader;
 import com.scor.rr.service.batch.writer.AccLocFilesHandler;
 import com.scor.rr.service.batch.writer.ELTWriter;
 import com.scor.rr.service.batch.writer.PLTWriter;
+import com.scor.rr.service.fileBasedImport.batch.LoadLossDataFileService;
 import org.beanio.spring.BeanIOFlatFileItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -36,8 +37,12 @@ public class FileBasedImportJob {
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
+//    @Autowired
+//    private RegionPerilExtractor regionPerilExtractor;
+
     @Autowired
-    private RegionPerilExtractor regionPerilExtractor;
+    private LoadLossDataFileService loadLossDataFileService;
+
 
     @Autowired
     private ExchangeRateExtractor exchangeRateExtractor;
@@ -110,10 +115,19 @@ public class FileBasedImportJob {
     /**
      * Tasklet
      */
+//    @Bean
+//    public Tasklet extractRegionPerilTasklet() {
+//        return (StepContribution contribution, ChunkContext chunkContext) -> {
+//            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
+//            return RepeatStatus.FINISHED;
+//        };
+//    }
+
+
     @Bean
-    public Tasklet extractRegionPerilTasklet() {
+    public Tasklet loadLossDataFileTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> {
-            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
+            loadLossDataFileService.loadLossDataFile();
             return RepeatStatus.FINISHED;
         };
     }
@@ -205,12 +219,18 @@ public class FileBasedImportJob {
 
     /**
      * @return
-     * @implNote Step 1 of the main job : used to extract region perils
+     * @implNote Step 1 of the main job : loadLossDataFile
      */
+//    @Bean
+//    public Step getExtractRegionPerilStep() {
+//        return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
+//    }
+
     @Bean
-    public Step getExtractRegionPerilStep() {
-        return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
+    public Step getLoadLossDataFileStep() {
+        return stepBuilderFactory.get("loadLossDataFile").tasklet(loadLossDataFileTasklet()).build();
     }
+
 
     @Bean
     public Step getExtractEpCurveStatsStep() {
@@ -331,19 +351,14 @@ public class FileBasedImportJob {
      */
 
     @Bean(value = "fileBasedImport")
-    public Job getFileBasedImport(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
+    public Job getFileBasedImport(@Qualifier(value = "jobBuilderFileBasedImport") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder.build();
     }
 
-    @Bean(value = "fileBasedImport")
-    public Job getFileBasedImporta(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
-        return simpleJobBuilder.build();
-    }
-
-    @Bean(value = "jobBuilder")
+    @Bean(value = "jobBuilderFileBasedImport")
     public SimpleJobBuilder getJobBuilder() {
         return jobBuilderFactory.get("fileBasedImport")
-                .start(getExtractRegionPerilStep())
+                .start(getLoadLossDataFileStep())
                 .next(getExtractEpCurveStatsStep())
                 .next(getExtractExchangeRatesStep())
                 .next(geExtractELTStep())
