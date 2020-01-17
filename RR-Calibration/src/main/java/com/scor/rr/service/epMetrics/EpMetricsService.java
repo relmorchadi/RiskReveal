@@ -163,9 +163,9 @@ public class EpMetricsService {
         }
     }
 
-    public ResponseEntity<?> getSinglePLTSummaryStats(Long pltHeaderId, CurveType curveType) {
+    public ResponseEntity<?> getSinglePLTSummaryStats(Long pltHeaderId) {
         try {
-            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltHeaderId, curveType.getCurveType()));
+            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltHeaderId, "PLT"));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }

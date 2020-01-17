@@ -253,7 +253,7 @@ export class PltStateService {
     } = ctx.getState().content[wsIdentifier].pltManager;
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.openedPlt = data[pltId];
+      draft.content[wsIdentifier].pltManager.openedPlt = {...data[pltId]};
     }));
   }
 

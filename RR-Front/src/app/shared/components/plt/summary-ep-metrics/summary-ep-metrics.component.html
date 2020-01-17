@@ -6,7 +6,7 @@
           <a nz-dropdown>
             <div class="dropdown-wrap" [style.width]="'108px'">
               <div class="dropdown-wrap-title">
-                <span class="dropdown-title">Display Currency</span>
+                <span class="dropdown-title">Currency</span>
                 <span class="dropdown-item-selected">
                   USD
               </span>
@@ -76,8 +76,23 @@
               </tbody>
               <tfoot>
               <tr>
-                <td><i class="icon-plus-circle"></i></td>
-                <td style="width: 20% !important;"><input style="width: 100% !important;" type="text">
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1" style="padding-top: 10px;">
+                  <i (click)="addToReturnPeriod()" style="font-size: 14px; margin-right: 1px; margin-top: 3px" [ngStyle]="{'cursor' : 'pointer'}" class="icon-plus-circle"></i>
+                  <input type="number" class="a-textfield-mini" style="width: 95%" [ngModel]="returnPeriodConfig?.returnPeriodInput" (ngModelChange)="inputChange($event)" name="new-field">
+                </td>
+              </tr>
+              <tr *ngIf="returnPeriodConfig?.showSuggestion">
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1">
+                  <span style="color: red;margin-left: 16px;">
+                    {{rpValidation?.lowerBound}} - {{rpValidation?.upperBound}} are the nearest valid return periods
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="returnPeriodConfig?.message">
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1">
+                  <span style="color: red;margin-left: 16px;">
+                    {{returnPeriodConfig?.message}}
+                  </span>
                 </td>
               </tr>
               </tfoot>
@@ -87,19 +102,19 @@
             <div nz-row>
               <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
               <div nz-col nzSpan="1">&nbsp;</div>
-              <div nz-col nzSpan="5">323,849</div>
+              <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium}}</div>
               <div nz-col nzSpan="3">&nbsp;</div>
             </div>
             <div nz-row>
               <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
               <div nz-col nzSpan="1">&nbsp;</div>
-              <div nz-col nzSpan="5">5,806,767</div>
+              <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation}}</div>
               <div nz-col nzSpan="3">&nbsp;</div>
             </div>
             <div nz-row>
               <div nz-col nzSpan="5" style="text-align: right">CoV</div>
               <div nz-col nzSpan="1">&nbsp;</div>
-              <div nz-col nzSpan="5">17.83</div>
+              <div nz-col nzSpan="5">{{epMetricsLosses?.cov}}</div>
               <div nz-col nzSpan="3">&nbsp;</div>
             </div>
 
