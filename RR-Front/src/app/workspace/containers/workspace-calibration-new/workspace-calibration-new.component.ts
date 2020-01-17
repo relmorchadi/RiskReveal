@@ -105,7 +105,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: false,
       isDeltaByAmount: false,
       expandedRowKeys: {},
-        selectedFinancialUnit: "Unit"
+      selectedFinancialUnit: "Unit",
+      filterData: {}
     };
 
     this.columnsConfig = {
