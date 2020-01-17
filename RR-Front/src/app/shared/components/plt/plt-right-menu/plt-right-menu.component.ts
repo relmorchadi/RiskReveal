@@ -19,7 +19,8 @@ import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
 import {PltApi} from "../../../../workspace/services/api/plt.api";
-import {filter} from "rxjs/operators";
+import {filter, mergeMap, tap} from "rxjs/operators";
+import {empty, EMPTY, forkJoin, of} from "rxjs";
 
 @Component({
   selector: 'app-plt-right-menu',
@@ -191,6 +192,18 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   epMetricsLosses;
 
   epMetricsLossesSubscriptions: any;
+
+  returnPeriodConfig: {
+    showSuggestion: boolean,
+    returnPeriodInput: number,
+    message: string
+  };
+
+  rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
 
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
@@ -376,6 +389,18 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.epMetrics= {};
     this.epMetricsSubscriptions= {};
     this.rps= {};
+
+    this.returnPeriodConfig= {
+      showSuggestion: false,
+      returnPeriodInput: null,
+      message: null
+    };
+
+    this.rpValidation = {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
   }
 
   ngOnInit() {
@@ -394,18 +419,19 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     } = changes;
 
     if(!previousValue) {
-      this.loadSummary(currentValue.pltHeaderId);
-      this.loadTab(currentValue.selectedTab.index);
+      this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
     } else {
       if(previousValue.pltHeaderId != currentValue.pltHeaderId) {
-        console.log(this.epMetricsTableConfig.columns);
-        this.appendColumn('OEP');
-        console.log(this.epMetricsTableConfig.columns);
-        this.loadSummary(currentValue.pltHeaderId);
-        this.loadTab(currentValue.selectedTab.index);
+        this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
       }
     }
 
+  }
+
+  loadOnChange(pltHeaderId, index) {
+    this.appendColumn('OEP');
+    this.loadSummary(pltHeaderId);
+    this.loadTab(index);
   }
 
   closeDrawer() {
@@ -485,7 +511,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     if(!this.epMetrics[pltHeaderId]) this.epMetrics[pltHeaderId] = {};
     if(!this.epMetrics[pltHeaderId] || !_.keys(this.epMetrics[pltHeaderId][curve]).length) {
       this.epMetrics[pltHeaderId][curve]= {};
-      this.rps[pltHeaderId]= [];
+      this.rps[pltHeaderId]= this.rps[pltHeaderId] || [];
       if(!this.epMetricsSubscriptions[pltHeaderId]) this.epMetricsSubscriptions[pltHeaderId]= {};
       this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''))
           .pipe(
@@ -505,28 +531,16 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
               if(curveType && (pltId || pltId === 0)) {
                 this.epMetrics[pltId]= {
-                  ...this.epMetrics,
+                  ...this.epMetrics[pltId],
                   [curveType]: metrics
                 };
                 this.appendColumn(curveType);
-                console.log(this.epMetricsTableConfig.columns);
-                console.log(this.epMetrics[pltId])
               }
 
+              this.detectChanges();
+              this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
 
-            } else {
-              if(curve && (pltHeaderId || pltHeaderId === 0)) {
-                this.epMetrics[pltHeaderId]= {
-                  ...this.epMetrics,
-                  [curve]: {}
-                };
-                this.appendColumn(curve);
-                console.log(this.epMetricsTableConfig.columns);
-                console.log(this.epMetrics[pltHeaderId])
-              }
             }
-            this.detectChanges();
-            this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
           });
     }
   }
@@ -550,6 +564,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   handleEpMetrics(action: Message) {
+    console.log(action);
 
     switch (action.type) {
       case "Show Metric":
@@ -564,12 +579,99 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         this.selectFinancialUnit(action.payload);
         break;
 
+      case "Return period input change":
+        this.rpInputChange(action.payload);
+        break;
+
+      case "ADD Return period":
+        this.addRP(action.payload);
+        break;
+
       default:
         console.log(action);
         break;
     }
 
     console.log(this.epMetricsTableConfig, this.epMetrics);
+
+  }
+
+  rpInputChange(rp) {
+    this.returnPeriodConfig= {
+        ...this.returnPeriodConfig,
+      returnPeriodInput: rp
+    }
+  }
+
+  addRP(rp) {
+    if(!_.find(this.rps[this.inputs.pltHeaderId], e => e == rp)) {
+      this.calibrationAPI.validateRP(rp)
+          .pipe(
+              tap((validation: any) => {
+                this.rpValidation = validation;
+                if(validation.isValid) {
+                  this.returnPeriodConfig = {
+                    ...this.returnPeriodConfig,
+                    showSuggestion: false,
+                    returnPeriodInput: null,
+                    message: null
+                  };
+                } else {
+                  this.returnPeriodConfig = {
+                    ...this.returnPeriodConfig,
+                    showSuggestion: true,
+                    message: null
+                  };
+                }
+                this.detectChanges();
+              }),
+              filter((validation: any) => validation.isValid),
+              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp], 1)
+                  .pipe(
+                      mergeMap(() => forkJoin(
+                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-','')))
+                      ))
+                  )),
+              this.unsubscribeOnDestroy
+          ).subscribe((res) => {
+            this.epMetrics[this.inputs.pltHeaderId]= {};
+            this.rps[this.inputs.pltHeaderId]= _.sortBy([...this.rps[this.inputs.pltHeaderId], rp], v => _.toNumber(v));
+            _.forEach(res, data => {
+              if(data.length) {
+                const metrics = _.get(data, '0');
+
+                const {
+                  pltId,
+                  curveType
+                } = metrics;
+
+                if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+
+                if(curveType && (pltId || pltId === 0)) {
+                  this.epMetrics[pltId]= {
+                    ...this.epMetrics[pltId],
+                    [curveType]: metrics
+                  };
+                  this.appendColumn(curveType);
+                }
+              }
+            });
+            this.detectChanges();
+      })
+    } else {
+      this.returnPeriodConfig = {
+        ...this.returnPeriodConfig,
+        showSuggestion: false,
+        returnPeriodInput: null,
+        message: "Already Exists"
+      }
+    }
+  }
+
+  handleEPMetricsReload(rp, pltHeaderId) {
+    this.epMetrics[pltHeaderId] = {};
+    this.rps[pltHeaderId]= _.sortBy([...this.rps[pltHeaderId], rp], v => v);
+
 
   }
 

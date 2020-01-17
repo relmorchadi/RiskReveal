@@ -37,7 +37,7 @@ export class ReturnPeriodPopUpComponent implements OnInit {
       type: "Return period popup input change",
       payload: newValue
     })
-  }, 150)
+  }, 150);
 
   addToReturnPeriod() {
     this.actionDispatcher.emit({

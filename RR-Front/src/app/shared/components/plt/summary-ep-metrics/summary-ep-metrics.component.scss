@@ -37,7 +37,8 @@
   ::ng-deep {
     p-table {
       display: block;
-      height: calc(100% - 100px);
+      height: calc(100% - 80px);
+      margin-bottom: 1.7em;
 
       .ui-table {
         height: 100%;
