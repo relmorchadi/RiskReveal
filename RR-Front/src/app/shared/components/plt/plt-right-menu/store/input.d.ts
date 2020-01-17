@@ -6,6 +6,8 @@ export interface Input {
     index: number,
     title: string,
   };
-  tabs: any[];
+  tabs?: { [key: string] : any };
+  pltDetail?: any;
   basket: any[];
+  summary?: any;
 }

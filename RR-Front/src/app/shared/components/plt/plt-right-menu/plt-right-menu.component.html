@@ -22,9 +22,7 @@
           </div>
         </div>
       </div>
-      <nz-tabset
-        [nzSelectedIndex]="inputs.selectedTab.index"
-      >
+      <nz-tabset [nzSelectedIndex]="inputs.selectedTab.index" style="height: calc(100% - 20px)">
          <nz-tab *ngFor="let tab of inputs.tabs;let i= index;" [nzTitle]="tab?.title" (nzSelect)="loadTab(i);selectTab(i, tab?.title)">
            <ng-template nz-tab>
              <ng-container *ngIf="tab?.title == 'Summary'">
