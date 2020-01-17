@@ -18,7 +18,6 @@ import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 import {FinancialUnitPipe} from "../../workspace/pipes/financial-unit.pipe";
 
-
 export const PIPES = [
   CalibratePipe,
   PickKeysPipe,

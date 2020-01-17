@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import {Message} from "../../../../shared/message";
 import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
@@ -12,7 +21,7 @@ declare  const _;
   styleUrls: ['./calibration-new-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalibrationNewTableComponent implements OnInit {
+export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
@@ -28,6 +37,7 @@ export class CalibrationNewTableComponent implements OnInit {
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
+    filterData: any
     isDeltaByAmount: boolean
   };
 
@@ -85,6 +95,9 @@ export class CalibrationNewTableComponent implements OnInit {
     {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
   ]
   private selectedFinancialUnit: any = 'Unit';
+  private isExpanded: boolean = false;
+
+  contextMenuItem : any[];
 
 
 
@@ -92,6 +105,15 @@ export class CalibrationNewTableComponent implements OnInit {
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
+    this.contextMenuItem = [
+      {label: 'Expand', command: (event)=>{this.expandCollapseAllPlts()}},
+      {label: 'Collapse', command: (event)=>{this.expandCollapseAllPlts()}},
+    ]
+  }
+  ngAfterViewInit() {
+  }
+  ngAfterViewChecked(): void {
+
   }
 
   statusFlilerCheckbox(event: any, type: string) {
@@ -330,6 +352,38 @@ export class CalibrationNewTableComponent implements OnInit {
     event.stopPropagation();
   }
 
+    onShowAddRemovePopUp() {
+        this.actionDispatcher.emit({
+          type: "Open Add Remove Pop Up",
+        })
+    }
+
+
+  expandCollapseAllPlts() {
+    this.actionDispatcher.emit({
+      type: "Expand Collapse Plts"
+    })
+  }
+
+  onResizePltPanelEnd(event) {
+    this.actionDispatcher.emit({
+      type: "Expand Collapse Plt Panel",
+      payload: {
+        event
+      }
+    })
+    /*let arr = this.columnsConfig.frozenWidth.split('p');
+    this.columnsConfig.frozenWidth = (Number(arr[0])  + event.edges.right) + 'px';*/
+    }
+
+  filter(field: any, value: string) {
+    if (value){
+      this.actionDispatcher.emit({
+        type: "Filter Plt Table",
+        payload: _.merge({}, this.tableConfig.filterData, {[field]: value})
+      })
+    }
+  }
   exportEPMetrics() {
     this.actionDispatcher.emit( {
       type: "Export EP Metrics",
