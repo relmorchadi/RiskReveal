@@ -189,6 +189,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
+      isTagsTab: false
     };
     this.tagsInputs= {
       _tagModalVisible: false,

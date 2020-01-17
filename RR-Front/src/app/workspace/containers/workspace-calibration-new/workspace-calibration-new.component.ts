@@ -39,7 +39,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
-    isGrouped: boolean
+    isGrouped: boolean,
+    filterData: any
   };
   constants: {
     financialUnits: string[],
@@ -71,9 +72,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     upperBound: number,
     lowerBound: number
   };
+  /******** add remove pop up **********/
+  isAddRemovePopUpVisible: boolean;
+  addRemovePopUpConfig: {
+    tableColumns: any[]
+  }
 
   //Sub
   validationSub: Subscription;
+  private isExpanded: boolean = false;
 
 
   constructor(
@@ -93,11 +100,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       selectedFinancialUnit: "Unit",
       isExpanded: false,
       expandedRowKeys: {},
-      isGrouped: true
+      isGrouped: true,
+      filterData: {}
     };
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '530px'
+      frozenWidth: '275px'
     };
 
     this.constants = {
@@ -121,6 +129,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       upperBound: null
     };
     this.selectedStatusFilter= {};
+
+    this.isAddRemovePopUpVisible = false;
+    this.addRemovePopUpConfig = {
+      ...this.addRemovePopUpConfig,
+      tableColumns: this.calibrationTableService.getAddRemovePopUpTableColumns()
+    }
   }
 
   ngOnInit() {
@@ -255,6 +269,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.data = plts;
     this.adjustments = adjustments;
     this.loading = loading;
+    if (this.data.length && !this.isExpanded){
+      this.expandCollapseAllPlts();
+    }
   }
 
   initEpMetricsCols({cols, rps}) {
@@ -347,6 +364,18 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       case "Financial Unit Change":
               this.financialUnitChange(action.payload);
               break;
+      case "Open Add Remove Pop Up":
+        this.openAddRemovePopUp();
+        break;
+      case "Expand Collapse Plts":
+        this.expandCollapseAllPlts();
+        break;
+      case "Expand Collapse Plt Panel":
+        this.adaptPltPanelWidth(action.payload);
+        break;
+      case "Filter Plt Table":
+        this.updateFilterData(action.payload);
+        break;
 
       default:
         console.log(action);
@@ -405,7 +434,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const a = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '530px',
+      frozenWidth: '275px',
       ...a
     };
     console.log(a, this.tableConfig, this.columnsConfig);
@@ -529,5 +558,46 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       selectedFinancialUnit: financialUnit
     }
+  }
+
+  private openAddRemovePopUp() {
+    this.isAddRemovePopUpVisible = true;
+  }
+
+  handleAddRemovePopUp(event: any) {
+    let type = event.type;
+    switch (type) {
+      case 'Hide Add Remove Pop Up':
+        this.isAddRemovePopUpVisible = false;
+        break;
+
+    }
+
+  }
+
+  expandCollapseAllPlts() {
+    if (!this.isExpanded && this.tableConfig.expandedRowKeys != {}){
+      _.forEach(this.data, (pure)=>{
+        this.tableConfig.expandedRowKeys[pure.pltId] = true;
+      })
+    } else {
+      this.tableConfig.expandedRowKeys = {};
+    }
+    console.log('expand all',this.tableConfig.expandedRowKeys)
+    this.isExpanded = !this.isExpanded;
+  }
+
+  adaptPltPanelWidth(payload){
+  let arr = this.columnsConfig.frozenWidth.split('p');
+  let newWidth = Number(arr[0])  + payload.event.edges.right;
+  this.columnsConfig = {
+    ...this.columnsConfig,
+    frozenWidth: newWidth+'px',
+    frozenColumns: this.calibrationTableService.getFrozenColumns(newWidth)
+  }
+  }
+
+  private updateFilterData(payload: any) {
+    this.tableConfig.filterData = payload;
   }
 }

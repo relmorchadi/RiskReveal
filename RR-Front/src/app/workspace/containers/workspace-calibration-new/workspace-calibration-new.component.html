@@ -37,3 +37,11 @@
   [rpValidation]="rpValidation"
   (actionDispatcher)="handleReturnPeriodPopUp($event)"
 ></app-return-period-pop-up>
+
+<app-add-remove-pop-up-new
+        *ngIf="isAddRemovePopUpVisible"
+        [addRemovePopUpConfig]="addRemovePopUpConfig"
+        [data]="data"
+        (actionDispatcher)="handleAddRemovePopUp($event)"
+>
+</app-add-remove-pop-up-new>

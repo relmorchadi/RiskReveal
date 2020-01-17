@@ -17,7 +17,6 @@ import {FalselyFilterPipe} from "./falsely-filter.pipe";
 import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 
-
 export const PIPES = [
   CalibratePipe,
   PickKeysPipe,

@@ -3,6 +3,7 @@
   [value]="data"
   [expandedRowKeys]="tableConfig?.expandedRowKeys"
   [columns]="columnsConfig?.columns"
+  [contextMenu]="contmenu"
   [frozenColumns]="columnsConfig?.frozenColumns"
   [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
@@ -39,6 +40,11 @@
     <tr>
       <ng-container *ngFor="let col of columns; let last=last" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width, isLastColumn: last}"></ng-container>
     </tr>
+    <tr >
+      <th *ngFor="let col of columns">
+        <app-input [visible]="col.filter" (onInput)="filter(col?.field, $event)"></app-input>
+      </th>
+    </tr>
   </ng-template>
 
   <!--
@@ -57,8 +63,8 @@
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr>
       <td *ngFor="let col of columns; let i =index; let last=last"
-          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align, 'padding-right': last ? '9px':'0px'}"
-          style="background-color: #ecf1f7 !important;">
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}"
+          style="background-color: #ecf1f7 !important; padding-right: 9px">
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <a href="#" [pRowToggler]="rowData" class="left-margin-checkbox-column">
@@ -95,7 +101,7 @@
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index; let last=last"
-          [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align,  'padding-right': last ? '9px':'0px'}">
+          [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}" style="padding-right: 9px">
         <ng-container *ngIf="col?.type == 'arrow'" >
           <label nz-checkbox [(ngModel)]="thread.selected"
                  (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"
@@ -136,7 +142,7 @@
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
       <td *ngFor="let col of columns; let i=index; let last=last"
-          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align,  'padding-right': last ? '9px':'0px'}" >
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="padding-right: 9px">
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
@@ -215,13 +221,17 @@
 
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-isLastColumn="isLastColumn">
-    <ng-container *ngIf="isResizable">
-      <th [id]="col?.field" [style.width]="width + 'px'" pResizableColumn>
+    <ng-container>
+      <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
         </ng-container>
         <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="checkAll" class="left-margin-checkbox-column"></label>
+          <label nz-checkbox [(ngModel)]="selectOptions.checkAll"
+                 [nzIndeterminate]="selectOptions.indeterminate"
+                 (change)="dispatchTableActions({type: 'check_all'})"
+                 class="left-margin-checkbox-column">
+          </label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
           <div class="text-ellipsis">
@@ -230,32 +240,15 @@
         </ng-container>
       </th>
     </ng-container>
-    <ng-container *ngIf="!isResizable" [ngTemplateOutlet]="nonResizableTemplate" [ngTemplateOutletContext]="{ $implicit: col, width: width, isLastColumn: isLastColumn }" ></ng-container>
-  </ng-template>
-
-  <ng-template #nonResizableTemplate let-col let-width="width" let-isLastColumn="isLastColumn">
-    <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align, 'padding-right': isLastColumn?'9px':'0px'}" >
-      <ng-container *ngIf="col?.type == 'status'">
-        <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
-      </ng-container>
-      <ng-container *ngIf="col?.type == 'arrow'">
-        <label nz-checkbox [(ngModel)]="selectOptions.checkAll"
-               [nzIndeterminate]="selectOptions.indeterminate"
-               (change)="dispatchTableActions({type: 'check_all'})"
-               class="left-margin-checkbox-column">
-        </label>
-      </ng-container>
-      <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
-        <div class="text-ellipsis">
-          {{col?.header}}
-        </div>
-      </ng-container>
-    </th>
   </ng-template>
 
   <!--HEADER-->
   <ng-template #leftHeader>
-    <div class="flex-vertical-layout spread-layout">
+    <div mwlResizable
+         [enableGhostResize]="false"
+         [resizeEdges]="{bottom: false, right: true, top: false, left: false}"
+         (resizeEnd)="onResizePltPanelEnd($event)"
+         class="flex-vertical-layout spread-layout">
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
         <span class="title">PLTs</span>
         <div class="icon-wrapper">
@@ -266,8 +259,12 @@
         </div>
       </div>
       <div class="flex-horizontal-sb-layout group-icons">
-        <div></div>
         <div>
+          <!--<span (click)="onShowAddRemovePopUp()" class="addRemove">Add/Remove</span>-->
+        </div>
+        <div>
+          <i (click)="expandCollapseAllPlts()"
+             class="icon-expand_more_24px regenerate-all" nz-tooltip="Expand/Collapse All"></i>
           <i (click)="toggleGrouping()" *ngIf="!tableConfig?.isGrouped"
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
@@ -400,3 +397,5 @@
   </ng-template>
 
 </p-table>
+
+<p-contextMenu #contmenu [model]="contextMenuItem" appendTo="body"></p-contextMenu>
