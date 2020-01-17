@@ -31,13 +31,14 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   @Input() adjustments: any;
 
   @Input() tableConfig: {
-    view: 'adjustment' | 'analysis' | 'epMetrics',
+    view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
     filterData: any
+    isDeltaByAmount: boolean
   };
 
   @Input() columnsConfig: {
@@ -101,9 +102,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
 
 
-  constructor(private _baseStore: Store, private route$: ActivatedRoute,) {
-
-  }
+  constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
     this.contextMenuItem = [
@@ -385,4 +384,19 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
       })
     }
   }
+  exportEPMetrics() {
+    this.actionDispatcher.emit( {
+      type: "Export EP Metrics",
+      payload: [ ...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns ]
+    } )
+  }
+
+  onDeltaChange(newValue) {
+    console.log(this.tableConfig.isDeltaByAmount);
+    this.actionDispatcher.emit({
+      type: "Delta Change",
+      payload: newValue
+    })
+  }
+
 }

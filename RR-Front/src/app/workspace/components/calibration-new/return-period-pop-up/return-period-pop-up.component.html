@@ -15,12 +15,12 @@
   </p-header>
   <div class="content" style="display: unset;">
 
-    <p-table [value]="returnPeriodConfig?.currentRPs | concatList : returnPeriodConfig?.newlyAdded" [scrollable]="true" scrollHeight="365px">
+    <p-table [value]="returnPeriodConfig?.currentRPs | concatList : returnPeriodConfig?.newlyAdded | filterRP : returnPeriodConfig?.deletedRPs" [scrollable]="true" scrollHeight="365px">
       <ng-template pTemplate="header">
       </ng-template>
       <ng-template pTemplate="body" let-rowData>
         <tr>
-          <td style="background-color: #ffffff" class="on-hover-pop-up">
+          <td style="background-color: #ffffff" class="on-hover">
             <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
                style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
             <span class="pull-right">

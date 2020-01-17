@@ -116,12 +116,11 @@ public class DefaultAdjustment extends AbstractWriter {
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
                                     //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
-                                    this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                                 } else {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
-
+                            this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                             //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
@@ -140,13 +139,19 @@ public class DefaultAdjustment extends AbstractWriter {
     }
 
     private void calculateSummaryStat(PltHeaderEntity pltHeader, RestTemplate restTemplate) {
-        HttpEntity<Long> calculateSummaryStats =
-                new HttpEntity<>(pltHeader.getPltHeaderId());
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+        HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(summaryStatURL)
+                .queryParam("pltId", pltHeader.getPltHeaderId());
 
         ResponseEntity<SummaryStatisticHeaderEntity> response = restTemplate
-                .exchange(summaryStatURL, HttpMethod.POST, calculateSummaryStats, SummaryStatisticHeaderEntity.class);
+                .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, SummaryStatisticHeaderEntity.class);
 
-        if(response.getStatusCode().equals(HttpStatus.OK))
+        if (response.getStatusCode().equals(HttpStatus.OK))
             log.info("stats calculation has ended successfully for the PLT with Id {}", pltHeader.getPltHeaderId());
         else
             log.info("stats calculation has failed for the PLT with Id {}", pltHeader.getPltHeaderId());

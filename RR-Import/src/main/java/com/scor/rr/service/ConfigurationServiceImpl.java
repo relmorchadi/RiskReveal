@@ -2,6 +2,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
+import com.scor.rr.domain.riskLink.RLSavedDataSource;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -45,6 +47,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private ProjectConfigurationForeWriterDivisionRepository projectConfigurationForeWriterDivisionRepository;
+
+    @Autowired
+    private RLSavedDataSourceRepository rlSavedDataSourceRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -101,11 +106,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             carDivisionDto.setCarStatus((String) division.get("carStatus"));
             carDivisionDto.setContractId((String) division.get("contractId"));
             carDivisionDto.setCurrency((String) division.get("currency"));
-            carDivisionDto.setDivisionNumber(Integer.valueOf((String)division.get("divisionNumber")));
+            carDivisionDto.setDivisionNumber(Integer.valueOf((String) division.get("divisionNumber")));
             carDivisionDto.setIsPrincipalDivision(Boolean.parseBoolean(String.valueOf(division.get("IsPrincipalDivision"))));
-            carDivisionDto.setProjectId(((BigInteger)division.get("projectId")).longValue());
+            carDivisionDto.setProjectId(((BigInteger) division.get("projectId")).longValue());
             carDivisionDto.setUwYear((Integer) division.get("uwYear"));
-            carDivisionDto.setWorkspaceId(((BigInteger)division.get("workspaceId")).longValue());
+            carDivisionDto.setWorkspaceId(((BigInteger) division.get("workspaceId")).longValue());
             carDivisions.add(carDivisionDto);
         }
 
@@ -117,5 +122,27 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         Map<Long, List<RegionPerilDto>> result = new HashMap<>();
         rlAnalysisIds.forEach(id -> result.put(id, this.getRegionPeril(id)));
         return result;
+    }
+
+    @Override
+    @Transactional(transactionManager = "rrTransactionManager")
+    public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
+        rlSavedDataSourceRepository.deleteByProjectIdAndUserIdAndInstanceId(dataSourcesDto.getProjectId(), dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+
+        if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
+            dataSourcesDto.getDataSources().forEach(dataSource -> {
+                RLSavedDataSource rlSavedDataSource = modelMapper.map(dataSource, RLSavedDataSource.class);
+
+                rlSavedDataSource.setInstanceId(dataSourcesDto.getInstanceId());
+                rlSavedDataSource.setProjectId(dataSourcesDto.getProjectId());
+                rlSavedDataSource.setUserId(dataSourcesDto.getUserId());
+
+                rlSavedDataSourceRepository.save(rlSavedDataSource);
+            });
+        }
+    }
+    @Override
+    public List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId){
+        return rlSavedDataSourceRepository.findByProjectIdAndInstanceIdAndUserId(projectId, instanceId, userId);
     }
 }

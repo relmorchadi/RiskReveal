@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import {catchError, count, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from './api/risk.api';
-import {forkJoin} from 'rxjs';
+import {empty, forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
@@ -1192,23 +1192,30 @@ export class RiskLinkStateService {
 
   basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
     const {selectedDS, projectId, instanceId} = payload;
+    const state = ctx.getState();
     return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
       .pipe(mergeMap((response: any[]) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
             const parsedResponse = this._parseBasicScanResponse(response);
-            draft.content[wsIdentifier].riskLink.selection.edms = Object.assign(
-              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.edms, item =>
-                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.edms[item.rmsId].count}}))
-            );
-            draft.content[wsIdentifier].riskLink.selection.rdms = Object.assign(
-              {}, ..._.map(draft.content[wsIdentifier].riskLink.selection.rdms, item =>
-                ({[item.rmsId]: {...item, scanning: false, count: parsedResponse.rdms[item.rmsId].count}}))
-            );
+            const edms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.edms), item =>
+                _.includes(_.keys(parsedResponse.edms), `${item.rmsId}`));
+            const rdms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.rdms), item =>
+                _.includes(_.keys(parsedResponse.rdms), `${item.rmsId}`));
+            console.log('answer', response, parsedResponse, rdms, edms);
+            draft.content[wsIdentifier].riskLink.selection.edms = {...draft.content[wsIdentifier].riskLink.selection.edms, ...Object.assign(
+              {}, ..._.map(edms, item =>
+                ({[item.rmsId]: {...item, scanning: false, count: _.get(parsedResponse.edms, `${item.rmsId}.count`, 0)}}))
+            )};
+            draft.content[wsIdentifier].riskLink.selection.rdms = { ...draft.content[wsIdentifier].riskLink.selection.rdms,
+              ...Object.assign({}, ..._.map(rdms, item =>
+                ({[item.rmsId]: {...item, scanning: false, count: _.get(parsedResponse.rdms, `${item.rmsId}.count`, 0)}}))
+            )};
           }));
           return of(response);
         }),
-        catchError(err => {
+        catchError((err, response) => {
+          console.log(err, response);
           return of(err);
         }));
   }
@@ -2333,6 +2340,82 @@ export class RiskLinkStateService {
       }
 
     }));
-
   }
+
+  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, payload: any){
+    const {projectId, instanceId, userId} = payload;
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state.currentTab, 'wsIdentifier', null);
+
+    return this.riskApi.getDefaultDataSources(instanceId,projectId, userId)
+        .pipe(mergeMap((response: any) => {
+          if(_.isEmpty(response)) {
+            ctx.patchState(produce(ctx.getState(),draft => {
+              draft.content[wsIdentifier].riskLink.selection.edms = {};
+              draft.content[wsIdentifier].riskLink.selection.rdms = {};
+              draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = false;
+            }));
+            return of(response);
+          }
+          let selectedDS= [];
+          ctx.patchState(produce(ctx.getState(),draft => {
+            let data = {edms: {}, rdms: {}};
+            _.forEach(response, ds => {
+              const value = {rmsId: ds.dataSourceId, name: ds.dataSourceName, type: ds.dataSourceType, scanning: true};
+              if (value.type === 'EDM') {
+                data.edms[value.rmsId] = value;
+               } else if (value.type === 'RDM') {
+                data.rdms[value.rmsId] = value;
+              }
+              selectedDS.push(value);
+            });
+            draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = true;
+            draft.content[wsIdentifier].riskLink.selection.edms = data.edms;
+            draft.content[wsIdentifier].riskLink.selection.rdms = data.rdms;
+          }));
+          ctx.dispatch(new fromWs.BasicScanEDMAndRDMAction({instanceId: instanceId, selectedDS, projectId}));
+          return of(response);
+        }), catchError(err => of(err)));
+  }
+
+  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, payload: any) {
+    let {empty} = payload;
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const projectId = _.get(_.find(state.content[wsIdentifier].projects, item => item.selected), 'projectId');
+    const {instanceId} = state.content[wsIdentifier].riskLink.financialValidator.rmsInstance.selected;
+    const {edms, rdms} = state.content[wsIdentifier].riskLink.selection;
+    let dataSources = [];
+
+    if (!empty) {
+      dataSources = _.map(_.concat(_.values(edms), _.values(rdms)), item => ({
+        dataSourceId: item.rmsId,
+        dataSourceName: item.name,
+        dataSourceType: item.type
+      }));
+    }
+
+    return this.riskApi.saveDefaultDataSources(instanceId, projectId, dataSources, 1)
+        .pipe( catchError(err => {
+          if(err.status != 200)
+            ctx.dispatch(new fromWs.SaveDefaultDataSourcesErrorAction(err));
+          return of(err);
+        }),
+        mergeMap((response: any) => {
+          if(_.isEmpty(dataSources)){
+            ctx.patchState(produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].riskLink.selection.analysis=[];
+              draft.content[wsIdentifier].riskLink.selection.portfolioa=[];
+              draft.content[wsIdentifier].riskLink.selection.edms={};
+              draft.content[wsIdentifier].riskLink.selection.rdms={};
+              draft.content[wsIdentifier].riskLink.display.displayListRDMEDM=false;
+            }));
+            ctx.dispatch(new fromWs.ClearDefaultDataSourcesSuccessAction(response));
+          } else
+            ctx.dispatch(new fromWs.SaveDefaultDataSourcesSuccessAction(response));
+          return of();
+        })
+    );
+  }
+
 }

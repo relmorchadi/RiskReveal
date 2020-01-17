@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -84,20 +85,20 @@ public class DefaultAdjustmentService {
                                                                                           long regionPerilId,
                                                                                           long marketChannelId,
                                                                                           String engineType,
-                                                                                          int pltEntityId
+                                                                                          int entityId
                                                                                                  ) throws RRException {
         List<DefaultAdjustmentNode> defaultAdjustmentNodeEntities = new ArrayList<>();
         List<DefaultAdjustmentEntity> defaultAdjustmentEntities = defaultAdjustmentRepository.findByTargetRapTargetRAPIdEqualsAndMarketChannel_MarketChannelIdAndEngineTypeEqualsAndEntityEquals(
                 targetRapId,
                 marketChannelId,
                 engineType,
-                pltEntityId);
+                entityId);
         if (defaultAdjustmentEntities != null) {
             DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentEntities.stream().filter(defaultAdjustmentEntity ->
                     defaultAdjustmentEntity.getTargetRap().getTargetRAPId() == targetRapId &&
                             defaultAdjustmentEntity.getEngineType().equals(engineType) &&
                             defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getDefaultAdjustmentId(), regionPerilId) &&
-                            defaultAdjustmentEntity.getEntity() == pltEntityId
+                            defaultAdjustmentEntity.getEntity() == entityId
             )
                     .findAny().orElse(null);
             if (defaultAdjustment != null) {
@@ -134,12 +135,21 @@ public class DefaultAdjustmentService {
             PltHeaderEntity pltHeaderEntity = pltHeaderRepository.findById(scorPltHeaderId).get();
             ProjectEntity projectEntity = projectRepository.findById(pltHeaderEntity.getProjectId()).get();
             WorkspaceEntity workspaceEntity = workspaceRepository.findById(projectEntity.getWorkspaceId()).get();
+            String engineType = "";
+            Optional<ModelAnalysisEntity> modelAnalysis = modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId());
+            if (modelAnalysis.isPresent()) {
+                if ("ALM".equals(modelAnalysis.get().getModel())) {
+                    engineType = "AGG";
+                } else if ("DLM".equals(modelAnalysis.get().getModel())) {
+                    engineType = "DET";
+                }
+            }
             if (modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).isPresent()) {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
                         workspaceEntity.getWorkspaceMarketChannel(),
-                        modelAnalysisEntityRepository.findById(pltHeaderEntity.getModelAnalysisId()).get().getModel(),
+                        engineType,
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
         }

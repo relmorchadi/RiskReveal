@@ -1,9 +1,9 @@
-package com.scor.rr.service.importprocess;
+package com.scor.rr.service.fileBasedImport;
 
-import com.google.gson.Gson;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.keyvalue.MultiKey;
@@ -943,33 +943,42 @@ public class ImportFileService {
         return textFiles;
     }
 
+    public void updateFileBasedConfig(FileBasedImportConfigRequest request) throws RRException {
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(request.getProjectId()));
+
+        if (fileBasedImportConfigDB == null) {
+            fileBasedImportConfigDB = createFileBasedImportConfigIfNotExist(request);
+        }
+
+        if (request.getSelectedFileSourcePath() == null || request.getSelectedFileSourcePath().size() == 0) {
+            fileBasedImportConfigDB.setSelectedFileSourcePath(null);
+        } else {
+            fileBasedImportConfigDB.setSelectedFileSourcePath(request.getSelectedFileSourcePath().toString());
+        }
+
+        fileBasedImportConfigDB.setImportLocked(request.isImportLocked());
+
+        fileBasedImportConfigRepository.save(fileBasedImportConfigDB);
+    }
+
+    private FileBasedImportConfig createFileBasedImportConfigIfNotExist(FileBasedImportConfigRequest request) {
+        FileBasedImportConfig fileBasedImportConfig = new FileBasedImportConfig();
+        fileBasedImportConfig.setFileBasedImportConfig(Integer.valueOf(request.getProjectId()));
+        fileBasedImportConfig.setProjectId(Integer.valueOf(request.getProjectId()));
+        fileBasedImportConfig.setImportLocked(false);
+        fileBasedImportConfig.setLastUnlockDateForImport(new Date());
+
+        return fileBasedImportConfig;
+    }
+
     public String retrieveFileBasedConfig(String projectId) {
         String fileBasedConfigStr = "";
 
         FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(projectId));
-        if (fileBasedImportConfigDB == null) {
-            fileBasedImportConfigDB = createFileBasedImportConfigIfNotExist(projectId);
-        }
-
         if (fileBasedImportConfigDB != null) {
             fileBasedConfigStr = fileBasedImportConfigDB.toString();
         }
 
         return fileBasedConfigStr;
-    }
-
-    private FileBasedImportConfig createFileBasedImportConfigIfNotExist(String projectId) {
-        FileBasedImportConfig fileBasedImportConfig = new FileBasedImportConfig();
-        fileBasedImportConfig.setFileBasedImportConfig(Integer.valueOf(projectId));
-        fileBasedImportConfig.setProjectId(Integer.valueOf(projectId));
-        fileBasedImportConfig.setImportLocked(false);
-
-        fileBasedImportConfig.setSelectedFolderSourcePath("");
-        fileBasedImportConfig.setSelectedFileSourcePath("");
-        fileBasedImportConfig.setLastUnlockDateForImport(null);
-
-//        fileBasedImportConfigRepository.save(fileBasedImportConfig);
-
-        return fileBasedImportConfig;
     }
 }

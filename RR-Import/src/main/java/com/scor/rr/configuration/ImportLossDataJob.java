@@ -77,6 +77,9 @@ public class ImportLossDataJob {
     private AccLocFilesHandler accLocFilesHandler;
 
     @Autowired
+    private CarStatus carStatus;
+
+    @Autowired
     @Qualifier(value = "AccReader")
     private RLAccCursorItemReader accReader;
 
@@ -193,6 +196,10 @@ public class ImportLossDataJob {
         return (StepContribution contribution, ChunkContext chunkContext) -> accLocFilesHandler.copyFilesToIHub();
     }
 
+    @Bean
+    public Tasklet carStatusTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> carStatus.changeCARStatus();
+    }
 
     /** Steps */
 
@@ -314,6 +321,11 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(copyAccAndLocToIHubTasklet()).build();
     }
 
+    @Bean
+    public Step carStatusStep() {
+        return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(carStatusTasklet()).build();
+    }
+
     /**
      * Job
      */
@@ -327,6 +339,7 @@ public class ImportLossDataJob {
                 .next(extractLocStep())
                 .next(extractLocFWStep())
                 .next(copyAccAndLocFilesStep())
+                .next(carStatusStep())
                 .build();
     }
 

@@ -44,7 +44,7 @@ public class DefaultAdjustmentsInScopeView {
     private Boolean capped;
 
     public Object getFactors() {
-        return adjustmentType.equals("Linear") ? adjustmentNode.getLinearAdjustment() : adjustmentNode.getNonLinearAdjustment();
+        return adjustmentType.equals("Linear") || adjustmentType.equals("EEF Frequency") ? adjustmentNode.getLinearAdjustment() : adjustmentNode.getNonLinearAdjustment();
     }
 
 

@@ -1,19 +1,18 @@
-package com.scor.rr.rest.importprocess;
+package com.scor.rr.rest.fileBasedImport;
 
-import com.scor.rr.domain.model.TreeNode;
-import com.scor.rr.service.importprocess.ImportFileService;
+import com.scor.rr.service.fileBasedImport.ImportFileService;
+import com.scor.rr.domain.importfile.FileBasedImportConfigRequest;
+import com.scor.rr.exceptions.RRException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("api/ihub")
-public class ImportiHubRest {
+public class FileBasedImportRest {
 
     @Autowired
     ImportFileService importFileService;
@@ -61,6 +60,12 @@ public class ImportiHubRest {
     @GetMapping("retrieveTextFiles")
     public List<String> retrieveTextFiles(String path) {
         return importFileService.retrieveTextFiles(path);
+    }
+
+    @PostMapping("updateFileBasedConfig")
+    public ResponseEntity<?> updateFileBasedConfig(@RequestBody FileBasedImportConfigRequest request) throws RRException {
+        importFileService.updateFileBasedConfig(request);
+        return ResponseEntity.ok("Updated Successfully");
     }
 
     @GetMapping("retrieveFileBasedConfig")

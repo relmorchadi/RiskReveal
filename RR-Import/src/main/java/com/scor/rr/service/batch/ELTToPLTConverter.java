@@ -91,7 +91,7 @@ public class ELTToPLTConverter extends AbstractWriter {
     @Value("${convert.executor.queue.size}")
     private int queueSize;
     @Value("#{jobParameters['importSequence']}")
-    private Integer importSequence;
+    private Long importSequence;
     @Value("#{jobParameters['contractId']}")
     private String contractId;
     @Value("#{jobParameters['uwYear']}")
@@ -206,7 +206,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 if (marketChannel.equalsIgnoreCase("Treaty"))
                     file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
                 else
-                    file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), bundle.getModelAnalysis().getDivision(), carId), filename);
+                    file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), bundle.getModelAnalysis().getDivision(), carId, importSequence), filename);
 
                 BinFile binFile = new BinFile(file);
                 pltHeaderEntity.setLossDataFilePath(binFile.getPath());
@@ -314,7 +314,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             scorPltHeaderEntity.setGeoCode(modelAnalysisEntity.getGeoCode());
             scorPltHeaderEntity.setGeoDescription(modelAnalysisEntity.getGeoCode());
             scorPltHeaderEntity.setPerilCode(modelAnalysisEntity.getPeril());
-            scorPltHeaderEntity.setImportSequence(importSequence);
+            scorPltHeaderEntity.setImportSequence(importSequence.intValue());
             scorPltHeaderEntity.setSourceLossModelingBasis(modelingBasis.getCode());
             String sourceFinPersp = modelAnalysisEntity.getFinancialPerspective();
             scorPltHeaderEntity.setUdName(modelAnalysisEntity.getRegionPeril() + "_" + sourceFinPersp + "_LMF1.T0");

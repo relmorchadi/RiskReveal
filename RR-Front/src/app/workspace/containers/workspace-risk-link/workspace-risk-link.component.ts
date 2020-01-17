@@ -166,31 +166,33 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   ngOnInit() {
     this.loadRefsData();
 
-    this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.state$.pipe().subscribe(value => {
       this.state = _.merge({}, value);
       this.detectChanges();
     });
-    this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.listEdmRdm$.pipe().subscribe(value => {
       this.listEdmRdm = _.merge({}, value);
       this.detectChanges();
     });
-    this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.ws$.pipe().subscribe(value => {
       this.ws = _.merge({}, value);
       this.wsStatus = this.ws.workspaceType;
       this.detectChanges();
     });
-    this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.analysis$.pipe().subscribe(value => {
       this.analysis = _.merge({}, value);
       this.detectChanges();
     });
-    this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.portfolios$.pipe().subscribe(value => {
       this.portfolios = _.merge({}, value);
       this.detectChanges();
     });
-    this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+    this.selectedProject$.pipe().subscribe(value => {
       this.selectedProject = value;
       this.tabStatus = _.get(value, 'projectType', null);
+      console.log('selected project change', value);
       this.loadRefsData();
+      this.loadDefaultDataSources();
       this.detectChanges();
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
@@ -207,6 +209,34 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.detectChanges();
     });
 
+    this.actions$
+        .pipe(
+            this.unsubscribeOnDestroy,
+            ofActionDispatched(fromWs.SaveDefaultDataSourcesSuccessAction)
+        ).subscribe(() => {
+      this.notification.createNotification('Information',
+          'The Current EDM And RDM Selection is Saved.',
+          'info', 'bottomRight', 4000);
+    });
+
+    this.actions$
+        .pipe(
+            this.unsubscribeOnDestroy,
+            ofActionDispatched(fromWs.SaveDefaultDataSourcesErrorAction)
+        ).subscribe(() => {
+      this.notification.createNotification('Error',
+          'The Current EDM And RDM Selection is not Saved.',
+          'error', 'bottomRight', 4000);
+    });
+    this.actions$
+        .pipe(
+            this.unsubscribeOnDestroy,
+            ofActionDispatched(fromWs.ClearDefaultDataSourcesSuccessAction)
+        ).subscribe(() => {
+      this.notification.createNotification('Information',
+          'The EDM And RDM Selection is reset to default.',
+          'info', 'bottomRight', 4000);
+    });
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
@@ -218,7 +248,27 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       .pipe(debounceTime(500))
       .subscribe(val => {
         this.onInputSearch(val);
-      })
+      });
+
+  }
+
+  loadDefaultDataSources(){
+    setTimeout(() => {
+      if(this.selectedProject)
+        this.dispatch(new fromWs.LoadDefaultDataSourcesAction({
+          projectId: this.selectedProject.projectId,
+          instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+          userId: 1
+        }));
+    }, 500);
+  }
+
+  saveDefaultSelection() {
+    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({empty: false}));
+  }
+
+  clearDefaultSelection() {
+    this.dispatch(new fromWs.SaveDefaultDataSourcesAction({empty: true}));
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -299,13 +349,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.scrollableColsPortfolio = [...event];
     }
     this.closePopUp();
-  }
-
-  saveEDMAndRDMSelection() {
-    this.dispatch(new fromWs.SaveEDMAndRDMSelectionAction());
-    this.notification.createNotification('Information',
-      'The Current EDM And RDM Selection is Saved.',
-      'info', 'bottomRight', 4000);
   }
 
   closePopUp() {
@@ -528,10 +571,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   synchronizeEDMAndRDMSelection() {
     this.dispatch(new fromWs.SynchronizeEDMAndRDMSelectionAction());
-  }
-
-  removeEDMAndRDMSelection() {
-    this.dispatch(new fromWs.RemoveEDMAndRDMSelectionAction());
   }
 
   getNumberOfSelected(item, source) {

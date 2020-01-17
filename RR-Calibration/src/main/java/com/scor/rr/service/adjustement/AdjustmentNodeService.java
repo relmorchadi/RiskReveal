@@ -483,7 +483,7 @@ public class AdjustmentNodeService {
 //    }
 
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-        if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
+        if (LINEAR.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, linear adjustment");
             if (parameterRequest.getLmf() != null) {
                 if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -495,7 +495,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
             }
         }
-        else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (EEF_FREQUENCY.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}",EEF_FREQUENCY.getValue());
             if (parameterRequest.getRpmf() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -507,7 +507,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
             }
         }
-        else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_DRIVEN.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
@@ -519,7 +519,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
@@ -531,7 +531,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EEF_RPB.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}", node.getAdjustmentTypeCode());
             if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                 for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {

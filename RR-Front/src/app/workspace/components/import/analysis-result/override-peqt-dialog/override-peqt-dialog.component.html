@@ -36,9 +36,9 @@
           </nz-dropdown>
         </div>
       </div>
-      <div class="summary-info" >
+      <div class="summary-info override-table" >
         <p-table [columns]="peqtDataTable" [dataKey]="'id'" [expandedRowKeys]="expandedRows"
-                 [resizableColumns]="true" [scrollHeight]="'270px'"
+                 [resizableColumns]="true" [scrollHeight]="'350px'"
                  [value]="tree" #peqtt [scrollable]="true">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -127,9 +127,9 @@
 <!--          <ng-container *ngIf="parent.expanded">-->
 <!--            <ng-container *ngFor="let child of parent.children">-->
               <div class="popover-menu absolute-menu" *ngIf="data?.targetRaps?.length">
-                <div class="summary-info" >
+                <div class="summary-info override-table-secondary" >
                   <p-table [columns]="targetRapDataTable" [dataKey]="'id'"
-                           [resizableColumns]="true" [scrollHeight]="'270px'"
+                           [resizableColumns]="true" [scrollHeight]="'350px'"
                            [value]="data?.targetRaps" #peqtdatat [scrollable]="true">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>

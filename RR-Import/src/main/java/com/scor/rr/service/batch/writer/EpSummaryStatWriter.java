@@ -51,7 +51,7 @@ public class EpSummaryStatWriter extends AbstractWriter {
             return writeELTSummaryStatistics(summaryStatisticHeaders, file);
         } else {
             division = division != null ? division : Integer.valueOf(this.division);
-            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence), filename);
             return writeELTSummaryStatistics(summaryStatisticHeaders, file);
         }
     }

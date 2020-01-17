@@ -4,7 +4,6 @@ import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.enums.*;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -61,20 +60,22 @@ public class PathUtils {
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
 
-    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Integer division, String carId) {
+    public static String getPrefixDirectoryFac(String clientName, Long clientId, String contractId, Integer uwYear, Integer division, String carId, Long importSequence) {
         List<String> items = new ArrayList<>();
         items.add("Facultative");
-        items.add("Cedant");
-        if (clientName != null && clientId != null)
-            items.add(new StringBuilder(clientName.replaceAll("[\\\\/:*?\"<>|]", "_")).append("-").append(clientId).toString());
+        items.add("Contracts");
+//        if (clientName != null && clientId != null)
+//            items.add(new StringBuilder(clientName.replaceAll("[\\\\/:*?\"<>|]", "_")).append("-").append(clientId).toString());
         if (contractId != null)
             items.add(contractId);
         if (uwYear != null)
             items.add(String.valueOf(uwYear));
         if (carId != null)
-            items.add(String.valueOf(carId));
+            items.add(carId);
         if (division != null)
             items.add(String.valueOf(division));
+        if (importSequence != null)
+            items.add("import " + importSequence);
 
         return org.apache.commons.lang.StringUtils.join(items, "/");
     }
@@ -200,6 +201,7 @@ public class PathUtils {
 //        String finalName = fileName.trim().replaceAll(" ", "-");//.replaceAll(" +", " ").replaceAll("[^-a-zA-Z0-9\\s]", "").replaceAll(" ", "-").replaceAll("\\.", "");
         return builder.toString();
     }
+
     public static String makePLTFileName(WorkspaceEntity workspaceEntity,
                                          ModelAnalysisEntity modelAnalysis,
                                          PltHeaderEntity plt,

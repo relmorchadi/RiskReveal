@@ -30,6 +30,14 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}epMetrics?workspaceContextCode=${wsId}&uwYear=${uwYear}&userId=${userId}&curveType=${curveType}`);
   }
 
+  loadSinglePltEpMetrics(pltHeaderId, userId, curveType) {
+    return this.http.get(`${this.URL}epMetrics/singlePLT`, { params: {pltHeaderId, userId, curveType}});
+  }
+
+  loadSinglePLTSummaryStats(pltHeaderId) {
+    return this.http.get(`${this.URL}epMetrics/singlePLTSummaryStats`, { params: {pltHeaderId}});
+  }
+
   loadDefaultAdjustments(workspaceContextCode, uwYear) {
     return this.http.get(`${this.URL}defaultAdjustment`, { params: {workspaceContextCode, uwYear}});
   }
@@ -46,12 +54,20 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}state/all`);
   }
 
-  validateRP(rp){
-    return this.http.get(`${this.URL}epMetrics/validate`, { params: { rp }});
+  loadDefaultRPs() {
+    return this.http.get(`${this.URL}state/all`);
+  }
+
+  validateRP(rp) {
+    return this.http.get(`${this.URL}epMetrics/rp/validate`, { params: { rp }});
   }
 
   saveListOfRPsByUserId(rps: number[], userId: number) {
-    return this.http.post(`${this.URL}epMetrics/rp`, {rps, userId})
+    return this.http.post(`${this.URL}epMetrics/rp/save`, {rps, userId});
+  }
+
+  deleteListOfRPsByUserId(userId, rps) {
+    return this.http.post(`${this.URL}epMetrics/rp/delete`, { userId, rps });
   }
 
 }

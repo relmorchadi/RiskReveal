@@ -10,7 +10,8 @@ import {WorkspaceState} from "../../store";
 import {first, take, takeWhile} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
-import {Subscription} from "rxjs";
+import {combineLatest, Subscription} from "rxjs";
+import {ExcelService} from "../../../shared/services/excel.service";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -40,6 +41,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
+    isDeltaByAmount: boolean
     filterData: any
   };
   constants: {
@@ -63,6 +65,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   returnPeriodConfig: {
     currentRPs: number[],
     newlyAdded: number[],
+    deletedRPs: number[],
     returnPeriodInput: number,
     showSuggestion: boolean,
     message: string
@@ -87,7 +90,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
     private calibrationTableService: CalibrationTableService,
     private calibrationApi: CalibrationAPI,
-    private actions$: Actions
+    private actions$: Actions,
+    private excel: ExcelService
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -97,12 +101,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.tableConfig = {
       view: "adjustments",
       selectedCurveType: "OEP",
-      selectedFinancialUnit: "Unit",
-      isExpanded: false,
-      expandedRowKeys: {},
       isGrouped: true,
-      filterData: {}
+      isExpanded: false,
+      isDeltaByAmount: false,
+      expandedRowKeys: {},
+        selectedFinancialUnit: "Unit"
     };
+
     this.columnsConfig = {
       ...this.columnsConfig,
       frozenWidth: '275px'
@@ -119,6 +124,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.returnPeriodConfig= {
       newlyAdded: [],
       currentRPs: [],
+      deletedRPs: [],
       showSuggestion: false,
       returnPeriodInput: null,
       message: null
@@ -138,14 +144,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   ngOnInit() {
-    this.actions$
-      .pipe(
-        ofActionCompleted(fromWorkspaceStore.SaveRPs),
+
+    this.actions$.pipe(ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs)).pipe(
         this.unsubscribeOnDestroy
-      ).subscribe( () => {
-        this.cancelRPPopup();
-        this.detectChanges();
+    ).subscribe(() => {
+      this.cancelRPPopup();
+      this.detectChanges();
     })
+
   }
 
   ngOnDestroy(): void {
@@ -377,6 +383,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.updateFilterData(action.payload);
         break;
 
+      case "Export EP Metrics":
+        this.exportEPMetrics();
+        break;
+
+      case "Delta Change":
+        this.deltaChange(action.payload);
+        break;
+
       default:
         console.log(action);
     }
@@ -395,18 +409,25 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   handleReturnPeriodPopUp(action: Message) {
     switch (action.type) {
+
       case "Return period popup input change":
         this.rpInputChange(action.payload);
         break;
+
       case "ADD Return period":
         this.addReturnPeriod(action.payload);
         break;
+
       case "Save return periods":
-        this.saveRPs();
+        this.handleRPSave();
         break;
 
       case "Cancel Changes":
         this.cancelRPPopup();
+        break;
+
+      case "Delete RP":
+        this.deleteRP(action.payload);
         break;
 
       default:
@@ -506,6 +527,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  handleRPSave() {
+    /*this.saveRPs();
+    this.deleteRPs();*/
+    this.saveOrDeleteRPs();
+  }
+
   saveRPs() {
     this.dispatch(new fromWorkspaceStore.SaveRPs({
       rps: this.returnPeriodConfig.newlyAdded,
@@ -516,18 +543,43 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }))
   }
 
+  deleteRPs() {
+    this.dispatch(new fromWorkspaceStore.DeleteRPs({
+      rps: this.returnPeriodConfig.deletedRPs,
+      userId: 1,
+      wsId: this.wsId,
+      uwYear: this.uwYear,
+      curveType: this.tableConfig.selectedCurveType
+    }))
+  }
+
+  saveOrDeleteRPs() {
+    this.dispatch(new fromWorkspaceStore.SaveOrDeleteRPs({
+      deletedRPs: this.returnPeriodConfig.deletedRPs,
+      newlyAddedRPs: this.returnPeriodConfig.newlyAdded,
+      userId: 1,
+      wsId: this.wsId,
+      uwYear: this.uwYear,
+      curveType: this.tableConfig.selectedCurveType
+    }))
+  }
+
   cancelRPPopup() {
-    this.isRPPopUpVisible = false;
-    this.returnPeriodConfig= {
-      ...this.returnPeriodConfig,
-      showSuggestion: false,
-      returnPeriodInput: null,
-      message: null
-    };
-    this.rpValidation= {
-      isValid: false,
-      lowerBound: null,
-      upperBound: null
+    if( this.isRPPopUpVisible ) {
+      this.isRPPopUpVisible = false;
+      this.returnPeriodConfig= {
+        ...this.returnPeriodConfig,
+        newlyAdded: [],
+        deletedRPs: [],
+        showSuggestion: false,
+        returnPeriodInput: null,
+        message: null
+      };
+      this.rpValidation= {
+        isValid: false,
+        lowerBound: null,
+        upperBound: null
+      }
     }
   }
 
@@ -552,8 +604,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
-
-  private financialUnitChange(financialUnit) {
+  financialUnitChange(financialUnit) {
     this.tableConfig = {
       ...this.tableConfig,
       selectedFinancialUnit: financialUnit
@@ -600,4 +651,38 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   private updateFilterData(payload: any) {
     this.tableConfig.filterData = payload;
   }
+
+  exportEPMetrics() {
+    let exportedList = [];
+
+    _.forEach(this.data, pure => {
+
+      exportedList.push({..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]});
+
+      _.forEach(pure.threads, thread => {
+        exportedList.push({..._.omit(thread, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId]});
+      })
+
+    });
+
+    this.excel.exportAsExcelFile(
+        exportedList,
+        'epMetrics'
+    )
+  }
+
+  deltaChange(newDelta) {
+    this.tableConfig = {
+        ...this.tableConfig,
+      isDeltaByAmount: newDelta
+    }
+  }
+
+  deleteRP(rp) {
+    this.returnPeriodConfig = {
+      ...this.returnPeriodConfig,
+      deletedRPs: [...this.returnPeriodConfig.deletedRPs, _.toNumber(rp)]
+    }
+  }
+
 }

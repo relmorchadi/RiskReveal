@@ -24,6 +24,9 @@ public class UserRPEntity {
     @Column(name = "rp")
     private Integer rp;
 
+    @Column(name = "isDeleted")
+    private Boolean isDeleted;
+
 
     public UserRPEntity(Integer rp, Long userId) {
         this.rp = rp;
