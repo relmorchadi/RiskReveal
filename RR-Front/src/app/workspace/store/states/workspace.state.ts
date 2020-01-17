@@ -26,8 +26,7 @@ const initialState: WorkspaceModel = {
   constants: {
     basis: [],
     adjustmentTypes: [],
-    status: [],
-    defaultRPs: []
+    status: []
   },
   facWs: {
     data: Data.facWs,
