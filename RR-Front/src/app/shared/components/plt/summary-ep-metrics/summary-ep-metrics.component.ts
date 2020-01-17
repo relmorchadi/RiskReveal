@@ -34,6 +34,18 @@ export class SummaryEpMetricsComponent implements OnInit {
 
   @Input() epMetricsLosses;
 
+  @Input() returnPeriodConfig: {
+    showSuggestion: boolean,
+    returnPeriodInput: number,
+    message: string
+  };
+
+  @Input() rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
   constructor() { }
 
   ngOnInit() {
@@ -41,11 +53,18 @@ export class SummaryEpMetricsComponent implements OnInit {
   }
 
   curveTypeSelectChange(curveTypes) {
+
+    let res = curveTypes;
+
+    if(!curveTypes.length) {
+      res= [ this.summaryEpMetricsConfig.selectedCurveType[0] ];
+    }
+
     this.actionDispatcher.emit({
-      type: curveTypes.length < this.summaryEpMetricsConfig.selectedCurveType.length ? "Hide Metric" : "Show Metric",
+      type: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? "Hide Metric" : "Show Metric",
       payload: {
-        curveTypes,
-        difference: curveTypes.length < this.summaryEpMetricsConfig.selectedCurveType.length ? _.difference(this.summaryEpMetricsConfig.selectedCurveType, curveTypes) : _.difference(curveTypes, this.summaryEpMetricsConfig.selectedCurveType)
+        curveTypes: res,
+        difference: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? _.difference(this.summaryEpMetricsConfig.selectedCurveType, res) : _.difference(res, this.summaryEpMetricsConfig.selectedCurveType)
       }
     })
   }
@@ -56,4 +75,19 @@ export class SummaryEpMetricsComponent implements OnInit {
       payload: financialUnit
     })
   }
+
+  inputChange = _.debounce((newValue) => {
+    this.actionDispatcher.emit({
+      type: "Return period input change",
+      payload: newValue
+    })
+  }, 150);
+
+  addToReturnPeriod() {
+    this.actionDispatcher.emit({
+      type: "ADD Return period",
+      payload: this.returnPeriodConfig.returnPeriodInput
+    })
+  }
+
 }

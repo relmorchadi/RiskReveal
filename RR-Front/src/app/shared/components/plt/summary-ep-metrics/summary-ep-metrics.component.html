@@ -76,12 +76,24 @@
               </tbody>
               <tfoot>
               <tr>
-                <td><i class="icon-plus-circle"></i></td>
-                <td style="width: 20% !important;"><input style="width: 100% !important;" type="text"></td>
-                <ng-container *ngFor="let placeholder of epMetricsTableConfig?.columns;let i= index;">
-                  <td *ngIf="i > 1">
-                  </td>
-                </ng-container>
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1" style="padding-top: 10px;">
+                  <i (click)="addToReturnPeriod()" style="font-size: 14px; margin-right: 1px; margin-top: 3px" [ngStyle]="{'cursor' : 'pointer'}" class="icon-plus-circle"></i>
+                  <input type="number" class="a-textfield-mini" style="width: 95%" [ngModel]="returnPeriodConfig?.returnPeriodInput" (ngModelChange)="inputChange($event)" name="new-field">
+                </td>
+              </tr>
+              <tr *ngIf="returnPeriodConfig?.showSuggestion">
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1">
+                  <span style="color: red;margin-left: 16px;">
+                    {{rpValidation?.lowerBound}} - {{rpValidation?.upperBound}} are the nearest valid return periods
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="returnPeriodConfig?.message">
+                <td [attr.colspan]="epMetricsTableConfig.columns.length + 1">
+                  <span style="color: red;margin-left: 16px;">
+                    {{returnPeriodConfig?.message}}
+                  </span>
+                </td>
               </tr>
               </tfoot>
             </table>
