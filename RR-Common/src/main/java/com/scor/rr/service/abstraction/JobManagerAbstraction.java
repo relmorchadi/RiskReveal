@@ -1,4 +1,4 @@
-package com.scor.rr.service;
+package com.scor.rr.service.abstraction;
 
 import com.google.gson.Gson;
 import com.scor.rr.domain.JobEntity;

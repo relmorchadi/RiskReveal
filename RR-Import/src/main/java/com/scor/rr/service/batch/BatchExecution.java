@@ -3,7 +3,7 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.JobManager;
+import com.scor.rr.service.abstraction.JobManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
