@@ -140,7 +140,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(transactionManager = "rrTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
-        rlSavedDataSourceRepository.deleteByProjectIdAndUserIdAndInstanceId(dataSourcesDto.getProjectId(), dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+        rlSavedDataSourceRepository.deleteByUserIdAndInstanceId(dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
 
         if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
             dataSourcesDto.getDataSources().forEach(dataSource -> {
@@ -156,8 +156,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
-        return rlSavedDataSourceRepository.findByProjectIdAndInstanceIdAndUserId(projectId, instanceId, userId);
+    public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
+        return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
+                .map(RLDataSourcesDto::new).collect(Collectors.toList());
     }
 
     @Override
@@ -166,21 +167,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLImportedDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
+    public List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
 
         List<RLImportedDataSourcesAndAnalysis> data = rlImportedDataSourcesAndAnalysisRepository.findByProjectId(projectId);
-        List<RLImportedDataSourcesDto> importedDataSources = new ArrayList<>();
+        List<RLDataSourcesDto> importedDataSources = new ArrayList<>();
 
         if (data != null && !data.isEmpty()) {
             data.forEach(element -> {
 
-                RLImportedDataSourcesDto importedDataSourceDto = importedDataSources.stream()
+                RLDataSourcesDto importedDataSourceDto = importedDataSources.stream()
                         .filter(ele -> ele.getRlDataSourceId().equals(element.getRlDataSourceId())
-                                && ele.getRlDataSourceName().equals(element.getRlDataSourceName())
-                                && ele.getRlDatabaseId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
+                                && ele.getDataSourceName().equals(element.getRlDataSourceName())
+                                && ele.getDataSourceId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
 
                 if (importedDataSourceDto == null) {
-                    importedDataSourceDto = new RLImportedDataSourcesDto(element);
+                    importedDataSourceDto = new RLDataSourcesDto(element);
                     importedDataSources.add(importedDataSourceDto);
                 } else
                     importedDataSourceDto.addToRlModelIdList(element.getRlModelId());
