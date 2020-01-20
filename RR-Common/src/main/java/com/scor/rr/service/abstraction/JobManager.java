@@ -1,4 +1,4 @@
-package com.scor.rr.service;
+package com.scor.rr.service.abstraction;
 
 import com.scor.rr.domain.JobEntity;
 import com.scor.rr.domain.StepEntity;

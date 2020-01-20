@@ -17,6 +17,8 @@ public class CARDivisionDto {
     private Integer uwYear;
     private String currency;
     private Integer divisionNumber;
+    private String coverage;
+    private String lob;
     private boolean IsPrincipalDivision;
 
 }
