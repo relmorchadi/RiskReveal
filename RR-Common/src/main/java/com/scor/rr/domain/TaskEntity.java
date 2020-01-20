@@ -1,49 +1,58 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.domain.enums.JobStatus;
+import com.scor.rr.domain.enums.JobType;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Task")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskEntity {
-    private int taskId;
-    private Integer jobId;
-    private String taskType;
+
+    private Long taskId;
+    private JobEntity jobId;
+    private JobType taskCode;
     private String taskParams;
-    private String status;
+    private JobStatus status;
+    private Integer priority;
+    private Timestamp submittedDate;
     private Timestamp startedDate;
     private Timestamp finishedDate;
 
     @Id
     @Column(name = "taskId", nullable = false)
-    public int getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(int taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 
-    @Basic
-    @Column(name = "jobId", nullable = true)
-    public Integer getJobId() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "jobId")
+    public JobEntity getJobId() {
         return jobId;
     }
 
-    public void setJobId(Integer jobId) {
+    public void setJobId(JobEntity jobId) {
         this.jobId = jobId;
     }
 
     @Basic
-    @Column(name = "taskType", nullable = true, length = 255)
-    public String getTaskType() {
-        return taskType;
+    @Column(name = "taskCode", nullable = true, length = 255)
+    public JobType getTaskCode() {
+        return taskCode;
     }
 
-    public void setTaskType(String taskType) {
-        this.taskType = taskType;
+    public void setTaskCode(JobType taskCode) {
+        this.taskCode = taskCode;
     }
 
     @Basic
@@ -58,12 +67,32 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "status", nullable = true, length = 255)
-    public String getStatus() {
+    public JobStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(JobStatus status) {
         this.status = status;
+    }
+
+    @Basic
+    @Column(name = "priority", nullable = true, length = 255)
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
+    }
+
+    @Basic
+    @Column(name = "submittedDate", nullable = true)
+    public Timestamp getSubmittedDate() {
+        return submittedDate;
+    }
+
+    public void setSubmittedDate(Timestamp submittedDate) {
+        this.submittedDate = submittedDate;
     }
 
     @Basic
@@ -93,7 +122,7 @@ public class TaskEntity {
         TaskEntity that = (TaskEntity) o;
         return taskId == that.taskId &&
                 Objects.equals(jobId, that.jobId) &&
-                Objects.equals(taskType, that.taskType) &&
+                Objects.equals(taskCode, that.taskCode) &&
                 Objects.equals(taskParams, that.taskParams) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(startedDate, that.startedDate) &&
@@ -102,6 +131,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, jobId, taskType, taskParams, status, startedDate, finishedDate);
+        return Objects.hash(taskId, jobId, taskCode, taskParams, status, startedDate, finishedDate);
     }
 }

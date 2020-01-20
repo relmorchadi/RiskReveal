@@ -1,50 +1,53 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.domain.enums.StepStatus;
+
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Step")
 public class StepEntity {
-    private int stepId;
-    private Integer taskId;
-    private String stepName;
+
+    private Long stepId;
+    private Long taskId;
+    private String stepCode;
     private Integer stepOrder;
     private String stepParams;
-    private String status;
+    private StepStatus status;
+    private Timestamp submittedDate;
     private Timestamp startedDate;
     private Timestamp finishedDate;
 
     @Id
     @Column(name = "stepId", nullable = false)
-    public int getStepId() {
+    public Long getStepId() {
         return stepId;
     }
 
-    public void setStepId(int stepId) {
+    public void setStepId(Long stepId) {
         this.stepId = stepId;
     }
 
     @Basic
     @Column(name = "taskId", nullable = true)
-    public Integer getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(Integer taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 
     @Basic
-    @Column(name = "stepName", nullable = true, length = 255)
+    @Column(name = "stepCode", nullable = true, length = 255)
     public String getStepName() {
-        return stepName;
+        return stepCode;
     }
 
     public void setStepName(String stepName) {
-        this.stepName = stepName;
+        this.stepCode = stepName;
     }
 
     @Basic
@@ -69,12 +72,22 @@ public class StepEntity {
 
     @Basic
     @Column(name = "status", nullable = true, length = 255)
-    public String getStatus() {
+    public StepStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StepStatus status) {
         this.status = status;
+    }
+
+    @Basic
+    @Column(name = "submittedDate", nullable = true)
+    public Timestamp getSubmittedDate() {
+        return submittedDate;
+    }
+
+    public void setSubmittedDate(Timestamp submittedDate) {
+        this.submittedDate = submittedDate;
     }
 
     @Basic
@@ -104,7 +117,7 @@ public class StepEntity {
         StepEntity that = (StepEntity) o;
         return stepId == that.stepId &&
                 Objects.equals(taskId, that.taskId) &&
-                Objects.equals(stepName, that.stepName) &&
+                Objects.equals(stepCode, that.stepCode) &&
                 Objects.equals(stepOrder, that.stepOrder) &&
                 Objects.equals(stepParams, that.stepParams) &&
                 Objects.equals(status, that.status) &&
@@ -114,6 +127,6 @@ public class StepEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepId, taskId, stepName, stepOrder, stepParams, status, startedDate, finishedDate);
+        return Objects.hash(stepId, taskId, stepCode, stepOrder, stepParams, status, startedDate, finishedDate);
     }
 }
