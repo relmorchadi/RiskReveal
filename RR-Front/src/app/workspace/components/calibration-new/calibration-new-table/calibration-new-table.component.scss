@@ -91,8 +91,8 @@ Table Header
 
 .button-toggle {
   float: right;
-  margin-right: -280px;
   margin-top: -38px;
+  padding-bottom: 5px;
   z-index: 1;
   position: relative;
 }
@@ -101,7 +101,7 @@ Table Header
 
 .button-toggle-empetric-config {
   float: right;
-  margin-right: -447px;
+  margin-right: -607px;
   margin-top: -122px;
   z-index: 1;
   position: relative;
@@ -195,50 +195,6 @@ CELL Header
   margin-left: 2px;
   font-size: 12px !important;
   font-weight: bold;
-}
-
-.body-wrap-dropDowns-calibration {
-  display: flex;
-
-  .dropdown-wrap-calibration {
-    display: flex;
-    padding-right: 13px;
-    height: 35px;
-    margin-right: 10px;
-    justify-content: space-between;
-    background-color: #fff;
-    border: 1px solid #1FCBB4;
-    cursor: pointer;
-
-    .dropdown-wrap-title-calibration {
-      display: flex;
-      width: 100%;
-      font-family: Rubik;
-      flex-direction: column;
-      padding: 3px 6px;
-
-      .dropdown-title-calibration {
-        font-size: 10px;
-        line-height: 10px;
-        color: rgba(0, 0, 0, 0.4);
-      }
-
-      .dropdown-item-selected-calibration {
-        font-size: 13px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        width: 100px;
-      }
-    }
-
-    .dropdown-icon {
-      display: flex;
-      font-size: 8px;
-      align-items: center;
-      padding-right: 8px;
-    }
-  }
 }
 
 /**/

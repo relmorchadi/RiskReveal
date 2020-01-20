@@ -90,7 +90,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           componentName: 'ArchivedFacWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
-        /*{
+        {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -99,7 +99,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
+        }
       ]
     },
     {
@@ -164,7 +164,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           componentName: 'ArchivedFacWidgetComponent', selected: true,
           position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
         },
-       /* {
+        {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -173,7 +173,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
+        }
       ]
     },
   ];
@@ -229,7 +229,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         componentName: 'ArchivedFacWidgetComponent', selected: true,
         position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
       },
-     /* {
+      {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -238,7 +238,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
         componentName: 'facSubsidiaryChartComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
-      }*/
+      }
     ]
   };
   previousUrl: string;
@@ -265,6 +265,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     });
     this.options = {
       gridType: GridType.VerticalFixed,
+      compactType: 'compactUp',
       margin: 10,
       outerMargin: true,
       outerMarginTop: null,
@@ -338,11 +339,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   setTabValue() {
+    this.idTab = 1;
+    this.dashboardChange(1);
     const data = window.localStorage.getItem('previousUrl');
     console.log(data);
     if (data === '/CreateNewFile') {
-      // this.idTab = 1;
-      this.dashboardChange(1);
+
     }
   }
 

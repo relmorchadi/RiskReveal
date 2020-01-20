@@ -4,7 +4,6 @@ package com.scor.rr.domain.riskLink;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigInteger;
 import java.util.Date;
 
 
@@ -30,11 +29,11 @@ public class RLAnalysisScanStatus {
     private Date lastScan;
     @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "RLModelAnalysisId")
-    private RLAnalysis rlAnalysisId;
+    private RLAnalysis rlAnalysis;
 
     public RLAnalysisScanStatus(RLAnalysis rlAnalysisId, int scanStatus) {
         this.entity = 1;
-        this.rlAnalysisId = rlAnalysisId;
+        this.rlAnalysis = rlAnalysisId;
         this.scanLevel = 0; //TODO: define scan level enum
         this.scanStatus = scanStatus; //TODO: define scan status enum
         this.lastScan = new Date();

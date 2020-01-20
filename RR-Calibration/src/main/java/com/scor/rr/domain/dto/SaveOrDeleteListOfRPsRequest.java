@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class SaveListOfRPsRequest {
+public class SaveOrDeleteListOfRPsRequest {
     List<Integer> rps;
     Long userId;
 }

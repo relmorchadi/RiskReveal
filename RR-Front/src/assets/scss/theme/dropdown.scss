@@ -166,3 +166,47 @@ body .ui-multiselect {
 body .ui-multiselect .ui-multiselect-trigger {
   background-color: transparent;
 }
+
+::ng-deep .body-wrap-dropDowns {
+  display: flex;
+
+  .dropdown-wrap {
+    display: flex;
+    padding-right: 13px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}

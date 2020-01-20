@@ -88,11 +88,6 @@ export class WorkspaceService {
               rps: []
             },
             adjustments: {},
-            constants: {
-              basis: [],
-              adjustmentTypes: [],
-              status: []
-            },
             loading: false
           },
           calibration: {

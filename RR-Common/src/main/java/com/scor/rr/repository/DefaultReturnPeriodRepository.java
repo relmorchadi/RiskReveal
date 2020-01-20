@@ -16,6 +16,10 @@ public interface DefaultReturnPeriodRepository extends JpaRepository<DefaultRetu
     List<Map<String, Object>> validateRP(@Param("rp") Integer rp);
 
     @Transactional
+    @Query(value = "exec dbonew.usp_FindSinglePLTEpMetricsByPLTHeaderIdAndUserAndCurveType @userId=:userId, @PLTHeaderId=:pltHeaderId, @curveType=:curveType", nativeQuery = true)
+    List<Map<String, Object>> findSinglePLTEpMetricsUserAndCurveType(@Param("userId") Integer userId, @Param("pltHeaderId") Long pltHeaderId, @Param("curveType") String type);
+
+    @Transactional
     @Query(value = "exec dbonew.usp_FindEpMetricsByWorkspaceAndUserAndCurveType @userId=:userId, @workspaceContextCode=:workspaceContextCode, @uwYear=:uwYear, @type=:curveType", nativeQuery = true)
     List<Map<String, Object>> findEpMetricsByWorkspaceAndUserAndCurveType(@Param("userId") Integer userId, @Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear, @Param("curveType") String type);
 

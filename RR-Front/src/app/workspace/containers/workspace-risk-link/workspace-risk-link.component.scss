@@ -451,6 +451,10 @@
               margin-right: 3px;
             }
 
+            .ui-table-scrollable-wrapper {
+              display: flex;
+            }
+
             .ui-table-thead {
               tr:nth-child(2n) {
                 th {

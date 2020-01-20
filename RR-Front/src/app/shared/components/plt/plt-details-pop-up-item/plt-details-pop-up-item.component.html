@@ -33,9 +33,7 @@
       <tbody *ngIf="!inputs?.cloningSource">
         <tr *ngFor="let col of inputs?.cols?.summary">
           <td style="min-width: 150px;padding: 5px 16px;">{{col?.header}}</td>
-          <ng-container *ngIf="!col?.type">
-            <td style="width: auto;padding: 5px 16px;font-weight: bold;">{{plt[col?.field]}}</td>
-          </ng-container>
+          <ng-container *ngIf="!col?.type" [ngTemplateOutlet]="defaultTD" [ngTemplateOutletContext]="{ $implicit: plt[col?.field] }"></ng-container>
           <ng-container *ngIf="col?.type == 'tags'">
             <td>
               <ng-container *ngFor="let tag of plt[col?.field];">
@@ -43,11 +41,7 @@
               </ng-container>
             </td>
           </ng-container>
-          <ng-container *ngIf="col?.type == 'indicator'">
-            <td class="indicator">
-              <i class="icon-check" *ngIf="plt[col?.field]"></i>
-            </td>
-          </ng-container>
+          <ng-container *ngIf="col?.type == 'indicator'" [ngTemplateOutlet]="indicatorTD" [ngTemplateOutletContext]="{ $implicit: plt[col?.field] }"></ng-container>
         </tr>
       </tbody>
       <tbody *ngIf="inputs?.cloningSource">
@@ -73,3 +67,21 @@
     </table>
   </div>
 </div>
+
+<ng-template #defaultTD let-data>
+  <td style="width: auto;padding: 5px 16px;font-weight: bold;">
+    {{data}}
+  </td>
+</ng-template>
+
+<ng-template #dateTD let-data >
+  <td>
+    {{data | date: 'DD/MM/YYYY'}}
+  </td>
+</ng-template>
+
+<ng-template #indicatorTD let-data >
+  <td class="indicator">
+    <i class="icon-check" *ngIf="data"></i>
+  </td>
+</ng-template>
