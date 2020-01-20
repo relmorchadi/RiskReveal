@@ -1,436 +1,426 @@
 <div class="a-app-wrapper">
   <div class="a-app-header">
+    <div style="display: flex; flex-flow: column;">
+      <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Contract'" [links]="hyperLinks"
+                       [routes]="hyperLinksRoutes"></app-hyper-links>
+      <div style="display: flex">
+        <h4>Contract</h4>
+<!--        <div *ngIf="tabStatus === 'fac'" style="margin-left: 35px">
+          <nz-dropdown [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">CAR ID</span>
+                <span class="dropdown-item-selected">{{selectedContract}}</span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="selectContract(item.id)"
+                  *ngFor="let item of contracts">{{item.id}}</li>
+            </ul>
+          </nz-dropdown>
+        </div>-->
+      </div>
 
-    <h4>Contract</h4>
-
+    </div>
+    <app-pin
+      (pinWs)="pinWorkspace()"
+      [active]="!workspace?.isPinned"
+    >
+    </app-pin>
   </div>
-  <div class="app-body">
 
-  </div>
+  <ng-container *ngIf="wsStatus === 'treaty' || tabStatus === 'fac'">
+    <div class="body-wrap-body">
+      <div class="body-wrapper">
+        <div class="body-wrapper-header">
+          <div class="body-wrapper-header-left">
+            <hr>
+            <div *ngIf="tabStatus === 'treaty'">treaty Sections</div>
+            <div *ngIf="tabStatus === 'fac'">Contract Summary</div>
+          </div>
+          <div class="body-wrapper-header-right">
+            <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+            <i *ngIf="collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_up_24px"></i>
+            <i *ngIf="!collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_down_24px"></i>
+          </div>
+        </div>
+        <div class="body-wrap-border unfold-fac-component" *ngIf="tabStatus === 'fac' && facData !== null">
+          <div class="body-wrap-border-body">
+            <div class="body-wrap-border-left">
+
+              <div class="body-w-b-l-list-item border-bottom-custom">
+                <div class="body-w-b-l-item">
+                  <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
+                  <span class="body-1">{{facData?.contractName}}</span>
+                </div>
+                <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData?.carStatus}}</span></div>
+              </div>
+            </div>
+            <div class="body-wrap-border-standard">
+              <ul>
+                <li>
+                  <span class="span-left">UW Analysis</span>
+                  <span class="span-right">{{facData?.uwAnalysis}}</span>
+                </li>
+                <li>
+                  <span class="span-left">UW Year</span>
+                  <span class="span-right">{{facData?.uwanalysisContractYear}}</span>
+                </li>
+                <li>
+                  <span class="span-left">Contract Label</span>
+                  <span class="span-right">{{facData?.uwanalysisContractLabel}}</span>
+                </li>
+                <li>
+                  <span class="span-left">Business Type</span>
+                  <span class="span-right">{{facData?.uwanalysisContractBusinessType}}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="body-wrap-border-standard">
+              <ul>
+                <li>
+                  <span class="span-left">Sector</span>
+                  <span class="span-right">{{facData?.uwanalysisContractSector}}</span>
+                </li>
+                <li>
+                  <span class="span-left">Contract ID</span>
+                  <span class="span-right">{{facData?.uwanalysisContractContractId}}</span>
+                </li>
+                <li>
+                  <span class="span-left">Insured</span>
+                  <span class="span-right">{{facData?.uwanalysisContractInsured}}</span>
+                </li>
+                <li>
+                  <span class="span-left">Subsidiary</span>
+                  <span class="span-right">{{facData?.uwanalysisContractSubsidiary}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="header-style" *ngIf="tabStatus === 'fac'">Divisions</div>
+        <div class="show-table">
+          <p-table #dt [columns]="scrollableColsTreaty" [frozenColumns]="frozenColsTreaty" [value]="treatyData"
+                   [scrollable]="true" scrollHeight="340px" frozenWidth="140px" *ngIf="tabStatus === 'treaty'">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr>
+                <th *ngFor="let col of columns">
+                  <div class="table-header-wrapper" *ngIf="col.display">
+                  <span *ngIf="col.indicator" class="indicator-frame"
+                        [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                  </div>
+                  <div class="search-bar-table" *ngIf="col.filtered">
+                    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                    <input pInputText type="text"
+                           (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                  </div>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+              <tr>
+                <td *ngFor="let col of columns"
+                    [ngClass]="{'selected-item': rowData?.selected}"
+                    [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                  <div style=" display: flex;" *ngIf="col.type === 'select'">
+                    <label nz-checkbox (ngModelChange)="checkRow($event, rowData)" [ngModel]="rowData.selected"></label>
+                  </div>
+                  <div class="text-data" (click)="selectRows(rowData, i)"
+                       *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                  <div class="text-data" (click)="selectRows(rowData, i)"
+                       *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <ng-container *ngIf="facData !== null">
+            <p-table #dt [columns]="scrollableColsFac" [value]="facData?.division" [scrollable]="true"
+                     scrollHeight="340px" *ngIf="tabStatus === 'fac'">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div class="table-header-wrapper" *ngIf="col.display">
+                  <span *ngIf="col.indicator" class="indicator-frame"
+                        [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                    </div>
+                    <div class="search-bar-table" *ngIf="col.filtered">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input pInputText type="text"
+                             (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns" (click)="selectFacDivison(rowData)"
+                      [ngClass]="{'selected-item': rowData?.selected}"
+                      [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                    <div style=" display: flex;" *ngIf="col.type === 'select'">
+                      <i class="icon-check_24px" *ngIf="rowData.principal"></i>
+                    </div>
+                    <div class="text-data"*ngIf="col.type === 'text'">
+                      {{rowData[col.field]}}
+                    </div>
+                    <div class="text-data" *ngIf="col.type === 'date'">
+                      {{rowData[col.field] | date:'dd/MM/yyyy'}}
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </ng-container>
+        </div>
+
+        <div class="body-wrap-border" *ngIf="tabStatus === 'treaty'">
+          <div class="body-1">
+            <span style="font-weight: bold;">Treaty Section Summary</span>
+          </div>
+          <div class="body-wrap-border-body">
+            <div class="body-wrap-border-left">
+
+              <div class="body-w-b-l-list-item border-bottom-custom">
+                <div class="body-w-b-l-item">
+                  <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
+                  <span class="body-1">Treaty 02T019976 1 XS DAB EVTS NATURELS</span>
+                </div>
+                <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> Renewed</span></div>
+              </div>
+
+              <div class="body-w-b-l-list-item">
+                <div class="body-w-b-l-item">
+                  <span class="indicator-container"></span>
+                  <span class="body-1">Section: 1.1 XS DAB EVTS NATURELS</span>
+                </div>
+                <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value">Renewed</span></div>
+              </div>
+
+            </div>
+            <div class="body-wrap-border-standard">
+              <ul>
+                <li *ngFor="let item of listStandardContent?.primary">
+                  <span class="span-left">{{item.title}}</span>
+                  <span class="span-right">
+                  <nz-progress [nzPercent]="item.value"
+                               [ngClass]="{'hidden-text': item.value < 100 }"
+                               [nzWidth]="20" nzType="circle"></nz-progress>
+                    {{item.value | number: '1.2-2'}}%
+                </span>
+                </li>
+              </ul>
+            </div>
+            <div class="body-wrap-border-standard">
+              <ul>
+                <li *ngFor="let item of listStandardContent?.secondary">
+                  <span class="span-left">{{item.title}}</span>
+                  <span class="span-right">{{item.value}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="body-wrap-secondary">
+          <div></div>
+          <div>
+            <div>
+              <div></div>
+              <div></div>
+            </div>
+            <div>
+              <div></div>
+              <div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contract-body-wrapper" *ngIf="tabStatus === 'treaty'">
+      <div class="contract-left">
+        <div class="body-wrap-body margin-reset">
+          <div class="body-wrapper" style="height: 250px;">
+            <div class="body-wrapper-header">
+              <div class="body-wrapper-header-left">
+                <hr>
+                <div>Reinstatement</div>
+              </div>
+              <div class="body-wrapper-header-right">
+                <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+                <i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>
+                <i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>
+              </div>
+            </div>
+            <div class="show-table">
+              <p-table #dt [columns]="colsReinstatement" [value]="reinstatementData"
+                       [scrollable]="true" scrollHeight="340px">
+                <ng-template pTemplate="colgroup" let-columns>
+                  <colgroup>
+                    <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                  </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th *ngFor="let col of columns">
+                      <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator"
+                                                                                  class="indicator-frame"
+                                                                                  [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                      </div>
+                      <div class="search-bar-table" *ngIf="col.filtered">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text"
+                               (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                  <tr>
+                    <td *ngFor="let col of columns"
+                        [ngClass]="{'selected-item': rowData?.selected}"
+                        [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                      <div style=" display: flex;" *ngIf="col.type === 'select'">
+                        <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                               [ngModel]="rowData.selected"></label>
+                      </div>
+                      <div class="text-data" (click)="selectRows(rowData, i)"
+                           *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                      <div class="text-data" (click)="selectRows(rowData, i)"
+                           *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                      <div *ngIf="col.type === 'status'">
+                        <nz-progress [nzPercent]="rowData[col.field]"
+                                     [ngClass]="{'hidden-text': rowData[col.field] < 100 }"
+                                     [nzWidth]="20" nzType="circle"></nz-progress>
+                        {{rowData[col.field] | number: '1.2-2'}}%
+                      </div>
+                      <div class="text-data" *ngIf="col.type === 'icon'">
+                        <i class="icon-block_24px"></i>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="contract-right">
+        <div class="body-wrap-body margin-reset">
+          <div class="body-wrapper" style="height: 250px;">
+            <div class="body-wrapper-header">
+              <div class="body-wrapper-header-left">
+                <hr>
+                <div>Coverages</div>
+              </div>
+              <div class="body-wrapper-header-right">
+                <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+                <i *ngIf="collapseRight" (click)="collapseRight = false" class="icon-keyboard_arrow_up_24px"></i>
+                <i *ngIf="!collapseRight" (click)="collapseRight = true" class="icon-keyboard_arrow_down_24px"></i>
+              </div>
+            </div>
+            <div>
+              <ul class="ul-wrapper">
+                <li class="list-item-wrapper" *ngFor="let items of coveragesElement">
+                  <div class="list-item-left"><span></span><span>{{items.country}}</span></div>
+                  <div class="list-item-right"><span class="flag-container" *ngFor="let flag of items.flags"
+                                                     [ngStyle]="{'background-color': flag.color}">{{flag.content}}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="contract-body-wrapper" *ngIf="tabStatus === 'fac'">
+      <div class="body-wrap-body margin-reset">
+        <div class="body-wrapper" style="height: 250px;">
+          <div class="body-wrapper-header">
+            <div class="body-wrapper-header-left">
+              <hr>
+              <div>Region Peril</div>
+            </div>
+            <div class="body-wrapper-header-right">
+              <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+              <i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>
+              <i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>
+            </div>
+          </div>
+          <div *ngIf="facData !== null" class="show-table">
+            <p-table #dt [columns]="colsRegionPeril" [value]="filterSelection()"
+                     [scrollable]="true" scrollHeight="120px">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div class="table-header-wrapper" *ngIf="col.display">
+                      <span *ngIf="col.indicator" class="indicator-frame"
+                            [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                    </div>
+                    <div class="search-bar-table" *ngIf="col.filtered">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input pInputText type="text"
+                             (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <td *ngFor="let col of columns"
+                      [ngClass]="{'selected-item': rowData?.selected}"
+                      [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                    <div style=" display: flex;" *ngIf="col.type === 'select'">
+                      <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                             [ngModel]="rowData.selected"></label>
+                    </div>
+                    <div class="text-data" (click)="selectRows(rowData, i)"
+                         *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                    <div class="text-data" (click)="selectRows(rowData, i)"
+                         *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                    <div *ngIf="col.type === 'status'">
+                      <nz-progress [nzPercent]="rowData[col.field]"
+                                   [ngClass]="{'hidden-text': rowData[col.field] < 100 }"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                      {{rowData[col.field] | number: '1.2-2'}}%
+                    </div>
+                    <div class="text-data" *ngIf="col.type === 'icon'">
+                      <i class="icon-block_24px"></i>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="wsStatus === 'fac' && tabStatus === 'treaty'">
+    <div style="flex-direction: column" class="d-flex align-items-center justify-content-center">
+      <span class="body-1 font-weight-bold">The selected project is manual therefore no Scope and completeness to be displayed</span>
+      <nz-empty></nz-empty>
+    </div>
+  </ng-container>
+
 </div>
-<!--<div class="a-app-wrapper">-->
-  <!--<div class="a-app-header">-->
-    <!--<div style="display: flex; flex-flow: column;">-->
-      <!--<app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Contract'" [links]="hyperLinks"-->
-                       <!--[routes]="hyperLinksRoutes"></app-hyper-links>-->
-      <!--<div style="display: flex">-->
-        <!--<h4>Contract</h4>-->
-<!--&lt;!&ndash;        <div *ngIf="tabStatus === 'fac'" style="margin-left: 35px">-->
-          <!--<nz-dropdown [nzTrigger]="'click'">-->
-            <!--<div class="dropdown-wrap" nz-dropdown>-->
-              <!--<div class="dropdown-wrap-title">-->
-                <!--<span class="dropdown-title">CAR ID</span>-->
-                <!--<span class="dropdown-item-selected">{{selectedContract}}</span>-->
-              <!--</div>-->
-              <!--<div class="dropdown-icon">-->
-                <!--<i nz-icon type="down"></i>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<ul nz-menu>-->
-              <!--<li nz-menu-item (click)="selectContract(item.id)"-->
-                  <!--*ngFor="let item of contracts">{{item.id}}</li>-->
-            <!--</ul>-->
-          <!--</nz-dropdown>-->
-        <!--</div>&ndash;&gt;-->
-      <!--</div>-->
-
-    <!--</div>-->
-    <!--<app-pin-->
-      <!--(pinWs)="pinWorkspace()"-->
-      <!--[active]="!workspace?.isPinned"-->
-    <!--&gt;-->
-    <!--</app-pin>-->
-  <!--</div>-->
-
-  <!--<ng-container *ngIf="wsStatus === 'treaty' || tabStatus === 'fac'">-->
-    <!--<div class="body-wrap-body">-->
-      <!--<div class="body-wrapper">-->
-        <!--<div class="body-wrapper-header">-->
-          <!--<div class="body-wrapper-header-left">-->
-            <!--<hr>-->
-            <!--<div *ngIf="tabStatus === 'treaty'">treaty Sections</div>-->
-            <!--<div *ngIf="tabStatus === 'fac'">Contract Summary</div>-->
-          <!--</div>-->
-          <!--<div class="body-wrapper-header-right">-->
-            <!--&lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;-->
-            <!--<i *ngIf="collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_up_24px"></i>-->
-            <!--<i *ngIf="!collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_down_24px"></i>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="body-wrap-border unfold-fac-component" *ngIf="tabStatus === 'fac' && facData !== null">-->
-          <!--<div class="body-wrap-border-body">-->
-            <!--<div class="body-wrap-border-left">-->
-
-              <!--<div class="body-w-b-l-list-item border-bottom-custom">-->
-                <!--<div class="body-w-b-l-item">-->
-                  <!--<span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>-->
-                  <!--<span class="body-1">{{facData?.contractName}}</span>-->
-                <!--</div>-->
-                <!--<div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> {{facData?.carStatus}}</span></div>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div class="body-wrap-border-standard">-->
-              <!--<ul>-->
-                <!--<li>-->
-                  <!--<span class="span-left">UW Analysis</span>-->
-                  <!--<span class="span-right">{{facData?.uwAnalysis}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">UW Year</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractYear}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Contract Label</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractLabel}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Business Type</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractBusinessType}}</span>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-            <!--<div class="body-wrap-border-standard">-->
-              <!--<ul>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Sector</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractSector}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Contract ID</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractContractId}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Insured</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractInsured}}</span>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<span class="span-left">Subsidiary</span>-->
-                  <!--<span class="span-right">{{facData?.uwanalysisContractSubsidiary}}</span>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-        <!--<div class="header-style" *ngIf="tabStatus === 'fac'">Divisions</div>-->
-        <!--<div class="show-table">-->
-          <!--<p-table #dt [columns]="scrollableColsTreaty" [frozenColumns]="frozenColsTreaty" [value]="treatyData"-->
-                   <!--[scrollable]="true" scrollHeight="340px" frozenWidth="140px" *ngIf="tabStatus === 'treaty'">-->
-            <!--<ng-template pTemplate="colgroup" let-columns>-->
-              <!--<colgroup>-->
-                <!--<col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">-->
-              <!--</colgroup>-->
-            <!--</ng-template>-->
-            <!--<ng-template pTemplate="header" let-columns>-->
-              <!--<tr>-->
-                <!--<th *ngFor="let col of columns">-->
-                  <!--<div class="table-header-wrapper" *ngIf="col.display">-->
-                  <!--<span *ngIf="col.indicator" class="indicator-frame"-->
-                        <!--[ngStyle]="{'background-color': col.color}"></span> {{col.header}}-->
-                  <!--</div>-->
-                  <!--<div class="search-bar-table" *ngIf="col.filtered">-->
-                    <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-                    <!--<input pInputText type="text"-->
-                           <!--(input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">-->
-                  <!--</div>-->
-                <!--</th>-->
-              <!--</tr>-->
-            <!--</ng-template>-->
-            <!--<ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">-->
-              <!--<tr>-->
-                <!--<td *ngFor="let col of columns"-->
-                    <!--[ngClass]="{'selected-item': rowData?.selected}"-->
-                    <!--[ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">-->
-                  <!--<div style=" display: flex;" *ngIf="col.type === 'select'">-->
-                    <!--<label nz-checkbox (ngModelChange)="checkRow($event, rowData)" [ngModel]="rowData.selected"></label>-->
-                  <!--</div>-->
-                  <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                       <!--*ngIf="col.type === 'text'">{{rowData[col.field]}}</div>-->
-                  <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                       <!--*ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>-->
-                <!--</td>-->
-              <!--</tr>-->
-            <!--</ng-template>-->
-          <!--</p-table>-->
-          <!--<ng-container *ngIf="facData !== null">-->
-            <!--<p-table #dt [columns]="scrollableColsFac" [value]="facData?.division" [scrollable]="true"-->
-                     <!--scrollHeight="340px" *ngIf="tabStatus === 'fac'">-->
-              <!--<ng-template pTemplate="colgroup" let-columns>-->
-                <!--<colgroup>-->
-                  <!--<col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">-->
-                <!--</colgroup>-->
-              <!--</ng-template>-->
-              <!--<ng-template pTemplate="header" let-columns>-->
-                <!--<tr>-->
-                  <!--<th *ngFor="let col of columns">-->
-                    <!--<div class="table-header-wrapper" *ngIf="col.display">-->
-                  <!--<span *ngIf="col.indicator" class="indicator-frame"-->
-                        <!--[ngStyle]="{'background-color': col.color}"></span> {{col.header}}-->
-                    <!--</div>-->
-                    <!--<div class="search-bar-table" *ngIf="col.filtered">-->
-                      <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-                      <!--<input pInputText type="text"-->
-                             <!--(input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">-->
-                    <!--</div>-->
-                  <!--</th>-->
-                <!--</tr>-->
-              <!--</ng-template>-->
-              <!--<ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">-->
-                <!--<tr>-->
-                  <!--<td *ngFor="let col of columns" (click)="selectFacDivison(rowData)"-->
-                      <!--[ngClass]="{'selected-item': rowData?.selected}"-->
-                      <!--[ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">-->
-                    <!--<div style=" display: flex;" *ngIf="col.type === 'select'">-->
-                      <!--<i class="icon-check_24px" *ngIf="rowData.principal"></i>-->
-                    <!--</div>-->
-                    <!--<div class="text-data"*ngIf="col.type === 'text'">-->
-                      <!--{{rowData[col.field]}}-->
-                    <!--</div>-->
-                    <!--<div class="text-data" *ngIf="col.type === 'date'">-->
-                      <!--{{rowData[col.field] | date:'dd/MM/yyyy'}}-->
-                    <!--</div>-->
-                  <!--</td>-->
-                <!--</tr>-->
-              <!--</ng-template>-->
-            <!--</p-table>-->
-          <!--</ng-container>-->
-        <!--</div>-->
-
-        <!--<div class="body-wrap-border" *ngIf="tabStatus === 'treaty'">-->
-          <!--<div class="body-1">-->
-            <!--<span style="font-weight: bold;">Treaty Section Summary</span>-->
-          <!--</div>-->
-          <!--<div class="body-wrap-border-body">-->
-            <!--<div class="body-wrap-border-left">-->
-
-              <!--<div class="body-w-b-l-list-item border-bottom-custom">-->
-                <!--<div class="body-w-b-l-item">-->
-                  <!--<span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>-->
-                  <!--<span class="body-1">Treaty 02T019976 1 XS DAB EVTS NATURELS</span>-->
-                <!--</div>-->
-                <!--<div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> Renewed</span></div>-->
-              <!--</div>-->
-
-              <!--<div class="body-w-b-l-list-item">-->
-                <!--<div class="body-w-b-l-item">-->
-                  <!--<span class="indicator-container"></span>-->
-                  <!--<span class="body-1">Section: 1.1 XS DAB EVTS NATURELS</span>-->
-                <!--</div>-->
-                <!--<div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value">Renewed</span></div>-->
-              <!--</div>-->
-
-            <!--</div>-->
-            <!--<div class="body-wrap-border-standard">-->
-              <!--<ul>-->
-                <!--<li *ngFor="let item of listStandardContent?.primary">-->
-                  <!--<span class="span-left">{{item.title}}</span>-->
-                  <!--<span class="span-right">-->
-                  <!--<nz-progress [nzPercent]="item.value"-->
-                               <!--[ngClass]="{'hidden-text': item.value < 100 }"-->
-                               <!--[nzWidth]="20" nzType="circle"></nz-progress>-->
-                    <!--{{item.value | number: '1.2-2'}}%-->
-                <!--</span>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-            <!--<div class="body-wrap-border-standard">-->
-              <!--<ul>-->
-                <!--<li *ngFor="let item of listStandardContent?.secondary">-->
-                  <!--<span class="span-left">{{item.title}}</span>-->
-                  <!--<span class="span-right">{{item.value}}</span>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-
-        <!--<div class="body-wrap-secondary">-->
-          <!--<div></div>-->
-          <!--<div>-->
-            <!--<div>-->
-              <!--<div></div>-->
-              <!--<div></div>-->
-            <!--</div>-->
-            <!--<div>-->
-              <!--<div></div>-->
-              <!--<div></div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="contract-body-wrapper" *ngIf="tabStatus === 'treaty'">-->
-      <!--<div class="contract-left">-->
-        <!--<div class="body-wrap-body margin-reset">-->
-          <!--<div class="body-wrapper" style="height: 250px;">-->
-            <!--<div class="body-wrapper-header">-->
-              <!--<div class="body-wrapper-header-left">-->
-                <!--<hr>-->
-                <!--<div>Reinstatement</div>-->
-              <!--</div>-->
-              <!--<div class="body-wrapper-header-right">-->
-                <!--&lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;-->
-                <!--<i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>-->
-                <!--<i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div class="show-table">-->
-              <!--<p-table #dt [columns]="colsReinstatement" [value]="reinstatementData"-->
-                       <!--[scrollable]="true" scrollHeight="340px">-->
-                <!--<ng-template pTemplate="colgroup" let-columns>-->
-                  <!--<colgroup>-->
-                    <!--<col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">-->
-                  <!--</colgroup>-->
-                <!--</ng-template>-->
-                <!--<ng-template pTemplate="header" let-columns>-->
-                  <!--<tr>-->
-                    <!--<th *ngFor="let col of columns">-->
-                      <!--<div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator"-->
-                                                                                  <!--class="indicator-frame"-->
-                                                                                  <!--[ngStyle]="{'background-color': col.color}"></span> {{col.header}}-->
-                      <!--</div>-->
-                      <!--<div class="search-bar-table" *ngIf="col.filtered">-->
-                        <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-                        <!--<input pInputText type="text"-->
-                               <!--(input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">-->
-                      <!--</div>-->
-                    <!--</th>-->
-                  <!--</tr>-->
-                <!--</ng-template>-->
-                <!--<ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">-->
-                  <!--<tr>-->
-                    <!--<td *ngFor="let col of columns"-->
-                        <!--[ngClass]="{'selected-item': rowData?.selected}"-->
-                        <!--[ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">-->
-                      <!--<div style=" display: flex;" *ngIf="col.type === 'select'">-->
-                        <!--<label nz-checkbox (ngModelChange)="checkRow($event, rowData)"-->
-                               <!--[ngModel]="rowData.selected"></label>-->
-                      <!--</div>-->
-                      <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                           <!--*ngIf="col.type === 'text'">{{rowData[col.field]}}</div>-->
-                      <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                           <!--*ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>-->
-                      <!--<div *ngIf="col.type === 'status'">-->
-                        <!--<nz-progress [nzPercent]="rowData[col.field]"-->
-                                     <!--[ngClass]="{'hidden-text': rowData[col.field] < 100 }"-->
-                                     <!--[nzWidth]="20" nzType="circle"></nz-progress>-->
-                        <!--{{rowData[col.field] | number: '1.2-2'}}%-->
-                      <!--</div>-->
-                      <!--<div class="text-data" *ngIf="col.type === 'icon'">-->
-                        <!--<i class="icon-block_24px"></i>-->
-                      <!--</div>-->
-                    <!--</td>-->
-                  <!--</tr>-->
-                <!--</ng-template>-->
-              <!--</p-table>-->
-            <!--</div>-->
-
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-      <!--<div class="contract-right">-->
-        <!--<div class="body-wrap-body margin-reset">-->
-          <!--<div class="body-wrapper" style="height: 250px;">-->
-            <!--<div class="body-wrapper-header">-->
-              <!--<div class="body-wrapper-header-left">-->
-                <!--<hr>-->
-                <!--<div>Coverages</div>-->
-              <!--</div>-->
-              <!--<div class="body-wrapper-header-right">-->
-                <!--&lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;-->
-                <!--<i *ngIf="collapseRight" (click)="collapseRight = false" class="icon-keyboard_arrow_up_24px"></i>-->
-                <!--<i *ngIf="!collapseRight" (click)="collapseRight = true" class="icon-keyboard_arrow_down_24px"></i>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div>-->
-              <!--<ul class="ul-wrapper">-->
-                <!--<li class="list-item-wrapper" *ngFor="let items of coveragesElement">-->
-                  <!--<div class="list-item-left"><span></span><span>{{items.country}}</span></div>-->
-                  <!--<div class="list-item-right"><span class="flag-container" *ngFor="let flag of items.flags"-->
-                                                     <!--[ngStyle]="{'background-color': flag.color}">{{flag.content}}</span>-->
-                  <!--</div>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div class="contract-body-wrapper" *ngIf="tabStatus === 'fac'">-->
-      <!--<div class="body-wrap-body margin-reset">-->
-        <!--<div class="body-wrapper" style="height: 250px;">-->
-          <!--<div class="body-wrapper-header">-->
-            <!--<div class="body-wrapper-header-left">-->
-              <!--<hr>-->
-              <!--<div>Region Peril</div>-->
-            <!--</div>-->
-            <!--<div class="body-wrapper-header-right">-->
-              <!--&lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;-->
-              <!--<i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>-->
-              <!--<i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>-->
-            <!--</div>-->
-          <!--</div>-->
-          <!--<div *ngIf="facData !== null" class="show-table">-->
-            <!--<p-table #dt [columns]="colsRegionPeril" [value]="filterSelection()"-->
-                     <!--[scrollable]="true" scrollHeight="120px">-->
-              <!--<ng-template pTemplate="colgroup" let-columns>-->
-                <!--<colgroup>-->
-                  <!--<col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">-->
-                <!--</colgroup>-->
-              <!--</ng-template>-->
-              <!--<ng-template pTemplate="header" let-columns>-->
-                <!--<tr>-->
-                  <!--<th *ngFor="let col of columns">-->
-                    <!--<div class="table-header-wrapper" *ngIf="col.display">-->
-                      <!--<span *ngIf="col.indicator" class="indicator-frame"-->
-                            <!--[ngStyle]="{'background-color': col.color}"></span> {{col.header}}-->
-                    <!--</div>-->
-                    <!--<div class="search-bar-table" *ngIf="col.filtered">-->
-                      <!--<i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>-->
-                      <!--<input pInputText type="text"-->
-                             <!--(input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">-->
-                    <!--</div>-->
-                  <!--</th>-->
-                <!--</tr>-->
-              <!--</ng-template>-->
-              <!--<ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">-->
-                <!--<tr>-->
-                  <!--<td *ngFor="let col of columns"-->
-                      <!--[ngClass]="{'selected-item': rowData?.selected}"-->
-                      <!--[ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">-->
-                    <!--<div style=" display: flex;" *ngIf="col.type === 'select'">-->
-                      <!--<label nz-checkbox (ngModelChange)="checkRow($event, rowData)"-->
-                             <!--[ngModel]="rowData.selected"></label>-->
-                    <!--</div>-->
-                    <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                         <!--*ngIf="col.type === 'text'">{{rowData[col.field]}}</div>-->
-                    <!--<div class="text-data" (click)="selectRows(rowData, i)"-->
-                         <!--*ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>-->
-                    <!--<div *ngIf="col.type === 'status'">-->
-                      <!--<nz-progress [nzPercent]="rowData[col.field]"-->
-                                   <!--[ngClass]="{'hidden-text': rowData[col.field] < 100 }"-->
-                                   <!--[nzWidth]="20" nzType="circle"></nz-progress>-->
-                      <!--{{rowData[col.field] | number: '1.2-2'}}%-->
-                    <!--</div>-->
-                    <!--<div class="text-data" *ngIf="col.type === 'icon'">-->
-                      <!--<i class="icon-block_24px"></i>-->
-                    <!--</div>-->
-                  <!--</td>-->
-                <!--</tr>-->
-              <!--</ng-template>-->
-            <!--</p-table>-->
-          <!--</div>-->
-
-        <!--</div>-->
-      <!--</div>-->
-    <!--</div>-->
-  <!--</ng-container>-->
-  <!--<ng-container *ngIf="wsStatus === 'fac' && tabStatus === 'treaty'">-->
-    <!--<div style="flex-direction: column" class="d-flex align-items-center justify-content-center">-->
-      <!--<span class="body-1 font-weight-bold">The selected project is manual therefore no Scope and completeness to be displayed</span>-->
-      <!--<nz-empty></nz-empty>-->
-    <!--</div>-->
-  <!--</ng-container>-->
-
-<!--</div>-->
