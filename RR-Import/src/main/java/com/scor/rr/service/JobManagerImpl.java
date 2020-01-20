@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.service.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.stereotype.Service;
