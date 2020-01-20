@@ -10,13 +10,13 @@ import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
+import com.scor.rr.service.abstraction.DivisionService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +65,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private RLImportSelectionRepository rlImportSelectionRepository;
 
     @Autowired
+    private DivisionService divisionService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
@@ -111,23 +114,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     // TODO : Review this later
     @Override
     public List<CARDivisionDto> getDivisions(String carId) {
-        List<Map<String, Object>> divisions = projectConfigurationForeWriterDivisionRepository.findByCARId(carId);
-        List<CARDivisionDto> carDivisions = new ArrayList<>();
-        for (Map<String, Object> division : divisions) {
-            CARDivisionDto carDivisionDto = new CARDivisionDto();
-            carDivisionDto.setCaRequestId((String) division.get("caRequestId"));
-            carDivisionDto.setCarStatus((String) division.get("carStatus"));
-            carDivisionDto.setContractId((String) division.get("contractId"));
-            carDivisionDto.setCurrency((String) division.get("currency"));
-            carDivisionDto.setDivisionNumber(Integer.valueOf((String) division.get("divisionNumber")));
-            carDivisionDto.setIsPrincipalDivision(Boolean.parseBoolean(String.valueOf(division.get("IsPrincipalDivision"))));
-            carDivisionDto.setProjectId(((BigInteger) division.get("projectId")).longValue());
-            carDivisionDto.setUwYear((Integer) division.get("uwYear"));
-            carDivisionDto.setWorkspaceId(((BigInteger) division.get("workspaceId")).longValue());
-            carDivisions.add(carDivisionDto);
-        }
-
-        return carDivisions;
+        return divisionService.getDivisions(carId);
     }
 
     @Override
