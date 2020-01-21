@@ -14,9 +14,8 @@ export class WsApi {
   constructor(private _http: HttpClient) {
   }
 
-
-  searchWorkspace(id = '', year = '') {
-    return this._http.get(`${environment.API_URI + 'search/'}worspace/${id}/${year}`);
+  searchWorkspace(workspaceContextCode = '', workspaceContextUwYear = '', type = 'TTY') {
+    return this._http.get(`${this.api}`, { params: {workspaceContextCode, workspaceContextUwYear, type} });
   }
 
   getDivision(carId) {

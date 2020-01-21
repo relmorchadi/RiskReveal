@@ -3,6 +3,8 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
+import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.service.SearchService;
 import com.scor.rr.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +14,18 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/workspace")
-public class WorkspaceRessource {
+public class WorkspaceResource {
 
     @Autowired
     WorkspaceService workspaceService;
+
+    @Autowired
+    private SearchService searchService;
+
+    @GetMapping
+    WorkspaceDetailsDTO getWorkspaceDetails(@RequestParam("workspaceContextCode") String workspaceId, @RequestParam("workspaceContextUwYear") String uwy, @RequestParam("type") String type){
+        return  searchService.getWorkspaceDetails(workspaceId, uwy, type);
+    }
 
     @GetMapping("favorite")
     List<WorkspaceEntity> getFavoriteWorkspaces(@RequestParam(required = false, defaultValue = "") String kw, @RequestParam Integer userId, @RequestParam( defaultValue = "0" ) Integer offset, @RequestParam( defaultValue = "10" ) Integer size) {

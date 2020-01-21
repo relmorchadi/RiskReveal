@@ -1,7 +1,6 @@
 package com.scor.rr.request;
 
-import com.scor.rr.dto.InuringContractLayerDto;
-import lombok.Data;
+import com.scor.rr.domain.dto.InuringContractLayerDto;
 
 import java.util.List;
 

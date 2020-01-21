@@ -164,14 +164,59 @@ public class SearchService {
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
 
-    public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy) {
+    public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy, String wsType) {
+        WorkspaceDetailsDTO res= null;
+
+        if("TTY".equals(wsType)) res = loadTreatyWorkspace(workspaceId, uwy);
+        if("FAC".equals(wsType)) res = loadFacWorkspace(workspaceId, uwy);
+
+        if(res == null) res = loadFacWorkspace(workspaceId, uwy);
+        if(res == null) res = loadTreatyWorkspace(workspaceId, uwy);
+
+        if( res != null ) {
+            return res;
+        } else {
+            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+        }
+    };
+
+    WorkspaceDetailsDTO loadTreatyWorkspace(String workspaceId, String uwy) {
+        List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+        List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
+        Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+        List<ProjectCardView> projects = wsOpt
+                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
+                .orElse(new ArrayList<>());
+        if (!CollectionUtils.isEmpty(contracts)) {
+            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            Long marketChannel = null;
+            if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
+            WorkspaceEntity ws = new WorkspaceEntity();
+            if(wsOpt.isPresent()) {
+                ws = wsOpt.get();
+            }
+            return buildWorkspaceDetails(
+                    ws,
+                    contracts,
+                    years,
+                    projects,
+                    workspaceId,
+                    uwy,
+                    marketChannel
+            );
+        } else {
+            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+        }
+    }
+
+    WorkspaceDetailsDTO loadFacWorkspace(String workspaceId, String uwy) {
         Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         if (wsOpt.isPresent()) {
             List<ProjectCardView> projects = wsOpt
                     .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
                     .orElse(new ArrayList<>());
             List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
-            List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
+            List<Integer> years = workspaceEntityRepository.findDistinctYearsByWorkspaceContextCode(workspaceId);
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
             Long marketChannel = null;
             if (wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
@@ -216,22 +261,24 @@ public class SearchService {
             detailsDTO.setYear(uwYear);
         }
         detailsDTO.setIsPinned(true);
-        detailsDTO.setExpectedRegionPerils(getCount(workspaceEntityRepository.getDistinctRegionPerilsInScopeCount(workspaceId, uwYear)));
-        detailsDTO.setExpectedExposureSummaries(getCount(new ArrayList<>(Arrays.asList())));
-        detailsDTO.setQualifiedPLTs(getCount(workspaceEntityRepository.getDistinctRegionPerilsByQualifyingPLTsCount(workspaceId, uwYear)));
-        detailsDTO.setExpectedPublishedForPricing(getCount(workspaceEntityRepository.getDistinctRPByPublishedToPricingQualifiedPLTsCount(workspaceId, uwYear)));
-        detailsDTO.setExpectedPriced(getCount(workspaceEntityRepository.getDistinctRPByPricedQualifiedPLTsCount(workspaceId, uwYear)));
-        detailsDTO.setExpectedAccumulation(getCount(workspaceEntityRepository.getDistinctRPByAccumulatedQualifiedPLTsCount(workspaceId, uwYear)));
-        detailsDTO.setIsFavorite(this.favoriteWorkspaceRepository.existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(workspaceId, uwYear, 1));
+
+        getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, uwYear, 1L), detailsDTO);
+
         return detailsDTO;
     }
 
-    private Integer getCount(List<Map<String, Object>> arr) {
+    private WorkspaceDetailsDTO getCount(List<Map<String, Object>> arr, WorkspaceDetailsDTO ws) {
         if( arr.size() > 0 ) {
             Map<String, Object> tmp = arr.get(0);
-            return (Integer) tmp.get("count");
-
-        } else return 0;
+            ws.setExpectedAccumulation( (Integer) tmp.get("expectedAccumulation"));
+            ws.setExpectedExposureSummaries( (Integer) tmp.get("expectedExposureSummaries"));
+            ws.setExpectedPriced( (Integer) tmp.get("expectedPriced"));
+            ws.setExpectedPublishedForPricing( (Integer) tmp.get("expectedPublishedForPricing"));
+            ws.setExpectedRegionPerils( (Integer) tmp.get("expectedRegionPerils"));
+            ws.setIsFavorite( (Boolean) tmp.get("isFavorite"));
+            ws.setQualifiedPLTs( (Integer) tmp.get("qualifiedPLTs"));
+            return ws;
+        } else return ws;
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {

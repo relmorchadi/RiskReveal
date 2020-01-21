@@ -110,7 +110,7 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)).pipe(
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType), 'Calibration').pipe(
         tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -184,7 +184,7 @@ export class CalibrationNewService {
   }
 
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
-    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId, 'Calibration')
       .pipe(
         mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
@@ -192,8 +192,8 @@ export class CalibrationNewService {
 
   saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, userId, wsId, uwYear, curveType}) {
     return concat(
-        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId),
-        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs),
+        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId, 'Calibration'),
+        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration'),
         ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true}))
     )
   }
