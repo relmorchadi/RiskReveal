@@ -8,4 +8,5 @@ import java.util.List;
 public class SaveOrDeleteListOfRPsRequest {
     List<Integer> rps;
     Long userId;
+    String screen;
 }

@@ -23,10 +23,9 @@ export class WorkspaceService {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
-    const {
-      wsId, uwYear, route} = payload;
+    const {wsId, uwYear, route, type} = payload;
     ctx.patchState({loading: true});
-    return this.wsApi.searchWorkspace(wsId, uwYear)
+    return this.wsApi.searchWorkspace(wsId, uwYear, type ? type : 'TTY')
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
@@ -40,142 +39,142 @@ export class WorkspaceService {
     const {wsId, uwYear, ws, route} = payload;
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
+
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content = _.merge(draft.content, {
-        [wsIdentifier]: {
-          wsId,
-          uwYear,
-          ...ws,
-          projects: _.map(projects, prj => {
-            return prj.carRequestId === null ? {...prj, projectType: 'TREATY'} : {...prj, projectType: 'FAC'};
-          }),
-          workspaceType: _.includes(_.map(projects, prj => {return prj.carRequestId === null ? 'TREATY' : 'FAC'}), 'FAC') ? 'fac' : 'treaty',
-          isPinned: false,
-          collapseWorkspaceDetail: true,
-          route,
-          leftNavbarCollapsed: false,
-          plts: {},
-          pltManager: {
-            data: {},
-            deleted: {},
-            filters: {
-              systemTag: [], userTag: []
-            },
-            openedPlt: {},
-            userTags: {},
-            userTagManager: {
-              usedInWs: {},
-              suggested: {},
-              allTags: {}
-            },
-            pltDetails: {
-              summary: {}
-            },
-            cloneConfig: {},
-            loading: false
+      draft.content[wsIdentifier] = {
+        wsId,
+        uwYear,
+        ...ws,
+        projects: _.map(projects, (prj, index) => {
+          prj.selected = index === '0';
+          prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+          return prj;
+        }),
+        workspaceType: ws.marketChannel == 2 ? 'fac' : 'treaty',
+        isPinned: false,
+        collapseWorkspaceDetail: true,
+        route,
+        leftNavbarCollapsed: false,
+        plts: {},
+        pltManager: {
+          data: {},
+          deleted: {},
+          filters: {
+            systemTag: [], userTag: []
           },
-          contract: {
-            treaty: {},
-            fac: {},
-            loading: false,
-            typeWs: null,
+          openedPlt: {},
+          userTags: {},
+          userTagManager: {
+            usedInWs: {},
+            suggested: {},
+            allTags: {}
           },
-          calibrationNew: {
-            plts: [],
-            epMetrics: {
-              cols: [],
-              rps: []
-            },
-            adjustments: {},
-            loading: false
+          pltDetails: {
+            summary: {}
           },
-          calibration: {
-            data: {},
-            deleted: {},
-            loading: false,
-            filters: {
-              systemTag: [],
-              userTag: []
-            },
-            userTags: {},
-            selectedPLT: [],
-            extendPltSection: false,
-            extendState: false,
-            collapseTags: true,
-            lastCheckedBool: false,
-            firstChecked: '',
-            adjustments: [],
-            adjustmentApplication: {},
-            defaultAdjustment: {},
-            adjustementType: _.assign({}, ADJUSTMENT_TYPE),
-            allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+          cloneConfig: {},
+          loading: false
+        },
+        contract: {
+          treaty: {},
+          fac: {},
+          loading: false,
+          typeWs: null,
+        },
+        calibrationNew: {
+          plts: [],
+          epMetrics: {
+            cols: [],
+            rps: []
           },
-          riskLink: {
-            listEdmRdm: {
-              data: null,
-              dataSelected: [],
-              selectedListEDMAndRDM: {edm: null, rdm: null},
-              totalNumberElement: 0,
-              searchValue: '',
-              numberOfElement: 0
-            },
-            linking: {
-              edm: null,
-              rdm: {data: null, selected: null},
-              autoLinks: null,
-              linked: [],
-              analysis: null,
-              portfolio: null,
-              autoMode: false
-            },
-            display: {
-              displayListRDMEDM: false,
-              displayTable: false,
-              displayImport: false,
-            },
-            collapse: {
-              collapseHead: true,
-              collapseAnalysis: true,
-              collapseResult: true,
-            },
-            financialValidator: {
-              rmsInstance: {data: [], selected: ''},
-              financialPerspectiveELT: {data: [], selected: ''},
-              targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
-              division: {data: [], selected: 'Division N°1'},
-            },
-            financialPerspective: {
-              rdm: {data: null, selected: null},
-              analysis: null,
-              treaty: null,
-              standard: null,
-              target: 'currentSelection'
-            },
-            analysis: [],
-            portfolios: [],
-            results: null,
-            summaries: null,
-            selection: null,
-            facSelection: {},
-            importPLTs: {},
-            selectedEDMOrRDM: null,
-            activeAddBasket: false,
-            synchronize: false
+          adjustments: {},
+          loading: false
+        },
+        calibration: {
+          data: {},
+          deleted: {},
+          loading: false,
+          filters: {
+            systemTag: [],
+            userTag: []
           },
-          scopeOfCompletence: {
-            data: {},
-            wsType: null
+          userTags: {},
+          selectedPLT: [],
+          extendPltSection: false,
+          extendState: false,
+          collapseTags: true,
+          lastCheckedBool: false,
+          firstChecked: '',
+          adjustments: [],
+          adjustmentApplication: {},
+          defaultAdjustment: {},
+          adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+          allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+        },
+        riskLink: {
+          listEdmRdm: {
+            data: null,
+            dataSelected: [],
+            selectedListEDMAndRDM: {edm: null, rdm: null},
+            totalNumberElement: 0,
+            searchValue: '',
+            numberOfElement: 0
           },
-          fileBaseImport: {
-            folders: null,
-            files: null,
-            selectedFiles: null,
-            importedPLTs: null
+          linking: {
+            edm: null,
+            rdm: {data: null, selected: null},
+            autoLinks: null,
+            linked: [],
+            analysis: null,
+            portfolio: null,
+            autoMode: false
           },
-          inuring: defaultInuringState
-        }
-      });
+          display: {
+            displayListRDMEDM: false,
+            displayTable: false,
+            displayImport: false,
+          },
+          collapse: {
+            collapseHead: true,
+            collapseAnalysis: true,
+            collapseResult: true,
+          },
+          financialValidator: {
+            rmsInstance: {data: [], selected: ''},
+            financialPerspectiveELT: {data: [], selected: ''},
+            targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
+            division: {data: [], selected: 'Division N°1'},
+          },
+          financialPerspective: {
+            rdm: {data: null, selected: null},
+            analysis: null,
+            treaty: null,
+            standard: null,
+            target: 'currentSelection'
+          },
+          analysis: [],
+          portfolios: [],
+          results: null,
+          summaries: null,
+          selection: null,
+          facSelection: {},
+          importPLTs: {},
+          selectedEDMOrRDM: null,
+          activeAddBasket: false,
+          synchronize: false
+        },
+        scopeOfCompletence: {
+          data: {},
+          wsType: null
+        },
+        fileBaseImport: {
+          folders: null,
+          files: null,
+          selectedFiles: null,
+          importedPLTs: null
+        },
+        inuring: defaultInuringState
+      };
       draft.loading = false;
       ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
@@ -185,7 +184,7 @@ export class WorkspaceService {
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
-    const {wsId, uwYear, route} = payload;
+    const {wsId, uwYear, route, type} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -199,7 +198,9 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
-        route}));
+        route,
+        type
+      }));
     }
   }
 
