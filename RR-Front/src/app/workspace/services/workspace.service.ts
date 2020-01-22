@@ -46,7 +46,7 @@ export class WorkspaceService {
         uwYear,
         ...ws,
         projects: _.map(projects, (prj, index) => {
-          prj.selected = index === '0';
+          prj.selected = index == 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
         }),

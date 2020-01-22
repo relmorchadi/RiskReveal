@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
-import {importUrl} from "../../../shared/api";
+import {importUrl, backendUrl} from "../../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WsApi {
 
-  private readonly api = environment.API_URI + 'workspace/';
+  private readonly api = backendUrl() + 'workspace/';
   private readonly importAPI = importUrl() + 'import/';
 
   constructor(private _http: HttpClient) {
