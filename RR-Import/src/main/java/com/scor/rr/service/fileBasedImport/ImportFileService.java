@@ -946,7 +946,7 @@ public class ImportFileService {
     }
 
     public void updateFileBasedConfig(FileBasedImportConfigRequest request) throws RRException {
-        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(request.getProjectId()));
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
 
         if (fileBasedImportConfigDB == null) {
             fileBasedImportConfigDB = createFileBasedImportConfigIfNotExist(request);
@@ -962,31 +962,34 @@ public class ImportFileService {
 
         fileBasedImportConfigRepository.save(fileBasedImportConfigDB);
 
-        //remove old FileImportSourceResult
-        List<FileImportSourceResult> oldFileImportSourceResults = fileImportSourceResultRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
-        for (FileImportSourceResult fileImportSourceResult: oldFileImportSourceResults) {
-            fileImportSourceResultRepository.deleteById(fileImportSourceResult.getFileImportSourceResultId());
-        }
-
-        //update new FileImportSourceResult
-        if (request.getSelectedFileSourcePath() != null && request.getSelectedFileSourcePath().size() > 0) {
-            Set<File> selectedTextFiles = new HashSet<>();
-            for (String path: request.getSelectedFileSourcePath()) {
-                File file = new File(path);
-                selectedTextFiles.add(file);
+        // create/update FileImportSourceResult if isImportLocked = false
+        if (!request.isImportLocked()) {
+            //remove old FileImportSourceResult
+            List<FileImportSourceResult> oldFileImportSourceResults = fileImportSourceResultRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
+            for (FileImportSourceResult fileImportSourceResult : oldFileImportSourceResults) {
+                fileImportSourceResultRepository.deleteById(fileImportSourceResult.getFileImportSourceResultId());
             }
 
-            for (File file : selectedTextFiles) {
-                if (file.isDirectory() || !"txt".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
-                    continue;
+            //update new FileImportSourceResult
+            if (request.getSelectedFileSourcePath() != null && request.getSelectedFileSourcePath().size() > 0) {
+                Set<File> selectedTextFiles = new HashSet<>();
+                for (String path : request.getSelectedFileSourcePath()) {
+                    File file = new File(path);
+                    selectedTextFiles.add(file);
                 }
 
-                SourceFileImport sourceFileImport = buildSourceFileImport(file);
+                for (File file : selectedTextFiles) {
+                    if (file.isDirectory() || !"txt".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+                        continue;
+                    }
 
-                fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(request.getProjectId()));
-                if (sourceFileImport.getErrorMessages() == null || sourceFileImport.getErrorMessages().size() == 0) {
-                    FileImportSourceResult sourceResult = buildFileImportSourceResult(fileBasedImportConfigDB, sourceFileImport);
-                    fileImportSourceResultRepository.save(sourceResult);
+                    SourceFileImport sourceFileImport = buildSourceFileImport(file);
+
+                    fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
+                    if (sourceFileImport.getErrorMessages() == null || sourceFileImport.getErrorMessages().size() == 0) {
+                        FileImportSourceResult sourceResult = buildFileImportSourceResult(fileBasedImportConfigDB, sourceFileImport);
+                        fileImportSourceResultRepository.save(sourceResult);
+                    }
                 }
             }
         }
@@ -1004,7 +1007,7 @@ public class ImportFileService {
     public String retrieveFileBasedConfig(String projectId) {
         String fileBasedConfigStr = "";
 
-        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(projectId));
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(projectId));
         if (fileBasedImportConfigDB != null) {
             fileBasedConfigStr = fileBasedImportConfigDB.toString();
         }
