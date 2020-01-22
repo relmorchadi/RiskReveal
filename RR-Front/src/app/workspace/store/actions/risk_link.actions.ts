@@ -53,26 +53,6 @@ export class ToggleRiskLinkAnalysisAction {
   constructor(public payload: any) {}
 }
 
-export class ToggleRiskLinkResultAction {
-  static readonly type = '[Risk Link] Toggle Result';
-  constructor(public payload: any) {}
-}
-
-export class ToggleRiskLinkSummaryAction {
-  static readonly type = '[Risk Link] Toggle Summary';
-  constructor(public payload: any) {}
-}
-
-export class ToggleRiskLinkFPStandardAction {
-  static readonly type = '[Risk Link] Toggle Financial Perspective Standard';
-  constructor(public payload: any) {}
-}
-
-export class ToggleRiskLinkFPAnalysisAction {
-  static readonly type = '[Risk Link] Toggle Financial Perspective Analysis';
-  constructor(public payload: any) {}
-}
-
 export class ToggleRiskLinkEDMAndRDMSelectedAction {
   static readonly type = '[Risk Link] Select Display Portfolio Or Analysis';
   constructor(public payload: any) {}
@@ -83,23 +63,8 @@ export class ToggleAnalysisForLinkingAction {
   constructor(public payload: any) {}
 }
 
-export class ToggleAnalysisLinkingAction {
-  static readonly type = '[Risk Link] Select Linked Analysis';
-  constructor(public payload: any) {}
-}
-
-export class TogglePortfolioLinkingAction {
-  static readonly type = '[Risk Link] Select linked Portfolios';
-  constructor(public payload: any) {}
-}
-
 export class AddToBasketAction {
   static readonly type = '[Risk Link] Add Analysis and Portfolio To Basket';
-  constructor() {}
-}
-
-export class AddToBasketDefaultAction {
-  static readonly type = '[Risk Link] Auto Attach Fac Data';
   constructor() {}
 }
 
@@ -108,10 +73,6 @@ export class TriggerImportAction {
   constructor(public payload?: any) {}
 }
 
-export class DeleteFromBasketAction {
-  static readonly type = '[Risk Link] Delete From Basket';
-  constructor(public payload: any) {}
-}
 
 export class DeleteEdmRdmAction {
   static readonly type = '[Risk Link] Delete Edm Or Rdm';
@@ -138,10 +99,6 @@ export class UpdateAnalysisAndPortfolioData {
   constructor(public payload: any) {}
 }
 
-export class SelectRiskLinkEDMAndRDMAction {
-  static readonly type = '[Risk Link] Select Risk Link EDM And RDM';
-  constructor() {}
-}
 
 export class SelectFacRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Select Fac Risk Link EDM And RDM';
@@ -153,10 +110,6 @@ export class DatasourceScanAction {
   constructor(public payload:any) {}
 }
 
-export class ApplyFinancialPerspectiveAction {
-  static readonly type = '[Risk Link] Apply Financial Perspective For Analysis';
-  constructor(public payload: any) {}
-}
 
 export class ApplyRegionPerilAction {
   static readonly type = '[Risk Link] Apply Region Peril To All';
@@ -208,20 +161,11 @@ export class SaveEDMAndRDMSelectionAction {
   constructor(public payload?: any) {}
 }
 
-export class SynchronizeEDMAndRDMSelectionAction {
-  static readonly type = '[Risk Link] Synchronize EDM And RDM Selection';
-  constructor(public payload?: any) {}
-}
-
 export class BasicScanEDMAndRDMAction {
   static readonly type = '[Risk Link] Basic Scan And RDM';
   constructor(public payload?: any) {}
 }
 
-export class CreateLinkingAction {
-  static readonly type = '[Risk Link] Create Linking';
-  constructor(public payload: any) {}
-}
 
 // export class LoadFacDataAction {
 //   static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
@@ -263,23 +207,13 @@ export class LoadRiskLinkDataAction {
   constructor(public payload?) {}
 }
 
-export class LoadRiskLinkAnalysisDataAction {
-  static readonly type = '[Risk Link] Load Risk Link Analysis Data';
+export class RunDetailedScanAction {
+  static readonly type = '[Risk Link] Run detailed scan';
   constructor(public payload: any) {}
 }
 
-export class LoadRiskLinkPortfolioDataAction {
-  static readonly type = '[Risk Link] Load Risk Link portfolio Data';
-  constructor(public payload: any) {}
-}
-
-export class RunDetailedScanForTreatyAction {
-  static readonly type = '[Risk Link] Run detailed scan for Treaty';
-  constructor(public payload: any) {}
-}
-
-export class RunDetailedScanForFacAction {
-  static readonly type = '[Risk Link] Run detailed scan for FAC';
+export class AddToImportBasket {
+static readonly type = '[Risk Link] Add to import Basket';
   constructor(public payload: any) {}
 }
 
