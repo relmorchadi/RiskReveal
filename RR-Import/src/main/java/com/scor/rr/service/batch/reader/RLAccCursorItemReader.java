@@ -1,10 +1,10 @@
 package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
-import com.scor.rr.service.state.FacParameters;
+import com.scor.rr.mapper.RLAccItemRowMapper;
+import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -24,7 +24,7 @@ import java.util.List;
 
 @StepScope
 @Service
-public class RLAccCursorItemReader extends JdbcCursorItemReader {
+public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     private static final Logger log = LoggerFactory.getLogger(RLAccCursorItemReader.class);
 
 
@@ -43,6 +43,9 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
 
+    @Value("${rms.ds.dbname}")
+    private String database;
+
     private List<String> parameters;
 
     public RLAccCursorItemReader() {
@@ -59,7 +62,8 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
     public void init() {
         try {
             super.setDataSource(new ExtendedConnectionDataSourceProxy(rmsInstanceCache.getDataSource(instanceId)));
-            super.setSql(EmbeddedQueries.RL_ACC_QUERY);
+            super.setSql(EmbeddedQueries.RL_ACC_QUERY_PROC);
+            super.setRowMapper(new RLAccItemRowMapper());
             parameters = new ArrayList<>();
             parameters.add("PORTFOLIO");
         } catch (Exception e) {
@@ -75,11 +79,12 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader {
 
             if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
-                setSql(StringUtils.replaceEach(getSql(), new String[]{":edm:"}, new String[]{transformationPackage.getModelPortfolios().get(0).getDataSourceName()}));
+                setSql(getSql().replace("@database", database));
 
                 ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
                 List<Object> queryParameters = new LinkedList<>();
 
+                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getDataSourceName());
                 queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
 
                 pss.setParameters(queryParameters);

@@ -2,7 +2,9 @@ package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.dto.CARDivisionDto;
+import com.scor.rr.mapper.RLLocItemRowMapper;
 import com.scor.rr.service.abstraction.ConfigurationService;
+import com.scor.rr.service.batch.processor.rows.RLLocRow;
 import com.scor.rr.service.state.FacParameters;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
@@ -24,14 +26,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 @StepScope
-public class RLLocCursorItemReader extends JdbcCursorItemReader {
+public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
     private static final Logger log = LoggerFactory.getLogger(RLLocCursorItemReader.class);
 
     @Autowired
     private RmsInstanceCache rmsInstanceCache;
-
-    @Autowired
-    private FacParameters facParameters;
 
     @Autowired
     private TransformationPackage transformationPackage;
@@ -51,6 +50,9 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
     @Value("#{jobParameters['carId']}")
     private String carId;
 
+    @Value("${rms.ds.dbname}")
+    private String database;
+
 
     private List<String> parameters;
 
@@ -68,7 +70,8 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
     public void init() {
         try {
             super.setDataSource(new ExtendedConnectionDataSourceProxy(rmsInstanceCache.getDataSource(instanceId)));
-            super.setSql(EmbeddedQueries.RL_LOC_QUERY);
+            super.setSql(EmbeddedQueries.RL_LOC_QUERY_PROC);
+            super.setRowMapper(new RLLocItemRowMapper());
             parameters = new ArrayList<>();
             parameters.add("LIABILITY_CCY");
             parameters.add("PORTFOLIO");
@@ -89,18 +92,20 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader {
                 String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
                 String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)","_R");
 
-                setSql(StringUtils.replaceEach(getSql(), new String[]{":edm:", ":rdm:"}, new String[]{edm, rdm}));
+                setSql(getSql().replace("@database", database));
 
                 Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
+
                 ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
                 List<Object> queryParameters = new LinkedList<>();
 
+                queryParameters.add(edm);
+                queryParameters.add(rdm);
+                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
                 queryParameters.add(
                         configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
-                        .map(CARDivisionDto::getCurrency)
-                        .findFirst().orElse("USD"));
-                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
-                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
+                                .map(CARDivisionDto::getCurrency)
+                                .findFirst().orElse("USD"));
 
                 pss.setParameters(queryParameters);
                 setPreparedStatementSetter(pss);
