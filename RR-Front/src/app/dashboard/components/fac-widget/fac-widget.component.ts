@@ -112,7 +112,9 @@ export class FacWidgetComponent implements OnInit {
     this.store.dispatch(new workspaceActions.OpenWS({
       wsId: event.contractName,
       uwYear: event.uwYear,
-      route: 'projects'}))
+      route: 'projects',
+      type: 'FAC'
+    }))
   }
 
   filterAssign() {

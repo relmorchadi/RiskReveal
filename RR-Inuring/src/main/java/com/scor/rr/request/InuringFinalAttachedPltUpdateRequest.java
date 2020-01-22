@@ -1,6 +1,6 @@
 package com.scor.rr.request;
 
-import com.scor.rr.dto.InuringFinalAttachePltDto;
+import com.scor.rr.domain.dto.InuringFinalAttachePltDto;
 import lombok.Data;
 
 import java.util.List;

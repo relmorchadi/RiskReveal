@@ -513,7 +513,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       this.epMetrics[pltHeaderId][curve]= {};
       this.rps[pltHeaderId]= this.rps[pltHeaderId] || [];
       if(!this.epMetricsSubscriptions[pltHeaderId]) this.epMetricsSubscriptions[pltHeaderId]= {};
-      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''))
+      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager')
           .pipe(
               this.unsubscribeOnDestroy,
           )
@@ -626,10 +626,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                 this.detectChanges();
               }),
               filter((validation: any) => validation.isValid),
-              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp], 1)
+              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp], 1, 'PLT Manager')
                   .pipe(
                       mergeMap(() => forkJoin(
-                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-','')))
+                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager'))
                       ))
                   )),
               this.unsubscribeOnDestroy

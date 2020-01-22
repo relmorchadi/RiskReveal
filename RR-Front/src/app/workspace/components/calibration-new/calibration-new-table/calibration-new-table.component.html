@@ -326,12 +326,12 @@
             </nz-dropdown>
           </div>
           <div class="body-wrap-dropDowns">
-            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
               <div class="dropdown-wrap" nz-dropdown>
                 <div class="dropdown-wrap-title">
                   <span class="dropdown-title">Change Currency</span>
                   <span class="dropdown-item-selected">
-                        {{selectedCurrencie}}
+                        {{tableConfig?.selectedCurrency}}
                       </span>
                 </div>
                 <div class="dropdown-icon">
@@ -339,8 +339,8 @@
                 </div>
               </div>
               <ul nz-menu>
-                <li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">
-                  {{currency.label}}
+                <li *ngFor="let currency of constants?.currencies" nz-menu-item (click)="changeCurrencie(currency)">
+                  {{currency}}
                 </li>
               </ul>
             </nz-dropdown>

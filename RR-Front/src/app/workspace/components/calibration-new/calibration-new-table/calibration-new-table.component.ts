@@ -9,7 +9,6 @@ import {
   Output
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
-import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
@@ -34,6 +33,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
+    selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
@@ -52,7 +52,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   @Input() constants: {
     financialUnits: string[],
-    curveTypes: string[]
+    curveTypes: string[],
+    currencies: string[]
   };
 
   @Input() status: any[];
@@ -69,22 +70,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   selectOptions: any = {
     checkAll: false,
     indeterminate: false
-  };
-  selectedCurrencie: any = 'EUR';
-  currencies = {
-    data: [
-      {id: '1', name: 'Euro', label: 'EUR'},
-      {id: '2', name: 'Us Dollar', label: 'USD'},
-      {id: '3', name: 'Britsh Pound', label: 'GBP'},
-      {id: '4', name: 'Canadian Dollar', label: 'CAD'},
-      {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
-      {id: '5', name: 'Swiss Franc', label: 'CHF'},
-      {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-      {id: '6', name: 'Bitcoin', label: 'XBT'},
-      {id: '7', name: 'Hungarian forint', label: 'HUF'},
-      {id: '8', name: 'Singapore Dollars', label: 'SGD'}
-    ],
-    selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
   statusOptions:any = [
     {title: 'In Progress', field: 'inProgress', class: 'icon-history-alt iconYellow'},
@@ -309,7 +294,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   changeCurrencie(currency: any) {
     this.actionDispatcher.emit({
-      type: "Financial Unit Change",
+      type: "Currency Change",
       payload: currency
     })
   }
