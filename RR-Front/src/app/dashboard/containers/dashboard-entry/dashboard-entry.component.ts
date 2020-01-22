@@ -9,6 +9,7 @@ import {BaseContainer} from "../../../shared/base";
 import {Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
+import {DashData} from "./data";
 import {elementStylingMap} from "@angular/core/src/render3";
 
 @Component({
@@ -26,6 +27,18 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   newFacHeight = '115px';
   inProgressFacHeight = '115px';
   archivedFacHeight = '115px';
+
+  newCols: any;
+  inProgressCols: any;
+  archivedCols: any;
+
+  immutableNew: any;
+  immutableInProgress: any;
+  immutableArchive: any;
+
+  manageNewPopUp = false;
+  manageInProgressPopUp = false;
+  manageArchivedPopUp = false;
 
   dashboards: any = [
     {
@@ -307,13 +320,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
       },
-      resizable: {
-        enabled: true,
-        stop: (event, element, widget) => {
-          console.log(event, element, widget);
-          this.changeWidgetHeight(event.componentName, element.$item.rows);
-        }
-      },
+      resizable: {enabled: true},
       swap: true,
       pushItems: true,
       disablePushOnDrag: true,
@@ -325,6 +332,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       disableWarnings: false,
       scrollToNewItems: false
     };
+
+    this.newCols = DashData.cols;
+    this.inProgressCols = DashData.cols;
+    this.archivedCols = DashData.cols;
+
+    this.resetImmutable();
+
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
@@ -338,6 +352,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.setTabValue();
   }
 
+  resetImmutable() {
+    this.immutableNew = [...this.newCols];
+    this.immutableInProgress = [...this.inProgressCols];
+    this.immutableArchive = [...this.archivedCols];
+  }
+
   setTabValue() {
     this.idTab = 1;
     this.dashboardChange(1);
@@ -348,30 +368,36 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
-  changeWidgetScrollHeight(rows) {
-    switch (rows) {
-      case 1:
-        return '115px';
-      case 2:
-        return '330px';
-      case 3:
-        return '520px';
+  openPopUp(event) {
+    switch (event) {
+      case 'newCar':
+        this.manageNewPopUp = true;
+        break;
+      case 'inProgressCar':
+        this.manageInProgressPopUp = true;
+        break;
+      case 'archivedCar':
+        this.manageArchivedPopUp = true;
+        break;
     }
   }
 
-  changeWidgetHeight(widget, rows) {
-    console.log(widget, rows);
-    switch (widget) {
-      case 'NewFacWidgetComponent':
-        this.newFacHeight = this.changeWidgetScrollHeight(rows);
-        break;
-      case 'InProgressFacWidgetComponent':
-        this.inProgressFacHeight = this.changeWidgetScrollHeight(rows);
-        break;
-      case 'ArchivedFacWidgetComponent':
-        this.archivedFacHeight = this.changeWidgetScrollHeight(rows);
-        break;
+  closePopUp() {
+    this.manageNewPopUp = false;
+    this.manageInProgressPopUp = false;
+    this.manageArchivedPopUp = false;
+    this.resetImmutable();
+  }
+
+  saveColumns(event, scope) {
+    if (scope === 'new') {
+      this.newCols = [...event];
+    } else if (scope === 'inProgress') {
+      this.inProgressCols = [...event];
+    } else if (scope === 'archived') {
+      this.archivedCols = [...event];
     }
+    this.closePopUp();
   }
 
   addDashboard() {

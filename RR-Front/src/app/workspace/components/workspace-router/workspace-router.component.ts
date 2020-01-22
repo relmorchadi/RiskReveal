@@ -1,6 +1,7 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
   WorkspaceCalibrationComponent,
+  WorkspaceContractComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
   WorkspaceRiskLinkComponent,
@@ -39,7 +40,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    */
   readonly componentsMapper = {
     projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
-    //Contract: {component: WorkspaceContractComponent, selector: (state) => state},
+    Contract: {component: WorkspaceContractComponent, selector: (state) => state},
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},

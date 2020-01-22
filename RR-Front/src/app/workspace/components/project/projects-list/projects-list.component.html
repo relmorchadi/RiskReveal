@@ -25,7 +25,7 @@
         <!--          [ngClass]="{'standard-flag-icon': project.projectFacSource === 'manual',
         'standard-fac-flag-icon': project.projectFacSource === 'specific'}"
           <i *ngIf="project.projectFacSource === 'manual'" class='icon-assignment_24px'></i>-->
-        <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <div class="project-header-title d-flex flex-column justify-content-center">
           <div class="d-flex justify-content-between" *ngIf="project.projectType === 'FAC'">
             <div class="d-flex flex-column">
               <span>{{project?.projectName}}</span>
@@ -151,18 +151,18 @@
           {{project?.projectDescription}}
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11 line-height-m" style="flex:1;	letter-spacing: 0.08px;">Created</span>
+          <span class="dt-11 line-height-m" style="flex:1;	letter-spacing: 0.08px;">Created</span>
           <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
           <span class="text-center dt-11 line-height-m" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Last Modified</span>
+          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Last Modified</span>
           <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
           <span class="text-center line-height-m dt-11"
                 style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Assigned Analyst</span>
+          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Assigned Analyst</span>
           <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">Nathalie Dulac</span>
           <span class="text-center line-height-m dt-11" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;"></span>
         </div>

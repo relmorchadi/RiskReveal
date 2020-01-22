@@ -562,6 +562,11 @@ export class WorkspaceState {
     this.contractService.toggleFacDivision(ctx, payload);
   }
 
+  @Action(fromWS.LoadContractFacAction)
+  loadContractFac(ctx: StateContext<WorkspaceModel>) {
+    return this.contractService.loadContractFacData(ctx);
+  }
+
   /***********************************
    *
    * Plt Manager Actions
@@ -643,7 +648,6 @@ export class WorkspaceState {
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
     // return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
-
 
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTag) {
