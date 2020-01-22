@@ -164,10 +164,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.actions$
         .pipe(
             ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
-            map( r => _.uniq(_.map(this.data, el => el.currencyCode))),
-            switchMap( currencies => this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, currencies, this.tableConfig.selectedCurrency))
-        ).pipe(
-    ).subscribe(d => console.log(d));
+            map( r => _.uniq(_.map(this.data, el => el.currencyCode)))
+        ).subscribe(d => console.log(d));
 
   }
 
