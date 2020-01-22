@@ -394,6 +394,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
+      isTagsTab: true
     };
   }
 
@@ -684,6 +685,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
+      isTagsTab: true
     };
   }
 

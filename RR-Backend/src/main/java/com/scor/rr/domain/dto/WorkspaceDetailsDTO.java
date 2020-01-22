@@ -27,6 +27,7 @@ public class WorkspaceDetailsDTO {
     private String subsidiaryLedgerId;
     private Boolean isFavorite;
     private Boolean isPinned;
+    private String currency;
     private String contractDatasource;
     private Long marketChannel;
     private List<String> treatySections;
@@ -61,6 +62,7 @@ public class WorkspaceDetailsDTO {
         this.subsidiaryLedgerId = contract.getSubsidiaryLedgerid();
         this.contractDatasource = contract.getContractSourceTypeName();
         this.marketChannel = marketChannel;
+        this.currency = contract.getLiabilityCurrencyid();
     }
 
     public void setTreatySections(List<ContractSearchResult> items) {

@@ -1,4 +1,4 @@
-package com.scor.rr.dto;
+package com.scor.rr.domain.dto;
 
 import lombok.Data;
 

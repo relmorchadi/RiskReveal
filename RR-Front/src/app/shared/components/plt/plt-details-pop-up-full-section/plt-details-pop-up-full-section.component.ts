@@ -1,11 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from "../../../message";
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store'
 
 @Component({
   selector: 'app-plt-details-pop-up-full-section',
   templateUrl: './plt-details-pop-up-full-section.component.html',
-  styleUrls: ['./plt-details-pop-up-full-section.component.scss']
+  styleUrls: ['./plt-details-pop-up-full-section.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PltDetailsPopUpFullSectionComponent implements OnInit {
 

@@ -11,4 +11,8 @@ public interface CurrencyRepository extends JpaRepository<CurrencyEntity, String
 
     @Query("select ce.currencyId, ce.label from CurrencyEntity ce")
     List<Object> findReferenceCurrencies();
+
+    @Query("SELECT c.currencyId from CurrencyEntity c")
+    List<String> findAllCurrencies();
+
 }

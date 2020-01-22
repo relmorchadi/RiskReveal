@@ -24,9 +24,16 @@ public class UserRPEntity {
     @Column(name = "rp")
     private Integer rp;
 
+    @Column(name = "isDeleted")
+    private Boolean isDeleted;
 
-    public UserRPEntity(Integer rp, Long userId) {
+    @Column(name = "screen", length = 30)
+    private String screen;
+
+
+    public UserRPEntity(Integer rp, Long userId, String screen) {
         this.rp = rp;
         this.userId = userId;
+        this.screen = screen;
     }
 }

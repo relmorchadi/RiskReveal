@@ -1,4 +1,10 @@
   ::ng-deep.returned-periods {
     height: 453px !important;
     width: 417px !important;
+
+    .on-hover:hover {
+      i {
+        visibility: visible !important;
+      }
+    }
   }

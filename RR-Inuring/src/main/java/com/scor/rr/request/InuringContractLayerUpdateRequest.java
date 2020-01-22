@@ -1,6 +1,6 @@
 package com.scor.rr.request;
 
-import com.scor.rr.dto.InuringContractLayerParamDto;
+import com.scor.rr.domain.dto.InuringContractLayerParamDto;
 
 import java.util.List;
 

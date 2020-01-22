@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import {Message} from "../../../../shared/message";
 import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
@@ -12,7 +21,7 @@ declare  const _;
   styleUrls: ['./calibration-new-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalibrationNewTableComponent implements OnInit {
+export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
@@ -22,12 +31,14 @@ export class CalibrationNewTableComponent implements OnInit {
   @Input() adjustments: any;
 
   @Input() tableConfig: {
-    view: 'adjustment' | 'analysis' | 'epMetrics',
+    view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
     isExpanded: boolean,
     expandedRowKeys: any,
-    isGrouped: boolean
+    isGrouped: boolean,
+    filterData: any
+    isDeltaByAmount: boolean
   };
 
   @Input() columnsConfig: {
@@ -59,22 +70,6 @@ export class CalibrationNewTableComponent implements OnInit {
     checkAll: false,
     indeterminate: false
   };
-  selectedCurrencie: any = 'EUR';
-  currencies = {
-    data: [
-      {id: '1', name: 'Euro', label: 'EUR'},
-      {id: '2', name: 'Us Dollar', label: 'USD'},
-      {id: '3', name: 'Britsh Pound', label: 'GBP'},
-      {id: '4', name: 'Canadian Dollar', label: 'CAD'},
-      {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
-      {id: '5', name: 'Swiss Franc', label: 'CHF'},
-      {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-      {id: '6', name: 'Bitcoin', label: 'XBT'},
-      {id: '7', name: 'Hungarian forint', label: 'HUF'},
-      {id: '8', name: 'Singapore Dollars', label: 'SGD'}
-    ],
-    selected: {id: '1', name: 'Euro', label: 'EUR'}
-  };
   statusOptions:any = [
     {title: 'In Progress', field: 'inProgress', class: 'icon-history-alt iconYellow'},
     {title: 'New', field: 'new', class: 'icon-star iconBlue'},
@@ -84,6 +79,9 @@ export class CalibrationNewTableComponent implements OnInit {
     {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
   ]
   private selectedFinancialUnit: any = 'Unit';
+  private isExpanded: boolean = false;
+
+  contextMenuItem : any[];
 
 
 
@@ -91,6 +89,15 @@ export class CalibrationNewTableComponent implements OnInit {
   constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
 
   ngOnInit() {
+    this.contextMenuItem = [
+      {label: 'Expand', command: (event)=>{this.expandCollapseAllPlts()}},
+      {label: 'Collapse', command: (event)=>{this.expandCollapseAllPlts()}},
+    ]
+  }
+  ngAfterViewInit() {
+  }
+  ngAfterViewChecked(): void {
+
   }
 
   statusFlilerCheckbox(event: any, type: string) {
@@ -327,6 +334,53 @@ export class CalibrationNewTableComponent implements OnInit {
 
   stopPropagation(event) {
     event.stopPropagation();
+  }
+
+    onShowAddRemovePopUp() {
+        this.actionDispatcher.emit({
+          type: "Open Add Remove Pop Up",
+        })
+    }
+
+
+  expandCollapseAllPlts() {
+    this.actionDispatcher.emit({
+      type: "Expand Collapse Plts"
+    })
+  }
+
+  onResizePltPanelEnd(event) {
+    this.actionDispatcher.emit({
+      type: "Expand Collapse Plt Panel",
+      payload: {
+        event
+      }
+    })
+    /*let arr = this.columnsConfig.frozenWidth.split('p');
+    this.columnsConfig.frozenWidth = (Number(arr[0])  + event.edges.right) + 'px';*/
+    }
+
+  filter(field: any, value: string) {
+    if (value){
+      this.actionDispatcher.emit({
+        type: "Filter Plt Table",
+        payload: _.merge({}, this.tableConfig.filterData, {[field]: value})
+      })
+    }
+  }
+  exportEPMetrics() {
+    this.actionDispatcher.emit( {
+      type: "Export EP Metrics",
+      payload: [ ...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns ]
+    } )
+  }
+
+  onDeltaChange(newValue) {
+    console.log(this.tableConfig.isDeltaByAmount);
+    this.actionDispatcher.emit({
+      type: "Delta Change",
+      payload: newValue
+    })
   }
 
 }

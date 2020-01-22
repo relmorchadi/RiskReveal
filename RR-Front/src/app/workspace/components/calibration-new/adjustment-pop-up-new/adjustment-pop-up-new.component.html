@@ -58,8 +58,13 @@
       <div class="ui-g-3">
         <label> Narrative </label>
       </div>
-      <div class="ui-g-9">
-        <textarea nz-input disabled rows="4" style="margin-left: 10px; width: 300px"></textarea>
+      <div class="ui-g-9" >
+        <nz-collapse>
+          <nz-collapse-panel  [nzActive]="false">
+            <textarea disabled nz-input rows="4" style=" width: 300px"></textarea>
+          </nz-collapse-panel>
+        </nz-collapse>
+
       </div>
     </div>
     <div class="ui-g">

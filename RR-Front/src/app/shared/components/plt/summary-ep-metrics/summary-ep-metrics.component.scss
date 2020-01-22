@@ -1,0 +1,76 @@
+:host {
+  display: block;
+  height: 100%;
+
+  ::ng-deep .summary-epMetrics-container {
+    height: 100%;
+    flex: 1 1 auto;
+
+    .dropdown-container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 50px;
+
+      .left {
+        display: flex;
+      }
+    }
+  }
+
+  .ep-metric-tabset {
+    height: calc(100% - 50px);
+  }
+
+  ::ng-deep {
+    nz-tabset.ant-tabs.ant-tabs-top.ant-tabs-line {
+      height: 100%;
+    }
+  }
+}
+
+.metric-table-content {
+  padding: 8px 6px 6px 0;
+  height: 100%;
+
+  ::ng-deep {
+    p-table {
+      display: block;
+      height: calc(100% - 100px);
+      margin-bottom: 1.7em;
+
+      .ui-table {
+        height: 100%;
+      }
+
+      .ui-table-scrollable-wrapper {
+        height: 100%;
+
+        .ui-table-scrollable-view {
+          height: 100%;
+
+          .ui-table-scrollable-body {
+            height: calc(100% - 100px);
+          }
+        }
+      }
+    }
+
+    .ui-table-thead {
+      th {
+        background-color: #FFFFFF;
+        border: none;
+        border-bottom: .5px solid rgba(0,0,0,0.15);
+      }
+    }
+
+    .ui-table-tbody {
+      td {
+        background-color: #FFFFFF;
+        border: none;
+        border-bottom: .5px solid rgba(0,0,0,0.15);
+      }
+    }
+  }
+}

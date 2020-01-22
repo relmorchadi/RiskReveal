@@ -3,8 +3,8 @@ package com.scor.rr.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "DefaultEventBasedAdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
+@javax.persistence.Entity
+@Table(name = "DefaultEventBasedAdjustmentParameter")
 public class DefaultEventBasedAdjustmentParameter {
     private int defaultAdjustmentParameterId;
     private String inputFilePath;
