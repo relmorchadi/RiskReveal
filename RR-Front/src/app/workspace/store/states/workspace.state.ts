@@ -75,6 +75,10 @@ export class WorkspaceState {
     return state.content[wsIdentifier].projects;
   }
 
+  static getWorkspaceCurrency(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].currency);
+  }
+
   @Selector()
   static getCurrentWorkspaces(state: WorkspaceModel) {
     const wsId = state.currentTab.wsIdentifier;

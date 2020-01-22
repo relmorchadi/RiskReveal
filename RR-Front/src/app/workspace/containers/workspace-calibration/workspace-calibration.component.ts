@@ -327,7 +327,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       selectedListOfPlts: this.selectedListOfPlts,
       systemTagsCount: this.systemTagsCount,
       wsHeaderSelected: this.wsHeaderSelected,
-      pathTab: false
+      pathTab: false,
+      isTagsTab: true
     };
     this.tagsInputs= {
       _tagModalVisible: false,

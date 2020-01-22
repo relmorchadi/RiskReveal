@@ -66,11 +66,6 @@ public class SearchResource {
         return searchService.countInWorkspace(table, keyword, size);
     }
 
-    @GetMapping("worspace/{workspaceId}/{uwy}")
-    WorkspaceDetailsDTO getWorkspaceDetails(@PathVariable("workspaceId") String workspaceId, @PathVariable("uwy") String uwy){
-        return  searchService.getWorkspaceDetails(workspaceId, uwy);
-    }
-
     @PostMapping
     ResponseEntity<?> saveSearch(@RequestBody SavedSearchRequest request) {
         return ResponseEntity.ok(

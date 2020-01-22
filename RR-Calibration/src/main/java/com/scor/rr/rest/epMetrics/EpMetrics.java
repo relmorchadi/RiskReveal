@@ -15,10 +15,10 @@ public class EpMetrics {
     EpMetricsService epMetricsService;
 
     @GetMapping
-    public ResponseEntity<?> getEpMetrics(@RequestParam String workspaceContextCode, @RequestParam Integer uwYear, @RequestParam CurveType curveType, @RequestParam Integer userId) { return this.epMetricsService.getEpMetrics(userId,workspaceContextCode, uwYear, curveType);}
+    public ResponseEntity<?> getEpMetrics(@RequestParam String workspaceContextCode, @RequestParam Integer uwYear, @RequestParam CurveType curveType, @RequestParam Integer userId, @RequestParam String screen) { return this.epMetricsService.getEpMetrics(userId,workspaceContextCode, uwYear, curveType, screen);}
 
     @GetMapping("singlePLT")
-    public ResponseEntity<?> getSinglePLTEpMetrics(@RequestParam Long pltHeaderId, @RequestParam CurveType curveType, @RequestParam Integer userId) { return this.epMetricsService.getSinglePLTEpMetrics(userId, pltHeaderId, curveType);}
+    public ResponseEntity<?> getSinglePLTEpMetrics(@RequestParam Long pltHeaderId, @RequestParam CurveType curveType, @RequestParam Integer userId, @RequestParam String screen) { return this.epMetricsService.getSinglePLTEpMetrics(userId, pltHeaderId, curveType, screen);}
 
     @GetMapping("singlePLTSummaryStats")
     public ResponseEntity<?> getSinglePLTSummaryStats(@RequestParam Long pltHeaderId) { return this.epMetricsService.getSinglePLTSummaryStats(pltHeaderId);}

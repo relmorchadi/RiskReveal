@@ -1,6 +1,6 @@
 package com.scor.rr.service;
 
-import com.scor.rr.dto.InuringContractLayerParamDto;
+import com.scor.rr.domain.dto.InuringContractLayerParamDto;
 import com.scor.rr.entity.InuringContractLayer;
 import com.scor.rr.entity.InuringContractLayerParam;
 import com.scor.rr.entity.InuringContractNode;

@@ -349,7 +349,8 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       selectedListOfPlts: [],
       systemTagsCount: {},
       wsHeaderSelected: true,
-      pathTab: true
+      pathTab: true,
+      isTagsTab: true
     };
     this.tagsInputs= {
       _tagModalVisible: false,
