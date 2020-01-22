@@ -1,13 +1,13 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {BaseContainer} from "../../../shared/base";
 import {StateSubscriber} from "../../model/state-subscriber";
-import {Actions, ofActionCompleted, Store} from "@ngxs/store";
+import {Actions, ofActionCompleted, ofActionSuccessful, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
 import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
 import {WorkspaceState} from "../../store";
-import {first, take, takeWhile} from "rxjs/operators";
+import {first, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
@@ -24,6 +24,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   wsId: string;
   uwYear: number;
   workspaceType: string;
+  workspaceCurrency: string;
+  workspaceEffectiveDate: Date;
 
   data: any[];
   epMetrics: any;
@@ -38,6 +40,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
+    selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
@@ -46,7 +49,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   };
   constants: {
     financialUnits: string[],
-    curveTypes: string[]
+    curveTypes: string[],
+    currencies: string[]
   };
   columnsConfig: {
     frozenColumns: any[],
@@ -79,7 +83,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   isAddRemovePopUpVisible: boolean;
   addRemovePopUpConfig: {
     tableColumns: any[]
-  }
+  };
 
   //Sub
   validationSub: Subscription;
@@ -106,6 +110,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isDeltaByAmount: false,
       expandedRowKeys: {},
       selectedFinancialUnit: "Unit",
+      selectedCurrency: null,
       filterData: {}
     };
 
@@ -116,7 +121,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.constants = {
       curveTypes: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
-      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion']
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
+      currencies: []
     };
     this.rowKeys= {};
 
@@ -145,13 +151,21 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   ngOnInit() {
+    this.workspaceCurrency= null;
 
-    this.actions$.pipe(ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs)).pipe(
+    this.actions$.pipe(
+        ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs),
         this.unsubscribeOnDestroy
     ).subscribe(() => {
       this.cancelRPPopup();
       this.detectChanges();
-    })
+    });
+
+    this.actions$
+        .pipe(
+            ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
+            map( r => _.uniq(_.map(this.data, el => el.currencyCode)))
+        ).subscribe(d => console.log(d));
 
   }
 
@@ -191,6 +205,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
       this.subscribeToConstants(wsId + "-" + uwYear);
+      this.subscribeToWorkspaceCurrencyAndEffectiveDate(wsId + "-" + uwYear);
 
       //Others
       this.loadConstants();
@@ -217,7 +232,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   loadConstants() {
-    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants())
+    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants());
+    this.calibrationApi.loadCurrencies().subscribe(
+        (currencies: any) => {
+          this.constants = {
+              ...this.constants,
+            currencies
+          }
+        }
+    )
   }
 
   subscribeToEpMetrics (wsIdentifier: string) {
@@ -263,6 +286,32 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
         this.detectChanges();
       })
+  }
+
+  subscribeToWorkspaceCurrencyAndEffectiveDate(wsIdentifier: string) {
+    this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( currency => {
+          this.workspaceCurrency = currency;
+          this.tableConfig = {
+              ...this.tableConfig,
+            selectedCurrency: currency
+          };
+          this.detectChanges();
+    });
+
+    this.select(WorkspaceState.getWorkspaceEffectiveDate(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( date => {
+      this.workspaceEffectiveDate = date;
+      this.detectChanges();
+    });
   }
 
   initComponent(state) {
@@ -390,6 +439,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Delta Change":
         this.deltaChange(action.payload);
+        break;
+
+      case "Currency Change":
+        this.currencyChange(action.payload);
         break;
 
       default:
@@ -683,6 +736,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.returnPeriodConfig = {
       ...this.returnPeriodConfig,
       deletedRPs: [...this.returnPeriodConfig.deletedRPs, _.toNumber(rp)]
+    }
+  }
+
+  currencyChange(currency) {
+    this.tableConfig = {
+        ...this.tableConfig,
+      selectedCurrency: currency
     }
   }
 

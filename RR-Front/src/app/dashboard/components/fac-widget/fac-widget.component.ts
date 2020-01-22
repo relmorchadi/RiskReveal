@@ -20,6 +20,7 @@ export class FacWidgetComponent implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
+  @Output('managePopUp') openPopUp: any = new EventEmitter<any>();
 
   private dropdown: NzDropdownContextComponent;
   uwyUnits;
@@ -41,28 +42,11 @@ export class FacWidgetComponent implements OnInit {
   type: any;
   @Input()
   data: any;
-  @Input()
-  tableHeight: any;
+  @Input('tableCols')
+  dashCols: any;
+
   newDashboard: any;
   editName = false;
-
-  cols = [
-    {field: 'favorite', header: '', width: '20px', display: true, sorted: false, filtered: false, type: 'favStatus'},
-    {field: 'carRequestId', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'contractID', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'projectId', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwYear', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'contractName', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'subsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'sector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'businessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'assignedAnalyst', header: 'Assigned Analyst', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'requestCreationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
-    {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
-  ];
 
   mockData = [];
   private defaultCountry: string;
@@ -97,6 +81,7 @@ export class FacWidgetComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
+
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
       uwUnit: ''
@@ -126,6 +111,10 @@ export class FacWidgetComponent implements OnInit {
 
   valueFavChange(event) {
 
+  }
+
+  openPopUpAction(scope) {
+    this.openPopUp.emit(scope);
   }
 
   sortChange(event) {

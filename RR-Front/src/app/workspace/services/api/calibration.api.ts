@@ -58,6 +58,10 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}state/all`);
   }
 
+  loadCurrencies() {
+    return this.http.get(`${this.URL}constants/currency/all`);
+  }
+
   validateRP(rp) {
     return this.http.get(`${this.URL}epMetrics/rp/validate`, { params: { rp }});
   }
@@ -68,6 +72,10 @@ export class CalibrationAPI {
 
   deleteListOfRPsByUserId(userId, rps, screen) {
     return this.http.post(`${this.URL}epMetrics/rp/delete`, { userId, rps, screen });
+  }
+
+  getExchangeRates(effectiveDate, currencies, target) {
+    return this.http.post(`${this.URL}exchangerate`, {effectiveDate, currencies, target})
   }
 
 }

@@ -64,10 +64,6 @@ export class TasksMenuItemComponent implements OnInit {
 
   formatter = (_) => '';
 
-  private searchData(id, year) {
-    return this._searchService.searchWorkspace(id || '', year || '2019');
-  }
-
   detectChanges() {
     if (!this.cdRef['destroyed'])
       this.cdRef.detectChanges();

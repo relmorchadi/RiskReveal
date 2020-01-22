@@ -32,14 +32,14 @@
     </app-pin>
   </div>
 
-  <ng-container *ngIf="wsStatus === 'treaty' || tabStatus === 'fac'">
+  <ng-container *ngIf="wsStatus === 'treaty' || tabStatus === 'FAC'">
     <div class="body-wrap-body">
       <div class="body-wrapper">
         <div class="body-wrapper-header">
           <div class="body-wrapper-header-left">
             <hr>
-            <div *ngIf="tabStatus === 'treaty'">treaty Sections</div>
-            <div *ngIf="tabStatus === 'fac'">Contract Summary</div>
+            <div *ngIf="tabStatus === 'TREATY'">treaty Sections</div>
+            <div *ngIf="tabStatus === 'FAC'">Contract Summary</div>
           </div>
           <div class="body-wrapper-header-right">
             <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
@@ -47,7 +47,7 @@
             <i *ngIf="!collapseHead" (click)="changeCollapse()" class="icon-keyboard_arrow_down_24px"></i>
           </div>
         </div>
-        <div class="body-wrap-border unfold-fac-component" *ngIf="tabStatus === 'fac' && facData !== null">
+        <div class="body-wrap-border unfold-fac-component" *ngIf="tabStatus === 'FAC' && facData !== null">
           <div class="body-wrap-border-body">
             <div class="body-wrap-border-left">
 
@@ -67,7 +67,7 @@
                 </li>
                 <li>
                   <span class="span-left">UW Year</span>
-                  <span class="span-right">{{facData?.uwanalysisContractYear}}</span>
+                  <span class="span-right">{{facData?.uwYear}}</span>
                 </li>
                 <li>
                   <span class="span-left">Contract Label</span>
@@ -75,7 +75,7 @@
                 </li>
                 <li>
                   <span class="span-left">Business Type</span>
-                  <span class="span-right">{{facData?.uwanalysisContractBusinessType}}</span>
+                  <span class="span-right">{{facData?.businessType}}</span>
                 </li>
               </ul>
             </div>
@@ -83,11 +83,11 @@
               <ul>
                 <li>
                   <span class="span-left">Sector</span>
-                  <span class="span-right">{{facData?.uwanalysisContractSector}}</span>
+                  <span class="span-right">{{facData?.sector}}</span>
                 </li>
                 <li>
                   <span class="span-left">Contract ID</span>
-                  <span class="span-right">{{facData?.uwanalysisContractContractId}}</span>
+                  <span class="span-right">{{facData?.contractId}}</span>
                 </li>
                 <li>
                   <span class="span-left">Insured</span>
@@ -95,16 +95,16 @@
                 </li>
                 <li>
                   <span class="span-left">Subsidiary</span>
-                  <span class="span-right">{{facData?.uwanalysisContractSubsidiary}}</span>
+                  <span class="span-right">{{facData?.subsidiary}}</span>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <div class="header-style" *ngIf="tabStatus === 'fac'">Divisions</div>
+        <div class="header-style" *ngIf="tabStatus === 'FAC'">Divisions</div>
         <div class="show-table">
           <p-table #dt [columns]="scrollableColsTreaty" [frozenColumns]="frozenColsTreaty" [value]="treatyData"
-                   [scrollable]="true" scrollHeight="340px" frozenWidth="140px" *ngIf="tabStatus === 'treaty'">
+                   [scrollable]="true" scrollHeight="340px" frozenWidth="140px" *ngIf="tabStatus === 'TREATY'">
             <ng-template pTemplate="colgroup" let-columns>
               <colgroup>
                 <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -142,8 +142,8 @@
             </ng-template>
           </p-table>
           <ng-container *ngIf="facData !== null">
-            <p-table #dt [columns]="scrollableColsFac" [value]="facData?.division" [scrollable]="true"
-                     scrollHeight="340px" *ngIf="tabStatus === 'fac'">
+            <p-table #dt [columns]="scrollableColsFac" [value]="facData?.divisions" [scrollable]="true"
+                     scrollHeight="340px" *ngIf="tabStatus === 'FAC'">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -185,7 +185,7 @@
           </ng-container>
         </div>
 
-        <div class="body-wrap-border" *ngIf="tabStatus === 'treaty'">
+        <div class="body-wrap-border" *ngIf="tabStatus === 'TREATY'">
           <div class="body-1">
             <span style="font-weight: bold;">Treaty Section Summary</span>
           </div>
@@ -249,7 +249,7 @@
       </div>
     </div>
 
-    <div class="contract-body-wrapper" *ngIf="tabStatus === 'treaty'">
+    <div class="contract-body-wrapper" *ngIf="tabStatus === 'TREATY'">
       <div class="contract-left">
         <div class="body-wrap-body margin-reset">
           <div class="body-wrapper" style="height: 250px;">
@@ -347,7 +347,7 @@
       </div>
     </div>
 
-    <div class="contract-body-wrapper" *ngIf="tabStatus === 'fac'">
+    <!--<div class="contract-body-wrapper" *ngIf="tabStatus === 'FAC'">
       <div class="body-wrap-body margin-reset">
         <div class="body-wrapper" style="height: 250px;">
           <div class="body-wrapper-header">
@@ -356,7 +356,7 @@
               <div>Region Peril</div>
             </div>
             <div class="body-wrapper-header-right">
-              <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+              &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
               <i *ngIf="collapseLeft" (click)="collapseLeft = false" class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!collapseLeft" (click)="collapseLeft = true" class="icon-keyboard_arrow_down_24px"></i>
             </div>
@@ -414,9 +414,9 @@
 
         </div>
       </div>
-    </div>
+    </div>-->
   </ng-container>
-  <ng-container *ngIf="wsStatus === 'fac' && tabStatus === 'treaty'">
+  <ng-container *ngIf="wsStatus === 'fac' && tabStatus === 'TREATY'">
     <div style="flex-direction: column" class="d-flex align-items-center justify-content-center">
       <span class="body-1 font-weight-bold">The selected project is manual therefore no Scope and completeness to be displayed</span>
       <nz-empty></nz-empty>
