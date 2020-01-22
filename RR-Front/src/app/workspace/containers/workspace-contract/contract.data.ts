@@ -17,8 +17,8 @@ const frozenColsTreaty = [
 ];
 
 const scrollableColsFac = [
-  {field: 'divisionNo', header: 'Division No', width: '120px', display: true, filtered: true, type: 'text', indicator: true, color: '#FFAA06'},
-  {field: 'principal', header: 'Primary Division', width: '120px', type: 'select', sorted: false, filtered: true, highlight: false, display: true},
+  {field: 'divisionNumber', header: 'Division No', width: '120px', display: true, filtered: true, type: 'text', indicator: true, color: '#FFAA06'},
+  {field: 'isPrincipalDivision', header: 'Primary Division', width: '120px', type: 'select', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'lob', header: 'LOB', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'coverage', header: 'Coverage', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},
   {field: 'currency', header: 'Currency', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, display: true},

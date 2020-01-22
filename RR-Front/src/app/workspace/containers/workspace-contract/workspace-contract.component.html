@@ -67,7 +67,7 @@
                 </li>
                 <li>
                   <span class="span-left">UW Year</span>
-                  <span class="span-right">{{facData?.uwanalysisContractYear}}</span>
+                  <span class="span-right">{{facData?.uwYear}}</span>
                 </li>
                 <li>
                   <span class="span-left">Contract Label</span>
@@ -75,7 +75,7 @@
                 </li>
                 <li>
                   <span class="span-left">Business Type</span>
-                  <span class="span-right">{{facData?.uwanalysisContractBusinessType}}</span>
+                  <span class="span-right">{{facData?.businessType}}</span>
                 </li>
               </ul>
             </div>
@@ -83,11 +83,11 @@
               <ul>
                 <li>
                   <span class="span-left">Sector</span>
-                  <span class="span-right">{{facData?.uwanalysisContractSector}}</span>
+                  <span class="span-right">{{facData?.sector}}</span>
                 </li>
                 <li>
                   <span class="span-left">Contract ID</span>
-                  <span class="span-right">{{facData?.uwanalysisContractContractId}}</span>
+                  <span class="span-right">{{facData?.contractId}}</span>
                 </li>
                 <li>
                   <span class="span-left">Insured</span>
@@ -95,7 +95,7 @@
                 </li>
                 <li>
                   <span class="span-left">Subsidiary</span>
-                  <span class="span-right">{{facData?.uwanalysisContractSubsidiary}}</span>
+                  <span class="span-right">{{facData?.subsidiary}}</span>
                 </li>
               </ul>
             </div>
@@ -142,7 +142,7 @@
             </ng-template>
           </p-table>
           <ng-container *ngIf="facData !== null">
-            <p-table #dt [columns]="scrollableColsFac" [value]="facData?.division" [scrollable]="true"
+            <p-table #dt [columns]="scrollableColsFac" [value]="facData?.divisions" [scrollable]="true"
                      scrollHeight="340px" *ngIf="tabStatus === 'FAC'">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
