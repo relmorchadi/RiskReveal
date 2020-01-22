@@ -474,7 +474,7 @@ public class RmsService {
         this.logger.debug("Service starts executing the query ...");
 
         if (portfolioList != null) {
-            String sql = query + ",@portfolioList=" + portfolioList;
+            String sql = query + ",@portfolio_id_List=" + portfolioList;
             edmPortfolios = getJdbcTemplate(instanceId).query(
                     sql, new EdmPortfolioRowMapper()
             );
@@ -697,7 +697,7 @@ public class RmsService {
 
         String ccy = ccyy.toString().replaceAll(" ", "");
         List<RmsExchangeRate> rmsExchangeRate = new ArrayList<>();
-        String sql = "execute " + DATABASE + ".[dbo].[RR_RL_GetRMSExchangeRates] @ccyList=" + ccy;
+        String sql = "execute " + DATABASE + ".[dbo].[RR_RL_GetRMSExchangeRates] @ccy_list=" + ccy;
         this.logger.debug("Service starts executing the query ...");
         rmsExchangeRate = getJdbcTemplate(instanceId).query(sql, new RmsExchangeRateRowMapper());
         this.logger.debug("the data returned ", rmsExchangeRate);

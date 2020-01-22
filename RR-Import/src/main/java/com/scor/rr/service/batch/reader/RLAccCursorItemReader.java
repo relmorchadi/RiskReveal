@@ -75,24 +75,21 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Override
     protected void openCursor(Connection con) {
 
-        if (marketChannel.equalsIgnoreCase("Fac")) {
+        if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
-            if (!transformationPackage.getModelPortfolios().isEmpty()) {
+            setSql(getSql().replace("@database", database));
 
-                setSql(getSql().replace("@database", database));
+            ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
+            List<Object> queryParameters = new LinkedList<>();
 
-                ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
-                List<Object> queryParameters = new LinkedList<>();
+            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getDataSourceName());
+            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
 
-                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getDataSourceName());
-                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
+            pss.setParameters(queryParameters);
+            setPreparedStatementSetter(pss);
 
-                pss.setParameters(queryParameters);
-                setPreparedStatementSetter(pss);
+            super.openCursor(con);
 
-                super.openCursor(con);
-
-            }
         }
 
     }

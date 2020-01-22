@@ -5,10 +5,8 @@ import com.scor.rr.domain.dto.CARDivisionDto;
 import com.scor.rr.mapper.RLLocItemRowMapper;
 import com.scor.rr.service.abstraction.ConfigurationService;
 import com.scor.rr.service.batch.processor.rows.RLLocRow;
-import com.scor.rr.service.state.FacParameters;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -85,34 +83,31 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
     @Override
     protected void openCursor(Connection con) {
 
-        if (marketChannel.equalsIgnoreCase("Fac")) {
+        if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
-            if (!transformationPackage.getModelPortfolios().isEmpty()) {
+            String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
+            String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)", "_R");
 
-                String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
-                String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)","_R");
+            setSql(getSql().replace("@database", database));
 
-                setSql(getSql().replace("@database", database));
+            Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
 
-                Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
+            ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
+            List<Object> queryParameters = new LinkedList<>();
 
-                ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
-                List<Object> queryParameters = new LinkedList<>();
+            queryParameters.add(edm);
+            queryParameters.add(rdm);
+            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
+            queryParameters.add(
+                    configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                            .map(CARDivisionDto::getCurrency)
+                            .findFirst().orElse("USD"));
 
-                queryParameters.add(edm);
-                queryParameters.add(rdm);
-                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
-                queryParameters.add(
-                        configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
-                                .map(CARDivisionDto::getCurrency)
-                                .findFirst().orElse("USD"));
+            pss.setParameters(queryParameters);
+            setPreparedStatementSetter(pss);
 
-                pss.setParameters(queryParameters);
-                setPreparedStatementSetter(pss);
+            super.openCursor(con);
 
-                super.openCursor(con);
-
-            }
         }
     }
 }
