@@ -9,7 +9,6 @@ import {
   Output
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
-import {StatusFilter} from "../../../model/status-filter.model";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
@@ -34,6 +33,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
+    selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
@@ -52,7 +52,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   @Input() constants: {
     financialUnits: string[],
-    curveTypes: string[]
+    curveTypes: string[],
+    currencies: string[]
   };
 
   @Input() status: any[];

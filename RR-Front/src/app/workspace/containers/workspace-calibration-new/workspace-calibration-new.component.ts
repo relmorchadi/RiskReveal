@@ -1,13 +1,13 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {BaseContainer} from "../../../shared/base";
 import {StateSubscriber} from "../../model/state-subscriber";
-import {Actions, ofActionCompleted, Store} from "@ngxs/store";
+import {Actions, ofActionCompleted, ofActionSuccessful, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
 import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
 import {WorkspaceState} from "../../store";
-import {first, take, takeWhile} from "rxjs/operators";
+import {first, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
@@ -39,6 +39,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
+    selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
@@ -108,6 +109,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isDeltaByAmount: false,
       expandedRowKeys: {},
       selectedFinancialUnit: "Unit",
+      selectedCurrency: null,
       filterData: {}
     };
 
@@ -150,12 +152,21 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   ngOnInit() {
     this.workspaceCurrency= null;
 
-    this.actions$.pipe(ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs)).pipe(
+    this.actions$.pipe(
+        ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs),
         this.unsubscribeOnDestroy
     ).subscribe(() => {
       this.cancelRPPopup();
       this.detectChanges();
-    })
+    });
+
+    this.actions$
+        .pipe(
+            ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
+            map( r => _.uniq(_.map(this.data, el => el.currencyCode))),
+            switchMap()
+        ).pipe(
+    ).subscribe(d => console.log(d));
 
   }
 
@@ -286,6 +297,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             this.unsubscribeOnDestroy
         ).subscribe( currency => {
           this.workspaceCurrency = currency;
+          this.tableConfig = {
+              ...this.tableConfig,
+            selectedCurrency: currency
+          };
           this.detectChanges();
     })
   }
