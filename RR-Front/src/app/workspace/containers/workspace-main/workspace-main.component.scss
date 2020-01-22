@@ -587,7 +587,8 @@
     .text-center.my-2.px-4.d-inline-flex.flex-column {
       padding-right: 75px !important;
       border-left: 1px solid rgba(255, 255, 255, 0.5);
-      @media screen and (max-width: 1100px) {
+
+      @media screen and (max-width: 1200px) {
         padding-right: 45px !important;
       }
     }
@@ -617,7 +618,7 @@
 
     .workspace-treaty-date-wrapper {
       padding-left: 15px;
-      border-left: 1px solid rgba(255,255,255,0.5);
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
       width: 60%;
 
       .workspace-date-menu {
@@ -625,7 +626,7 @@
       }
 
       .icon-calendar-alt {
-        font-size:  1.6em;
+        font-size: 1.6em;
       }
     }
   }

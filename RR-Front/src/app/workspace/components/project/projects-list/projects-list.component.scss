@@ -124,6 +124,8 @@
     }
 
     .project-header-title {
+      padding-left: 1rem;
+
       span:nth-child(1) {
         color: rgba(0, 0, 0, 0.87);
         font-family: Rubik;
@@ -224,6 +226,7 @@
       }
 
       .project-header-title {
+
         span:nth-child(1) {
           font-size: 14px;
         }
@@ -245,12 +248,14 @@
       }
 
       .project-header-title {
+        padding-left: 0.5rem;
+
         span:nth-child(1) {
-          font-size: 12px;
+          font-size: 10px;
         }
 
         span:nth-child(2) {
-          font-size: 10px;
+          font-size: 9px;
         }
       }
     }
@@ -479,6 +484,7 @@
 .line-height-m {
   line-height: 32px;
   font-size: 14px;
+  padding-left: 1.5rem;
 
   @media screen and (min-width: 1450px) and (max-width: 1690px) {
     line-height: 28px;
@@ -488,11 +494,13 @@
   @media screen and (min-width: 1250px) and (max-width: 1450px) {
     line-height: 24px;
     font-size: 11px;
+    padding-left: 1rem;
   }
 
   @media screen and (max-width: 1250px) {
     line-height: 20px;
     font-size: 9px;
+    padding-left: 0.5rem;
   }
 }
 
@@ -538,9 +546,8 @@
 }
 
 .field-car-status {
-  flex: 0 0 35%;
+  flex: 0 0 32%;
   letter-spacing: 0.08px;
-  padding-left: 24px;
 }
 
 .fac-detail-panel {

@@ -74,7 +74,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
-    this.dispatch(new LoadContractAction());
+    this.dispatch([new LoadContractAction(),new fromWs.LoadContractFacAction()]);
     this.select(WorkspaceState.getCurrentTab)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
@@ -83,18 +83,18 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
       });
     this.currentContract$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.treatyDataInfo = _.get(value, 'treaty', null);
-      this.facDataInfo = _.get(value, 'fac', null);
+      this.facData = _.get(value, 'fac', null);
       this.detectChanges();
     });
     this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.ws = _.merge({}, value);
       this.wsStatus = this.ws.workspaceType;
       if (this.wsStatus === 'fac') {
+        // this.dispatch(new fromWs.LoadContractFacAction());
         this.selectedProject = _.filter(this.ws.projects, item => item.selected)[0];
-        this.tabStatus = _.get(this.selectedProject, 'projectType', null);
-        this.selectDataScope();
+        this.tabStatus = _.get(this.selectedProject, 'projectType', 'TREATY');
       } else {
-        this.tabStatus = 'treaty';
+        this.tabStatus = 'TREATY';
       }
       this.detectChanges();
     });
@@ -114,10 +114,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     this.listStandardContent = ContractData.listStandardContent;
     this.listSecondaryContent = ContractData.listSecondaryContent;
     this.coveragesElement = ContractData.coveragesElement;
-  }
-
-  selectDataScope() {
-    this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedProject.id)[0];
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -159,11 +155,6 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
     } else {
       return this.facData.regionPeril;
     }
-  }
-
-  selectContract(value) {
-    this.selectedContract = value;
-    this.facData = _.filter(this.facDataInfo, item => item.id === this.selectedContract)[0];
   }
 
   ngOnDestroy(): void {
