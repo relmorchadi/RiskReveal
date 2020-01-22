@@ -519,4 +519,6 @@ public class EmbeddedQueries {
             "            AND RTRIM(rp2.CountryCode)  = RTRIM(res.CountryCode)\n" +
             "            AND RTRIM(rp2.Admin1Code)   = ''\n" +
             "OPTION (FORCE ORDER)  -- ** ADDED FOR PERFORMANCE **";
+    public static final String RL_ACC_QUERY_PROC = "Exec @database.dbo.RR_RL_GetEdmExtractACCFile @edm_name= ?, @portnum= ?";
+    public static final String RL_LOC_QUERY_PROC = "Exec @database.dbo.RR_RL_GetEdmExtractLOCFile @edm_name= ?, @rdm_name= ?, @portnum= ?, @ccy_code= ?";
 }
