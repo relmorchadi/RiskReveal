@@ -39,8 +39,8 @@ export class SearchService {
     return this._http.get(`${this.api}searchcount`, {params: {keyword, size, table}});
   }
 
-  searchWorkspace(id = '', year = '') {
-    return this._http.get(`${this.api}worspace/${id}/${year}`);
+  searchWorkspace(workspaceContextCode = '', workspaceContextUwYear = '', type = 'TTY') {
+    return this._http.get(`${backendUrl() + 'workspace/'}`, { params: {workspaceContextCode, workspaceContextUwYear, type} });
   }
 
   searchGlobal(filter, offset = '0', size = '100') {

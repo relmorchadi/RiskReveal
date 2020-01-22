@@ -25,6 +25,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   uwYear: number;
   workspaceType: string;
   workspaceCurrency: string;
+  workspaceEffectiveDate: Date;
 
   data: any[];
   epMetrics: any;
@@ -164,7 +165,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         .pipe(
             ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
             map( r => _.uniq(_.map(this.data, el => el.currencyCode))),
-            switchMap()
+            switchMap( currencies => this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, currencies, this.tableConfig.selectedCurrency))
         ).pipe(
     ).subscribe(d => console.log(d));
 
@@ -206,7 +207,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
       this.subscribeToConstants(wsId + "-" + uwYear);
-      this.subscribeToWorkspaceCurrency(wsId + "-" + uwYear);
+      this.subscribeToWorkspaceCurrencyAndEffectiveDate(wsId + "-" + uwYear);
 
       //Others
       this.loadConstants();
@@ -289,7 +290,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       })
   }
 
-  subscribeToWorkspaceCurrency(wsIdentifier: string) {
+  subscribeToWorkspaceCurrencyAndEffectiveDate(wsIdentifier: string) {
     this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
         .pipe(
             takeWhile(v => !_.isNil(v)),
@@ -302,7 +303,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             selectedCurrency: currency
           };
           this.detectChanges();
-    })
+    });
+
+    this.select(WorkspaceState.getWorkspaceEffectiveDate(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( date => {
+      this.workspaceEffectiveDate = date;
+      this.detectChanges();
+    });
   }
 
   initComponent(state) {
@@ -430,6 +441,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Delta Change":
         this.deltaChange(action.payload);
+        break;
+
+      case "Currency Change":
+        this.currencyChange(action.payload);
         break;
 
       default:
@@ -723,6 +738,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.returnPeriodConfig = {
       ...this.returnPeriodConfig,
       deletedRPs: [...this.returnPeriodConfig.deletedRPs, _.toNumber(rp)]
+    }
+  }
+
+  currencyChange(currency) {
+    this.tableConfig = {
+        ...this.tableConfig,
+      selectedCurrency: currency
     }
   }
 
