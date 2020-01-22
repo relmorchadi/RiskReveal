@@ -1,6 +1,7 @@
 <i style="position: absolute;right: 0px;top:5px; cursor: grab;  z-index: 9999999;color: black;font-size: 1.5em;"
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
+
 <ng-container *ngIf="type !== 'newCar'">
   <nz-tabset
     [(nzSelectedIndex)]="tabIndex"
@@ -8,7 +9,7 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
-                   [tableColumn]="cols"
+                   [tableColumn]="dashCols"
                    [listOfData]="data"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
@@ -22,7 +23,7 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
-                   [tableColumn]="cols"
+                   [tableColumn]="dashCols"
                    [listOfData]="filterAssign()"
                    [virtualScroll]="false"
                    (dbClickItem)="openFacItem($event)"
@@ -35,10 +36,11 @@
     </nz-tab>
   </nz-tabset>
 </ng-container>
+
 <ng-container *ngIf="type === 'newCar'">
   <div class="renewal-contract-table">
     <app-table [sortable]="true"
-               [tableColumn]="cols"
+               [tableColumn]="dashCols"
                [listOfData]="data"
                [virtualScroll]="false" [filterModeFront]="false"
                (sortDataChange)="sortChange($event)"
@@ -110,7 +112,9 @@
             <li nz-menu-item>Reset Filters</li>
             <li nz-menu-item>Reset Sort/Filters</li>
             <li nz-menu-divider></li>
-            <li nz-menu-item>Manage Columns</li>
+            <li nz-menu-item *ngIf="type === 'newCar'" (click)="openPopUpAction('newCar')">Manage Columns</li>
+            <li nz-menu-item *ngIf="type === 'inProgressCar'" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
+            <li nz-menu-item *ngIf="type === 'archivedCar'" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
             <li nz-menu-divider></li>
             <li nz-menu-item>Unselect All</li>
           </ul>

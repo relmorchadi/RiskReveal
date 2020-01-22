@@ -25,6 +25,8 @@ public class CalibrationView {
 
     private String pltType;
 
+    private String currencyCode;
+
     @Column(length = 25)
     private String status;
 

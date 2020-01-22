@@ -37,12 +37,17 @@ import {CreateFacProjectPopupComponent} from './containers/workspace-project/cre
 import { ParseIdPipe } from './pipes/parse-id.pipe';
 import {ReturnPeriodPopUpComponent} from "./components/calibration-new/return-period-pop-up/return-period-pop-up.component";
 import {GetMetricPipe} from "./pipes/get-metric.pipe";
+import { AddRemovePopUpNewComponent } from './components/calibration-new/add-remove-pop-up-new/add-remove-pop-up-new.component';
+import { PopUpPltTableNewComponent } from './components/calibration-new/pop-up-plt-table-new/pop-up-plt-table-new.component';
+import { ResizableModule  } from 'angular-resizable-element';
+import { ContextMenuModule } from "primeng/primeng";
+import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filter.pipe';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, CreateFacProjectPopupComponent, ParseIdPipe, ReturnPeriodPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, CreateFacProjectPopupComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe
   ],
   imports: [
     NgxEchartsModule,
@@ -64,13 +69,15 @@ import {GetMetricPipe} from "./pipes/get-metric.pipe";
     ScrollingModule,
     DropdownModule,
     jsPlumbToolkitModule,
-    jsPlumbToolkitDragDropModule
+    jsPlumbToolkitDragDropModule,
+    ResizableModule,
+    ContextMenuModule
   ],
   exports: [
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

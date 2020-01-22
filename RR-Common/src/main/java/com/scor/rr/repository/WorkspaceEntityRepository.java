@@ -17,6 +17,9 @@ public interface WorkspaceEntityRepository extends JpaRepository<WorkspaceEntity
 
     Optional<WorkspaceEntity> findByWorkspaceContextCodeAndWorkspaceUwYear(String workspaceContextCode, Integer workspaceUwYear);
 
+    @Query("select distinct w.workspaceUwYear from WorkspaceEntity w where w.workspaceContextCode= :wsId order by w.workspaceUwYear asc")
+    List<Integer> findDistinctYearsByWorkspaceContextCode(@Param("wsId") String workspaceContextCode);
+
     @Query("FROM WorkspaceEntity ws where ws.workspaceId IN (SELECT pr.workspaceId FROM ProjectEntity pr, PltHeaderEntity plt WHERE plt.pltHeaderId = :pltHeaderId AND plt.projectId = pr.projectId)")
     Optional<WorkspaceEntity> findWorkspaceByPltHeaderId(@Param("pltHeaderId") Long pltHeaderId);
 
@@ -43,5 +46,10 @@ public interface WorkspaceEntityRepository extends JpaRepository<WorkspaceEntity
     @Transactional
     @Query(value = "exec dbonew.usp_DistinctRPByAccumulatedQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRPByAccumulatedQualifiedPLTsCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
+
+    @Transactional
+    @Query(value = "exec dbonew.usp_WorkspaceHeaderStatistics @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear, @userId= :userId", nativeQuery = true)
+    List<Map<String, Object>> getWorkspaceHeaderStatistics(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear, @Param("userId") Long userId);
+
 
 }

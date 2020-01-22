@@ -25,7 +25,7 @@
         <!--          [ngClass]="{'standard-flag-icon': project.projectFacSource === 'manual',
         'standard-fac-flag-icon': project.projectFacSource === 'specific'}"
           <i *ngIf="project.projectFacSource === 'manual'" class='icon-assignment_24px'></i>-->
-        <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <div class="project-header-title d-flex flex-column justify-content-center">
           <div class="d-flex justify-content-between" *ngIf="project.projectType === 'FAC'">
             <div class="d-flex flex-column">
               <span>{{project?.projectName}}</span>
@@ -70,7 +70,7 @@
               <span *ngIf="project?.importedFlag" class="check-true-span"></span>
             </span>
           </div>
-          <span>Imported</span>
+          <span class="status-naming">Imported</span>
         </div>
         <div class="project-flag">
           <div style="margin-right: 3px">
@@ -79,14 +79,13 @@
               <span *ngIf="project?.publishedForPricingFlag" class="check-true-span"></span>
             </span>
           </div>
-          <span>Published to Pricing</span>
+          <span class="status-naming">Published to Pricing</span>
         </div>
         <div class="project-flag">
           <div style="margin-right: 3px">
-            <hr>
-            <span class="steper-icon"></span>
+            <hr><span class="steper-icon"></span>
           </div>
-          <span>Priced</span>
+          <span class="status-naming">Priced</span>
         </div>
         <div class="project-flag">
           <div style="margin-right: 2px">
@@ -95,37 +94,37 @@
               <span *ngIf="project?.accumulatedFlag" class="check-true-span"></span>
             </span>
           </div>
-          <span>Accumulated</span>
+          <span class="status-naming">Accumulated</span>
         </div>
       </div>
       <div class="project-kpi border-top d-flex">
-        <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-location_searching_24px mb-1"></i>
+        <div style="flex:1" class="border-right d-inline-flex flex-column project-component">
+          <i style=" color: rgba(0,0,0,0.3)" class="icon-location_searching_24px mb-1"></i>
           <span class="project-kpi-span">Region Perils</span>
           <span class="project-kpi-span"><b>{{project?.regionPerils || '-'}}</b></span>
         </div>
-        <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
+        <div style="flex:1" class="border-right d-inline-flex flex-column project-component">
+          <i style="color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
           <span class="project-kpi-span">Exp</span>
           <span class="project-kpi-span"><b>-</b></span>
         </div>
-        <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <div style="flex:1" class="border-right d-inline-flex flex-column project-component">
+          <i style="color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
           <span class="project-kpi-span">PLT</span>
           <span class="project-kpi-span"><b>{{project?.plts || '-'}}</b></span>
         </div>
-        <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <div style="flex:1" class="border-right d-inline-flex flex-column project-component">
+          <i style="color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
           <span class="project-kpi-span">Published</span>
           <span class="project-kpi-span"><b>{{project?.publishedForPricingCount|| '-'}}</b></span>
         </div>
-        <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
+        <div style="flex:1" class="border-right d-inline-flex flex-column project-component">
+          <i style="color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
           <span class="project-kpi-span">Pricing</span>
           <span class="project-kpi-span"><b>{{project?.finalPricing || '-'}}</b></span>
         </div>
-        <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
-          <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <div style="flex:1" class="d-inline-flex flex-column project-component">
+          <i style="color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
           <span class="project-kpi-span">Accum</span>
           <span class="project-kpi-span"><b>{{project?.accumulatedPlts || '-'}}</b></span>
         </div>
@@ -133,40 +132,39 @@
       <div class="project-kpi-details pb-3">
         <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'FAC'">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
-          <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
-          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
+          <span *ngIf="project.sourceWsName" class="source-Ws line-height-m">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
+          <a class="project-link line-height-m" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
             [{{project?.sourceProjectId}}]</a>
         </div>
-        <div style="height: 65px; padding: 0" class="d-flex flex-column project-kpi-details-title"
+        <div class="d-flex flex-column project-kpi-details-title fac-detail-panel"
              *ngIf="project.projectType === 'FAC'">
-          <div style="padding: 6px 0;" class="d-flex border-bottom">
+          <div class="d-flex border-bottom line-height-m">
             <span class="field-car-status">CAR ID :</span>
             <span class="font-weight-bold">{{project?.carRequestId | parseId}}</span>
           </div>
-          <div style="padding: 6px 0;" class="d-flex">
+          <div class="d-flex line-height-m">
             <span class="field-car-status">UW Analysis :</span>
             <span class="font-weight-bold">{{project?.uwAnalysis}}</span>
           </div>
         </div>
-        <div class="project-kpi-details-title" *ngIf="project.projectType === 'TREATY'">
+        <div class="project-kpi-details-title line-height-m" *ngIf="project.projectType === 'TREATY'">
           {{project?.projectDescription}}
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
-          <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
-          <span class="text-center dt-11"
-                style="flex:1;color: rgba(0,0,0,0.87);  letter-spacing: 0.08px; line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
+          <span class="dt-11 line-height-m" style="flex:1;	letter-spacing: 0.08px;">Created</span>
+          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
+          <span class="text-center dt-11 line-height-m" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last Modified</span>
-          <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
-          <span class="text-center dt-11"
-                style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Last Modified</span>
+          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
+          <span class="text-center line-height-m dt-11"
+                style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Assigned Analyst</span>
-          <span class="pr-4 dt-11 project-kpi-creat-wrap">Nathalie Dulac</span>
-          <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;"></span>
+          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Assigned Analyst</span>
+          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">Nathalie Dulac</span>
+          <span class="text-center line-height-m dt-11" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;"></span>
         </div>
       </div>
     </div>

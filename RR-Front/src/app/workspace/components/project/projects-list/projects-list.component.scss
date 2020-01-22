@@ -28,11 +28,11 @@
   justify-content: flex-start;
   height: 100%;
 
-  @media screen and (max-width: 1550px) and (min-width: 1200px) {
+  @media screen and (max-width: 1550px) and (min-width: 950px) {
     justify-content: space-between;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 950px) {
     justify-content: center;
   }
 
@@ -57,7 +57,7 @@
 
 .card-holder {
   margin: 10px 0;
-  width: 50%;
+  width: 33%;
   display: flex;
   justify-content: center;
 
@@ -65,16 +65,7 @@
     width: 25%;
   }
 
-  @media screen and (min-width: 1650px) and (max-width: 2200px) {
-    width: 33%;
-  }
-
-  @media screen and (min-width: 1080px) and (max-width: 1350px) {
-    margin: 10px auto;
-    width: 60%;
-  }
-
-  @media screen and (min-width: 750px) and (max-width: 1080px) {
+  @media screen and (max-width: 950px) {
     margin: 10px auto;
     width: 80%;
   }
@@ -133,6 +124,8 @@
     }
 
     .project-header-title {
+      padding-left: 1rem;
+
       span:nth-child(1) {
         color: rgba(0, 0, 0, 0.87);
         font-family: Rubik;
@@ -140,6 +133,16 @@
         font-weight: 500;
         letter-spacing: 0.25px;
         line-height: 24px;
+
+        @media screen and (min-width: 1250px) and (max-width: 1450px) {
+          font-size: 17px;
+          line-height: 24px;
+        }
+
+        @media screen and (max-width: 1250px) {
+          font-size: 16px;
+          line-height: 20px;
+        }
       }
 
       span:nth-child(2) {
@@ -147,6 +150,16 @@
         font-size: 14px;
         letter-spacing: 0.5px;
         line-height: 28px;
+
+        @media screen and (min-width: 1250px) and (max-width: 1450px) {
+          font-size: 13px;
+          line-height: 24px;
+        }
+
+        @media screen and (max-width: 1250px) {
+          font-size: 12px;
+          line-height: 20px;
+        }
       }
 
       flex: 1;
@@ -180,11 +193,89 @@
         margin-right: 15px
       }
     }
+
+    @media screen and (min-width: 1450px) and (max-width: 1690px) {
+      height: 70px;
+      .project-header-icon {
+        width: 70px;
+
+        i{
+          font-size: 1.7em;
+        }
+      }
+
+      .project-header-title {
+        span:nth-child(1) {
+          font-size: 16px;
+        }
+
+        span:nth-child(2) {
+          font-size: 13px;
+        }
+      }
+    }
+
+    @media screen and (min-width: 1250px) and (max-width: 1450px) {
+      height: 60px;
+      .project-header-icon {
+        width: 60px;
+
+        i{
+          font-size: 1.4em;
+        }
+      }
+
+      .project-header-title {
+
+        span:nth-child(1) {
+          font-size: 14px;
+        }
+
+        span:nth-child(2) {
+          font-size: 12px;
+        }
+      }
+    }
+
+    @media screen and (max-width: 1250px) {
+      height: 50px;
+      .project-header-icon {
+        width: 50px;
+
+        i{
+          font-size: 1.1em;
+        }
+      }
+
+      .project-header-title {
+        padding-left: 0.5rem;
+
+        span:nth-child(1) {
+          font-size: 10px;
+        }
+
+        span:nth-child(2) {
+          font-size: 9px;
+        }
+      }
+    }
   }
 
   .project-progress {
     height: 80px;
     background-color: #fff;
+
+    @media screen and (min-width: 1450px) and (max-width: 1690px) {
+      height: 70px;
+    }
+
+    @media screen and (min-width: 1250px) and (max-width: 1450px) {
+      height: 60px;
+    }
+
+    @media screen and (max-width: 1250px) {
+      height: 50px;
+    }
 
     .project-flag {
       width: 25%;
@@ -208,11 +299,18 @@
       justify-content: center;
       //position: absolute;
       margin-top: -24px;
-      margin-left: 70px;
+      margin-left: 50px;
       background: #fff;
 
-      @media screen and (min-width: 1650px) and (max-width: 2200px) {
-        margin-left: 52px;
+      @media screen and (min-width: 1300px) and (max-width: 1650px) {
+        margin-left: 40px;
+      }
+
+      @media screen and (max-width: 1300px) {
+        width: 10px;
+        height: 10px;
+        margin-top: -22px;
+        margin-left: 30px;
       }
 
       .check-true-span {
@@ -231,12 +329,44 @@
 
     .project-component {
       justify-content: space-between;
+      padding: 10px 12px;
+
+      @media screen and (min-width: 1450px) and (max-width: 1690px) {
+        padding: 10px;
+      }
+
+      @media screen and (min-width: 1250px) and (max-width: 1450px) {
+        padding: 10px 8px;
+      }
+
+      @media screen and (max-width: 1250px) {
+        padding: 9px 7px;
+      }
     }
 
     div {
       i {
         height: 19.89px;
         width: 16.89px;
+        font-size: 2.6em;
+
+        @media screen and (min-width: 1450px) and (max-width: 1690px) {
+          height: 17.89px;
+          width: 15.89px;
+          font-size: 2.3em;
+        }
+
+        @media screen and (min-width: 1250px) and (max-width: 1450px) {
+          height: 15.89px;
+          width: 13.89px;
+          font-size: 2em;
+        }
+
+        @media screen and (max-width: 1250px) {
+          height: 13.89px;
+          width: 11.89px;
+          font-size: 1.7em;
+        }
       }
 
       .project-kpi-span {
@@ -244,10 +374,38 @@
         font-size: 15px;
         letter-spacing: 0.5px;
         line-height: 20px;
+
+        @media screen and (min-width: 1450px) and (max-width: 1690px) {
+          font-size: 13px;
+          padding-top: 10px;
+        }
+
+        @media screen and (min-width: 1250px) and (max-width: 1450px) {
+          font-size: 11px;
+          padding-top: 8px;
+        }
+
+        @media screen and (max-width: 1250px) {
+          font-size: 9px;
+          padding-top: 3px;
+          line-height: 16px;
+        }
       }
 
       span:nth-child(3) {
         font-size: 30px;
+
+        @media screen and (min-width: 1450px) and (max-width: 1690px) {
+          font-size: 26px;
+        }
+
+        @media screen and (min-width: 1250px) and (max-width: 1450px) {
+          font-size: 22px;
+        }
+
+        @media screen and (max-width: 1250px) {
+          font-size: 18px;
+        }
       }
     }
 
@@ -266,8 +424,6 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-      height: 35px;
-      padding: 10px;
       font-size: 0.9em;
 
       .source-Ws {
@@ -275,8 +431,16 @@
         margin-right: 10px;
       }
 
-      @media screen and (max-width: 1500px) and (min-width: 1350px) {
+      @media screen and (min-width: 1450px) and (max-width: 1690px) {
+        font-size: 0.8em;
+      }
+
+      @media screen and (min-width: 1250px) and (max-width: 1450px) {
         font-size: 0.7em;
+      }
+
+      @media screen and (max-width: 1250px) {
+        font-size: 0.6em;
       }
     }
 
@@ -287,13 +451,6 @@
       i {
         font-size: 20px;
         margin-right: 10px;
-      }
-    }
-
-    .dt-11 {
-      font-size: 11px;
-      @media screen and (max-width: 1500px) and (min-width: 1350px) {
-        font-size: 10px;
       }
     }
   }
@@ -318,11 +475,49 @@
 
 .project-kpi-creat-wrap {
   flex: 1;
-  color: rgba(0, 0, 0, 0.87);
+  font-weight: 700;
   letter-spacing: 0.08px;
-  line-height: 32px;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.line-height-m {
+  line-height: 32px;
+  font-size: 14px;
+  padding-left: 1.5rem;
+
+  @media screen and (min-width: 1450px) and (max-width: 1690px) {
+    line-height: 28px;
+    font-size: 13px;
+  }
+
+  @media screen and (min-width: 1250px) and (max-width: 1450px) {
+    line-height: 24px;
+    font-size: 11px;
+    padding-left: 1rem;
+  }
+
+  @media screen and (max-width: 1250px) {
+    line-height: 20px;
+    font-size: 9px;
+    padding-left: 0.5rem;
+  }
+}
+
+.status-naming {
+  font-size: 16px;
+
+  @media screen and (min-width: 1450px) and (max-width: 1690px) {
+    font-size: 13px;
+  }
+
+  @media screen and (min-width: 1250px) and (max-width: 1450px) {
+    font-size: 11px;
+  }
+
+  @media screen and (max-width: 1250px) {
+    font-size: 9px;
+  }
 }
 
 .car-status-temp {
@@ -333,12 +528,40 @@
   text-shadow: -15px 5px 20px rgba(0, 0, 0, 0.8);
   border-radius: 20px;
   margin: 0 5px;
+
+  @media screen and (min-width: 1450px) and (max-width: 1690px) {
+    font-size: 12.26px;
+    padding: 3px 11px;
+  }
+
+  @media screen and (min-width: 1250px) and (max-width: 1450px) {
+    font-size: 11.26px;
+    padding: 3px 10px;
+  }
+
+  @media screen and (max-width: 1250px) {
+    font-size: 10.26px;
+    padding: 3px 9px;
+  }
 }
 
 .field-car-status {
-  flex: 0 0 34%;
+  flex: 0 0 32%;
   letter-spacing: 0.08px;
-  line-height: 20px;
-  font-size: 11px;
-  padding-left: 24px;
+}
+
+.fac-detail-panel {
+  height: 64px;
+
+  @media screen and (min-width: 1450px) and (max-width: 1690px) {
+    height: 56px;
+  }
+
+  @media screen and (min-width: 1250px) and (max-width: 1450px) {
+    height: 48px
+  }
+
+  @media screen and (max-width: 1250px) {
+    height: 40px;
+  }
 }

@@ -20,6 +20,7 @@ import {NgxsStoragePluginModule, STORAGE_ENGINE, StorageEngine} from '@ngxs/stor
 import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from './store';
 import {GlobalErrorHandler, MyStorageEngine} from "./config";
+import {FooterModule} from "../footer/footer.module";
 
 
 registerLocaleData(en);
@@ -29,17 +30,18 @@ registerLocaleData(en);
   providers: [
     {provide: ErrorHandler, useClass: GlobalErrorHandler}
   ],
-  imports: [
-    NgZorroAntdModule,
-    RouterModule,
-    FormsModule,
-    SharedModule,
-    NgxsRouterPluginModule.forRoot(),
-    ReactiveFormsModule,
-    NgxsFormPluginModule.forRoot(),
-    StoreModule,
-    ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
-  ],
+    imports: [
+        NgZorroAntdModule,
+        RouterModule,
+        FormsModule,
+        SharedModule,
+        NgxsRouterPluginModule.forRoot(),
+        ReactiveFormsModule,
+        NgxsFormPluginModule.forRoot(),
+        StoreModule,
+        ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})],
+        FooterModule
+    ],
   exports: [
     NgZorroAntdModule,
     NgxsFormPluginModule,

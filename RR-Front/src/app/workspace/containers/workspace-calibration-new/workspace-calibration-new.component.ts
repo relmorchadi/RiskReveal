@@ -1,13 +1,13 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {BaseContainer} from "../../../shared/base";
 import {StateSubscriber} from "../../model/state-subscriber";
-import {Actions, ofActionCompleted, Store} from "@ngxs/store";
+import {Actions, ofActionCompleted, ofActionSuccessful, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
 import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
 import {WorkspaceState} from "../../store";
-import {first, take, takeWhile} from "rxjs/operators";
+import {first, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
@@ -24,6 +24,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   wsId: string;
   uwYear: number;
   workspaceType: string;
+  workspaceCurrency: string;
+  workspaceEffectiveDate: Date;
 
   data: any[];
   epMetrics: any;
@@ -38,14 +40,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
     selectedFinancialUnit: string,
+    selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
     isDeltaByAmount: boolean
+    filterData: any
   };
   constants: {
     financialUnits: string[],
-    curveTypes: string[]
+    curveTypes: string[],
+    currencies: string[]
   };
   columnsConfig: {
     frozenColumns: any[],
@@ -74,9 +79,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     upperBound: number,
     lowerBound: number
   };
+  /******** add remove pop up **********/
+  isAddRemovePopUpVisible: boolean;
+  addRemovePopUpConfig: {
+    tableColumns: any[]
+  };
 
   //Sub
   validationSub: Subscription;
+  private isExpanded: boolean = false;
 
 
   constructor(
@@ -98,16 +109,20 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: false,
       isDeltaByAmount: false,
       expandedRowKeys: {},
-      selectedFinancialUnit: "Unit"
+      selectedFinancialUnit: "Unit",
+      selectedCurrency: null,
+      filterData: {}
     };
+
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '530px'
+      frozenWidth: '275px'
     };
 
     this.constants = {
       curveTypes: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
-      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion']
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
+      currencies: []
     };
     this.rowKeys= {};
 
@@ -127,16 +142,30 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       upperBound: null
     };
     this.selectedStatusFilter= {};
+
+    this.isAddRemovePopUpVisible = false;
+    this.addRemovePopUpConfig = {
+      ...this.addRemovePopUpConfig,
+      tableColumns: this.calibrationTableService.getAddRemovePopUpTableColumns()
+    }
   }
 
   ngOnInit() {
+    this.workspaceCurrency= null;
 
-    this.actions$.pipe(ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs)).pipe(
+    this.actions$.pipe(
+        ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs),
         this.unsubscribeOnDestroy
     ).subscribe(() => {
       this.cancelRPPopup();
       this.detectChanges();
-    })
+    });
+
+    this.actions$
+        .pipe(
+            ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
+            map( r => _.uniq(_.map(this.data, el => el.currencyCode)))
+        ).subscribe(d => console.log(d));
 
   }
 
@@ -176,6 +205,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
       this.subscribeToConstants(wsId + "-" + uwYear);
+      this.subscribeToWorkspaceCurrencyAndEffectiveDate(wsId + "-" + uwYear);
 
       //Others
       this.loadConstants();
@@ -202,7 +232,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   loadConstants() {
-    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants())
+    this.dispatch(new fromWorkspaceStore.LoadCalibrationConstants());
+    this.calibrationApi.loadCurrencies().subscribe(
+        (currencies: any) => {
+          this.constants = {
+              ...this.constants,
+            currencies
+          }
+        }
+    )
   }
 
   subscribeToEpMetrics (wsIdentifier: string) {
@@ -250,6 +288,32 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       })
   }
 
+  subscribeToWorkspaceCurrencyAndEffectiveDate(wsIdentifier: string) {
+    this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( currency => {
+          this.workspaceCurrency = currency;
+          this.tableConfig = {
+              ...this.tableConfig,
+            selectedCurrency: currency
+          };
+          this.detectChanges();
+    });
+
+    this.select(WorkspaceState.getWorkspaceEffectiveDate(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( date => {
+      this.workspaceEffectiveDate = date;
+      this.detectChanges();
+    });
+  }
+
   initComponent(state) {
 
     const {
@@ -261,6 +325,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.data = plts;
     this.adjustments = adjustments;
     this.loading = loading;
+    if (this.data.length && !this.isExpanded){
+      this.expandCollapseAllPlts();
+    }
   }
 
   initEpMetricsCols({cols, rps}) {
@@ -351,7 +418,19 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       case "Financial Unit Change":
-        this.financialUnitChange(action.payload);
+              this.financialUnitChange(action.payload);
+              break;
+      case "Open Add Remove Pop Up":
+        this.openAddRemovePopUp();
+        break;
+      case "Expand Collapse Plts":
+        this.expandCollapseAllPlts();
+        break;
+      case "Expand Collapse Plt Panel":
+        this.adaptPltPanelWidth(action.payload);
+        break;
+      case "Filter Plt Table":
+        this.updateFilterData(action.payload);
         break;
 
       case "Export EP Metrics":
@@ -360,6 +439,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Delta Change":
         this.deltaChange(action.payload);
+        break;
+
+      case "Currency Change":
+        this.currencyChange(action.payload);
         break;
 
       default:
@@ -426,7 +509,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const a = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
     this.columnsConfig = {
       ...this.columnsConfig,
-      frozenWidth: '530px',
+      frozenWidth: '275px',
       ...a
     };
     console.log(a, this.tableConfig, this.columnsConfig);
@@ -582,6 +665,47 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  private openAddRemovePopUp() {
+    this.isAddRemovePopUpVisible = true;
+  }
+
+  handleAddRemovePopUp(event: any) {
+    let type = event.type;
+    switch (type) {
+      case 'Hide Add Remove Pop Up':
+        this.isAddRemovePopUpVisible = false;
+        break;
+
+    }
+
+  }
+
+  expandCollapseAllPlts() {
+    if (!this.isExpanded && this.tableConfig.expandedRowKeys != {}){
+      _.forEach(this.data, (pure)=>{
+        this.tableConfig.expandedRowKeys[pure.pltId] = true;
+      })
+    } else {
+      this.tableConfig.expandedRowKeys = {};
+    }
+    console.log('expand all',this.tableConfig.expandedRowKeys)
+    this.isExpanded = !this.isExpanded;
+  }
+
+  adaptPltPanelWidth(payload){
+  let arr = this.columnsConfig.frozenWidth.split('p');
+  let newWidth = Number(arr[0])  + payload.event.edges.right;
+  this.columnsConfig = {
+    ...this.columnsConfig,
+    frozenWidth: newWidth+'px',
+    frozenColumns: this.calibrationTableService.getFrozenColumns(newWidth)
+  }
+  }
+
+  private updateFilterData(payload: any) {
+    this.tableConfig.filterData = payload;
+  }
+
   exportEPMetrics() {
     let exportedList = [];
 
@@ -612,6 +736,13 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.returnPeriodConfig = {
       ...this.returnPeriodConfig,
       deletedRPs: [...this.returnPeriodConfig.deletedRPs, _.toNumber(rp)]
+    }
+  }
+
+  currencyChange(currency) {
+    this.tableConfig = {
+        ...this.tableConfig,
+      selectedCurrency: currency
     }
   }
 

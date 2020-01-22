@@ -75,6 +75,14 @@ export class WorkspaceState {
     return state.content[wsIdentifier].projects;
   }
 
+  static getWorkspaceCurrency(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].currency);
+  }
+
+  static getWorkspaceEffectiveDate(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => new Date(state.content[wsIdentifier].expiryDate));
+  }
+
   @Selector()
   static getCurrentWorkspaces(state: WorkspaceModel) {
     const wsId = state.currentTab.wsIdentifier;
@@ -552,6 +560,11 @@ export class WorkspaceState {
     this.contractService.toggleFacDivision(ctx, payload);
   }
 
+  @Action(fromWS.LoadContractFacAction)
+  loadContractFac(ctx: StateContext<WorkspaceModel>) {
+    return this.contractService.loadContractFacData(ctx);
+  }
+
   /***********************************
    *
    * Plt Manager Actions
@@ -633,7 +646,6 @@ export class WorkspaceState {
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
     // return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
-
 
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTag) {

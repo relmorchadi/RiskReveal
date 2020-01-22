@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
@@ -41,7 +41,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this._route.params
       .pipe(this.unsubscribeOnDestroy,
-        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: 'treaty'})))
+        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: 'TTY'})))
       .subscribe(action => this.dispatch(action));
 
     this.select(WorkspaceState.getCurrentTab)

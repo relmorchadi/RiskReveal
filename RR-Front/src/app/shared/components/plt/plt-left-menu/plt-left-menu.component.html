@@ -42,7 +42,7 @@
     </div>
   </nz-tab>
 
-  <nz-tab [nzTitle]="tags">
+  <nz-tab [nzTitle]="tags" *ngIf="leftMenuInputs.isTagsTab">
     <ng-template #tags>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Tags</span>
     </ng-template>
