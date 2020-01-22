@@ -152,10 +152,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       this.cdRef.detectChanges();
   }
 
-  private searchData(id, year) {
-    return this._searchService.searchWorkspace(id || '', year || '2019');
-  }
-
   private _subscribeRecentSearchChanges() {
     this._unsubscribeToFormChanges();
     this.subscriptionsRecent = this.contractFilterFormGroup.get('recentSearch')
@@ -374,27 +370,21 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       selectedItems = this.pinnedWs.filter(ws => ws.selected);
     }
     selectedItems.forEach(
-      (ws) => {
-        this.searchData(ws.workspaceContextCode, ws.workspaceUwYear).subscribe(
-          (dt: any) => {
-            const workspace = {
-              workSpaceId: ws.workspaceContextCode,
-              uwYear: ws.workspaceUwYear,
-              selected: false,
-              ...dt
-            };
-            this.store.dispatch(new workspaceActions.OpenWS({
-              wsId: ws.workspaceContextCode,
-              uwYear: ws.workspaceUwYear, route: 'projects', type: 'treaty'
-            }));
-            workspaces = [workspace, ...workspaces];
-            if (workspaces.length === selectedItems.length) {
-              this.visible = false;
-            }
-            this.detectChanges();
+        (ws) => {
+          const workspace = {
+            workSpaceId: ws.workspaceContextCode,
+            uwYear: ws.workspaceUwYear,
+          };
+          this.store.dispatch(new workspaceActions.OpenWS({
+            wsId: ws.workspaceContextCode,
+            uwYear: ws.workspaceUwYear, route: 'projects'
+          }));
+          workspaces = [workspace, ...workspaces];
+          if (workspaces.length === selectedItems.length) {
+            this.visible = false;
           }
-        );
-      }
+          this.detectChanges();
+        }
     );
   }
 

@@ -74,8 +74,8 @@ export class CalibrationAPI {
     return this.http.post(`${this.URL}epMetrics/rp/delete`, { userId, rps, screen });
   }
 
-  getExchangeRates(effectiveDate, currencies) {
-    return this.http.post(`${this.URL}exchangerate`, {effectiveDate, currencies})
+  getExchangeRates(effectiveDate, currencies, target) {
+    return this.http.post(`${this.URL}exchangerate`, {effectiveDate, currencies, target})
   }
 
 }

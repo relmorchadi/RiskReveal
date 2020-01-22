@@ -222,18 +222,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspaceInSlider(contract) {
-    this.currentWorkspace = contract;
+/*    this.currentWorkspace = contract;
     this.sliceValidator = true;
-    this.expandWorkspaceDetails = true;
-    this.searchData(contract.workSpaceId, contract.uwYear)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(
-        dt => {
-          this.selectedWorkspace = dt;
-          this.cdRef.detectChanges();
-        }
-      );
-
+    this.expandWorkspaceDetails = true;*/
   }
 
   popUpWorkspace(wsId, year) {
@@ -300,10 +291,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       })),
       keyword
     }
-  }
-
-  private searchData(id, year) {
-    return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
   loadMore(event: LazyLoadEvent) {
