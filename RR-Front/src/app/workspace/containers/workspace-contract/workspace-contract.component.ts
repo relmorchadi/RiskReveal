@@ -58,6 +58,9 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
 
   @Select(WorkspaceState.getContract) currentContract$;
   facDataInfo: any;
+
+  @Select(WorkspaceState.getSelectedProject) selectedProject$;
+
   treatyDataInfo: any;
   tabStatus: any;
   wsStatus: any;
@@ -74,7 +77,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
-    this.dispatch([new LoadContractAction(),new fromWs.LoadContractFacAction()]);
+    this.dispatch([new LoadContractAction(), new fromWs.LoadContractFacAction()]);
     this.select(WorkspaceState.getCurrentTab)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
@@ -90,13 +93,17 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
       this.ws = _.merge({}, value);
       this.wsStatus = this.ws.workspaceType;
       if (this.wsStatus === 'fac') {
-        // this.dispatch(new fromWs.LoadContractFacAction());
         this.selectedProject = _.filter(this.ws.projects, item => item.selected)[0];
         this.tabStatus = _.get(this.selectedProject, 'projectType', 'TREATY');
       } else {
         this.tabStatus = 'TREATY';
       }
       this.detectChanges();
+    });
+    this.selectedProject$.pipe().subscribe(data => {
+      if (this.wsStatus === 'fac') {
+        this.dispatch(new fromWs.LoadContractFacAction());
+      }
     });
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig = {
