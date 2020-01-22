@@ -20,10 +20,14 @@ export class TableSortAndFilterPipe implements PipeTransform {
         _.every(
           filterDataKeys,
             filteredCol => _.some(
-              _.split(filterData[filteredCol],/[,;]/g), strs =>
-              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
+              _.split(filterData[filteredCol],/[,;]/g), strs => {
+                  if(_.startsWith(strs,"\"") && _.endsWith(strs,"\""))
+                    return _.toLower(_.toString(row[filteredCol])) == _.toLower(_.toString(_.trim(strs, `\"`)));
+                  return _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)));
+                }
+              )
             )
-        ))
+        )
     }
     if(sortDataKeys.length > 0){
         res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])

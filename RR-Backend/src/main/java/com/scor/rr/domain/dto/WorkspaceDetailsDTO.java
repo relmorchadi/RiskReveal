@@ -33,12 +33,12 @@ public class WorkspaceDetailsDTO {
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
-    private int expectedRegionPerils;
-    private int expectedExposureSummaries;
-    private int qualifiedPLTs;
-    private int expectedPublishedForPricing;
-    private int expectedPriced;
-    private int expectedAccumulation;
+    private Integer expectedRegionPerils;
+    private Integer expectedExposureSummaries;
+    private Integer qualifiedPLTs;
+    private Integer expectedPublishedForPricing;
+    private Integer expectedPriced;
+    private Integer expectedAccumulation;
 
     public WorkspaceDetailsDTO(WorkspaceEntity workspaceEntity) {
         this.id = workspaceEntity.getWorkspaceContextCode();

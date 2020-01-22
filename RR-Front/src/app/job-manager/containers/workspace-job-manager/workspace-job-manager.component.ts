@@ -276,10 +276,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
     });
   }
 
-  private searchData(id, year) {
-    return this._searchService.searchWorkspace(id || '', year || '2019');
-  }
-
   expandRow(row, expand) {
     row.append = !row.append;
     return true;

@@ -5,8 +5,9 @@ import {Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../../workspace/store/states";
 import {WsApi} from "../../../workspace/services/api/workspace.api";
 import * as _ from 'lodash';
-import {GeneralConfigState} from "../../../core/store/states";
+import {DashboardState, GeneralConfigState} from "../../../core/store/states";
 import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
+import set = Reflect.set;
 
 @Component({
   selector: 'app-fac-subsidiary-chart',
@@ -59,7 +60,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
         myCostumeTool: {
           show: true,
           title: 'rate',
-          icon: 'image://http://echarts.baidu.com/images/favicon.png',
+          // icon: 'image://http://echarts.baidu.com/images/favicon.png',
           onclick: () => {
             this.switchData();
           }
@@ -101,7 +102,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   };
   alternateSeriesData: any;
 
-  @ViewChild('chart') chart;
+  @ViewChild('chartS') chart;
 
   @Input()
   itemName = 'Car Widget';
@@ -121,7 +122,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   private mockDataCache;
   tabIndex = 1;
 
-  @Select(WorkspaceState.getFacData) facData$;
+  @Select(DashboardState.getFacData) facData$;
   data: any[];
   filteredData: any[];
 
@@ -139,13 +140,15 @@ export class FacSubsidiaryChartComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    this.facData$.subscribe(value => {
+    this.facData$.subscribe(rValue => {
+      const newD = _.get(rValue, 'new', []);
+      const inPD = _.get(rValue, 'inProgress', []);
+      const archiveD = _.get(rValue, 'archived', []);
+      const value = [...newD, ...inPD, ...archiveD];
       this.data = value;
       this.filteredData = value;
-      this.chartOption.xAxis.data = _.uniq(value.map(item => item.uwanalysisContractSubsidiary));
-      this.chartOption.legend.data = _.uniq(value.map(item => item.assignedAnalyst));
-      this.subsidiaryList = [..._.uniq(value.map(item => item.uwanalysisContractSubsidiary)), 'ALL'];
-      this.setValues();
+      this.subsidiaryList = [..._.uniq(value.map(item => item.uwAnalysis)), 'ALL'];
+      this.detectChanges();
     });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
@@ -202,28 +205,41 @@ export class FacSubsidiaryChartComponent implements OnInit {
   }
 
   setValues() {
+    const legendData = _.uniq(this.filteredData.map(item => item.assignedAnalyst)) || [];
+    const xAxisData = _.uniq(this.filteredData.map(item => item.uwAnalysis)) || [];
+    console.log(this.filteredData);
     let series = [];
     let alternateSeries = [];
-    const {data} = this.chartOption.legend;
-    _.forEach(data, item => {
+    _.forEach(legendData, item => {
       let trad = [];
       let part = [];
       _.forEach(this.subsidiaryList, subsItem => {
         trad = [...trad, _.filter(this.data, dt =>
-          dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length];
-        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwanalysisContractSubsidiary === subsItem).length /
-        _.filter(this.data, dt => dt.uwanalysisContractSubsidiary === subsItem).length) * 100];
+            dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length];
+        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
+            _.filter(this.data, dt => dt.uwAnalysis === subsItem).length) * 100];
       });
       series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
       alternateSeries = [...alternateSeries, {name: item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
     this.alternateSeriesData = alternateSeries;
-    console.log(alternateSeries);
-    this.chartOption.series = series;
+
+    this.myChart.setOption({
+      xAxis: {
+        data: xAxisData
+      },
+      legend: {
+        data: legendData
+      },
+      series: series
+    });
   }
 
   onChartInit(instance) {
-    this.myChart = instance;
+    setTimeout(() => {
+      this.myChart = instance;
+      this.setValues();
+    }, 1000);
   }
 
   switchData() {

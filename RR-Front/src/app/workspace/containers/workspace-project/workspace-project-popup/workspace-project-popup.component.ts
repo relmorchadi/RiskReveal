@@ -890,7 +890,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
     if (this.selectionStep == 'project') {
-      this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
+/*      this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
           this.selectedWorkspaceProjects = _.map(data.projects, (item) => ({...item, selected: false}));
           if (!data.projects.length) {
             this.browesing = false;
@@ -900,7 +900,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
           this.detectChanges();
         }
-      );
+      );*/
     }
 
     if(this.selectionStep == 'plt') {

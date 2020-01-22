@@ -3,12 +3,14 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.abstraction.JobManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class BatchExecution {
 
     @Autowired
     private JobLauncher jobLauncher;
+
+    @Autowired
+    private JobRepository jobRepository;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -43,6 +48,16 @@ public class BatchExecution {
 
     @Autowired
     private ProjectConfigurationForeWriterContractRepository projectConfigurationForeWriterContractRepository;
+
+    @Autowired
+    private RLImportSelectionRepository rlImportSelectionRepository;
+
+    @Autowired
+    private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
+
+    @Autowired
+    @Qualifier(value = "jobManagerImpl")
+    private JobManager jobManager;
 
     @Autowired
     @Qualifier(value = "importLossData")
@@ -100,6 +115,33 @@ public class BatchExecution {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public boolean queueImportLossData(String instanceId, Long projectId, Long userId) {
+
+        List<Long> rlImportSelections = rlImportSelectionRepository.findRLImportSelectionIdByProjectId(projectId);
+        List<Long> rlPortfolioSelections = rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId);
+
+        if (rlImportSelections != null && !rlImportSelections.isEmpty()
+                && rlPortfolioSelections != null && !rlPortfolioSelections.isEmpty()) {
+            Map<String, String> params = extractNamingProperties(projectId, instanceId);
+
+//            JobParams jobParams = JobParams.builder()
+//                    .instanceId(instanceId)
+//                    .projectId(projectId)
+//                    .userId(userId)
+//                    .params(params)
+//                    .rlImportSelections(rlImportSelections)
+//                    .rlPortfolioSelections(rlPortfolioSelections)
+//                    .build();
+
+            if (params != null) {
+                params.put("sourceResultIdsInput", String.join(";", rlImportSelections.toArray(new String[rlImportSelections.size()])));
+                params.put("rlPortfolioSelectionIds", String.join(";", rlPortfolioSelections.toArray(new String[rlPortfolioSelections.size()])));
+            }
+            //jobManager.createJob();
+        }
+        return true;
     }
 
     private Map<String, String> extractNamingProperties(Long projectId, String instanceId) {

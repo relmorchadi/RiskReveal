@@ -10,13 +10,13 @@ import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
+import com.scor.rr.service.abstraction.DivisionService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +65,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private RLImportSelectionRepository rlImportSelectionRepository;
 
     @Autowired
+    private DivisionService divisionService;
+
+    @Autowired
     private ModelMapper modelMapper;
 
     @Override
@@ -111,23 +114,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     // TODO : Review this later
     @Override
     public List<CARDivisionDto> getDivisions(String carId) {
-        List<Map<String, Object>> divisions = projectConfigurationForeWriterDivisionRepository.findByCARId(carId);
-        List<CARDivisionDto> carDivisions = new ArrayList<>();
-        for (Map<String, Object> division : divisions) {
-            CARDivisionDto carDivisionDto = new CARDivisionDto();
-            carDivisionDto.setCaRequestId((String) division.get("caRequestId"));
-            carDivisionDto.setCarStatus((String) division.get("carStatus"));
-            carDivisionDto.setContractId((String) division.get("contractId"));
-            carDivisionDto.setCurrency((String) division.get("currency"));
-            carDivisionDto.setDivisionNumber(Integer.valueOf((String) division.get("divisionNumber")));
-            carDivisionDto.setIsPrincipalDivision(Boolean.parseBoolean(String.valueOf(division.get("IsPrincipalDivision"))));
-            carDivisionDto.setProjectId(((BigInteger) division.get("projectId")).longValue());
-            carDivisionDto.setUwYear((Integer) division.get("uwYear"));
-            carDivisionDto.setWorkspaceId(((BigInteger) division.get("workspaceId")).longValue());
-            carDivisions.add(carDivisionDto);
-        }
-
-        return carDivisions;
+        return divisionService.getDivisions(carId);
     }
 
     @Override
@@ -140,7 +127,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(transactionManager = "rrTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
-        rlSavedDataSourceRepository.deleteByProjectIdAndUserIdAndInstanceId(dataSourcesDto.getProjectId(), dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+        rlSavedDataSourceRepository.deleteByUserIdAndInstanceId(dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
 
         if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
             dataSourcesDto.getDataSources().forEach(dataSource -> {
@@ -156,8 +143,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLSavedDataSource> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
-        return rlSavedDataSourceRepository.findByProjectIdAndInstanceIdAndUserId(projectId, instanceId, userId);
+    public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
+        return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
+                .map(RLDataSourcesDto::new).collect(Collectors.toList());
     }
 
     @Override
@@ -166,21 +154,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<RLImportedDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
+    public List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
 
         List<RLImportedDataSourcesAndAnalysis> data = rlImportedDataSourcesAndAnalysisRepository.findByProjectId(projectId);
-        List<RLImportedDataSourcesDto> importedDataSources = new ArrayList<>();
+        List<RLDataSourcesDto> importedDataSources = new ArrayList<>();
 
         if (data != null && !data.isEmpty()) {
             data.forEach(element -> {
 
-                RLImportedDataSourcesDto importedDataSourceDto = importedDataSources.stream()
+                RLDataSourcesDto importedDataSourceDto = importedDataSources.stream()
                         .filter(ele -> ele.getRlDataSourceId().equals(element.getRlDataSourceId())
-                                && ele.getRlDataSourceName().equals(element.getRlDataSourceName())
-                                && ele.getRlDatabaseId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
+                                && ele.getDataSourceName().equals(element.getRlDataSourceName())
+                                && ele.getDataSourceId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
 
                 if (importedDataSourceDto == null) {
-                    importedDataSourceDto = new RLImportedDataSourcesDto(element);
+                    importedDataSourceDto = new RLDataSourcesDto(element);
                     importedDataSources.add(importedDataSourceDto);
                 } else
                     importedDataSourceDto.addToRlModelIdList(element.getRlModelId());

@@ -1,5 +1,7 @@
 package com.scor.rr.service.fileBasedImport;
 
+import com.scor.rr.domain.ModellingSystemEntity;
+import com.scor.rr.domain.ModellingVendorEntity;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
@@ -21,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -43,6 +46,9 @@ public class ImportFileService {
 
     @Autowired
     FileBasedImportConfigRepository fileBasedImportConfigRepository;
+
+    @Autowired
+    FileImportSourceResultRepository fileImportSourceResultRepository;
 
 //    @Autowired
 //    UserRrRepository userRrRepository;
@@ -199,7 +205,7 @@ public class ImportFileService {
     }
 
     public SourceFileImport buildSourceFileImport(File file) {
-        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file); // ham nay chua ham validate(importFileLossDataHeader, mandatoryMetadataList, defaultMetadataList) nho hon
+        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file);
         SourceFileImport sourceFileImport = new SourceFileImport();
         sourceFileImport.setProjectId(null);
         sourceFileImport.setFilePath(file.getParent().replace(getRootFilePath(), ""));
@@ -364,19 +370,15 @@ public class ImportFileService {
     }
 
 //    @Value("${nonrms.plt.root.path}")
-    private String rootFilePath = "C:\\\\scor\\\\data\\\\ihub\\\\nonRMS\\\\plt\\\\";
+    private String rootFilePath = "/scor/data/ihub/nonRMS/";
 
-    private String rootDirectoryPath = "/scor/data/ihub/nonRMS/";
+//    private String rootFilePath = "C:\\\\scor\\\\data\\\\ihub\\\\nonRMS\\\\plt\\\\";
 
 //    @Value("${nonrms.peqt.path}")
     private String peqtFilePath = "/scor/data/ihub/nonRMS/peqt/";
 
     public String getRootFilePath() {
         return rootFilePath;
-    }
-
-    public String getRootDirectoryPath() {
-        return rootDirectoryPath;
     }
 
     // scan file de lay du lieu + validate 1 phan thong tin co ban, validate cac thong tin khac cua header sau (numeric, ...)
@@ -882,7 +884,7 @@ public class ImportFileService {
     public String directoryListing() {
         PathNode rootData = new PathNode(new File(getRootFilePath()), null);
         com.scor.rr.domain.model.TreeNode<PathNode> root = new com.scor.rr.domain.model.TreeNode<>(rootData, null);
-        getPathList(root, new File(getRootDirectoryPath()));
+        getPathList(root, new File(getRootFilePath()));
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode rootJsonNode = objectMapper.valueToTree(root);
         return printJsonString(rootJsonNode);
@@ -944,7 +946,7 @@ public class ImportFileService {
     }
 
     public void updateFileBasedConfig(FileBasedImportConfigRequest request) throws RRException {
-        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(request.getProjectId()));
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
 
         if (fileBasedImportConfigDB == null) {
             fileBasedImportConfigDB = createFileBasedImportConfigIfNotExist(request);
@@ -959,11 +961,42 @@ public class ImportFileService {
         fileBasedImportConfigDB.setImportLocked(request.isImportLocked());
 
         fileBasedImportConfigRepository.save(fileBasedImportConfigDB);
+
+        // create/update FileImportSourceResult if isImportLocked = false
+        if (!request.isImportLocked()) {
+            //remove old FileImportSourceResult
+            List<FileImportSourceResult> oldFileImportSourceResults = fileImportSourceResultRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
+            for (FileImportSourceResult fileImportSourceResult : oldFileImportSourceResults) {
+                fileImportSourceResultRepository.deleteById(fileImportSourceResult.getFileImportSourceResultId());
+            }
+
+            //update new FileImportSourceResult
+            if (request.getSelectedFileSourcePath() != null && request.getSelectedFileSourcePath().size() > 0) {
+                Set<File> selectedTextFiles = new HashSet<>();
+                for (String path : request.getSelectedFileSourcePath()) {
+                    File file = new File(path);
+                    selectedTextFiles.add(file);
+                }
+
+                for (File file : selectedTextFiles) {
+                    if (file.isDirectory() || !"txt".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+                        continue;
+                    }
+
+                    SourceFileImport sourceFileImport = buildSourceFileImport(file);
+
+                    fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(request.getProjectId()));
+                    if (sourceFileImport.getErrorMessages() == null || sourceFileImport.getErrorMessages().size() == 0) {
+                        FileImportSourceResult sourceResult = buildFileImportSourceResult(fileBasedImportConfigDB, sourceFileImport);
+                        fileImportSourceResultRepository.save(sourceResult);
+                    }
+                }
+            }
+        }
     }
 
     private FileBasedImportConfig createFileBasedImportConfigIfNotExist(FileBasedImportConfigRequest request) {
         FileBasedImportConfig fileBasedImportConfig = new FileBasedImportConfig();
-        fileBasedImportConfig.setFileBasedImportConfig(Integer.valueOf(request.getProjectId()));
         fileBasedImportConfig.setProjectId(Integer.valueOf(request.getProjectId()));
         fileBasedImportConfig.setImportLocked(false);
         fileBasedImportConfig.setLastUnlockDateForImport(new Date());
@@ -974,11 +1007,43 @@ public class ImportFileService {
     public String retrieveFileBasedConfig(String projectId) {
         String fileBasedConfigStr = "";
 
-        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findFileBasedImportConfigByProjectId(Integer.valueOf(projectId));
+        FileBasedImportConfig fileBasedImportConfigDB = fileBasedImportConfigRepository.findByProjectId(Integer.valueOf(projectId));
         if (fileBasedImportConfigDB != null) {
             fileBasedConfigStr = fileBasedImportConfigDB.toString();
         }
 
         return fileBasedConfigStr;
+    }
+
+    private FileImportSourceResult buildFileImportSourceResult(FileBasedImportConfig fileBasedImportConfigDB, SourceFileImport sourceFileImport) {
+        FileImportSourceResult fileImportSourceResult = new FileImportSourceResult();
+        ImportFileLossDataHeader importFileLossDataHeader = sourceFileImport.getImportFileHeader();
+        if (importFileLossDataHeader != null) {
+            Map<String, String> metadata = importFileLossDataHeader.getMetadata();
+
+            //TODO
+            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfig());
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfig());
+            fileImportSourceResult.setResultName(metadata.get("ResultsName"));
+            fileImportSourceResult.setTargetRAPCode(sourceFileImport.getTargetRapCode());
+            fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId());
+            if (metadata.get("Years") != null) {
+                fileImportSourceResult.setPLTSimulationPeriods(Integer.valueOf(metadata.get("Years")));
+            }
+            fileImportSourceResult.setSourceCurrency(metadata.get("Currency"));
+            fileImportSourceResult.setTargetCurrency(null);
+            fileImportSourceResult.setFinancialPerspective(metadata.get("FinPerspective"));
+            fileImportSourceResult.setUnitMultiplier(new BigDecimal(1.0));
+            fileImportSourceResult.setProportion(new BigDecimal(100.0));
+            fileImportSourceResult.setDataSource(metadata.get("ResultsDatabaseName"));
+            fileImportSourceResult.setFilePath(sourceFileImport.getFilePath());
+            fileImportSourceResult.setFileName(sourceFileImport.getFileName());
+            if (metadata.get("User") != null) {
+                fileImportSourceResult.setImportUser(Integer.valueOf(metadata.get("User").replace("U", "0")));
+            }
+            fileImportSourceResult.setGrain(metadata.get("Grain"));
+
+        }
+        return fileImportSourceResult;
     }
 }

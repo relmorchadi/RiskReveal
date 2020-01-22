@@ -270,13 +270,13 @@ public class SearchService {
     private WorkspaceDetailsDTO getCount(List<Map<String, Object>> arr, WorkspaceDetailsDTO ws) {
         if( arr.size() > 0 ) {
             Map<String, Object> tmp = arr.get(0);
-            ws.setExpectedAccumulation( (Integer) tmp.get("expectedAccumulation"));
-            ws.setExpectedExposureSummaries( (Integer) tmp.get("expectedExposureSummaries"));
-            ws.setExpectedPriced( (Integer) tmp.get("expectedPriced"));
-            ws.setExpectedPublishedForPricing( (Integer) tmp.get("expectedPublishedForPricing"));
-            ws.setExpectedRegionPerils( (Integer) tmp.get("expectedRegionPerils"));
-            ws.setIsFavorite( (Boolean) tmp.get("isFavorite"));
-            ws.setQualifiedPLTs( (Integer) tmp.get("qualifiedPLTs"));
+            ws.setExpectedAccumulation( tmp.get("expectedAccumulation") != null ? (Integer) tmp.get("expectedAccumulation") : null);
+            ws.setExpectedExposureSummaries( tmp.get("expectedExposureSummaries") != null ?  (Integer) tmp.get("expectedExposureSummaries") : null);
+            ws.setExpectedPriced( tmp.get("expectedPriced") != null ? (Integer) tmp.get("expectedPriced") : null );
+            ws.setExpectedPublishedForPricing(  tmp.get("expectedPublishedForPricing") != null ? (Integer) tmp.get("expectedPublishedForPricing"): null );
+            ws.setExpectedRegionPerils( tmp.get("expectedRegionPerils") != null ? (Integer) tmp.get("expectedRegionPerils") :null );
+            ws.setIsFavorite( tmp.get("isFavorite") != null ? (Boolean) tmp.get("isFavorite") : null );
+            ws.setQualifiedPLTs( tmp.get("qualifiedPLTs") != null ? (Integer) tmp.get("qualifiedPLTs") : null );
             return ws;
         } else return ws;
     }

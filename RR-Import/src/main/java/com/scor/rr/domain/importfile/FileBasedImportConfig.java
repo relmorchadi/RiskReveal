@@ -1,13 +1,11 @@
 package com.scor.rr.domain.importfile;
 
-import com.scor.rr.util.ListStringConverter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "FileBasedImportConfig", schema = "dbonew", catalog = "RiskReveal")
@@ -16,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class FileBasedImportConfig {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "FileBasedImportConfig")
     private int fileBasedImportConfig;
 

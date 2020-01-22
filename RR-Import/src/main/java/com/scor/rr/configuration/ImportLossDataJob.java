@@ -3,6 +3,7 @@ package com.scor.rr.configuration;
 import com.scor.rr.service.batch.*;
 import com.scor.rr.service.batch.processor.AccItemProcessor;
 import com.scor.rr.service.batch.processor.LocItemProcessor;
+import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.batch.processor.rows.RLLocRow;
 import com.scor.rr.service.batch.reader.RLAccCursorItemReader;
 import com.scor.rr.service.batch.reader.RLLocCursorItemReader;
@@ -289,7 +290,7 @@ public class ImportLossDataJob {
     @Bean
     public Step extractAccStep() {
         return this.stepBuilderFactory.get("extractAcc")
-                .<RLLocRow, RLLocRow>chunk(1000)
+                .<RLAccRow, RLAccRow>chunk(1000)
                 .reader(accReader)
                 .processor(accProcessor)
                 .writer(accWriter)

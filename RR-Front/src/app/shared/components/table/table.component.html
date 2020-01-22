@@ -22,18 +22,16 @@
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th *ngFor="let col of columns" pResizableColumn>
-        <span *ngIf="col?.display"
-              style="display:flex ;justify-content: space-between ; white-space:nowrap ;text-overflow: ellipsis ">
+        <span *ngIf="col?.display" style="display:flex ;justify-content: space-between ; white-space:nowrap ;text-overflow: ellipsis ">
           {{col?.header}}
           <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
-              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
-                 style="font-size: 1.4em;"></i>
-            </ng-container>
-
+            <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+               (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+            <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+               (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+            <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
+               style="font-size: 1.4em;"></i>
+          </ng-container>
         </span>
         <!--        (input)="filterCol($event.target.value, col?.filterParam)"-->
         <div class="search-bar-table" *ngIf="col?.filtered">
@@ -135,9 +133,9 @@
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </ng-container>
            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
-              <i *ngSwitchCase="'ASC'" class="icon-keyboard_arrow_up_24px"
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
                  (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchCase="'DSEC'" class="icon-keyboard_arrow_down_24px"
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
                  (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
               <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
                  style="font-size: 1.4em;"></i>
