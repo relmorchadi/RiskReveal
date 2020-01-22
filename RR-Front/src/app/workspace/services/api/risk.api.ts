@@ -62,12 +62,5 @@ export class RiskApi {
     return this.http.post(`${this.IMPORT_URL}import/config/save-default-data-sources`, {instanceId, projectId,dataSources, userId})
   }
 
-  searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
-    return this.http.get(`${this.URL}analysis?size=20`, {params: {rdmName: paramName}});
-  }
-
-  searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
-    return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
-  }
 
 }
