@@ -294,7 +294,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   changeCurrencie(currency: any) {
     this.actionDispatcher.emit({
-      type: "Financial Unit Change",
+      type: "Currency Change",
       payload: currency
     })
   }
