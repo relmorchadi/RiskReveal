@@ -97,16 +97,14 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.managePopUp = false;
     this.rightMenuInputs = {
       basket: [],
-      pltDetail: null,
       pltHeaderId: '',
       selectedTab: {
         index: 0,
         title: 'pltDetail',
       },
-      tabs: {'pltDetail': true},
+      tabs: [{title: "Summary"}, {title: "EP Metrics"}],
       visible: false,
       mode: "default",
-      summary: {}
     };
     this.tableInputs = {
       scrollConfig: {
@@ -189,6 +187,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
+      isTagsTab: false
     };
     this.tagsInputs= {
       _tagModalVisible: false,
@@ -212,13 +211,14 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   observeRouteParams() {
-    return this.route$.params.pipe(tap(({wsId, year}) => {
-      this.workspaceId = wsId;
-      this.uwy = year;
-
-      this.updateLeftMenuInputs('wsId', this.workspaceId);
-      this.updateLeftMenuInputs('uwYear', this.uwy);
-    }))
+    return this.route$.params.pipe(
+        tap(({wsId, year}) => {
+          this.workspaceId = wsId;
+          this.uwy = year;
+          this.updateLeftMenuInputs('wsId', this.workspaceId);
+          this.updateLeftMenuInputs('uwYear', this.uwy);
+        })
+    )
   }
 
   observeRouteParamsWithSelector(operator) {
@@ -336,12 +336,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getSummary()).subscribe( summary => {
-      this.updateMenuKey('pltDetail', summary);
-      this.updateMenuKey('summary', summary);
-      this.detectChanges();
-    })
-
     this.actions$
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.AddNewTag)
@@ -445,15 +439,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   openPltInDrawer(plt) {
-    if(this.getRightMenuKey('pltDetail')) {
-      this.closePltInDrawer();
-    }
+    this.updateMenuKey('pltHeaderId', plt);
+    this.updateMenuKey('visible', true);
+
     this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
-    this.updateMenuKey('pltHeaderId', plt);
-    this.updateMenuKey('visible', true);
   }
 
   resetPath() {
@@ -591,27 +583,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     switch (action.type) {
       case rightMenuStore.closeDrawer:
         this.updateMenuKey('visible', false);
-        this.closePltInDrawer();
         break;
 
-      case rightMenuStore.loadTab:
-        this.loadPLTDetailsTab(action.payload);
+      case rightMenuStore.setSelectedTabByIndex:
+        this.updateMenuKey('selectedTab', action.payload);
         break;
+
       default:
         console.log('default right menu action');
     }
-  }
-
-  loadPLTDetailsTab(tabIndex) {
-    switch (tabIndex) {
-      case 0:
-        this.loadSummaryTab(this.getRightMenuKey('pltHeaderId'))
-        break;
-    }
-  }
-
-  loadSummaryTab(pltHeaderId) {
-    this.dispatch(new fromWorkspaceStore.loadSummaryDetail(pltHeaderId));
   }
 
   setRightMenuSelectedTab(tab) {
@@ -916,7 +896,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   onTableContainerResize($event: ResizedEvent) {
-    console.log($event)
     this.updateTable('scrollConfig', {
       containerHeight: $event.newHeight,
       containerGap: '49px',

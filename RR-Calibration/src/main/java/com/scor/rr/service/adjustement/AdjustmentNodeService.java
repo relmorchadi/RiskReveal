@@ -80,6 +80,9 @@ public class AdjustmentNodeService {
     private DefaultReturnPeriodBandingAdjustmentParameterRepository defaultReturnPeriodBandingAdjustmentParameterRepository;
 
     @Autowired
+    private DefaultEventBasedAdjustmentParameterRepository defaultEventBasedAdjustmentParameterRepository;
+
+    @Autowired
     private ReturnPeriodBandingAdjustmentParameterRepository returnPeriodBandingAdjustmentParameterRepository;
 
     public AdjustmentNode findOne(Integer id){
@@ -121,12 +124,14 @@ public class AdjustmentNodeService {
                                                                              DefaultAdjustmentNode defaultNode) throws RRException {
         Double lmf = null; // linear, type 1
         Double rpmf = null; // EEF frequency, type 2
+        PEATDataRequest peatData = null; //todo, now default adj has not this type 3, 6
         List<DefaultReturnPeriodBandingAdjustmentParameter> defaultReturnPeriodBandings = null;
 
         // default adjustment has only 4 types, 2 tables :
         // scaling : linear, frequency
         // return period banding : EEF, OEP
         // TODO : change type id in the future
+
         if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 5) {
             DefaultScalingAdjustmentParameter defaultScalingAdjustmentParameter = defaultScalingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
             if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 1) {
@@ -136,9 +141,17 @@ public class AdjustmentNodeService {
             }
         } else if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 2 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 4) {
             defaultReturnPeriodBandings = defaultReturnPeriodBandingAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+        } else if (defaultNode.getAdjustmentType().getAdjustmentTypeId() == 3 || defaultNode.getAdjustmentType().getAdjustmentTypeId() == 6) {
+            DefaultEventBasedAdjustmentParameter parameter = defaultEventBasedAdjustmentParameterRepository.findByDefaultAdjustmentNodeDefaultAdjustmentNodeId(defaultNode.getDefaultAdjustmentNodeId());
+            if (parameter == null) {
+                throw new IllegalStateException("createAdjustmentNodeFromDefaultAdjustmentReference, can't find DefaultEventBasedAdjustmentParameter from defaultNode, wrong");
+            }
+            peatData = new PEATDataRequest();
+            peatData.setFileName(parameter.getInputFileName());
+            peatData.setPath(parameter.getInputFilePath());
         }
 
-        PEATDataRequest peatData = null; //todo, now default adj has not this type
+        // todo type 3, 6 not treated
 //        List<ReturnPeriodBandingAdjustmentParameterRequest> adjustmentReturnPeriodBandings = null; //todo
 //        DefaultRetPerBandingParamsEntity defaultRetPerBandingParamsEntity = defaultRetPerBandingParamsRepository.getByDefaultAdjustmentNodeByIdDefaultNode(defaultNode.getDefaultAdjustmentNodeId());
 //        if (defaultRetPerBandingParamsEntity != null) {
@@ -483,7 +496,7 @@ public class AdjustmentNodeService {
 //    }
 
     private void saveParameterNode(AdjustmentNode node, AdjustmentNodeRequest parameterRequest) {
-        if (LINEAR.getValue().equals(node.getAdjustmentTypeCode())) {
+        if (LINEAR.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, linear adjustment");
             if (parameterRequest.getLmf() != null) {
                 if (parameterRequest.getRpmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -495,7 +508,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : lmf not found ----------");
             }
         }
-        else if (EEF_FREQUENCY.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (EEF_FREQUENCY.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}",EEF_FREQUENCY.getValue());
             if (parameterRequest.getRpmf() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
@@ -507,7 +520,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : rpmf not found ----------");
             }
         }
-        else if (NONLINEAR_EVENT_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_DRIVEN.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if (parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getPeatData()");
@@ -519,7 +532,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EVENT_PERIOD_DRIVEN.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             if (parameterRequest.getPeatData() != null) {
                 if(parameterRequest.getLmf() != null || parameterRequest.getRpmf() != null || parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                     log.info("saveParameterNode, warning : parameter redundant out of parameterRequest.getLmf");
@@ -531,7 +544,7 @@ public class AdjustmentNodeService {
                 throw new IllegalStateException("---------- saveParameterNode, exception parameter : paet data not found ----------");
             }
         }
-        else if (NONLINEAR_EEF_RPB.getValue().equals(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equals(node.getAdjustmentTypeCode())) {
+        else if (NONLINEAR_EEF_RPB.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode()) || NONLINEAR_OEP_RPB.getValue().equalsIgnoreCase(node.getAdjustmentTypeCode())) {
             log.info("saveParameterNode, {}", node.getAdjustmentTypeCode());
             if (parameterRequest.getAdjustmentReturnPeriodBandings() != null) {
                 for (ReturnPeriodBandingAdjustmentParameterRequest adjustmentReturnPeriodBanding : parameterRequest.getAdjustmentReturnPeriodBandings()) {

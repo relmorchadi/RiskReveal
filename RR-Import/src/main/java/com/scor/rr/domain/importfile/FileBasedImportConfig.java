@@ -14,8 +14,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class FileBasedImportConfig {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "FileBasedImportConfig", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "FileBasedImportConfig")
     private int fileBasedImportConfig;
 
     @Column(name = "ProjectImportRunId")
@@ -25,7 +25,7 @@ public class FileBasedImportConfig {
     private int projectId;
 
     @Column(name = "IsImportLocked")
-    private int isImportLocked;
+    private boolean isImportLocked;
 
     @Column(name = "ProjectImportSourceConfigId")
     private int projectImportSourceConfigId;

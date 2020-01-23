@@ -2,7 +2,7 @@
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
-<div echarts [options]="chartOption" class="demo-chart" #chart></div>
+<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" #chartA></div>
 
 <div class="widget-footer">
   <div class="filter-div">
@@ -42,13 +42,8 @@
             <i class="icon-settings_24px"></i>
           </a>
           <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
             <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
             <li nz-menu-divider></li>
-            <li nz-menu-item>Manage Columns</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Unselect All</li>
           </ul>
         </nz-dropdown>
       </div>

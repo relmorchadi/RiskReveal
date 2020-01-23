@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -36,7 +35,7 @@ public class RLPortfolio {
     private String name;
     @Column(name = "RLPortfolioNumber")
     private String number;
-//    @Column(name = "Created")
+    //    @Column(name = "Created")
 //    private Date created;
     @Column(name = "Description")
     private String description;
@@ -59,8 +58,7 @@ public class RLPortfolio {
     @JsonBackReference
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "PortfolioScanStatus")
+    @OneToOne(mappedBy = "rlPortfolio")
     @JsonBackReference
     private RLPortfolioScanStatus rlPortfolioScanStatus;
 

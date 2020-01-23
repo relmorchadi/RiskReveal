@@ -3,6 +3,10 @@
 TABLE STYLE
 =======================================================================================
 */
+.frozenRow{
+  pointer-events: none;
+  background-color: #663366;
+}
 
 .empty-notif-wrapper {
   display: flex;

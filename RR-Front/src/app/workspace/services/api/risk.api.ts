@@ -54,12 +54,13 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
   }
 
-  searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
-    return this.http.get(`${this.URL}analysis?size=20`, {params: {rdmName: paramName}});
+  getDefaultDataSources(instanceId, projectId, userId){
+    return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`, {params: {instanceId, projectId, userId}})
   }
 
-  searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
-    return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
+  saveDefaultDataSources(instanceId, projectId,dataSources, userId){
+    return this.http.post(`${this.IMPORT_URL}import/config/save-default-data-sources`, {instanceId, projectId,dataSources, userId})
   }
+
 
 }

@@ -10,6 +10,7 @@ import {PltDetailsPopUpItemComponent} from "./plt/plt-details-pop-up-item/plt-de
 import {PltDetailsPopUpFullSectionComponent} from "./plt/plt-details-pop-up-full-section/plt-details-pop-up-full-section.component";
 import {PltTagManagerComponent} from "./plt/plt-tag-manager/plt-tag-manager.component";
 import {InputComponent} from "./input/input.component";
+import {SummaryEpMetricsComponent} from "./plt/summary-ep-metrics/summary-ep-metrics.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -23,7 +24,8 @@ export const COMPONENTS = [
   PltDetailsPopUpItemComponent,
   PltDetailsPopUpFullSectionComponent,
   PltTagManagerComponent,
-  InputComponent
+  InputComponent,
+  SummaryEpMetricsComponent
 ];
 
 export * from './table/table.component';

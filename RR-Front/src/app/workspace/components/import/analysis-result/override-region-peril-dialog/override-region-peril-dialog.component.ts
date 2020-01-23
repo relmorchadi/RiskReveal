@@ -37,7 +37,7 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
 
   regionPerilDataTable = [
     {
-      field: 'analysisId',
+      field: 'rlAnalysisId',
       header: 'ID',
       width: '50px',
       type: 'text',
@@ -57,7 +57,7 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
       visible: true
     },
     {
-      field: 'regionPeril',
+      field: 'rpCode',
       header: 'Region Peril',
       width: '80px',
       type: 'text',
@@ -104,11 +104,10 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
 
   ngOnInit() {
     this.overrideChanges = _.reduce(this.analyses, (result, value, index) => {
-      const {rpCode, occurrenceBasis} = value;
-      return _.merge(result, {[index]: {rpCode, occurrenceBasis}})
+      const {rpCode, rpOccurrenceBasis, rlAnalysisId} = value;
+      return _.merge(result, {[rlAnalysisId]: {rpCode, rpOccurrenceBasis}})
     }, {});
   }
-
 
   unselectAll() {
 
@@ -118,19 +117,17 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
 
   }
 
-  overrideRegionPeril(value, rowIndex) {
-    console.log('override region peril', value, rowIndex);
-    this.overrideChanges[rowIndex].rpCode = value;
+  overrideRegionPeril(value, key) {
+    this.overrideChanges[key].rpCode = value;
   }
 
-  doCopyRegionPeril(rowIndex) {
-    const targetRpCode = this.overrideChanges[rowIndex].rpCode;
+  doCopyRegionPeril(rlAnalysisId) {
+    const targetRpCode = this.overrideChanges[rlAnalysisId].rpCode;
     _.keys(this.overrideChanges)
-      .filter(i => {
-        const {rlAnalysisId} = this.analyses[i];
-        return this.canOverride(rlAnalysisId, targetRpCode);
+      .filter(key => {
+        return this.canOverride(key, targetRpCode);
       })
-      .forEach(i => this.overrideChanges[i].rpCode = targetRpCode);
+      .forEach(key => this.overrideChanges[key].rpCode = targetRpCode);
   }
 
   canOverride(analysisId, targetRegionPeril): boolean {
@@ -138,12 +135,10 @@ export class OverrideRegionPerilDialogComponent implements OnInit {
   }
 
   closeDialog() {
-    console.log('close dialog');
     this.closeEmitter.emit();
   }
 
   applyOverride() {
-    console.log('apply override');
     this.overrideEmitter.emit(this.overrideChanges);
   }
 

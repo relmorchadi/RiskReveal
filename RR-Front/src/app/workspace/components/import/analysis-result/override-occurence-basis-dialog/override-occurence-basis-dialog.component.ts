@@ -22,7 +22,7 @@ export class OverrideOccurenceBasisDialogComponent implements OnInit {
 
   changes={
     occurrenceBasis: 'PerEvent',
-    overrideReason: '',
+    occurrenceBasisOverrideReason: '',
     scopeOfOverride: 'current'
   };
 

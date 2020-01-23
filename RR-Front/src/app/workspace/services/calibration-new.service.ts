@@ -5,7 +5,7 @@ import {WorkspaceModel} from "../model";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
-import {EMPTY, forkJoin, of} from "rxjs";
+import {concat, EMPTY, forkJoin, of} from "rxjs";
 import {LoadEpMetrics} from "../store/actions";
 
 
@@ -110,7 +110,7 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType)).pipe(
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType), 'Calibration').pipe(
         tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -155,21 +155,15 @@ export class CalibrationNewService {
 
   loadCalibrationConstants(ctx: StateContext<WorkspaceModel>) {
     return forkJoin(
-      this.calibrationAPI.loadAllBasis(),
-      this.calibrationAPI.loadAllAdjustmentTypes(),
-      this.calibrationAPI.loadAllAdjustmentStates()
+        this.calibrationAPI.loadAllBasis(),
+        this.calibrationAPI.loadAllAdjustmentTypes(),
+        this.calibrationAPI.loadAllAdjustmentStates(),
+        this.calibrationAPI.loadDefaultRPs()
     ).pipe(
-      tap(([basis, adjustmentTypes, status]) => {
+      tap(([basis, adjustmentTypes, status]: any) => {
         ctx.patchState(produce(ctx.getState(), draft => {
-          const {
-            currentTab: {
-              wsIdentifier
-            }
-          } = draft;
 
-          const innerDraft = this.getCalibState(draft, wsIdentifier);
-
-          innerDraft.constants = {
+          draft.constants = {
             basis,
             adjustmentTypes,
             status
@@ -190,9 +184,18 @@ export class CalibrationNewService {
   }
 
   saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
-    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId)
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId, 'Calibration')
       .pipe(
         mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
       )
   }
+
+  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, userId, wsId, uwYear, curveType}) {
+    return concat(
+        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId, 'Calibration'),
+        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration'),
+        ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true}))
+    )
+  }
+
 }

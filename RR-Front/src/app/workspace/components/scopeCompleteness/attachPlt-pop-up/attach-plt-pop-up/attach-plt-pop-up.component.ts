@@ -296,7 +296,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
       wsHeaderSelected: true,
-      pathTab: true
+      pathTab: true,
+      isTagsTab: true
     };
     this.tagsInputs= {
       _tagModalVisible: false,

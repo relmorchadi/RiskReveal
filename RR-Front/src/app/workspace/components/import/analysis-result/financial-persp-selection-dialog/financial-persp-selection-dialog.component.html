@@ -1,4 +1,4 @@
-<p-dialog
+toggleAnalysisSelection<p-dialog
   [visible]="isVisible"
   [closable]="false"
   styleClass="m-dialog-modal-lg-auto"
@@ -93,18 +93,20 @@
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr>
                 <th *ngFor="let col of columns" class="ui-resizable-column"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <div *ngIf="col.type === 'select'"><label nz-checkbox (ngModelChange)="toggleAnalysisSelection(i)"
-                                                            [ngModel]="changes.analysis[i].selected"></label></div>
-                  <div class="text-data" (click)="toggleAnalysisSelection(i)" *ngIf="col.type === 'iconIndicator'">
+                    [ngClass]="{'selected-item': changes.analysis[rowData.rlAnalysisId].selected}">
+                  <div *ngIf="col.type === 'select'">
+                    <label nz-checkbox (ngModelChange)="toggleAnalysisSelection(rowData.rlAnalysisId)"
+                           [ngModel]="changes.analysis[rowData.rlAnalysisId].selected"></label>
+                  </div>
+                  <div class="text-data" (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" *ngIf="col.type === 'iconIndicator'">
                     <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
                   </div>
-                  <div class="text-data" (click)="toggleAnalysisSelection(i)" *ngIf="col.type === 'tags'"
+                  <div class="text-data" (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" *ngIf="col.type === 'tags'"
                        style="display: flex">
-                    <span class="tags-secondary" *ngFor="let item of changes.analysis[i].financialPerspectives">{{item}}<i
-                      (click)="removeFP(i, item)" class="icon-close_24px"></i></span>
+                    <span class="tags-secondary" *ngFor="let item of changes.analysis[rowData.rlAnalysisId].financialPerspectives">{{item}}<i
+                      (click)="removeFP(rowData.rlAnalysisId, item)" class="icon-close_24px"></i></span>
                   </div>
-                  <div (click)="toggleAnalysisSelection(i)" class="text-data"
+                  <div (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" class="text-data"
                        [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                        *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                 </th>
@@ -120,7 +122,7 @@
     <div style="padding: 0" class="fp-options-wrapper">
       <nz-tabset class="tabs-standard-top">
         <nz-tab nzTitle="Standard">
-          <div style="padding-top:0" class="summary-info resize-table">
+          <div style="padding: 0 1px 20px" class="summary-info resize-table">
             <div class="menu-icon-wrap" style="position: absolute; top: 10px; right: 10px;">
               <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
@@ -173,7 +175,7 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
                   <th *ngFor="let col of columns" class="ui-resizable-column"
-                      [ngClass]="{'selected-item': rowData?.selected}">
+                      [ngClass]="{'selected-item': changes.epCurves[i].selected}">
                     <div *ngIf="col.type === 'select'">
                       <label nz-checkbox
                              (ngModelChange)="toggleEpCurveSelection(i)"

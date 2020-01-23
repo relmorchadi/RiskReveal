@@ -2,8 +2,8 @@ package com.scor.rr.service;
 
 import com.google.gson.Gson;
 import com.scor.rr.JsonFormat.*;
-import com.scor.rr.dto.FilterCriteriaList;
-import com.scor.rr.dto.InuringFinalAttachePltDto;
+import com.scor.rr.domain.dto.FilterCriteriaList;
+import com.scor.rr.domain.dto.InuringFinalAttachePltDto;
 import com.scor.rr.entity.*;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InuringFinalAttachedPltNotFoundException;

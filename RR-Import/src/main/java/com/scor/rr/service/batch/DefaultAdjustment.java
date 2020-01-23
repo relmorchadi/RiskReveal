@@ -1,8 +1,8 @@
 package com.scor.rr.service.batch;
 
 import com.google.gson.Gson;
-import com.scor.rr.domain.*;
 import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.EPMetric;
 import com.scor.rr.domain.dto.PLTBundle;
 import com.scor.rr.domain.dto.SummaryStatisticType;
@@ -115,13 +115,13 @@ public class DefaultAdjustment extends AbstractWriter {
 
                                 if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
                                     log.info("Calculation for thread has ended successfully");
-                                    this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
+                                    //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
                                 } else {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
-
-                            this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
+                            this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
+                            //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
                         }
@@ -136,6 +136,25 @@ public class DefaultAdjustment extends AbstractWriter {
         log.debug("Default adjustment completed");
 
         return RepeatStatus.FINISHED;
+    }
+
+    private void calculateSummaryStat(PltHeaderEntity pltHeader, RestTemplate restTemplate) {
+
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+        HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(summaryStatURL)
+                .queryParam("pltId", pltHeader.getPltHeaderId());
+
+        ResponseEntity<SummaryStatisticHeaderEntity> response = restTemplate
+                .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, SummaryStatisticHeaderEntity.class);
+
+        if (response.getStatusCode().equals(HttpStatus.OK))
+            log.info("stats calculation has ended successfully for the PLT with Id {}", pltHeader.getPltHeaderId());
+        else
+            log.info("stats calculation has failed for the PLT with Id {}", pltHeader.getPltHeaderId());
     }
 
     private void getAndWriteStatsForPlt(PltHeaderEntity pltHeader, RestTemplate restTemplate, boolean isThread, Integer threadId) {

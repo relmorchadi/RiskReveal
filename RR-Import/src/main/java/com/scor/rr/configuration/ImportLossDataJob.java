@@ -3,6 +3,7 @@ package com.scor.rr.configuration;
 import com.scor.rr.service.batch.*;
 import com.scor.rr.service.batch.processor.AccItemProcessor;
 import com.scor.rr.service.batch.processor.LocItemProcessor;
+import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.batch.processor.rows.RLLocRow;
 import com.scor.rr.service.batch.reader.RLAccCursorItemReader;
 import com.scor.rr.service.batch.reader.RLLocCursorItemReader;
@@ -29,18 +30,25 @@ public class ImportLossDataJob {
 
     @Autowired
     ELTConformer eltConformer;
+
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
+
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
+
     @Autowired
     private RegionPerilExtractor regionPerilExtractor;
+
     @Autowired
     private ExchangeRateExtractor exchangeRateExtractor;
+
     @Autowired
     private EpCurveExtractor epCurveExtractor;
+
     @Autowired
     private ELTExtractor eltExtractor;
+
     @Autowired
     private ELTTruncator eltTruncator;
 
@@ -55,6 +63,9 @@ public class ImportLossDataJob {
     private PLTWriter pltWriter;
 
     @Autowired
+    private DefaultAdjustment defaultAdjustment;
+
+    @Autowired
     private ModellingOptionsExtractor modellingOptionsExtractor;
 
     @Autowired
@@ -65,6 +76,9 @@ public class ImportLossDataJob {
 
     @Autowired
     private AccLocFilesHandler accLocFilesHandler;
+
+    @Autowired
+    private ProjectImportRunStatus carStatus;
 
     @Autowired
     @Qualifier(value = "AccReader")
@@ -164,6 +178,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Tasklet defaultAdjustmentTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> defaultAdjustment.defaultAdjustment();
+    }
+
+    @Bean
     public Tasklet extractExposureSummaryTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> exposureSummaryExtractor.extract();
     }
@@ -178,6 +197,10 @@ public class ImportLossDataJob {
         return (StepContribution contribution, ChunkContext chunkContext) -> accLocFilesHandler.copyFilesToIHub();
     }
 
+    @Bean
+    public Tasklet projectImportRunStatusTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> carStatus.changeProjectImportRunStatus();
+    }
 
     /** Steps */
 
@@ -250,6 +273,11 @@ public class ImportLossDataJob {
     }
 
     @Bean
+    public Step defaultAdjustmentStep() {
+        return stepBuilderFactory.get("defaultAdjustment").tasklet(defaultAdjustmentTasklet()).build();
+    }
+
+    @Bean
     public Step extractExposureSummaryStep() {
         return stepBuilderFactory.get("extractExposureSummary").tasklet(extractExposureSummaryTasklet()).build();
     }
@@ -262,7 +290,7 @@ public class ImportLossDataJob {
     @Bean
     public Step extractAccStep() {
         return this.stepBuilderFactory.get("extractAcc")
-                .<RLLocRow, RLLocRow>chunk(1000)
+                .<RLAccRow, RLAccRow>chunk(1000)
                 .reader(accReader)
                 .processor(accProcessor)
                 .writer(accWriter)
@@ -294,6 +322,11 @@ public class ImportLossDataJob {
         return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(copyAccAndLocToIHubTasklet()).build();
     }
 
+    @Bean
+    public Step projectImportRunStatusChangeStep() {
+        return stepBuilderFactory.get("projectImportRunStatus").tasklet(projectImportRunStatusTasklet()).build();
+    }
+
     /**
      * Job
      */
@@ -307,6 +340,7 @@ public class ImportLossDataJob {
                 .next(extractLocStep())
                 .next(extractLocFWStep())
                 .next(copyAccAndLocFilesStep())
+                .next(projectImportRunStatusChangeStep())
                 .build();
     }
 
@@ -314,11 +348,12 @@ public class ImportLossDataJob {
     public Job getImportLossData(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder
                 //.next(extractExposureSummaryStep())
+                .next(projectImportRunStatusChangeStep())
                 .build();
     }
 
     @Bean(value = "jobBuilder")
-    public SimpleJobBuilder getJobBuilder(){
+    public SimpleJobBuilder getJobBuilder() {
         return jobBuilderFactory.get("importLossData")
                 .start(getExtractRegionPerilStep())
                 .next(getExtractEpCurveStatsStep())
@@ -331,6 +366,7 @@ public class ImportLossDataJob {
                 .next(getEltHeaderWritingStep())
                 .next(getExtractModellingOptionsStep())
                 .next(getEltToPLTStep())
-                .next(getPltWriterStep());
+                .next(getPltWriterStep())
+                .next(defaultAdjustmentStep());
     }
 }

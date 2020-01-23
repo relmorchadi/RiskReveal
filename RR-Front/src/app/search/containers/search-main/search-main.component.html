@@ -103,7 +103,7 @@
                    [virtualScroll]="true"
                    (selectOne)="openWorkspaceInSlider($event)"
                    [tableWidth]="'1000px'"
-                   [tableHeight]="'560px'"
+                   [tableHeight]="'calc(100vh - 210px)'"
                    (loadMore)="loadMore($event)"
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
                    (sortDataChange)="sortChange($event)"

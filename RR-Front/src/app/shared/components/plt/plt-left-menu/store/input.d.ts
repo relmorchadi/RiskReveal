@@ -13,5 +13,6 @@ export interface Input {
   selectedListOfPlts: any[];
   systemTagsCount: any;
   wsHeaderSelected: boolean;
-  pathTab: boolean;
+  pathTab: boolean,
+  isTagsTab: boolean
 }

@@ -3,6 +3,7 @@
   [value]="data"
   [expandedRowKeys]="tableConfig?.expandedRowKeys"
   [columns]="columnsConfig?.columns"
+  [contextMenu]="contmenu"
   [frozenColumns]="columnsConfig?.frozenColumns"
   [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
@@ -37,7 +38,12 @@
       </ng-container>
     </tr>
     <tr>
-      <ng-container *ngFor="let col of columns" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width}"></ng-container>
+      <ng-container *ngFor="let col of columns; let last=last" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width, isLastColumn: last}"></ng-container>
+    </tr>
+    <tr >
+      <th *ngFor="let col of columns">
+        <app-input [visible]="col.filter" (onInput)="filter(col?.field, $event)"></app-input>
+      </th>
     </tr>
   </ng-template>
 
@@ -56,10 +62,12 @@
   -->
   <ng-template #grouped let-rowData let-expanded="expanded" let-columns="columns">
     <tr>
-      <td *ngFor="let col of columns; let i =index;" [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="background-color: #ecf1f7 !important;">
+      <td *ngFor="let col of columns; let i =index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}"
+          style="background-color: #ecf1f7 !important; padding-right: 9px">
 
         <ng-container *ngIf="col?.type == 'arrow'">
-          <a href="#" [pRowToggler]="rowData">
+          <a href="#" [pRowToggler]="rowData" class="left-margin-checkbox-column">
             <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
           </a>
         </ng-container>
@@ -70,7 +78,7 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field || 0 | number:'1.0-3'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field || 0 | financialUnit : tableConfig?.selectedFinancialUnit | number:'1.0-3'}}
             </div>
           </ng-container>
 
@@ -92,9 +100,13 @@
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}" (click)="displa(col)">
-        <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+      <td *ngFor="let col of columns; let i=index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}" style="padding-right: 9px">
+        <ng-container *ngIf="col?.type == 'arrow'" >
+          <label nz-checkbox [(ngModel)]="thread.selected"
+                 (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"
+                 class="left-margin-checkbox-column">
+          </label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'arrow'">
 
@@ -103,10 +115,10 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | number:'1.0-2'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | number:'1.0-2'}}
             </div>
-            <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType) >= 50 ? 'green' : 'red'">
-              {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType | number:'1.0-2'}}%
+            <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount) >= 0 ? 'green' : 'red'">
+              {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount | number:'1.0-2'}}{{ tableConfig?.isDeltaByAmount ? '' : '%' }}
             </span>
           </ng-container>
 
@@ -129,11 +141,14 @@
         [ngClass]="{'active_plt_item': thread.selected}"
         (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
-      <td *ngFor="let col of columns; let i=index;" [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" >
+      <td *ngFor="let col of columns; let i=index; let last=last"
+          [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="padding-right: 9px">
 
         <ng-container *ngIf="col?.type == 'arrow'">
           <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
-          <label nz-checkbox [(ngModel)]="thread.selected" (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"></label>
+          <label nz-checkbox [(ngModel)]="thread.selected"
+                 (change)="dispatchTableActions({event: $event, type: 'single_check', pureId: rowData.pltId, threadId: thread.pltId})"
+                 class="left-margin-checkbox-column"></label>
         </ng-container>
 
         <ng-container *ngIf="col?.type != 'arrow'">
@@ -143,10 +158,10 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | number:'1.0-2'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | number:'1.0-2'}}
             </div>
-            <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType) >= 50 ? 'green' : 'red'">
-              {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType | number:'1.0-2'}}%
+            <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount) >= 0 ? 'green' : 'red'">
+              {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount | number:'1.0-2'}}{{ tableConfig?.isDeltaByAmount ? '' : '%' }}
             </span>
           </ng-container>
 
@@ -165,7 +180,7 @@
   <!--TEMPLATES-->
 
   <ng-template #draggableTD let-adjustment>
-    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment)" class="text-table-cell border-dragable" style="display: flex;">
+    <div *ngIf="adjustment" (click)="viewAdjustmentDetail(adjustment); stopPropagation($event)" class="text-table-cell border-dragable" style="display: flex;">
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
           <span>{{adjustment?.basisShortName}}</span>
@@ -205,14 +220,18 @@
   </ng-template>
 
   <!--Resizable Header-->
-  <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width">
-    <ng-container *ngIf="isResizable">
-      <th [id]="col?.field" [style.width]="width + 'px'" pResizableColumn>
+  <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-isLastColumn="isLastColumn">
+    <ng-container>
+      <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
         </ng-container>
         <ng-container *ngIf="col?.type == 'arrow'">
-          <label nz-checkbox [(ngModel)]="checkAll" ></label>
+          <label nz-checkbox [(ngModel)]="selectOptions.checkAll"
+                 [nzIndeterminate]="selectOptions.indeterminate"
+                 (change)="dispatchTableActions({type: 'check_all'})"
+                 class="left-margin-checkbox-column">
+          </label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
           <div class="text-ellipsis">
@@ -221,28 +240,15 @@
         </ng-container>
       </th>
     </ng-container>
-    <ng-container *ngIf="!isResizable" [ngTemplateOutlet]="nonResizableTemplate" [ngTemplateOutletContext]="{ $implicit: col, width: width }" ></ng-container>
-  </ng-template>
-
-  <ng-template #nonResizableTemplate let-col let-width="width">
-    <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" >
-      <ng-container *ngIf="col?.type == 'status'">
-        <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
-      </ng-container>
-      <ng-container *ngIf="col?.type == 'arrow'">
-        <label nz-checkbox [(ngModel)]="selectOptions.checkAll" [nzIndeterminate]="selectOptions.indeterminate" (change)="dispatchTableActions({type: 'check_all'})" ></label>
-      </ng-container>
-      <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
-        <div class="text-ellipsis">
-          {{col?.header}}
-        </div>
-      </ng-container>
-    </th>
   </ng-template>
 
   <!--HEADER-->
   <ng-template #leftHeader>
-    <div class="flex-vertical-layout spread-layout">
+    <div mwlResizable
+         [enableGhostResize]="false"
+         [resizeEdges]="{bottom: false, right: true, top: false, left: false}"
+         (resizeEnd)="onResizePltPanelEnd($event)"
+         class="flex-vertical-layout spread-layout">
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
         <span class="title">PLTs</span>
         <div class="icon-wrapper">
@@ -253,8 +259,12 @@
         </div>
       </div>
       <div class="flex-horizontal-sb-layout group-icons">
-        <div></div>
         <div>
+          <!--<span (click)="onShowAddRemovePopUp()" class="addRemove">Add/Remove</span>-->
+        </div>
+        <div>
+          <i (click)="expandCollapseAllPlts()"
+             class="icon-expand_more_24px regenerate-all" nz-tooltip="Expand/Collapse All"></i>
           <i (click)="toggleGrouping()" *ngIf="!tableConfig?.isGrouped"
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
@@ -274,12 +284,12 @@
           <span class="title">
            Thread Level EP Metrics
           </span>
-          <div class="body-wrap-dropDowns-calibration">
+          <div class="body-wrap-dropDowns">
             <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-              <div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>
-                <div class="dropdown-wrap-title-calibration">
-                  <span class="dropdown-title-calibration">Change Display</span>
-                  <span class="dropdown-item-selected-calibration">
+              <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
+                <div class="dropdown-wrap-title">
+                  <span class="dropdown-title">Change Display</span>
+                  <span class="dropdown-item-selected">
                   {{tableConfig?.selectedCurveType}}
                 </span>
                 </div>
@@ -294,51 +304,51 @@
               </ul>
             </nz-dropdown>
           </div>
-          <!--<div class="body-wrap-dropDowns-calibration">-->
-            <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-              <!--<div class="dropdown-wrap-calibration" [style.width]="'108px'" nz-dropdown>-->
-                <!--<div class="dropdown-wrap-title-calibration">-->
-                  <!--<span class="dropdown-title-calibration">Financial Unit</span>-->
-                  <!--<span class="dropdown-item-selected-calibration">-->
-                  <!--{{tableConfig?.selectedFinancialUnit}}-->
-                <!--</span>-->
-                <!--</div>-->
-                <!--<div class="dropdown-icon">-->
-                  <!--<i nz-icon type="down"></i>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<ul nz-menu>-->
-                <!--<li-->
-                  <!--*ngFor="let financialUnit of constants?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">-->
-                  <!--{{financialUnit}}-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</nz-dropdown>-->
-          <!--</div>-->
-          <!--<div class="body-wrap-dropDowns-calibration">-->
-            <!--<nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">-->
-              <!--<div class="dropdown-wrap-calibration" nz-dropdown>-->
-                <!--<div class="dropdown-wrap-title-calibration">-->
-                  <!--<span class="dropdown-title-calibration">Change Currency</span>-->
-                  <!--<span class="dropdown-item-selected-calibration">-->
-                        <!--{{selectedCurrencie}}-->
-                      <!--</span>-->
-                <!--</div>-->
-                <!--<div class="dropdown-icon">-->
-                  <!--<i nz-icon type="down"></i>-->
-                <!--</div>-->
-              <!--</div>-->
-              <!--<ul nz-menu>-->
-                <!--<li *ngFor="let currency of currencies.data" nz-menu-item (click)="changeCurrencie(currency)">-->
-                  <!--{{currency.label}}-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</nz-dropdown>-->
-          <!--</div>-->
+          <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+              <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
+                <div class="dropdown-wrap-title">
+                  <span class="dropdown-title">Financial Unit</span>
+                  <span class="dropdown-item-selected">
+                  {{tableConfig?.selectedFinancialUnit}}
+                </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
+              </div>
+              <ul nz-menu>
+                <li
+                  *ngFor="let financialUnit of constants?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">
+                  {{financialUnit}}
+                </li>
+              </ul>
+            </nz-dropdown>
+          </div>
+          <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+              <div class="dropdown-wrap" nz-dropdown>
+                <div class="dropdown-wrap-title">
+                  <span class="dropdown-title">Change Currency</span>
+                  <span class="dropdown-item-selected">
+                        {{tableConfig?.selectedCurrency}}
+                      </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
+              </div>
+              <ul nz-menu>
+                <li *ngFor="let currency of constants?.currencies" nz-menu-item (click)="changeCurrencie(currency)">
+                  {{currency}}
+                </li>
+              </ul>
+            </nz-dropdown>
+          </div>
         </div>
       </div>
 
-      <div [ngClass]="{ 'button-toggle' : !expanded }" style="padding-bottom: 5px;">
+      <div [ngClass]="{ 'button-toggle' : !expanded }" [ngStyle]="{ marginRight: (tableConfig?.view == 'epMetrics' ? -500 : -278)  + 'px'}">
         <div style="display: inline-block"><span style="font-weight: bold; margin-right: 10px">View: </span></div>
         <div class="p-button-group" style="display: inline-block">
           <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
@@ -350,8 +360,28 @@
                          label="EP Metrics" name="tableType"
                          value="epMetrics"></p-radioButton>
         </div>
+        <div *ngIf="tableConfig?.view == 'epMetrics'" style="display: inline-block;">
+          <span [ngStyle]="{'visibility': tableConfig?.isDeltaByAmount ? 'hidden' : 'visible'}">Deltas by %</span>&nbsp;
+          <nz-switch (ngModelChange)="onDeltaChange($event)" [ngModel]="tableConfig?.isDeltaByAmount"
+                     class="switch-input"></nz-switch>&nbsp;
+          <span [ngStyle]="{'visibility': !tableConfig?.isDeltaByAmount ? 'hidden' : 'visible'}">Deltas by Amount</span>
+        </div>
       </div>
-      <i (click)="openRPManager()" *ngIf="tableConfig?.view == 'epMetrics'" style="z-index: 9999;position: absolute;right: 25px;top: 90px;font-size: 18px;" class="icon-settings_24px" [nz-tooltip]="'Manage return periods'"></i>
+      <nz-dropdown *ngIf="tableConfig?.view == 'epMetrics'"
+                   [nzPlacement]="'bottomRight'"
+                   nzTrigger="click"
+                   style="z-index: 9999;position: absolute;right: 25px;top: 90px;font-size: 18px;">
+        <i class="icon-settings_24px" nz-dropdown
+           style="cursor: pointer;font-size: 25px; float: right; margin-right: 7px"></i>
+        <ul nz-menu>
+          <li nz-menu-item (click)="openRPManager()">
+            <span title>Manage return periods</span>
+          </li>
+          <li nz-menu-item (click)="exportEPMetrics()">
+            <span title>Export</span>
+          </li>
+        </ul>
+      </nz-dropdown>
     </div>
     <!--<div style="" [ngClass]="{ 'table-header-right-container' : expanded }">
       <i class="icon-settings_24px"></i>
@@ -387,3 +417,5 @@
   </ng-template>
 
 </p-table>
+
+<p-contextMenu #contmenu [model]="contextMenuItem" appendTo="body"></p-contextMenu>

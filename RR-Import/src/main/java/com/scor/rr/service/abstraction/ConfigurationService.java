@@ -1,5 +1,6 @@
 package com.scor.rr.service.abstraction;
 
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 
@@ -20,5 +21,15 @@ public interface ConfigurationService {
 
     List<CARDivisionDto> getDivisions(String carId);
 
-    Map<Long,List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
+    Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds);
+
+    void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
+
+    List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId);
+
+    ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
+
+    List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
+
+    List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId);
 }

@@ -56,7 +56,7 @@ public class EpCurveWriter extends AbstractWriter {
             return writeEPCurves(metricToEPCurve, file, null);
         } else {
             division = division != null ? division : Integer.valueOf(this.division);
-            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence), filename);
             return writeEPCurves(metricToEPCurve, file, null);
         }
     }
@@ -67,7 +67,7 @@ public class EpCurveWriter extends AbstractWriter {
             File file = makeFullFile(PathUtils.getPrefixDirectory(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), Long.valueOf(projectId)), filename);
             return writeEPCurves(metricToEPCurve, file, statisticMetric);
         } else {
-            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId), filename);
+            File file = makeFullFile(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence), filename);
             return writeEPCurves(metricToEPCurve, file, statisticMetric);
         }
 

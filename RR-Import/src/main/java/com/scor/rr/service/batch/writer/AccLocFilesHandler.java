@@ -56,7 +56,7 @@ public class AccLocFilesHandler extends AbstractWriter {
             final Path iHubPath = Paths.get(iHub);
 
             final Path sourcePath = iHubPath.resolve("tmp");
-            final Path targetPath = iHubPath.resolve(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId));
+            final Path targetPath = iHubPath.resolve(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence));
 
             try {
                 this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath);

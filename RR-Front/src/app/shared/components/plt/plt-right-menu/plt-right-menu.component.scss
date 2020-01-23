@@ -235,6 +235,8 @@
 }
 
 .ep-metric-tabset {
+  height: 100%;
+
   .ant-tabs-ink-bar {
     display: none;
     transform: translate3d(0px, 0px, 0px);
@@ -265,39 +267,13 @@
   .metric-table {
     font-size: 12px;
     font-family: Rubik;
-    display: block;
-    overflow: auto;
     padding-bottom: 4px;
 
-    th {
-      font-weight: bold;
-      color: #898989;
-      padding: 3px 0px;
-      text-align: center;
-
-      i {
-        font-size: 16px;
-        color: #000;
-        cursor: pointer;
-        padding: 0px 0px 0px 3px;
-        cursor: pointer;
-      }
-    }
-
-    td {
-      padding: 7px 5px 1px 2px;
-      text-align: right;
-    }
-
     input {
-      border-right: 0px;
-      border-left: 0px;
-      border-top: 0px;
+      border: none;
       border-bottom: 1px solid #4540db;
       background: #f4f6fc;
     }
-
-
   }
 }
 
@@ -428,14 +404,13 @@
   ::ng-deep {
 
     .plt-details-container {
+      z-index: 70;
       position: absolute;
       right: 0;
       height: 100%;
       width: 650px;
-      padding: 7px 7px;
       background: #fff;
       box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
-      z-index: 9999;
       display: flex;
       flex-flow: column;
 
@@ -453,6 +428,15 @@
           cursor: pointer;
         }
       }
+    }
+
+    .plt-detail-body {
+      padding: 0 10px;
+      height: calc(100% - 60px);
+    }
+
+    .ant-tabs-tabpane.ant-tabs-tabpane-active {
+      height: calc(100% - 48px) !important;
     }
 
     .plt-details-header {

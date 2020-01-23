@@ -1,16 +1,22 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.riskLink.RLImportSelection;
+import com.scor.rr.domain.riskLink.RLImportTargetRAPSelection;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
+import com.scor.rr.domain.riskLink.RLSavedDataSource;
+import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
+import com.scor.rr.service.abstraction.DivisionService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +51,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Autowired
     private ProjectConfigurationForeWriterDivisionRepository projectConfigurationForeWriterDivisionRepository;
+
+    @Autowired
+    private RLSavedDataSourceRepository rlSavedDataSourceRepository;
+
+    @Autowired
+    private ProjectImportRunRepository projectImportRunRepository;
+
+    @Autowired
+    private RLImportedDataSourcesAndAnalysisRepository rlImportedDataSourcesAndAnalysisRepository;
+
+    @Autowired
+    private RLImportSelectionRepository rlImportSelectionRepository;
+
+    @Autowired
+    private DivisionService divisionService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -90,31 +111,104 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
     }
 
+    // TODO : Review this later
     @Override
     public List<CARDivisionDto> getDivisions(String carId) {
-        List<Map<String, Object>> divisions = projectConfigurationForeWriterDivisionRepository.findByCARId(carId);
-        List<CARDivisionDto> carDivisions = new ArrayList<>();
-        for (Map<String, Object> division : divisions) {
-            CARDivisionDto carDivisionDto = new CARDivisionDto();
-            carDivisionDto.setCaRequestId((String) division.get("caRequestId"));
-            carDivisionDto.setCarStatus((String) division.get("carStatus"));
-            carDivisionDto.setContractId((String) division.get("contractId"));
-            carDivisionDto.setCurrency((String) division.get("currency"));
-            carDivisionDto.setDivisionNumber(Integer.valueOf((String)division.get("divisionNumber")));
-            carDivisionDto.setIsPrincipalDivision(Boolean.parseBoolean(String.valueOf(division.get("IsPrincipalDivision"))));
-            carDivisionDto.setProjectId(((BigInteger)division.get("projectId")).longValue());
-            carDivisionDto.setUwYear((Integer) division.get("uwYear"));
-            carDivisionDto.setWorkspaceId(((BigInteger)division.get("workspaceId")).longValue());
-            carDivisions.add(carDivisionDto);
-        }
-
-        return carDivisions;
+        return divisionService.getDivisions(carId);
     }
 
     @Override
     public Map<Long, List<RegionPerilDto>> getRegionPerilForMultiAnalysis(List<Long> rlAnalysisIds) {
         Map<Long, List<RegionPerilDto>> result = new HashMap<>();
-        rlAnalysisIds.stream().forEach(id -> result.put(id, this.getRegionPeril(id)));
+        rlAnalysisIds.forEach(id -> result.put(id, this.getRegionPeril(id)));
         return result;
+    }
+
+    @Override
+    @Transactional(transactionManager = "rrTransactionManager")
+    public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
+        rlSavedDataSourceRepository.deleteByUserIdAndInstanceId(dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+
+        if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
+            dataSourcesDto.getDataSources().forEach(dataSource -> {
+                RLSavedDataSource rlSavedDataSource = modelMapper.map(dataSource, RLSavedDataSource.class);
+
+                rlSavedDataSource.setInstanceId(dataSourcesDto.getInstanceId());
+                rlSavedDataSource.setProjectId(dataSourcesDto.getProjectId());
+                rlSavedDataSource.setUserId(dataSourcesDto.getUserId());
+
+                rlSavedDataSourceRepository.save(rlSavedDataSource);
+            });
+        }
+    }
+
+    @Override
+    public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
+        return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
+                .map(RLDataSourcesDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId) {
+        return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+    }
+
+    @Override
+    public List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
+
+        List<RLImportedDataSourcesAndAnalysis> data = rlImportedDataSourcesAndAnalysisRepository.findByProjectId(projectId);
+        List<RLDataSourcesDto> importedDataSources = new ArrayList<>();
+
+        if (data != null && !data.isEmpty()) {
+            data.forEach(element -> {
+
+                RLDataSourcesDto importedDataSourceDto = importedDataSources.stream()
+                        .filter(ele -> ele.getRlDataSourceId().equals(element.getRlDataSourceId())
+                                && ele.getDataSourceName().equals(element.getRlDataSourceName())
+                                && ele.getDataSourceId().equals(element.getRlDatabaseId())).findFirst().orElse(null);
+
+                if (importedDataSourceDto == null) {
+                    importedDataSourceDto = new RLDataSourcesDto(element);
+                    importedDataSources.add(importedDataSourceDto);
+                } else
+                    importedDataSourceDto.addToRlModelIdList(element.getRlModelId());
+
+            });
+        }
+        return importedDataSources;
+    }
+
+    @Override
+    public List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId) {
+        List<RLImportSelection> data = rlImportSelectionRepository.findByProjectId(projectId);
+        List<ImportSelectionDto> importedDataSources = new ArrayList<>();
+
+        if (data != null && !data.isEmpty()) {
+            data.forEach(element -> {
+                ImportSelectionDto rlImportSelection = importedDataSources.stream()
+                        .filter(ele -> ele.getRlAnalysisId().equals(element.getRlAnalysis().getRlAnalysisId())
+                                && ele.getProjectId().equals(element.getProjectId())).findFirst().orElse(null);
+
+                if (rlImportSelection == null) {
+                    rlImportSelection = new ImportSelectionDto(element);
+                    importedDataSources.add(rlImportSelection);
+                } else {
+
+                    if (element.getDivision() != null)
+                        rlImportSelection.addToDivisionList(element.getDivision());
+
+                    if (element.getTargetRaps() != null && !element.getTargetRaps().isEmpty()) {
+                        for (RLImportTargetRAPSelection targetRap : element.getTargetRaps()) {
+                            if (!rlImportSelection.getTargetRAPCodes().contains(targetRap.getTargetRAPCode()))
+                                rlImportSelection.addToTargetRapsList(targetRap.getTargetRAPCode());
+                        }
+                    }
+
+                    if (element.getFinancialPerspective() != null && !rlImportSelection.getFinancialPerspectives().contains(element.getFinancialPerspective()))
+                        rlImportSelection.addToFPList(element.getFinancialPerspective());
+                }
+            });
+        }
+        return importedDataSources;
     }
 }

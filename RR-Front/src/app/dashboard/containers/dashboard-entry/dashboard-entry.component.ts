@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {GridsterConfig, GridType} from 'angular-gridster2';
+import {CompactType, DisplayGrid, GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
@@ -9,6 +9,8 @@ import {BaseContainer} from "../../../shared/base";
 import {Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
+import {DashData} from "./data";
+import {elementStylingMap} from "@angular/core/src/render3";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -21,6 +23,23 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   newDashboardTitle: any;
   selectedDashboard: any;
   searchMode = 'Treaty';
+
+  newFacHeight = '115px';
+  inProgressFacHeight = '115px';
+  archivedFacHeight = '115px';
+
+  newCols: any;
+  inProgressCols: any;
+  archivedCols: any;
+
+  immutableNew: any;
+  immutableInProgress: any;
+  immutableArchive: any;
+
+  manageNewPopUp = false;
+  manageInProgressPopUp = false;
+  manageArchivedPopUp = false;
+
   dashboards: any = [
     {
       id: 0,
@@ -84,7 +103,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           componentName: 'ArchivedFacWidgetComponent', selected: false,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
-        /*{
+        {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -93,7 +112,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
+        }
       ]
     },
     {
@@ -146,19 +165,19 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
           componentName: 'NewFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
           componentName: 'InProgressFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
           componentName: 'ArchivedFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
+          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
         },
-       /* {
+        {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -167,7 +186,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
+        }
       ]
     },
   ];
@@ -211,19 +230,19 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       {
         id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
         componentName: 'NewFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
       },
       {
         id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
         componentName: 'InProgressFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
       },
       {
         id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
         componentName: 'ArchivedFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0}
+        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
       },
-     /* {
+      {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -232,7 +251,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
         componentName: 'facSubsidiaryChartComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
-      }*/
+      }
     ]
   };
   previousUrl: string;
@@ -259,14 +278,41 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     });
     this.options = {
       gridType: GridType.VerticalFixed,
-      enableEmptyCellDrop: true,
-      emptyCellDropCallback: () => {
-      },
-      pushItems: true,
-      swap: true,
-      pushDirections: {north: true, east: true, south: true, west: true},
-      resizable: {enabled: true},
-      // itemChangeCallback: this.changeItemPosition.bind(this),
+      compactType: 'compactUp',
+      margin: 10,
+      outerMargin: true,
+      outerMarginTop: null,
+      outerMarginRight: null,
+      outerMarginBottom: null,
+      outerMarginLeft: null,
+      // useTransformPositioning: true,
+      // mobileBreakpoint: 640,
+      minCols: 1,
+      maxCols: 3,
+      minRows: 1,
+      maxRows: 15,
+      maxItemCols: 3,
+      minItemCols: 1,
+      maxItemRows: 100,
+      minItemRows: 1,
+      maxItemArea: 2500,
+      minItemArea: 1,
+      defaultItemCols: 1,
+      defaultItemRows: 1,
+      // fixedColWidth: 105,
+      fixedRowHeight: 245,
+      keepFixedHeightInMobile: true,
+      // keepFixedWidthInMobile: false,
+      scrollVertical: true,
+      disableScrollHorizontal: true,
+      scrollSensitivity: 10,
+      scrollSpeed: 20,
+      enableEmptyCellClick: false,
+      enableEmptyCellContextMenu: false,
+      enableEmptyCellDrop: false,
+      enableEmptyCellDrag: false,
+      enableOccupiedCellDrop: false,
+      ignoreMarginInRow: false,
       draggable: {
         enabled: true,
         ignoreContent: true,
@@ -274,13 +320,25 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
       },
-      displayGrid: 'always',
-      minCols: 3,
-      minRows: 10,
-      maxItemRows: 3,
-      //minItemRows:4,
-      maxCols: 3,
+      resizable: {enabled: true},
+      swap: true,
+      pushItems: true,
+      disablePushOnDrag: true,
+      disablePushOnResize: false,
+      pushDirections: {north: true, east: true, south: true, west: true},
+      pushResizeItems: true,
+      displayGrid: DisplayGrid.Always,
+      disableWindowResize: true,
+      disableWarnings: false,
+      scrollToNewItems: false
     };
+
+    this.newCols = DashData.cols;
+    this.inProgressCols = DashData.cols;
+    this.archivedCols = DashData.cols;
+
+    this.resetImmutable();
+
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
@@ -294,13 +352,52 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.setTabValue();
   }
 
+  resetImmutable() {
+    this.immutableNew = [...this.newCols];
+    this.immutableInProgress = [...this.inProgressCols];
+    this.immutableArchive = [...this.archivedCols];
+  }
+
   setTabValue() {
+    this.idTab = 1;
+    this.dashboardChange(1);
     const data = window.localStorage.getItem('previousUrl');
     console.log(data);
     if (data === '/CreateNewFile') {
-      // this.idTab = 1;
-      this.dashboardChange(1);
+
     }
+  }
+
+  openPopUp(event) {
+    switch (event) {
+      case 'newCar':
+        this.manageNewPopUp = true;
+        break;
+      case 'inProgressCar':
+        this.manageInProgressPopUp = true;
+        break;
+      case 'archivedCar':
+        this.manageArchivedPopUp = true;
+        break;
+    }
+  }
+
+  closePopUp() {
+    this.manageNewPopUp = false;
+    this.manageInProgressPopUp = false;
+    this.manageArchivedPopUp = false;
+    this.resetImmutable();
+  }
+
+  saveColumns(event, scope) {
+    if (scope === 'new') {
+      this.newCols = [...event];
+    } else if (scope === 'inProgress') {
+      this.inProgressCols = [...event];
+    } else if (scope === 'archived') {
+      this.archivedCols = [...event];
+    }
+    this.closePopUp();
   }
 
   addDashboard() {
@@ -341,6 +438,10 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
       this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
     }
+  }
+
+  consoleLog(event) {
+    console.log(event);
   }
 
   deleteDashboard() {

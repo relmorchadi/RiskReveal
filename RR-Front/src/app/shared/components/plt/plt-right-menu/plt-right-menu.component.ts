@@ -1,18 +1,36 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges
+} from '@angular/core';
 import {Message} from '../../../message';
 import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
 import * as _ from 'lodash';
+import {BaseContainer} from "../../../base";
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
+import {PltApi} from "../../../../workspace/services/api/plt.api";
+import {filter, mergeMap, tap} from "rxjs/operators";
+import {empty, EMPTY, forkJoin, of} from "rxjs";
 
 @Component({
   selector: 'app-plt-right-menu',
   templateUrl: './plt-right-menu.component.html',
-  styleUrls: ['./plt-right-menu.component.scss']
+  styleUrls: ['./plt-right-menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PltRightMenuComponent implements OnInit {
+export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDestroy, OnChanges  {
 
   @Input('Inputs') inputs: rightMenuStore.Input;
-  pltDetailsItemsInput: pltDetailsPopUpItemStore.Input;
 
   pltPopUpItemConfig: pltDetailsPopUpItemStore.Input[];
 
@@ -133,60 +151,69 @@ export class PltRightMenuComponent implements OnInit {
     }
   ];
 
-  theads = [
-    {
-      title: '', cards: [
-        {
-          chip: 'ID: 222881',
-          content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
-          borderColor: '#6e6cc0',
-          selected: false
-        },
-      ]
-    },
-    {
-      title: 'Base', cards: [
-        {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Default', cards: [
-        {chip: 'Event', content: 'Tsunami', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Analyst', cards: [
-        {chip: '1.13', content: 'ALAE', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: '', cards: [
-        {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
-      ]
-    }
-  ];
-
   dependencies = [
     {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
     {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
   ];
-
-  epMetricsCurrencySelected: any = 'EUR';
-  CalibrationImpactCurrencySelected: any = 'EUR';
-  epMetricsFinancialUnitSelected: any = 'Million';
-  CalibrationImpactFinancialUnitSelected: any = 'Million';
   fullViewActive: boolean;
   currentFullView: any;
-  activeTabIndex: number;
 
-  constructor() {
+  //Summary
+
+  selectedPLT: any;
+  pltCache: any;
+
+  //Summary EPMetrics
+
+  constants: {
+    financialUnits: string[],
+    curveTypes: any[],
+    currencies: string[]
+  };
+
+  summaryEpMetricsConfig: {
+    selectedCurrency: string;
+    selectedFinancialUnit: string;
+    selectedCurveType: any[];
+  };
+
+  epMetricsTableConfig: {
+    columns: any[];
+  };
+
+  epMetrics;
+
+  epMetricsSubscriptions: any;
+
+  rps;
+
+  epMetricsLosses;
+
+  epMetricsLossesSubscriptions: any;
+
+  returnPeriodConfig: {
+    showSuggestion: boolean,
+    returnPeriodInput: number,
+    message: string
+  };
+
+  rpValidation: {
+    isValid: boolean,
+    upperBound: number,
+    lowerBound: number
+  };
+
+  constructor(
+      _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+      private calibrationAPI: CalibrationAPI,
+      private pltAPI: PltApi
+  ) {
+    super(_baseRouter, _baseCdr, _baseStore);
+    console.log("init");
+    this.selectedPLT= {};
+    this.pltCache= {};
     this.pltPopUpItemConfig= [
       {
         title: "PLT Thread",
@@ -246,7 +273,7 @@ export class PltRightMenuComponent implements OnInit {
         cloningSource: true,
         cols: {
           summary: [
-            {header: "Clone Source PLT", field: "ClonedSourcePlt"}, {header: "Clone Source Project", field: "ClonedSourceProject"}, {header: "Clone Source Workspace", field: "ClonedSourceWorkspace"}
+            {header: "Clone Source PLT", field: "clonedSourcePlt"}, {header: "Clone Source Project", field: "clonedSourceProject"}, {header: "Clone Source Workspace", field: "clonedSourceWorkspace"}
           ]
         }
       },
@@ -254,11 +281,11 @@ export class PltRightMenuComponent implements OnInit {
         title: "Project",
         cols: {
           summary: [
-            {header: "Project ID", field: "projectId"}, {header: "Project Name", field: "projectName"}, {header: "Project Description", field: "projectDescription"}, {header: "Project Type", field: "projectType"}, {header: "Assigned Analyst", field: "assignedTo"}, {header: "Created Date", field: "createdDate"}, {header: "Created By", field: "createdBy"}, {header: "Car ID", field: "carId"}, {header: "CAR Source System", field: "carSourceSystem"}, {header: "CAR Source System Ref", field: "carSourceSystemRef"}, {header: "CAR Raised Ref", field: "carRaisedRef"}, {header: "Master Project ID", field: "masterProjectId"}, {header: "Master Project Name", field: "masterProjectName"}, {header: "Master Project Description", field: "masterProjectDescription"}, {header: "Master Project Workspace", field: "masterProjectWorkspace"}, {header: "Master Project Client", field: "masterProjectClient"}, {header: "MGA Details", field: ""}
+            {header: "Project ID", field: "projectId"}, {header: "Project Name", field: "projectName"}, {header: "Project Description", field: "projectDescription"}, {header: "Project Type", field: "projectType"}, {header: "Assigned Analyst", field: "assignedTo"}, {header: "Created Date", field: "projectCreatedDate", type: "date"}, {header: "Created By", field: "createdBy"}, {header: "Car ID", field: "carId"}, {header: "CAR Source System", field: "carSourceSystem"}, {header: "CAR Source System Ref", field: "carSourceSystemRef"}, {header: "CAR Raised Ref", field: "carRaisedRef"}, {header: "Master Project ID", field: "masterProjectId"}, {header: "Master Project Name", field: "masterProjectName"}, {header: "Master Project Description", field: "masterProjectDescription"}, {header: "Master Project Workspace", field: "masterProjectWorkspace"}, {header: "Master Project Client", field: "masterProjectClient"}, {header: "MGA Details", field: ""}
           ],
           sections: [
             {
-              title: "Project", rows: [{label: "Project ID", field: "projectId"}, {label: "Project Name", field: "projectName"}, {label: "Project Description", field: "projectDescription"}, {label: "Project Type", field: "projectType"}, {label: "Assigned Analyst", field: "assignedTo"}, {label: "Created Date", field: "createdDate"}, {label: "Created By", field: "createdBy"}
+              title: "Project", rows: [{label: "Project ID", field: "projectId"}, {label: "Project Name", field: "projectName"}, {label: "Project Description", field: "projectDescription"}, {label: "Project Type", field: "projectType"}, {label: "Assigned Analyst", field: "assignedTo"}, {label: "Created Date", field: "projectCreatedDate", type: "date"}, {label: "Created By", field: "createdBy"}
             ],
             },
             {
@@ -274,10 +301,10 @@ export class PltRightMenuComponent implements OnInit {
         title: "Publishing Status",
         cols: {
           summary: [
-            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
+            {header: "(X) Published to xAct", field: "xActPublication"}, {header: "Published to Pricing Date", field: "xActPublicationDate", type: "date"}, {header: "Published to Pricing By", field: "publishedBy"}, {header: "(P) Priced PLT", field: "xActPriced", type: "indicator"}, {header: "(A) Published to ARC", field: "arcPublication", type: "indicator"}, {header: "Published to ARC Date", field: ""}, {header: "Published to ARC By", field: ""}
           ],
           sections: [
-            { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
+            { title: "Pricing", rows: [{label: "(X) Published to xAct", field: "xActPublication"}, {label: "Published to Pricing Date", field: "xActPublicationDate", type: "date"}, {label: "Published to Pricing By", field: "publishedBy"}, {label: "(P) Priced PLT", field: "xActPriced"}]},
             { title: "Accumulation", rows: [{label: "(A) Published to ARC", field: "arcPublication"}, {label: "Published to ARC Date", field: ""}, {label: "Published to ARC By", field: ""}]}
           ]
         }
@@ -313,7 +340,7 @@ export class PltRightMenuComponent implements OnInit {
         title: "Source Loss Table",
         cols: {
           summary: [
-            {header: "Loss Table Type", field: "lossTableType"}, {header: "Loss Table Id", field: "lossTypeId"}, {header: "Vendor System", field: "vendorSystem"}, {header: "Modelling Data Source", field: "modellingDataSource"}, {header: "Source Analaysis Id", field: "sourceAnalysisId"}, {header: "Source Analysis Name", field: "sourceAnalysisName"}, {header: "Source Analysis Description", field: "sourceAnalysisDescription"}, {header: "Source Financial Perspective", field: "sourceFinancialPerspective"}
+            {header: "Loss Table Type", field: "lossTableType"}, {header: "Loss Table Id", field: "lossTypeId"}, {header: "Vendor System", field: "vendorSystem"}, {header: "Modelling Data Source", field: "modellingDataSource"}, {header: "Source Analysis Id", field: "sourceAnalysisId"}, {header: "Source Analysis Name", field: "sourceAnalysisName"}, {header: "Source Analysis Description", field: "sourceAnalysisDescription"}, {header: "Source Financial Perspective", field: "sourceFinancialPerspective"}
           ],
           sections: [
             {
@@ -326,7 +353,7 @@ export class PltRightMenuComponent implements OnInit {
         title: "Inuring Package",
         cols: {
           summary: [
-            {header: "ID", field: "inuringPackageId"}, {header: "Name", field: "inuringPackageName"}, {header: "Description", field: "inuringPackageDescription"}, {header: "Package Status", field: "inuringPackageStatus"}, {header: "Locked Indicator", field: "inuringPackageLocked"}, {header: "Created On", field: "inuringCreatedOn"}, {header: "Last Updated", field: "inuringLastModifiedOn"}, {header: "Last Updated By", field: "inuringLastModifiedBy"},
+            {header: "ID", field: "inuringPackageId"}, {header: "Name", field: "inuringPackageName"}, {header: "Description", field: "inuringPackageDescription"}, {header: "Package Status", field: "inuringPackageStatus"}, {header: "Locked Indicator", field: "inuringPackageLocked"}, {header: "Created On", field: "inuringCreatedOn"}, {header: "Last Updated", field: "inuringLastModifiedOn", type: "date"}, {header: "Last Updated By", field: "inuringLastModifiedBy"},
           ],
           sections: [
             {
@@ -338,42 +365,78 @@ export class PltRightMenuComponent implements OnInit {
     ];
     this.fullViewActive= false;
     this.currentFullView= {};
+
+    //Summary EpMetrics
+
+    this.constants = {
+      curveTypes: [{ label: 'OEP', value: 'OEP'}, { label: 'OEP-TVAR', value: 'OEP-TVAR' }, { label: 'AEP', value: 'AEP'} , { label: 'AEP-TVAR', value: 'AEP-TVAR'} ],
+      financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
+      currencies: ['USD', 'EUR', 'MAD']
+    };
+
+    this.summaryEpMetricsConfig = {
+      selectedCurrency: 'USD',
+      selectedCurveType: ['OEP'],
+      selectedFinancialUnit: 'Unit'
+    };
+
+    this.epMetricsTableConfig = {
+      columns: []
+    };
+
+    this.epMetricsLosses= {};
+    this.epMetricsLossesSubscriptions= {};
+    this.epMetrics= {};
+    this.epMetricsSubscriptions= {};
+    this.rps= {};
+
+    this.returnPeriodConfig= {
+      showSuggestion: false,
+      returnPeriodInput: null,
+      message: null
+    };
+
+    this.rpValidation = {
+      isValid: false,
+      lowerBound: null,
+      upperBound: null
+    }
   }
 
   ngOnInit() {
-    this.activeTabIndex =0;
-    this.loadTab(this.activeTabIndex);
+  }
+
+  ngOnDestroy() {
+    this.destroy();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    const {
+      inputs: {
+        currentValue,
+        previousValue
+      }
+    } = changes;
+
+    if(!previousValue) {
+      this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
+    } else {
+      if(previousValue.pltHeaderId != currentValue.pltHeaderId) {
+        this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
+      }
+    }
+
+  }
+
+  loadOnChange(pltHeaderId, index) {
+    this.appendColumn('OEP');
+    this.loadSummary(pltHeaderId);
+    this.loadTab(index);
   }
 
   closeDrawer() {
     this.actionDispatcher.emit({
       type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
-    })
-  }
-
-  selectCardThead(card) {
-    this.theads.forEach(thead => {
-      thead.cards.forEach(card => {
-        card.selected = false;
-      });
-    });
-    card.selected = true;
-  }
-
-  getCardBackground(selected) {
-    if (selected) return '#FFF';
-    else return '#f4f6fc';
-  }
-
-  getBoxShadow(selected) {
-    if (selected) return '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
-    else return 'none';
-  }
-
-  unselectPlt(pltId: any) {
-    this.actionDispatcher.emit({
-      type: rightMenuStore.unselectPlt,
-      payload: pltId
     })
   }
 
@@ -400,18 +463,253 @@ export class PltRightMenuComponent implements OnInit {
     this.currentFullView= {};
   }
 
-  selectTab($event: void) {
+  selectTab(index, title) {
     this.actionDispatcher.emit({
       type: rightMenuStore.setSelectedTabByIndex,
-      payload: $event
+      payload: {index, title}
     })
   }
 
-  loadTab(tabIndex: number) {
-    console.log(tabIndex);
-    this.actionDispatcher.emit({
-      type: rightMenuStore.loadTab,
-      payload: tabIndex
-    })
+  loadTab(index: number) {
+    this.handleLazyTabs(index);
+  }
+
+  handleLazyTabs(tabIndex) {
+    switch (tabIndex) {
+      case 0:
+        this.loadSummary(this.inputs.pltHeaderId);
+        break;
+      case 1:
+        this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, 'OEP');
+        break;
+      default:
+        console.log(tabIndex);
+        break;
+    }
+  }
+
+  loadSummary(pltHeaderId) {
+    if(!this.pltCache[pltHeaderId]) {
+      this.pltAPI.getSummary(pltHeaderId)
+          .pipe(this.unsubscribeOnDestroy)
+          .subscribe(summary => {
+            this.pltCache[summary.pltId] = summary;
+            this.selectedPLT= summary;
+            this.detectChanges();
+          })
+    } else {
+      this.selectedPLT = this.pltCache[pltHeaderId];
+    }
+  }
+
+  handleEpMetricsTabLoading(pltHeaderId,curve) {
+    this.loadEpMetrics(pltHeaderId, curve);
+    this.loadEpMetricsLosses(pltHeaderId);
+  }
+
+  loadEpMetrics(pltHeaderId, curve) {
+    if(!this.epMetrics[pltHeaderId]) this.epMetrics[pltHeaderId] = {};
+    if(!this.epMetrics[pltHeaderId] || !_.keys(this.epMetrics[pltHeaderId][curve]).length) {
+      this.epMetrics[pltHeaderId][curve]= {};
+      this.rps[pltHeaderId]= this.rps[pltHeaderId] || [];
+      if(!this.epMetricsSubscriptions[pltHeaderId]) this.epMetricsSubscriptions[pltHeaderId]= {};
+      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager')
+          .pipe(
+              this.unsubscribeOnDestroy,
+          )
+          .subscribe((data: any[]) => {
+            console.log(data);
+            if(data.length) {
+              const metrics = _.get(data, '0');
+
+              const {
+                pltId,
+                curveType
+              } = metrics;
+
+              if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+
+              if(curveType && (pltId || pltId === 0)) {
+                this.epMetrics[pltId]= {
+                  ...this.epMetrics[pltId],
+                  [curveType]: metrics
+                };
+                this.appendColumn(curveType);
+              }
+
+              this.detectChanges();
+              this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
+
+            }
+          });
+    }
+  }
+
+  loadEpMetricsLosses(pltHeaderId) {
+    if(!this.epMetricsLosses[pltHeaderId]) {
+      this.epMetricsLosses[pltHeaderId]= {};
+
+      this.calibrationAPI.loadSinglePLTSummaryStats(pltHeaderId)
+          .pipe(
+              this.unsubscribeOnDestroy
+          )
+          .subscribe(losses => {
+            this.epMetricsLosses[pltHeaderId]= _.get(losses, '0');
+            this.detectChanges();
+          })
+
+    }
+
+
+  }
+
+  handleEpMetrics(action: Message) {
+    console.log(action);
+
+    switch (action.type) {
+      case "Show Metric":
+        this.showMetric(action.payload);
+        break;
+
+      case "Hide Metric":
+        this.hideMetric(action.payload);
+        break;
+
+      case "Select Financial Unit":
+        this.selectFinancialUnit(action.payload);
+        break;
+
+      case "Return period input change":
+        this.rpInputChange(action.payload);
+        break;
+
+      case "ADD Return period":
+        this.addRP(action.payload);
+        break;
+
+      default:
+        console.log(action);
+        break;
+    }
+
+    console.log(this.epMetricsTableConfig, this.epMetrics);
+
+  }
+
+  rpInputChange(rp) {
+    this.returnPeriodConfig= {
+        ...this.returnPeriodConfig,
+      returnPeriodInput: rp
+    }
+  }
+
+  addRP(rp) {
+    if(!_.find(this.rps[this.inputs.pltHeaderId], e => e == rp)) {
+      this.calibrationAPI.validateRP(rp)
+          .pipe(
+              tap((validation: any) => {
+                this.rpValidation = validation;
+                if(validation.isValid) {
+                  this.returnPeriodConfig = {
+                    ...this.returnPeriodConfig,
+                    showSuggestion: false,
+                    returnPeriodInput: null,
+                    message: null
+                  };
+                } else {
+                  this.returnPeriodConfig = {
+                    ...this.returnPeriodConfig,
+                    showSuggestion: true,
+                    message: null
+                  };
+                }
+                this.detectChanges();
+              }),
+              filter((validation: any) => validation.isValid),
+              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp], 1, 'PLT Manager')
+                  .pipe(
+                      mergeMap(() => forkJoin(
+                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager'))
+                      ))
+                  )),
+              this.unsubscribeOnDestroy
+          ).subscribe((res) => {
+            this.epMetrics[this.inputs.pltHeaderId]= {};
+            this.rps[this.inputs.pltHeaderId]= _.sortBy([...this.rps[this.inputs.pltHeaderId], rp], v => _.toNumber(v));
+            _.forEach(res, data => {
+              if(data.length) {
+                const metrics = _.get(data, '0');
+
+                const {
+                  pltId,
+                  curveType
+                } = metrics;
+
+                if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+
+                if(curveType && (pltId || pltId === 0)) {
+                  this.epMetrics[pltId]= {
+                    ...this.epMetrics[pltId],
+                    [curveType]: metrics
+                  };
+                  this.appendColumn(curveType);
+                }
+              }
+            });
+            this.detectChanges();
+      })
+    } else {
+      this.returnPeriodConfig = {
+        ...this.returnPeriodConfig,
+        showSuggestion: false,
+        returnPeriodInput: null,
+        message: "Already Exists"
+      }
+    }
+  }
+
+  handleEPMetricsReload(rp, pltHeaderId) {
+    this.epMetrics[pltHeaderId] = {};
+    this.rps[pltHeaderId]= _.sortBy([...this.rps[pltHeaderId], rp], v => v);
+
+
+  }
+
+  generateCol(header) {
+    return {field: header, header};
+  }
+
+  appendColumn(curveType) {
+    this.epMetricsTableConfig= {
+      columns: _.uniqBy([...this.epMetricsTableConfig.columns, this.generateCol(curveType)], col => col.field)
+    }
+  }
+
+  showMetric({curveTypes, difference}) {
+
+    _.forEach(difference, curveType => {
+      this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
+    });
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: curveTypes
+    };
+  }
+
+  hideMetric({curveTypes, difference}) {
+    this.epMetricsTableConfig= {
+      columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(difference, column => column == col.header))
+    };
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: curveTypes
+    };
+  }
+
+  selectFinancialUnit(financialUnit) {
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedFinancialUnit: financialUnit
+    };
   }
 }

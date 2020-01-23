@@ -246,11 +246,11 @@
                 <div class="body-wrap-menu-header" style="flex-direction: column">
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
-                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Save as default selection" (click)="saveDefaultSelection()"
                        style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="synchronizeEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadDefaultDataSources()"
                        class="icon-sync_24px"></i>
-                    <i nz-tooltip nzTitle="Clear default settings" (click)="removeEDMAndRDMSelection()"
+                    <i nz-tooltip nzTitle="Clear default settings" (click)="clearDefaultSelection()"
                        class="icon-close_24px"></i>
                   </div>
                 </div>
@@ -266,17 +266,15 @@
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
                       <ng-container *ngIf="!itemsE.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}
-                          /{{itemsE.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsE, 'portfolio')}}/{{itemsE.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">0/{{itemsE.count}}</span>-->
                         <!--                        <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="rescanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsE.scanning">
                        <span class="loading">Scanning</span>
                        <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
-                     </ng-container>
+                      </ng-container>
                       <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -293,10 +291,8 @@
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
                       <ng-container *ngIf="!itemsR?.scanning">
-                        <span class="reference"
-                              *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}
-                          /{{itemsR.count}}</span>
-                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>
+                        <span class="reference">{{getNumberOfSelected(itemsR, 'analysis')}}/{{itemsR.count}}</span>
+<!--                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">0/{{itemsR.count}}</span>-->
                         <i (click)="rescanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="itemsR?.scanning">
@@ -449,8 +445,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [context]="tabStatus" [data]="summary.portfolios"></portfolio-result>
-        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
+        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 

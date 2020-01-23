@@ -290,6 +290,7 @@ ul.widgets-list {
 
     .ant-tabs-tabpane.ant-tabs-tabpane-active {
       height: calc(100vh - 150px);
+      overflow: auto;
     }
   }
 

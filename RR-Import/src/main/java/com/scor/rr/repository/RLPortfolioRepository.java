@@ -35,4 +35,6 @@ public interface RLPortfolioRepository extends JpaRepository<RLPortfolio, Long> 
     RLPortfolio findByEdmIdAndEdmNameAndRlIdAndProjectId(Long edmId, String edmName, Long portfolioId, Long projectId);
 
     List<RLPortfolio> findByRlModelDataSourceRlModelDataSourceId(Long rlModelDataSourceId);
+
+
 }

@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 
 import com.scor.rr.domain.DataSource;
+import com.scor.rr.domain.dto.DataSourcesDto;
 import com.scor.rr.domain.dto.DetailedScanDto;
 import com.scor.rr.domain.dto.ImportSelectionDto;
 import com.scor.rr.domain.dto.PortfolioSelectionDto;
@@ -133,5 +134,63 @@ public class ConfigurationResource {
         }
     }
 
+    @PostMapping(value = "save-default-data-sources")
+    public ResponseEntity<?> saveDefaultDataSources(@RequestBody DataSourcesDto dataSourcesDto) {
+        try {
+            configurationService.saveDefaultDataSources(dataSourcesDto);
+            return new ResponseEntity<>("Operation successful", HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @GetMapping(value = "get-default-data-sources")
+    public ResponseEntity<?> getDefaultDataSources(@RequestParam Long projectId, @RequestParam Long userId, @RequestParam String instanceId) {
+        try {
+            return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "check-if-project-has-been-imported")
+    public ResponseEntity<?> checkIfProjectHasBeenImported(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.checkIfProjectHasBeenImportedBefore(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-imported-data-sources")
+    public ResponseEntity<?> getImportedDataSources(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-imported-analysis-configuration")
+    public ResponseEntity<?> getImportedAnalysisConfiguration(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getRLModelAnalysisConfigs(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "get-global-data-sources")
+    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
+        try {
+            if (configurationService.checkIfProjectHasBeenImportedBefore(projectId) != null)
+                return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
+            else
+                return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
