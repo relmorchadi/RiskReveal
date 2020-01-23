@@ -9,6 +9,7 @@ import com.scor.rr.exceptions.pltfile.PLTDataNullException;
 import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.pltfile.PLTFileWriteException;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.List;
 /**
  * Created by u004602 on 28/06/2019.
  */
+@Component
 public class CSVPLTFileWriter implements PLTFileWriter {
     public void write(List<PLTLossData> pltLossDataList, File file) throws RRException {
         if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
