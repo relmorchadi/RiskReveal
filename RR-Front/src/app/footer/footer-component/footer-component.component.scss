@@ -1,0 +1,15 @@
+:host {
+  position: fixed;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  bottom: 0;
+  right: 3px;
+  width: fit-content;
+  padding: 0 25px;
+  font-weight: bold;
+  height: 13px;
+  font-size: .9em;
+  background-color: transparent;
+  color: #14617A;
+}

@@ -20,6 +20,7 @@
         </div>
       </nz-tab>
     </nz-tabset> -->
+
     <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
       <ng-container *ngFor="let dashboard of dashboardsMockData">
         <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
@@ -43,26 +44,26 @@
                   </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item.componentName === 'NewFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="newFacCars" [tableHeight]="'calc(100% - 62px)'"
+                                  [data]="newFacCars" [tableCols]="newCols" (managePopUp)="openPopUp($event)"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item.componentName === 'InProgressFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="inProgressFacCars" [tableHeight]="inProgressFacHeight"
+                                  [data]="inProgressFacCars" [tableCols]="inProgressCols" (managePopUp)="openPopUp($event)"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item.componentName === 'ArchivedFacWidgetComponent'"
                                   [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                  [data]="archivedFacCars" [tableHeight]="archivedFacHeight"
+                                  [data]="archivedFacCars" [tableCols]="archivedCols" (managePopUp)="openPopUp($event)"
                                   (delete)="deleteItemFac(dashboard.id, $event)" [type]="item.type"
                                   (changeName)="changeNameFac(dashboard.id, $event)"
                                   (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
-   <!--               <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
+                  <app-fac-chart-widget *ngIf="item.componentName === 'facChartWidgetComponent'"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                         (delete)="deleteItemFac(dashboard.id, $event)"
                                         (changeName)="changeNameFac(dashboard.id, $event)"
@@ -73,18 +74,26 @@
                                             (delete)="deleteItemFac(dashboard.id, $event)"
                                             (changeName)="changeNameFac(dashboard.id, $event)"
                                             (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
-                  </app-fac-subsidiary-chart>-->
+                  </app-fac-subsidiary-chart>
                 </gridster-item>
               </ng-container>
             </gridster>
           </div>
         </nz-tab>
       </ng-container>
-      .
-
     </nz-tabset>
-
   </nz-content>
+  <app-manage-columns [visible]="manageNewPopUp" [columns]="immutableNew"
+                      (onSubmit)="saveColumns($event, 'new')"
+                      (onCancel)="closePopUp()"></app-manage-columns>
+
+  <app-manage-columns [visible]="manageInProgressPopUp" [columns]="immutableInProgress"
+                      (onSubmit)="saveColumns($event, 'inProgress')"
+                      (onCancel)="closePopUp()"></app-manage-columns>
+
+  <app-manage-columns [visible]="manageArchivedPopUp" [columns]="immutableArchive"
+                      (onSubmit)="saveColumns($event, 'archived')"
+                      (onCancel)="closePopUp()"></app-manage-columns>
   <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
       <i class="clickable-item icon-settings_24px" style="font-size: 24px"

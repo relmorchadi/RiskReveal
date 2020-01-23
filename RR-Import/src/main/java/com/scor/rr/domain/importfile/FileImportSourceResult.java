@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class FileImportSourceResult {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "FileImportSourceResultId", nullable = false)
     private int fileImportSourceResultId;
 
@@ -86,4 +86,7 @@ public class FileImportSourceResult {
 
     @Column(name = "ImportStatus", length = 15)
     private String importStatus;
+
+    @Column(name = "FilePath")
+    private String filePath;
 }

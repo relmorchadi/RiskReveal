@@ -24,17 +24,14 @@ public class AccItemProcessor implements ItemProcessor<RLAccRow, RLAccRow> {
 
     @Override
     public RLAccRow process(RLAccRow item) throws Exception {
-        if (marketChannel.equalsIgnoreCase("Fac")) {
 
-            if (!this.isConstruction()) {
-                item.setInceptionDate(null);
-                item.setPracticalCompletionDate(null);
-            }
-            if (forceCarId)
-                item.setCarID(carId);
-            return item;
+        if (!this.isConstruction()) {
+            item.setInceptionDate(null);
+            item.setPracticalCompletionDate(null);
         }
-        return null;
+        if (forceCarId)
+            item.setCarID(carId);
+        return item;
     }
 
     private boolean isConstruction() {

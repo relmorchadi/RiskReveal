@@ -72,4 +72,13 @@ public class FileBasedImportRest {
     public String retrieveFileBasedConfig(String projectId) {
         return importFileService.retrieveFileBasedConfig(projectId);
     }
+
+//    @GetMapping("launchFileBasedImport")
+//    public Long launchFileBasedImport(String instanceId,
+//                                            String nonrmspicId,
+//                                            String userId,
+//                                            String projectId,
+//                                            String fileImportSourceResultIds) {
+//        return importFileService.launchFileBasedImport(instanceId, nonrmspicId, userId, projectId, fileImportSourceResultIds);
+//    }
 }

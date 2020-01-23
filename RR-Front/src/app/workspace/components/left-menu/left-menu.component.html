@@ -1,22 +1,22 @@
 <ul [nzInlineCollapsed]="isCollapsed" [nzMode]="'inline'" nz-menu>
   <li (click)="collapse($event)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
-          <span title>
-            <i nz-icon>
-              <i *ngIf="!isCollapsed" class="icon-chevron_left_24px"></i>
-              <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
-              <i *ngIf="isCollapsed" class="icon-chevron_right_24px"></i>
-            </i>
-          </span>
+    <span title>
+      <i nz-icon>
+        <i *ngIf="!isCollapsed" class="icon-chevron_left_24px"></i>
+          <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
+        <i *ngIf="isCollapsed" class="icon-chevron_right_24px"></i>
+      </i>
+    </span>
   </li>
-  <li [nzTitle]="isCollapsed ? 'Workspace' : ''" nz-submenu="" nz-tooltip nzPlacement="right">
-          <span title>
-            <i nz-icon><i class="icon-window-section"></i></i>
-            <span>Workspace</span>
-          </span>
+  <li [nzTitle]="isCollapsed ? 'Workspace' : ''" [ngClass]="{'fix-size': isCollapsed}" nz-submenu="" nz-tooltip nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-window-section"></i></i>
+      <span class="test-list">Workspace</span>
+    </span>
     <ul>
-      <li (click)="routerNavigate(null)" nz-menu-item>Projects</li>
-      <!--<li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>-->
-      <!--<li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>-->
+      <li (click)="routerNavigate(null)" class="test-list" nz-menu-item>Projects</li>
+      <li (click)="routerNavigate('Contract')" class="test-list" nz-menu-item>Contract</li>
+      <!--<li (click)="routerNavigate('Activity')" class="test-list" nz-menu-item>Activity</li>-->
     </ul>
   </li>
   <!--<li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"-->
@@ -29,10 +29,10 @@
 
   <li (click)="routerNavigate('PltBrowser')" [nzTitle]="isCollapsed ? 'PLT Manager' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
-          <span title>
-            <i nz-icon><i class="icon-file-search-alt"></i></i>
-            <span>PLT Manager</span>
-          </span>
+    <span title>
+      <i nz-icon><i class="icon-file-search-alt"></i></i>
+      <span class="test-list">PLT Manager</span>
+    </span>
   </li>
   <!--li (click)="routerNavigate('JobManager')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Job Manager' : ''">
           <span title>
@@ -41,24 +41,24 @@
           </span>
   </li-->
   <hr class="col-xs-12">
-  <li [nzTitle]="isCollapsed ? 'Data sources Import' : ''" class="pr-1" nz-submenu nz-tooltip nzPlacement="right">
-          <span title>
-            <i style="z-index: 99" (click)="riskLinkImportNavigation()" nz-icon><i class="icon-call_merge_24px"></i></i>
-            <span (click)="riskLinkImportNavigation()">Data Sources Import</span>
-          </span>
+  <li [nzTitle]="isCollapsed ? 'Data sources Import' : ''" [ngClass]="{'fix-size': isCollapsed}" nz-submenu nz-tooltip nzPlacement="right">
+    <span title>
+      <i style="z-index: 99" (click)="riskLinkImportNavigation()" nz-icon><i class="icon-call_merge_24px"></i></i>
+      <span class="test-list" (click)="riskLinkImportNavigation()">Data Sources Import</span>
+    </span>
     <ul>
-      <li (click)="routerNavigate('RiskLink')" nz-menu-item>RiskLink Import</li>
-<!--      <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File-Based Import</li>-->
-      <!--      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>-->
+      <li (click)="routerNavigate('RiskLink')" class="test-list" nz-menu-item>RiskLink Import</li>
+<!--      <li (click)="routerNavigate('FileBasedImport')" class="test-list" nz-menu-item>File-Based Import</li>-->
+      <!--      <li (click)="routerNavigate('CloneData')" class="test-list" nz-menu-item>Clone Data</li>-->
     </ul>
   </li>
 <!--  <hr class="col-xs-12">-->
 <!--  <li (click)="routerNavigate('CloneData')" [nzTitle]=" isCollapsed ? 'Clone Data' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
-          <span title>
-            <i nz-icon><i class="icon-database"></i></i>
-            <span>Clone Data</span>
-          </span>
+      <span title>
+        <i nz-icon><i class="icon-database"></i></i>
+        <span>Clone Data</span>
+      </span>
   </li>-->
 <!--  <li (click)="routerNavigate('Exposures')" nz-menu-item nz-tooltip nzPlacement="right"
       [nzTitle]="isCollapsed ? 'Exposure' : ''">
@@ -76,10 +76,10 @@
   </li>-->
   <li (click)="routerNavigate('Calibration')" [nzTitle]="isCollapsed ? 'Calibration' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
-          <span title>
-            <i nz-icon><i class="icon-sitemap"></i></i>
-            <span>Calibration</span>
-          </span>
+    <span title>
+      <i nz-icon><i class="icon-sitemap"></i></i>
+      <span class="test-list">Calibration</span>
+    </span>
   </li>
   <hr class="col-xs-12">
 <!--  <li (click)="routerNavigate('Inuring')" *ngIf="status === 'treaty'" [nzTitle]="isCollapsed ? 'Inuring' : ''" nz-menu-item nz-tooltip

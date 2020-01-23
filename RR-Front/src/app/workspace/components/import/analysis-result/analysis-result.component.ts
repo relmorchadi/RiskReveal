@@ -1,7 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
-import * as _ from 'lodash';
 import componentData from "./data";
 
 @Component({
@@ -98,11 +97,10 @@ export class AnalysisResultComponent implements OnInit {
   updateRowData(key, value, index) {
     this.store.dispatch(new fromRiskLink.PatchAnalysisResultAction({
       key, value, index
-    }))
+    }));
   }
 
   openFinancialP(fp) {
-    console.log('Open Financial Perspective Popup');
     this.showSelectFinancialPerspDialog=true;
   }
 
@@ -111,7 +109,7 @@ export class AnalysisResultComponent implements OnInit {
   }
 
   overrideRegionPerilOccurrenceBasis(row, colType, index){
-    this.lastAnalysisIndex= index;
+    this.lastAnalysisIndex= row.rlAnalysisId;
     if(colType == 'Rp'){
       this.showOverrideRpDialog=true;
     }else if(colType == 'Ob'){

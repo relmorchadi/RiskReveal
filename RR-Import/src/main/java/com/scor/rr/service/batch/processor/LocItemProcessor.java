@@ -32,23 +32,20 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
 
     @Override
     public RLLocRow process(RLLocRow item) throws Exception {
-        if (marketChannel.equalsIgnoreCase("Fac")) {
-            if (forceCarId)
-                item.setCarID(carId);
+        if (forceCarId)
+            item.setCarID(carId);
 
-            Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
-            if (transformationPackage.getModelPortfolios() != null && !transformationPackage.getModelPortfolios().isEmpty())
-                item.setDivision(String.valueOf(division));
-            // TODO : review later & currency
+        Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
+        if (transformationPackage.getModelPortfolios() != null && !transformationPackage.getModelPortfolios().isEmpty())
+            item.setDivision(String.valueOf(division));
+        // TODO : review later & currency
 //        item.setAccuracyLevel(mappingHandler.getGeoResForCode(Integer.toString(item.getGeoResultionCode())));
-            item.setCurrencyCode(
-                    configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
-                    .map(CARDivisionDto::getCurrency)
-                    .findFirst().orElse("USD")
-            );
+        item.setCurrencyCode(
+                configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                        .map(CARDivisionDto::getCurrency)
+                        .findFirst().orElse("USD")
+        );
 
-            return item;
-        }
-        return null;
+        return item;
     }
 }

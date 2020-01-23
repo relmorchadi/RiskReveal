@@ -81,18 +81,18 @@
                 <div class="" *ngIf="col.type === 'selection'">
                   <label nz-checkbox [(ngModel)]="rowData.selected"></label>
                 </div>
-                <div class="text-data" (click)="selectRows(rowData, i)"
+                <div class="text-data" (click)="selectRows(rowData,rowData.rlAnalysisId)"
                      [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                      [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                 <div style="padding-left: 10px;" *ngIf="col.type === 'comment'">
-                  <input class="a-textfield-mini" style="width: 90%" [(ngModel)]="overrideChanges[i].occurrenceBasis"/>
+                  <input class="a-textfield-mini" style="width: 90%" [(ngModel)]="overrideChanges[rowData.rlAnalysisId].rpOccurrenceBasis"/>
                 </div>
                 <div *ngIf="col.type === 'override'">
                   <nz-select
                     style="padding: 10px 0; width: 90%"
-                    (ngModelChange)="overrideRegionPeril($event, i)"
-                    [(ngModel)]="overrideChanges[i].rpCode"
+                    (ngModelChange)="overrideRegionPeril($event,rowData.rlAnalysisId)"
+                    [(ngModel)]="overrideChanges[rowData.rlAnalysisId].rpCode"
                     nzShowSearch
                     class="a-dropdown-small input-wrapper"
                     nzPlaceHolder="Select Occurence Basis"
@@ -102,7 +102,7 @@
                   </nz-select>
                 </div>
                 <div *ngIf="col.type === 'function'">
-                  <i class="icon-download-alt" (click)="doCopyRegionPeril(i)" style="opacity: 0.7; font-size: 25px;"></i>
+                  <i class="icon-download-alt" (click)="doCopyRegionPeril(rowData.rlAnalysisId)" style="opacity: 0.7; font-size: 25px;"></i>
                 </div>
               </th>
             </ng-container>

@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface FileBasedImportConfigRepository extends JpaRepository<FileBasedImportConfig, Integer>, JpaSpecificationExecutor<FileBasedImportConfig> {
     @Query("select c from FileBasedImportConfig c where c.projectId = :projectId")
-    FileBasedImportConfig findFileBasedImportConfigByProjectId(Integer projectId);
+    FileBasedImportConfig findByProjectId(Integer projectId);
 }
