@@ -34,13 +34,13 @@ public class FileBasedImportTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void launchFileBasedImport() {
-        String instanceId = "";
-        String nonrmspicId = "";
-        String userId = "";
-        String projectId = "";
-        String fileImportSourceResultIds = "";
-        importFileService.launchFileBasedImport(instanceId, nonrmspicId, userId, projectId, fileImportSourceResultIds);
-    }
+//    @Test
+//    public void launchFileBasedImport() {
+//        String instanceId = "";
+//        String nonrmspicId = "";
+//        String userId = "";
+//        String projectId = "";
+//        String fileImportSourceResultIds = "";
+//        importFileService.launchFileBasedImport(instanceId, nonrmspicId, userId, projectId, fileImportSourceResultIds);
+//    }
 }

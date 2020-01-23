@@ -85,7 +85,7 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr [pContextMenuRow]="rowData">
+          <tr [pContextMenuRow]="rowData" [ngClass]="{'frozenRow': rowData.isScanning}">
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                   [ngClass]="{'selected-item': rowData?.selected}">
@@ -95,8 +95,14 @@
                 </div>
                 <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                 <div class="text-data" *ngIf="col.type === 'progress'">
-                  <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
-                               [nzWidth]="20" nzType="circle"></nz-progress>
+                  <ng-container *ngIf="!rowData.isScanning; else scanning">
+                    <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
+                                 [nzWidth]="20" nzType="circle"></nz-progress>
+                  </ng-container>
+                  <ng-template #scanning>
+<!--                    <span class="loading">Scanning</span>-->
+                    <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
+                  </ng-template>
                 </div>
                 <div class="text-data" (click)="openFinancialP(rowData)" [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'multiple'">

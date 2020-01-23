@@ -213,8 +213,9 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
   ngOnInit() {
     this._loadAnalysisChanges();
     this.distinctRdms = ['All', ..._.uniq(_.map(this.data.analysis, analysis => analysis.rdmName))];
-    this.changes.analysis[0].selected = true;
-    this.loadEpCurvesEmitter.emit(this.data.analysis[0].rlAnalysisId);
+    const firstKey= _.first(_.keys(this.changes.analysis));
+    this.changes.analysis[firstKey].selected = true;
+    this.loadEpCurvesEmitter.emit(firstKey);
   }
 
 
@@ -222,10 +223,10 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     console.log('select RDM', item);
   }
 
-  toggleAnalysisSelection(rowIndex) {
-    this.changes.analysis[rowIndex].selected = !this.changes.analysis[rowIndex].selected;
+  toggleAnalysisSelection(analysisId) {
+    this.changes.analysis[analysisId].selected = !this.changes.analysis[analysisId].selected;
     if(this._countSelectedAnalysis() == 1)
-      this.loadEpCurvesEmitter.emit(this.data.analysis[rowIndex].rlAnalysisId)
+      this.loadEpCurvesEmitter.emit(this.data.analysis[analysisId].rlAnalysisId)
   }
 
   toggleEpCurveSelection(rowIndex) {
@@ -244,10 +245,10 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     this.closeEmitter.emit();
   }
 
-  removeFP(rowIndex, value: any) {
+  removeFP(analysisId, value: any) {
     event.stopPropagation();
-    this.changes.analysis[rowIndex].financialPerspectives = _.filter(
-      this.changes.analysis[rowIndex].financialPerspectives,
+    this.changes.analysis[analysisId].financialPerspectives = _.filter(
+      this.changes.analysis[analysisId].financialPerspectives,
       item => item != value);
   }
 
@@ -322,8 +323,8 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
 
   private _loadAnalysisChanges() {
     this.changes.analysis = _.reduce(this.data.analysis, (result, value, index) => {
-      const {financialPerspectives} = value;
-      return _.merge(result, {[index]: {selected: false, financialPerspectives, rdmName: value.rdmName}})
+      const {financialPerspectives,rlAnalysisId} = value;
+      return _.merge(result, {[rlAnalysisId]: {selected: false, financialPerspectives, rdmName: value.rdmName}})
     }, {});
   }
 
