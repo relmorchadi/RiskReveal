@@ -78,7 +78,7 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field || 0 | financialUnit : tableConfig?.selectedFinancialUnit | number:'1.0-3'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : rowData?.pltId : col?.field || 0 | financialUnit : tableConfig?.selectedFinancialUnit | exchangeRate: exchangeRates : rowData?.currencyCode : tableConfig?.selectedCurrency | number:'1.0-3'}}
             </div>
           </ng-container>
 
@@ -115,7 +115,7 @@
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | number:'1.0-2'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | exchangeRate: exchangeRates : thread?.currencyCode : tableConfig?.selectedCurrency | number:'1.0-2'}}
             </div>
             <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount) >= 0 ? 'green' : 'red'">
               {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount | number:'1.0-2'}}{{ tableConfig?.isDeltaByAmount ? '' : '%' }}
@@ -153,12 +153,11 @@
 
         <ng-container *ngIf="col?.type != 'arrow'">
 
-          <ng-container *ngIf="col?.isFrozen"
-                        [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field, type: col?.type}"></ng-container>
+          <ng-container *ngIf="col?.isFrozen" [ngTemplateOutlet]="fieldTemplate" [ngTemplateOutletContext]="{$implicit: thread, field: col?.field, type: col?.type}"></ng-container>
 
           <ng-container *ngIf="!col?.isFrozen && (tableConfig?.view == 'epMetrics')">
             <div class="text-ellipsis">
-              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | number:'1.0-2'}}
+              {{epMetrics | getMetric: tableConfig?.selectedCurveType : thread?.pltId : col?.field | financialUnit: tableConfig?.selectedFinancialUnit | exchangeRate: exchangeRates : thread?.currencyCode : tableConfig?.selectedCurrency | number:'1.0-2'}}
             </div>
             <span class="epMetric-delta" [style.color]="(epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount) >= 0 ? 'green' : 'red'">
               {{epMetrics | getDelta: thread?.pltId : rowData?.pltId : col?.field : tableConfig?.selectedCurveType : tableConfig?.isDeltaByAmount | number:'1.0-2'}}{{ tableConfig?.isDeltaByAmount ? '' : '%' }}
@@ -370,7 +369,7 @@
       <nz-dropdown *ngIf="tableConfig?.view == 'epMetrics'"
                    [nzPlacement]="'bottomRight'"
                    nzTrigger="click"
-                   style="z-index: 9999;position: absolute;right: 25px;top: 90px;font-size: 18px;">
+                   style="z-index: 2;position: absolute;right: 25px;top: 90px;font-size: 18px;">
         <i class="icon-settings_24px" nz-dropdown
            style="cursor: pointer;font-size: 25px; float: right; margin-right: 7px"></i>
         <ul nz-menu>

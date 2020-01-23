@@ -41,6 +41,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     isDeltaByAmount: boolean
   };
 
+  @Input() exchangeRates: any;
+
   @Input() columnsConfig: {
     frozenColumns: any[],
     frozenWidth: string,

@@ -15,12 +15,14 @@ import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
 import * as _ from 'lodash';
 import {BaseContainer} from "../../../base";
-import {Store} from "@ngxs/store";
+import {ofActionSuccessful, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
 import {PltApi} from "../../../../workspace/services/api/plt.api";
-import {filter, mergeMap, tap} from "rxjs/operators";
-import {empty, EMPTY, forkJoin, of} from "rxjs";
+import {filter, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
+import {empty, EMPTY, forkJoin, of, Subscription} from "rxjs";
+import {WorkspaceState} from "../../../../workspace/store";
+import * as fromWorkspaceStore from "../../../../workspace/store";
 
 @Component({
   selector: 'app-plt-right-menu',
@@ -34,131 +36,12 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   pltPopUpItemConfig: pltDetailsPopUpItemStore.Input[];
 
-  _input(key): any {
-    return this.inputs[key];
-  }
-
   @Output() actionDispatcher: EventEmitter<Message>= new EventEmitter<Message>();
-
-  currencies = [
-    {id: '1', name: 'Euro', label: 'EUR'},
-    {id: '2', name: 'Us Dollar', label: 'USD'},
-    {id: '3', name: 'Britsh Pound', label: 'GBP'},
-    {id: '4', name: 'Canadian Dollar', label: 'CAD'},
-    {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
-    {id: '5', name: 'Swiss Franc', label: 'CHF'},
-    {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-    {id: '6', name: 'Bitcoin', label: 'XBT'},
-    {id: '7', name: 'Hungarian forint', label: 'HUF'},
-    {id: '8', name: 'Singapore Dollars', label: 'SGD'}
-  ];
-
-  units = [
-    {id: '3', label: 'Billion'},
-    {id: '1', label: 'Thousands'},
-    {id: '2', label: 'Million'},
-    {id: '4', label: 'Unit'}
-  ];
-
-  metrics = [
-    {
-      metricID: '1',
-      retrunPeriod: '10000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '2',
-      retrunPeriod: '5,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '4',
-      retrunPeriod: '1,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '5',
-      retrunPeriod: '500',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '6',
-      retrunPeriod: '250',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '7',
-      retrunPeriod: '100',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '8',
-      retrunPeriod: '50',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '9',
-      retrunPeriod: '25',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '10',
-      retrunPeriod: '10',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '11',
-      retrunPeriod: '5',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '12',
-      retrunPeriod: '2',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    }
-  ];
-
-  dependencies = [
-    {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
-    {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
-  ];
   fullViewActive: boolean;
   currentFullView: any;
+
+  workspaceCurrency: string;
+  workspaceEffectiveDate: Date;
 
   //Summary
 
@@ -172,6 +55,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     curveTypes: any[],
     currencies: string[]
   };
+
+  exchangeRates: any;
 
   summaryEpMetricsConfig: {
     selectedCurrency: string;
@@ -205,13 +90,15 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     lowerBound: number
   };
 
+  //Sub
+  exchangeRatesSubscription: Subscription;
+
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       private calibrationAPI: CalibrationAPI,
       private pltAPI: PltApi
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    console.log("init");
     this.selectedPLT= {};
     this.pltCache= {};
     this.pltPopUpItemConfig= [
@@ -371,7 +258,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.constants = {
       curveTypes: [{ label: 'OEP', value: 'OEP'}, { label: 'OEP-TVAR', value: 'OEP-TVAR' }, { label: 'AEP', value: 'AEP'} , { label: 'AEP-TVAR', value: 'AEP-TVAR'} ],
       financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
-      currencies: ['USD', 'EUR', 'MAD']
+      currencies: []
     };
 
     this.summaryEpMetricsConfig = {
@@ -404,6 +291,18 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   ngOnInit() {
+    this.exchangeRates= {};
+    this.subscribeToWorkspaceCurrencyAndEffectiveDate(this.inputs.wsIdentifier);
+
+    this.calibrationAPI.loadCurrencies().subscribe(
+        (currencies: any) => {
+          this.constants = {
+            ...this.constants,
+            currencies
+          };
+          this.detectChanges();
+        }
+    )
   }
 
   ngOnDestroy() {
@@ -419,18 +318,45 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     } = changes;
 
     if(!previousValue) {
-      this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
+
+      this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index, true);
     } else {
       if(previousValue.pltHeaderId != currentValue.pltHeaderId) {
-        this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index);
+        this.loadOnChange(currentValue.pltHeaderId, currentValue.selectedTab.index, false);
       }
     }
 
   }
 
-  loadOnChange(pltHeaderId, index) {
+  subscribeToWorkspaceCurrencyAndEffectiveDate(wsIdentifier: string) {
+    this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( currency => {
+      this.workspaceCurrency = currency;
+      this.summaryEpMetricsConfig = {
+        ...this.summaryEpMetricsConfig,
+        selectedCurrency: currency
+      };
+      this.detectChanges();
+    });
+
+    this.select(WorkspaceState.getWorkspaceEffectiveDate(wsIdentifier))
+        .pipe(
+            takeWhile(v => !_.isNil(v)),
+            take(2),
+            this.unsubscribeOnDestroy
+        ).subscribe( date => {
+      this.workspaceEffectiveDate = date;
+      this.detectChanges();
+    });
+  }
+
+  loadOnChange(pltHeaderId, index, init) {
     this.appendColumn('OEP');
-    this.loadSummary(pltHeaderId);
+    this.loadSummary(pltHeaderId, init);
     this.loadTab(index);
   }
 
@@ -477,7 +403,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   handleLazyTabs(tabIndex) {
     switch (tabIndex) {
       case 0:
-        this.loadSummary(this.inputs.pltHeaderId);
+        this.loadSummary(this.inputs.pltHeaderId, false);
         break;
       case 1:
         this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, 'OEP');
@@ -488,15 +414,37 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     }
   }
 
-  loadSummary(pltHeaderId) {
+  loadSummary(pltHeaderId, init) {
     if(!this.pltCache[pltHeaderId]) {
       this.pltAPI.getSummary(pltHeaderId)
-          .pipe(this.unsubscribeOnDestroy)
-          .subscribe(summary => {
-            this.pltCache[summary.pltId] = summary;
-            this.selectedPLT= summary;
-            this.detectChanges();
+          .pipe(
+              this.unsubscribeOnDestroy,
+              mergeMap(summary => {
+              this.pltCache[summary.pltId] = summary;
+              this.selectedPLT= summary;
+              if(init) {
+                let res= _.map([this.selectedPLT], el => el.pltCcy);
+
+                if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === this.summaryEpMetricsConfig.selectedCurrency)) {
+                  res= [...res, this.summaryEpMetricsConfig.selectedCurrency];
+                }
+
+                res = _.uniq(res);
+
+
+                return this.calibrationAPI.getExchangeRates(this.workspaceEffectiveDate, res);
+              } else {
+                return of(this.exchangeRates);
+              }
           })
+          ).subscribe(exchangeRates => {
+        this.exchangeRates = {...this.exchangeRates, ..._.keyBy(exchangeRates, 'currencyCode')};
+        this.summaryEpMetricsConfig = {
+          ...this.summaryEpMetricsConfig,
+          selectedCurrency: this.summaryEpMetricsConfig.selectedCurrency
+        };
+        this.detectChanges();
+      });
     } else {
       this.selectedPLT = this.pltCache[pltHeaderId];
     }
@@ -518,7 +466,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
               this.unsubscribeOnDestroy,
           )
           .subscribe((data: any[]) => {
-            console.log(data);
             if(data.length) {
               const metrics = _.get(data, '0');
 
@@ -564,7 +511,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   handleEpMetrics(action: Message) {
-    console.log(action);
 
     switch (action.type) {
       case "Show Metric":
@@ -577,6 +523,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
       case "Select Financial Unit":
         this.selectFinancialUnit(action.payload);
+        break;
+
+      case "Currency Change":
+        this.currencyChange(action.payload);
         break;
 
       case "Return period input change":
@@ -712,4 +662,30 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       selectedFinancialUnit: financialUnit
     };
   }
+
+  currencyChange(currency) {
+
+    let res= _.map([this.selectedPLT], el => el.currencyCode);
+
+    if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === currency)) {
+      res= [...res, currency];
+    }
+
+    res = _.uniq(res);
+
+
+    this.exchangeRatesSubscription = this.calibrationAPI.getExchangeRates(this.workspaceEffectiveDate, res)
+        .subscribe(exchangeRates => {
+          this.exchangeRates = {...this.exchangeRates, ..._.keyBy(exchangeRates, 'currencyCode')};
+          this.summaryEpMetricsConfig = {
+            ...this.summaryEpMetricsConfig,
+            selectedCurrency: currency
+          };
+          this.detectChanges();
+          this.exchangeRatesSubscription && this.exchangeRatesSubscription.unsubscribe();
+        });
+
+
+  }
+
 }

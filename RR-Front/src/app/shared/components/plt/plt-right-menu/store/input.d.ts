@@ -1,4 +1,5 @@
 export interface Input {
+  wsIdentifier?: string;
   visible: boolean;
   mode: string;
   pltHeaderId: string;
