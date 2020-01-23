@@ -1,13 +1,13 @@
 <div class="summary-epMetrics-container">
   <div class="dropdown-container">
     <div class="left">
-        <nz-dropdown [nzTrigger]="'click'">
+        <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}">
           <a nz-dropdown>
             <div class="dropdown-wrap" [style.width]="'108px'">
               <div class="dropdown-wrap-title">
                 <span class="dropdown-title">Currency</span>
                 <span class="dropdown-item-selected">
-                  USD
+                  {{summaryEpMetricsConfig?.selectedCurrency}}
               </span>
               </div>
               <div class="dropdown-icon">
@@ -16,7 +16,7 @@
             </div>
           </a>
           <ul nz-menu>
-            <li nz-menu-item *ngFor="let currency of constants?.currencies">
+            <li nz-menu-item *ngFor="let currency of constants?.currencies" (click)="currencyChange(currency)">
               {{currency}}
             </li>
           </ul>
@@ -67,7 +67,7 @@
                 <tr>
                   <td>{{rowData}}</td>
                   <td *ngFor="let col of epMetricsTableConfig.columns">
-                    {{epMetrics[col.field][rowData] | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
+                    {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
                   </td>
                 </tr>
               </ng-template>
@@ -98,19 +98,19 @@
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <!--              <ng-template pTemplate="footer" let-columns>

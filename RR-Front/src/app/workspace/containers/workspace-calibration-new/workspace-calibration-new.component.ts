@@ -59,6 +59,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columnsLength: number
   };
   rowKeys: any;
+  exchangeRates: any;
 
   //POP-UPs
   selectedAdjustment: any;
@@ -87,6 +88,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   //Sub
   validationSub: Subscription;
+  exchangeRatesSubscription: Subscription;
   private isExpanded: boolean = false;
 
 
@@ -113,6 +115,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       selectedCurrency: null,
       filterData: {}
     };
+    this.exchangeRates= {};
 
     this.columnsConfig = {
       ...this.columnsConfig,
@@ -164,8 +167,20 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.actions$
         .pipe(
             ofActionSuccessful(fromWorkspaceStore.LoadGroupedPltsByPure),
-            map( r => _.uniq(_.map(this.data, el => el.currencyCode)))
-        ).subscribe(d => console.log(d));
+            map( r => {
+              let res= _.map(this.data, el => el.currencyCode);
+
+              if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === this.tableConfig.selectedCurrency)) {
+                res= [...res, this.tableConfig.selectedCurrency];
+              }
+
+              return _.uniq(res);
+            }),
+            switchMap( currencies => this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, currencies))
+        ).subscribe(exchangeRates => {
+          this.exchangeRates = _.keyBy(exchangeRates, 'currencyCode');
+          this.detectChanges();
+    });
 
   }
 
@@ -740,10 +755,28 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   currencyChange(currency) {
-    this.tableConfig = {
-        ...this.tableConfig,
-      selectedCurrency: currency
+
+    let res= _.map(this.data, el => el.currencyCode);
+
+    if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === currency)) {
+      res= [...res, currency];
     }
+
+    res = _.uniq(res);
+
+
+    this.exchangeRatesSubscription = this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, res)
+        .subscribe(exchangeRates => {
+          this.exchangeRates = {...this.exchangeRates, ..._.keyBy(exchangeRates, 'currencyCode')};
+          this.tableConfig = {
+            ...this.tableConfig,
+            selectedCurrency: currency
+          };
+          this.detectChanges();
+          this.exchangeRatesSubscription && this.exchangeRatesSubscription.unsubscribe();
+        });
+
+
   }
 
 }
