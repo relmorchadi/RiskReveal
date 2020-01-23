@@ -483,22 +483,26 @@
 
 .line-height-m {
   line-height: 32px;
+  height: 32px;
   font-size: 14px;
   padding-left: 1.5rem;
 
   @media screen and (min-width: 1450px) and (max-width: 1690px) {
     line-height: 28px;
+    height: 28px;
     font-size: 13px;
   }
 
   @media screen and (min-width: 1250px) and (max-width: 1450px) {
     line-height: 24px;
+    height: 24px;
     font-size: 11px;
     padding-left: 1rem;
   }
 
   @media screen and (max-width: 1250px) {
     line-height: 20px;
+    height: 20px;
     font-size: 9px;
     padding-left: 0.5rem;
   }

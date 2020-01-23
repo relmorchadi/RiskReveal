@@ -130,10 +130,10 @@
         </div>
       </div>
       <div class="project-kpi-details pb-3">
-        <div class="project-kpi-details-title flex-align-Ws" *ngIf="project?.projectType !== 'FAC'">
+        <div class="project-kpi-details-title flex-align-Ws line-height-m" *ngIf="project?.projectType !== 'FAC'">
           <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
-          <span *ngIf="project.sourceWsName" class="source-Ws line-height-m">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
-          <a class="project-link line-height-m" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
+          <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
+          <a class="project-link" *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}
             [{{project?.sourceProjectId}}]</a>
         </div>
         <div class="d-flex flex-column project-kpi-details-title fac-detail-panel"
