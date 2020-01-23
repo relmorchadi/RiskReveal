@@ -274,7 +274,7 @@
                       <ng-container *ngIf="itemsE.scanning">
                        <span class="loading">Scanning</span>
                        <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
-                     </ng-container>
+                      </ng-container>
                       <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
@@ -445,8 +445,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [context]="tabStatus" [data]="summary.portfolios"></portfolio-result>
-        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
+        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 

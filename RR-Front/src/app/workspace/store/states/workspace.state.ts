@@ -350,15 +350,17 @@ export class WorkspaceState {
     return {
       analysis: _.flatten(
         _.keys(analysis).map(rdmId => _.map( _.toArray(analysis[rdmId]), item => ({
+          ...item,
           rdmId,
           rdmName: rdms[rdmId].name,
-          analysisId: item.rlId,
-          analysisName: item.analysisName,
-          rlAnalysisId: item.rlAnalysisId
+          analysisId: item.rlId
+          // analysisName: item.analysisName,
+          // rlAnalysisId: item.rlAnalysisId
         }) ))
       ),
       portfolios: _.flatten(
         _.keys(portfolios).map(edmId => _.map( _.toArray(portfolios[edmId]), item => ({
+          ...item,
           edmId,
           edmName: edms[edmId].name,
           currency: item.agCurrency,
@@ -971,60 +973,11 @@ export class WorkspaceState {
     this.riskLinkFacade.toggleRiskLinkPortfolio(ctx, payload);
   }
 
-  @Action(fromWS.ToggleRiskLinkAnalysisAction)
-  toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkAnalysisAction) {
-    this.riskLinkFacade.toggleRiskLinkAnalysis(ctx, payload);
-  }
-
-  @Action(fromWS.ToggleRiskLinkResultAction)
-  toggleRiskLinkResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkResultAction) {
-    this.riskLinkFacade.toggleRiskLinkResult(ctx, payload);
-  }
-
-  @Action(fromWS.ToggleRiskLinkSummaryAction)
-  toggleRiskLinkSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkSummaryAction) {
-    this.riskLinkFacade.toggleRiskLinkSummary(ctx, payload);
-  }
-
-  @Action(fromWS.ToggleRiskLinkFPStandardAction)
-  toggleRiskLinkFPStandard(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkFPStandardAction) {
-    this.riskLinkFacade.toggleRiskLinkFPStandard(ctx, payload);
-  }
-
-  @Action(fromWS.ToggleRiskLinkFPAnalysisAction)
-  toggleRiskLinkFPAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkFPAnalysisAction) {
-    this.riskLinkFacade.toggleRiskLinkFPAnalysis(ctx, payload);
-  }
-
-  @Action(fromWS.ToggleAnalysisLinkingAction)
-  toggleAnalysisLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleAnalysisLinkingAction) {
-    this.riskLinkFacade.toggleAnalysisLinking(ctx, payload);
-  }
-
-  @Action(fromWS.TogglePortfolioLinkingAction)
-  togglePortfolioLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePortfolioLinkingAction) {
-    this.riskLinkFacade.togglePortfolioLinking(ctx, payload);
-  }
-
-  @Action(fromWS.AddToBasketAction)
-  addToBasket(ctx: StateContext<WorkspaceModel>) {
-    return this.riskLinkFacade.addToBasket(ctx);
-  }
-
-  @Action(fromWS.AddToBasketDefaultAction)
-  addToBasketDefault(ctx: StateContext<WorkspaceModel>) {
-    return this.riskLinkFacade.addToBasketDefault(ctx);
-  }
-
   @Action(fromWS.TriggerImportAction)
   importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TriggerImportAction) {
     return this.riskLinkFacade.triggerImport(ctx, payload);
   }
 
-  @Action(fromWS.ApplyFinancialPerspectiveAction)
-  applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyFinancialPerspectiveAction) {
-    this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
-  }
 
   @Action(fromWS.ApplyRegionPerilAction)
   applyRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyRegionPerilAction) {
@@ -1056,19 +1009,9 @@ export class WorkspaceState {
     this.riskLinkFacade.saveEDMAndRDMSelection(ctx);
   }
 
-  @Action(fromWS.SynchronizeEDMAndRDMSelectionAction)
-  synchronizeEDMAndRDMSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SynchronizeEDMAndRDMSelectionAction) {
-    this.riskLinkFacade.synchronizeEDMAndRDMSelection(ctx);
-  }
-
   @Action(fromWS.BasicScanEDMAndRDMAction)
   basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.BasicScanEDMAndRDMAction) {
     return this.riskLinkFacade.basicScanEDMAndRDM(ctx, payload);
-  }
-
-  @Action(fromWS.CreateLinkingAction)
-  createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
-    this.riskLinkFacade.createLinking(ctx, payload);
   }
 
   @Action(fromWS.UpdateStatusLinkAction)
@@ -1091,49 +1034,14 @@ export class WorkspaceState {
     this.riskLinkFacade.removeEDMAndRDMSelection(ctx);
   }
 
-  @Action(fromWS.DeleteFromBasketAction)
-  deleteFromBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteFromBasketAction) {
-    this.riskLinkFacade.deleteFromBasket(ctx, payload);
-  }
-
   @Action(fromWS.DeleteEdmRdmAction)
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
     this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
-  // @Action(fromWS.DeleteLinkAction)
-  // deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
-  //   this.riskLinkFacade.deleteLink(ctx, payload);
-  // }
-  //
-  // @Action(fromWS.DeleteInnerLinkAction)
-  // deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
-  //   this.riskLinkFacade.deleteInnerLink(ctx, payload);
-  // }
-  //
-  // @Action(fromWS.LoadLinkingDataAction)
-  // loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
-  //   this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
-  // }
-  //
-  // @Action(fromWS.LoadFacDataAction)
-  // loadFacData(ctx: StateContext<WorkspaceModel>) {
-  //   return this.riskLinkFacade.loadFacData(ctx);
-  // }
-
   @Action(fromWS.LoadDivisionSelection)
   loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
     this.riskLinkFacade.loadDivisionSelection(ctx);
-  }
-
-  @Action(fromWS.LoadRiskLinkAnalysisDataAction)
-  loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkAnalysisDataAction) {
-    return this.riskLinkFacade.loadRiskLinkAnalysisData(ctx, payload);
-  }
-
-  @Action(fromWS.LoadRiskLinkPortfolioDataAction)
-  loadRiskLinkPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkPortfolioDataAction) {
-    return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
@@ -1141,15 +1049,14 @@ export class WorkspaceState {
     return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
   }
 
+  @Action(fromWS.ToggleRiskLinkAnalysisAction)
+  toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkAnalysisAction) {
+    this.riskLinkFacade.toggleRiskLinkAnalysis(ctx, payload);
+  }
+
   @Action(fromWS.ToggleAnalysisForLinkingAction)
   toggleAnalysisForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleAnalysisForLinkingAction) {
     this.riskLinkFacade.toggleAnalysisForLinking(ctx, payload);
-  }
-
-  /** ACTION ADDED EDM AND RDM */
-  @Action(fromWS.SelectRiskLinkEDMAndRDMAction)
-  selectRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.selectRiskLinkEDMAndRDM(ctx);
   }
 
   @Action(fromWS.SelectFacRiskLinkEDMAndRDMAction)
@@ -1175,14 +1082,14 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadRiskLinkData(ctx, payload);
   }
 
-  @Action(fromWS.RunDetailedScanForTreatyAction)
-  runDetailedScanForTreaty(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
-    return this.riskLinkFacade.runDetailedScanForTreaty(ctx, payload);
+  @Action(fromWS.RunDetailedScanAction)
+  runDetailedScanForTreaty(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RunDetailedScanAction) {
+    return this.riskLinkFacade.runDetailedScan(ctx, payload);
   }
 
-  @Action(fromWS.RunDetailedScanForFacAction)
-  runDetailedScanForFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
-    return this.riskLinkFacade.runDetailedScanForFAC(ctx, payload);
+  @Action(fromWS.AddToImportBasket)
+  addToImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFinancialPerspectiveAction) {
+    return this.riskLinkFacade.addToImportBasket(ctx, payload);
   }
 
   @Action(fromWS.PatchAnalysisResultAction)

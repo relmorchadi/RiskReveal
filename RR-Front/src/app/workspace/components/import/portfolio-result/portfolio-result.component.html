@@ -89,8 +89,16 @@
                 </div>
                 <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                 <div *ngIf="col.type === 'progress'">
-                  <nz-progress [nzPercent]="0"
-                               [nzWidth]="20" nzType="circle"></nz-progress>
+                  <div class="text-data" *ngIf="col.type === 'progress'">
+                    <ng-container *ngIf="!rowData.isScanning; else scanning">
+                      <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                    </ng-container>
+                    <ng-template #scanning>
+<!--                      <span class="loading">Scanning</span>-->
+                      <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
+                    </ng-template>
+                  </div>
                 </div>
                 <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
                         <span *ngIf="rowData?.exposedLocation" class="indicator-flag"
