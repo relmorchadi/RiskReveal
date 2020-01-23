@@ -3,11 +3,12 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
-import com.scor.rr.domain.enums.ScanLevelEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.runnables.AnalysisDetailedScanRunnableTask;
+import com.scor.rr.service.runnables.PortfolioDetailedScanRunnableTask;
 import com.scor.rr.util.Utils;
 import org.apache.commons.collections.keyvalue.MultiKey;
 import org.apache.commons.lang.StringUtils;
@@ -29,8 +30,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.sql.Types;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static com.scor.rr.util.Utils.applyOffsetSizeToList;
@@ -101,6 +101,12 @@ public class RmsService {
     @Autowired
     private RmsInstanceCache rmsInstanceCache;
 
+    @Autowired
+    private AnalysisDetailedScanRunnableTask analysisDetailedScanRunnableTask;
+
+    @Autowired
+    private PortfolioDetailedScanRunnableTask portfolioDetailedScanRunnableTask;
+
     /********** Scan Basic / Detailed **********/
 
 
@@ -147,19 +153,60 @@ public class RmsService {
                 scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
     }
 
-//    public DetailedScanResult paralleledDetailedScan(DetailedScanDto detailedScanDto) {
-//        ExecutorService executorService = Executors.newFixedThreadPool(
-//                detailedScanDto.getRlAnalysisList().size() +
-//                        detailedScanDto.getRlPortfolioList().size());
-//
-//        detailedScanDto.getRlAnalysisList().forEach(analysisHeader ->
-//                executorService.execute(() -> this.scanAnalysisDetail(detailedScanDto.getInstanceId(), Collections.singletonList(analysisHeader), detailedScanDto.getProjectId()))
-//        );
-//
-//        detailedScanDto.getRlPortfolioList().forEach(portfolioHeader ->
-//                executorService.execute(() -> this.scanPortfolioDetail(detailedScanDto.getInstanceId(), Collections.singletonList(portfolioHeader), detailedScanDto.getProjectId()))
-//        );
-//    }
+    public DetailedScanResult paralleledDetailedScan(DetailedScanDto detailedScanDto) {
+
+        List<Future<List<RLAnalysis>>> analysisFutures = new ArrayList<>();
+        List<Future<List<RLPortfolio>>> portfolioFutures = new ArrayList<>();
+
+        int numberOfThreads = detailedScanDto.getRlAnalysisList().size() +
+                detailedScanDto.getRlPortfolioList().size();
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+
+        CountDownLatch countDownLatch = new CountDownLatch(numberOfThreads);
+
+
+        detailedScanDto.getRlAnalysisList().forEach(analysisHeader -> {
+            analysisDetailedScanRunnableTask.setCountDownLatch(countDownLatch);
+            analysisDetailedScanRunnableTask.setInstanceId(detailedScanDto.getInstanceId());
+            analysisDetailedScanRunnableTask.setProjectId(detailedScanDto.getProjectId());
+            analysisDetailedScanRunnableTask.setHeaders(Collections.singletonList(analysisHeader));
+            analysisFutures.add(executorService.submit(analysisDetailedScanRunnableTask));
+        });
+
+        detailedScanDto.getRlPortfolioList().forEach(portfolioHeader -> {
+            portfolioDetailedScanRunnableTask.setCountDownLatch(countDownLatch);
+            portfolioDetailedScanRunnableTask.setInstanceId(detailedScanDto.getInstanceId());
+            portfolioDetailedScanRunnableTask.setProjectId(detailedScanDto.getProjectId());
+            portfolioDetailedScanRunnableTask.setHeaders(Collections.singletonList(portfolioHeader));
+            portfolioFutures.add(executorService.submit(portfolioDetailedScanRunnableTask));
+        });
+
+        try {
+            countDownLatch.await();
+            return new DetailedScanResult(analysisFutures.stream().flatMap(future -> {
+                try {
+                    return future.get().stream();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }).filter(Objects::nonNull).map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
+                    .collect(Collectors.toList()),
+                    portfolioFutures.stream().flatMap(future1 -> {
+                        try {
+                            return future1.get().stream();
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }).collect(Collectors.toList()));
+        } catch (InterruptedException ex) {
+            logger.error("a thread has been interrupted during the detailed scan");
+        } catch (Exception ex) {
+            logger.error("an error has occurred during detailed scan parallelism");
+        }
+        return null;
+    }
 
     /********** END :Scan Basic / Detailed **********/
 
@@ -245,14 +292,12 @@ public class RmsService {
         return rdmAnalysisBasics.size();
     }
 
-    private List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
+    public List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
 
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
         Map<Long, RLAnalysis> cache = new HashMap<>();
 
-        // TODO eppoint = 1/10 ....
-        List<Float> epPoints = Arrays.asList(1 / 10f, 1 / 50f, 1 / 100f, 1 / 250f, 1 / 500f, 1 / 1000f);
-        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
+
 
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
 
@@ -262,27 +307,26 @@ public class RmsService {
             rlAnalysisList.stream().map(item -> new MultiKey(item.getRdmId(), item.getRdmName())).distinct()
                     .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
 
-            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
-
-            ExecutorService executorService = Executors.newFixedThreadPool(1);
-            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
+//            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
+//
+//            ExecutorService executorService = Executors.newFixedThreadPool(1);
+//            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
 
             for (Map.Entry<MultiKey, List<Long>> multiKeyListEntry : analysisByRdms.entrySet()) {
 
                 Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
-                this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue()).stream()
-                        .map(rdmAnalysis -> {
+                this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                        .forEach(rdmAnalysis -> {
                             RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             allScannedAnalysis.add(rlAnalysis);
                             cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
-                            return rlAnalysis;
-                        }).forEach(rdmAnalysis -> this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rdmAnalysis.getRlAnalysisId()));
-
+                            //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
+                        });
                 rlAnalysisRepository.saveAll(allScannedAnalysis);
 
                 rlAnalysisProfileRegionsRepository.saveAll(
@@ -324,6 +368,11 @@ public class RmsService {
         }
     }
 
+    private void updateRLPortfolio(RLPortfolio rlPortfolio, EdmPortfolio edmPortfolio) {
+        rlPortfolio.setTiv(edmPortfolio.getTiv());
+        rlPortfolio.setNumber(edmPortfolio.getNumber());
+    }
+
     private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
         rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(edm.getRlModelDataSourceId());
         List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
@@ -339,7 +388,7 @@ public class RmsService {
         return edmPortfolioBasics.size();
     }
 
-    private List<RLPortfolio> scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
+    public List<RLPortfolio> scanPortfolioDetail(String instanceId, List<PortfolioHeader> rlPortfolioList, Long projectId) {
 
         Integer runId;
         Map<MultiKey, List<String>> portfolioIdAndTypeAndCurrencyByEdms = new HashMap<>();
@@ -361,22 +410,23 @@ public class RmsService {
 
                 this.listEdmPortfolio(instanceId, edmId, edmName, multiKeyListEntry.getValue())
                         .forEach(edmPortfolio -> {
-                            this.rlPortfolioRepository.updatePortfolioById(projectId, edmPortfolio);
                             RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmPortfolio.getEdmId(),
                                     edmPortfolio.getEdmName(), edmPortfolio.getPortfolioId(), projectId);
+                            this.updateRLPortfolio(rlPortfolio, edmPortfolio);
                             allScannedPortfolios.add(rlPortfolio);
                         });
 
-                this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, runId)
-                        .stream()
-                        .map(portfolioAnalysisRegions -> {
-                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
-                            rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
-                            rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
-                            rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
-                            return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
-                        })
-                        .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
+                rlPortfolioRepository.saveAll(allScannedPortfolios);
+//                this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, runId)
+//                        .stream()
+//                        .map(portfolioAnalysisRegions -> {
+//                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
+//                            rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
+//                            rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
+//                            rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
+//                            return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
+//                        })
+//                        .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
 
                 this.removeEDMPortfolioContext(instanceId, runId);
             }
@@ -838,7 +888,7 @@ public class RmsService {
         return new NamedParameterJdbcTemplate(this.getJdbcTemplate(instanceId));
     }
 
-    private void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, Long projectId, List<Float> epPoints, List<Long> analysisIds, List<String> fpCodes) {
+    public void extractSourceEpHeaders(String instanceId, Long rdmId, String rdmName, Long projectId, List<Float> epPoints, List<Long> analysisIds, List<String> fpCodes) {
 
         List<RdmAnalysisEpCurves> epCurves = this.getRdmAllAnalysisEpCurves(instanceId, rdmId, rdmName, epPoints, analysisIds, fpCodes);
 
