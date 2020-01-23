@@ -11,6 +11,7 @@
   [scrollHeight]="'calc( 100vh - 450px )'"
   [columnResizeMode]="'expand'"
   (onColResize)="onColumnResize($event)"
+  syncScroll
 >
 
   <ng-template pTemplate="colgroup" let-columns>
@@ -221,7 +222,7 @@
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-isLastColumn="isLastColumn">
     <ng-container>
-      <th [id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
+      <th [id]="col?.field" [attr.title]="col?.isFrozen"  [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
         </ng-container>
