@@ -368,7 +368,7 @@ public class RmsService {
 
     private void updateRLPortfolio(RLPortfolio rlPortfolio, EdmPortfolio edmPortfolio) {
         rlPortfolio.setTiv(edmPortfolio.getTiv());
-        rlPortfolio.setNumber(edmPortfolio.getNumber());
+        //rlPortfolio.setNumber(edmPortfolio.getNumber());
     }
 
     private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
