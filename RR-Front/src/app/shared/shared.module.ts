@@ -43,7 +43,6 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
   exports: [
     CommonModule,
     NgZorroAntdModule,
-    HighlightDirective,
     ContextMenuModule,
     TableModule,
     ReactiveFormsModule,
@@ -56,7 +55,8 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
     ColorGithubModule,
     AngularResizedEventModule,
     ...COMPONENTS,
-    ...PIPES
+    ...PIPES,
+      ...DIRECTIVES
   ]
 })
 export class SharedModule { }

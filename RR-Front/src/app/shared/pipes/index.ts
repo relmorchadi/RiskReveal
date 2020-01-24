@@ -17,6 +17,7 @@ import {FalselyFilterPipe} from "./falsely-filter.pipe";
 import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 import {FinancialUnitPipe} from "../../workspace/pipes/financial-unit.pipe";
+import {ExchangeRatePipe} from "./exchange-rate.pipe";
 
 export const PIPES = [
   CalibratePipe,
@@ -37,7 +38,8 @@ export const PIPES = [
   FilterByStatusPipe,
   FalselyFilterPipe,
   StartCasePipe,
-  FinancialUnitPipe
+  FinancialUnitPipe,
+  ExchangeRatePipe
 ];
 
 export * from './trim-secondary-format.pipe';

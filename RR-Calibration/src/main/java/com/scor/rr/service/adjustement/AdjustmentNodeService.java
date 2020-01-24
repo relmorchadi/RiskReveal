@@ -169,7 +169,7 @@ public class AdjustmentNodeService {
             }
         }
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest(
-                defaultNode.getSequence(),
+                1,
                 defaultNode.getCappedMaxExposure(),
                 defaultNode.getAdjustmentBasis().getAdjustmentBasisId(),
                 defaultNode.getAdjustmentType().getAdjustmentTypeId(),
