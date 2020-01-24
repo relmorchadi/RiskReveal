@@ -1,6 +1,5 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
@@ -177,8 +176,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId) {
-        return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+    public boolean checkIfProjectHasBeenImportedBefore(Long projectId) {
+        //return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+        return !rlImportSelectionRepository.findByProjectId(projectId).isEmpty() ||
+                !rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId).isEmpty();
     }
 
     @Override
@@ -207,19 +208,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId) {
+    public List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId) {
         List<RLImportSelection> data = rlImportSelectionRepository.findByProjectId(projectId);
-        List<ImportSelectionDto> importedDataSources = new ArrayList<>();
+        List<RLImportSelectionDtoWithAnalysisInfo> importedAnalysis = new ArrayList<>();
 
         if (data != null && !data.isEmpty()) {
             data.forEach(element -> {
-                ImportSelectionDto rlImportSelection = importedDataSources.stream()
+                RLImportSelectionDtoWithAnalysisInfo rlImportSelection = importedAnalysis.stream()
                         .filter(ele -> ele.getRlAnalysisId().equals(element.getRlAnalysis().getRlAnalysisId())
                                 && ele.getProjectId().equals(element.getProjectId())).findFirst().orElse(null);
 
                 if (rlImportSelection == null) {
-                    rlImportSelection = new ImportSelectionDto(element);
-                    importedDataSources.add(rlImportSelection);
+                    rlImportSelection = new RLImportSelectionDtoWithAnalysisInfo(element);
+                    importedAnalysis.add(rlImportSelection);
                 } else {
 
                     if (element.getDivision() != null)
@@ -237,7 +238,31 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 }
             });
         }
-        return importedDataSources;
+        return importedAnalysis;
+    }
+
+    @Override
+    public List<RLPortfolioSelectionDtoWithPortfolioInfo> getRLPortfolioConfigs(Long projectId) {
+        List<RLPortfolioSelection> data = rlPortfolioSelectionRepository.findByProjectId(projectId);
+        List<RLPortfolioSelectionDtoWithPortfolioInfo> importedPortfolios = new ArrayList<>();
+
+        if (data != null && !data.isEmpty()) {
+            data.forEach(element -> {
+                RLPortfolioSelectionDtoWithPortfolioInfo rlImportSelection = importedPortfolios.stream()
+                        .filter(ele -> ele.getRlPortfolioId().equals(element.getRlPortfolio().getRlPortfolioId())
+                                && ele.getProjectId().equals(element.getProjectId())).findFirst().orElse(null);
+
+                if (rlImportSelection == null) {
+                    rlImportSelection = new RLPortfolioSelectionDtoWithPortfolioInfo(element);
+                    importedPortfolios.add(rlImportSelection);
+                } else {
+
+                    if (element.getDivision() != null)
+                        rlImportSelection.addToDivisionList(element.getDivision());
+                }
+            });
+        }
+        return importedPortfolios;
     }
 
 }
