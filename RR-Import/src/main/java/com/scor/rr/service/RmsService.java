@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import static com.scor.rr.util.Utils.applyOffsetSizeToList;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -298,7 +297,6 @@ public class RmsService {
         Map<Long, RLAnalysis> cache = new HashMap<>();
 
 
-
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
 
 
@@ -464,20 +462,20 @@ public class RmsService {
 
     /****** Risk Link Interface ******/
 
-    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources";
+    public List<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
         this.logger.debug("Service starts executing the query ...");
+
+        if (!StringUtils.isEmpty(keyword))
+            sql += ", @filter=" + keyword;
+
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
                 sql,
                 new DataSourceRowMapper());
-        if (!StringUtils.isEmpty(keyword))
-            dataSources = dataSources.stream().filter(ds -> StringUtils.containsIgnoreCase(ds.getName(), keyword))
-                    .collect(toList());
 
-        List<DataSource> parsedDatasources = applyOffsetSizeToList(dataSources, offset, size);
 
-        this.logger.debug("the data returned ", parsedDatasources);
-        return new PageImpl<>(parsedDatasources, PageRequest.of(offset / size, size), dataSources.size());
+        this.logger.debug("the data returned ", dataSources);
+        return dataSources;
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {
