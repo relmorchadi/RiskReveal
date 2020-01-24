@@ -182,10 +182,19 @@ public class ConfigurationResource {
         }
     }
 
+    @GetMapping(value = "get-imported-portfolio-configuration")
+    public ResponseEntity<?> getImportedPortfolioConfiguration(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getRLPortfolioConfigs(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "get-global-data-sources")
     public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
         try {
-            if (configurationService.checkIfProjectHasBeenImportedBefore(projectId) != null)
+            if (configurationService.checkIfProjectHasBeenImportedBefore(projectId))
                 return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
             else
                 return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
