@@ -27,7 +27,9 @@ public interface ConfigurationService {
 
     List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId);
 
-    boolean checkIfProjectHasBeenImportedBefore(Long projectId);
+    ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
+
+    boolean checkIfProjectHasConfigurations(Long projectId);
 
     List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
 
