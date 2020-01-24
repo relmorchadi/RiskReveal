@@ -11,6 +11,7 @@ import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibr
 import {EMPTY, forkJoin, of} from 'rxjs';
 import {defaultInuringState} from './inuring.service';
 import {ProjectApi} from "./api/project.api";
+import {RiskLink} from "../model/risk-link.model";
 
 @Injectable({
   providedIn: 'root'
@@ -111,58 +112,7 @@ export class WorkspaceService {
           adjustementType: _.assign({}, ADJUSTMENT_TYPE),
           allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
         },
-        riskLink: {
-          listEdmRdm: {
-            data: null,
-            dataSelected: [],
-            selectedListEDMAndRDM: {edm: null, rdm: null},
-            totalNumberElement: 0,
-            searchValue: '',
-            numberOfElement: 0
-          },
-          linking: {
-            edm: null,
-            rdm: {data: null, selected: null},
-            autoLinks: null,
-            linked: [],
-            analysis: null,
-            portfolio: null,
-            autoMode: false
-          },
-          display: {
-            displayListRDMEDM: false,
-            displayTable: false,
-            displayImport: false,
-          },
-          collapse: {
-            collapseHead: true,
-            collapseAnalysis: true,
-            collapseResult: true,
-          },
-          financialValidator: {
-            rmsInstance: {data: [], selected: ''},
-            financialPerspectiveELT: {data: [], selected: ''},
-            targetCurrency: {data: [], selected: 'Main Liability Currency (MLC)'},
-            division: {data: [], selected: 'Division N°1'},
-          },
-          financialPerspective: {
-            rdm: {data: null, selected: null},
-            analysis: null,
-            treaty: null,
-            standard: null,
-            target: 'currentSelection'
-          },
-          analysis: [],
-          portfolios: [],
-          results: null,
-          summaries: null,
-          selection: null,
-          facSelection: {},
-          importPLTs: {},
-          selectedEDMOrRDM: null,
-          activeAddBasket: false,
-          synchronize: false
-        },
+        riskLink: new RiskLink(),
         scopeOfCompletence: {
           data: {},
           wsType: null
@@ -327,6 +277,7 @@ export class WorkspaceService {
     return ctx.patchState(produce(ctx.getState(), draft => {
       const {projects} = draft.content[wsIdentifier];
       draft.content[wsIdentifier].projects = [...this._selectProject(projects, projectIndex)];
+      draft.content[wsIdentifier].riskLink= _.merge({}, new RiskLink());
     }));
   }
 
