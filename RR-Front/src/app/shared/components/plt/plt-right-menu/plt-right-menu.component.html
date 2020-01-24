@@ -54,6 +54,8 @@
                        [summaryEpMetricsConfig]="summaryEpMetricsConfig"
                        [rpValidation]="rpValidation"
                        [returnPeriodConfig]="returnPeriodConfig"
+                       [exchangeRates]="exchangeRates"
+                       [sourceCurrency]="selectedPLT?.pltCcy"
                        (actionDispatcher)="handleEpMetrics($event)"
                ></app-summary-ep-metrics>
              </ng-container>

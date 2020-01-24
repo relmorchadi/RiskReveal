@@ -8,21 +8,10 @@ import java.util.Objects;
 @Table(name = "DefaultAdjustmentNode")
 public class DefaultAdjustmentNode {
     private int defaultAdjustmentNodeId;
-    private Integer sequence;
     private Boolean isCappedMaxExposure;
     private AdjustmentBasis adjustmentBasis;
     private AdjustmentType adjustmentType;
     private DefaultAdjustmentThreadEntity defaultAdjustmentThread;
-
-    @Basic
-    @Column(name = "sequence", nullable = true)
-    public Integer getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
 
     @Id
     @Column(name = "DefaultAdjustmentNodeId", nullable = false)
@@ -50,13 +39,12 @@ public class DefaultAdjustmentNode {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentNode that = (DefaultAdjustmentNode) o;
         return defaultAdjustmentNodeId == that.defaultAdjustmentNodeId &&
-                Objects.equals(sequence, that.sequence) &&
                 Objects.equals(isCappedMaxExposure, that.isCappedMaxExposure);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sequence, defaultAdjustmentNodeId, isCappedMaxExposure);
+        return Objects.hash(defaultAdjustmentNodeId, isCappedMaxExposure);
     }
 
     @ManyToOne

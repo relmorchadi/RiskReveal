@@ -456,9 +456,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(data => {
                 const [p, analysisPortfolioSelection] = data;
                 const {analysis, portfolios} = analysisPortfolioSelection;
-                this.dispatch(new fromWs.AddToImportBasket({analysis, portfolios, context: this.tabStatus}));
-                const payloads = this.buildDetailScanPayloads(this.state.financialValidator.rmsInstance.selected.instanceId, p.projectId, analysis, portfolios);
-                _.forEach(payloads, p => this.dispatch(new fromWs.RunDetailedScanAction(p)));
+                this.dispatch([
+                    new fromWs.AddToImportBasket({analysis, portfolios, context: this.tabStatus}),
+                    new fromWs.RunDetailedScanAction({
+                        instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+                        projectId: p.projectId,
+                        analysis,
+                        portfolios
+                    })]);
+                // const payloads = this.buildDetailScanPayloads(this.state.financialValidator.rmsInstance.selected.instanceId, p.projectId, analysis, portfolios);
+                // _.forEach(payloads, p => this.dispatch(new fromWs.RunDetailedScanAction(p)));
             });
     }
 
@@ -547,37 +554,57 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getSelection(data) {
-      if (data.length > 1) {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-          this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
-            action: 'unSelectChunk',
-            data: this.getSelectedAnalysisIds()
-          }));
-          this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectChunk', data: _.map(data, a => a.rlAnalysisId)}));
-        } else {
-          this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
-            action: 'unSelectChunk',
-            data: this.getSelectedPortfolioIds()
-          }));
-          this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectChunk', data: _.map(data, p => p.rlPortfolioId)}));
+        if (data.length > 1) {
+            if (this.state.selectedEDMOrRDM === 'RDM') {
+                this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                    action: 'unSelectChunk',
+                    data: this.getSelectedAnalysisIds()
+                }));
+                this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                    action: 'selectChunk',
+                    data: _.map(data, a => a.rlAnalysisId)
+                }));
+            } else {
+                this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                    action: 'unSelectChunk',
+                    data: this.getSelectedPortfolioIds()
+                }));
+                this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                    action: 'selectChunk',
+                    data: _.map(data, p => p.rlPortfolioId)
+                }));
+            }
         }
-      }
-      this.UpdateCheckboxStatus();
+        this.UpdateCheckboxStatus();
     }
 
     selectOne(row) {
         if (this.state.selectedEDMOrRDM === 'RDM') {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, rlAnalysisId: row.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                value: true,
+                rlAnalysisId: row.rlAnalysisId
+            }));
         } else {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, rlPortfolioId: row.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                value: true,
+                rlPortfolioId: row.rlPortfolioId
+            }));
         }
     }
 
     unselectAllTable(scope) {
         if (scope === 'analysis') {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll', data: this.getSelectedAnalysisIds()}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'unselectAll',
+                data: this.getSelectedAnalysisIds()
+            }));
         } else if (scope === 'portfolio') {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll', data: this.getSelectedPortfolioIds()}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'unselectAll',
+                data: this.getSelectedPortfolioIds()
+            }));
         }
         this.UpdateCheckboxStatus();
     }
@@ -620,13 +647,21 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 action: 'unSelectChunk',
                 data: this.getSelectedAnalysisIds()
             }));
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, rlAnalysisId: row.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                value: true,
+                rlAnalysisId: row.rlAnalysisId
+            }));
         } else {
             this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                 action: 'unSelectChunk',
                 data: this.getSelectedPortfolioIds()
             }));
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, rlPortfolioId: row.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                value: true,
+                rlPortfolioId: row.rlPortfolioId
+            }));
         }
     }
 
@@ -641,9 +676,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     checkRow(event, rowData) {
         if (this.state.selectedEDMOrRDM === 'EDM') {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne',rlPortfolioId: rowData.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                rlPortfolioId: rowData.rlPortfolioId
+            }));
         } else {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', rlAnalysisId: rowData.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                rlAnalysisId: rowData.rlAnalysisId
+            }));
         }
         this.UpdateCheckboxStatus();
     }
@@ -743,11 +784,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     private getSelectedAnalysisIds() {
-      return _.keys(this.state.selection.analysis[this.state.selection.currentDataSource]);
+        return _.keys(this.state.selection.analysis[this.state.selection.currentDataSource]);
     }
 
     private getSelectedPortfolioIds() {
-      return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
+        return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
     }
 
 }

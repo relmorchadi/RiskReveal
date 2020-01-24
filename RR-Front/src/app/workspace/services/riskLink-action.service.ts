@@ -1203,10 +1203,12 @@ export class RiskLinkStateService {
         const {projectId, instanceId, userId} = payload;
         return this.riskApi.getSummaryOrDefaultDataSources(instanceId, projectId, userId)
             .pipe(mergeMap(({isSummary, content}: any) => {
-                if (isSummary) {
-                    ctx.dispatch(new fromWs.LoadSummaryAction({content, projectId}));
-                } else {
-                    ctx.dispatch(new fromWs.LoadDefaultDataSourcesAction({content, projectId, instanceId}));
+                if(_.size(content) > 0){
+                    if (isSummary) {
+                        ctx.dispatch(new fromWs.LoadSummaryAction({content, projectId}));
+                    } else {
+                        ctx.dispatch(new fromWs.LoadDefaultDataSourcesAction({content, projectId, instanceId}));
+                    }
                 }
                 return of(content);
             }), catchError(err => of(err)))
@@ -1216,7 +1218,7 @@ export class RiskLinkStateService {
         const {content, projectId} = payload;
         this.addDataSourcesSelection(ctx, content, false);
         return this.riskApi.getAnalysisPortfoliosByProject(projectId).pipe(
-            mergeMap(([analysis]: any[]) => {
+            mergeMap(([analysis,portfolios]: any[]) => {
                 ctx.patchState(produce(ctx.getState(), draft => {
                     const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
                     draft.content[wsIdentifier].riskLink.summary.analysis =
@@ -1230,10 +1232,23 @@ export class RiskLinkStateService {
                                     occurrenceBasis: null,
                                     overrideReason: null,
                                     rpOccurrenceBasis: null,
-                                    isScanning: false
+                                    isScanning: false,
+                                    rpCode: item.targetRegionPeril,
+                                    analysisCurrency: item.sourceCurrency
                                 }
                             }))
                         );
+                    draft.content[wsIdentifier].riskLink.summary.portfolios =_.merge({},
+                        ..._.map(portfolios, item => ({
+                            [item.rlPortfolioId]: {
+                                ...item,
+                                isScanning: false,
+                                name: item.portfolioName,
+                                number: item.portfolioNumber,
+                                agCurrency: item.sourceCurrency
+                            }
+                        }))
+                    );
                     _.forEach(content, ({dataSourceId, dataSourceName, dataSourceType, rlModelIdList}) => {
                         if (dataSourceType == 'RDM') {
                             draft.content[wsIdentifier].riskLink.selection.analysis[dataSourceId] = _.merge({},
@@ -1245,12 +1260,19 @@ export class RiskLinkStateService {
                                     }
                                 })))
                         } else if (dataSourceType == 'EDM') {
-                            //@TODO for portfolio
+                            draft.content[wsIdentifier].riskLink.selection.portfolios[dataSourceId] = _.merge({},
+                                ..._.map(rlModelIdList, id => ({
+                                    [id]: {
+                                        ...draft.content[wsIdentifier].riskLink.summary.portfolios[id],
+                                        rdmId: dataSourceId,
+                                        rmdName: dataSourceName
+                                    }
+                                })))
                         } else {
                             console.error('Unsupported DataSource Type', dataSourceType);
                         }
                     });
-                    if (analysis.length > 0) //@TODO for portfolio
+                    if ( (analysis.length  + portfolios.length) > 0)
                         draft.content[wsIdentifier].riskLink.display.displayImport = true;
                 }));
                 return of({analysis});

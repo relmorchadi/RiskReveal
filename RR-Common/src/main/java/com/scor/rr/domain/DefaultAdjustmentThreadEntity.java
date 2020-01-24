@@ -34,7 +34,7 @@ public class DefaultAdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "DefaultAdjustmentVersion", referencedColumnName = "DefaultAdjustmentVersionId")
+    @JoinColumn(name = "DefaultAdjustmentVersionId", referencedColumnName = "DefaultAdjustmentVersionId")
     public DefaultAdjustmentVersionEntity getDefaultAdjustmentVersion() {
         return defaultAdjustmentVersion;
     }
