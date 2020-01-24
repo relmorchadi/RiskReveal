@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -35,8 +37,8 @@ public class RLPortfolio {
     private String name;
     @Column(name = "RLPortfolioNumber")
     private String number;
-    //    @Column(name = "Created")
-//    private Date created;
+    @Column(name = "Created")
+    private Date created;
     @Column(name = "Description")
     private String description;
     @Column(name = "DescriptionType")
@@ -70,11 +72,16 @@ public class RLPortfolio {
     public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm) {
         this.entity = 1L;
         this.projectId = edm.getProjectId();
-        this.edmId = Long.valueOf(edm.getRlId());
+        this.edmId = edm.getRlId();
         this.edmName = edm.getName();
         this.rlId = edmPortfolioBasic.getPortfolioId();
         this.name = edmPortfolioBasic.getName();
-        //this.created = edmPortfolioBasic.getCreated();
+        try {
+            this.created = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(edmPortfolioBasic.getCreated());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        this.number = edmPortfolioBasic.getNumber();
         this.description = edmPortfolioBasic.getDescription();
         this.type = edmPortfolioBasic.getType();
         this.peril = edmPortfolioBasic.getPeril();
