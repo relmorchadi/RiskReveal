@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.domain.views.RLImportedDataSourcesAndAnalysis;
@@ -176,8 +177,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
-    public boolean checkIfProjectHasBeenImportedBefore(Long projectId) {
-        //return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+    public ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId) {
+        return projectImportRunRepository.findFirstByProjectIdOrderByRunId(projectId);
+    }
+
+    @Override
+    public boolean checkIfProjectHasConfigurations(Long projectId) {
         return !rlImportSelectionRepository.findByProjectId(projectId).isEmpty() ||
                 !rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId).isEmpty();
     }
