@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author Ayman IKAR
  * @created 19/12/2019
@@ -65,6 +67,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     private RLImportSelectionRepository rlImportSelectionRepository;
 
     @Autowired
+    private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
+
+    @Autowired
     private DivisionService divisionService;
 
     @Autowired
@@ -76,7 +81,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (rlModelDataSource != null) {
             log.debug("Fetching RLAnalysis for rlModelDataSource {}", rlModelDataSource.getRlModelDataSourceId());
             return rlAnalysisRepository.findByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId()).stream()
-                    .map(rlAnalysis -> modelMapper.map(rlAnalysis, RLAnalysisDto.class)).collect(Collectors.toList());
+                    .map(rlAnalysis -> modelMapper.map(rlAnalysis, RLAnalysisDto.class)).collect(toList());
         }
         return new ArrayList<>();
     }
@@ -87,7 +92,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         if (rlModelDataSource != null) {
             log.debug("Fetching RLPortfolio for rlModelDataSource {}", rlModelDataSource.getRlModelDataSourceId());
             return rlPortfolioRepository.findByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId()).stream()
-                    .map(rlPortfolio -> modelMapper.map(rlPortfolio, RLPortfolioDto.class)).collect(Collectors.toList());
+                    .map(rlPortfolio -> modelMapper.map(rlPortfolio, RLPortfolioDto.class)).collect(toList());
         }
         return new ArrayList<>();
     }
@@ -96,14 +101,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public List<RLAnalysisToTargetRAPDto> getTargetRapByAnalysisId(Long rlAnalysisId) {
         return rlAnalysisToTargetRAPRepository.findByRlAnalysisId(rlAnalysisId).stream()
                 .map(element -> modelMapper.map(element, RLAnalysisToTargetRAPDto.class))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
     public List<RegionPerilDto> getRegionPeril(Long rlAnalysisId) {
         return rlAnalysisToRegionPerilsRepository.findByRlModelAnalysisId(rlAnalysisId).stream()
                 .map(element -> modelMapper.map(element, RegionPerilDto.class))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @Override
@@ -145,7 +150,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
         return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
-                .map(RLDataSourcesDto::new).collect(Collectors.toList());
+                .map(RLDataSourcesDto::new).collect(toList());
     }
 
     @Override
@@ -211,4 +216,5 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         }
         return importedDataSources;
     }
+
 }

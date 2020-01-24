@@ -165,40 +165,39 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     ngOnInit() {
-        this.loadRefsData();
-
-        this.state$.pipe().subscribe(value => {
+        this.importInit();
+        this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.state = _.merge({}, value);
             this.detectChanges();
         });
-        this.listEdmRdm$.pipe().subscribe(value => {
+        this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.listEdmRdm = _.merge({}, value);
             this.detectChanges();
         });
-        this.ws$.pipe().subscribe(value => {
+        this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.ws = _.merge({}, value);
             this.wsStatus = this.ws.workspaceType;
             this.detectChanges();
         });
-        this.analysis$.pipe().subscribe(value => {
+        this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.analysis = _.merge({}, value);
             this.detectChanges();
         });
-        this.portfolios$.pipe().subscribe(value => {
+        this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.portfolios = _.merge({}, value);
             this.detectChanges();
         });
-        this.selectedProject$.pipe().subscribe(value => {
+        this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.selectedProject = value;
             this.tabStatus = _.get(value, 'projectType', null);
             console.log('selected project change', value);
-            this.loadRefsData();
-            this.loadDefaultDataSources();
+            this.importInit();
+            this.loadSummaryOrDefaultDataSources();
             this.detectChanges();
         });
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
-            this.loadRefsData();
+            this.importInit();
             this.detectChanges();
         });
         this.actions$
@@ -253,10 +252,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     }
 
-    loadDefaultDataSources() {
+    loadSummaryOrDefaultDataSources() {
         setTimeout(() => {
             if (this.selectedProject)
-                this.dispatch(new fromWs.LoadDefaultDataSourcesAction({
+                this.dispatch(new fromWs.LoadSummaryOrDefaultDataSourcesAction({
                     projectId: this.selectedProject.projectId,
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     userId: 1
@@ -730,7 +729,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         );
     }
 
-    private loadRefsData() {
+    private importInit() {
         if (!this.selectedProject) {
             console.error('No selected Project');
             return;
@@ -748,7 +747,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     private getSelectedPortfolioIds() {
-      return _.keys(this.state.selection.portfolio[this.state.selection.currentDataSource]);
+      return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
     }
 
 }
