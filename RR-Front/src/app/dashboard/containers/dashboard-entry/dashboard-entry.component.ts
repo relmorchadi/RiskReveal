@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ContentChild, ElementRef, OnInit, QueryList, ViewChild} from '@angular/core';
 import {CompactType, DisplayGrid, GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
@@ -11,6 +11,7 @@ import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
 import {DashData} from "./data";
 import {elementStylingMap} from "@angular/core/src/render3";
+import {createViewChild} from "@angular/compiler/src/core";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -106,12 +107,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         },
         {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         }
       ]
     },
@@ -180,12 +181,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
           componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         },
         {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
           componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         }
       ]
     },
@@ -245,12 +246,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
         componentName: 'facChartWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
       },
       {
         id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
         componentName: 'facSubsidiaryChartComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
       }
     ]
   };
@@ -260,6 +261,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   newFacCars: any;
   inProgressFacCars: any;
   archivedFacCars: any;
+
+  searchInput: ElementRef;
+  @ViewChild('searchInput') set assetInput(elRef: ElementRef) {
+    this.searchInput = elRef;
+    // this.detectChanges();
+  }
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
@@ -409,39 +416,36 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       name: this.newDashboardTitle,
       visible: true,
       items: _.map(selectedTreatyComponent,
-        ({componentName, title, icon}: any, key) => ({
-          id: key,
-          componentName,
-          name: title,
-          icon,
-          selected: false,
-          position: {rows: 2, cols: 3}
-        })
+        (dt: any, key) => {
+        return {...dt, id: key, name: dt.title, selected: false}
+      }
       ),
       fac: _.map(selectedFacComponent,
-        ({componentName, title, type, icon}: any, key) => ({
-          id: key,
-          componentName,
-          name: title,
-          icon,
-          type,
-          selected: false,
-          position: {rows: 2, cols: 3}
-        }))
+        (dt: any, key) => {
+        return {...dt, id: key, name: dt.title, selected: false}
+      })
     };
     if (item.name != null) {
       this.dashboards = [...this.dashboards, item];
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
-      this.newDashboardTitle = '';
+      this.emptyField();
       this.idTab = this.dashboards.length - 1;
       this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
       this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
     }
   }
 
-  consoleLog(event) {
-    console.log(event);
+  emptyField() {
+    this.newDashboardTitle = ''
+  }
+
+  focusInput() {
+    // this.assetInput;
+    setTimeout(dt => {
+      console.log(this.searchInput);
+      this.searchInput.nativeElement.focus();
+    })
   }
 
   deleteDashboard() {
