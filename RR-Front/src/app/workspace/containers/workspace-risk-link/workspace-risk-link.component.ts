@@ -456,17 +456,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(data => {
                 const [p, analysisPortfolioSelection] = data;
                 const {analysis, portfolios} = analysisPortfolioSelection;
-                this.dispatch(new fromWs.AddToImportBasket({analysis, portfolios, context: this.tabStatus}));
-                const payloads = this.buildDetailScanPayloads(this.state.financialValidator.rmsInstance.selected.instanceId, p.projectId, analysis, portfolios);
-                _.forEach(payloads, p => this.dispatch(new fromWs.RunDetailedScanAction(p)));
+                this.dispatch([
+                    new fromWs.AddToImportBasket({analysis, portfolios, context: this.tabStatus}),
+                    new fromWs.RunDetailedScanAction({
+                        instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+                        projectId: p.projectId,
+                        analysis,
+                        portfolios
+                    })]);
             });
-    }
-
-    private buildDetailScanPayloads(instanceId, projectId, analysis, portfolios): any[] {
-        return [
-            ..._.map(analysis, a => ({instanceId, projectId, analysis: [a], portfolios: []})),
-            ..._.map(portfolios, p => ({instanceId, projectId, analysis: [], portfolios: [p]}))
-        ];
     }
 
     getScrollableCols() {
@@ -547,37 +545,57 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getSelection(data) {
-      if (data.length > 1) {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-          this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
-            action: 'unSelectChunk',
-            data: this.getSelectedAnalysisIds()
-          }));
-          this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectChunk', data: _.map(data, a => a.rlAnalysisId)}));
-        } else {
-          this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
-            action: 'unSelectChunk',
-            data: this.getSelectedPortfolioIds()
-          }));
-          this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectChunk', data: _.map(data, p => p.rlPortfolioId)}));
+        if (data.length > 1) {
+            if (this.state.selectedEDMOrRDM === 'RDM') {
+                this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                    action: 'unSelectChunk',
+                    data: this.getSelectedAnalysisIds()
+                }));
+                this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                    action: 'selectChunk',
+                    data: _.map(data, a => a.rlAnalysisId)
+                }));
+            } else {
+                this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                    action: 'unSelectChunk',
+                    data: this.getSelectedPortfolioIds()
+                }));
+                this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                    action: 'selectChunk',
+                    data: _.map(data, p => p.rlPortfolioId)
+                }));
+            }
         }
-      }
-      this.UpdateCheckboxStatus();
+        this.UpdateCheckboxStatus();
     }
 
     selectOne(row) {
         if (this.state.selectedEDMOrRDM === 'RDM') {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, rlAnalysisId: row.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                value: true,
+                rlAnalysisId: row.rlAnalysisId
+            }));
         } else {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, rlPortfolioId: row.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                value: true,
+                rlPortfolioId: row.rlPortfolioId
+            }));
         }
     }
 
     unselectAllTable(scope) {
         if (scope === 'analysis') {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll', data: this.getSelectedAnalysisIds()}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'unselectAll',
+                data: this.getSelectedAnalysisIds()
+            }));
         } else if (scope === 'portfolio') {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll', data: this.getSelectedPortfolioIds()}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'unselectAll',
+                data: this.getSelectedPortfolioIds()
+            }));
         }
         this.UpdateCheckboxStatus();
     }
@@ -620,13 +638,21 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 action: 'unSelectChunk',
                 data: this.getSelectedAnalysisIds()
             }));
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, rlAnalysisId: row.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                value: true,
+                rlAnalysisId: row.rlAnalysisId
+            }));
         } else {
             this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                 action: 'unSelectChunk',
                 data: this.getSelectedPortfolioIds()
             }));
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, rlPortfolioId: row.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                value: true,
+                rlPortfolioId: row.rlPortfolioId
+            }));
         }
     }
 
@@ -641,9 +667,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     checkRow(event, rowData) {
         if (this.state.selectedEDMOrRDM === 'EDM') {
-            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne',rlPortfolioId: rowData.rlPortfolioId}));
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+                action: 'selectOne',
+                rlPortfolioId: rowData.rlPortfolioId
+            }));
         } else {
-            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', rlAnalysisId: rowData.rlAnalysisId}));
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+                action: 'selectOne',
+                rlAnalysisId: rowData.rlAnalysisId
+            }));
         }
         this.UpdateCheckboxStatus();
     }
@@ -685,7 +717,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     triggerImport() {
         const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
         const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
-
         forkJoin(
             [
                 this.selectedProject$,
@@ -696,6 +727,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(data => {
                 const [p, summary] = data;
                 const {projectId} = p;
+                if(this.tabStatus == 'FAC' && this._nonUniqDivisionPerAnalysis(summary.analysis)){
+                    alert('You cannot import multiple for the same divisions !');
+                    return;
+                }
                 this.dispatch(new fromWs.TriggerImportAction({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     projectId,
@@ -704,6 +739,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, portfolioConfigFields)
                 }));
             });
+    }
+
+    private _nonUniqDivisionPerAnalysis(analysis): boolean{
+        let data = {};
+        for(let a of analysis) {
+            if(data[a.rpCode])
+                data[a.rpCode].push(...a.divisions);
+            else
+                data[a.rpCode]= [...a.divisions]
+            if( _.size(data[a.rpCode]) > 0 )
+                return false;
+        }
+        return true;
     }
 
     private transformAnalysisResultForImport(analysis, projectId, toBePicked) {
@@ -743,11 +791,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     private getSelectedAnalysisIds() {
-      return _.keys(this.state.selection.analysis[this.state.selection.currentDataSource]);
+        return _.keys(this.state.selection.analysis[this.state.selection.currentDataSource]);
     }
 
     private getSelectedPortfolioIds() {
-      return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
+        return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
     }
 
 }
