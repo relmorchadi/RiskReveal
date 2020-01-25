@@ -192,7 +192,9 @@
         width: 100%;
 
         .body-wrapper-header-left {
-          width: 300px;
+          min-width: 220px;
+          width: 25%;
+          white-space: nowrap;
           font-family: Rubik;
 
           span {
@@ -203,6 +205,14 @@
             line-height: 20px;
             padding: 15px 20px;
             font-weight: 500;
+          }
+
+          @media screen and (max-width: 1350px) {
+            width: 20%;
+
+            span {
+              font-size: 13.26px;
+            }
           }
 
           div {
@@ -245,6 +255,23 @@
               color: rgba(0,0,0,0.7);
             }
           }
+
+          @media screen and (max-width: 1350px) {
+            width: 500px;
+
+            span {
+              font-size: 13.26px;
+              padding: 10px;
+            }
+
+            .action-icon-wrapper {
+              margin: 0 10px;
+
+              i {
+                font-size: 17px;
+              }
+            }
+          }
         }
 
         .body-wrapper-header-middle {
@@ -271,6 +298,12 @@
             font-size: 25px;
             margin-right: 15px;
             cursor: pointer;
+          }
+
+          @media screen and (max-width: 1350px) {
+            .icon-filter, .icon-link_24px {
+              font-size: 20px;
+            }
           }
         }
 
@@ -421,6 +454,34 @@
           .poover-menu-item-active {
             background-color: #FCF9D6;
           }
+
+          @media screen and (max-width: 1350px) {
+            .list-items-title {
+              padding-left: 19px;
+            }
+
+            ul {
+              padding-left: 14px;
+            }
+
+            .poover-menu-item {
+              .text {
+                font-size: 10px;
+                padding-top: 2px;
+              }
+
+              .logo {
+                font-size: 10px;
+                line-height: 20px;
+                margin-right: 5px;
+              }
+
+              .loading {
+                padding-top: 2px;
+                font-size: 10px;
+              }
+            }
+          }
         }
       }
 
@@ -435,6 +496,10 @@
           width: 100%;
           margin: auto;
           margin-top: 12px;
+
+          @media screen and (max-width: 1350px) {
+            margin-top: 0;
+          }
 
           ::ng-deep {
             .ui-table-scrollable-view.ui-table-frozen-view {
@@ -523,7 +588,6 @@
                 color: rgb(0, 0, 0);
                 font-size: 12px;
                 letter-spacing: 0.08px;
-                height: 25px;
                 border: none;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
@@ -532,6 +596,7 @@
                   align-items: center;
                   width: 100%;
                   height: 27px;
+
                   span {
                     text-overflow: ellipsis;
                     white-space: nowrap;
@@ -559,6 +624,16 @@
                 border-radius: 18px;
                 margin-top: 4px;
               }
+
+              @media screen and (max-width: 1350px) {
+                td {
+                  font-size: 10px;
+
+                  div {
+                    height: 22px;
+                  }
+                }
+              }
             }
           }
         }
@@ -568,6 +643,12 @@
           width: 97%;
           margin: auto;
           justify-content: flex-end;
+        }
+      }
+
+      @media screen and (max-width: 1350px) {
+        .right, .left {
+          height: 530px;
         }
       }
     }
@@ -748,91 +829,6 @@ SELECT EDM AND RDM DROPDOWN STYLE
   flex-direction: column;
   user-select: none;
 
-  .search-bar {
-    display: flex;
-    width: 100%;
-    background-color: #F4F6FC;
-    border-bottom: 2px solid #0700CF;
-
-    input {
-      flex: 1;
-      border: none;
-
-      &:focus {
-        outline: 0;
-      }
-    }
-
-    ::-webkit-input-placeholder {
-      color: #0700CF;
-    }
-
-    ::-moz-placeholder {
-      color: #0700CF;
-    }
-
-    :-ms-input-placeholder {
-      color: #0700CF;
-    }
-
-    :-moz-placeholder {
-      color: #0700CF;
-    }
-
-    .search-bar-icon-search {
-      padding: 10px;
-      color: rgba(0, 0, 0, 0.35);
-      cursor: pointer;
-    }
-
-    .search-bar-text {
-      color: #0700CF;
-      font-family: Rubik;
-      font-size: 14.22px;
-      font-weight: 500;
-      letter-spacing: 0.25px;
-      line-height: 20px;
-      flex: 1;
-      padding-top: 8px;
-      cursor: pointer;
-    }
-
-    .displayed-info {
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-
-      .search-bar-text-title {
-        font-size: 8px;
-        padding-top: 3px;
-        line-height: 14px;
-        color: rgba(0, 0, 0, 0.5);
-      }
-
-      .search-bar-text-subtitle {
-        font-size: 14px;
-        color: rgba(0, 0, 0, 0.75);
-        line-height: 16px;
-      }
-    }
-
-    .search-bar-icon-down {
-      padding: 10px;
-      color: #0700CF;
-      cursor: pointer;
-    }
-  }
-
-  .search-bar-active {
-    background-color: #fff;
-    border-bottom: none;
-  }
-
-  .search-bar-display {
-    background-color: #fff;
-    border-bottom: none;
-  }
-
   .search-bar-result {
     z-index: 1000;
     position: absolute;
@@ -886,7 +882,6 @@ SELECT EDM AND RDM DROPDOWN STYLE
       .icon-check_box_outline_blank_24px{
         color: rgba(0,0,0,0.36);
       }
-
 
       .no-check{
         display: inline-block;
@@ -992,6 +987,116 @@ SELECT EDM AND RDM DROPDOWN STYLE
       }
     }
   }
+
+  @media screen and (max-width: 1350px) {
+    width: 460px;
+
+    .search-bar-result {
+      width: 460px;
+    }
+
+    .search-bar-result-list {
+      ul {
+        height: 250px;
+      }
+
+      ::ng-deep {
+        cdk-virtual-scroll-viewport.cdk-virtual-scroll-viewport.cdk-virtual-scroll-orientation-vertical {
+          height: 250px !important;
+        }
+
+        .ui-virtualscroller .ui-virtualscroller-content .ui-virtualscroller-list li {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+
+  .search-bar {
+    display: flex;
+    width: 100%;
+    background-color: #F4F6FC;
+    border-bottom: 2px solid #0700CF;
+
+    input {
+      flex: 1;
+      border: none;
+
+      &:focus {
+        outline: 0;
+      }
+    }
+
+    ::-webkit-input-placeholder {
+      color: #0700CF;
+    }
+
+    ::-moz-placeholder {
+      color: #0700CF;
+    }
+
+    :-ms-input-placeholder {
+      color: #0700CF;
+    }
+
+    :-moz-placeholder {
+      color: #0700CF;
+    }
+
+    .search-bar-icon-search {
+      padding: 10px;
+      color: rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+    }
+
+    .search-bar-text {
+      color: #0700CF;
+      font-family: Rubik;
+      font-size: 14.22px;
+      font-weight: 500;
+      letter-spacing: 0.25px;
+      line-height: 20px;
+      flex: 1;
+      padding-top: 8px;
+      cursor: pointer;
+    }
+
+    .displayed-info {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+
+      .search-bar-text-title {
+        font-size: 8px;
+        padding-top: 3px;
+        line-height: 14px;
+        color: rgba(0, 0, 0, 0.5);
+      }
+
+      .search-bar-text-subtitle {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.75);
+        line-height: 16px;
+      }
+    }
+
+    .search-bar-icon-down {
+      padding: 10px;
+      color: #0700CF;
+      cursor: pointer;
+    }
+  }
+
+  .search-bar-active {
+    background-color: #fff;
+    border-bottom: none;
+  }
+
+  .search-bar-display {
+    background-color: #fff;
+    border-bottom: none;
+  }
+
 }
 
 .body-wrapper-search-display {
@@ -1179,6 +1284,14 @@ TABLE STYLE
         .icon-block_24px {
           color: #B20626;
           font-size: 20px;
+        }
+
+        @media screen and (max-width: 1350px) {
+          font-size: 10px;
+
+          .text-data {
+            height: 24px;
+          }
         }
       }
 

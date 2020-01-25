@@ -146,6 +146,21 @@
     align-items: center;
     padding-right: 8px;
   }
+
+  @media screen and (max-width: 1350px) {
+    width: 125px;
+    height: 30px;
+
+    .dropdown-wrap-title {
+      .dropdown-title {
+        font-size: 8px;
+      }
+
+      .dropdown-item-selected {
+        font-size: 10px;
+      }
+    }
+  }
 }
 
 body .ui-multiselect {

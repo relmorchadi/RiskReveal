@@ -7,7 +7,6 @@ import {WsApi} from "../../../workspace/services/api/workspace.api";
 import * as _ from 'lodash';
 import {DashboardState, GeneralConfigState} from "../../../core/store/states";
 import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
-import set = Reflect.set;
 
 @Component({
   selector: 'app-fac-subsidiary-chart',
@@ -127,7 +126,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   filteredData: any[];
 
   subsidiaryList: any;
-  selectedAnalyst = 'ALL';
+  selectedSubsidiary = [];
 
   dateTo: any;
   dateFrom: any;
@@ -147,7 +146,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
       const value = [...newD, ...inPD, ...archiveD];
       this.data = value;
       this.filteredData = value;
-      this.subsidiaryList = [..._.uniq(value.map(item => item.uwAnalysis)), 'ALL'];
+      this.subsidiaryList = [..._.map(_.uniq(value.map(item => item.uwAnalysis)), item => ({label: item, value: item}))];
+      this.selectedSubsidiary = [..._.uniq(value.map(item => item.uwAnalysis))];
       this.detectChanges();
     });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
@@ -206,14 +206,12 @@ export class FacSubsidiaryChartComponent implements OnInit {
 
   setValues() {
     const legendData = _.uniq(this.filteredData.map(item => item.assignedAnalyst)) || [];
-    const xAxisData = _.uniq(this.filteredData.map(item => item.uwAnalysis)) || [];
-    console.log(this.filteredData);
     let series = [];
     let alternateSeries = [];
     _.forEach(legendData, item => {
       let trad = [];
       let part = [];
-      _.forEach(this.subsidiaryList, subsItem => {
+      _.forEach(this.selectedSubsidiary, subsItem => {
         trad = [...trad, _.filter(this.data, dt =>
             dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length];
         part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
@@ -226,13 +224,17 @@ export class FacSubsidiaryChartComponent implements OnInit {
 
     this.myChart.setOption({
       xAxis: {
-        data: xAxisData
+        data: this.selectedSubsidiary
       },
       legend: {
         data: legendData
       },
       series: series
     });
+  }
+
+  filterDataBySubsidiary() {
+    this.setValues();
   }
 
   onChartInit(instance) {

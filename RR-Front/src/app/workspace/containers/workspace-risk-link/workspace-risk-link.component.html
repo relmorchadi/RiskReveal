@@ -247,8 +247,8 @@
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
                     <i nz-tooltip nzTitle="Save as default selection" (click)="saveDefaultSelection()"
-                       style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadSummaryOrDefaultDataSources()"
+                       class="icon-save_24px"></i>
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadDefaultDataSources()"
                        class="icon-sync_24px"></i>
                     <i nz-tooltip nzTitle="Clear default settings" (click)="clearDefaultSelection()"
                        class="icon-close_24px"></i>
@@ -349,7 +349,7 @@
                            selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
-                           [dataKey]="'rlId'">
+                           [dataKey]="'rlId'" syncScroll>
                     <!--  -->
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
