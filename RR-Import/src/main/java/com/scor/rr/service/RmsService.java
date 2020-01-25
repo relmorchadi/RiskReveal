@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -462,20 +463,29 @@ public class RmsService {
 
     /****** Risk Link Interface ******/
 
-    public List<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
+        //@Todo by BTP Count S/p
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources ";
+
+
         this.logger.debug("Service starts executing the query ...");
 
-        if (!StringUtils.isEmpty(keyword))
+        if (!StringUtils.isEmpty(keyword)){
             sql += ", @filter=" + keyword;
+            countSql += " @filter=" + keyword;
+        }
 
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
                 sql,
                 new DataSourceRowMapper());
 
+        List<DataSource> dataSourcesCount = getJdbcTemplate(instanceId).query(
+                countSql,
+                new DataSourceRowMapper());
 
         this.logger.debug("the data returned ", dataSources);
-        return dataSources;
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), ofNullable(dataSourcesCount).map(l -> l.size()).orElse(1000)  ) ;
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {

@@ -28,7 +28,7 @@ public class RmsRessource {
 
         this.logger.debug("controller starts getting dataSource ...");
 
-        List<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size);
+        Page<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size);
 
         return ResponseEntity.ok(dataSources);
     }
