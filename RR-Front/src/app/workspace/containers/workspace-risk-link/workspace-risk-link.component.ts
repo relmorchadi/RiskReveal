@@ -464,16 +464,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                         analysis,
                         portfolios
                     })]);
-                // const payloads = this.buildDetailScanPayloads(this.state.financialValidator.rmsInstance.selected.instanceId, p.projectId, analysis, portfolios);
-                // _.forEach(payloads, p => this.dispatch(new fromWs.RunDetailedScanAction(p)));
             });
-    }
-
-    private buildDetailScanPayloads(instanceId, projectId, analysis, portfolios): any[] {
-        return [
-            ..._.map(analysis, a => ({instanceId, projectId, analysis: [a], portfolios: []})),
-            ..._.map(portfolios, p => ({instanceId, projectId, analysis: [], portfolios: [p]}))
-        ];
     }
 
     getScrollableCols() {
@@ -726,7 +717,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     triggerImport() {
         const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
         const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
-
         forkJoin(
             [
                 this.selectedProject$,
@@ -737,6 +727,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(data => {
                 const [p, summary] = data;
                 const {projectId} = p;
+                if(this.tabStatus == 'FAC' && this._nonUniqDivisionPerAnalysis(summary.analysis)){
+                    alert('You cannot import multiple for the same divisions !');
+                    return;
+                }
                 this.dispatch(new fromWs.TriggerImportAction({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     projectId,
@@ -745,6 +739,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, portfolioConfigFields)
                 }));
             });
+    }
+
+    private _nonUniqDivisionPerAnalysis(analysis): boolean{
+        let data = {};
+        for(let a of analysis) {
+            if(data[a.rpCode])
+                data[a.rpCode].push(...a.divisions);
+            else
+                data[a.rpCode]= [...a.divisions]
+            if( _.size(data[a.rpCode]) > 0 )
+                return false;
+        }
+        return true;
     }
 
     private transformAnalysisResultForImport(analysis, projectId, toBePicked) {
