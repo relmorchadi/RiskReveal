@@ -101,7 +101,8 @@ export class FacWidgetComponent implements OnInit {
       wsId: event.contractName,
       uwYear: event.uwYear,
       route: 'projects',
-      type: 'FAC'
+      type: 'FAC',
+      carSelected: event.projectId
     }))
   }
 

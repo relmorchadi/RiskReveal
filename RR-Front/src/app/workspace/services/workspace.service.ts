@@ -23,13 +23,13 @@ export class WorkspaceService {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
-    const {wsId, uwYear, route, type} = payload;
+    const {wsId, uwYear, route, type, carSelected} = payload;
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear, type ? type : 'TTY')
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId, uwYear, ws, route
+          wsId, uwYear, ws, route, carSelected
         }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
@@ -37,6 +37,7 @@ export class WorkspaceService {
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route} = payload;
+    const carSelected = _.get(payload, 'carSelected', null);
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
 
@@ -46,7 +47,7 @@ export class WorkspaceService {
         uwYear,
         ...ws,
         projects: _.map(projects, (prj, index: any) => {
-          prj.selected = index == 0;
+          prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
         }),
@@ -185,11 +186,20 @@ export class WorkspaceService {
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
     const {wsId, uwYear, route, type} = payload;
+    const carSelected = _.get(payload, 'carSelected', null);
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
+      if (carSelected !== null) {
+        ctx.patchState(produce(ctx.getState(), draft =>  {
+          draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
+            prj.selected = prj.projectId === carSelected;
+            return prj;
+          });
+        }));
+      }
       return ctx.dispatch(new fromWS.SetCurrentTab({
         index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
         wsIdentifier
@@ -199,7 +209,8 @@ export class WorkspaceService {
         wsId,
         uwYear,
         route,
-        type
+        type,
+        carSelected
       }));
     }
   }
