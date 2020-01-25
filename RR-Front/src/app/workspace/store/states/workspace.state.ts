@@ -315,13 +315,13 @@ export class WorkspaceState {
   @Selector()
   static getAnalysis(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.analysis;
+    return _.toArray(state.content[wsIdentifier].riskLink.analysis);
   }
 
   @Selector()
   static getPortfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.portfolios;
+    return _.toArray(state.content[wsIdentifier].riskLink.portfolios);
   }
 
   @Selector()
@@ -1154,6 +1154,18 @@ export class WorkspaceState {
   loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
   }
+
+  @Action(fromWS.LoadSummaryOrDefaultDataSourcesAction)
+  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.loadSummaryOrDefaultDataSources(ctx, payload);
+  }
+
+  @Action(fromWS.LoadSummaryAction)
+  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.loadSummary(ctx, payload);
+  }
+
+
 
   /***********************************
    *

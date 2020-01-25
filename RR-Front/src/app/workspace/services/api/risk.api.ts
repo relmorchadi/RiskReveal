@@ -1,7 +1,8 @@
-import {Observable} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {backendUrl, importUrl} from "../../../shared/api";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -54,8 +55,15 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
   }
 
-  getDefaultDataSources(instanceId, projectId, userId){
-    return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`, {params: {instanceId, projectId, userId}})
+  getSummaryOrDefaultDataSources(instanceId, projectId, userId){
+    return this.http.get(`${this.IMPORT_URL}import/config/get-global-data-sources`, {params: {instanceId, projectId, userId}})
+  }
+
+  getAnalysisPortfoliosByProject(projectId){
+    return forkJoin([
+      this.http.get(`${this.IMPORT_URL}import/config/get-imported-analysis-configuration`, {params: {projectId}}),
+      this.http.get(`${this.IMPORT_URL}import/config/get-imported-portfolio-configuration`, {params: {projectId}})
+    ]);
   }
 
   saveDefaultDataSources(instanceId, projectId,dataSources, userId){

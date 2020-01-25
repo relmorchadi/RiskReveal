@@ -120,11 +120,11 @@ public class DefaultAdjustment extends AbstractWriter {
                                     log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
                                 }
                             }
-                            this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                             //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                         } else {
                             log.error("An error has occurred {}", response.getStatusCodeValue());
                         }
+                        this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                     }
                 }
 

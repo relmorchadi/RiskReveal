@@ -274,8 +274,18 @@ export class OverrideOccurrenceBasis {
   constructor(public payload: any) {}
 }
 
+export class LoadSummaryOrDefaultDataSourcesAction {
+  static readonly type= '[Risk Link] Load Summary or default data sources action';
+  constructor(public payload: any) {}
+}
+
 export class LoadDefaultDataSourcesAction {
   static readonly type= '[Risk Link] Load default data sources action';
+  constructor(public payload: any) {}
+}
+
+export class LoadSummaryAction {
+  static readonly type= '[Risk Link] Load summary action';
   constructor(public payload: any) {}
 }
 

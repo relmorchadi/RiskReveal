@@ -16,7 +16,13 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -49,89 +55,151 @@ public class ImportFileService {
 
     @Autowired
     FileImportSourceResultRepository fileImportSourceResultRepository;
+    @Autowired
+    private JobLauncher jobLauncher;
 
-//    @Autowired
-//    UserRrRepository userRrRepository;
+    @Value("${nonrms.plt.root.path}")
+    private String rootFilePath;
 
-    //    public void copyFileToiHub(String path) throws IOException {
-//        File file = new File(path);
-//        CopyFile.copyFileFromPath(file,PATH_IHUB);
-//    }
+    @Value("${nonrms.peqt.path}")
+    private String peqtFilePath;
+
+    private Map<String, Object> extractNamingNonRMSProperties(String projectId, String nonrmspicId, String instanceId) {
+//        Project project = projectRepository.findOne(projectId);
+//        if (project == null) {
+//            log.error("Non RMS : No project found for projectId={}", projectId);
+//            return null;
+//        }
+//        Workspace myWorkspace = workspaceRepository.findByProjectId(projectId);
+//        if (myWorkspace == null) {
+//            log.error("Non RMS : Error. No workspace found");
+//            return null;
+//        }
 //
-//    public boolean verifyFilePlt(String path, String peqtPath) {
-//        List<MetadataHeaderSectionEntity> metadataHeaders = metadataHeaderSectionRepository.findAll();
-//        List<FileBasedImportProducer> headerSegments = fileBasedImportProducerRepository.findAll();
-//        return verifyFile(metadataHeaders, headerSegments, path, peqtPath);
-//    }
-
-
-//    public List<ImportFilePLTData> getPltFromLossDataFile(String path) { // lay data : 1 list data cua 1 plt
-//        List<ImportFilePLTData> pltDataList = null;
-//        try (Stream<String> stream = Files.lines(Paths.get(path))) {
-//            AtomicBoolean testEndMarker = new AtomicBoolean(false);
-//            AtomicBoolean testHeaderPlt = new AtomicBoolean(false);
-//            AtomicReference<Map<String, Integer>> pltHeaderOrder = new AtomicReference<>();
-//            pltDataList = new ArrayList<>();
-//            List<ImportFilePLTData> finalPltDataList = pltDataList;
-//            stream.forEach(s -> {
-//                        if (!StringUtils.isEmpty(s)) {
-//                            if (testHeaderPlt.get()) {
-//                                if (pltHeaderOrder.get() != null) {
-//                                    finalPltDataList.add(getImportFilePLTData(pltHeaderOrder.get(), s.split("\\s+")));
-//                                }
-//                            }
-//                            if (testEndMarker.get()) {
-//                                String[] pltline = s.split("\\s+");
-//                                pltHeaderOrder.set(retrieveFieldOrder(pltline));
-//                                testHeaderPlt.set(true);
-//                                testEndMarker.set(false);
-//                            }
-//                            if (s.equals(END_MARKER)) {
-//                                testEndMarker.set(true);
-//                            }
-//                        }
-//                    }
-//            );
-//        } catch (IOException e) {
-//            e.printStackTrace();
+//        String workspaceCode = myWorkspace.getWorkspaceContextCode();
+//        String contractId = myWorkspace.getContractId();
+//        if ((contractId == null) || contractId.isEmpty()) {
+//            log.error("Non RMS : Error. contractId is null or empty");
+//            return null;
 //        }
-//        return pltDataList;
-//    }
-
-//    private static ImportFilePLTData getImportFilePLTData(Map<String, Integer> pltHeaderOrder, String[] pltline) {
-//        ImportFilePLTData importFilePLTData = new ImportFilePLTData();
-//        if (pltHeaderOrder.get(PLT_DATA_EVENT_ID) != null) {
-//            importFilePLTData.setEventId(Integer.parseInt(pltline[pltHeaderOrder.get(PLT_DATA_EVENT_ID)]));
+//
+//        NonRmsProjectImportConfig nonrmspic = nonRmsProjectImportConfigRepository.findOne(nonrmspicId);
+//        ModellingSystemInstance modellingSystemInstance = null;
+//        if (instanceId != null) {
+//            modellingSystemInstanceRepository.findOne(instanceId);
 //        }
-//        if (pltHeaderOrder.get(PLT_DATA_YEAR) != null) {
-//            importFilePLTData.setYear(Integer.parseInt(pltline[pltHeaderOrder.get(PLT_DATA_YEAR)]));
+//        Section section = sectionRepository.findOne(contractId);
+//        if (section == null) {
+//            log.error("Non RMS : Error. No section found");
+//            return null;
 //        }
-//        if (pltline[pltHeaderOrder.get(PLT_DATA_VALUE)] != null) {
-//            importFilePLTData.setValue(Float.parseFloat(pltline[pltHeaderOrder.get(PLT_DATA_VALUE)]));
+//        Contract contract = contractRepository.findOne(section.getContract().getId());
+//        if (contract == null) {
+//            log.error("Non RMS : Error. No contract found");
+//            return null;
 //        }
-//        if (pltHeaderOrder.get(PLT_DATA_MAX_EXPOSURE) != null) {
-//            importFilePLTData.setMaxExposure(Float.parseFloat(pltline[pltHeaderOrder.get(PLT_DATA_MAX_EXPOSURE)]));
+//        Client client = clientRepository.findOne(contract.getClient().getId());
+//        if (client == null) {
+//            log.error("Non RMS : Error. No client found");
+//            return null;
+//        }
+//
+//        String reinsuranceType = "T"; // fixed for TT
+//        String division = "01"; // fixed for TT
+//        String sourceVendor = "Non RMS";
+//        String periodBasis = "FT"; // fixed for TT
+//        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
+//        String uwYear = myWorkspace.getWorkspaceUwYear() + "-01";
+//        String modelSystemVersion = modellingSystemInstance != null ? modellingSystemInstance.getModellingSystemVersion().getId() : null;
+//
+//        Long imSeq = null;
+//        if (nonrmspic == null) {
+//            log.error("Non RMS : No NonRmsProjectImportConfig for nonrmspicId = {}", nonrmspicId);
+//            return null;
+//        }
+//
+//        ProjectImportRun lastProjectImportRun = null;
+//        if (nonrmspic.getLastProjectImportRunId() != null) {
+//            lastProjectImportRun = projectImportRunRepository.findOne(nonrmspic.getLastProjectImportRunId());
+//        }
+//
+//        // distinguish Non RMS et RMS
+//        List<ProjectImportRun> projectImportRuns = projectImportRunRepository.findByProjectId(projectId);
+//        if (projectImportRuns == null) {
+//            imSeq = 1L;
 //        } else {
-//            importFilePLTData.setMaxExposure(importFilePLTData.getValue());
+//            imSeq = projectImportRuns.size() + 1L;
 //        }
-//        if (pltHeaderOrder.get(PLT_DATA_EVENT_DATE) != null) {
-//            String eventDate = pltline[pltHeaderOrder.get(PLT_DATA_EVENT_DATE)];
-//            importFilePLTData.setEventDate(eventDate);
-//            Matcher matcher = pattern.matcher(eventDate);
-//            if (matcher.find()) {
-//                if (matcher.group(1) != null) {
-//                    importFilePLTData.setMonth(Integer.parseInt(matcher.group(1)));
-//                }
-//                if (matcher.group(2) != null) {
-//                    importFilePLTData.setDay(Integer.parseInt(matcher.group(2)));
-//                }
-//                if (matcher.group(3) != null) {
-//                    importFilePLTData.setRepetition(Integer.parseInt(matcher.group(3)));
-//                }
-//            }
-//        }
-//        return importFilePLTData;
-//    }
+//
+//        log.info("Non RMS BatchRest: rmspicId {}, lastProjectImportRunId {}, runId {}", nonrmspic.getId(), lastProjectImportRun == null ? null : lastProjectImportRun.getId(), lastProjectImportRun == null ? null : lastProjectImportRun.getRunId());
+//
+//        String clientName = client.getClientShortName();
+//        String clientId = client.getId();
+//
+//        log.info("Non RMS : reinsuranceType {}, prefix {}, clientName {}, clientId {}, contractId {}, division {}, uwYear {}, sourceVendor {}, modelSystemVersion {}, periodBasis {}, importSequence {}",
+//                reinsuranceType, prefix, clientName, clientId, contractId, division, uwYear, sourceVendor, modelSystemVersion, periodBasis, imSeq);
+
+        Map<String, Object> map = new HashMap<>();
+//        map.put("reinsuranceType", reinsuranceType);
+//        map.put("prefix", prefix);
+//        map.put("clientName", clientName);
+//        map.put("clientId", clientId);
+//        map.put("contractId", workspaceCode); // use code instead of contract Id
+//        map.put("division", division);
+//        map.put("uwYear", uwYear);
+//        map.put("sourceVendor", sourceVendor);
+//        map.put("modelSystemVersion", modelSystemVersion);
+//        map.put("periodBasis", periodBasis);
+//        map.put("importSequence", imSeq);
+//        map.put("projectId", projectId);
+//        map.put("nonrmspicId", nonrmspicId);
+//        map.put("instanceId", instanceId);
+        return map;
+    }
+
+    @Autowired
+    @Qualifier(value = "fileBasedImport")
+    private Job fileBasedImport;
+
+    public Long launchFileBasedImport(String instanceId,
+                                            String nonrmspicId,
+                                            String userId,
+                                            String projectId,
+                                            String fileImportSourceResultIds) {
+        log.info("Starting launchFileBasedImport at backend");
+        try {
+            Map<String, Object> properties = extractNamingNonRMSProperties(projectId, nonrmspicId, instanceId);
+            if (properties == null) {
+                log.error("Error. No workspace found");
+                return null;
+            }
+
+            JobParametersBuilder builder = new JobParametersBuilder()
+                    .addString("instanceId", instanceId)
+                    .addString("reinsuranceType", (String) properties.get("reinsuranceType"))
+                    .addString("prefix", (String) properties.get("prefix"))
+                    .addString("clientName", (String) properties.get("clientName"))
+                    .addString("clientId", (String) properties.get("clientId"))
+                    .addString("contractId", (String) properties.get("contractId"))
+                    .addString("division", (String) properties.get("division"))
+                    .addString("uwYear", (String) properties.get("uwYear"))
+                    .addString("sourceVendor", (String) properties.get("sourceVendor"))
+                    .addString("modelSystemVersion", (String) properties.get("modelSystemVersion"))
+                    .addString("periodBasis", (String) properties.get("periodBasis"))
+                    .addLong("importSequence", (Long) properties.get("importSequence"))
+                    .addString("nonrmspicId", nonrmspicId)
+                    .addString("userId", userId)
+                    .addString("projectId", projectId)
+                    .addString("fileImportSourceResultIds", fileImportSourceResultIds);
+            log.info("Starting Non RMS import batch: nonrmspicId {}, userId {}, projectId {}, fileIds {}", nonrmspicId, userId, projectId, fileImportSourceResultIds);
+            JobExecution execution = null;
+            execution = jobLauncher.run(fileBasedImport, builder.toJobParameters());
+            return execution.getId();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
     private static final String PATH_IHUB = "RRADJUSTMENT/src/main/resources/copyfile/";
 
@@ -205,7 +273,7 @@ public class ImportFileService {
     }
 
     public SourceFileImport buildSourceFileImport(File file) {
-        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file);
+        ImportFileLossDataHeader importFileLossDataHeader = parseLossDataTableHeader(file); // ham nay chua ham validate(importFileLossDataHeader, mandatoryMetadataList, defaultMetadataList) nho hon
         SourceFileImport sourceFileImport = new SourceFileImport();
         sourceFileImport.setProjectId(null);
         sourceFileImport.setFilePath(file.getParent().replace(getRootFilePath(), ""));
@@ -370,15 +438,19 @@ public class ImportFileService {
     }
 
 //    @Value("${nonrms.plt.root.path}")
-    private String rootFilePath = "/scor/data/ihub/nonRMS/";
-
 //    private String rootFilePath = "C:\\\\scor\\\\data\\\\ihub\\\\nonRMS\\\\plt\\\\";
 
+    private String rootDirectoryPath = "/scor/data/ihub/nonRMS/";
+
 //    @Value("${nonrms.peqt.path}")
-    private String peqtFilePath = "/scor/data/ihub/nonRMS/peqt/";
+//    private String peqtFilePath = "/scor/data/ihub/nonRMS/peqt/";
 
     public String getRootFilePath() {
         return rootFilePath;
+    }
+
+    public String getRootDirectoryPath() {
+        return rootDirectoryPath;
     }
 
     // scan file de lay du lieu + validate 1 phan thong tin co ban, validate cac thong tin khac cua header sau (numeric, ...)
@@ -482,7 +554,7 @@ public class ImportFileService {
         }
     }
 
-    private ImportFileLossDataHeader validate(ImportFileLossDataHeader importFileLossDataHeader,
+    public ImportFileLossDataHeader validate(ImportFileLossDataHeader importFileLossDataHeader,
                                               List<MetadataHeaderSectionEntity> mandatoryMetadataList,
                                               List<MetadataHeaderSectionEntity> defaultMetadataList) {
         List<String> missings = new ArrayList<>();
@@ -997,7 +1069,7 @@ public class ImportFileService {
 
     private FileBasedImportConfig createFileBasedImportConfigIfNotExist(FileBasedImportConfigRequest request) {
         FileBasedImportConfig fileBasedImportConfig = new FileBasedImportConfig();
-        fileBasedImportConfig.setProjectId(Integer.valueOf(request.getProjectId()));
+        fileBasedImportConfig.setProjectId(Long.valueOf(request.getProjectId()));
         fileBasedImportConfig.setImportLocked(false);
         fileBasedImportConfig.setLastUnlockDateForImport(new Date());
 
@@ -1022,11 +1094,11 @@ public class ImportFileService {
             Map<String, String> metadata = importFileLossDataHeader.getMetadata();
 
             //TODO
-            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfig());
-            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfig());
+            fileImportSourceResult.setFileBasedImportConfig(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
+            fileImportSourceResult.setFileBasedImportConfigId(fileBasedImportConfigDB.getFileBasedImportConfig().intValue());
             fileImportSourceResult.setResultName(metadata.get("ResultsName"));
             fileImportSourceResult.setTargetRAPCode(sourceFileImport.getTargetRapCode());
-            fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId());
+            fileImportSourceResult.setProjectId(fileBasedImportConfigDB.getProjectId().intValue());
             if (metadata.get("Years") != null) {
                 fileImportSourceResult.setPLTSimulationPeriods(Integer.valueOf(metadata.get("Years")));
             }

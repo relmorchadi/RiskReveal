@@ -16,25 +16,25 @@ public class FileBasedImportConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "FileBasedImportConfig")
-    private int fileBasedImportConfig;
+    private Long fileBasedImportConfig;
 
     @Column(name = "ProjectImportRunId")
-    private int projectImportRunId;
+    private Long projectImportRunId;
 
     @Column(name = "ProjectId")
-    private int projectId;
+    private Long projectId;
 
     @Column(name = "IsImportLocked")
     private boolean isImportLocked;
 
     @Column(name = "ProjectImportSourceConfigId")
-    private int projectImportSourceConfigId;
+    private Long projectImportSourceConfigId;
 
     @Column(name = "SelectedSourceFileImportId")
-    private int selectedSourceFileImportId;
+    private Long selectedSourceFileImportId;
 
-    @Column(name = "SelectedSourceFileImportidForRowSelect")
-    private int selectedSourceFileImportidForRowSelect;
+    @Column(name = "SelectedSourceFileImportIdForRowSelect")
+    private int selectedSourceFileImportIdForRowSelect;
 
     @Column(name = "SelectedFolderSourcePath", length = 500)
     private String selectedFolderSourcePath;
@@ -55,7 +55,7 @@ public class FileBasedImportConfig {
     private boolean importing;
 
     @Column(name = "LastProjectImportRunId")
-    private int lastProjectImportRunId;
+    private Long lastProjectImportRunId;
 
     @Column(name = "LastUnlockDateForImport")
     private Date lastUnlockDateForImport;

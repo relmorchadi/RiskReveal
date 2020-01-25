@@ -29,7 +29,11 @@ public interface ConfigurationService {
 
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 
+    boolean checkIfProjectHasConfigurations(Long projectId);
+
     List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
 
-    List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId);
+    List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId);
+
+    List<RLPortfolioSelectionDtoWithPortfolioInfo> getRLPortfolioConfigs(Long projectId);
 }

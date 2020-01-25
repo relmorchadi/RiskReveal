@@ -2,10 +2,7 @@ package com.scor.rr.rest;
 
 
 import com.scor.rr.domain.DataSource;
-import com.scor.rr.domain.dto.DataSourcesDto;
-import com.scor.rr.domain.dto.DetailedScanDto;
-import com.scor.rr.domain.dto.ImportSelectionDto;
-import com.scor.rr.domain.dto.PortfolioSelectionDto;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.abstraction.ConfigurationService;
@@ -42,7 +39,7 @@ public class ConfigurationResource {
 
     @PostMapping("detailed-scan")
     public ResponseEntity<?> analysisDetailScan(@RequestBody DetailedScanDto detailedScanDto) {
-        return new ResponseEntity<>(rmsService.detailedScan(detailedScanDto), HttpStatus.OK);
+        return new ResponseEntity<>(rmsService.paralleledDetailedScan(detailedScanDto), HttpStatus.OK);
     }
 
     @PostMapping("save-analysis-import-selection")
@@ -182,13 +179,22 @@ public class ConfigurationResource {
         }
     }
 
+    @GetMapping(value = "get-imported-portfolio-configuration")
+    public ResponseEntity<?> getImportedPortfolioConfiguration(@RequestParam Long projectId) {
+        try {
+            return new ResponseEntity<>(configurationService.getRLPortfolioConfigs(projectId), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "get-global-data-sources")
     public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
         try {
-            if (configurationService.checkIfProjectHasBeenImportedBefore(projectId) != null)
-                return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
+            if (configurationService.checkIfProjectHasConfigurations(projectId))
+                return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
-                return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
