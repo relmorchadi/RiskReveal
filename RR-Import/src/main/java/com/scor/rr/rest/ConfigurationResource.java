@@ -7,6 +7,8 @@ import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.abstraction.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +82,22 @@ public class ConfigurationResource {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has Occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "filter-riskLink-analysis")
+    public ResponseEntity<?> filterRiskLinkAnalysis(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long rdmId, @PageableDefault(size = 20) Pageable pageable, RLAnalysisDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
+        if(withPagination)
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter,pageable));
+        else
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter));
+    }
+
+    @GetMapping(value = "filter-riskLink-portfolio")
+    public ResponseEntity<?> filterRiskLinkPortfolio(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long edmId, @PageableDefault(size = 20) Pageable pageable, RLPortfolioDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
+        if(withPagination)
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter,pageable));
+        else
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter));
     }
 
     @GetMapping(value = "get-source-ep-headers")
@@ -199,4 +217,5 @@ public class ConfigurationResource {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }
