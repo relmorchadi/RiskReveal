@@ -69,15 +69,10 @@ export class RiskApi {
 
   getAnalysisPortfoliosByProject(projectId){
     return forkJoin([
-      this.http.get(`${this.IMPORT_URL}import/config/get-imported-analysis-configuration`, {params: {projectId}})
-      // this.http.get(`${this.IMPORT_URL}import/config/get-imported-portfolios-configuration`, {params: {projectId}})
-
+      this.http.get(`${this.IMPORT_URL}import/config/get-imported-analysis-configuration`, {params: {projectId}}),
+      this.http.get(`${this.IMPORT_URL}import/config/get-imported-portfolio-configuration`, {params: {projectId}})
     ]);
   }
-
-  // getDefaultDataSources(instanceId, projectId, userId){
-  //   return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`, {params: {instanceId, projectId, userId}})
-  // }
 
   saveDefaultDataSources(instanceId, projectId,dataSources, userId){
     return this.http.post(`${this.IMPORT_URL}import/config/save-default-data-sources`, {instanceId, projectId,dataSources, userId})
