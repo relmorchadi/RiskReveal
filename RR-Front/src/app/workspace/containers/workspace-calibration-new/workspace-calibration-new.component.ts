@@ -7,11 +7,12 @@ import * as fromWorkspaceStore from '../../store';
 import * as _ from "lodash";
 import {CalibrationTableService} from "../../services/helpers/calibrationTable.service";
 import {WorkspaceState} from "../../store";
-import {first, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
+import {first, last, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
 import {ExcelService} from "../../../shared/services/excel.service";
+import produce from "immer";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -45,7 +46,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     expandedRowKeys: any,
     isGrouped: boolean,
     isDeltaByAmount: boolean
-    filterData: any
+    filterData: any,
+    isExpandAll: boolean
   };
   constants: {
     financialUnits: string[],
@@ -58,7 +60,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columns: any[],
     columnsLength: number
   };
-  rowKeys: any;
   exchangeRates: any;
 
   //POP-UPs
@@ -113,7 +114,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       expandedRowKeys: {},
       selectedFinancialUnit: "Unit",
       selectedCurrency: null,
-      filterData: {}
+      filterData: {},
+      isExpandAll: false
     };
     this.exchangeRates= {};
 
@@ -127,7 +129,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       financialUnits: [ 'Unit', 'Thousands', 'Million', 'Billion'],
       currencies: []
     };
-    this.rowKeys= {};
 
     this.isAdjustmentPopUpVisible= false;
     this.isRPPopUpVisible= false;
@@ -151,6 +152,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.addRemovePopUpConfig,
       tableColumns: this.calibrationTableService.getAddRemovePopUpTableColumns()
     }
+
+    setInterval(() => console.log(this.tableConfig), 3333);
   }
 
   ngOnInit() {
@@ -211,12 +214,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     if( !this.wsId && wsId && !this.uwYear && uwYear ) {
       //INIT
       this.calibrationTableService.setWorkspaceType(workspaceType);
-      this.columnsConfig = {
-        ...this.columnsConfig,
-        ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
-      };
+      this.calibrationTableService.init();
+
+      console.log(this.columnsConfig);
 
       //SUB
+      this.subscribeToColumns();
       this.subscribeToAdjustments(wsId + "-" + uwYear);
       this.subscribeToEpMetrics(wsId + "-" + uwYear);
       this.subscribeToConstants(wsId + "-" + uwYear);
@@ -329,6 +332,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     });
   }
 
+  subscribeToColumns() {
+    this.calibrationTableService.columnsConfig$.subscribe(config => {
+      this.columnsConfig= config;
+      console.log(config);
+      this.detectChanges();
+    })
+  }
+
   initComponent(state) {
 
     const {
@@ -340,7 +351,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.data = plts;
     this.adjustments = adjustments;
     this.loading = loading;
-    if (this.data.length && !this.isExpanded){
+    if (this.data.length){
       this.expandCollapseAllPlts();
     }
   }
@@ -354,10 +365,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       cols,
       'epMetrics'
     );
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
-    };
+    this.calibrationTableService.init();
   }
 
   initFilterStatus(status) {
@@ -374,10 +382,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       view: newView
     };
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      ...this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded)
-    };
+    this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded);
   }
 
   toggleGrouping() {
@@ -411,11 +416,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.viewAdjustmentDetail(action.payload);
         break;
 
-      case "Resize frozen Column":
-        this.resizeFrozenColumn(action.payload);
-        this.detectChanges();
-        break;
-
       case "Row Expand change":
         this.rowExpandChange(action.payload);
         break;
@@ -433,17 +433,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       case "Financial Unit Change":
-              this.financialUnitChange(action.payload);
-              break;
+        this.financialUnitChange(action.payload);
+        break;
       case "Open Add Remove Pop Up":
         this.openAddRemovePopUp();
         break;
+
       case "Expand Collapse Plts":
         this.expandCollapseAllPlts();
         break;
-      case "Expand Collapse Plt Panel":
-        this.adaptPltPanelWidth(action.payload);
-        break;
+
       case "Filter Plt Table":
         this.updateFilterData(action.payload);
         break;
@@ -458,6 +457,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Currency Change":
         this.currencyChange(action.payload);
+        break;
+
+      case "Resize Table Separator":
+        this.tableSeparatorResize(action.payload);
+        break;
+
+      case "Resize frozen Column":
+        this.resizeFrozenColumn(action.payload);
         break;
 
       default:
@@ -504,16 +511,72 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
+  tableSeparatorResize(delta){
+
+    this.solotry(delta);
+
+  }
+
+  solotry(delta) {
+    let res : {
+      frozenWidth: string;
+      frozenColumns: any[];
+    } = { frozenWidth: '', frozenColumns: []};
+    const head = _.slice(this.columnsConfig.frozenColumns,0, 3);
+    const tail= this.columnsConfig.frozenColumns[this.columnsConfig.frozenColumns.length - 1];
+    const headTailCols = [...head, tail];
+    const minWidth = _.reduce(headTailCols, (acc, curr) => acc + _.toNumber(curr.width), 0);
+    const frozenWidth = _.toNumber(_.trim(this.columnsConfig.frozenWidth, 'px'));
+    const expandedMaxWidth = frozenWidth + delta - minWidth;
+
+    const possibleExpandedCols = CalibrationTableService.frozenColsExpanded;
+
+    let expandedWidth = 0;
+    let i =0;
+
+    for(; i < possibleExpandedCols.length; i++) {
+      const currentColWidth = _.toNumber(possibleExpandedCols[i].width);
+      if( expandedWidth + currentColWidth <= expandedMaxWidth) {
+        expandedWidth = expandedWidth + currentColWidth;
+      } else break;
+    }
+
+    let middle;
+
+    if(expandedWidth == 0) {
+      middle = [];
+    } else {
+      if( i == possibleExpandedCols.length) {
+        middle = possibleExpandedCols;
+      } else {
+        middle = _.slice(possibleExpandedCols, 0, i + 1);
+      }
+
+      const lastCol = middle[middle.length - 1];
+      const diff = Math.abs(expandedMaxWidth - expandedWidth);
+      const newColMinWidth = _.toNumber(lastCol.minWidth);
+      let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
+
+      middle[middle.length - 1] = {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''};
+    }
+    const resCols = [...head, ...middle ,tail];
+    res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
+    res.frozenColumns= resCols;
+
+    this.calibrationTableService.updateColumnsConfig({
+      ...this.columnsConfig,
+      ...res
+    });
+
+  }
+
   expandColumns() {
     this.tableConfig = {
       ...this.tableConfig,
       isExpanded: true
     };
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      frozenWidth: '1px',
-      ...this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded)
-    };
+    this.calibrationTableService.updateColumnsConfigCache(this.columnsConfig);
+    this.calibrationTableService.getColumns(this.tableConfig.view, true);
   }
 
   expandColumnsOff() {
@@ -521,14 +584,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: false
     };
-    const a = this.calibrationTableService.getColumns(this.tableConfig.view, this.tableConfig.isExpanded);
-    this.columnsConfig = {
-      ...this.columnsConfig,
-      frozenWidth: '275px',
-      ...a
-    };
-    console.log(a, this.tableConfig, this.columnsConfig);
-    this.detectChanges();
+    this.calibrationTableService.getColumns(this.tableConfig.view, false);
   }
 
   viewAdjustmentDetail(newAdjustment) {
@@ -536,11 +592,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.isAdjustmentPopUpVisible = true;
   }
 
-  resizeFrozenColumn(delta) {
-    this.columnsConfig = {
+  resizeFrozenColumn({delta, index}) {
+
+    this.calibrationTableService.updateColumnsConfig({
       ...this.columnsConfig,
+      frozenColumns: produce(this.columnsConfig.frozenColumns, draft => {
+        draft[index].width = _.toNumber(draft[index].width) + delta + ''
+      }),
       frozenWidth: ( _.toNumber(_.trimEnd(this.columnsConfig.frozenWidth, "px")) + delta ) + "px"
-    }
+    })
+
   }
 
   rowExpandChange(rowExpandKeys) {
@@ -696,20 +757,27 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   expandCollapseAllPlts() {
-    if (!this.isExpanded && this.tableConfig.expandedRowKeys != {}){
-      _.forEach(this.data, (pure)=>{
+    if (!_.keys(this.tableConfig.expandedRowKeys).length){
+      _.forEach(this.data, (pure)=> {
         this.tableConfig.expandedRowKeys[pure.pltId] = true;
-      })
+      });
+      this.tableConfig= {
+          ...this.tableConfig,
+        isExpandAll: true
+      };
     } else {
-      this.tableConfig.expandedRowKeys = {};
+      this.tableConfig= {
+        ...this.tableConfig,
+        expandedRowKeys: {},
+        isExpandAll: false
+      };
     }
-    console.log('expand all',this.tableConfig.expandedRowKeys)
-    this.isExpanded = !this.isExpanded;
+
   }
 
-  adaptPltPanelWidth(payload){
+  adaptPltPanelWidth(delta){
   let arr = this.columnsConfig.frozenWidth.split('p');
-  let newWidth = Number(arr[0])  + payload.event.edges.right;
+  let newWidth = Number(arr[0])  + delta;
   this.columnsConfig = {
     ...this.columnsConfig,
     frozenWidth: newWidth+'px',

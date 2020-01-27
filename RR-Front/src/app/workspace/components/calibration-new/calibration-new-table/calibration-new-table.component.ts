@@ -13,7 +13,7 @@ import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
 import {ActivatedRoute} from "@angular/router";
-declare  const _;
+import * as _ from 'lodash';
 @Component({
   selector: 'app-calibration-new-table',
   templateUrl: './calibration-new-table.component.html',
@@ -38,7 +38,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     expandedRowKeys: any,
     isGrouped: boolean,
     filterData: any
-    isDeltaByAmount: boolean
+    isDeltaByAmount: boolean,
+    isExpandAll: boolean
   };
 
   @Input() exchangeRates: any;
@@ -309,12 +310,16 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
-  onColumnResize({delta, element: {id, title}}) {
-    console.log(id, title);
-    if(!this.tableConfig.isExpanded && title == 'true') {
+  onColumnResize({delta, element}) {
+    const isFrozen = element.attributes[6].value;
+    const index = element.attributes[7].value;
+    if(!this.tableConfig.isExpanded && isFrozen) {
       this.actionDispatcher.emit({
         type: "Resize frozen Column",
-        payload: delta
+        payload: {
+          delta,
+          index
+        }
       })
     }
   }
@@ -340,12 +345,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     event.stopPropagation();
   }
 
-    onShowAddRemovePopUp() {
-        this.actionDispatcher.emit({
-          type: "Open Add Remove Pop Up",
-        })
-    }
-
 
   expandCollapseAllPlts() {
     this.actionDispatcher.emit({
@@ -353,15 +352,11 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
-  onResizePltPanelEnd(event) {
-    this.actionDispatcher.emit({
-      type: "Expand Collapse Plt Panel",
-      payload: {
-        event
-      }
-    })
-    /*let arr = this.columnsConfig.frozenWidth.split('p');
-    this.columnsConfig.frozenWidth = (Number(arr[0])  + event.edges.right) + 'px';*/
+  onTableSeparatorResize(event) {
+    Math.abs(event.edges.right) > 20 && this.actionDispatcher.emit({
+      type: "Resize Table Separator",
+      payload: event.edges.right
+    });
     }
 
   filter(field: any, value: string) {

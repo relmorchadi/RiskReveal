@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalibrationTableService {
+
+  public static frozenColsHead: any[];
+  public static frozenColsTail: any[];
 
   public static frozenCols: any[];
   public static frozenColsExpanded: any[];
@@ -13,6 +17,28 @@ export class CalibrationTableService {
   public analysis: any[];
 
   public isFac: boolean;
+
+  //Obs
+  public columnsConfig$ = new BehaviorSubject({
+    frozenColumns: [],
+    frozenWidth: '',
+    columns: [],
+    columnsLength: 0
+  });
+
+  private columnsConfigCache = {
+    frozenColumns: [],
+    frozenWidth: '',
+    columns: [],
+    columnsLength: 0
+  };
+
+  public updateColumnsConfig = (v) => {
+    this.columnsConfig$.next(v);
+  };
+
+  public updateColumnsConfigCache = v => this.columnsConfigCache = v;
+
   constructor() {
 
     this.isFac= false;
@@ -20,22 +46,26 @@ export class CalibrationTableService {
     CalibrationTableService.frozenCols = [
       {type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
       {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true},
-      {header: 'Peril',field: 'peril', icon:'', width: "60", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
-      {header: '',field: 'status',type: 'status', width: "40", unit: 'px', icon:'', filter: false, sort: false, resizable: false, isFrozen: true}
+      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true}
+    ];
+
+    CalibrationTableService.frozenColsHead = [
+      {type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
+      {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true},
+      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true}
+    ];
+
+    CalibrationTableService.frozenColsTail = [
+      {field: 'status', type: 'status', width: "40", unit: 'px', icon:'', filter: false, sort: false, resizable: false, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsExpanded = [
-      {type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
-      {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true},
-      {header: 'Peril',field: 'peril', icon:'', width: "60", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
-      {field: 'regionPerilCode', header: 'Region Peril', width: "120", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
-      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "160", unit: 'px', icon:'', filter: true, sort: true, resizable: true, isFrozen: true},
-      {field: 'grain', header: 'Grain', width: "60", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
-      {header: 'Vendor System',field: 'vendorSystem', width: "100", unit: 'px', icon:'', filter: true, sort: true, resizable: true, isFrozen: true},
-      {field: 'rap', header: 'RAP', width: "80", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
-      {header: '',field: 'status',type: 'status', width: "40", unit: 'px', icon:'', filter: false, sort: false, resizable: false, isFrozen: true}
+      {header: 'Peril',field: 'peril', icon:'', width: "60", minWidth: "40", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
+      {field: 'regionPerilCode', header: 'Region Peril', width: "120", minWidth: "100", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
+      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "120", minWidth: "100", unit: 'px', icon:'', filter: true, sort: true, resizable: true, isFrozen: true},
+      {field: 'grain', header: 'Grain', width: "60", minWidth: "40", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true},
+      {header: 'Vendor System',field: 'vendorSystem', width: "100", minWidth: "50", unit: 'px', icon:'', filter: true, sort: true, resizable: true, isFrozen: true},
+      {field: 'rap', header: 'RAP', width: "80", minWidth: "50", unit: 'px', filter: true, sort: true, resizable: true, isFrozen: true}
     ];
 
     this.adjustments = [
@@ -55,62 +85,59 @@ export class CalibrationTableService {
 
   columnHandler = {
     "fac-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
-      const columnsLength = frozenColumns ? frozenColumns.length : null;
+      console.log("fac-epMetrics");
+      const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
+      const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : this.epMetrics );
+      const columnsLength = columns ? columns.length : null;
 
       return ({
-        frozenColumns: frozenColumns,
-        columns: columns,
-        columnsLength: columnsLength
+        frozenWidth,
+        frozenColumns,
+        columns,
+        columnsLength
       })
     },
     "fac-adjustments": (isExpanded) => {
-      const defaulCol = _.find(this.adjustments, col => col.header == "Default");
-      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, {...defaulCol, width: '562'}] : [defaulCol]);
-      const columnsLength = frozenColumns ? frozenColumns.length : null;
+      const c = {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}
+      const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
+      const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );
+      const columnsLength = columns ? columns.length : null;
 
       return ({
-        frozenColumns: frozenColumns,
-        columns: columns,
-        columnsLength: columnsLength
-      })
-    },
-    "treaty-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols);
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.epMetrics] : this.epMetrics );
-      const columnsLength = frozenColumns ? frozenColumns.length : null;
-
-      return ({
-        frozenColumns: frozenColumns,
-        columns: columns,
-        columnsLength: columnsLength
-      })
-    },
-    "treaty-adjustments": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : CalibrationTableService.frozenCols );
-      const columns = ( isExpanded ? [...CalibrationTableService.frozenColsExpanded, ...this.adjustments] : this.adjustments );
-      const columnsLength = frozenColumns ? frozenColumns.length : null;
-
-      return ({
-        frozenColumns: frozenColumns,
-        columns: columns,
-        columnsLength: columnsLength
+        frozenWidth,
+        frozenColumns,
+        columns,
+        columnsLength
       })
     }
 
   };
 
+  init = () =>  {
+    const a = [...CalibrationTableService.frozenColsHead, ...CalibrationTableService.frozenColsTail];
+    this.updateColumnsConfig({
+      frozenColumns: a,
+      frozenWidth: _.reduce(a, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
+      columns: this.adjustments,
+      columnsLength: a.length
+    });
+    this.updateColumnsConfigCache(this.columnsConfig$.getValue())
+  };
+
   getColumns(view, isExpanded) {
+    console.log(view, this.isFac);
     try {
-      return this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
+      const tmp = this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
+      this.updateColumnsConfig(tmp);
     } catch(e) {
-      return ({
+      this.updateColumnsConfig({
+        frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',
         frozenColumns: CalibrationTableService.frozenCols,
-        columns: this.adjustments,
+        columns: this.analysis,
         columnsLength: CalibrationTableService.frozenCols.length
-      });
+      })
     }
   }
 
@@ -122,11 +149,11 @@ export class CalibrationTableService {
 
   setWorkspaceType = (wsType) => this.isFac = wsType == "fac";
 
-    getAddRemovePopUpTableColumns() {
+  getAddRemovePopUpTableColumns() {
         return CalibrationTableService.frozenColsExpanded;
     }
 
-    getFrozenColumns = _.memoize(function (inputWidth) {
+  getFrozenColumns = _.memoize((inputWidth) => {
       let width = 0;
       let result: any[] = CalibrationTableService.frozenColsExpanded;
       _.forEach(CalibrationTableService.frozenColsExpanded, (col, i)=>{
