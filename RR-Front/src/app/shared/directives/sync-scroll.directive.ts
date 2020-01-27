@@ -25,8 +25,8 @@ export class SyncScrollDirective implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.frozen.nativeElement.removeEventListener('scroll');
-    this.unfrozen.nativeElement.removeEventListener('scroll');
+    // this.frozen.nativeElement.removeEventListener('scroll');
+    // this.unfrozen.nativeElement.removeEventListener('scroll');
   }
 
 }

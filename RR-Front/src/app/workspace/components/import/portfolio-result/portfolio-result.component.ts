@@ -1,14 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import {Store} from "@ngxs/store";
 import componentData from './data';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'portfolio-result',
   templateUrl: './portfolio-result.component.html',
   styleUrls: ['./portfolio-result.component.scss']
 })
-export class PortfolioResultComponent implements OnInit {
+export class PortfolioResultComponent implements OnInit, OnChanges {
 
 
   isCollapsed;
@@ -44,15 +45,27 @@ export class PortfolioResultComponent implements OnInit {
   constructor(private store:Store) { }
 
   ngOnInit() {
-    console.log('')
-    if(this.context == 'FAC'){
-      this.scrollableColsSummary= componentData.FAC.scrollableCols;
-      this.frozenColsSummary= componentData.FAC.fixedCols;
-    } else {
-      this.scrollableColsSummary= componentData.Treaty.scrollableCols;
-      this.frozenColsSummary= componentData.Treaty.fixedCols;
+    this.loadTablesCols();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.context){
+      this.loadTablesCols();
     }
   }
+
+  private loadTablesCols(){
+    if(_.toUpper(this.context) == 'FAC'){
+      this.scrollableColsSummary= componentData.FAC.scrollableCols;
+      this.frozenColsSummary= componentData.FAC.fixedCols;
+    } else if(_.toUpper(this.context) == 'TREATY') {
+      this.scrollableColsSummary= componentData.Treaty.scrollableCols;
+      this.frozenColsSummary= componentData.Treaty.fixedCols;
+    } else {
+      console.error('Unknown Context ', this.context);
+    }
+  }
+
 
   updateRowData(key, value, index) {
     console.log('Update Row data', {key,value,index})
