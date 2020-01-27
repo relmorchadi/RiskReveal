@@ -58,6 +58,16 @@ export class ToggleRiskLinkEDMAndRDMSelectedAction {
   constructor(public payload: any) {}
 }
 
+export class GetRiskLinkAnalysisAction {
+  static readonly type = '[Risk Link] Get RiskLink Analysis';
+  constructor(public payload: any) {}
+}
+
+export class GetRiskLinkPortfolioAction {
+  static readonly type = '[Risk Link] Get RiskLink Portfolios';
+  constructor(public payload: any) {}
+}
+
 export class ToggleAnalysisForLinkingAction {
   static readonly type = '[Risk Link] Select Target RDM For Linking';
   constructor(public payload: any) {}

@@ -321,7 +321,7 @@ export class WorkspaceState {
   @Selector()
   static getPortfolios(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return _.toArray(state.content[wsIdentifier].riskLink.portfolios);
+    return state.content[wsIdentifier].riskLink.portfolios;
   }
 
   @Selector()
@@ -1047,6 +1047,16 @@ export class WorkspaceState {
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
     return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
+  }
+
+  @Action(fromWS.GetRiskLinkAnalysisAction)
+  getRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
+    return this.riskLinkFacade.getRiskLinkAnalysis(ctx, payload);
+  }
+
+  @Action(fromWS.GetRiskLinkPortfolioAction)
+  getRiskLinkPortfolios(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
+    return this.riskLinkFacade.getRiskLinkPortfolios(ctx, payload);
   }
 
   @Action(fromWS.ToggleRiskLinkAnalysisAction)
