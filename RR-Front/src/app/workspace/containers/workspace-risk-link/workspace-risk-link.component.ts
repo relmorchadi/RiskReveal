@@ -185,13 +185,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         });
         this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.portfolios = _.merge({}, value);
-            console.log('this is portfolios', this.portfolios);
             this.detectChanges();
         });
         this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.selectedProject = value;
             this.tabStatus = _.get(value, 'projectType', null);
-            console.log('selected project change', value);
             this.importInit();
             this.loadSummaryOrDefaultDataSources();
             this.detectChanges();
@@ -434,7 +432,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     rescanItem(datasource) {
-        console.log('Rescan Datasource', datasource);
         datasource.scanning = true;
         this.selectedProject$.pipe(take(1))
             .subscribe(p => {
@@ -603,23 +600,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     onPortfolioFilter(param){
-        console.log('PortfolioFilter', param,this.filterPortfolio);
         this.getRiskLinkPortfolio(0);
     }
 
     onAnalysisFilter(param){
-        console.log('AnalysisFilter', param, this.filterAnalysis);
         this.getRiskLinkAnalysis(0);
     }
 
     lazyloadAnalysis({first, rows}){
-        console.log('Load analysis', {first, rows});
         const page = Math.round(first/rows);
         this.getRiskLinkAnalysis(page, rows);
     }
 
     lazyloadPortfolios({first, rows}){
-        console.log('Load Porfolios', {first, rows});
         const page = Math.round(first/rows);
         this.getRiskLinkPortfolio(page,rows);
     }
@@ -739,7 +732,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     changeFinancialValidator(value, item) {
         this.dispatch(new fromWs.PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
-        console.log(value, value === 'division');
         if (value === 'division') {
             this.UpdateCheckboxStatus();
             this.setFilterDivision();
