@@ -1,14 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import componentData from "./data";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'analysis-result',
   templateUrl: './analysis-result.component.html',
   styleUrls: ['./analysis-result.component.scss']
 })
-export class AnalysisResultComponent implements OnInit {
+export class AnalysisResultComponent implements OnInit, OnChanges {
 
   @Input('context')
   context;
@@ -77,10 +78,20 @@ export class AnalysisResultComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(this.context == 'FAC'){
+    this._loadDataTableCols();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes.context && changes.context.currentValue){
+      this._loadDataTableCols();
+    }
+  }
+
+  private _loadDataTableCols(){
+    if(_.toUpper(this.context) == 'FAC'){
       this.scrollableColsResults= componentData.FAC.scrollableCols;
       this.frozenColsResults= componentData.FAC.fixedCols;
-    } else {
+    } else if( _.toUpper(this.context) == 'TREATY') {
       this.scrollableColsResults= componentData.Treaty.scrollableCols;
       this.frozenColsResults= componentData.Treaty.fixedCols;
     }

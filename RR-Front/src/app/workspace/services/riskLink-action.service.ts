@@ -168,7 +168,7 @@ export class RiskLinkStateService {
         });
         if (payload.key === 'division') {
             const oldValue = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
-            const data = [...state.content[wsIdentifier].riskLink.analysis, ...state.content[wsIdentifier].riskLink.portfolios];
+            const data = [...state.content[wsIdentifier].riskLink.analysis.data, ...state.content[wsIdentifier].riskLink.portfolios.data];
             if (data.length > 0) {
                 ctx.dispatch(new SaveDivisionSelection(oldValue));
             }

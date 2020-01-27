@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {backendUrl, importUrl} from "../../../shared/api";
 import {map} from "rxjs/operators";
+import * as _ from 'lodash'
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,20 @@ export class RiskApi {
   }
 
   searchRiskLinkData(instanceId, keyword, offset, size): Observable<any> {
+    keyword= this._parseKeyword(keyword);
     return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId, keyword, offset, size}});
+  }
+
+  private _parseKeyword(keyword){
+    if(_.isEmpty(keyword))
+      return keyword;
+    if(_.startsWith(keyword,"\"") && _.endsWith(keyword,"\"")){
+      return _.trim(keyword, "\"");
+    }else if (!_.includes(keyword,'*')){
+      return '*'+ keyword + '*';
+    }else{
+      return keyword;
+    }
   }
 
   runDetailedScan(instanceId, projectId, rlAnalysisList, rlPortfolioList){

@@ -472,8 +472,8 @@ public class RmsService {
         this.logger.debug("Service starts executing the query ...");
 
         if (!StringUtils.isEmpty(keyword)){
-            sql += ", @filter=" + keyword;
-            countSql += " @filter=" + keyword;
+            sql += ", @filter='" + keyword+"'";
+            countSql += " @filter='" + keyword+"'";
         }
 
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
