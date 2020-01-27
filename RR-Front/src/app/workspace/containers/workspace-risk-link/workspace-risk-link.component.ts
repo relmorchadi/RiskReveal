@@ -126,7 +126,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         analysisName: '',
         analysisDescription: '',
         engineType: '',
-        runDate: '',
+        //runDate: '',
         analysisType: '',
         peril: '',
         subPeril: '',
@@ -140,7 +140,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         rlId: '',
         name: '',
         description: '',
-        created: null,
+        //created: null,
         type: '',
         agCurrency: '',
         agCedent: '',
@@ -185,6 +185,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         });
         this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.portfolios = _.merge({}, value);
+            console.log('this is portfolios', this.portfolios);
             this.detectChanges();
         });
         this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
@@ -492,7 +493,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getIndeterminate() {
-        const data = this.filterData(this.getTableData());
+        const data = [];  //this.filterData(this.getTableData());
         const selection = _.filter(data, item => item.selected);
         if (this.state.selectedEDMOrRDM === 'RDM') {
             this.indeterminateAnalysis = (selection.length < data.length && selection.length > 0);
@@ -503,12 +504,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getCheckedData() {
-        const data = this.filterData(this.getTableData());
-        const selection = _.filter(data, item => item.selected);
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            this.allCheckedAnalysis = selection.length === data.length && selection.length > 0;
+        //const data = this.filterData(this.getTableData());
+        if (this.state.selectedEDMOrRDM === 'EDM') {
+            const selection = _.filter(this.state.portfolios.data, item => item.selected);
+            this.allCheckedAnalysis = selection.length === this.state.portfolios.data.length && selection.length > 0;
         } else {
-            this.allCheckedPortolfios = selection.length === data.length && selection.length > 0;
+            const selection = _.filter(this.state.analysis.data, item => item.selected);
+            this.allCheckedPortolfios = selection.length === this.state.analysis.data.length && selection.length > 0;
         }
         this.detectChanges();
     }
@@ -600,8 +602,59 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.UpdateCheckboxStatus();
     }
 
+    onPortfolioFilter(param){
+        console.log('PortfolioFilter', param,this.filterPortfolio);
+        this.getRiskLinkPortfolio(0);
+    }
+
+    onAnalysisFilter(param){
+        console.log('AnalysisFilter', param, this.filterAnalysis);
+        this.getRiskLinkAnalysis(0);
+    }
+
+    lazyloadAnalysis({first, rows}){
+        console.log('Load analysis', {first, rows});
+        const page = Math.round(first/rows);
+        this.getRiskLinkAnalysis(page, rows);
+    }
+
+    lazyloadPortfolios({first, rows}){
+        console.log('Load Porfolios', {first, rows});
+        const page = Math.round(first/rows);
+        this.getRiskLinkPortfolio(page,rows);
+    }
+
+    private getRiskLinkAnalysis(page=this.state.analysis.page,size= this.state.analysis. size){
+        return this.dispatch(new fromWs.GetRiskLinkAnalysisAction({
+            rdmId: this.state.selection.currentDataSource,
+            paginationParams: {page, size},
+            projectId: this.selectedProject.projectId,
+            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            filter: this.parseFilter(this.filterAnalysis),
+            userId: 1
+        }));
+    }
+
+    private getRiskLinkPortfolio(page=this.portfolios.page, size=this.portfolios.size){
+        return this.dispatch(new fromWs.GetRiskLinkPortfolioAction({
+            edmId: this.state.selection.currentDataSource,
+            paginationParams: {page, size},
+            projectId: this.selectedProject.projectId,
+            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            filter: this.parseFilter(this.filterPortfolio),
+            userId: 1
+        }));
+    }
+
+    private parseFilter(filter){
+        let finalFilter= {...filter};
+        _.keys(finalFilter).filter(key => !finalFilter[key]).forEach(key => delete finalFilter[key]);
+        return finalFilter;
+    }
+
     updateAllChecked(scope) {
-        const selectedInChunk = _.filter(this.filterData(this.getTableData()), item => item.selected).length;
+        const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
+        /**
         if (scope === 'analysis') {
             if (selectedInChunk === 0) {
                 this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
@@ -629,6 +682,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 }));
             }
         }
+         */
         this.UpdateCheckboxStatus();
     }
 
@@ -657,7 +711,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     selectRows(row: any, index: number) {
-        console.log(this.filterAnalysis, this.filterPortfolio);
         if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
             this.selectWithUnselect(row);
             this.lastSelectedIndex = index;
@@ -713,6 +766,18 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     ngOnDestroy(): void {
         this.destroy();
     }
+
+    // autoAttach(){
+    //     console.log('Auto attach');
+    //     const defaultFilters = _.map(this.state.financialValidator.division.data, d => `"${this.ws.wsId}_${("0" + d.divisionNumber).slice(-2)}"`);
+    //     const selectedEdms = _.values(this.state.selection.edms);
+    //     const selectedRdms = _.values(this.state.selection.rdms);
+    //     this.dispatch(new fromWs.AutoAttach({
+    //         instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+    //         projectId: this.selectedProject.projectId,
+    //         userId: 1
+    //     }))
+    // }
 
     triggerImport() {
         const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];

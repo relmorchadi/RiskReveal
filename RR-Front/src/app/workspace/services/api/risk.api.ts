@@ -31,6 +31,14 @@ export class RiskApi {
     return this.http.get(`${this.IMPORT_URL}import/config/get-riskLink-analysis-portfolios`, {params: {instanceId, projectId, rmsId , type}});
   }
 
+  filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, withPagination=true){
+    return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-analysis`, {params: {...paginationParams, instanceId, projectId, rdmId, userId, withPagination, ...filter}});
+  }
+
+  filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, withPagination=true){
+    return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-portfolio`, {params: {...paginationParams, instanceId, projectId, edmId, userId, withPagination, ...filter}});
+  }
+
   searchRiskLinkData(instanceId, keyword, offset, size): Observable<any> {
     return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {params: {instanceId, keyword, offset, size}});
   }

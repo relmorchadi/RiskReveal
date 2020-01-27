@@ -1,4 +1,6 @@
 import * as _ from "lodash";
+import {RLAnalysisFilter} from "./rl-analysis-filter.model";
+import {RlPortfolioFilter} from "./rl-portfolio-filter.model";
 
 export class RiskLink {
     type;
@@ -88,8 +90,24 @@ export class RiskLink {
             division: {data: [], selected: 'Division N°1'},
         };
         this.facSelection = {};
-        this.analysis = {};
-        this.portfolios = {};
+        this.analysis = {
+            data: [],
+            page: 0,
+            size: 20,
+            total: null,
+            last: null,
+            filter: new RLAnalysisFilter(),
+            loading: false
+        };
+        this.portfolios = {
+            data: [],
+            page: 0,
+            size: 20,
+            total: null,
+            last: null,
+            filter: new RlPortfolioFilter(),
+            loading: false
+        };
     }
 
     setRefData(refData) {
