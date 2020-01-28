@@ -2,6 +2,7 @@ package com.scor.rr.service.fileBasedImport;
 
 import com.scor.rr.domain.ModellingSystemEntity;
 import com.scor.rr.domain.ModellingVendorEntity;
+import com.scor.rr.domain.dto.ImportFilePLTData;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.model.PathNode;
 import com.scor.rr.domain.model.TreeNode;
