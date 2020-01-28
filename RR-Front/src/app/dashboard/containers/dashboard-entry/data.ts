@@ -12,7 +12,7 @@ const cols = [
     {field: 'businessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'assignedAnalyst', header: 'Assigned Analyst', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'requestCreationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
+    {field: 'creationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
 ];
 
