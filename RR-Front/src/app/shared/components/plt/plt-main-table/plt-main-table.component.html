@@ -163,11 +163,11 @@
             </div>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + col?.unit }">
-            <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
+            <div class="text-elipsice" style="font-weight: bold;padding: 0 5px;" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId}}</div>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
-              <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{ rowData[col.fields] }}</div>
+              <div class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{ rowData[col.fields] }}</div>
             </ng-container>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">
@@ -177,7 +177,7 @@
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
-              <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
+              <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
             </ng-container>
           </td>
           <td *ngIf="col?.type == 'icon' ||  col?.type == 'indicator'" [ngStyle]="{ 'width': col?.width + col?.unit }">

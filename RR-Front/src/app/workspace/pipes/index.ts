@@ -15,6 +15,10 @@ import {GetDescriptionPipe} from "./get-description.pipe";
 import {ConcatListPipe} from "./concat-list.pipe";
 import {GetDeltaPipe} from "./get-delta.pipe";
 import {FilterRPPipe} from "./filter-rp.pipe";
+import {FilterGroupedPltsPipe} from "./filter-grouped-plts.pipe";
+import {SortGroupedPltsPipe} from "./sort-grouped-plts.pipe";
+import {IsEventAdjustmentPipe} from "./is-event-adjustment.pipe";
+import {GetEventAdjustmentParamsPipe} from "./get-event-adjustment-params.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
@@ -33,7 +37,12 @@ export const PIPES = [
   GetDescriptionPipe,
   ConcatListPipe,
   GetDeltaPipe,
-  FilterRPPipe
+  FilterRPPipe,
+  FilterGroupedPltsPipe,
+  SortGroupedPltsPipe,
+  IsEventAdjustmentPipe,
+  GetEventAdjustmentParamsPipe
+
 ];
 
 export * from './filter-by-badge.pipe';
