@@ -1,36 +1,22 @@
 package com.scor.rr.service.fileBasedImport.batch;
 
-import com.scor.almf.cdm.repository.reference.CurrencyRepository;
-import com.scor.almf.ihub.treaty.processing.nonRMSbatch.bean.BaseNonRMSBean;
-import com.scor.almf.ihub.treaty.processing.treaty.loss.PLTLossData;
-import com.scor.almf.ihub.treaty.processing.ylt.meta.PLTPublishStatus;
-import com.scor.almf.ihub.treaty.processing.ylt.meta.XLTOT;
-import com.scor.almf.ihub.treaty.utils.ImportFileUtils;
-import com.scor.almf.treaty.cdm.domain.dss.FinancialPerspective;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.tracking.ProjectImportAssetLog;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.tracking.Step;
-import com.scor.almf.treaty.cdm.domain.omega.contract.Contract;
-import com.scor.almf.treaty.cdm.domain.plt.ScorPLTHeader;
-import com.scor.almf.treaty.cdm.domain.plt.meta.*;
-import com.scor.almf.treaty.cdm.domain.rap.TargetRap;
-import com.scor.almf.treaty.cdm.domain.reference.meta.BinFile;
-import com.scor.almf.treaty.cdm.domain.region.RegionPeril;
-import com.scor.almf.treaty.cdm.domain.workspace.Project;
-import com.scor.almf.treaty.cdm.repository.dss.TTFinancialPerspectiveRepository;
-import com.scor.almf.treaty.cdm.repository.dss.agnostic.ProjectImportAssetLogRepository;
-import com.scor.almf.treaty.cdm.repository.omega.treaty.ContractRepository;
-import com.scor.almf.treaty.cdm.repository.rap.TargetRapRepository;
-import com.scor.almf.treaty.cdm.repository.region.TTRegionPerilRepository;
-import com.scor.almf.treaty.cdm.repository.workspace.ProjectRepository;
-import com.scor.almf.treaty.cdm.tools.sequence.MongoDBSequence;
-import com.scor.almf.treaty.dao.DAOService;
-import com.scor.almf.treaty.service.importfile.ImportFileService;
+import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.PLTLossData;
+import com.scor.rr.domain.enums.*;
+import com.scor.rr.repository.ContractRepository;
+import com.scor.rr.repository.CurrencyRepository;
+import com.scor.rr.repository.ProjectRepository;
+import com.scor.rr.repository.TargetRapRepository;
+import com.scor.rr.service.fileBasedImport.ImportFileService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.apache.http.annotation.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
@@ -47,22 +33,13 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 
-/**
- * Created by U005342 on 14/07/2018.
- */
 @Service
 @StepScope
-public class LossDataSCORFormatConverter {
-    private static final Logger log = LoggerFactory.getLogger(LossDataSCORFormatConverter.class);
+public class ConvertToSCORFormatService {
+    private static final Logger log = LoggerFactory.getLogger(ConvertToSCORFormatService.class);
 
     @Autowired
     private ImportFileService importFileService;
-
-    @Autowired
-    private ProjectImportAssetLogRepository projectImportAssetLogRepository;
-
-    @Autowired
-    private DAOService daoService;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -86,7 +63,7 @@ public class LossDataSCORFormatConverter {
     @Autowired
     TTRegionPerilRepository ttRegionPerilRepository;
 
-    public Boolean convertLossDataToSCORFormat() throws Exception {
+    public RepeatStatus convertToSCORFormat() throws Exception {
         log.debug("Start CONVERT_LOSS_DATA_TO_SCOR_FORMAT");
         Date startDate = new Date();
 
@@ -110,13 +87,13 @@ public class LossDataSCORFormatConverter {
         for (TransformationBundleNonRMS bundle : transformationPackage.getBundles()) {
             // start new step (import progress) : step 2 CONVERT_LOSS_DATA_TO_SCOR_FORMAT for this analysis in loop of many analysis :
             // only valid sourceResults after step 1 are converted to bundles
-            ProjectImportAssetLog projectImportAssetLogA = new ProjectImportAssetLog();
-            mongoDBSequence.nextSequenceId(projectImportAssetLogA);
-            projectImportAssetLogA.setProjectId(getProjectId());
-            projectImportAssetLogA.setStepId(2);
-            projectImportAssetLogA.setStepName(Step.getStepNameFromStepIdForAnalysis(projectImportAssetLogA.getStepId()));
-            projectImportAssetLogA.setStartDate(startDate);
-            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
+//            ProjectImportAssetLog projectImportAssetLogA = new ProjectImportAssetLog();
+//            mongoDBSequence.nextSequenceId(projectImportAssetLogA);
+//            projectImportAssetLogA.setProjectId(getProjectId());
+//            projectImportAssetLogA.setStepId(2);
+//            projectImportAssetLogA.setStepName(Step.getStepNameFromStepIdForAnalysis(projectImportAssetLogA.getStepId()));
+//            projectImportAssetLogA.setStartDate(startDate);
+//            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
             // --------------------------------------------------------------
 
             long pic = System.currentTimeMillis();
@@ -128,17 +105,17 @@ public class LossDataSCORFormatConverter {
                 log.debug("File {}: parsing data section return null -- something wrong", bundle.getFile().getName());
             }
 
-            List<TargetRap> targetRaps = new ArrayList<>();
+            List<TargetRapEntity> targetRaps = new ArrayList<>();
             for (String targetRapId : bundle.getRrAnalysis().getIncludedTargetRapIds()) {
-                TargetRap targetRap = targetRapRepository.findByTargetRapId(Integer.parseInt(targetRapId));
+                TargetRapEntity targetRap = targetRapRepository.findByTargetRapId(Integer.parseInt(targetRapId));
                 targetRaps.add(targetRap);
             }
 
             // chua conform
-            List<ScorPLTHeader> pltHeaders = makeOriginalPurePLTHeaders(bundle, targetRaps, modelingBasis);
+            List<PltHeaderEntity> pltHeaders = makeOriginalPurePLTHeaders(bundle, targetRaps, modelingBasis);
 
             if (bundle.getPltLossDataList() != null) {
-                for (ScorPLTHeader pltHeader : pltHeaders) {
+                for (PltHeaderEntity pltHeader : pltHeaders) {
                     String filename = makePLTFileName(
                             pltHeader.getCreatedDate(),
                             pltHeader.getRegionPeril().getRegionPerilCode(),
@@ -160,7 +137,7 @@ public class LossDataSCORFormatConverter {
 
             // truncator
             double threshold = 0.0;
-            for (ScorPLTHeader pltHeader : pltHeaders) {
+            for (PltHeaderEntity pltHeader : pltHeaders) {
                 PLTBundleNonRMS pltBundle = new PLTBundleNonRMS();
                 pltBundle.setHeader(pltHeader);
                 bundle.addPLTBundle(pltBundle);
@@ -172,13 +149,13 @@ public class LossDataSCORFormatConverter {
             }
 
             // finish step 2 CONVERT_LOSS_DATA_TO_SCOR_FORMAT for one analysis in loop for of many analysis
-            Date endDate = new Date();
-            projectImportAssetLogA.setEndDate(endDate);
-            projectImportAssetLogRepository.save(projectImportAssetLogA);
-            log.info("Finish import progress STEP 2 : CONVERT_LOSS_DATA_TO_SCOR_FORMAT for RRAnalysis : {}", bundle.getRrAnalysis().getId());
+//            Date endDate = new Date();
+//            projectImportAssetLogA.setEndDate(endDate);
+//            projectImportAssetLogRepository.save(projectImportAssetLogA);
+            log.info("Finish import progress STEP 2 : CONVERT_LOSS_DATA_TO_SCOR_FORMAT for RRAnalysis : {}", bundle.getRrAnalysis().getRrAnalysisId());
         }
 
-        return true;
+        return RepeatStatus.FINISHED;
     }
 
     private static boolean DBG = true;
@@ -242,14 +219,14 @@ public class LossDataSCORFormatConverter {
         ) == null;
     }
 
-    private List<ScorPLTHeader> makeOriginalPurePLTHeaders(TransformationBundleNonRMS bundle, List<TargetRap> targetRaps, PLTModelingBasis modelingBasis) {
+    private List<PltHeaderEntity> makeOriginalPurePLTHeaders(TransformationBundleNonRMS bundle, List<TargetRapEntity> targetRaps, PLTModelingBasis modelingBasis) {
 
         int i = 0;
-        List<ScorPLTHeader> pltHeaders = new ArrayList<>();
-        for (TargetRap targetRap : targetRaps) {
+        List<PltHeaderEntity> pltHeaders = new ArrayList<>();
+        for (TargetRapEntity targetRap : targetRaps) {
             i++;
 
-            ScorPLTHeader scorPLTHeader = new ScorPLTHeader();
+            PltHeaderEntity scorPLTHeader = new PltHeaderEntity();
 
             scorPLTHeader.setPltLossDataFile(null);
             scorPLTHeader.setPltStatisticList(null);
@@ -261,16 +238,16 @@ public class LossDataSCORFormatConverter {
             // TODO how ???
             scorPLTHeader.setPltType(PLTType.Pure);
 
-            Project project = projectRepository.findById(getProjectId());
+            ProjectEntity project = projectRepository.findById(getProjectId());
             scorPLTHeader.setProject(project);
             scorPLTHeader.setRrRepresentationDatasetId(transformationPackage.getRrRepresentationDatasetId());
             scorPLTHeader.setRrAnalysisId(bundle.getRrAnalysis().getId());
 
-            Currency currency = currencyRepository.findByCode(bundle.getRrAnalysis().getSourceCurrency());
+            CurrencyEntity currency = currencyRepository.findByCode(bundle.getRrAnalysis().getSourceCurrency());
             scorPLTHeader.setCurrency(currency);
             scorPLTHeader.setTargetRap(targetRap);
 
-            RegionPeril regionPeril = ttRegionPerilRepository.findByRegionPerilCode(bundle.getRrAnalysis().getRegionPeril());
+            RegionPerilEntity regionPeril = ttRegionPerilRepository.findByRegionPerilCode(bundle.getRrAnalysis().getRegionPeril());
 
             scorPLTHeader.setRegionPeril(regionPeril);
             scorPLTHeader.setFinancialPerspective(fpUP);
@@ -307,8 +284,8 @@ public class LossDataSCORFormatConverter {
             scorPLTHeader.setPltName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1");
             pltHeaders.add(scorPLTHeader);
 
-            daoService.getMongoDBSequence().nextSequenceId(scorPLTHeader);
-            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPLTHeader.getId(), targetRap.getId(), targetRap.getSourceRapCode(), targetRap.getTargetRapCode());
+//            daoService.getMongoDBSequence().nextSequenceId(scorPLTHeader);
+            log.info("PLT {} has targetRap {}: source code {}, target code {}", scorPLTHeader.getPltHeaderId(), targetRap.getTargetRAPId(), targetRap.getSourceRAPCode(), targetRap.getTargetRAPCode());
         }
         return pltHeaders;
     }
