@@ -53,8 +53,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     columnsLength: number
   };
 
-  @Input() rowKeys: any;
-
   @Input() constants: {
     financialUnits: string[],
     curveTypes: string[],
