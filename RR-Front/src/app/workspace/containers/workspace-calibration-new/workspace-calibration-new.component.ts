@@ -47,6 +47,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     isGrouped: boolean,
     isDeltaByAmount: boolean
     filterData: any,
+    sortData: any,
     isExpandAll: boolean
   };
   constants: {
@@ -115,6 +116,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       selectedFinancialUnit: "Unit",
       selectedCurrency: null,
       filterData: {},
+      sortData: {},
       isExpandAll: false
     };
     this.exchangeRates= {};
@@ -151,9 +153,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.addRemovePopUpConfig = {
       ...this.addRemovePopUpConfig,
       tableColumns: this.calibrationTableService.getAddRemovePopUpTableColumns()
-    }
-
-    setInterval(() => console.log(this.tableConfig), 3333);
+    };
   }
 
   ngOnInit() {
@@ -216,8 +216,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.calibrationTableService.init();
 
-      console.log(this.columnsConfig);
-
       //SUB
       this.subscribeToColumns();
       this.subscribeToAdjustments(wsId + "-" + uwYear);
@@ -269,6 +267,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       )
       .subscribe(epMetrics => {
       this.epMetrics = epMetrics;
+
+      console.log(epMetrics);
 
       this.initEpMetricsCols(this.epMetrics);
 
@@ -335,7 +335,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
       this.columnsConfig= config;
-      console.log(config);
       this.detectChanges();
     })
   }
@@ -351,9 +350,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.data = plts;
     this.adjustments = adjustments;
     this.loading = loading;
-    if (this.data.length){
-      this.expandCollapseAllPlts();
-    }
+    if(this.data.length > 0) this.expandAllPlts();
   }
 
   initEpMetricsCols({cols, rps}) {
@@ -365,7 +362,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       cols,
       'epMetrics'
     );
-    this.calibrationTableService.init();
+    if(this.tableConfig.view == 'epMetrics') this.calibrationTableService.getColumns('epMetrics', this.tableConfig.isExpanded);
   }
 
   initFilterStatus(status) {
@@ -439,12 +436,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.openAddRemovePopUp();
         break;
 
-      case "Expand Collapse Plts":
-        this.expandCollapseAllPlts();
+      case "Collapse All Plts":
+        this.collapseAllPlts();
         break;
 
-      case "Filter Plt Table":
-        this.updateFilterData(action.payload);
+      case "Expand All Plts":
+        this.expandAllPlts();
+        break;
+
+      case "Filter Table":
+        this.filterTable(action.payload);
         break;
 
       case "Export EP Metrics":
@@ -465,6 +466,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       case "Resize frozen Column":
         this.resizeFrozenColumn(action.payload);
+        break;
+
+      case "Sort Table":
+        this.sortTable(action.payload);
         break;
 
       default:
@@ -513,11 +518,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   tableSeparatorResize(delta){
 
-    this.solotry(delta);
-
-  }
-
-  solotry(delta) {
     let res : {
       frozenWidth: string;
       frozenColumns: any[];
@@ -528,8 +528,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const minWidth = _.reduce(headTailCols, (acc, curr) => acc + _.toNumber(curr.width), 0);
     const frozenWidth = _.toNumber(_.trim(this.columnsConfig.frozenWidth, 'px'));
     const expandedMaxWidth = frozenWidth + delta - minWidth;
-
     const possibleExpandedCols = CalibrationTableService.frozenColsExpanded;
+    // const possibleExpandedCols = _.uniqBy([..._.slice(this.columnsConfig.frozenColumns,3, this.columnsConfig.frozenColumns.length - 1), ...CalibrationTableService.frozenColsExpanded], 'field');
+    // console.log(possibleExpandedCols);
 
     let expandedWidth = 0;
     let i =0;
@@ -557,16 +558,19 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       const newColMinWidth = _.toNumber(lastCol.minWidth);
       let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
 
-      middle[middle.length - 1] = {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''};
+      middle[middle.length - 1] = {...lastCol, width : newColMinWidth + ''};
     }
     const resCols = [...head, ...middle ,tail];
     res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
     res.frozenColumns= resCols;
 
-    this.calibrationTableService.updateColumnsConfig({
+    const tmp ={
       ...this.columnsConfig,
       ...res
-    });
+    };
+
+    this.calibrationTableService.updateColumnsConfig(tmp);
+    this.calibrationTableService.updateColumnsConfigCache(tmp);
 
   }
 
@@ -658,29 +662,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleRPSave() {
-    /*this.saveRPs();
-    this.deleteRPs();*/
     this.saveOrDeleteRPs();
-  }
-
-  saveRPs() {
-    this.dispatch(new fromWorkspaceStore.SaveRPs({
-      rps: this.returnPeriodConfig.newlyAdded,
-      userId: 1,
-      wsId: this.wsId,
-      uwYear: this.uwYear,
-      curveType: this.tableConfig.selectedCurveType
-    }))
-  }
-
-  deleteRPs() {
-    this.dispatch(new fromWorkspaceStore.DeleteRPs({
-      rps: this.returnPeriodConfig.deletedRPs,
-      userId: 1,
-      wsId: this.wsId,
-      uwYear: this.uwYear,
-      curveType: this.tableConfig.selectedCurveType
-    }))
   }
 
   saveOrDeleteRPs() {
@@ -756,37 +738,36 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   }
 
-  expandCollapseAllPlts() {
-    if (!_.keys(this.tableConfig.expandedRowKeys).length){
-      _.forEach(this.data, (pure)=> {
-        this.tableConfig.expandedRowKeys[pure.pltId] = true;
-      });
-      this.tableConfig= {
-          ...this.tableConfig,
-        isExpandAll: true
-      };
-    } else {
-      this.tableConfig= {
+  collapseAllPlts() {
+    this.tableConfig= {
+      ...this.tableConfig,
+      expandedRowKeys: {},
+      isExpandAll: false
+    };
+  }
+
+  expandAllPlts() {
+    _.forEach(this.data, (pure)=> {
+      this.tableConfig.expandedRowKeys[pure.pltId] = true;
+    });
+    this.tableConfig= {
+      ...this.tableConfig,
+      isExpandAll: true
+    };
+  }
+
+  private filterTable(filter: any) {
+    this.tableConfig = {
         ...this.tableConfig,
-        expandedRowKeys: {},
-        isExpandAll: false
-      };
+      filterData: filter
     }
-
   }
 
-  adaptPltPanelWidth(delta){
-  let arr = this.columnsConfig.frozenWidth.split('p');
-  let newWidth = Number(arr[0])  + delta;
-  this.columnsConfig = {
-    ...this.columnsConfig,
-    frozenWidth: newWidth+'px',
-    frozenColumns: this.calibrationTableService.getFrozenColumns(newWidth)
-  }
-  }
-
-  private updateFilterData(payload: any) {
-    this.tableConfig.filterData = payload;
+  sortTable(sorts: any) {
+    this.tableConfig = {
+        ...this.tableConfig,
+      sortData: sorts
+    }
   }
 
   exportEPMetrics() {
@@ -804,7 +785,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     this.excel.exportAsExcelFile(
         exportedList,
-        'epMetrics'
+        'EP Metrics-Calibration'
     )
   }
 

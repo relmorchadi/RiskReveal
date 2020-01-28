@@ -165,23 +165,29 @@ public class SearchService {
     }
 
     public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy, String wsType) {
-        WorkspaceDetailsDTO res= null;
 
-        if("TTY".equals(wsType)) res = loadTreatyWorkspace(workspaceId, uwy);
-        if("FAC".equals(wsType)) res = loadFacWorkspace(workspaceId, uwy);
+        if("TTY".equals(wsType)) return loadTreatyWorkspace(workspaceId, uwy, false, null);
+        if("FAC".equals(wsType)) return loadFacWorkspace(workspaceId, uwy, false, null);
 
-        if(res == null) res = loadFacWorkspace(workspaceId, uwy);
-        if(res == null) res = loadTreatyWorkspace(workspaceId, uwy);
+        if("".equals(wsType)) {
+            List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+            if(!CollectionUtils.isEmpty(contracts)) {
+                return this.loadTreatyWorkspace(workspaceId, uwy, true, contracts);
+            }
 
-        if( res != null ) {
-            return res;
-        } else {
-            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+            Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+
+            if(wsOpt.isPresent()) {
+                return this.loadFacWorkspace(workspaceId, uwy, true, wsOpt);
+            }
+
         }
-    };
 
-    WorkspaceDetailsDTO loadTreatyWorkspace(String workspaceId, String uwy) {
-        List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+        return null;
+    }
+
+    WorkspaceDetailsDTO loadTreatyWorkspace(String workspaceId, String uwy, boolean alreadyChecked, List<ContractSearchResult> ct) {
+        List<ContractSearchResult> contracts = !alreadyChecked ? contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy) : ct;
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         List<ProjectCardView> projects = wsOpt
@@ -209,8 +215,8 @@ public class SearchService {
         }
     }
 
-    WorkspaceDetailsDTO loadFacWorkspace(String workspaceId, String uwy) {
-        Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+    WorkspaceDetailsDTO loadFacWorkspace(String workspaceId, String uwy, boolean alreadyChecked, Optional<WorkspaceEntity> ws) {
+        Optional<WorkspaceEntity> wsOpt = !alreadyChecked ? workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy)) : ws;
         if (wsOpt.isPresent()) {
             List<ProjectCardView> projects = wsOpt
                     .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))

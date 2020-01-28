@@ -14,6 +14,7 @@ import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
 import {ActivatedRoute} from "@angular/router";
 import * as _ from 'lodash';
+import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
 @Component({
   selector: 'app-calibration-new-table',
   templateUrl: './calibration-new-table.component.html',
@@ -37,7 +38,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     isExpanded: boolean,
     expandedRowKeys: any,
     isGrouped: boolean,
-    filterData: any
+    filterData: any,
+    sortData: any,
     isDeltaByAmount: boolean,
     isExpandAll: boolean
   };
@@ -94,8 +96,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   ngOnInit() {
     this.contextMenuItem = [
-      {label: 'Expand', command: (event)=>{this.expandCollapseAllPlts()}},
-      {label: 'Collapse', command: (event)=>{this.expandCollapseAllPlts()}},
+      {label: 'Expand', command: (event)=>{this.expandAllPlts()}},
+      {label: 'Collapse', command: (event)=>{this.collapseAllPlts()}},
     ]
   }
   ngAfterViewInit() {
@@ -346,9 +348,15 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
 
-  expandCollapseAllPlts() {
+  expandAllPlts() {
     this.actionDispatcher.emit({
-      type: "Expand Collapse Plts"
+      type: "Expand All Plts"
+    })
+  }
+
+  collapseAllPlts() {
+    this.actionDispatcher.emit({
+      type: "Collapse All Plts"
     })
   }
 
@@ -359,14 +367,12 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     });
     }
 
-  filter(field: any, value: string) {
-    if (value){
-      this.actionDispatcher.emit({
-        type: "Filter Plt Table",
-        payload: _.merge({}, this.tableConfig.filterData, {[field]: value})
-      })
-    }
-  }
+  filter = _.debounce((field: any, value: string) => {
+    this.actionDispatcher.emit({
+      type: "Filter Table",
+      payload: value ? _.merge({}, this.tableConfig.filterData, {[field]: value}) : _.omit(this.tableConfig.filterData, `${field}`)
+    })
+  })
   exportEPMetrics() {
     this.actionDispatcher.emit( {
       type: "Export EP Metrics",
@@ -380,6 +386,25 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
       type: "Delta Change",
       payload: newValue
     })
+  }
+
+  sortChange(field: any, sortCol: any) {
+    if (!sortCol) {
+      this.actionDispatcher.emit({
+        type: "Sort Table",
+        payload: _.merge({}, this.tableConfig.sortData, {[field]: 'asc'})
+      });
+    } else if (sortCol === 'asc') {
+      this.actionDispatcher.emit({
+        type: "Sort Table",
+        payload: _.merge({}, this.tableConfig.sortData, {[field]: 'desc'})
+      });
+    } else if (sortCol === 'desc') {
+      this.actionDispatcher.emit({
+        type: "Sort Table",
+        payload: _.omit(this.tableConfig.sortData, `${field}`)
+      });
+    }
   }
 
 }

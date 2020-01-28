@@ -25,7 +25,7 @@ export class WorkspaceService {
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {wsId, uwYear, route, type} = payload;
     ctx.patchState({loading: true});
-    return this.wsApi.searchWorkspace(wsId, uwYear, type ? type : 'TTY')
+    return this.wsApi.searchWorkspace(wsId, uwYear, type)
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({

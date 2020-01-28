@@ -1,6 +1,6 @@
 <p-table
   [dataKey]="'pltId'"
-  [value]="data"
+  [value]="data | filterGroupedPlts : tableConfig.filterData | sortGroupedPlts : tableConfig.sortData"
   [expandedRowKeys]="tableConfig?.expandedRowKeys"
   [columns]="columnsConfig?.columns"
   [contextMenu]="contmenu"
@@ -8,7 +8,7 @@
   [frozenWidth]="columnsConfig?.frozenWidth"
   [resizableColumns]="true"
   [scrollable]="true"
-  [scrollHeight]="'calc( 100vh - 450px )'"
+  [scrollHeight]="'calc( 100vh - 466px )'"
   [columnResizeMode]="'expand'"
   (onColResize)="onColumnResize($event)"
   syncScroll
@@ -72,6 +72,7 @@
           <a href="#" [pRowToggler]="rowData" class="left-margin-checkbox-column">
             <i [ngClass]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
           </a>
+
         </ng-container>
 
         <ng-container *ngIf="col?.type != 'arrow'">
@@ -185,7 +186,8 @@
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
           <span>{{adjustment?.basisShortName}}</span>
-          <input class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
+          <div class="text-ellipsis" *ngIf="adjustment?.adjustmentType != 'Linear'">{{adjustment?.adjustmentType}}</div>
+          <input *ngIf="adjustment?.adjustmentType == 'Linear'" class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
         </div>
       </div>
     </div>
@@ -235,8 +237,13 @@
           </label>
         </ng-container>
         <ng-container *ngIf="col?.type != 'status' && col?.type != 'arrow'">
-          <div class="text-ellipsis">
+          <div class="text-ellipsis" style="display: flex;justify-content: space-between;">
             {{col?.header}}
+            <ng-container *ngIf="col?.sortable" [ngSwitch]="tableConfig?.sortData[col?.field]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field,tableConfig?.sortData[col?.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field,tableConfig?.sortData[col?.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,tableConfig?.sortData[col?.field])" style="font-size: 1.4em;"></i>
+            </ng-container>
           </div>
         </ng-container>
       </th>
@@ -263,8 +270,11 @@
         <div>
           <!--<span (click)="onShowAddRemovePopUp()" class="addRemove">Add/Remove</span>-->
         </div>
-        <div>
-          <i (click)="expandCollapseAllPlts()" class="regenerate-all" [ngClass]="{'icon-expand_more_24px': !tableConfig?.isExpandAll,'icon-expand_less_24px': tableConfig?.isExpandAll }" [nz-tooltip]="isExpandAllTemplate"></i>
+        <div style="display: flex;">
+          <div style="margin-right: 10px;">
+            <i class="icon-plus-square" style="font-size: 20px;cursor: pointer;" (click)="expandAllPlts()"></i>
+            <i class="icon-minus-square" style="font-size: 20px;cursor: pointer;" (click)="collapseAllPlts()"></i>
+          </div>
           <i (click)="toggleGrouping()" *ngIf="!tableConfig?.isGrouped"
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"

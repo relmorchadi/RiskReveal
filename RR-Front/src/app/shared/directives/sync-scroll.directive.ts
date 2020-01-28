@@ -1,4 +1,4 @@
-import {AfterViewInit, Directive, ElementRef, OnDestroy} from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, OnChanges, OnDestroy} from '@angular/core';
 
 @Directive({
   selector: '[syncScroll]'
@@ -25,8 +25,8 @@ export class SyncScrollDirective implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.frozen.nativeElement.removeEventListener('scroll');
-    this.unfrozen.nativeElement.removeEventListener('scroll');
+    // this.frozen.nativeElement.removeEventListener('scroll');
+    // this.unfrozen.nativeElement.removeEventListener('scroll');
   }
 
 }
