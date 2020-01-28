@@ -41,6 +41,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     isDeltaByAmount: boolean
   };
 
+  @Input() exchangeRates: any;
+
   @Input() columnsConfig: {
     frozenColumns: any[],
     frozenWidth: string,
@@ -307,8 +309,9 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
-  onColumnResize({delta, element: {id}}) {
-    if(!this.tableConfig.isExpanded) {
+  onColumnResize({delta, element: {id, title}}) {
+    console.log(id, title);
+    if(!this.tableConfig.isExpanded && title == 'true') {
       this.actionDispatcher.emit({
         type: "Resize frozen Column",
         payload: delta

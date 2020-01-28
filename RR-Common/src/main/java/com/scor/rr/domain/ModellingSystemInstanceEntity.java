@@ -34,7 +34,7 @@ public class ModellingSystemInstanceEntity {
     private String driverClass;
     @Column(name = "Acitve")
     private Boolean active;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ModellingSystemVersionId")
     private ModellingSystemVersionEntity modellingSystemVersion;
 }

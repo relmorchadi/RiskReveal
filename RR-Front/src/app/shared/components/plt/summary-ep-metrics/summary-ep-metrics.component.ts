@@ -34,6 +34,10 @@ export class SummaryEpMetricsComponent implements OnInit {
 
   @Input() epMetricsLosses;
 
+  @Input() exchangeRates;
+
+  @Input() sourceCurrency;
+
   @Input() returnPeriodConfig: {
     showSuggestion: boolean,
     returnPeriodInput: number,
@@ -74,6 +78,13 @@ export class SummaryEpMetricsComponent implements OnInit {
       type: "Select Financial Unit",
       payload: financialUnit
     })
+  }
+
+  currencyChange(currency) {
+    this.actionDispatcher.emit({
+      type: "Currency Change",
+      payload: currency
+    });
   }
 
   inputChange = _.debounce((newValue) => {

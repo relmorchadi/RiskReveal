@@ -1,5 +1,6 @@
 package com.scor.rr.domain.dto;
 
+import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,4 +24,5 @@ public class RLPortfolioDto {
     private String agCedent;
     private String agSource;
     private String peril;
+
 }

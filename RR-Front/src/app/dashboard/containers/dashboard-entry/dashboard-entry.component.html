@@ -104,18 +104,19 @@
     <div nz-row class="slider-header-item">
       <div nz-col class="center-items" nzSpan="8">
         <i class="clickable-item icon-settings_24px" style="color: #fff; font-size: 24px"
-           (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
+           (click)="rightSliderCollapsed = !rightSliderCollapsed"></i>
       </div>
       <div nz-col nzSpan="16" class="header-title">
         Dashboard <br>
         Preferences
-        <button nz-popconfirm (nzOnConfirm)="addDashboard()" [nzTitle]="dash" class="add-workspace-btn" nz-button
+        <button nz-popconfirm (nzOnConfirm)="addDashboard()" (nzOnCancel)="emptyField()" (click)="focusInput()" [nzTitle]="dash" class="add-workspace-btn" nz-button
                 nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" >
           <i nz-icon type="plus"></i>
         </button>
         <ng-template #dash>
           <p class="popover-title">Add New Dashboard</p>
-          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="a-textfield-standard" type="text">
+          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name"
+                 class="a-textfield-standard" type="text" #searchInput>
         </ng-template>
       </div>
     </div>
@@ -136,10 +137,17 @@
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input" placeholder=""
                  (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard.name">
-          <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted"
+          <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted" *ngIf="dashboards.length > 1"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
             nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'"
           ></i>
+          <i nz-popconfirm nzPlacement="top" [nzTitle]="refDelete" *ngIf="dashboards.length === 1"
+             (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
+             nzOkText="OK" [nzOkType]="'primary'" nzCancelText=""
+          ></i>
+          <ng-template #refDelete>
+            <p class="body-2">It's impossible to delete this dashboard</p>
+          </ng-template>
           <ng-template #deleted>
             <span class="body-1">Delete {{selectedDashboard.name}}</span>
             <p class="body-2">Are you sure you want to delete {{selectedDashboard.name}}?</p>
@@ -178,9 +186,9 @@
           </ng-container>
         </ul>-->
         <div class="highlight" style="margin-top: 10px">
-          <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
+          <span class="title">FAC</span>
         </div>
-        <ul class="widgets-list" style="height: 160px;">
+        <ul class="widgets-list">
           <ng-container *ngFor="let fac of selectedDashboard.fac; let i = index">
             <li *ngIf="i < 5"
                 (click)="addRemoveItemFac(fac, selectedDashboard)"

@@ -2,7 +2,12 @@ package com.scor.rr.service.abstraction;
 
 import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.ModelDataSourceType;
+import com.scor.rr.domain.riskLink.RLPortfolio;
 import com.scor.rr.domain.views.RLSourceEpHeaderView;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +34,20 @@ public interface ConfigurationService {
 
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 
+    boolean checkIfProjectHasConfigurations(Long projectId);
+
     List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
 
-    List<ImportSelectionDto> getRLModelAnalysisConfigs(Long projectId);
+    List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId);
+
+    List<RLPortfolioSelectionDtoWithPortfolioInfo> getRLPortfolioConfigs(Long projectId);
+
+    Page<RLAnalysisDto> filterRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long rdmId, RLAnalysisDto filter, Pageable pageable);
+
+    List<RLAnalysisDto> filterRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long rdmId, RLAnalysisDto filter);
+
+    Page<RLPortfolioDto> filterRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long edmId, RLPortfolioDto filter, Pageable pageable);
+
+    List<RLPortfolioDto> filterRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long edmId, RLPortfolioDto filter);
+
 }

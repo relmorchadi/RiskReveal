@@ -315,7 +315,7 @@ export class WorkspaceState {
   @Selector()
   static getAnalysis(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].riskLink.analysis;
+    return _.toArray(state.content[wsIdentifier].riskLink.analysis);
   }
 
   @Selector()
@@ -1049,6 +1049,16 @@ export class WorkspaceState {
     return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
   }
 
+  @Action(fromWS.GetRiskLinkAnalysisAction)
+  getRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
+    return this.riskLinkFacade.getRiskLinkAnalysis(ctx, payload);
+  }
+
+  @Action(fromWS.GetRiskLinkPortfolioAction)
+  getRiskLinkPortfolios(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
+    return this.riskLinkFacade.getRiskLinkPortfolios(ctx, payload);
+  }
+
   @Action(fromWS.ToggleRiskLinkAnalysisAction)
   toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkAnalysisAction) {
     this.riskLinkFacade.toggleRiskLinkAnalysis(ctx, payload);
@@ -1154,6 +1164,18 @@ export class WorkspaceState {
   loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
   }
+
+  @Action(fromWS.LoadSummaryOrDefaultDataSourcesAction)
+  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.loadSummaryOrDefaultDataSources(ctx, payload);
+  }
+
+  @Action(fromWS.LoadSummaryAction)
+  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+    return this.riskLinkFacade.loadSummary(ctx, payload);
+  }
+
+
 
   /***********************************
    *

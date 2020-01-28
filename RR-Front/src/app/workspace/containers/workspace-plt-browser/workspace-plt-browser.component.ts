@@ -217,6 +217,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           this.uwy = year;
           this.updateLeftMenuInputs('wsId', this.workspaceId);
           this.updateLeftMenuInputs('uwYear', this.uwy);
+          this.updateMenuKey('wsIdentifier', this.workspaceId+"-"+this.uwy);
         })
     )
   }

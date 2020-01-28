@@ -2,14 +2,13 @@ package com.scor.rr.rest;
 
 
 import com.scor.rr.domain.DataSource;
-import com.scor.rr.domain.dto.DataSourcesDto;
-import com.scor.rr.domain.dto.DetailedScanDto;
-import com.scor.rr.domain.dto.ImportSelectionDto;
-import com.scor.rr.domain.dto.PortfolioSelectionDto;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.ModelDataSourceType;
 import com.scor.rr.service.RmsService;
 import com.scor.rr.service.abstraction.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,7 @@ public class ConfigurationResource {
 
     @PostMapping("detailed-scan")
     public ResponseEntity<?> analysisDetailScan(@RequestBody DetailedScanDto detailedScanDto) {
-        return new ResponseEntity<>(rmsService.detailedScan(detailedScanDto), HttpStatus.OK);
+        return new ResponseEntity<>(rmsService.paralleledDetailedScan(detailedScanDto), HttpStatus.OK);
     }
 
     @PostMapping("save-analysis-import-selection")
@@ -83,6 +82,22 @@ public class ConfigurationResource {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has Occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping(value = "filter-riskLink-analysis")
+    public ResponseEntity<?> filterRiskLinkAnalysis(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long rdmId, @PageableDefault(size = 20) Pageable pageable, RLAnalysisDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
+        if(withPagination)
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter,pageable));
+        else
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter));
+    }
+
+    @GetMapping(value = "filter-riskLink-portfolio")
+    public ResponseEntity<?> filterRiskLinkPortfolio(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long edmId, @PageableDefault(size = 20) Pageable pageable, RLPortfolioDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
+        if(withPagination)
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter,pageable));
+        else
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter));
     }
 
     @GetMapping(value = "get-source-ep-headers")
@@ -182,15 +197,25 @@ public class ConfigurationResource {
         }
     }
 
-    @GetMapping(value = "get-global-data-sources")
-    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
+    @GetMapping(value = "get-imported-portfolio-configuration")
+    public ResponseEntity<?> getImportedPortfolioConfiguration(@RequestParam Long projectId) {
         try {
-            if (configurationService.checkIfProjectHasBeenImportedBefore(projectId) != null)
-                return new ResponseEntity<>(configurationService.getDataSourcesWithSelectedAnalysis(projectId), HttpStatus.OK);
-            else
-                return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+            return new ResponseEntity<>(configurationService.getRLPortfolioConfigs(projectId), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "get-global-data-sources")
+    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
+        try {
+            if (configurationService.checkIfProjectHasConfigurations(projectId))
+                return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
+            else
+                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

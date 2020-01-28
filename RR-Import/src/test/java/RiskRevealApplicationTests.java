@@ -520,7 +520,7 @@ public class RiskRevealApplicationTests {
 
     @Test
     public void listAvailableDataSources() {
-        Mockito.when(rmsService.listAvailableDataSources(instanceId, null, 0,20).get().collect(toList())).thenReturn(Arrays.asList(dataSource));
+        Mockito.when(rmsService.listAvailableDataSources(instanceId, null, 0,20).getContent()).thenReturn(Arrays.asList(dataSource));
         List<DataSource> dataSources = (List<DataSource>) rmsRessource.listAvailableDataSources(instanceId, null, 0, 20).getBody();
         Assert.assertNotNull(dataSources.get(0));
         Assert.assertNotNull(dataSource);

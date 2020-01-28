@@ -14,4 +14,6 @@ public interface RLPortfolioSelectionRepository extends JpaRepository<RLPortfoli
 
     @Query("SELECT rlPortfolioSelectionId FROM RLPortfolioSelection WHERE projectId=:projectId")
     List<Long> findRLPortfolioSelectionIdByProjectId(Long projectId);
+
+    List<RLPortfolioSelection> findByProjectId(Long projectId);
 }
