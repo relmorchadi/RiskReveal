@@ -16,6 +16,8 @@ public class RLPortfolioDto {
     private Long rlPortfolioId;
     private String number;
     private Long rlId;
+    private Long edmId;
+    private String edmName;
     private String name;
     private String description;
     private Date created;

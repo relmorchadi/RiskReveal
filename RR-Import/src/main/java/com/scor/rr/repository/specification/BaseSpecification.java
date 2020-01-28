@@ -101,7 +101,7 @@ public abstract class BaseSpecification<T, U> {
 
     protected Specification<T> evaluateSpecialChars(SingularAttribute attribute, String value) {
         if(StringUtils.startsWith(value, "\"") && StringUtils.endsWith(value, "\"")){
-            return AttributeEquals(attribute, value);
+            return AttributeEquals(attribute, StringUtils.remove(value, "\""));
         }else if (StringUtils.startsWith(value, "*") || StringUtils.endsWith(value, "*") ){
             if (StringUtils.startsWith(value, "*")){
                 return AttributeEndsWith(attribute, StringUtils.remove(value, "*"));
