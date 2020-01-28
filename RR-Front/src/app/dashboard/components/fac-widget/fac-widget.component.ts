@@ -23,73 +23,38 @@ export class FacWidgetComponent implements OnInit {
   @Output('managePopUp') openPopUp: any = new EventEmitter<any>();
 
   private dropdown: NzDropdownContextComponent;
-  uwyUnits;
-  cedants = Data.cedant;
-
-  filterNew = false;
-  filterCurrent = false;
-  filterArchive = false;
 
   @Input()
-  itemName = 'Car Widget';
+  itemWidget: any;
   @Input()
   dashboard: any;
-  @Input()
-  identifier: number;
-  @Input()
-  widgetIndex: number;
-  @Input()
-  type: any;
   @Input()
   data: any;
   @Input('tableCols')
   dashCols: any;
 
+  identifier: number;
+  itemName: any;
+  type: any;
+  persisted: any;
   newDashboard: any;
   editName = false;
-
-  mockData = [];
-  private defaultCountry: string;
-  private defaultUwUnit: string;
-  Countries = Data.coutryAlt;
-  private mockDataCache;
   tabIndex = 1;
-
   filters = {};
-
   newSort = {};
   globalSort = {};
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef,
               private wsApi: WsApi) {
-    this.mockData = dashData.mockData;
-
-    this.mockDataCache = this.mockData = _.map(this.mockData,
-      (e, i) => ({
-        ...e,
-        assignedTo: 'Rim BENABBES',
-        lastModifiedBy: 'Rim BENABBES',
-        lastModifiedDate: moment(Date.now()).format('MM/DD/YYYY'),
-        country: this.Countries[i].COUNTRYSHORTNAME,
-        visible: true,
-        cedant: this.cedants[i].CLIENTSHORTNAME
-      }));
-
-    this.uwyUnits = _.uniqBy(this.mockData, 'UNDERWRITINGUNITCODE');
   }
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-
-    this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
-      country: '',
-      uwUnit: ''
-    })).subscribe(coi => {
-      this.defaultCountry = coi.defaultCountry;
-      this.defaultUwUnit = coi.defaultUwUnit;
-      this.detectChanges();
-    });
+    this.identifier = this.itemWidget.id;
+    this.type = this.itemWidget.type;
+    this.itemName = this.itemWidget.name;
+    this.persisted =  this.itemWidget.persisted;
   }
 
   selectTab(index) {
@@ -135,8 +100,8 @@ export class FacWidgetComponent implements OnInit {
     this.duplicate.emit(itemName);
   }
 
-  deleteItem(id): void {
-    this.delete.emit(id);
+  deleteItem(id, persistent): void {
+    this.delete.emit({id, persistent});
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
@@ -149,7 +114,7 @@ export class FacWidgetComponent implements OnInit {
 
   validateName(keyboardMap, id) {
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
+      this.changeName.emit({itemId: id, newName: keyboardMap.target.value, persistent: this.persisted});
       this.editName = false;
     }
   }
@@ -161,9 +126,5 @@ export class FacWidgetComponent implements OnInit {
   detectChanges() {
     if (!this.cdRef['destroyed'])
       this.cdRef.detectChanges();
-  }
-
-  setFilter(col: string, $event: {}) {
-    this.mockData = _.filter(this.mockDataCache, (e) => $event ? e[col] === $event : true);
   }
 }

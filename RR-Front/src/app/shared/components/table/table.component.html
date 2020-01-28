@@ -54,21 +54,24 @@
         <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
             (dblclick)="doubleClickRow(rowData)"
             (click)="selectRow(rowData, i)">
-          <div *ngIf="col?.type === 'text' || col?.type === 'date'" style="display:flex">
-            <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+          <div *ngIf="col?.type === 'text'" style="display:flex">
             <span *ngIf="rowData[col.field] !== 'Unassigned'" [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+          </div>
+          <div *ngIf="col?.type === 'date'" style="display:flex">
+            <i class="icon-calendar-alt" style="margin-right: 4px"></i>
+            <span class="text-wrapper">{{rowData[col?.field] | date: 'dd-MM-yyyy'}}</span>
           </div>
           <div class="fav-status-info" (click)="updateFavValue(rowData)" *ngIf="col?.type === 'favStatus'">
             <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
             <i *ngIf="rowData[col?.field]" class="icon-star_24px"></i>
           </div>
-          <ng-container *ngIf="col?.type === 'rawStatus'">
+<!--          <ng-container *ngIf="col?.type === 'rawStatus'">
             <span class="new-item" *ngIf="rowData[col.field] === 'New'">New</span>
             <span class="canceled-item" *ngIf="rowData[col.field] === 'Canceled'">Canceled</span>
             <span class="superseeded-item" *ngIf="rowData[col.field] === 'SuperSeeded'">SuperSeeded</span>
             <span class="current-item" *ngIf="rowData[col.field] === 'In Progress'">In Progress</span>
             <span class="completed-item" *ngIf="rowData[col.field] === 'Completed'">Completed</span>
-          </ng-container>
+          </ng-container>-->
         </td>
         <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
           <div style="display:flex">
