@@ -31,9 +31,14 @@ public class GroupedPLTSplitter {
     private FinalContributionMatrixWriter finalContributionMatrixWriter;
 
 
-    public Map<Integer, List<PLTLossData>> contributionCorrecter(File groupedPlt, String lossContPath, String maxContPath, int numberOfPLTs) throws RRException {
+
+    public Map<Integer, List<PLTLossData>> contributionCorrecter(File groupedPlt, String lossContPath, String maxContPath, int numberOfPLTs,String separator) throws RRException {
 
         boolean changed = false;
+        String tempFile = lossContPath +"temp"+ separator;
+        String maxtempFile = maxContPath +"temp"+ separator;
+        boolean created1 = new File(tempFile).mkdir();
+        boolean created2 = new File(maxtempFile).mkdir();
         Map<Integer, List<PLTLossData>> map = new HashMap<>();
         List<ContributionMatrice> contributionMatrixMap = new ArrayList<>();
         List<ContributionMatrice> contributionMatrixMapMax = new ArrayList<>();
@@ -68,12 +73,13 @@ public class GroupedPLTSplitter {
                     combinedPLT.add(lossData);
 
                     if (phase != rowPhase) {
-                        if (changed) {
-                            Files.deleteIfExists(Paths.get(lossContPath + (phase) + "-Con.bin"));
-                            Files.deleteIfExists(Paths.get(maxContPath + (phase) + "-ConMax.bin"));
-                            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMap, new File(lossContPath + (phase) + "-Con.bin"), contributionMatrixMap.size(), numberOfPLTs);
-                            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMapMax, new File(maxContPath + (phase) + "-ConMax.bin"), contributionMatrixMapMax.size(), numberOfPLTs);
+                        if(phase != 0){
+                            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMap, new File(tempFile + (phase) + "-Con.bin"), contributionMatrixMap.size(), numberOfPLTs);
+                            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMapMax, new File(maxtempFile + (phase) + "-ConMax.bin"), contributionMatrixMapMax.size(), numberOfPLTs);
+                            contributionMatrixMap.clear();
+                            contributionMatrixMapMax.clear();
                         }
+
                         File getChunkContributionMax = new File(maxContPath + (rowPhase) + "-ConMax.bin");
                         File getChunkContribution = new File(lossContPath + (rowPhase) + "-Con.bin");
 
@@ -110,6 +116,11 @@ public class GroupedPLTSplitter {
                         pltToWrite.add(pltSplitted);
                     }
                 }
+
+            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMap, new File(tempFile + (phase) + "-Con.bin"), contributionMatrixMap.size(), numberOfPLTs);
+            finalContributionMatrixWriter.writeCorrectMatrice(contributionMatrixMapMax, new File(maxtempFile + (phase) + "-ConMax.bin"), contributionMatrixMapMax.size(), numberOfPLTs);
+            contributionMatrixMap.clear();
+            contributionMatrixMapMax.clear();
 
 
 

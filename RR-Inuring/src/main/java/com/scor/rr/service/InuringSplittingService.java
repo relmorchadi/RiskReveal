@@ -8,12 +8,14 @@ import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import com.scor.rr.request.InuringSplittingRequest;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,7 @@ public class InuringSplittingService {
     @Value(value = "${application.inuring.separator}")
     private String separator;
 
-    public void SplitPLTintoIndividual(InuringSplittingRequest request) throws RRException, CloneNotSupportedException {
+    public void SplitPLTintoIndividual(InuringSplittingRequest request) throws RRException, CloneNotSupportedException, IOException {
         File groupedPlt = new File(request.getPltGroupedPath());
         if (!groupedPlt.exists()) throw new PLTFileNotFoundException();
         int index = 0;
@@ -40,7 +42,8 @@ public class InuringSplittingService {
         Map<Integer, List<PLTLossData>> returnMap = groupedPLTSplitter.contributionCorrecter(groupedPlt,
                 request.getContributionMatriceLossPath(),
                 request.getContributionMatriceMaxExpoPath(),
-                request.getPltIds().size());
+                request.getPltIds().size(),
+                separator);
 
         String targetFile = path + "SplittedPLTFolder" + separator;
         boolean created1 = new File(targetFile).mkdir();
@@ -53,8 +56,8 @@ public class InuringSplittingService {
         while (index < request.getPltIds().size()) {
             File filePlt = new File(targetFile +"plt"+ request.getPltIds().get(index) + ".bin");
             List<PLTLossData> pltToWrite = groupedPLTSplitter.groupedPLTSplitter(returnMap.get(1),
-                    request.getContributionMatriceLossPath(),
-                    request.getContributionMatriceMaxExpoPath(),
+                    request.getContributionMatriceLossPath()+"temp"+separator,
+                    request.getContributionMatriceMaxExpoPath()+"temp"+separator,
                     request.getPltIds().size(),
                     index);
 
@@ -62,7 +65,12 @@ public class InuringSplittingService {
             pltFileWriter.write(pltToWrite, filePlt);
             index++;
         }
+        System.gc();
+
+        FileUtils.deleteDirectory(new File(request.getContributionMatriceLossPath()+"temp"+separator));
+        FileUtils.deleteDirectory(new File(request.getContributionMatriceMaxExpoPath()+"temp"+separator));
 
 
     }
+
 }
