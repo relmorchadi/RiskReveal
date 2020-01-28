@@ -1,34 +1,18 @@
 package com.scor.rr.service.fileBasedImport.batch;
 
-import com.scor.almf.cdm.repository.reference.CurrencyRepository;
-import com.scor.almf.cdm.repository.reference.ExchangeRateRepository;
-import com.scor.almf.ihub.treaty.processing.nonRMSbatch.bean.BaseNonRMSBean;
-import com.scor.almf.ihub.treaty.processing.treaty.loss.PLTLossData;
-import com.scor.almf.ihub.treaty.processing.ylt.meta.PLTPublishStatus;
-import com.scor.almf.ihub.treaty.processing.ylt.meta.XLTOT;
-import com.scor.almf.treaty.cdm.domain.dss.AnalysisFinancialPerspective;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.ihub.LossDataFile;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.ihub.RRFinancialPerspective;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.ihub.RRLossTable;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.ihub.RRLossTableType;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.stat.RREPCurve;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.stat.RRStatisticHeader;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.stat.RRSummaryStatistic;
-import com.scor.almf.treaty.cdm.domain.dss.agnostic.tracking.ProjectImportAssetLog;
-import com.scor.almf.treaty.cdm.domain.plt.ScorPLTHeader;
-import com.scor.almf.treaty.cdm.domain.plt.meta.*;
-import com.scor.almf.treaty.cdm.domain.reference.meta.BinFile;
-import com.scor.almf.treaty.cdm.repository.dss.agnostic.ProjectImportAssetLogRepository;
-import com.scor.almf.treaty.cdm.repository.dss.agnostic.RRLossTableRepository;
-import com.scor.almf.treaty.cdm.repository.dss.agnostic.RRStatisticHeaderRepository;
-import com.scor.almf.treaty.cdm.repository.plt.ScorPLTHeaderRepository;
-import com.scor.almf.treaty.cdm.tools.sequence.MongoDBSequence;
-import com.scor.almf.treaty.dao.DAOService;
+import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.PLTLossData;
+import com.scor.rr.domain.enums.*;
+import com.scor.rr.repository.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
 
@@ -45,42 +29,32 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
 
-/**
- * Created by U005342 on 16/07/2018.
- */
-public class PLTConformer extends BaseNonRMSBean {
+@Service
+@StepScope
+public class ConformPLTService {
 
-    private static final Logger log = LoggerFactory.getLogger(PLTConformer.class);
+    private static final Logger log = LoggerFactory.getLogger(ConformPLTService.class);
 
     private static boolean DBG = true;
 
     @Autowired
-    private MongoDBSequence mongoDBSequence;
+    private PltHeaderRepository pltHeaderRepository;
 
     @Autowired
-    private ScorPLTHeaderRepository scorPLTHeaderRepository;
+    private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
-    private RRStatisticHeaderRepository rrStatisticHeaderRepository;
-
-    @Autowired
-    private RRLossTableRepository rrLossTableRepository;
-
-    @Autowired
-    private DAOService daoService;
-
-    @Autowired
-    private ProjectImportAssetLogRepository projectImportAssetLogRepository;
+    private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
     @Autowired
     private CurrencyRepository currencyRepository;
 
     @Autowired
-    private ExchangeRateRepository exchangeRateRepository;
+    private ExchangerateRepository exchangerateRepository;
 
     private TransformationPackageNonRMS transformationPackage;
 
-    public Boolean conformPLT() {
+    public RepeatStatus conformPLT() throws Exception {
 
         log.debug("Start CONFORM_PLT");
         Date startDate = new Date();
@@ -88,13 +62,13 @@ public class PLTConformer extends BaseNonRMSBean {
         for (TransformationBundleNonRMS bundle : transformationPackage.getBundles()) {
             // start new step (import progress) : step 4 CONFORM_PLT for this analysis in loop of many analysis :
             // only valid sourceResults after step 1 are converted to bundles
-            ProjectImportAssetLog projectImportAssetLogA = new ProjectImportAssetLog();
-            mongoDBSequence.nextSequenceId(projectImportAssetLogA);
-            projectImportAssetLogA.setProjectId(getProjectId());
-            projectImportAssetLogA.setStepId(4);
-            projectImportAssetLogA.setStepName(StepNonRMS.getStepNameFromStepIdForAnalysis(projectImportAssetLogA.getStepId()));
-            projectImportAssetLogA.setStartDate(startDate);
-            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
+//            ProjectImportAssetLog projectImportAssetLogA = new ProjectImportAssetLog();
+//            mongoDBSequence.nextSequenceId(projectImportAssetLogA);
+//            projectImportAssetLogA.setProjectId(getProjectId());
+//            projectImportAssetLogA.setStepId(4);
+//            projectImportAssetLogA.setStepName(StepNonRMS.getStepNameFromStepIdForAnalysis(projectImportAssetLogA.getStepId()));
+//            projectImportAssetLogA.setStartDate(startDate);
+//            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
             // --------------------------------------------------------------
             // TODO logic here
 
@@ -103,21 +77,21 @@ public class PLTConformer extends BaseNonRMSBean {
             }
 
             // finis step 3 CONFORM_PLT for one analysis in loop for of many analysis
-            Date endDate = new Date();
-            projectImportAssetLogA.setEndDate(endDate);
-            projectImportAssetLogRepository.save(projectImportAssetLogA);
+//            Date endDate = new Date();
+//            projectImportAssetLogA.setEndDate(endDate);
+//            projectImportAssetLogRepository.save(projectImportAssetLogA);
             log.info("Finish import progress STEP 4 : CONFORM_PLT for RRAnalysis : {}", bundle.getRrAnalysis().getId());
         }
-        return true;
+        return RepeatStatus.FINISHED;
     }
 
-    public ScorPLTHeader makeConformedPurePLTHeader(PLTBundleNonRMS pltBundle, TransformationBundleNonRMS bundle) {
+    public PltHeaderEntity makeConformedPurePLTHeader(PLTBundleNonRMS pltBundle, TransformationBundleNonRMS bundle) {
 
-        ScorPLTHeader originalPLT = pltBundle.getHeader();
-        ScorPLTHeader conformedPLT = new ScorPLTHeader();
+        PltHeaderEntity originalPLT = pltBundle.getHeader();
+        PltHeaderEntity conformedPLT = new PltHeaderEntity();
 
         // TODO a) source ccy --> target ccy
-        conformedPLT.setId(originalPLT.getId());
+        conformedPLT.setPltHeaderId(originalPLT.getPltHeaderId());
         conformedPLT.setPltLossDataFile(null);
         conformedPLT.setPltStatisticList(null);
         conformedPLT.setPltGrouping(PLTGrouping.UnGrouped);
@@ -126,12 +100,12 @@ public class PLTConformer extends BaseNonRMSBean {
         conformedPLT.setInuringPackageDefinition(null);
         // TODO how ???
         conformedPLT.setPltSimulationPeriods(bundle.getSourceResult().getPltSimulationPeriods());
-        conformedPLT.setPltType(PLTType.Pure);
+        conformedPLT.setPltType(PLTType.Pure.toString());
         conformedPLT.setProject(originalPLT.getProject());
         conformedPLT.setRrRepresentationDatasetId(transformationPackage.getRrRepresentationDatasetId());
         conformedPLT.setRrAnalysisId(bundle.getRrAnalysis().getId());
         conformedPLT.setRrLossTableId(originalPLT.getRrLossTableId());
-        Currency currency = currencyRepository.findByCode(bundle.getRrAnalysis().getTargetCurrency());
+        CurrencyEntity currency = currencyRepository.findByCode(bundle.getRrAnalysis().getTargetCurrency());
         conformedPLT.setCurrency(currency);
         conformedPLT.setTargetRap(originalPLT.getTargetRap());
         conformedPLT.setRegionPeril(originalPLT.getRegionPeril());
@@ -163,29 +137,29 @@ public class PLTConformer extends BaseNonRMSBean {
 
         // TODO b) apply proportion and unit multiplier
         // TODO c) calculate EPC, EPS for conformed PLT
-        List<RRStatisticHeader> confRrStatisticHeaders = new ArrayList<>();
+        List<SummaryStatisticHeaderEntity> confRrStatisticHeaders = new ArrayList<>();
         Map<AnalysisFinancialPerspective, Map<StatisticMetric, List<RREPCurve>>> fp2Metric2EPCurves = new HashMap<>();
         Map<AnalysisFinancialPerspective, RRSummaryStatistic> fp2SumStat = new HashMap<>(); // ELTEPSummaryStatistic
 
         double proportion = bundle.getSourceResult().getProportion() == null ? 1: bundle.getSourceResult().getProportion().doubleValue() / 100;
         double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1: bundle.getSourceResult().getUnitMultiplier().doubleValue();
-        log.info("Conforming EP curves and sum stats for conformedPLT {}, proportion {}, multiplier {}", conformedPLT.getId(), proportion, multiplier);
+        log.info("Conforming EP curves and sum stats for conformedPLT {}, proportion {}, multiplier {}", conformedPLT.getPltHeaderId(), proportion, multiplier);
 
         RRSummaryStatistic confSumStat = conformSummaryStatistic(originalPLT.getPltStatisticList().get(0).getStatisticData().getSummaryStatistic(), proportion, multiplier, bundle.getRrAnalysis().getExchangeRate()); // ELTEPSummaryStatistic
 
         Map<StatisticMetric, List<RREPCurve>> metricToEPCurve = new HashMap<>();
 
-        for (RRStatisticHeader rrStatisticHeader : originalPLT.getPltStatisticList()) {
+        for (SummaryStatisticHeaderEntity rrStatisticHeader : originalPLT.getPltStatisticList()) {
             RRFinancialPerspective fp = rrStatisticHeader.getFinancialPerspective();
             StatisticMetric metric = rrStatisticHeader.getStatisticData().getStatisticMetric();
             List<RREPCurve> confEPCurves = conformELTEPCurves(rrStatisticHeader.getStatisticData().getEpCurves(), proportion, multiplier, bundle.getRrAnalysis().getExchangeRate());
 
-            RRStatisticHeader confRrStatisticHeader = new RRStatisticHeader();
-            mongoDBSequence.nextSequenceId(confRrStatisticHeader);
+            SummaryStatisticHeaderEntity confRrStatisticHeader = new SummaryStatisticHeaderEntity();
+//            mongoDBSequence.nextSequenceId(confRrStatisticHeader);
             confRrStatisticHeader.setProjectId(getProjectId());
-            confRrStatisticHeader.setLossTableId(conformedPLT.getId());
-            confRrStatisticHeader.setLossDataType(RRStatisticHeader.STAT_DATA_TYPE_PLT);
-            confRrStatisticHeader.setFinancialPerspective(fp);
+            confRrStatisticHeader.setLossTableId(conformedPLT.getPltHeaderId());
+            confRrStatisticHeader.setLossDataType("PLT");
+            confRrStatisticHeader.setFinancialPerspective(fp.getCode());
             confRrStatisticHeader.getStatisticData().setStatisticMetric(metric);
             confRrStatisticHeader.getStatisticData().setSummaryStatistic(confSumStat);
             confRrStatisticHeader.getStatisticData().setEpCurves(confEPCurves);
@@ -195,7 +169,7 @@ public class PLTConformer extends BaseNonRMSBean {
             metricToEPCurve.put(metric, confEPCurves);
         }
         conformedPLT.setPltStatisticList(confRrStatisticHeaders);
-        log.debug("conformed PLT id {} currency {}, ", conformedPLT.getId(), conformedPLT.getCurrency());
+        log.debug("conformed PLT id {} currency {}, ", conformedPLT.getPltHeaderId(), conformedPLT.getCurrency());
 
         // TODO d) write as bin file to ihub : DAT, EPC, EPS
 
@@ -209,7 +183,7 @@ public class PLTConformer extends BaseNonRMSBean {
                 conformedPLT.getPltSimulationPeriods(),
                 PLTPublishStatus.PURE,
                 0, // pure PLT
-                conformedPLT.getId(),
+                conformedPLT.getPltHeaderId(),
                 getFileExtension());
 
         String sumstatFilename = makePLTSummaryStatFilename(
@@ -260,20 +234,20 @@ public class PLTConformer extends BaseNonRMSBean {
 
         // TODO e) persist conformed PLT into data base
         conformedPLT.setPltStatisticList(confRrStatisticHeaders);
-        rrStatisticHeaderRepository.save(confRrStatisticHeaders);
-        daoService.persistScorPLTHeader(conformedPLT);
+        summaryStatisticHeaderRepository.save(confRrStatisticHeaders);
+        daoService.persistScorPLTHeader(conformedPLT); // todo
 
-        RRLossTable rrLossTable = rrLossTableRepository.findByRrAnalysisIdAndLossTableTypeAndFileDataFormatAndOriginalTarget(
+        LossDataHeaderEntity rrLossTable = lossDataHeaderEntityRepository.findByRrAnalysisIdAndLossTableTypeAndFileDataFormatAndOriginalTarget(
                 bundle.getRrAnalysis().getId(),
-                RRLossTable.DATA_TYPE_PLT,
-                RRLossTable.FILE_DATA_FORMAT_TREATY,
+                "PLT",
+               "Treaty",
                 RRLossTableType.CONFORMED.toString());
         if (rrLossTable != null) {
             rrLossTable.setLossDataFile(new LossDataFile(file.getName(),file.getParent()));
-            rrLossTableRepository.save(rrLossTable);
+            lossDataHeaderEntityRepository.save(rrLossTable);
         }
 
-        log.info("Conformed PLT Header {}", conformedPLT.getId());
+        log.info("Conformed PLT Header {}", conformedPLT.getPltHeaderId());
         return conformedPLT;
     }
 
@@ -520,4 +494,6 @@ public class PLTConformer extends BaseNonRMSBean {
         File file = new File(parent, filename);
         return file;
     }
+
+
 }

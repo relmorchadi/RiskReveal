@@ -1,17 +1,7 @@
 package com.scor.rr.configuration.fileBasedImport;
 
 import com.scor.rr.service.batch.*;
-import com.scor.rr.service.batch.processor.AccItemProcessor;
-import com.scor.rr.service.batch.processor.LocItemProcessor;
-import com.scor.rr.service.batch.processor.rows.RLAccRow;
-import com.scor.rr.service.batch.processor.rows.RLLocRow;
-import com.scor.rr.service.batch.reader.RLAccCursorItemReader;
-import com.scor.rr.service.batch.reader.RLLocCursorItemReader;
-import com.scor.rr.service.batch.writer.AccLocFilesHandler;
-import com.scor.rr.service.batch.writer.ELTWriter;
-import com.scor.rr.service.batch.writer.PLTWriter;
-import com.scor.rr.service.fileBasedImport.batch.LoadLossDataFileService;
-import org.beanio.spring.BeanIOFlatFileItemWriter;
+import com.scor.rr.service.fileBasedImport.batch.*;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
@@ -38,93 +28,26 @@ public class FileBasedImportJob {
     @Autowired
     private StepBuilderFactory stepBuilderFactory;
 
-//    @Autowired
-//    private RegionPerilExtractor regionPerilExtractor;
-
     @Autowired
     private LoadLossDataFileService loadLossDataFileService;
 
+    @Autowired
+    private ConvertToSCORFormatService convertToSCORFormatService;
 
     @Autowired
-    private ExchangeRateExtractor exchangeRateExtractor;
+    private CalculateEPCEPSForSourcePLTService calculateEPCEPSForSourcePLTService;
 
     @Autowired
-    private EpCurveExtractor epCurveExtractor;
+    private ConformPLTService conformPLTService;
 
     @Autowired
-    private ELTExtractor eltExtractor;
-
-    @Autowired
-    private ELTTruncator eltTruncator;
-
-    @Autowired
-    private ELTToPLTConverter eltToPLTConverter;
-
-    @Autowired
-    @Qualifier(value = "eltWriter")
-    private ELTWriter eltWriter;
-
-    @Autowired
-    private PLTWriter pltWriter;
-
-    @Autowired
-    private DefaultAdjustment defaultAdjustment;
-
-    @Autowired
-    private ModellingOptionsExtractor modellingOptionsExtractor;
-
-    @Autowired
-    private ExposureSummaryExtractor exposureSummaryExtractor;
-
-    @Autowired
-    private TivExtractor tivExtractor;
-
-    @Autowired
-    private AccLocFilesHandler accLocFilesHandler;
-
-    @Autowired
-    private ProjectImportRunAndCARStatus carStatus;
-
-    @Autowired
-    @Qualifier(value = "AccReader")
-    private RLAccCursorItemReader accReader;
-
-    @Autowired
-    @Qualifier(value = "LocReader")
-    private RLLocCursorItemReader locReader;
-
-    @Autowired
-    @Qualifier(value = "AccProcessor")
-    private AccItemProcessor accProcessor;
-
-    @Autowired
-    @Qualifier(value = "LocProcessor")
-    private LocItemProcessor locProcessor;
-
-    @Autowired
-    @Qualifier(value = "AccWriter")
-    private BeanIOFlatFileItemWriter accWriter;
-
-    @Autowired
-    @Qualifier(value = "LocWriter")
-    private BeanIOFlatFileItemWriter locWriter;
-
-    @Autowired
-    @Qualifier(value = "LocWriterFW")
-    private BeanIOFlatFileItemWriter locWriterFW;
+    private AdjustDefaultService adjustDefaultService;
 
     /**
      * Tasklet
      */
-//    @Bean
-//    public Tasklet extractRegionPerilTasklet() {
-//        return (StepContribution contribution, ChunkContext chunkContext) -> {
-//            regionPerilExtractor.loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
-//            return RepeatStatus.FINISHED;
-//        };
-//    }
 
-
+    // step 1
     @Bean
     public Tasklet loadLossDataFileTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> {
@@ -133,218 +56,66 @@ public class FileBasedImportJob {
         };
     }
 
+    // step 2
     @Bean
-    public Tasklet extractEpCurveStatsTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> epCurveExtractor.extractEpCurve();
-    }
-
-    @Bean
-    public Tasklet extractExchangeRatesTasklet() {
+    public Tasklet convertToSCORFormatTasklet() {
         return (StepContribution contribution, ChunkContext chunkContext) -> {
-            exchangeRateExtractor.runExchangeRateExtraction();
+            convertToSCORFormatService.convertToSCORFormat();
             return RepeatStatus.FINISHED;
         };
     }
 
+    // step 3
     @Bean
-    public Tasklet extractELTTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltExtractor.extractElts();
+    public Tasklet calculateEPCEPSForSourcePLTTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> {
+            calculateEPCEPSForSourcePLTService.calculateEPCEPSForSourcePLT();
+            return RepeatStatus.FINISHED;
+        };
     }
 
+    // step 4
     @Bean
-    public Tasklet conformeEltTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltConformer.conformeELT();
+    public Tasklet conformPLTTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> {
+            conformPLTService.conformPLT();
+            return RepeatStatus.FINISHED;
+        };
     }
 
+    // step 5
     @Bean
-    public Tasklet truncateELTTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltTruncator.truncateELTs();
+    public Tasklet adjustDefaultTasklet() {
+        return (StepContribution contribution, ChunkContext chunkContext) -> {
+            adjustDefaultService.adjustDefault();
+            return RepeatStatus.FINISHED;
+        };
     }
 
-    @Bean
-    public Tasklet extractModellingOptionsTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> modellingOptionsExtractor.extractModellingOptions();
-    }
-
-    @Bean
-    public Tasklet eltBinaryWritingTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltWriter.writeBinary();
-    }
-
-    @Bean
-    public Tasklet eltHeaderWritingTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltWriter.writeHeader();
-    }
-
-    @Bean
-    public Tasklet EltToPLTTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> eltToPLTConverter.convertEltToPLT();
-    }
-
-    @Bean
-    public Tasklet pltWriterTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> pltWriter.writeHeader();
-    }
-
-    @Bean
-    public Tasklet conformEPCurvesTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> epCurveExtractor.extractConformedEpCurves();
-    }
-
-    @Bean
-    public Tasklet defaultAdjustmentTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> defaultAdjustment.defaultAdjustment();
-    }
-
-    @Bean
-    public Tasklet extractExposureSummaryTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> exposureSummaryExtractor.extract();
-    }
-
-    @Bean
-    public Tasklet extractTIVTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> tivExtractor.tivExtraction();
-    }
-
-    @Bean
-    public Tasklet copyAccAndLocToIHubTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> accLocFilesHandler.copyFilesToIHub();
-    }
-
-    @Bean
-    public Tasklet projectImportRunStatusTasklet() {
-        return (StepContribution contribution, ChunkContext chunkContext) -> carStatus.changeProjectImportRunStatus();
-    }
-
-    /** Steps */
-
-    /**
-     * @return
-     * @implNote Step 1 of the main job : loadLossDataFile
-     */
-//    @Bean
-//    public Step getExtractRegionPerilStep() {
-//        return stepBuilderFactory.get("extractRegionPeril").tasklet(extractRegionPerilTasklet()).build();
-//    }
-
+    // step
     @Bean
     public Step getLoadLossDataFileStep() {
         return stepBuilderFactory.get("loadLossDataFile").tasklet(loadLossDataFileTasklet()).build();
     }
 
-
     @Bean
-    public Step getExtractEpCurveStatsStep() {
-        return stepBuilderFactory.get("extractEpCurve").tasklet(extractEpCurveStatsTasklet()).build();
-    }
-
-    /**
-     * @return
-     * @implNote Step 3 of the main job : used to extract exchange rates for the currencies used
-     */
-    @Bean
-    public Step getExtractExchangeRatesStep() {
-        return stepBuilderFactory.get("exchangeRatesExtraction").tasklet(extractExchangeRatesTasklet()).build();
+    public Step getConvertToSCORFormatStep() {
+        return stepBuilderFactory.get("convertToSCORFormat").tasklet(convertToSCORFormatTasklet()).build();
     }
 
     @Bean
-    public Step geExtractELTStep() {
-        return stepBuilderFactory.get("extractELT").tasklet(extractELTTasklet()).build();
+    public Step getCalculateEPCEPSForSourcePLTStep() {
+        return stepBuilderFactory.get("calculateEPCEPSForSourcePLT").tasklet(calculateEPCEPSForSourcePLTTasklet()).build();
     }
 
     @Bean
-    public Step conformeEltStep() {
-        return stepBuilderFactory.get("conformeELT").tasklet(conformeEltTasklet()).build();
+    public Step getConformPLTStep() {
+        return stepBuilderFactory.get("conformPLT").tasklet(conformPLTTasklet()).build();
     }
 
     @Bean
-    public Step getELTTruncateELTStep() {
-        return stepBuilderFactory.get("truncateELT").tasklet(truncateELTTasklet()).build();
-    }
-
-    @Bean
-    public Step getExtractModellingOptionsStep() {
-        return stepBuilderFactory.get("extractModellingOptions").tasklet(extractModellingOptionsTasklet()).build();
-    }
-
-    @Bean
-    public Step getEltBinaryWritingStep() {
-        return stepBuilderFactory.get("EltBinaryWriting").tasklet(eltBinaryWritingTasklet()).build();
-    }
-
-    @Bean
-    public Step getEltHeaderWritingStep() {
-        return stepBuilderFactory.get("EltHeaderWriting").tasklet(eltHeaderWritingTasklet()).build();
-    }
-
-    @Bean
-    public Step getEltToPLTStep() {
-        return stepBuilderFactory.get("EltToPLT").tasklet(EltToPLTTasklet()).build();
-    }
-
-    @Bean
-    public Step getPltWriterStep() {
-        return stepBuilderFactory.get("pltWriter").tasklet(pltWriterTasklet()).build();
-    }
-
-    @Bean
-    public Step conformEPCurvesStep() {
-        return stepBuilderFactory.get("conformEpCurves").tasklet(conformEPCurvesTasklet()).build();
-    }
-
-    @Bean
-    public Step defaultAdjustmentStep() {
-        return stepBuilderFactory.get("defaultAdjustment").tasklet(defaultAdjustmentTasklet()).build();
-    }
-
-    @Bean
-    public Step extractExposureSummaryStep() {
-        return stepBuilderFactory.get("extractExposureSummary").tasklet(extractExposureSummaryTasklet()).build();
-    }
-
-    @Bean
-    public Step extractTIVStep() {
-        return stepBuilderFactory.get("extractTiv").tasklet(extractTIVTasklet()).build();
-    }
-
-    @Bean
-    public Step extractAccStep() {
-        return this.stepBuilderFactory.get("extractAcc")
-                .<RLAccRow, RLAccRow>chunk(1000)
-                .reader(accReader)
-                .processor(accProcessor)
-                .writer(accWriter)
-                .build();
-    }
-
-    @Bean
-    public Step extractLocStep() {
-        return this.stepBuilderFactory.get("extractAcc")
-                .<RLLocRow, RLLocRow>chunk(1000)
-                .reader(locReader)
-                .processor(locProcessor)
-                .writer(locWriter)
-                .build();
-    }
-
-    @Bean
-    public Step extractLocFWStep() {
-        return this.stepBuilderFactory.get("extractAcc")
-                .<RLLocRow, RLLocRow>chunk(50000)
-                .reader(locReader)
-                .processor(locProcessor)
-                .writer(locWriterFW)
-                .build();
-    }
-
-    @Bean
-    public Step copyAccAndLocFilesStep() {
-        return stepBuilderFactory.get("copyAccAndLocFiles").tasklet(copyAccAndLocToIHubTasklet()).build();
-    }
-
-    @Bean
-    public Step projectImportRunStatusChangeStep() {
-        return stepBuilderFactory.get("projectImportRunStatus").tasklet(projectImportRunStatusTasklet()).build();
+    public Step getAdjustDefaultStep() {
+        return stepBuilderFactory.get("adjustDefault").tasklet(adjustDefaultTasklet()).build();
     }
 
     /**
@@ -360,17 +131,46 @@ public class FileBasedImportJob {
     public SimpleJobBuilder getJobBuilder() {
         return jobBuilderFactory.get("fileBasedImport")
                 .start(getLoadLossDataFileStep())
-                .next(getExtractEpCurveStatsStep())
-                .next(getExtractExchangeRatesStep())
-                .next(geExtractELTStep())
-                .next(getELTTruncateELTStep())
-                .next(conformeEltStep())
-                .next(conformEPCurvesStep())
-                .next(getEltBinaryWritingStep())
-                .next(getEltHeaderWritingStep())
-                .next(getExtractModellingOptionsStep())
-                .next(getEltToPLTStep())
-                .next(getPltWriterStep())
-                .next(defaultAdjustmentStep());
+                .next(getConvertToSCORFormatStep())
+                .next(getCalculateEPCEPSForSourcePLTStep())
+                .next(getConformPLTStep())
+                .next(getAdjustDefaultStep());
     }
+
+
+//
+//     <!--step 1-->
+//        <batch:step id="loadLossDataFile" next="convertToSCORFormat">
+//            <batch:tasklet ref="loadLossDataFileTasklet"/>
+//        </batch:step>
+//
+//        <!--step 2-->
+//        <batch:step id="convertToSCORFormat" next="calculateEPCEPSForSourcePLT">
+//            <batch:tasklet ref="convertToScorFormatTasklet"/>
+//        </batch:step>
+//
+//        <!--step 3-->
+//        <batch:step id="calculateEPCEPSForSourcePLT" next="conformPLT">
+//            <batch:tasklet ref="calculateEPCEPSForSourcePLTTasklet"/>
+//        </batch:step>
+//
+//        <!--step 4-->
+//        <batch:step id="conformPLT" next="adjustDefault">
+//            <batch:tasklet ref="conformPLTTasklet"/>
+//        </batch:step>
+//
+//        <!--&lt;!&ndash;step 5&ndash;&gt;-->
+//        <!--<batch:step id="adjustDefault" next="createThreadAndPersistPLT">-->
+//        <!--<batch:tasklet ref="adjustDefaultTasklet"/>-->
+//        <!--<batch:end on="*" />-->
+//        <!--<batch:fail on="FAILED" />-->
+//        <!--</batch:step>-->
+//
+//        <!--step 5-->
+//        <batch:step id="adjustDefault">
+//            <batch:tasklet ref="adjustDefaultTasklet"/>
+//            <batch:end on="*" />
+//            <batch:fail on="FAILED" />
+//        </batch:step>
+
 }
