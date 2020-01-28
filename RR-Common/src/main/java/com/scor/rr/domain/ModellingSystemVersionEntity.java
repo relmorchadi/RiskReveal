@@ -18,7 +18,7 @@ public class ModellingSystemVersionEntity {
     private String id;
     @Column(name = "ModellingSystemVersion")
     private Integer modellingSystemVersion;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ModellingSystemId")
     private ModellingSystemEntity modellingSystem;
 }

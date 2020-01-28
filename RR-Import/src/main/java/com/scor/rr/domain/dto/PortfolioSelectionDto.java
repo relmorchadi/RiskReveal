@@ -19,4 +19,5 @@ public class PortfolioSelectionDto {
     private Long rlPortfolioId;
     private List<Integer> divisions;
     private Long projectId;
+
 }

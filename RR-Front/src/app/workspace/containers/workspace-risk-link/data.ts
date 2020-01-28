@@ -26,7 +26,7 @@ const scrollableColsAnalysis = [
 const frozenColsAnalysis = [
   {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
   // {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
-  {field: 'rlId', header: 'id', width: '30px', type: 'text', filtered: true},
+  {field: 'rlId', header: 'id', width: '60px', type: 'text', filtered: true},
   {field: 'analysisName', header: 'name', width: '190px', type: 'text', filtered: true}
 ];
 
@@ -45,7 +45,7 @@ const scrollableColsPortfolio = [
 const frozenColsPortfolio = [
   {field: 'selected', header: 'selected', width: '20px', type: 'select', filtered: false},
   // {field: 'imported', header: 'Imported', width: '20px', type: 'icon', filtered: false},
-  {field: 'rlId', header: 'id', width: '30px', type: 'text', filtered: true},
+  {field: 'rlId', header: 'id', width: '60px', type: 'text', filtered: true},
   {field: 'number', header: 'Number', width: '190px', type: 'text', filtered: true}
 ];
 

@@ -335,7 +335,6 @@ public class ImportLossDataJob {
     public Job getImportLossDataFac(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder
                 //.next(extractExposureSummaryStep())
-                .next(extractTIVStep())
                 .next(extractAccStep())
                 .next(extractLocStep())
                 .next(extractLocFWStep())

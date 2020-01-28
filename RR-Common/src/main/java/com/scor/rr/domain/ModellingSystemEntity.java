@@ -22,7 +22,7 @@ public class ModellingSystemEntity {
     private String name;
     @Column(name = "CatObjectId")
     private Integer catObjectId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "VendorId")
     private ModellingVendorEntity vendor;
 }

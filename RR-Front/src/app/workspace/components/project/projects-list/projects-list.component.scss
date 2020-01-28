@@ -28,10 +28,6 @@
   justify-content: flex-start;
   height: 100%;
 
-  @media screen and (max-width: 1550px) and (min-width: 950px) {
-    justify-content: space-between;
-  }
-
   @media screen and (max-width: 950px) {
     justify-content: center;
   }
