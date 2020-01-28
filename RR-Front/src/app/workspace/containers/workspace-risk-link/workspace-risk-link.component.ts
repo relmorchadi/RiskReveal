@@ -21,6 +21,7 @@ import {NotificationService} from '../../../shared/services';
 import {debounceTime, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {SetCurrentTab} from '../../store/actions';
 import {FormControl} from "@angular/forms";
+import {Debounce} from "../../../shared/decorators";
 
 @Component({
     selector: 'app-workspace-risk-link',
@@ -74,8 +75,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     filtersInput: any;
 
     displayDropdownRDMEDM = false;
-
-    serviceSubscription: any;
 
     occurrenceBasis;
 
@@ -138,6 +137,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     filterPortfolio = {
         rlId: '',
+        number: '',
         name: '',
         description: '',
         //created: null,
@@ -248,6 +248,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(val => {
                 this.onInputSearch(val);
             });
+        //@Todo refactor
+        if (this.tabStatus === 'FAC') {
+            const keyword = `"${this.ws.wsId}_${("0" + this.state.financialValidator.division.selected.divisionNumber).slice(-2)}"`;
+            if (this.state.selectedEDMOrRDM === 'RDM') {
+                this.filterAnalysis.analysisName = keyword;
+            } else {
+                this.filterPortfolio.number = keyword;
+            }
+        }
 
     }
 
@@ -307,9 +316,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }
         const keyword = `"${this.ws.wsId}_${("0" + this.state.financialValidator.division.selected.divisionNumber).slice(-2)}"`;
         if (this.state.selectedEDMOrRDM === 'RDM') {
-            this.filterAnalysis['analysisName'] = keyword;
+            this.filterAnalysis.analysisName = keyword;
+            this.getRiskLinkAnalysis(0);
         } else {
-            this.filterPortfolio['number'] = keyword;
+            this.filterPortfolio.number = keyword;
+            this.getRiskLinkPortfolio(0);
         }
     }
 
@@ -465,30 +476,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             });
     }
 
-    getScrollableCols() {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            return this.scrollableColsAnalysis;
-        } else {
-            return this.scrollableColsPortfolio;
-        }
-    }
-
-    getFrozenCols() {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            return this.frozenColsAnalysis;
-        } else {
-            return this.frozenColsPortfolio;
-        }
-    }
-
-    getTableData() {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            return this.analysis || [];
-        } else {
-            return this.portfolios || [];
-        }
-    }
-
     getIndeterminate() {
         const data = [];  //this.filterData(this.getTableData());
         const selection = _.filter(data, item => item.selected);
@@ -599,10 +586,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.UpdateCheckboxStatus();
     }
 
+    @Debounce()
     onPortfolioFilter(param){
         this.getRiskLinkPortfolio(0);
     }
 
+    @Debounce()
     onAnalysisFilter(param){
         this.getRiskLinkAnalysis(0);
     }
@@ -785,7 +774,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 const [p, summary] = data;
                 const {projectId} = p;
                 if(this.tabStatus == 'FAC' && this._nonUniqDivisionPerAnalysis(summary.analysis)){
-                    alert('You cannot import multiple for the same divisions !');
+                    alert('You cannot import multiple Analysis Region Peril for the same divisions !');
                     return;
                 }
                 this.dispatch(new fromWs.TriggerImportAction({
@@ -805,7 +794,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 data[a.rpCode].push(...a.divisions);
             else
                 data[a.rpCode]= [...a.divisions]
-            if( _.size(data[a.rpCode]) > 0 )
+            if( _.size(data[a.rpCode]) > 1 )
                 return false;
         }
         return true;

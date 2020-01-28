@@ -343,7 +343,7 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input (change)="onPortfolioFilter($event)"
+                            <input (input)="onPortfolioFilter($event)"
                                    type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
@@ -413,7 +413,7 @@
                           <th *ngFor="let col of columns" pResizableColumn>
                             <div class="search-bar-table" *ngIf="col.filtered">
                               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                              <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (change)="onAnalysisFilter($event)"
+                              <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (input)="onAnalysisFilter($event)"
                                      type="text" [(ngModel)]="filterAnalysis[col.field]">
                             </div>
                           </th>
@@ -467,8 +467,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [context]="tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
-        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="this.tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
+        <analysis-result [context]="this.tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
