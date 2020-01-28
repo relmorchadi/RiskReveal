@@ -4,17 +4,16 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.ELTLossnBetaFunction;
 import com.scor.rr.domain.dto.ImportFilePLTData;
-import com.scor.rr.domain.dto.PLTLossData;
+import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.domain.importfile.FileImportSourceResult;
 import com.scor.rr.domain.importfile.ImportFileLossDataHeader;
-import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-@Data
+
 public class TransformationBundleNonRMS {
     private Logger log = LoggerFactory.getLogger(TransformationBundleNonRMS.class);
 
@@ -35,8 +34,6 @@ public class TransformationBundleNonRMS {
     private List<RmsExchangeRate> rmsExchangeRatesOfRRLT;
 
     private List<String> modelingOptionsOfRRLT;
-
-    List<SummaryStatisticHeaderEntity> summaryStatisticHeaderEntities;
 
     public FileImportSourceResult getSourceResult() {
         return sourceResult;

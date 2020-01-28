@@ -3,6 +3,7 @@ package com.scor.rr.service.fileBasedImport.batch;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportFilePLTData;
 import com.scor.rr.domain.enums.RRLossTableType;
+import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.enums.TrackingStatus;
 import com.scor.rr.domain.importfile.*;
 import com.scor.rr.domain.riskLink.RLImportSelection;
