@@ -16,7 +16,7 @@ export class GlobalResourceApi {
     }
 
     getVersionDAta() {
-        return this.http.get(`${this.URL}version`);
+        return this.http.get(`${this.URL}version`, {responseType: 'text' as 'json'});
     }
 
 }

@@ -13,11 +13,8 @@ export class FooterComponentComponent implements OnInit {
   constructor(private globalAPI: GlobalResourceApi) { }
 
   ngOnInit() {
-    // this.globalAPI.getVersionDAta().subscribe(data => this.version = data);
-    this.globalAPI.getEnvData().subscribe(data => {
-      console.log(data);
-      this.env = data
-    });
+    this.globalAPI.getVersionDAta().subscribe(data => this.version = data);
+    this.globalAPI.getEnvData().subscribe(data => {this.env = data});
   }
 
 }
