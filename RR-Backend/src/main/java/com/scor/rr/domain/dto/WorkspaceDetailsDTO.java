@@ -29,7 +29,7 @@ public class WorkspaceDetailsDTO {
     private Boolean isPinned;
     private String currency;
     private String contractDatasource;
-    private Long marketChannel;
+    private String marketChannel;
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
@@ -49,7 +49,7 @@ public class WorkspaceDetailsDTO {
     }
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult contract, Long marketChannel) {
+    public WorkspaceDetailsDTO(ContractSearchResult contract, String marketChannel) {
         this.id = contract.getId();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();

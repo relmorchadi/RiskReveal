@@ -195,7 +195,7 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-            Long marketChannel = null;
+            String marketChannel = null;
             if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
             WorkspaceEntity ws = new WorkspaceEntity();
             if(wsOpt.isPresent()) {
@@ -224,7 +224,7 @@ public class SearchService {
             List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
             List<Integer> years = workspaceEntityRepository.findDistinctYearsByWorkspaceContextCode(workspaceId);
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-            Long marketChannel = null;
+            String marketChannel = null;
             if (wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
             return buildWorkspaceDetails(wsOpt.get(),
                     contracts,
@@ -246,7 +246,7 @@ public class SearchService {
                                                       List<ProjectCardView> projects,
                                                       String workspaceId,
                                                       String uwy,
-                                                      Long marketChannel) {
+                                                      String marketChannel) {
         WorkspaceDetailsDTO detailsDTO = null;
         if (contracts != null && !contracts.isEmpty()) {
             ContractSearchResult firstWs = contracts.get(0);
