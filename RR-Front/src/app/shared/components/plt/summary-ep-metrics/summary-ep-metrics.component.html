@@ -59,14 +59,14 @@
                      class="table metric-table">
               <ng-template pTemplate="header" let-columns>
                 <tr>
-                  <th>Return Period</th>
-                  <th *ngFor="let col of columns">{{col?.header}}</th>
+                  <th style="width: 100px;">Return Period</th>
+                  <th style="width: 160px;" *ngFor="let col of columns">{{col?.header}}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
-                  <td>{{rowData}}</td>
-                  <td *ngFor="let col of epMetricsTableConfig.columns">
+                  <td style="width: 100px;">{{rowData}}</td>
+                  <td style="width: 160px;" *ngFor="let col of epMetricsTableConfig.columns">
                     {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
                   </td>
                 </tr>

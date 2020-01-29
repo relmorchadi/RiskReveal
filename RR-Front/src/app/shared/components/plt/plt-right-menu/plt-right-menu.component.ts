@@ -456,6 +456,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   loadEpMetrics(pltHeaderId, curve) {
+    this.appendColumn(curve);
     if(!this.epMetrics[pltHeaderId]) this.epMetrics[pltHeaderId] = {};
     if(!this.epMetrics[pltHeaderId] || !_.keys(this.epMetrics[pltHeaderId][curve]).length) {
       this.epMetrics[pltHeaderId][curve]= {};
@@ -481,13 +482,11 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                   ...this.epMetrics[pltId],
                   [curveType]: metrics
                 };
-                this.appendColumn(curveType);
               }
-
-              this.detectChanges();
               this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
 
             }
+            this.detectChanges();
           });
     }
   }
@@ -521,6 +520,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         this.hideMetric(action.payload);
         break;
 
+      case "Selected CurveTypes Change":
+        this.selectedCurveTypesChange(action.payload);
+        break;
+
       case "Select Financial Unit":
         this.selectFinancialUnit(action.payload);
         break;
@@ -541,8 +544,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         console.log(action);
         break;
     }
-
-    console.log(this.epMetricsTableConfig, this.epMetrics);
 
   }
 
@@ -637,6 +638,9 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   showMetric({curveTypes, difference}) {
 
+    console.log("SHOW METRIC");
+    console.log({curveTypes, difference});
+
     _.forEach(difference, curveType => {
       this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
     });
@@ -644,9 +648,15 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       ...this.summaryEpMetricsConfig,
       selectedCurveType: curveTypes
     };
+
+    console.log(this.epMetricsTableConfig.columns, this.summaryEpMetricsConfig.selectedCurveType);
   }
 
   hideMetric({curveTypes, difference}) {
+
+    console.log("HIDE METRIC");
+    console.log({curveTypes, difference});
+
     this.epMetricsTableConfig= {
       columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(difference, column => column == col.header))
     };
@@ -654,6 +664,32 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       ...this.summaryEpMetricsConfig,
       selectedCurveType: curveTypes
     };
+
+    console.log(this.epMetricsTableConfig.columns, this.summaryEpMetricsConfig.selectedCurveType);
+  }
+
+  selectedCurveTypesChange(selectedCurveTypes) {
+
+    const toDelete = _.difference(this.summaryEpMetricsConfig.selectedCurveType, selectedCurveTypes);
+    const toLoad = _.difference(selectedCurveTypes,this.summaryEpMetricsConfig.selectedCurveType);
+
+    console.log(toDelete, toLoad);
+
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: selectedCurveTypes
+    };
+
+    this.epMetricsTableConfig= {
+      columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(toDelete, column => col.header == column))
+    };
+    // this.epMetricsTableConfig= {
+    //   columns: _.uniqBy([...this.epMetricsTableConfig.columns, this.generateCol(curveType)], col => col.field)
+    // }
+
+    _.forEach(toLoad, curveType => {
+      this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
+    });
   }
 
   selectFinancialUnit(financialUnit) {

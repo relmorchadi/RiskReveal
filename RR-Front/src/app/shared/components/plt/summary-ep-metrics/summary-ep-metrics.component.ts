@@ -65,11 +65,8 @@ export class SummaryEpMetricsComponent implements OnInit {
     }
 
     this.actionDispatcher.emit({
-      type: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? "Hide Metric" : "Show Metric",
-      payload: {
-        curveTypes: res,
-        difference: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? _.difference(this.summaryEpMetricsConfig.selectedCurveType, res) : _.difference(res, this.summaryEpMetricsConfig.selectedCurveType)
-      }
+      type: "Selected CurveTypes Change",
+      payload: res
     })
   }
 
