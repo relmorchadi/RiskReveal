@@ -15,12 +15,12 @@ export class DeleteDashboardAction {
 
 export class UpdateDashboardAction {
     static readonly type = '[Dashboard] Update Dashboard Data';
-    constructor(public paylaod?: any) {}
+    constructor(public payload?: any) {}
 }
 
 export class SaveDashboardStateAction {
     static readonly type = '[Dashboard] Save Dashboard State';
-    constructor(public paylaod?: any) {}
+    constructor(public payload?: any) {}
 }
 
 export class LoadDashboardFacDataAction {
