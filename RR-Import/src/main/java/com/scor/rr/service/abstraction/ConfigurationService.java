@@ -50,4 +50,5 @@ public interface ConfigurationService {
 
     List<RLPortfolioDto> filterRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long edmId, RLPortfolioDto filter);
 
+    Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds,List<Long> rdmIds, List<Long> divisionsIds);
 }

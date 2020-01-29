@@ -12,6 +12,26 @@ export class DashboardApi {
     constructor(private http: HttpClient) {
     }
 
+    getDashboards(userId): Observable<any> {
+        return this.http.get(`${this.URL}`, {params: {userId}});
+    }
+
+    creatDashboards(data): Observable<any> {
+        return this.http.post(`${this.URL}`, data);
+    }
+
+    deleteDashboards(): Observable<any> {
+        return this.http.get(`${this.URL}`);
+    }
+
+    SaveDashboards(): Observable<any> {
+        return this.http.get(`${this.URL}`);
+    }
+
+    UpdateDashboards(): Observable<any> {
+        return this.http.get(`${this.URL}`);
+    }
+
     getFacDashboardResources(filters): Observable<any>  {
         return this.http.post(`${this.URL}`, filters);
     }

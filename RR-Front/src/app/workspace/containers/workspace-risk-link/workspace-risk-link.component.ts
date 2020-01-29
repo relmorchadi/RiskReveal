@@ -307,6 +307,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 size: 100,
             }));
         }
+        setTimeout(() => {
+            this.searchInput.nativeElement.focus();
+        })
     }
 
     setFilterDivision() {
@@ -364,12 +367,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     drop(event: CdkDragDrop<string[]>) {
         moveItemInArray(this.columnsForConfig, event.previousIndex, event.currentIndex);
-    }
-
-    /** */
-    focusInput() {
-        this.toggleDatasourcesDisplay();
-        this.searchInput.nativeElement.focus();
     }
 
     toggleItemsListRDM(datasource) {
@@ -748,17 +745,29 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.destroy();
     }
 
-    // autoAttach(){
-    //     console.log('Auto attach');
-    //     const defaultFilters = _.map(this.state.financialValidator.division.data, d => `"${this.ws.wsId}_${("0" + d.divisionNumber).slice(-2)}"`);
-    //     const selectedEdms = _.values(this.state.selection.edms);
-    //     const selectedRdms = _.values(this.state.selection.rdms);
-    //     this.dispatch(new fromWs.AutoAttach({
-    //         instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-    //         projectId: this.selectedProject.projectId,
-    //         userId: 1
-    //     }))
-    // }
+    autoAttach(){
+        console.log('Auto attach');
+        const divisionsIds  = _.map(this.state.financialValidator.division.data, d => d.divisionNumber);
+        const edmIds= _.map(_.values(this.state.selection.edms), item => item.rlModelDataSourceId );
+        const rdmIds= _.map(_.values(this.state.selection.rdms), item => item.rlModelDataSourceId );
+        if( _.size(edmIds) == 0 && _.size(rdmIds) == 0 ){
+            alert('No available Edms / Rdms to attach');
+            return;
+        }
+        if( _.size(divisionsIds) == 0 ){
+            alert('No available Edms / Rdms to attach');
+            return;
+        }
+
+        this.dispatch(new fromWs.AutoAttachAction({
+            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            projectId: this.selectedProject.projectId,
+            divisionsIds,
+            edmIds,
+            rdmIds,
+            wsId: this.ws.wsId,
+        }))
+    }
 
     triggerImport() {
         const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
@@ -793,11 +802,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             if(data[a.rpCode])
                 data[a.rpCode].push(...a.divisions);
             else
-                data[a.rpCode]= [...a.divisions]
+                data[a.rpCode]= [...a.divisions];
             if( _.size(data[a.rpCode]) > 1 )
-                return false;
+                return true;
         }
-        return true;
+        return false;
     }
 
     private transformAnalysisResultForImport(analysis, projectId, toBePicked) {
