@@ -74,23 +74,10 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     checkAll: false,
     indeterminate: false
   };
-  statusOptions:any = [
-    {title: 'In Progress', field: 'inProgress', class: 'icon-history-alt iconYellow'},
-    {title: 'New', field: 'new', class: 'icon-star iconBlue'},
-    {title: 'Valid', field: 'valid', class: 'icon-check-circle iconGreen'},
-    {title: 'Locked', field: 'locked', class: 'icon-lock-alt iconRed'},
-    {title: 'Requires regeneration', field: 'requiresRegeneration', class: 'icon-report_problem_24px iconYellow2'},
-    {title: 'Failed', field: 'failed', class: 'icon-error_24px iconRed2'}
-  ]
-  private selectedFinancialUnit: any = 'Unit';
-  private isExpanded: boolean = false;
 
   contextMenuItem : any[];
 
-
-
-
-  constructor(private _baseStore: Store, private route$: ActivatedRoute,) { }
+  constructor(private _baseStore: Store) { }
 
   ngOnInit() {
     this.contextMenuItem = [
@@ -303,7 +290,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   financialUnitChange(financialUnit: any) {
-    this.selectedFinancialUnit = financialUnit;
     this.actionDispatcher.emit({
       type: "Financial Unit Change",
       payload: financialUnit
@@ -371,6 +357,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
       payload: value ? _.merge({}, this.tableConfig.filterData, {[field]: value}) : _.omit(this.tableConfig.filterData, `${field}`)
     })
   })
+
   exportEPMetrics() {
     this.actionDispatcher.emit( {
       type: "Export EP Metrics",
