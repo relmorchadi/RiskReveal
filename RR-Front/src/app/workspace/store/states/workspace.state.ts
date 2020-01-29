@@ -973,6 +973,11 @@ export class WorkspaceState {
     this.riskLinkFacade.toggleRiskLinkPortfolio(ctx, payload);
   }
 
+  @Action(fromWS.AutoAttachAction)
+  autoAttach(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AutoAttachAction) {
+    return this.riskLinkFacade.autoAttach(ctx, payload);
+  }
+
   @Action(fromWS.TriggerImportAction)
   importRiskLinkMain(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TriggerImportAction) {
     return this.riskLinkFacade.triggerImport(ctx, payload);

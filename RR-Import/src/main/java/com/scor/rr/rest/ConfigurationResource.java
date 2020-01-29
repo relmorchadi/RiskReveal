@@ -218,4 +218,9 @@ public class ConfigurationResource {
         }
     }
 
+    @GetMapping("AutoAttach")
+    public ResponseEntity<?> autoAttachWs(@RequestParam String wsId, @RequestParam List<Long> rdmIds,@RequestParam List<Long> edmIds, @RequestParam List<Long> divisionsIds){
+        return ResponseEntity.ok(configurationService.getAutoAttach(wsId, edmIds, rdmIds, divisionsIds));
+    }
+
 }

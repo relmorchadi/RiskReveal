@@ -311,6 +311,37 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 .collect(toList());
     }
 
+    @Override
+    public Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds, List<Long> rdmIds, List<Long> divisionsIds) {
+        Map<Long, AnalysisPortfolioDto> analysisPortfolioByDivision= new HashMap<>();
+        divisionsIds.forEach(divisionNumber -> {
+            String keyword= wsId + "_0" +divisionNumber;
+            AnalysisPortfolioDto data = new AnalysisPortfolioDto();
+            edmIds.forEach(edmId -> {
+                data.getRlPortfolios().addAll(findPortfolios(edmId, keyword));
+            });
+            rdmIds.forEach(rdmId -> {
+                data.getRlAnalyses().addAll(findAnalysis(rdmId, keyword));
+            });
+            analysisPortfolioByDivision.put(divisionNumber, data);
+        });
+        return analysisPortfolioByDivision;
+    }
+
+    private List<RLAnalysisDto> findAnalysis(Long rdmId, String keyword){
+        return rlAnalysisRepository.findByRdmIdAndName(rdmId, keyword)
+                .stream()
+                .map(analysis -> modelMapper.map(analysis, RLAnalysisDto.class))
+                .collect(toList());
+    }
+
+    private List<RLPortfolioDto> findPortfolios(Long edmId, String keyword){
+        return rlPortfolioRepository.findByEdmIdAndNumber(edmId, keyword)
+                .stream()
+                .map(p -> modelMapper.map(p, RLPortfolioDto.class))
+                .collect(toList());
+    }
+
     private Long getModelDsId(String instanceId, Long projectId, Long userId, Long rmsId){
         return ofNullable(rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId))
                 .map(ds -> ds.getRlModelDataSourceId())

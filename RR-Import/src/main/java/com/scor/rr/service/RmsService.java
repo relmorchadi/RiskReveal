@@ -466,26 +466,26 @@ public class RmsService {
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
         String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
         //@Todo by BTP Count S/p
-        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources ";
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
 
 
         this.logger.debug("Service starts executing the query ...");
 
         if (!StringUtils.isEmpty(keyword)){
             sql += ", @filter='" + keyword+"'";
-            countSql += " @filter='" + keyword+"'";
+            countSql += ", @filter='" + keyword+"'";
         }
 
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
                 sql,
                 new DataSourceRowMapper());
 
-        List<DataSource> dataSourcesCount = getJdbcTemplate(instanceId).query(
+        Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
                 countSql,
-                new DataSourceRowMapper());
+                Integer.class);
 
         this.logger.debug("the data returned ", dataSources);
-        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), ofNullable(dataSourcesCount).map(l -> l.size()).orElse(1000)  ) ;
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount) ;
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {
