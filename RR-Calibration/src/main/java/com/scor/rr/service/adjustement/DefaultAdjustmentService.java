@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -148,7 +149,7 @@ public class DefaultAdjustmentService {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
-                        workspaceEntity.getWorkspaceMarketChannel(),
+                        ofNullable(workspaceEntity).map(we -> we.getWorkspaceMarketChannel()).map(Long::valueOf).orElse(null),
                         engineType,
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
