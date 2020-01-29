@@ -12,10 +12,12 @@ import com.scor.rr.repository.UserRrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserDashboardService {
 
     @Autowired
@@ -79,8 +81,12 @@ public class UserDashboardService {
 
     public void deleteDashboard(long dashboardId) throws RRException{
 
-        List<UserDashboard> listDash = getDashboardForUser(dashboardId);
+        UserDashboard dashboard = userDashboardRepository.findByUserDashboardId(dashboardId);
+        if(dashboard == null) throw new UserDashboardNotFoundException(dashboardId);
+
+        List<UserDashboard> listDash = getDashboardForUser(dashboard.getUserId());
         if(listDash.size() == 1 ) throw new ImpossibleDeletionOfDashboard();
         userDashboardRepository.deleteByUserDashboardId(dashboardId);
     }
+
 }
