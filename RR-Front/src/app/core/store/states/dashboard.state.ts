@@ -36,6 +36,31 @@ export class DashboardState implements NgxsOnInit {
         return state.data.fac;
     }
 
+    @Action(fromHD.LoadDashboardsAction)
+    loadDashboards(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardsAction) {
+
+    }
+
+    @Action(fromHD.CreatNewDashboardAction)
+    creatNewDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.CreatNewDashboardAction) {
+
+    }
+
+    @Action(fromHD.DeleteDashboardAction)
+    deleteDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.DeleteDashboardAction) {
+
+    }
+
+    @Action(fromHD.UpdateDashboardAction)
+    updateDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.UpdateDashboardAction) {
+
+    }
+
+    @Action(fromHD.SaveDashboardStateAction)
+    saveDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.SaveDashboardStateAction) {
+
+    }
+
     @Action(fromHD.LoadDashboardFacDataAction)
     loadDashboardFacData(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardFacDataAction) {
         const state = ctx.getState();

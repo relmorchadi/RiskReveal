@@ -12,6 +12,7 @@ import {DashboardState} from "../../../core/store/states";
 import {DashData} from "./data";
 import {elementStylingMap} from "@angular/core/src/render3";
 import {createViewChild} from "@angular/compiler/src/core";
+import {timeout} from "rxjs/operators";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -376,11 +377,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   setTabValue() {
-    const visibleDash = _.filter(this.dashboards, item => item.visible);
+/*    const visibleDash = _.filter(this.dashboards, item => item.visible);
     if (visibleDash.length > 1) {
-      this.idTab = 1;
-      this.dashboardChange(1);
-    }
+      setTimeout(() => {
+        this.idTab = 1;
+        const idDash = _.get(this.dashboards[1], 'id', 1);
+        this.dashboardChange(idDash);
+      }, 500);
+    }*/
   }
 
   openPopUp(event) {
@@ -525,12 +529,10 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   dashboardChange(id: any) {
-    const name: any = _.get(_.find(this.dashboardsMockData, {id}), 'name');
-    this.dashboardTitle = name || '';
+    this.dashboardTitle =  _.get(_.find(this.dashboardsMockData, {id}), 'name', '');
     this.idSelected = id;
-    const filterData = this.dashboardsMockData.filter(ds => ds.id === id);
-    this.selectedDashboard = filterData[0];
-    if (filterData[0].visible === true) {
+    this.selectedDashboard = this.dashboardsMockData.filter(ds => ds.id === id)[0];
+    if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboardsMockData.forEach(
         ds => {
@@ -541,6 +543,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       );
       this.idTab = idSel;
     }
+    this.detectChanges();
   }
 
   deleteItem(dashboardId: any, itemId: any) {

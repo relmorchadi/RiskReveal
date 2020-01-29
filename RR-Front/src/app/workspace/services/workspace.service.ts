@@ -47,7 +47,7 @@ export class WorkspaceService {
         wsId,
         uwYear,
         ...ws,
-        projects: _.map(projects, (prj, index: any) => {
+        projects: _.map(projects.reverse(), (prj, index: any) => {
           prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
