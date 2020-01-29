@@ -52,7 +52,7 @@ export class WorkspaceService {
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
         }),
-        workspaceType: ws.marketChannel == 2 ? 'fac' : 'treaty',
+        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
         isPinned: false,
         collapseWorkspaceDetail: true,
         route,

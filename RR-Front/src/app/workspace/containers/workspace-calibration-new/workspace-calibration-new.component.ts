@@ -174,7 +174,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
               let res= _.map(this.data, el => el.currencyCode);
 
               if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === this.tableConfig.selectedCurrency)) {
-                res= [...res, this.tableConfig.selectedCurrency];
+                res= _.filter([...res, this.tableConfig.selectedCurrency], curr => !_.isNil(curr));
               }
 
               return _.uniq(res);
@@ -808,10 +808,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     let res= _.map(this.data, el => el.currencyCode);
 
     if(!_.find(['USD','EUR', 'CAD', 'GBP', 'SGD'], c => c === currency)) {
-      res= [...res, currency];
+      res= _.filter([...res, currency], curr => !_.isNil(curr));
     }
 
     res = _.uniq(res);
+
+    console.log(res);
 
 
     this.exchangeRatesSubscription = this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, res)

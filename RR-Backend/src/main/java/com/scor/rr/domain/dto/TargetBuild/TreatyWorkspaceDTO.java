@@ -1,10 +1,9 @@
-package com.scor.rr.domain.dto;
+package com.scor.rr.domain.dto.TargetBuild;
 
 import com.scor.rr.domain.ContractSearchResult;
-import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,8 +11,8 @@ import java.util.stream.Collectors;
 import static java.util.Optional.ofNullable;
 
 @Data
-@NoArgsConstructor
-public class WorkspaceDetailsDTO {
+@EqualsAndHashCode(callSuper = false)
+public class TreatyWorkspaceDTO extends WorkspaceStats {
 
     private String id;
     private String workspaceName;
@@ -34,17 +33,8 @@ public class WorkspaceDetailsDTO {
     private List<Integer> years;
     private List<ProjectCardView> projects;
 
-
-    public WorkspaceDetailsDTO(WorkspaceEntity workspaceEntity) {
-        this.id = workspaceEntity.getWorkspaceContextCode();
-        this.workspaceName = workspaceEntity.getWorkspaceName();
-        this.cedantCode = workspaceEntity.getWorkspaceContextCode();
-        this.cedantName = workspaceEntity.getClientName();
-        this.marketChannel = workspaceEntity.getWorkspaceMarketChannel();
-    }
-
-
-    public WorkspaceDetailsDTO(ContractSearchResult contract, String marketChannel) {
+    public TreatyWorkspaceDTO(ContractSearchResult contract, String marketChannel) {
+        super();
         this.id = contract.getId();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();
@@ -65,25 +55,17 @@ public class WorkspaceDetailsDTO {
         ).distinct().collect(Collectors.toList());
     }
 
-    public void setTreatySection(String treatySection) {
-        this.treatySections = Arrays.asList(treatySection);
-    }
-
     public void setYear(int year) {
         this.years = Arrays.asList(year);
     }
 
-    /**
-     * @param projects
-     * @Setter project
-     * @Desc calculate as well the {publishedForAccumulationPlts, publishedForPricingPlts, pricedPlts} Params from projects
-     */
     public void setProjects(List<ProjectCardView> projects) {
         if(projects != null) {
             this.projects = projects;
-        }else{
+        } else {
             this.projects= new ArrayList<>();
         }
-
     }
+
+
 }

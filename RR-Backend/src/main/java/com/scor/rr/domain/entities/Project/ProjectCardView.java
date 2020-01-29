@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "vw_ProjectCard")
@@ -76,4 +77,25 @@ public class ProjectCardView {
     private Boolean publishedForPricingFlag;
 
     private Boolean accumulatedFlag;
+
+    @Column(name = "subsidiary", length = 25)
+    private String subsidiary;
+
+    @Column(name = "ledgerName")
+    private String ledgerName;
+
+    @Column(name = "subsidiaryName")
+    private String subsidiaryName;
+
+    @Column(name = "expiryDate")
+    private String expiryDate;
+
+    @Column(name = "inceptionDate")
+    private String inceptionDate;
+
+    @Column(name = "contractDatasource")
+    private String contractDatasource;
+
+    @Transient
+    private List<String> divisions;
 }
