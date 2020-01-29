@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="DashboardWidgetColumns")
+@Table(name="ZZ_DashboardWidgetColumns")
 public class DashboardWidgetColumns {
 
     @Id

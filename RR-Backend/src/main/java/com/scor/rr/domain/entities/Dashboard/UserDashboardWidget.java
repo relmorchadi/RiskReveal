@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="UserDashboardWidget")
+@Table(name="ZZ_UserDashboardWidget")
 public class UserDashboardWidget {
 
     @Id

@@ -3,10 +3,9 @@ package com.scor.rr.domain.entities.Dashboard;
 import lombok.Data;
 
 import javax.persistence.*;
-
-@Data
 @Entity
-@Table(name="UserDashboard")
+@Data
+@Table(name="ZZ_UserDashboard")
 public class UserDashboard {
 
     @Id

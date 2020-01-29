@@ -30,6 +30,16 @@ public enum ExceptionCodename {
     PLT_FILE_WRITE_ERROR("Error while writing to file"),
 
 
+
+    /* this section is for DashboardExceptions*/
+
+    USER_NOT_FOUND_EXCEPTION("User not found"),
+    DASHBOARD_DELETE_IMPOSSIBLE("Impossible delete"),
+    DASHBOARD_NOT_FOUND("Dashboard not found"),
+
+
+
+
     /*
         This section is delegated to Inuring Exceptions
      */
