@@ -148,7 +148,7 @@ public class DefaultAdjustmentService {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
-                        "FAC".equals(workspaceEntity.getWorkspaceMarketChannel()) ? 2 : 1,
+                        workspaceEntity.getWorkspaceMarketChannel(),
                         engineType,
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
