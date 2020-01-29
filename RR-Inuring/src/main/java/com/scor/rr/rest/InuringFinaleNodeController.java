@@ -19,7 +19,7 @@ public class InuringFinaleNodeController {
     @Autowired
     private InuringFinalNodeService inuringFinalNodeService;
 
-    @PostMapping("update")
+    @PutMapping("update")
     public ResponseEntity<?> updateInuringFinalNode(@RequestBody InuringFinalNodeUpdateRequest request) throws RRException {
         inuringFinalNodeService.updateInuringFinalNode(request);
         return ResponseEntity.ok("it's working");

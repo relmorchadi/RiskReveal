@@ -30,10 +30,21 @@ public enum ExceptionCodename {
     PLT_FILE_WRITE_ERROR("Error while writing to file"),
 
 
+
+    /* this section is for DashboardExceptions*/
+
+    USER_NOT_FOUND_EXCEPTION("User not found"),
+    DASHBOARD_DELETE_IMPOSSIBLE("Impossible delete"),
+    DASHBOARD_NOT_FOUND("Dashboard not found"),
+
+
+
+
     /*
         This section is delegated to Inuring Exceptions
      */
     INURING_INVALID_NUMBER_PLTS("Invalid number of PLTS"),
+    CONTRIBUTION_NOT_FOUND_EXCEPTION("contribution not found"),
     INURING_FINAL_ATTACHED_PLT_NOT_FOUND("plt not found"),
     EXCHANGE_RATE_TYPE_NOT_FOUND("ExchangeRate Type not found"),
     INURING_STRUCTURE_NOT_VALID("Inuring structure not valid"),
