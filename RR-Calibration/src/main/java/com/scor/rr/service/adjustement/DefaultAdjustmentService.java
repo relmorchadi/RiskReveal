@@ -149,7 +149,11 @@ public class DefaultAdjustmentService {
                 return getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
                         pltHeaderEntity.getTargetRAPId(),
                         pltHeaderEntity.getRegionPerilId(),
+<<<<<<< Updated upstream
                         ofNullable(workspaceEntity).map(we -> we.getWorkspaceMarketChannel()).map(Long::valueOf).orElse(null),
+=======
+                        "FAC".equals(workspaceEntity.getWorkspaceMarketChannel()) ? 2 : 1,
+>>>>>>> Stashed changes
                         engineType,
                         pltHeaderEntity.getEntity() != null ? pltHeaderEntity.getEntity() : 1);
             }
