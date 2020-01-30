@@ -4,4 +4,6 @@ import com.scor.rr.domain.entities.Dashboard.UserDashboardWidget;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserDashboardWidgetRepository extends JpaRepository<UserDashboardWidget,Long> {
+
+    UserDashboardWidget findByUserDashboardWidgetId(long id);
 }

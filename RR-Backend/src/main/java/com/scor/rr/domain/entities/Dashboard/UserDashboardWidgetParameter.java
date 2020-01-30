@@ -20,6 +20,9 @@ public class UserDashboardWidgetParameter {
     @Column(name = "ParameterName")
     private String parameterName;
 
+    @Column(name = "UserID")
+    private long userID;
+
     @Column(name = "ParameterType")
     private String parameterType;
 
@@ -29,10 +32,4 @@ public class UserDashboardWidgetParameter {
     public UserDashboardWidgetParameter() {
     }
 
-    public UserDashboardWidgetParameter(long userDashboardWidgetId, String parameterName, String parameterType, String parameterValue) {
-        this.userDashboardWidgetId = userDashboardWidgetId;
-        this.parameterName = parameterName;
-        this.parameterType = parameterType;
-        this.parameterValue = parameterValue;
-    }
 }

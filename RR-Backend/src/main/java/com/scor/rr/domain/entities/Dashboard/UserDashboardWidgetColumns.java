@@ -29,6 +29,12 @@ public class UserDashboardWidgetColumns {
     @Column(name = "IsVisible")
     private boolean isVisible;
 
+    @Column(name = "UserID")
+    private long userID;
+
+    @Column(name = "ColumnHeader")
+    private String columnHeader;
+
     @Column(name = "FilterCriteria")
     private String filterCriteria;
 

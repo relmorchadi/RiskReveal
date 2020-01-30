@@ -29,14 +29,19 @@ public class DashboardWidget {
     @Column(name = "DataSource")
     private String dataSource;
 
+    @Column(name = "RowSpan")
+    private int rowSpan;
+
+    @Column(name = "ColSpan")
+    private int colSpan;
+
+    @Column(name = "MinItemRows")
+    private int minItemRows;
+
+    @Column(name = "MinItemCols")
+    private int minItemCols;
+
     public DashboardWidget() {
     }
 
-    public DashboardWidget(String widgetName, long widgetType, String widgetDefaultDisplayName, String dataSourceType, String dataSource) {
-        this.widgetName = widgetName;
-        this.widgetType = widgetType;
-        this.widgetDefaultDisplayName = widgetDefaultDisplayName;
-        this.dataSourceType = dataSourceType;
-        this.dataSource = dataSource;
-    }
 }

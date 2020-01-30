@@ -34,6 +34,9 @@ public enum ExceptionCodename {
     /* this section is for DashboardExceptions*/
 
     USER_NOT_FOUND_EXCEPTION("User not found"),
+    DASHBOARD_WIDGET_NOT_FOUND("Widget not found"),
+    PARAM_NOT_FOUND("No param found"),
+    INVALID_WIDGET_TYPE("Invalid widget type"),
     DASHBOARD_DELETE_IMPOSSIBLE("Impossible delete"),
     DASHBOARD_NOT_FOUND("Dashboard not found"),
 

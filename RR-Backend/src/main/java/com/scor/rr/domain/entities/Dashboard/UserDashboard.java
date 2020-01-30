@@ -31,11 +31,4 @@ public class UserDashboard {
     public UserDashboard() {
     }
 
-    public UserDashboard(long userId, String dashboardName, String searchMode, boolean isVisible, int dashBoardSequence) {
-        this.userId = userId;
-        this.dashboardName = dashboardName;
-        this.searchMode = searchMode;
-        this.isVisible = isVisible;
-        this.dashBoardSequence = dashBoardSequence;
-    }
 }
