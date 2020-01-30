@@ -58,6 +58,16 @@ export class ToggleRiskLinkEDMAndRDMSelectedAction {
   constructor(public payload: any) {}
 }
 
+export class GetRiskLinkAnalysisAction {
+  static readonly type = '[Risk Link] Get RiskLink Analysis';
+  constructor(public payload: any) {}
+}
+
+export class GetRiskLinkPortfolioAction {
+  static readonly type = '[Risk Link] Get RiskLink Portfolios';
+  constructor(public payload: any) {}
+}
+
 export class ToggleAnalysisForLinkingAction {
   static readonly type = '[Risk Link] Select Target RDM For Linking';
   constructor(public payload: any) {}
@@ -66,6 +76,11 @@ export class ToggleAnalysisForLinkingAction {
 export class AddToBasketAction {
   static readonly type = '[Risk Link] Add Analysis and Portfolio To Basket';
   constructor() {}
+}
+
+export class AutoAttachAction{
+  static readonly type = '[Risk Link] Auto Attach  Workspace';
+  constructor(public payload?: any) {}
 }
 
 export class TriggerImportAction {
@@ -274,8 +289,18 @@ export class OverrideOccurrenceBasis {
   constructor(public payload: any) {}
 }
 
+export class LoadSummaryOrDefaultDataSourcesAction {
+  static readonly type= '[Risk Link] Load Summary or default data sources action';
+  constructor(public payload: any) {}
+}
+
 export class LoadDefaultDataSourcesAction {
   static readonly type= '[Risk Link] Load default data sources action';
+  constructor(public payload: any) {}
+}
+
+export class LoadSummaryAction {
+  static readonly type= '[Risk Link] Load summary action';
   constructor(public payload: any) {}
 }
 

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ContentChild, ElementRef, OnInit, QueryList, ViewChild} from '@angular/core';
 import {CompactType, DisplayGrid, GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
@@ -11,6 +11,8 @@ import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
 import {DashData} from "./data";
 import {elementStylingMap} from "@angular/core/src/render3";
+import {createViewChild} from "@angular/compiler/src/core";
+import {timeout} from "rxjs/operators";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -90,28 +92,28 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       fac: [
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'NewFacWidgetComponent', selected: false,
+          componentName: 'NewFacWidgetComponent', selected: false, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'InProgressFacWidgetComponent', selected: false,
+          componentName: 'InProgressFacWidgetComponent', selected: false, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'ArchivedFacWidgetComponent', selected: false,
+          componentName: 'ArchivedFacWidgetComponent', selected: false, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0}
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
-          componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          componentName: 'facChartWidgetComponent', selected: false, persisted: true,
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         },
         {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
-          componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          componentName: 'facSubsidiaryChartComponent', selected: false, persisted: true,
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         }
       ]
     },
@@ -164,28 +166,28 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       fac: [
         {
           id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'NewFacWidgetComponent', selected: true,
+          componentName: 'NewFacWidgetComponent', selected: true, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
         },
         {
           id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'InProgressFacWidgetComponent', selected: true,
+          componentName: 'InProgressFacWidgetComponent', selected: true, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
         },
         {
           id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'ArchivedFacWidgetComponent', selected: true,
+          componentName: 'ArchivedFacWidgetComponent', selected: true, persisted: true,
           position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
         },
         {
           id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
-          componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          componentName: 'facChartWidgetComponent', selected: false, persisted: true,
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         },
         {
           id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
-          componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0}
+          componentName: 'facSubsidiaryChartComponent', selected: false, persisted: true,
+          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
         }
       ]
     },
@@ -229,37 +231,47 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     fac: [
       {
         id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
-        componentName: 'NewFacWidgetComponent', selected: true,
+        componentName: 'NewFacWidgetComponent', selected: true, persisted: true,
         position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
       },
       {
         id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
-        componentName: 'InProgressFacWidgetComponent', selected: true,
+        componentName: 'InProgressFacWidgetComponent', selected: true, persisted: true,
         position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
       },
       {
         id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
-        componentName: 'ArchivedFacWidgetComponent', selected: true,
+        componentName: 'ArchivedFacWidgetComponent', selected: true, persisted: true,
         position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
       },
       {
         id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
-        componentName: 'facChartWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        componentName: 'facChartWidgetComponent', selected: true, persisted: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
       },
       {
         id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
-        componentName: 'facSubsidiaryChartComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
+        componentName: 'facSubsidiaryChartComponent', selected: true, persisted: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
       }
     ]
   };
   previousUrl: string;
 
+  showAdd: any;
+
   @Select(DashboardState.getFacData) facData$;
   newFacCars: any;
   inProgressFacCars: any;
   archivedFacCars: any;
+
+  searchInput: ElementRef;
+  @ViewChild('searchInput') set assetInput(elRef: ElementRef) {
+    this.searchInput = elRef;
+    // this.detectChanges();
+  }
+
+  @ViewChild('popConfirm') confirmPopUp;
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
@@ -272,9 +284,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this.dispatch(new fromHD.LoadDashboardFacDataAction());
     this.facData$.pipe().subscribe(value => {
-      this.newFacCars = _.get(value, 'new', []);
-      this.inProgressFacCars = _.get(value, 'inProgress', []);
-      this.archivedFacCars = _.get(value, 'archived', []);
+      this.newFacCars = this.dataParam(_.get(value, 'new', []));
+      this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
+      this.archivedFacCars = this.dataParam(_.get(value, 'archived', []));
     });
     this.options = {
       gridType: GridType.VerticalFixed,
@@ -358,14 +370,21 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.immutableArchive = [...this.archivedCols];
   }
 
-  setTabValue() {
-    this.idTab = 1;
-    this.dashboardChange(1);
-    const data = window.localStorage.getItem('previousUrl');
-    console.log(data);
-    if (data === '/CreateNewFile') {
+  dataParam(data) {
+    return _.sortBy(_.map(data, item => {
+      return {...item, carRequestId: _.toInteger(_.split(item.carRequestId, '-')[1])}
+    }), ['carRequestId']).reverse();
+  }
 
-    }
+  setTabValue() {
+/*    const visibleDash = _.filter(this.dashboards, item => item.visible);
+    if (visibleDash.length > 1) {
+      setTimeout(() => {
+        this.idTab = 1;
+        const idDash = _.get(this.dashboards[1], 'id', 1);
+        this.dashboardChange(idDash);
+      }, 500);
+    }*/
   }
 
   openPopUp(event) {
@@ -408,40 +427,40 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       id: this.dashboards[this.dashboards.length - 1 ].id + 1,
       name: this.newDashboardTitle,
       visible: true,
-      items: _.map(selectedTreatyComponent,
-        ({componentName, title, icon}: any, key) => ({
-          id: key,
-          componentName,
-          name: title,
-          icon,
-          selected: false,
-          position: {rows: 2, cols: 3}
-        })
+      items: _.map(selectedTreatyComponent, (dt: any, key) => {
+        return {...dt, id: key, name: dt.title, selected: false}
+      }
       ),
-      fac: _.map(selectedFacComponent,
-        ({componentName, title, type, icon}: any, key) => ({
-          id: key,
-          componentName,
-          name: title,
-          icon,
-          type,
-          selected: false,
-          position: {rows: 2, cols: 3}
-        }))
+      fac: _.map(selectedFacComponent, (dt: any) => {
+        return {...dt, id: dt.id, name: dt.title, selected: false}
+      })
     };
-    if (item.name != null) {
+    if (!_.isEmpty(_.trim(item.name))) {
       this.dashboards = [...this.dashboards, item];
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
-      this.newDashboardTitle = '';
+      this.emptyField();
       this.idTab = this.dashboards.length - 1;
       this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
       this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
+    } else {
+      this.notificationService.createNotification('Information',
+          'An Error Occurred While Creating a New Dashboard Please Verify the name isn\'t Empty before creating a New Dashboard',
+          'error', 'bottomRight', 6000);
+      this.emptyField();
     }
   }
 
-  consoleLog(event) {
-    console.log(event);
+  emptyField() {
+    this.newDashboardTitle = ''
+  }
+
+  focusInput() {
+    // this.assetInput;
+    setTimeout(dt => {
+      console.log(this.searchInput);
+      this.searchInput.nativeElement.focus();
+    })
   }
 
   deleteDashboard() {
@@ -510,12 +529,10 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   dashboardChange(id: any) {
-    const name: any = _.get(_.find(this.dashboardsMockData, {id}), 'name');
-    this.dashboardTitle = name || '';
+    this.dashboardTitle =  _.get(_.find(this.dashboardsMockData, {id}), 'name', '');
     this.idSelected = id;
-    const filterData = this.dashboardsMockData.filter(ds => ds.id === id);
-    this.selectedDashboard = filterData[0];
-    if (filterData[0].visible === true) {
+    this.selectedDashboard = this.dashboardsMockData.filter(ds => ds.id === id)[0];
+    if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboardsMockData.forEach(
         ds => {
@@ -526,6 +543,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       );
       this.idTab = idSel;
     }
+    this.detectChanges();
   }
 
   deleteItem(dashboardId: any, itemId: any) {
@@ -547,17 +565,15 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.updateDashboardMockData();
   }
 
-  deleteItemFac(dashboardId: any, itemId: any) {
+  deleteItemFac(dashboardId: any, deletedItem: any) {
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId > 102 || itemId < 99) {
-      dashboard.fac = dashboard.fac.filter(ds => ds.id !== itemId);
+    const {persistent, id} = deletedItem;
+    console.log(deletedItem, dashboard);
+    if (!persistent) {
+      dashboard.fac = dashboard.fac.filter(ds => ds.id !== id);
     } else {
       dashboard.fac = dashboard.fac.map(item => {
-        if (item.id === itemId) {
-          return {...item, selected: false};
-        } else {
-          return item;
-        }
+        return item.id === id ? {...item, selected: false} : item;
       });
     }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
@@ -583,13 +599,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     // this.editName = false;
   }
 
-  changeNameFac(dashboardId: any, {itemId, newName}: any) {
+  changeNameFac(dashboardId: any, {itemId, newName, persistent}: any) {
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId > 102 && itemId < 99) {
+    if (persistent) {
       const newItem = dashboard.fac.filter(ds => ds.id === itemId);
       const copy = Object.assign({}, newItem[0], {
         name: newName,
-        id: dashboard.items.length + 1
+        id: dashboard.fac.length + 1
       });
       dashboard.fac.push(copy);
       newItem[0].selected = false;
@@ -619,6 +635,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     const duplicatedItem: any = dashboard.fac.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {
       id: dashboard.items.length + 1,
+      persisted: false,
       selected: true,
     });
     dashboard.fac = [...dashboard.fac, copy];
@@ -672,6 +689,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   onEnterAdd(keyEvent) {
     if (keyEvent.key === 'Enter') {
+      this.showAdd = false;
       keyEvent.target.value !== '' ? this.addDashboard() : null;
     }
   }

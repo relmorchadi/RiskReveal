@@ -6,10 +6,18 @@
 
 <div class="widget-footer">
   <div class="filter-div">
-    <span class="filter-label">User</span>
-    <nz-select class="a-dropdown-small" style="width: 150px" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
+    <span class="filter-label">Subsidiary</span>
+    <p-multiSelect [(ngModel)]="selectedSubsidiary"
+                   (ngModelChange)="filterDataBySubsidiary()"
+                   [options]="subsidiaryList"
+                   [style]="{width: '150px'}"
+                   defaultLabel="Subsidiary"
+                   appendTo="body"
+                   maxSelectedLabels="1"></p-multiSelect>
+<!--    <nz-select class="a-dropdown-small" style="width: 150px"
+               (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
       <nz-option *ngFor="let item of subsidiaryList" [nzValue]="item" [nzLabel]="item"></nz-option>
-    </nz-select>
+    </nz-select>-->
   </div>
   <div class="filter-div">
     <span class="filter-label">From</span>

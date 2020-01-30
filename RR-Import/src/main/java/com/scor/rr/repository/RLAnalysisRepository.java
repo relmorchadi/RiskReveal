@@ -3,6 +3,7 @@ package com.scor.rr.repository;
 import com.scor.rr.domain.RdmAnalysis;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 
-public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
+public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long>, JpaSpecificationExecutor<RLAnalysis> {
 
 
     // @TODO : Check Instance ID Param
@@ -68,4 +69,8 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long> {
     List<RLAnalysis> findByRlModelDataSourceId(Long rlModelDataSourceId);
 
     RLAnalysis findByRlId(Long analysisId);
+
+    @Query(value = "select rla from RLAnalysis rla where rla.analysisName= :name and rla.rlModelDataSourceId= :rdmId")
+    List<RLAnalysis> findByRdmIdAndName(@Param("rdmId") Long rdmId, @Param("name") String name);
+
 }

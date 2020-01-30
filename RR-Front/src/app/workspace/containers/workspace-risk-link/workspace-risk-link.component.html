@@ -121,11 +121,11 @@
                    [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': state?.display?.displayListRDMEDM}">
                 <div class="search-bar"
                      [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': state?.display?.displayListRDMEDM}">
-                  <i class="search-bar-icon-search" (click)="focusInput()" nz-icon nzType="search"
+                  <i class="search-bar-icon-search" (click)="toggleDatasourcesDisplay()" nz-icon nzType="search"
                      nzTheme="outline"></i>
                   <div class="search-bar-text"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       *ngIf="!state.display.displayListRDMEDM" (click)="focusInput()">Select EDM & RDM
+                       *ngIf="!state.display.displayListRDMEDM" (click)="toggleDatasourcesDisplay()">Select EDM & RDM
                   </div>
                   <input placeholder="Select EDM & RDM"
                          [formControl]="datasourceKeywordFc"
@@ -133,7 +133,7 @@
                          #searchInput>
                   <div class="search-bar-text displayed-info"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       (click)="focusInput()" *ngIf="state.display.displayListRDMEDM">
+                       (click)="toggleDatasourcesDisplay()" *ngIf="state.display.displayListRDMEDM">
                     <span class="search-bar-text-title">EDM & RDM</span>
                     <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                   </div>
@@ -173,7 +173,7 @@
                             </div>
                           </ng-template>
                           <ng-template let-car pTemplate="loadingItem">
-                            <div class="loading-text"></div>
+                            <div *ngIf="state?.listEdmRdm?.totalElements && !state?.listEdmRdm?.last" class="loading-text"></div>
                           </ng-template>
                         </p-virtualScroller>
                       </div>
@@ -181,57 +181,14 @@
                         <button (click)="scanDataSources()" class="a-buttons-contained">ADD</button>
                       </div>
                     </nz-tab>
-                    <!--
-                    <nz-tab nzTitle="EDM">
-                      <div class="search-bar-result-list">
-                        <ul>
-                          <ng-container *ngFor="let item of (listEdmRdm.data | rmsDatasource:'EDM')">
-                            <li class="poover-menu-item"
-                                (click)="toggleItems(item, $event, 'solo')"
-                                [ngClass]="{'poover-menu-item-active': item?.selected}">
-                              <label nz-checkbox (ngModelChange)="toggleItems(item, $event, 'solo')"
-                                     style="margin-right: 5px"
-                                     [ngModel]="item.selected"></label>
-                              <span class="logo" style="background: #0700CF">E</span>
-                              <span>{{item?.name}}</span>
-                            </li>
-                          </ng-container>
-                        </ul>
-                      </div>
-                      <div class="search-bar-result-button">
-                        <button (click)="selectedItem()" class="a-buttons-contained">ADD</button>
-                      </div>
-                    </nz-tab>
-                    <nz-tab nzTitle="RDM">
-                      <div class="search-bar-result-list">
-                        <ul>
-                          <ng-container *ngFor="let item of (listEdmRdm.data | rmsDatasource:'RDM')">
-                            <li class="poover-menu-item"
-                                (click)="toggleItems(item, $event, 'solo')"
-                                [ngClass]="{'poover-menu-item-active': item?.selected}">
-                              <label nz-checkbox (ngModelChange)="toggleItems(item, $event, 'solo')"
-                                     style="margin-right: 5px"
-                                     [ngModel]="item.selected"></label>
-                              <span class="logo" style="background: #03DAC4">R</span>
-                              <span>{{item?.name}}</span>
-                            </li>
-                          </ng-container>
-                        </ul>
-                      </div>
-                      <div class="search-bar-result-button">
-                        <button (click)="scanDataSources()" class="a-buttons-contained-mini">ADD</button>
-                      </div>
-                    </nz-tab>
--->
                   </nz-tabset>
                 </div>
               </div>
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
+              <button style="margin-right: 10px" (click)="autoAttach()" *ngIf="tabStatus === 'FAC'"
+                      class="a-buttons-outlined-mini">Auto Attach</button>
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
-<!--              <button style="margin-right: 10px" (click)="autoLinkAnalysis()" *ngIf="tabStatus === 'FAC'"-->
-<!--                      class="a-buttons-outlined-mini">Auto Attach-->
-<!--              </button>-->
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
               <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
@@ -247,8 +204,8 @@
                   <span>Selected EDMs & RDMs</span>
                   <div class="action-icon-wrapper">
                     <i nz-tooltip nzTitle="Save as default selection" (click)="saveDefaultSelection()"
-                       style="font-size: 23px" class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadDefaultDataSources()"
+                       class="icon-save_24px"></i>
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadSummaryOrDefaultDataSources()"
                        class="icon-sync_24px"></i>
                     <i nz-tooltip nzTitle="Clear default settings" (click)="clearDefaultSelection()"
                        class="icon-close_24px"></i>
@@ -343,14 +300,15 @@
               </div>
               <div style="display: flex; flex-direction: column">
                 <div class="show-table">
-                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()"
+                  <p-table *ngIf="state.selectedEDMOrRDM === 'EDM'; else AnalysisDataTable" #kt [columns]="scrollableColsPortfolio"
+                           [frozenColumns]="frozenColsPortfolio"
                            (selectionChange)="getSelection($event)"
-                           [value]="filterData(getTableData())"
+                           [value]="portfolios?.data"
                            selectionMode="multiple" [(selection)]="selectedRows"
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
-                           [dataKey]="'rlId'">
-                    <!--  -->
+                           [dataKey]="'rlId'" [lazy]="true" [rows]="20" (onLazyLoad)="lazyloadPortfolios($event)"
+                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -361,14 +319,9 @@
                         <ng-container *ngFor="let col of columns">
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
                               *ngIf="col.header === 'selected'">
-                            <label *ngIf="state.selectedEDMOrRDM === 'RDM'"
-                                   nz-checkbox [ngModel]="allCheckedAnalysis"
-                                   (ngModelChange)="updateAllChecked('analysis')"
-                                   [nzIndeterminate]="indeterminateAnalysis"></label>
-                            <label *ngIf="state.selectedEDMOrRDM === 'EDM'"
-                                   nz-checkbox [ngModel]="allCheckedPortolfios"
+                            <!--<label nz-checkbox [ngModel]="allCheckedPortolfios"
                                    (ngModelChange)="updateAllChecked('portfolio')"
-                                   [nzIndeterminate]="indeterminatePortfolio"></label>
+                                   [nzIndeterminate]="indeterminatePortfolio"></label>-->
                           </th>
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
                               *ngIf="col.header === 'Imported'">
@@ -390,9 +343,7 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table" *ngIf="col.filtered">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (ngModelChange)="UpdateCheckboxStatus()"
-                                   type="text" [(ngModel)]="filterAnalysis[col.field]">
-                            <input *ngIf="state.selectedEDMOrRDM === 'EDM'" (ngModelChange)="UpdateCheckboxStatus()"
+                            <input (input)="onPortfolioFilter($event)"
                                    type="text" [(ngModel)]="filterPortfolio[col.field]">
                           </div>
                         </th>
@@ -402,7 +353,7 @@
                       <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
-                          <div style=" display: flex;" *ngIf="col.type === 'select'">
+                          <div style="display: flex;" *ngIf="col.type === 'select'">
                             <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
                                    [ngModel]="rowData.selected"></label>
                           </div>
@@ -418,6 +369,77 @@
                       </tr>
                     </ng-template>
                   </p-table>
+                  <ng-template #AnalysisDataTable>
+                    <p-table #kt [columns]="scrollableColsAnalysis" [frozenColumns]="frozenColsAnalysis"
+                             (selectionChange)="getSelection($event)"
+                             [value]="state.analysis.data"
+                             selectionMode="multiple" [(selection)]="selectedRows"
+                             [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
+                             [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
+                             [dataKey]="'rlId'" [lazy]="true" [rows]="20" (onLazyLoad)="lazyloadAnalysis($event)"
+                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading">
+                      <!--  -->
+                      <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                          <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                        </colgroup>
+                      </ng-template>
+                      <ng-template pTemplate="header" let-columns>
+                        <tr>
+                          <ng-container *ngFor="let col of columns">
+                            <th [ngClass]="{'select-header': col.header === 'selected'}"
+                                *ngIf="col.header === 'selected'">
+                              <!--<label nz-checkbox [ngModel]="allCheckedAnalysis"
+                                     (ngModelChange)="updateAllChecked('analysis')"
+                                     [nzIndeterminate]="indeterminateAnalysis"></label>-->
+                            </th>
+                            <th [ngClass]="{'select-header': col.header === 'selected'}"
+                                *ngIf="col.header === 'Imported'">
+
+                            </th>
+                            <th *ngIf="col.header !== 'selected'" pResizableColumn
+                                [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
+                              <div>
+                                {{col.header}}
+                                <p-sortIcon style="position: absolute; float: right;"
+                                            [field]="col.field" ariaLabel="Activate to sort"
+                                            ariaLabelDesc="Activate to sort in descending order"
+                                            ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                              </div>
+                            </th>
+                          </ng-container>
+                        </tr>
+                        <tr>
+                          <th *ngFor="let col of columns" pResizableColumn>
+                            <div class="search-bar-table" *ngIf="col.filtered">
+                              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                              <input *ngIf="state.selectedEDMOrRDM === 'RDM'" (input)="onAnalysisFilter($event)"
+                                     type="text" [(ngModel)]="filterAnalysis[col.field]">
+                            </div>
+                          </th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                        <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
+                          <td *ngFor="let col of columns"
+                              [ngClass]="{'selected-item': rowData?.selected}">
+                            <div style=" display: flex;" *ngIf="col.type === 'select'">
+                              <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                                     [ngModel]="rowData.selected"></label>
+                            </div>
+                            <div class="text-data" (click)="selectRows(rowData, i)"
+                                 *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                            <div class="text-data" (click)="selectRows(rowData, i)"
+                                 *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
+                            <div *ngIf="col.type === 'icon'">
+                              <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                                 class="icon-upload_24px"></i>
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
+                  </ng-template>
                   <app-manage-columns [visible]="managePopUpAnalysis" [columns]="cloneData(scrollableColsAnalysis)"
                                       (onSubmit)="saveColumns($event, 'analysis')"
                                       (onCancel)="closePopUp()"></app-manage-columns>
@@ -445,8 +467,8 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [context]="tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
-        <analysis-result [context]="tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="this.tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
+        <analysis-result [context]="this.tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 

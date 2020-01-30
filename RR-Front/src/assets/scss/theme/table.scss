@@ -59,6 +59,18 @@
           }
         }
       }
+
+      @media screen and (max-width: 1350px) {
+        padding: 10px 8px 3px 1px !important;
+        height: 40px;
+        font-size: 9px;
+
+        .search-bar-table {
+          input {
+            height: 20px;
+          }
+        }
+      }
     }
   }
 
@@ -127,7 +139,6 @@
       color: rgb(0, 0, 0);
       font-size: 12px;
       letter-spacing: 0.08px;
-      height: 25px;
       border: none !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
 
@@ -176,6 +187,14 @@
       .icon-block_24px {
         color: #B20626;
         font-size: 20px;
+      }
+
+      @media screen and (max-width: 1350px) {
+        font-size: 10px;
+
+        .text-data {
+          height: 22px;
+        }
       }
     }
 
