@@ -29,7 +29,7 @@ public class DashboardWidgetController {
     }
 
     @GetMapping("getWidgets")
-    public List<UserWidgetResponse> getReferenceData(@RequestParam long id) throws RRException {
+    public List<UserWidgetResponse> getWidgets(@RequestParam long id) throws RRException {
         return userDashboardWidgetService.getDashboardWidget(id);
     }
 
@@ -54,5 +54,10 @@ public class DashboardWidgetController {
         userDashboardWidgetService.deleteDashboardWidget(dashboardWidgetId);
         return ResponseEntity.ok("deleted");
     }
+
+//    @GetMapping("getData")
+//    public WidgetDataResponse  getDataForWidget(@RequestBody WidgetDataRequest request) throws RRException {
+//        return userDashboardWidgetService.getWidgetData(request);
+//    }
 
 }
