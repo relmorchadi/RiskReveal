@@ -5,6 +5,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
+import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.runnables.AnalysisDetailedScanRunnableTask;
@@ -17,9 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -81,6 +79,9 @@ public class RmsService {
 
     @Autowired
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
+
+    @Autowired
+    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
@@ -321,6 +322,9 @@ public class RmsService {
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
+                            List<RLAnalysisToTargetRAP> targetRaps = rLAnalysisToTargetRAPRepository.findByRlAnalysisIdAndDefaultIs(rlAnalysis.getRlAnalysisId(), true);
+                            if (targetRaps != null && !targetRaps.isEmpty())
+                                rlAnalysis.setDefaultTargetRap(targetRaps.get(0).getTargetRapCode());
                             allScannedAnalysis.add(rlAnalysis);
                             cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
                             //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
@@ -1038,7 +1042,7 @@ public class RmsService {
             if (topLevelRegionPeril != null) {
                 systemRegionPeril = crawlDownToSystemRegionPeril(topLevelRegionPeril);
             } else {
-                logger.error("no top level RegionPeil found for analysis '{}':'{}' from RDM '{}':'{}'",
+                logger.error("no top level RegionPeril found for analysis '{}':'{}' from RDM '{}':'{}'",
                         rlAnalysis.getRlId(), rlAnalysis.getAnalysisName(), rlAnalysis.getRdmId(), rlAnalysis.getRdmName());
             }
         } else {
@@ -1085,7 +1089,7 @@ public class RmsService {
                     candidates.add(child);
                 }
             }
-            if (candidates.size() > 1) {
+            if (candidates.size() < 1) {
                 return node.getRegionPeril().getRegionPerilCode();
             } else {
                 for (RegionPerilNode c : candidates) {

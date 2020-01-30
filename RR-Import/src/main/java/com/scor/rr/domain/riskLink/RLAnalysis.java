@@ -138,6 +138,9 @@ public class RLAnalysis {
     @JsonBackReference
     private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
 
+    @Transient
+    private String defaultTargetRap;
+
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();

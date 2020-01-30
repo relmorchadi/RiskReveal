@@ -33,4 +33,5 @@ public class RLAnalysisDetailedDto {
     private String regionName;
     private Long proportion = 100L;
     private Double unitMultiplier = 1.0d;
+    private String defaultTargetRap;
 }

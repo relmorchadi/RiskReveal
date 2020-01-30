@@ -8,4 +8,6 @@ import java.util.List;
 public interface RLAnalysisToTargetRAPRepository extends JpaRepository<RLAnalysisToTargetRAP, Long> {
 
     List<RLAnalysisToTargetRAP> findByRlAnalysisId(Long rlAnalysisId);
+
+    List<RLAnalysisToTargetRAP> findByRlAnalysisIdAndDefaultIs(Long rlAnalysisId, boolean isDefault);
 }
