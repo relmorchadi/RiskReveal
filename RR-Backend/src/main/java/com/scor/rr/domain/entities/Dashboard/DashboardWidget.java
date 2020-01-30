@@ -32,6 +32,9 @@ public class DashboardWidget {
     @Column(name = "RowSpan")
     private int rowSpan;
 
+    @Column(name ="WidgetMode")
+    private String widgetMode;
+
     @Column(name = "ColSpan")
     private int colSpan;
 

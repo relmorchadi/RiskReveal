@@ -2,6 +2,7 @@ package com.scor.rr.rest.Dashboard;
 
 
 import com.scor.rr.domain.Response.ReferenceWidgetResponse;
+import com.scor.rr.domain.Response.UserDashboardResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
 import com.scor.rr.domain.requests.DashboardWidgetCreationRequest;
 import com.scor.rr.exceptions.RRException;
@@ -19,31 +20,38 @@ public class DashboardWidgetController {
 
     @Autowired
     private DashboardWidgetService dashboardWidgetService;
+    @Autowired
+    private UserDashboardWidgetService userDashboardWidgetService;
 
     @GetMapping("getRefData")
     public List<ReferenceWidgetResponse> getReferenceData() throws RRException {
         return dashboardWidgetService.getReferenceWidgets();
     }
 
+    @GetMapping("getWidgets")
+    public List<UserWidgetResponse> getReferenceData(@RequestParam long id) throws RRException {
+        return userDashboardWidgetService.getDashboardWidget(id);
+    }
+
     @PostMapping("create")
     public UserWidgetResponse createDashboardWidget(@RequestBody DashboardWidgetCreationRequest request) throws RRException {
-        return dashboardWidgetService.createDashboardWidget(request.getReferenceWidgetId(),request.getDashoardId(),request.getUserId());
+        return userDashboardWidgetService.createDashboardWidget(request.getReferenceWidgetId(),request.getDashoardId(),request.getUserId());
     }
 
     @PutMapping("update")
     public ResponseEntity<?> updateDashboardWidget(@RequestBody UserWidgetResponse requet) throws RRException {
-        dashboardWidgetService.UpdateDashboardWidget(requet);
+        userDashboardWidgetService.UpdateDashboardWidget(requet);
         return ResponseEntity.ok("updated");
     }
 
     @PostMapping("duplicate")
     public UserWidgetResponse duplicateDashboardWidget(@RequestParam long dashboardWidgetId) throws RRException {
-        return dashboardWidgetService.duplicateWidget(dashboardWidgetId);
+        return userDashboardWidgetService.duplicateWidget(dashboardWidgetId);
     }
 
     @DeleteMapping("delete")
     public ResponseEntity<?> deleteDashboardWidget(@RequestParam long dashboardWidgetId) throws RRException {
-        dashboardWidgetService.deleteDashboardWidget(dashboardWidgetId);
+        userDashboardWidgetService.deleteDashboardWidget(dashboardWidgetId);
         return ResponseEntity.ok("deleted");
     }
 

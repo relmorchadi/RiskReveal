@@ -1,5 +1,6 @@
 package com.scor.rr.rest.Dashboard;
 
+import com.scor.rr.domain.Response.UserDashboardResponse;
 import com.scor.rr.domain.entities.Dashboard.UserDashboard;
 import com.scor.rr.domain.requests.UserDashboardCreationRequest;
 import com.scor.rr.exceptions.RRException;
@@ -18,7 +19,7 @@ public class UserDashboardController {
     private UserDashboardService userDashboardService;
 
     @GetMapping("getDashboards")
-    public List<UserDashboard> getDashboards(@RequestParam long userId) throws RRException {
+    public List<UserDashboardResponse> getDashboards(@RequestParam long userId) throws RRException {
         return userDashboardService.getDashboardForUser(userId);
     }
 
