@@ -164,7 +164,7 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
-        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "Fac" : "";
+        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "Fac" : "";
 
         if (workspaceMarketChannel.equalsIgnoreCase("")) {
             log.error("Error. workspace market channel is not found");
@@ -196,7 +196,7 @@ public class BatchExecution {
         String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult.getCedantName();
         String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
-        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
+        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
         String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
         String division = "1"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT
