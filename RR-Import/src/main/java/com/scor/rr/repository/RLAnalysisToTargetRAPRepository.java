@@ -2,6 +2,7 @@ package com.scor.rr.repository;
 
 import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -9,5 +10,6 @@ public interface RLAnalysisToTargetRAPRepository extends JpaRepository<RLAnalysi
 
     List<RLAnalysisToTargetRAP> findByRlAnalysisId(Long rlAnalysisId);
 
-    List<RLAnalysisToTargetRAP> findByRlAnalysisIdAndDefaultIs(Long rlAnalysisId, boolean isDefault);
+    @Query
+    List<RLAnalysisToTargetRAP> findByRlAnalysisIdAndDefaultIsTrue(Long rlAnalysisId);
 }

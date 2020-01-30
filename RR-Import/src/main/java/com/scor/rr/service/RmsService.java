@@ -18,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -31,7 +34,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -323,7 +325,7 @@ public class RmsService {
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
-                            List<RLAnalysisToTargetRAP> targetRaps = rLAnalysisToTargetRAPRepository.findByRlAnalysisIdAndDefaultIs(rlAnalysis.getRlAnalysisId(), true);
+                            List<RLAnalysisToTargetRAP> targetRaps = rLAnalysisToTargetRAPRepository.findByRlAnalysisIdAndDefaultIsTrue(rlAnalysis.getRlAnalysisId());
                             if (targetRaps != null && !targetRaps.isEmpty())
                                 rlAnalysis.setDefaultTargetRap(targetRaps.get(0).getTargetRapCode());
                             allScannedAnalysis.add(rlAnalysis);
