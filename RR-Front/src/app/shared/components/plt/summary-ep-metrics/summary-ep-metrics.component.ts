@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from "../../../message";
 import * as _ from 'lodash';
+import EChartOption = echarts.EChartOption;
 
 @Component({
   selector: 'app-summary-ep-metrics',
@@ -49,6 +50,9 @@ export class SummaryEpMetricsComponent implements OnInit {
     upperBound: number,
     lowerBound: number
   };
+
+  @Input() chartOption: EChartOption;
+  @Input() updateOption: EChartOption;
 
   constructor() { }
 

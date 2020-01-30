@@ -15,14 +15,15 @@ import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
 import * as _ from 'lodash';
 import {BaseContainer} from "../../../base";
-import {ofActionSuccessful, Store} from "@ngxs/store";
+import { Store } from "@ngxs/store";
 import {Router} from "@angular/router";
 import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
 import {PltApi} from "../../../../workspace/services/api/plt.api";
 import {filter, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
 import {empty, EMPTY, forkJoin, of, Subscription} from "rxjs";
 import {WorkspaceState} from "../../../../workspace/store";
-import * as fromWorkspaceStore from "../../../../workspace/store";
+import EChartOption = echarts.EChartOption;
+import produce from "immer";
 
 @Component({
   selector: 'app-plt-right-menu',
@@ -72,7 +73,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   epMetricsSubscriptions: any;
 
-  rps;
+  rps: any;
 
   epMetricsLosses;
 
@@ -89,6 +90,11 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     upperBound: number,
     lowerBound: number
   };
+
+  //Echart
+
+  chartOption: EChartOption;
+  updateOption: EChartOption;
 
   //Sub
   exchangeRatesSubscription: Subscription;
@@ -287,10 +293,40 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       isValid: false,
       lowerBound: null,
       upperBound: null
-    }
+    };
+
+    this.chartOption = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: []
+    };
   }
 
+  curve: string= 'AEP';
+
   ngOnInit() {
+    setInterval(() => {
+      this.loadEpMetrics(this.inputs.pltHeaderId, this.curve);
+      if(this.curve == 'AEP') {
+        this.curve = 'OEP-TVAR';
+        this.summaryEpMetricsConfig = {
+            ...this.summaryEpMetricsConfig,
+          selectedCurveType: ['OEP', 'AEP']
+        }
+      }
+    }, 8000)
     this.exchangeRates= {};
     this.subscribeToWorkspaceCurrencyAndEffectiveDate(this.inputs.wsIdentifier);
 
@@ -475,7 +511,16 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                 curveType
               } = metrics;
 
-              if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+              if(!this.rps[pltId].length) {
+                this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+                this.updateOption = {
+                    ...this.updateOption,
+                  xAxis: {
+                      ...this.chartOption.xAxis,
+                      data: this.rps[pltId]
+                  }
+                };
+              }
 
               if(curveType && (pltId || pltId === 0)) {
                 this.epMetrics[pltId]= {
@@ -483,6 +528,24 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                   [curveType]: metrics
                 };
               }
+              let series= [];
+
+              _.forEach(this.summaryEpMetricsConfig.selectedCurveType, curveType => {
+                series.push({
+                  name: curveType,
+                  type: 'line',
+                  data: _.values(_.omit(this.epMetrics[pltId][curveType], ['pltId', 'curveType', 'AAL']))
+                })
+              });
+              this.updateOption = {
+                  ...this.updateOption,
+                series
+              };
+              // this.chartOption= {
+              //     ...this.chartOption,
+              //     ...this.updateOption
+              // };
+              console.log(this.chartOption);
               this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
 
             }

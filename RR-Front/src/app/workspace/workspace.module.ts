@@ -32,7 +32,6 @@ import {INURING_NODES} from './components/inuring/nodes';
 import {EditContractPopUpComponent} from './components/inuring/edit-contract-pop-up/edit-contract-pop-up.component';
 import {EditEdgePopUpComponent} from './components/inuring/edit-edge-pop-up/edit-edge-pop-up.component';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {NgxEchartsModule} from 'ngx-echarts';
 import {CreateFacProjectPopupComponent} from './containers/workspace-project/create-fac-project-popup/create-fac-project-popup.component';
 import { ParseIdPipe } from './pipes/parse-id.pipe';
 import {ReturnPeriodPopUpComponent} from "./components/calibration-new/return-period-pop-up/return-period-pop-up.component";
@@ -50,7 +49,6 @@ import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filte
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, CreateFacProjectPopupComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe
   ],
   imports: [
-    NgxEchartsModule,
     GridsterModule,
     SharedModule,
     FormsModule,

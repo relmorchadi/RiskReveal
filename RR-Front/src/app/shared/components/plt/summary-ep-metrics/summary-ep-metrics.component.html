@@ -127,12 +127,11 @@
           </div>
       </nz-tab>
       <nz-tab [nzTitle]="chart">
-          <ng-template #chart><i class="icon-show_chart_24px"
-                                 style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
-          </ng-template>
-          <div class="metric-chart-content">
-            <img src="../../../../assets/images/RRchartInVision.png">
-          </div>
+        <ng-template #chart><i class="icon-show_chart_24px" style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i></ng-template>
+        <app-ep-chart
+                [chartOption]="chartOption"
+                [updateOption]="updateOption"
+        ></app-ep-chart>
         </nz-tab>
     </nz-tabset>
   </div>
