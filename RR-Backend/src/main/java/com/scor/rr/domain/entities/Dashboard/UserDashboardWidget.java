@@ -29,6 +29,9 @@ public class UserDashboardWidget {
     @Column(name = "ColPosition")
     private int colPosition;
 
+    @Column(name = "UserID")
+    private long userID;
+
     @Column(name = "RowSpan")
     private int rowSpan;
 
@@ -47,16 +50,5 @@ public class UserDashboardWidget {
     public UserDashboardWidget() {
     }
 
-    public UserDashboardWidget(long userDashboardId, long widgetId, String userAssignedName, int rowPosition, int colPosition, int rowSpan, int colSpan, int minItemRows, int minItemCols, String componentName) {
-        this.userDashboardId = userDashboardId;
-        this.widgetId = widgetId;
-        this.userAssignedName = userAssignedName;
-        this.rowPosition = rowPosition;
-        this.colPosition = colPosition;
-        this.rowSpan = rowSpan;
-        this.colSpan = colSpan;
-        this.minItemRows = minItemRows;
-        this.minItemCols = minItemCols;
-        this.componentName = componentName;
-    }
+
 }

@@ -24,6 +24,9 @@ public class DashboardWidgetColumns {
     @Column(name = "ColumnOrder")
     private int columnOrder;
 
+    @Column(name ="ColumnHeader")
+    private String columnHeader;
+
     @Column(name = "IsVisible")
     private boolean isVisible;
 
