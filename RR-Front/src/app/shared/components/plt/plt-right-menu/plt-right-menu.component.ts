@@ -300,7 +300,12 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         trigger: 'axis'
       },
       legend: {
-        data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+        orient: 'horizontal',
+        bottom: '0px',
+        data:[{name: 'OEP',icon: 'circle'},{name: 'AEP',icon: 'circle'},{name: 'AEP-TVAR',icon: 'circle'},{name: 'OEP-TVAR',icon: 'circle'}]
+      },
+      grid: {
+        right: 70
       },
       xAxis: {
         type: 'category',
@@ -308,25 +313,19 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         data: []
       },
       yAxis: {
-        type: 'value'
+        type: 'value',
+        splitNumber: 5,
+        axisLabel: {
+          fontSize: 8
+        }
       },
       series: []
     };
+
+    this.updateOption= this.chartOption;
   }
 
-  curve: string= 'AEP';
-
   ngOnInit() {
-    setInterval(() => {
-      this.loadEpMetrics(this.inputs.pltHeaderId, this.curve);
-      if(this.curve == 'AEP') {
-        this.curve = 'OEP-TVAR';
-        this.summaryEpMetricsConfig = {
-            ...this.summaryEpMetricsConfig,
-          selectedCurveType: ['OEP', 'AEP']
-        }
-      }
-    }, 8000)
     this.exchangeRates= {};
     this.subscribeToWorkspaceCurrencyAndEffectiveDate(this.inputs.wsIdentifier);
 
@@ -513,13 +512,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
               if(!this.rps[pltId].length) {
                 this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
-                this.updateOption = {
-                    ...this.updateOption,
-                  xAxis: {
-                      ...this.chartOption.xAxis,
-                      data: this.rps[pltId]
-                  }
-                };
+                this.loadEpChartxAxis(pltId);
               }
 
               if(curveType && (pltId || pltId === 0)) {
@@ -528,30 +521,39 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                   [curveType]: metrics
                 };
               }
-              let series= [];
-
-              _.forEach(this.summaryEpMetricsConfig.selectedCurveType, curveType => {
-                series.push({
-                  name: curveType,
-                  type: 'line',
-                  data: _.values(_.omit(this.epMetrics[pltId][curveType], ['pltId', 'curveType', 'AAL']))
-                })
-              });
-              this.updateOption = {
-                  ...this.updateOption,
-                series
-              };
-              // this.chartOption= {
-              //     ...this.chartOption,
-              //     ...this.updateOption
-              // };
-              console.log(this.chartOption);
+              this.loadEpChartData(pltHeaderId);
               this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
-
             }
             this.detectChanges();
           });
+    } else {
+      this.loadEpChartData(this.inputs.pltHeaderId);
     }
+  }
+
+  loadEpChartData(pltId) {
+    let series= [];
+    _.forEach(this.summaryEpMetricsConfig.selectedCurveType, curveType => {
+      series.push({
+        name: curveType,
+        type: 'line',
+        data: _.values(_.omit(this.epMetrics[pltId][curveType], ['pltId', 'curveType', 'AAL']))
+      })
+    });
+    this.chartOption = _.assign({}, this.chartOption, {series});
+  }
+
+  loadEpChartxAxis(pltId) {
+    this.updateOption = _.assign({}, this.updateOption, {
+      xAxis: {
+        data: this.rps[pltId]
+      }
+    });
+    this.chartOption = _.assign({}, this.chartOption, {
+      xAxis: {
+        data: this.rps[pltId]
+      }
+    });
   }
 
   loadEpMetricsLosses(pltHeaderId) {
@@ -736,8 +738,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     const toDelete = _.difference(this.summaryEpMetricsConfig.selectedCurveType, selectedCurveTypes);
     const toLoad = _.difference(selectedCurveTypes,this.summaryEpMetricsConfig.selectedCurveType);
 
-    console.log(toDelete, toLoad);
-
     this.summaryEpMetricsConfig = {
       ...this.summaryEpMetricsConfig,
       selectedCurveType: selectedCurveTypes
@@ -746,13 +746,17 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.epMetricsTableConfig= {
       columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(toDelete, column => col.header == column))
     };
-    // this.epMetricsTableConfig= {
-    //   columns: _.uniqBy([...this.epMetricsTableConfig.columns, this.generateCol(curveType)], col => col.field)
-    // }
 
     _.forEach(toLoad, curveType => {
       this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
     });
+
+    if(!toLoad.length && _.every(selectedCurveTypes, curve => this.epMetrics[this.inputs.pltHeaderId][curve])) {
+      this.loadEpChartData(this.inputs.pltHeaderId);
+      this.detectChanges();
+    }
+
+
   }
 
   selectFinancialUnit(financialUnit) {
