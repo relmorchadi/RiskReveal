@@ -65,8 +65,9 @@ public class UserDashboardService {
             return responses;
         }else{
 
-            UserDashboardResponse userDashboardResponse = new UserDashboardResponse();
+
             for(UserDashboard dash : listDash){
+                UserDashboardResponse userDashboardResponse = new UserDashboardResponse();
                 userDashboardResponse.setUserDashboard(dash);
                 userDashboardResponse.setWidgets(userDashboardWidgetService.getDashboardWidget(dash.getUserDashboardId()));
                 responses.add(userDashboardResponse);
