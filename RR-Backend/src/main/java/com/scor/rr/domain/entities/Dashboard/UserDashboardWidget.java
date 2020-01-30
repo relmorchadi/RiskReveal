@@ -44,9 +44,6 @@ public class UserDashboardWidget {
     @Column(name = "MinItemCols")
     private int minItemCols;
 
-    @Column(name = "ComponentName")
-    private String componentName;
-
     public UserDashboardWidget() {
     }
 

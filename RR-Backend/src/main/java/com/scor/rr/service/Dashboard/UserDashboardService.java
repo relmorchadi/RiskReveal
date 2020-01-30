@@ -88,7 +88,7 @@ public class UserDashboardService {
         userDashboard.setSearchMode("Fac");
         userDashboard.setVisible(true);
 
-        userDashboardRepository.save(userDashboard);
+        userDashboard = userDashboardRepository.saveAndFlush(userDashboard);
         return userDashboard;
 
     }
