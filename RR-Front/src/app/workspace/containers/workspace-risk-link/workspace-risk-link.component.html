@@ -362,7 +362,7 @@
                           <div class="text-data" (click)="selectRows(rowData, i)"
                                *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
                           <div *ngIf="col.type === 'icon'">
-                            <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                            <i *ngIf="(summary$ | async)?.portfolios[rowData.rlPortfolioId]" style="font-size: 19px; color: #848484;"
                                class="icon-upload_24px"></i>
                           </div>
                         </td>
@@ -432,7 +432,7 @@
                             <div class="text-data" (click)="selectRows(rowData, i)"
                                  *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
                             <div *ngIf="col.type === 'icon'">
-                              <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                              <i *ngIf="(summary$ | async)?.analysis[rowData.rlAnalysisId]" style="font-size: 19px; color: #848484;"
                                  class="icon-upload_24px"></i>
                             </div>
                           </td>
