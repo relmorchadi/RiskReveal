@@ -3,12 +3,14 @@ package com.scor.rr.service.Dashboard;
 import com.scor.rr.domain.Response.UserDashboardResponse;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.entities.Dashboard.UserDashboard;
+import com.scor.rr.domain.entities.Dashboard.UserDashboardWidget;
 import com.scor.rr.domain.requests.UserDashboardCreationRequest;
 import com.scor.rr.exceptions.Dashboard.ImpossibleDeletionOfDashboard;
 import com.scor.rr.exceptions.Dashboard.UserDashboardNotFoundException;
 import com.scor.rr.exceptions.Dashboard.UserNotFoundException;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.Dashboard.UserDashboardRepository;
+import com.scor.rr.repository.Dashboard.UserDashboardWidgetRepository;
 import com.scor.rr.repository.UserRrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class UserDashboardService {
     private UserDashboardRepository userDashboardRepository;
     @Autowired
     private UserDashboardWidgetService userDashboardWidgetService;
+    @Autowired
+    private UserDashboardWidgetRepository userDashboardWidgetRepository;
 
     @Autowired
     private UserRrRepository userRrRepository;
@@ -106,8 +110,17 @@ public class UserDashboardService {
         UserDashboard dashboard = userDashboardRepository.findByUserDashboardId(dashboardId);
         if(dashboard == null) throw new UserDashboardNotFoundException(dashboardId);
 
+
+
         List<UserDashboardResponse> listDash = getDashboardForUser(dashboard.getUserId());
         if(listDash.size() == 1 ) throw new ImpossibleDeletionOfDashboard();
+        List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardId(dashboardId);
+        if(!widgets.isEmpty()){
+            for(UserDashboardWidget wid : widgets){
+                userDashboardWidgetService.deleteDashboardWidget(wid.getWidgetId());
+            }
+
+        }
         userDashboardRepository.deleteByUserDashboardId(dashboardId);
     }
 
