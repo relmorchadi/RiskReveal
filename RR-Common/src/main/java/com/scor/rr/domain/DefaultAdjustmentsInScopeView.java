@@ -11,6 +11,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,7 +45,17 @@ public class DefaultAdjustmentsInScopeView {
     private Boolean capped;
 
     public Object getFactors() {
-        return adjustmentType.equals("Linear") || adjustmentType.equals("EEF Frequency") ? adjustmentNode.getLinearAdjustment() : adjustmentNode.getNonLinearAdjustment();
+        if(adjustmentNode.getLinear().size() > 0) {
+            return adjustmentNode.getLinear();
+        }
+        if(adjustmentNode.getEventBased().size() > 0) {
+            return adjustmentNode.getEventBased();
+        }
+        if(adjustmentNode.getScalingBased().size() > 0) {
+            return adjustmentNode.getScalingBased();
+        }
+
+        return new ArrayList<>();
     }
 
 

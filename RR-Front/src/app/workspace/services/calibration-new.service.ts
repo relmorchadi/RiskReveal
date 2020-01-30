@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {CalibrationAPI} from "./api/calibration.api";
 import {StateContext} from "@ngxs/store";
 import {WorkspaceModel} from "../model";
-import {catchError, mergeMap, tap} from "rxjs/operators";
+import {catchError, mergeMap, switchMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import produce from "immer";
 import {concat, EMPTY, forkJoin, of} from "rxjs";
@@ -191,10 +191,11 @@ export class CalibrationNewService {
   }
 
   saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, userId, wsId, uwYear, curveType}) {
-    return concat(
+    return forkJoin(
         this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId, 'Calibration'),
-        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration'),
-        ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true}))
+        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration')
+    ).pipe(
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
     )
   }
 

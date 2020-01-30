@@ -33,8 +33,8 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "WorkspaceUwYear")
     private Integer workspaceUwYear;
 
-    @Column(name = "WorkspaceMarketChannel")
-    private Long workspaceMarketChannel;
+    @Column(name = "WorkspaceMarketChannel", length = 5)
+    private String workspaceMarketChannel;
 
     @Column(name = "WorkspaceName")
     private String workspaceName;
@@ -42,7 +42,7 @@ public class WorkspaceEntity implements Serializable {
     @Column(name = "ClientName")
     private String clientName;
 
-    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,Long workspaceMarketChannel, String workspaceName, String clientName) {
+    public WorkspaceEntity(String workspaceContextCode, Integer workspaceUwYear,String workspaceMarketChannel, String workspaceName, String clientName) {
         this.workspaceContextCode = workspaceContextCode;
         this.entity = 1;
         this.workspaceUwYear = workspaceUwYear;

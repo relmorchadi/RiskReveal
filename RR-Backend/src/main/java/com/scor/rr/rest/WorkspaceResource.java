@@ -23,7 +23,7 @@ public class WorkspaceResource {
     private SearchService searchService;
 
     @GetMapping
-    WorkspaceDetailsDTO getWorkspaceDetails(@RequestParam("workspaceContextCode") String workspaceId, @RequestParam("workspaceContextUwYear") String uwy, @RequestParam("type") String type){
+    Object getWorkspaceDetails(@RequestParam("workspaceContextCode") String workspaceId, @RequestParam("workspaceContextUwYear") String uwy, @RequestParam("type") String type){
         return  searchService.getWorkspaceDetails(workspaceId, uwy, type);
     }
 
