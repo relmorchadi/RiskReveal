@@ -296,9 +296,9 @@ export class RiskLinkStateService {
                 .forEach(selectedItem => {
                     const key = selectedItem.rmsId;
                     if (selectedItem.type == 'EDM') {
-                        draft.content[wsIdentifier].riskLink.selection.edms[key] = {...selectedItem, scanning: true}
+                        draft.content[wsIdentifier].riskLink.selection.edms[key] = {...selectedItem, scanning: true, instanceId: payload.instanceId}
                     } else if (selectedItem.type == 'RDM') {
-                        draft.content[wsIdentifier].riskLink.selection.rdms[key] = {...selectedItem, scanning: true}
+                        draft.content[wsIdentifier].riskLink.selection.rdms[key] = {...selectedItem, scanning: true, instanceId: payload.instanceId}
                     }
                 });
         }));
@@ -779,32 +779,11 @@ export class RiskLinkStateService {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.selectedEDMOrRDM = type;
             draft.content[wsIdentifier].riskLink.display.displayTable = true;
-            /**
-             if (type == 'EDM') {
-                const {filter} = draft.content[wsIdentifier].riskLink.analysis;
-                ctx.dispatch(new fromWs.GetRiskLinkPortfolioAction({
-                    edmId: rmsId,
-                    pagionationParams: {},
-                    projectId,
-                    instanceId,
-                    filter,
-                    userId: 1
-                }));
-            } else if (type == 'RDM') {
-                const {filter} = draft.content[wsIdentifier].riskLink.portfolios;
-                ctx.dispatch(new fromWs.GetRiskLinkAnalysisAction({
-                    rdmId: rmsId,
-                    pagionationParams: {},
-                    projectId,
-                    instanceId,
-                    filter,
-                    userId: 1
-                }));
-            }*/
             draft.content[wsIdentifier].riskLink.selection = {
                 ...draft.content[wsIdentifier].riskLink.selection,
                 currentDataSource: rmsId
             };
+            draft.content[wsIdentifier].riskLink.financialValidator.rmsInstance.selected= _.find(draft.content[wsIdentifier].riskLink.financialValidator.rmsInstance.data, item => item.instanceId == instanceId);
         }));
 
     }
@@ -1464,7 +1443,8 @@ export class RiskLinkStateService {
                         name: ds.dataSourceName,
                         type: ds.dataSourceType,
                         count: ds.modelCount,
-                        scanning
+                        scanning,
+                        instanceId: ds.instanceId
                     };
                     if (value.type === 'EDM') {
                         data.edms[value.rmsId] = value;
