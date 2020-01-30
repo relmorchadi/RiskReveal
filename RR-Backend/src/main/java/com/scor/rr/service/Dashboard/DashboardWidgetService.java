@@ -28,7 +28,7 @@ public class DashboardWidgetService {
         List<DashboardWidget> listWid =  dashboardWidgetRepository.findAll();
         if(!listWid.isEmpty()){
             for(DashboardWidget widget : listWid){
-                ReferenceWidgetResponse response = new ReferenceWidgetResponse(widget.getWidgetId(),widget.getWidgetName());
+                ReferenceWidgetResponse response = new ReferenceWidgetResponse(widget.getWidgetId(),widget.getWidgetName(),widget.getWidgetMode());
                 listRef.add(response);
             }
         }
