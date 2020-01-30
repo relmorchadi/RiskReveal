@@ -8,9 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "vw_ProjectDivisions")
+@Table(name = "vw_CarDivisions")
 @Data
-public class ProjectDivisions {
+public class CarDivisions {
 
     @Id
     @Column(name = "Id")

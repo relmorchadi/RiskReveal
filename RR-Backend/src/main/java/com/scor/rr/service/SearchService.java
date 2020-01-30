@@ -4,9 +4,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.dto.TargetBuild.FacWorkspaceDTO;
 import com.scor.rr.domain.dto.TargetBuild.TreatyWorkspaceDTO;
-import com.scor.rr.domain.entities.ContractSearchResultFac;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
-import com.scor.rr.domain.entities.ProjectDivisions;
 import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.SavedSearchRequest;
@@ -123,7 +121,7 @@ public class SearchService {
     RecentSearchItemRepository recentSearchItemRepository;
 
     @Autowired
-    ProjectDivisionsRepository projectDivisionsRepository;
+    CarDivisionsRepository carDivisionsRepository;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -262,7 +260,7 @@ public class SearchService {
                                        String uwy) {
         FacWorkspaceDTO detailsDTO= new FacWorkspaceDTO(ws);
         detailsDTO.setProjects(projects.stream().map(projectCardView -> {
-            projectCardView.setDivisions(projectDivisionsRepository.findAllDivisions(projectCardView.getProjectId()));
+            projectCardView.setDivisions(carDivisionsRepository.findAllDivisions(projectCardView.getCarRequestId()));
             return projectCardView;
         }).collect(Collectors.toList()));
         detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
