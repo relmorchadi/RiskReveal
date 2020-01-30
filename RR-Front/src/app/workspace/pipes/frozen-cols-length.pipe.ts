@@ -8,7 +8,7 @@ import * as _ from 'lodash'
 export class FrozenColsLengthPipe implements PipeTransform {
 
   transform(cols: any, args?: any): any {
-    return  _.filter(cols, item => item.isFrozen).length > 0;
+    return  _.filter(cols, item => item.isFrozen).length;
   }
 
 }

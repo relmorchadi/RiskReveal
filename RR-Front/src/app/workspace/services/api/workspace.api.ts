@@ -13,7 +13,7 @@ export class WsApi {
   constructor(private _http: HttpClient) {
   }
 
-  searchWorkspace(workspaceContextCode = '', workspaceContextUwYear = '', type = 'TTY') {
+  searchWorkspace(workspaceContextCode = '', workspaceContextUwYear = '', type = '') {
     return this._http.get(`${this.api}`, { params: {workspaceContextCode, workspaceContextUwYear, type} });
   }
 
