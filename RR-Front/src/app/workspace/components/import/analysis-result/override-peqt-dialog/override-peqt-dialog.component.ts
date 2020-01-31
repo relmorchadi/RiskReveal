@@ -90,7 +90,6 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    console.log('Override PEQT', this);
     this.tree = this._loadRpAnalysisTree();
     _.forEach(this.data.analysis,item => {
       this.changes[item.rlAnalysisId]=item.targetRaps || [];
@@ -109,7 +108,6 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
     // const {rlAnalysisId}= item;
     // this.loadTargetRapsEmitter.emit(rlAnalysisId);
     this.currentAnalysis= item.selected ? item : null;
-    console.log('Current Analysis', this.currentAnalysis)
     this._synchronizeTargetRapSelection();
   }
 
