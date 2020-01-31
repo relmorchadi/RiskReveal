@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -258,6 +255,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                     if (element.getFinancialPerspective() != null && !rlImportSelection.getFinancialPerspectives().contains(element.getFinancialPerspective()))
                         rlImportSelection.addToFPList(element.getFinancialPerspective());
                 }
+
+                rlImportSelection.setReferenceTargetRaps(this.getTargetRapByAnalysisId(element.getRlAnalysis().getRlAnalysisId()));
             });
         }
         return importedAnalysis;
@@ -289,7 +288,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Page<RLAnalysisDto> filterRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long rdmId, RLAnalysisDto filter, Pageable pageable) {
-        return rlAnalysisRepository.findAll(rlAnalysisSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId,rdmId)), pageable)
+        return rlAnalysisRepository.findAll(rlAnalysisSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId, rdmId)), pageable)
                 .map((item) ->
                         modelMapper.map(item, RLAnalysisDto.class)
                 );
@@ -297,20 +296,20 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public List<RLAnalysisDto> filterRLAnalysisByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long rdmId, RLAnalysisDto filter) {
-        return rlAnalysisRepository.findAll(rlAnalysisSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId,rdmId))).stream()
+        return rlAnalysisRepository.findAll(rlAnalysisSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId, rdmId))).stream()
                 .map(item -> modelMapper.map(item, RLAnalysisDto.class))
                 .collect(toList());
     }
 
     @Override
     public Page<RLPortfolioDto> filterRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long edmId, RLPortfolioDto filter, Pageable pageable) {
-        return rlPortfolioRepository.findAll(rlPortfolioSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId,edmId)), pageable)
+        return rlPortfolioRepository.findAll(rlPortfolioSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId, edmId)), pageable)
                 .map(item -> modelMapper.map(item, RLPortfolioDto.class));
     }
 
     @Override
     public List<RLPortfolioDto> filterRLPortfolioByRLModelDataSourceId(String instanceId, Long projectId, Long userId, Long edmId, RLPortfolioDto filter) {
-        return rlPortfolioRepository.findAll(rlPortfolioSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId,edmId)))
+        return rlPortfolioRepository.findAll(rlPortfolioSpecification.getFilter(filter, this.getModelDsId(instanceId, projectId, userId, edmId)))
                 .stream()
                 .map(item -> modelMapper.map(item, RLPortfolioDto.class))
                 .collect(toList());
@@ -318,9 +317,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds, List<Long> rdmIds, List<Long> divisionsIds) {
-        Map<Long, AnalysisPortfolioDto> analysisPortfolioByDivision= new HashMap<>();
+        Map<Long, AnalysisPortfolioDto> analysisPortfolioByDivision = new HashMap<>();
         divisionsIds.forEach(divisionNumber -> {
-            String keyword= wsId + "_0" +divisionNumber;
+            String keyword = wsId + "_0" + divisionNumber;
             AnalysisPortfolioDto data = new AnalysisPortfolioDto();
             edmIds.forEach(edmId -> {
                 data.getRlPortfolios().addAll(findPortfolios(edmId, keyword));
@@ -333,24 +332,24 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         return analysisPortfolioByDivision;
     }
 
-    private List<RLAnalysisDto> findAnalysis(Long rdmId, String keyword){
+    private List<RLAnalysisDto> findAnalysis(Long rdmId, String keyword) {
         return rlAnalysisRepository.findByRdmIdAndName(rdmId, keyword)
                 .stream()
                 .map(analysis -> modelMapper.map(analysis, RLAnalysisDto.class))
                 .collect(toList());
     }
 
-    private List<RLPortfolioDto> findPortfolios(Long edmId, String keyword){
+    private List<RLPortfolioDto> findPortfolios(Long edmId, String keyword) {
         return rlPortfolioRepository.findByEdmIdAndNumber(edmId, keyword)
                 .stream()
                 .map(p -> modelMapper.map(p, RLPortfolioDto.class))
                 .collect(toList());
     }
 
-    private Long getModelDsId(String instanceId, Long projectId, Long userId, Long rmsId){
+    private Long getModelDsId(String instanceId, Long projectId, Long userId, Long rmsId) {
         return ofNullable(rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId))
                 .map(ds -> ds.getRlModelDataSourceId())
-                .orElseThrow(() -> new RuntimeException("No available DataSource For given params : " +instanceId +"/"+projectId+"/"+rmsId ));
+                .orElseThrow(() -> new RuntimeException("No available DataSource For given params : " + instanceId + "/" + projectId + "/" + rmsId));
 
     }
 }

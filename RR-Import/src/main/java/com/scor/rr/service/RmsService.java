@@ -293,7 +293,6 @@ public class RmsService {
     }
 
     private int scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
-        rlAnalysisRepository.deleteByRlModelDataSourceId(rdm.getRlModelDataSourceId());
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, rdm.getRlId(), rdm.getName());
         for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
@@ -329,7 +328,8 @@ public class RmsService {
                 Long rdmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
-                this.listRdmAnalysis(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                RLModelDataSource dataSource = rlModelDataSourcesRepository.findByRlIdAndNameAndProjectId(rdmId, rdmName, projectId);
+                this.listRdmAnalysis(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
                         .forEach(rdmAnalysis -> {
                             RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
@@ -346,7 +346,7 @@ public class RmsService {
 //                rlAnalysisRepository.saveAll(allScannedAnalysis);
 
                 rlAnalysisProfileRegionsRepository.saveAll(
-                        this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
+                        this.getRdmAllAnalysisProfileRegions(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
                                 .stream()
                                 .map(analysisProfileRegion -> new RLAnalysisProfileRegion(analysisProfileRegion, cache.get(analysisProfileRegion.getAnalysisId()) != null ?
                                         cache.get(analysisProfileRegion.getAnalysisId()) :
@@ -390,7 +390,6 @@ public class RmsService {
     }
 
     private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
-        rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(edm.getRlModelDataSourceId());
         List<EdmPortfolioBasic> edmPortfolioBasics = listEdmPortfolioBasic(instanceId, edm.getRlId(), edm.getName());
         for (EdmPortfolioBasic edmPortfolioBasic : edmPortfolioBasics) {
             RLPortfolio rlPortfolio = rlPortfolioRepository.save(
@@ -423,8 +422,9 @@ public class RmsService {
                 String edmName = (String) multiKeyListEntry.getKey().getKey(1);
 
                 runId = createEDMPortfolioContext(instanceId, edmId, edmName, multiKeyListEntry.getValue(), new ArrayList<String>());
+                RLModelDataSource dataSource = rlModelDataSourcesRepository.findByRlIdAndNameAndProjectId(edmId, edmName, projectId);
 
-                this.listEdmPortfolio(instanceId, edmId, edmName, multiKeyListEntry.getValue())
+                this.listEdmPortfolio(dataSource.getInstanceId(), edmId, edmName, multiKeyListEntry.getValue())
                         .forEach(edmPortfolio -> {
                             RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmPortfolio.getEdmId(),
                                     edmPortfolio.getEdmName(), edmPortfolio.getPortfolioId(), projectId);
