@@ -209,7 +209,7 @@ public class ConfigurationResource {
     @GetMapping(value = "get-global-data-sources")
     public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
         try {
-            if (configurationService.checkIfProjectHasConfigurations(projectId))
+            if (configurationService.checkIfProjectHasScannedDataSources(projectId))
                 return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
                 return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
