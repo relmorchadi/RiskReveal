@@ -42,25 +42,16 @@ public class DashboardWidgetColumns {
     @Column(name = "DefaultWidth")
     private int defaultWidth;
 
-    @Column(name = "Sorting", nullable = true)
+    @Column(name = "Sorting")
     private int sorting;
 
-    @Column(name = "SortType", nullable = true)
+    @Column(name = "DataColumnType")
+    private String dataColumnType;
+
+    @Column(name = "SortType")
     private String sortType;
 
     public DashboardWidgetColumns() {
     }
 
-    public DashboardWidgetColumns(long dashboardWidgetId, String columnName, int columnOrder, boolean isVisible, String dataType, int minWidth, int maxWidth, int defaultWidth, int sorting, String sortType) {
-        this.dashboardWidgetId = dashboardWidgetId;
-        this.columnName = columnName;
-        this.columnOrder = columnOrder;
-        this.isVisible = isVisible;
-        this.dataType = dataType;
-        this.minWidth = minWidth;
-        this.maxWidth = maxWidth;
-        this.defaultWidth = defaultWidth;
-        this.sorting = sorting;
-        this.sortType = sortType;
-    }
 }

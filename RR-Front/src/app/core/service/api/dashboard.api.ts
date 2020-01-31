@@ -41,6 +41,10 @@ export class DashboardApi {
         return this.http.delete(`${this.WidgetURL}delete`, {params: {dashboardWidgetId}, responseType: 'text' as 'json'});
     }
 
+    deleteAllWidgetByRef(dashboardId, refId) {
+        return this.http.delete(`${this.WidgetURL}deleteByRef`, {params: {dashboardId, refId}, responseType: 'text' as 'json'});
+    }
+
     duplicateWidget(dashboardWidgetId) {
         return this.http.post(`${this.WidgetURL}duplicate`,{} ,{params: {dashboardWidgetId}});
     }

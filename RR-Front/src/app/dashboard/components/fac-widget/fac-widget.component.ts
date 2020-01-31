@@ -30,12 +30,11 @@ export class FacWidgetComponent implements OnInit {
   dashboard: any;
   @Input()
   data: any;
-  @Input('tableCols')
-  dashCols: any;
 
   identifier: number;
   itemName: any;
-  type: any;
+  widgetId: any;
+  dashCols: any;
   persisted: any;
   newDashboard: any;
   editName = false;
@@ -52,9 +51,9 @@ export class FacWidgetComponent implements OnInit {
   ngOnInit() {
     this.newDashboard = this.dashboard;
     this.identifier = this.itemWidget.id;
-    this.type = this.itemWidget.type;
+    this.widgetId = this.itemWidget.widgetId;
     this.itemName = this.itemWidget.name;
-    this.persisted =  this.itemWidget.persisted;
+    this.dashCols = this.itemWidget.columns;
   }
 
   selectTab(index) {
@@ -84,8 +83,7 @@ export class FacWidgetComponent implements OnInit {
   }
 
   sortChange(event) {
-    console.log(event);
-    this.type === 'newCar' ? this.newSort = event : this.globalSort = event;
+    this.widgetId === 1 ? this.newSort = event : this.globalSort = event;
   }
 
   filterData($event) {
@@ -96,12 +94,12 @@ export class FacWidgetComponent implements OnInit {
     }
   }
 
-  duplicateItem(itemName: any): void {
-    this.duplicate.emit(itemName);
+  duplicateItem(): void {
+    this.duplicate.emit(this.itemWidget.id);
   }
 
-  deleteItem(id, persistent): void {
-    this.delete.emit({id, persistent});
+  deleteItem(): void {
+    this.delete.emit(this.itemWidget.id);
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
@@ -112,9 +110,9 @@ export class FacWidgetComponent implements OnInit {
     this.dropdown.close();
   }
 
-  validateName(keyboardMap, id) {
+  validateName(keyboardMap) {
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId: id, newName: keyboardMap.target.value, persistent: this.persisted});
+      this.changeName.emit({item: this.itemWidget, newName: keyboardMap.target.value});
       this.editName = false;
     }
   }

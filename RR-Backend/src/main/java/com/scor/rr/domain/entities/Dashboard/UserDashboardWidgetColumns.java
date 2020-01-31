@@ -41,6 +41,9 @@ public class UserDashboardWidgetColumns {
     @Column(name = "DataType")
     private String dataType;
 
+    @Column(name = "DataColumnType")
+    private String dataColumnType;
+
     @Column(name = "Sort")
     private int sort;
 

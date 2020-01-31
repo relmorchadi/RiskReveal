@@ -266,7 +266,7 @@ export class DashboardState implements NgxsOnInit {
             WidgetId: item.userDashboardWidgetId,
             field: item.dashboardWidgetColumnId,
             header: item.columnHeader,
-            width: item.dashboardWidgetColumnWidth,
+            width: item.dashboardWidgetColumnWidth + 'px',
             display: item.visible,
             filtered: true,
             sorted: true,

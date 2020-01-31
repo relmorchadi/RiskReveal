@@ -2,7 +2,7 @@
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
-<ng-container *ngIf="type !== 'newCar'">
+<ng-container *ngIf="widgetId !== 1">
   <nz-tabset
     [(nzSelectedIndex)]="tabIndex"
     class="tabs-standard-top">
@@ -37,7 +37,7 @@
   </nz-tabset>
 </ng-container>
 
-<ng-container *ngIf="type === 'newCar'">
+<ng-container *ngIf="widgetId === 1">
   <div class="renewal-contract-table">
     <app-table [sortable]="true"
                [tableColumn]="dashCols"
@@ -58,7 +58,7 @@
     <div class="title-wrapper">
       <span *ngIf="!editName" (click)="activeEdit()" class="title-wrapper-name">{{itemName}}</span>
       <div *ngIf="editName" class="edit-dashboard-section">
-        <input class="hover-input" placeholder="" (keydown)="validateName($event, identifier)" [(ngModel)]="itemName">
+        <input class="hover-input" placeholder="" (keydown)="validateName($event)" [(ngModel)]="itemName">
       </div>
       <nz-dropdown [nzTrigger]="'click'">
         <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
@@ -78,16 +78,16 @@
             <li nz-menu-item>Reset Filters</li>
             <li nz-menu-item>Reset Sort/Filters</li>
             <li nz-menu-divider></li>
-            <li nz-menu-item *ngIf="type === 'newCar'" (click)="openPopUpAction('newCar')">Manage Columns</li>
-            <li nz-menu-item *ngIf="type === 'inProgressCar'" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
-            <li nz-menu-item *ngIf="type === 'archivedCar'" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
+            <li nz-menu-item *ngIf="widgetId === 1" (click)="openPopUpAction('newCar')">Manage Columns</li>
+            <li nz-menu-item *ngIf="widgetId === 2" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
+            <li nz-menu-item *ngIf="widgetId === 3" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
             <li nz-menu-divider></li>
             <li nz-menu-item>Unselect All</li>
           </ul>
         </nz-dropdown>
       </div>
     </div>
-    <div style="display: flex; align-items: center" *ngIf="type !== 'newCar'">
+    <div style="display: flex; align-items: center" *ngIf="widgetId !== 1">
       <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}"
             nz-tooltip [nzTitle]="'ALL'"
             class="tab-index">

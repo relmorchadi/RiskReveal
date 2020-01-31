@@ -43,34 +43,34 @@
                                           class="no-drag">
                   </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="newFacCars" [tableCols]="item.columns"
-                                  (managePopUp)="openPopUp($event)" (delete)="deleteItemFac(dashboard.id, $event)"
-                                  (changeName)="changeWidgetName(dashboard.id, $event)"
-                                  (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                                  [itemWidget]="item" [data]="newFacCars"
+                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (delete)="deleteWidgetAction($event)"
+                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="inProgressFacCars" [tableCols]="item.columns"
-                                  (managePopUp)="openPopUp($event)" (delete)="deleteItemFac(dashboard.id, $event)"
-                                  (changeName)="changeWidgetName(dashboard.id, $event)"
-                                  (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                                  [itemWidget]="item" [data]="inProgressFacCars"
+                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (delete)="deleteWidgetAction($event)"
+                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="archivedFacCars" [tableCols]="item.columns"
-                                  (managePopUp)="openPopUp($event)" (delete)="deleteItemFac(dashboard.id, $event)"
-                                  (changeName)="changeWidgetName(dashboard.id, $event)"
-                                  (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                                  [itemWidget]="item" [data]="archivedFacCars"
+                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (delete)="deleteWidgetAction($event)"
+                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-chart-widget *ngIf="item?.widgetId === 4"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                        (delete)="deleteItemFac(dashboard.id, $event)"
-                                        (changeName)="changeWidgetName(dashboard.id, $event)"
-                                        (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                                        (changeName)="changeWidgetName($event)"
+                                        (delete)="deleteWidgetAction($event)"
+                                        (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-chart-widget>
                   <app-fac-subsidiary-chart *ngIf="item?.widgetId === 5"
                                             [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                            (delete)="deleteItemFac(dashboard.id, $event)"
-                                            (changeName)="changeWidgetName(dashboard.id, $event)"
-                                            (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                                            (changeName)="changeWidgetName($event)"
+                                            (delete)="deleteWidgetAction($event)"
+                                            (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-subsidiary-chart>
                 </gridster-item>
             </gridster>
