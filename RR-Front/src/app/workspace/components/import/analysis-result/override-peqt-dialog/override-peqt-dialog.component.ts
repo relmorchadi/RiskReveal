@@ -14,6 +14,8 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
   @Input('visible')
   isVisible;
 
+
+  /** @TODO delete the API that loads the Target RAPS if the eager load of PEQTs is ok */
   @Output('loadTargetRaps')
   loadTargetRapsEmitter = new EventEmitter();
 
@@ -88,6 +90,7 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    console.log('Override PEQT', this);
     this.tree = this._loadRpAnalysisTree();
     _.forEach(this.data.analysis,item => {
       this.changes[item.rlAnalysisId]=item.targetRaps || [];
@@ -103,9 +106,10 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
   selectBranch(item: any) {
     this._unselectAllAnalysis();
     item.selected = !item.selected;
-    const {rlAnalysisId}= item;
-    this.loadTargetRapsEmitter.emit(rlAnalysisId);
+    // const {rlAnalysisId}= item;
+    // this.loadTargetRapsEmitter.emit(rlAnalysisId);
     this.currentAnalysis= item.selected ? item : null;
+    console.log('Current Analysis', this.currentAnalysis)
     this._synchronizeTargetRapSelection();
   }
 
@@ -156,6 +160,7 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
           selected: false,
           rlAnalysisId: item.rlAnalysisId,
           title: item.analysisName,
+          referenceTargetRaps: item.referenceTargetRaps
         })
       )
     }))
@@ -175,7 +180,7 @@ export class OverridePeqtDialogComponent implements OnInit, OnChanges {
       return;
     }
     const selectedTargetRaps= _.map(this.changes[this.currentAnalysis.rlAnalysisId], item => item.targetRapCode);
-    this.data.targetRaps.forEach(targetRap => {
+    this.currentAnalysis.referenceTargetRaps.forEach(targetRap => {
       targetRap.selected= _.find(selectedTargetRaps, i => i == targetRap.targetRapCode) != null;
     });
   }

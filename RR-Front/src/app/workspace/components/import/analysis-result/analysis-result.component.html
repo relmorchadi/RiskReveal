@@ -166,16 +166,16 @@
                     </div>
                   </ng-template>
                 </div>
-                <div class="text-data" (click)="showOverridePEQTDialog=true" *ngIf="col.type === 'Peqt'">
-                    <span class="highlighted-change">
+                <div class="text-data" (click)="col.canOverride ? showOverridePEQTDialog=true : null" *ngIf="col.type === 'Peqt'">
+                    <span [ngClass]="{'highlighted-change': col.canOverride}">
                       <span *ngIf=" (rowData.targetRaps||[]).length > 0; else noSelectedPeqts" nz-tooltip [nzTitle]="peqtInfo">
-                        {{rowData.targetRaps.length}}/3
+                        {{rowData.targetRaps.length}}/{{rowData?.referenceTargetRaps?.length || 0}}
                       </span>
                       <ng-template #peqtInfo>
                         <div class="popover-menu">
                           <ul style="margin-bottom: 0">
                             <ng-container *ngFor="let item of rowData?.targetRaps">
-                              <li *ngIf="item.selected">{{item.targetRapCode}}</li>
+                              <li>{{item.targetRapCode}}</li>
                             </ng-container>
                           </ul>
                         </div>
@@ -183,7 +183,7 @@
                     </span>
                     <ng-template #noSelectedPeqts>
                       <span>
-                         0/3 <i class="icon-exclamation-triangle"></i>
+                         0/{{rowData?.referenceTargetRaps?.length || 0}} <i class="icon-exclamation-triangle"></i>
                       </span>
                     </ng-template>
                 </div>

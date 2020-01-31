@@ -126,11 +126,11 @@
 <!--        <ng-container *ngFor="let parent of tree" style="flex-direction: column">-->
 <!--          <ng-container *ngIf="parent.expanded">-->
 <!--            <ng-container *ngFor="let child of parent.children">-->
-              <div class="popover-menu absolute-menu" *ngIf="data?.targetRaps?.length">
+              <div class="popover-menu absolute-menu" *ngIf="currentAnalysis?.referenceTargetRaps?.length">
                 <div class="summary-info override-table-secondary" >
                   <p-table [columns]="targetRapDataTable" [dataKey]="'id'"
                            [resizableColumns]="true" [scrollHeight]="'350px'"
-                           [value]="data?.targetRaps" #peqtdatat [scrollable]="true">
+                           [value]="currentAnalysis?.referenceTargetRaps" #peqtdatat [scrollable]="true">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <ng-container *ngFor="let col of columns">
