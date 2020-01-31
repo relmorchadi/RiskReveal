@@ -4,6 +4,7 @@ package com.scor.rr.domain.riskLink;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -139,7 +140,7 @@ public class RLAnalysis {
     private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
 
     @Transient
-    private String defaultTargetRap;
+    private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;

@@ -36,6 +36,8 @@ public interface ConfigurationService {
 
     boolean checkIfProjectHasConfigurations(Long projectId);
 
+    boolean checkIfProjectHasScannedDataSources(Long projectId);
+
     List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId);
 
     List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId);

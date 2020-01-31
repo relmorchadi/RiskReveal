@@ -10,6 +10,7 @@ public interface RLAnalysisToTargetRAPRepository extends JpaRepository<RLAnalysi
 
     List<RLAnalysisToTargetRAP> findByRlAnalysisId(Long rlAnalysisId);
 
-    @Query
+    @Query("FROM RLAnalysisToTargetRAP WHERE rlAnalysisId=:rlAnalysisId AND isDefault=true")
     List<RLAnalysisToTargetRAP> findByRlAnalysisIdAndDefaultIsTrue(Long rlAnalysisId);
+
 }

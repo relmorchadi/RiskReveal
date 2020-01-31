@@ -209,7 +209,7 @@ public class RegionPerilExtractor {
 
                 ModelAnalysisEntity modelAnalysisEntityLambda = rrAnalysisRepository.saveAndFlush(modelAnalysisEntity);
 
-                if (marketChannel.equalsIgnoreCase("Fac")) {
+                if (marketChannel.equalsIgnoreCase("Fac") && (sourceResult.getTargetRaps() == null || sourceResult.getTargetRaps().isEmpty())) {
                     List<Map<String, Object>> analysis = rmsService.getByQuery(EmbeddedQueries.REGION_PERIL_QUERY.replaceAll(":rdm:", sourceResult.getRlAnalysis().getRdmName()),
                             rlModelDataSource.isPresent() ? rlModelDataSource.get().getInstanceId() : instanceId,
                             sourceResult.getRlAnalysis().getRlId());
@@ -228,7 +228,8 @@ public class RegionPerilExtractor {
                             return RepeatStatus.valueOf("failed");
                         }
                     }
-                } else if (marketChannel.equalsIgnoreCase("Treaty")) {
+                } else if (marketChannel.equalsIgnoreCase("Treaty") ||
+                        (marketChannel.equalsIgnoreCase("Fac") && sourceResult.getTargetRaps() != null && !sourceResult.getTargetRaps().isEmpty())) {
 
                     sourceResult.getTargetRaps().forEach(targetRAPSelection -> {
                         targetRAPRepository.findByTargetRAPCode(targetRAPSelection.getTargetRAPCode()).ifPresent(targetRAP -> {
