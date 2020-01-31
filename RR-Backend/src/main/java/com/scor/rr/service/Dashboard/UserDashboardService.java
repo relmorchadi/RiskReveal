@@ -117,7 +117,7 @@ public class UserDashboardService {
         List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardId(dashboardId);
         if(!widgets.isEmpty()){
             for(UserDashboardWidget wid : widgets){
-                userDashboardWidgetService.deleteDashboardWidget(wid.getWidgetId());
+                userDashboardWidgetService.deleteDashboardWidget(wid.getUserDashboardWidgetId());
             }
 
         }

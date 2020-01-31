@@ -44,7 +44,7 @@ public class UserDashboardWidgetService {
             for(UserDashboardWidget widget : dashboardWidgets){
                 UserWidgetResponse response = new UserWidgetResponse();
                 response.setUserDashboardWidget(widget);
-                response.setColumns(userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId()));
+                response.setColumns(userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId()));
                 listResponse.add(response);
             }
         }
@@ -132,7 +132,7 @@ public class UserDashboardWidgetService {
         List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardIdAndWidgetId(dashboardID,referenceID);
         if(!widgets.isEmpty()){
             for(UserDashboardWidget widget: widgets){
-                deleteDashboardWidget(widget.getWidgetId());
+                deleteDashboardWidget(widget.getUserDashboardWidgetId());
             }
         }
     }
