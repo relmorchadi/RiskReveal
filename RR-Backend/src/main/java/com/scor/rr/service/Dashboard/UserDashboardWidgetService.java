@@ -104,10 +104,10 @@ public class UserDashboardWidgetService {
 
     }
 
-    public void UpdateDashboardWidget(UserWidgetResponse userWidgetResponse) throws RRException {
+    public void UpdateDashboardWidget(UserDashboardWidget userDashboardWidget) {
 
-        userDashboardWidgetRepository.save(userWidgetResponse.getUserDashboardWidget());
-        userDashboardWidgetColumnsRepository.saveAll(userWidgetResponse.getColumns());
+        userDashboardWidgetRepository.save(userDashboardWidget);
+
     }
 
     public void deleteDashboardWidget(long id) throws RRException{
