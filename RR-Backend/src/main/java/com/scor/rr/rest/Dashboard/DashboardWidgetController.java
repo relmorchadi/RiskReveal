@@ -4,6 +4,7 @@ package com.scor.rr.rest.Dashboard;
 import com.scor.rr.domain.Response.ReferenceWidgetResponse;
 import com.scor.rr.domain.Response.UserDashboardResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
+import com.scor.rr.domain.entities.Dashboard.UserDashboardWidget;
 import com.scor.rr.domain.requests.DashboardWidgetCreationRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.Dashboard.DashboardWidgetService;
@@ -42,7 +43,7 @@ public class DashboardWidgetController {
     }
 
     @PutMapping("update")
-    public ResponseEntity<?> updateDashboardWidget(@RequestBody UserWidgetResponse requet) throws RRException {
+    public ResponseEntity<?> updateDashboardWidget(@RequestBody UserDashboardWidget requet) throws RRException {
         userDashboardWidgetService.UpdateDashboardWidget(requet);
         return ResponseEntity.ok("updated");
     }
