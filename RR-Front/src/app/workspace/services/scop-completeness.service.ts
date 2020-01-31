@@ -32,12 +32,6 @@ export class ScopeCompletenessService {
           return item.selected ? {...item, carStatus: 'Completed', publishedDate: new Date(), publishedBy: 'Nathalie Dulac'} : {...item};
         }
       });
-      draft.facWs.data = _.map(draft.facWs.data, item => {
-        return item.id === selectProject.id ? {...item,
-          carStatus: 'Completed',
-          publishedDate: new Date(),
-          publishedBy: 'Nathalie Dulac'} : {...item};
-      });
     }));
   }
 

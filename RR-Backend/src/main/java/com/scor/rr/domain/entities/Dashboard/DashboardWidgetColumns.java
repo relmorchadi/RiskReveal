@@ -42,10 +42,10 @@ public class DashboardWidgetColumns {
     @Column(name = "DefaultWidth")
     private int defaultWidth;
 
-    @Column(name = "Sorting")
+    @Column(name = "Sorting", nullable = true)
     private int sorting;
 
-    @Column(name = "SortType")
+    @Column(name = "SortType", nullable = true)
     private String sortType;
 
     public DashboardWidgetColumns() {

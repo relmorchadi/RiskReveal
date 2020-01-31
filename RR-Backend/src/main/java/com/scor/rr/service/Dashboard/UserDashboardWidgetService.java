@@ -74,7 +74,7 @@ public class UserDashboardWidgetService {
 
         userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getUserDashboardWidgetId());
 
-        List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId());
+        List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId());
 
 
         return new UserWidgetResponse(widget,listUserCols);
