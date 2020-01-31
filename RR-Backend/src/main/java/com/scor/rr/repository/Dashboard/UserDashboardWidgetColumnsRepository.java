@@ -8,4 +8,5 @@ import java.util.List;
 public interface UserDashboardWidgetColumnsRepository extends JpaRepository<UserDashboardWidgetColumns,Long> {
 
     List<UserDashboardWidgetColumns> findByUserDashboardWidgetId(long id);
+    UserDashboardWidgetColumns findByUserDashboardWidgetColumnId(long id);
 }
