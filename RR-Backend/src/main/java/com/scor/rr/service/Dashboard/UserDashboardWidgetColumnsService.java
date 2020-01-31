@@ -28,6 +28,7 @@ public class UserDashboardWidgetColumnsService {
                 UserDashboardWidgetColumns userDashboardWidgetColumns = new UserDashboardWidgetColumns();
                 userDashboardWidgetColumns.setUserDashboardWidgetId(widgetId);
                 userDashboardWidgetColumns.setUserID(userId);
+                userDashboardWidgetColumns.setDataType(col.getDataType());
                 userDashboardWidgetColumns.setDashboardWidgetColumnName(col.getColumnName());
                 userDashboardWidgetColumns.setDashboardWidgetColumnWidth(col.getDefaultWidth());
                 userDashboardWidgetColumns.setDashboardWidgetColumnOrder(col.getColumnOrder());
@@ -48,15 +49,16 @@ public class UserDashboardWidgetColumnsService {
 
     }
 
-    public List<UserDashboardWidgetColumns> duplicateColumns(List<UserDashboardWidgetColumns> columns) {
+    public List<UserDashboardWidgetColumns> duplicateColumns(List<UserDashboardWidgetColumns> columns,long newWidgetId) {
         List<UserDashboardWidgetColumns> listCols = new ArrayList<>();
 
         if(columns != null && !columns.isEmpty()){
             for (UserDashboardWidgetColumns col: columns
             ) {
                 UserDashboardWidgetColumns userDashboardWidgetColumns = new UserDashboardWidgetColumns();
-                userDashboardWidgetColumns.setUserDashboardWidgetId(col.getUserDashboardWidgetId());
+                userDashboardWidgetColumns.setUserDashboardWidgetId(newWidgetId);
                 userDashboardWidgetColumns.setUserID(col.getUserID());
+                userDashboardWidgetColumns.setDataType(col.getDataType());
                 userDashboardWidgetColumns.setDashboardWidgetColumnName(col.getDashboardWidgetColumnName());
                 userDashboardWidgetColumns.setDashboardWidgetColumnWidth(col.getDashboardWidgetColumnWidth());
                 userDashboardWidgetColumns.setDashboardWidgetColumnOrder(col.getDashboardWidgetColumnOrder());
@@ -73,6 +75,10 @@ public class UserDashboardWidgetColumnsService {
 
     public void deleteWidgetColumns(long id){
         userDashboardWidgetColumnsRepository.deleteById(id);
+    }
+
+    public void updateColumn(long id, String field, String value){
+
     }
 
 

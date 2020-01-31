@@ -7,6 +7,7 @@ import com.scor.rr.domain.Response.UserWidgetResponse;
 import com.scor.rr.domain.requests.DashboardWidgetCreationRequest;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.Dashboard.DashboardWidgetService;
+import com.scor.rr.service.Dashboard.UserDashboardWidgetColumnsService;
 import com.scor.rr.service.Dashboard.UserDashboardWidgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ public class DashboardWidgetController {
     private DashboardWidgetService dashboardWidgetService;
     @Autowired
     private UserDashboardWidgetService userDashboardWidgetService;
+    @Autowired
+    private UserDashboardWidgetColumnsService userDashboardWidgetColumnsService;
 
     @GetMapping("getRefData")
     public List<ReferenceWidgetResponse> getReferenceData() throws RRException {
@@ -59,6 +62,12 @@ public class DashboardWidgetController {
     public ResponseEntity<?> deleteWidgetByRef(@RequestParam("dashboardId") long dashboardId,@RequestParam("refId") long referenceWidgetId) throws RRException{
         userDashboardWidgetService.deleteByRef(dashboardId,referenceWidgetId);
         return  ResponseEntity.ok("deleted");
+    }
+
+    @PutMapping("updateColumn")
+    public ResponseEntity<?> updateColumn(@RequestParam("columnId") long id ,@RequestParam("field") String field,@RequestParam("value") String value){
+        userDashboardWidgetColumnsService.updateColumn(id,field,value);
+        return ResponseEntity.ok("updated");
     }
 
 //    @GetMapping("getData")

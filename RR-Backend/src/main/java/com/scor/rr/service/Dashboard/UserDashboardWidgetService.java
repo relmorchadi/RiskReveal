@@ -98,7 +98,7 @@ public class UserDashboardWidgetService {
         duplicate = userDashboardWidgetRepository.saveAndFlush(duplicate);
 
 
-        List<UserDashboardWidgetColumns> columns = userDashboardWidgetColumnsService.duplicateColumns(userDashboardWidgetColumnsRepository.findByUserDashboardWidgetId(widgetId));
+        List<UserDashboardWidgetColumns> columns = userDashboardWidgetColumnsService.duplicateColumns(userDashboardWidgetColumnsRepository.findByUserDashboardWidgetId(widgetId),duplicate.getUserDashboardWidgetId());
 
         return new UserWidgetResponse(duplicate,columns);
 

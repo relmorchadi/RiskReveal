@@ -38,6 +38,9 @@ public class UserDashboardWidgetColumns {
     @Column(name = "FilterCriteria")
     private String filterCriteria;
 
+    @Column(name = "DataType")
+    private String dataType;
+
     @Column(name = "Sort")
     private int sort;
 
