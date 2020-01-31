@@ -55,6 +55,12 @@ public class DashboardWidgetController {
         return ResponseEntity.ok("deleted");
     }
 
+    @DeleteMapping("deleteByRef")
+    public ResponseEntity<?> deleteWidgetByRef(@RequestParam("dashboardId") long dashboardId,@RequestParam("refId") long referenceWidgetId) throws RRException{
+        userDashboardWidgetService.deleteByRef(dashboardId,referenceWidgetId);
+        return  ResponseEntity.ok("deleted");
+    }
+
 //    @GetMapping("getData")
 //    public WidgetDataResponse  getDataForWidget(@RequestBody WidgetDataRequest request) throws RRException {
 //        return userDashboardWidgetService.getWidgetData(request);

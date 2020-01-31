@@ -72,7 +72,7 @@ public class UserDashboardWidgetService {
 
         widget = userDashboardWidgetRepository.saveAndFlush(widget);
 
-        userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getWidgetId());
+        userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getUserDashboardWidgetId());
 
         List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId());
 
@@ -123,5 +123,17 @@ public class UserDashboardWidgetService {
         userDashboardWidgetRepository.delete(userDashboardWidget);
 
 
+    }
+
+    public void deleteByRef(long dashboardID, long referenceID) throws RRException {
+        UserDashboard userDashboard = userDashboardRepository.findByUserDashboardId(dashboardID);
+        if(userDashboard == null) throw new UserDashboardNotFoundException(dashboardID);
+
+        List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardIdAndWidgetId(dashboardID,referenceID);
+        if(!widgets.isEmpty()){
+            for(UserDashboardWidget widget: widgets){
+                deleteDashboardWidget(widget.getWidgetId());
+            }
+        }
     }
 }
