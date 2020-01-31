@@ -65,11 +65,6 @@ public class DashboardWidgetController {
         return  ResponseEntity.ok("deleted");
     }
 
-    @PutMapping("updateColumn")
-    public ResponseEntity<?> updateColumn(@RequestParam("columnId") long id ,@RequestParam("field") String field,@RequestParam("value") String value){
-        userDashboardWidgetColumnsService.updateColumn(id,field,value);
-        return ResponseEntity.ok("updated");
-    }
 
 //    @GetMapping("getData")
 //    public WidgetDataResponse  getDataForWidget(@RequestBody WidgetDataRequest request) throws RRException {
