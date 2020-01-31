@@ -72,7 +72,7 @@ public class UserDashboardWidgetService {
 
         widget = userDashboardWidgetRepository.saveAndFlush(widget);
 
-        userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getWidgetId());
+        userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getUserDashboardWidgetId());
 
         List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId());
 
