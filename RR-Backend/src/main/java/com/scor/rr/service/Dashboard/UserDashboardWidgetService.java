@@ -44,7 +44,7 @@ public class UserDashboardWidgetService {
             for(UserDashboardWidget widget : dashboardWidgets){
                 UserWidgetResponse response = new UserWidgetResponse();
                 response.setUserDashboardWidget(widget);
-                response.setColumns(userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId()));
+                response.setColumns(userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId()));
                 listResponse.add(response);
             }
         }
@@ -74,7 +74,7 @@ public class UserDashboardWidgetService {
 
         userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getUserDashboardWidgetId());
 
-        List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getWidgetId());
+        List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId());
 
 
         return new UserWidgetResponse(widget,listUserCols);
