@@ -17,7 +17,6 @@ export class EpChartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes, this.chartOption);
   }
 
 }

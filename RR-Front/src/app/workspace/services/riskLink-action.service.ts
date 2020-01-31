@@ -1025,6 +1025,8 @@ export class RiskLinkStateService {
                         _.forEach(analysis, a => {
                             draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].rpCode = a.systemRegionPeril;
                             draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].isScanning = false;
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].referenceTargetRaps= a.referenceTargetRaps;
+                            draft.content[wsIdentifier].riskLink.summary.analysis[a.rlAnalysisId].targetRaps= _.filter(a.referenceTargetRaps || [] , item => item.default)
                         });
                         _.forEach(portfolios, p => {
                             draft.content[wsIdentifier].riskLink.summary.portfolios[p.rlPortfolioId].isScanning = false;
