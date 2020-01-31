@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -6,19 +6,17 @@ import {Actions, ofActionDispatched, ofActionSuccessful, Select, Store} from '@n
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
-import {PatchRiskLinkDisplayAction, UpdateWsRouting} from '../../store/actions';
+import {UpdateWsRouting} from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
-import {ConfirmationService, LazyLoadEvent} from 'primeng/api';
-import * as moment from 'moment';
-import {combineLatest, forkJoin} from 'rxjs';
-import {of} from 'rxjs/internal/observable/of';
+import {ConfirmationService} from 'primeng/api';
+import {forkJoin} from 'rxjs';
 import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filter.pipe';
 import {NotificationService} from '../../../shared/services';
-import {debounceTime, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {debounceTime, take} from 'rxjs/operators';
 import {SetCurrentTab} from '../../store/actions';
 import {FormControl} from "@angular/forms";
 import {Debounce} from "../../../shared/decorators";
@@ -313,6 +311,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     setFilterDivision() {
+        console.log('Set Filter division');
         if (!this.state.financialValidator.division.selected) {
             console.error('No selected Division');
             return;
@@ -370,17 +369,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     toggleItemsListRDM(datasource) {
-        this.selectedProject$.pipe(take(1))
-            .subscribe(p => {
-                const {projectId} = p;
-                const {rmsId, type} = datasource;
-                this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    projectId,
-                    rmsId,
-                    type
-                }), new fromWs.PatchAddToBasketStateAction()]);
-            });
+        const {rmsId, type} = datasource;
+        this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction({
+            instanceId: datasource.instanceId,
+            projectId: this.selectedProject.projectId,
+            rmsId,
+            type
+        }), new fromWs.PatchAddToBasketStateAction()]);
         if (this.tabStatus === 'FAC') {
             this.setFilterDivision();
         }
@@ -593,11 +588,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.getRiskLinkAnalysis(0);
     }
 
+    @Debounce()
     lazyloadAnalysis({first, rows}){
         const page = Math.round(first/rows);
         this.getRiskLinkAnalysis(page, rows);
     }
 
+    @Debounce()
     lazyloadPortfolios({first, rows}){
         const page = Math.round(first/rows);
         this.getRiskLinkPortfolio(page,rows);

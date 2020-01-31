@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class RegionPerilService {
 
+
     @Autowired
     private RegionPerilMappingRepository regionPerilMappingRepository;
 
