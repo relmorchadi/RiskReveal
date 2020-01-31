@@ -147,14 +147,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
         stop: (item, itemComponent) => {
-          console.log(item, itemComponent);
+          //this.changeWidgetHeight(item, itemComponent);
         }
       },
       resizable: {
         enabled: true,
         stop: (item, itemComponent) => {
           console.log(item, itemComponent);
-          this.changeWidgetHeight(itemComponent.$item);
+          this.changeWidgetHeight(item, itemComponent.$item);
         }
       },
       swap: true,
@@ -306,16 +306,22 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   updateWidgetsDataAction(payload) {
-    const  {columns, userDashboardWidget, widgetId, selectedDashboard} = payload;
-    this.dashboards = _.map(this.dashboards, item => {
-      if (item.id === selectedDashboard.id) {
-        return {...item, widgets: _.map(item.widgets, widget => {
-          if (widget.userDashboardWidgetId === widgetId) {
-            return {...userDashboardWidget, columns}
-          } else {return widget}
-        })}
-      } else {return item}
-    });
+    const {updatedWidget, updatedDash} = payload;
+    const widgetId = updatedWidget.userDashboardWidgetId;
+
+    if(updatedDash !== null) {
+      this.dashboards = _.map(this.dashboards, item => {
+        if (item.id === this.selectedDashboard.id) {
+          return {...item, widgets: _.map(item.widgets, widget => {
+              if (widget.userDashboardWidgetId === widgetId) {
+                return {...widget, ...updatedDash}
+              } else {return widget}
+            })}
+        } else {return item}
+      });
+    }
+
+    this.dashboardAPI.updateWidget(updatedWidget).subscribe();
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
   }
 
@@ -344,7 +350,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
-  changeWidgetHeight(position) {
+  changeWidgetHeight(widgetItem, position) {
+    const resizedWidget = _.find(this.selectedDashboard.widgets, item => item.id === widgetItem.widgetId);
+
     const newPosition = {
       colSpan: position.cols,
       rowSpan: position.rows,
@@ -352,7 +360,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       rowPosition: position.y,
       minItemRows: position.minItemRows,
       minItemCols: position.minItemCols,
-    }
+      userAssignedName: resizedWidget.name,
+      userDashboardId: resizedWidget.userDashboardId,
+      userDashboardWidgetId: resizedWidget.userDashboardWidgetId,
+      userID: resizedWidget.userID,
+      widgetId: resizedWidget.widgetId
+    };
+
+     this.updateWidgetsDataAction({updatedWidget: newPosition, updatedDash: null})
   }
 
   closePopUp() {
@@ -451,25 +466,31 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
-  deleteItem(dashboardId: any, itemId: any) {
-
-  }
-
   changeWidgetName({item, newName}: any) {
-    const updatedWidget = {
-      userDashboardWidget: {
-        /*colPosition: item.position.,
-        colSpan: item.position.,
+    if (_.isEmpty(_.trim(newName))) {
+      this.notificationService.createNotification('Information',
+          'The Widget Name Cannot Be Empty!',
+          'error', 'bottomRight', 6000);
+    } else {
+      const updatedWidget = {
+        colPosition: item.position.x,
+        colSpan: item.position.cols,
         minItemCols: item.position.minItemCols,
         minItemRows: item.position.minItemRows,
-        rowPosition: item.position.,,
-        rowSpan: item.position.,
+        rowPosition: item.position.y,
+        rowSpan: item.position.rows,
         userAssignedName: newName,
-        userDashboardId: 0,
-        userDashboardWidgetId: 0,
-        userID: 0,
-        widgetId: 0*/
-      }
+        userDashboardId: item.userDashboardId,
+        userDashboardWidgetId: item.userDashboardWidgetId,
+        userID: item.userID,
+        widgetId: item.widgetId,
+      };
+
+      const updatedDash = {
+        name: newName
+      };
+
+      this.updateWidgetsDataAction({updatedWidget, updatedDash});
     }
   }
 
@@ -497,10 +518,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       this.idTab = idSel;
     }
     this.detectChanges();
-  }
-
-  duplicate(widgetId) {
-    this.duplicateWidgetAction(widgetId);
   }
 
   onEnterAdd(keyEvent) {
@@ -542,7 +559,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         x: widget.colPosition,
         y: widget.rowPosition,
         minItemRows: widget.minItemRows,
-        minItemCols: widget.minItemCols
+        minItemCols: widget.minItemCols,
+        widgetId: widget.userDashboardWidgetId,
       }
     }
   }

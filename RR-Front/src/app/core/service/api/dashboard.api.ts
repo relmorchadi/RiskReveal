@@ -50,7 +50,7 @@ export class DashboardApi {
     }
 
     updateWidget(widget) {
-        return this.http.put(`${this.WidgetURL}update`, widget);
+        return this.http.put(`${this.WidgetURL}update`, widget, {responseType: 'text' as 'json'});
     }
 
     getFacDashboardResources(filters): Observable<any>  {
