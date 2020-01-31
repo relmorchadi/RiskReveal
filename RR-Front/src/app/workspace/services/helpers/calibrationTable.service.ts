@@ -44,37 +44,37 @@ export class CalibrationTableService {
     this.isFac= false;
 
     CalibrationTableService.frozenCols = [
-      {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
-      {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true}
+      {field: 'arrow', type: "arrow", width: "45", unit: '%', resizable: false, isFrozen: true},
+      {field: 'pltId', header: 'PLT Id', width: "50", unit: '%', resizable: true, isFrozen: true},
+      {field: 'pltName', header: 'PLT Name', width: "80", unit: '%', resizable: true, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsHead = [
-      {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
-      {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true, filter: true, sortable: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true, filter: true, sortable: true}
+      {field: 'arrow', type: "arrow", width: "45", unit: '%', resizable: false, isFrozen: true},
+      {field: 'pltId', header: 'PLT Id', width: "50", unit: '%', resizable: true, isFrozen: true, filter: true, sortable: true},
+      {field: 'pltName', header: 'PLT Name', width: "80", unit: '%', resizable: true, isFrozen: true, filter: true, sortable: true}
     ];
 
     CalibrationTableService.frozenColsTail = [
-      {field: 'status', type: 'status', width: "40", unit: 'px', icon:'', filter: false, sortable: false, resizable: false, isFrozen: true}
+      {field: 'status', type: 'status', width: "40", unit: '%', icon:'', filter: false, sortable: false, resizable: false, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsExpanded = [
-      {header: 'Peril', field: 'peril', icon:'', width: "60", minWidth: "40", unit: 'px', filter: true, sortable: true, resizable: true, isFrozen: true},
-      {field: 'regionPerilCode', header: 'Region Peril', width: "120", minWidth: "100", unit: 'px', filter: true, sortable: true, resizable: true, isFrozen: true},
-      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "120", minWidth: "100", unit: 'px', icon:'', filter: true, sortable: true, resizable: true, isFrozen: true},
-      {field: 'grain', header: 'Grain', width: "60", minWidth: "40", unit: 'px', filter: true, sortable: true, resizable: true, isFrozen: true},
-      {header: 'Vendor System',field: 'vendorSystem', width: "100", minWidth: "50", unit: 'px', icon:'', filter: true, sortable: true, resizable: true, isFrozen: true},
-      {field: 'rap', header: 'RAP', width: "80", minWidth: "50", unit: 'px', filter: true, sortable: true, resizable: true, isFrozen: true}
+      {header: 'Peril', field: 'peril', icon:'', width: "60", minWidth: "40", unit: '%', filter: true, sortable: true, resizable: true, isFrozen: true},
+      {field: 'regionPerilCode', header: 'Region Peril', width: "120", minWidth: "100", unit: '%', filter: true, sortable: true, resizable: true, isFrozen: true},
+      {header: 'Region Peril Name',field: 'regionPerilDesc', width: "120", minWidth: "100", unit: '%', icon:'', filter: true, sortable: true, resizable: true, isFrozen: true},
+      {field: 'grain', header: 'Grain', width: "60", minWidth: "40", unit: '%', filter: true, sortable: true, resizable: true, isFrozen: true},
+      {header: 'Vendor System',field: 'vendorSystem', width: "100", minWidth: "50", unit: '%', icon:'', filter: true, sortable: true, resizable: true, isFrozen: true},
+      {field: 'rap', header: 'RAP', width: "80", minWidth: "50", unit: '%', filter: true, sortable: true, resizable: true, isFrozen: true}
     ];
 
     this.adjustments = [
-      {header: 'Overall LMF',field: 'overallLmf', width: "40", unit: 'px', icon:'', filter: false, sortable: false},
-      {header: 'Base',field: 'base', width: "40", unit: 'px', icon:'', filter: false, sortable: false},
-      {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sortable: false},
-      {header: 'Client',field: 'client', width: "40", unit: 'px', icon:'', filter: false, sortable: false},
-      {header: 'Inuring',field: 'inuring', width: "40", unit: 'px', icon:'', filter: false, sortable: false},
-      {header: 'Post-Inuring',field: 'postInuring', width: "40", unit: 'px', icon:'', filter: false, sortable: false}
+      {header: 'Overall LMF',field: 'overallLmf', width: "40", unit: '%', icon:'', filter: false, sortable: false},
+      {header: 'Base',field: 'base', width: "40", unit: '%', icon:'', filter: false, sortable: false},
+      {header: 'Default',field: 'Default', width: "40", unit: '%', icon:'', filter: false, sortable: false},
+      {header: 'Client',field: 'client', width: "40", unit: '%', icon:'', filter: false, sortable: false},
+      {header: 'Inuring',field: 'inuring', width: "40", unit: '%', icon:'', filter: false, sortable: false},
+      {header: 'Post-Inuring',field: 'postInuring', width: "40", unit: '%', icon:'', filter: false, sortable: false}
     ];
 
     this.analysis = [];
@@ -84,10 +84,11 @@ export class CalibrationTableService {
   }
 
   columnHandler = {
+
     "fac-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
+      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : this.epMetrics );
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : [...this.epMetrics] );
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -98,8 +99,8 @@ export class CalibrationTableService {
       })
     },
     "fac-adjustments": (isExpanded) => {
-      const c = {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}
-      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
+      const c = {header: 'Default',field: 'Default', width: "40", unit: '%', icon:'', filter: false, sort: false}
+      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
       const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );
       const columnsLength = columns ? columns.length : null;
@@ -116,19 +117,22 @@ export class CalibrationTableService {
 
   init = () =>  {
     const a = [...CalibrationTableService.frozenColsHead, ...CalibrationTableService.frozenColsTail];
-    this.updateColumnsConfig({
+    const r = {
       frozenColumns: a,
       frozenWidth: _.reduce(a, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
-      columns: [{header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}],
+      columns: [{header: 'Default',field: 'Default', width: "40", unit: '%', icon:'', filter: false, sort: false}],
       columnsLength: a.length
-    });
-    this.updateColumnsConfigCache(this.columnsConfig$.getValue())
+    };
+    this.updateColumnsConfig(r);
+    this.updateColumnsConfigCache(r);
   };
 
   getColumns(view, isExpanded) {
     try {
+      console.log("FOUND");
       const tmp = this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
       this.updateColumnsConfig(tmp);
+      this.updateColumnsConfigCache(tmp);
     } catch(e) {
       this.updateColumnsConfig({
         frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',

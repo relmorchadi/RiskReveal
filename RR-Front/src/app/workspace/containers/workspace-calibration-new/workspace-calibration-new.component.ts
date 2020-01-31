@@ -268,8 +268,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       .subscribe(epMetrics => {
       this.epMetrics = epMetrics;
 
-      console.log(epMetrics);
-
       this.initEpMetricsCols(this.epMetrics);
 
       this.detectChanges();
@@ -335,6 +333,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
       this.columnsConfig= config;
+      this.calibrationTableService.updateColumnsConfigCache(config);
       this.detectChanges();
     })
   }
@@ -522,15 +521,21 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       frozenWidth: string;
       frozenColumns: any[];
     } = { frozenWidth: '', frozenColumns: []};
-    const head = _.slice(this.columnsConfig.frozenColumns,0, 3);
-    const tail= this.columnsConfig.frozenColumns[this.columnsConfig.frozenColumns.length - 1];
-    const headTailCols = [...head, tail];
+
+    const head = _.slice(this.columnsConfig.frozenColumns, 0, 3);
+    const tail= _.slice(this.columnsConfig.frozenColumns, this.columnsConfig.frozenColumns.length - 1);
+    const headTailCols = [...head, ...tail];
     const minWidth = _.reduce(headTailCols, (acc, curr) => acc + _.toNumber(curr.width), 0);
     const frozenWidth = _.toNumber(_.trim(this.columnsConfig.frozenWidth, 'px'));
     const expandedMaxWidth = frozenWidth + delta - minWidth;
-    const possibleExpandedCols = CalibrationTableService.frozenColsExpanded;
-    // const possibleExpandedCols = _.uniqBy([..._.slice(this.columnsConfig.frozenColumns,3, this.columnsConfig.frozenColumns.length - 1), ...CalibrationTableService.frozenColsExpanded], 'field');
-    // console.log(possibleExpandedCols);
+    const possibleExpandedCols = _.uniqBy([..._.slice(this.columnsConfig.frozenColumns,3, this.columnsConfig.frozenColumns.length - 1), ...CalibrationTableService.frozenColsExpanded], 'field');
+    console.log({
+      head,
+      tail,
+      minWidth,
+      expandedMaxWidth,
+      possibleExpandedCols
+    });
 
     let expandedWidth = 0;
     let i =0;
@@ -552,15 +557,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       } else {
         middle = _.slice(possibleExpandedCols, 0, i + 1);
       }
-
-      const lastCol = middle[middle.length - 1];
-      const diff = Math.abs(expandedMaxWidth - expandedWidth);
-      const newColMinWidth = _.toNumber(lastCol.minWidth);
-      let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
-
-      middle[middle.length - 1] = {...lastCol, width : newColMinWidth + ''};
     }
-    const resCols = [...head, ...middle ,tail];
+
+    let resCols = [...head, ...middle , ...tail];
+    // const lastCol = resCols[resCols.length - 2];
+    // const diff = Math.abs(expandedMaxWidth - expandedWidth);
+    // const newColMinWidth = _.toNumber(lastCol.minWidth);
+    // let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
+    //
+    // resCols = _.map(resCols, (col, i)  => (_.toNumber(i) != (resCols.length - 2)) ?  col : {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''});
     res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
     res.frozenColumns= resCols;
 
@@ -570,8 +575,24 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
 
     this.calibrationTableService.updateColumnsConfig(tmp);
-    this.calibrationTableService.updateColumnsConfigCache(tmp);
 
+  }
+
+  resizeFrozenColumn({delta, index}) {
+    let columnsConfig= this.columnsConfig;
+    const frozenColumns= _.merge(columnsConfig.frozenColumns, {[index]: {
+      width: _.toNumber(columnsConfig.frozenColumns[index].width) + delta + ''
+    }});
+    const frozenWidth= _.reduce(frozenColumns, (acc, curr) => acc + _.toNumber(curr.width), 0) + "px";
+
+    console.log(frozenWidth, frozenColumns);
+    columnsConfig = {
+      ...columnsConfig,
+      frozenColumns,
+      frozenWidth
+    };
+
+    this.calibrationTableService.updateColumnsConfig(columnsConfig);
   }
 
   expandColumns() {
@@ -579,7 +600,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.tableConfig,
       isExpanded: true
     };
-    this.calibrationTableService.updateColumnsConfigCache(this.columnsConfig);
     this.calibrationTableService.getColumns(this.tableConfig.view, true);
   }
 
@@ -594,18 +614,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   viewAdjustmentDetail(newAdjustment) {
     this.selectedAdjustment = {...newAdjustment};
     this.isAdjustmentPopUpVisible = true;
-  }
-
-  resizeFrozenColumn({delta, index}) {
-
-    this.calibrationTableService.updateColumnsConfig({
-      ...this.columnsConfig,
-      frozenColumns: produce(this.columnsConfig.frozenColumns, draft => {
-        draft[index].width = _.toNumber(draft[index].width) + delta + ''
-      }),
-      frozenWidth: ( _.toNumber(_.trimEnd(this.columnsConfig.frozenWidth, "px")) + delta ) + "px"
-    })
-
   }
 
   rowExpandChange(rowExpandKeys) {
@@ -812,8 +820,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
 
     res = _.uniq(res);
-
-    console.log(res);
 
 
     this.exchangeRatesSubscription = this.calibrationApi.getExchangeRates(this.workspaceEffectiveDate, res)

@@ -49,12 +49,6 @@ public class SearchResource {
         return searchService.getWorkspaceYear(keyword, size);
     }
 
-    @GetMapping("workspace")
-//    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size) {
-        return searchService.globalSearchWorkspaces(filter, offset, size);
-    }
-
 //    @PostMapping("workspace")
 //    Page<CATContract> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
 //    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int offset, int size){
@@ -62,7 +56,7 @@ public class SearchResource {
 //    }
 
     @GetMapping("searchcount")
-    SearchCountResult countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
+    SearchCountResult countInWorkspace(@RequestParam TreatyTableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
         return searchService.countInWorkspace(table, keyword, size);
     }
 

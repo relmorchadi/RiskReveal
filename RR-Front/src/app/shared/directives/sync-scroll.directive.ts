@@ -1,16 +1,28 @@
-import {AfterViewInit, Directive, ElementRef, OnChanges, OnDestroy} from '@angular/core';
+import {
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges
+} from '@angular/core';
 
 @Directive({
   selector: '[syncScroll]'
 })
-export class SyncScrollDirective implements AfterViewInit, OnDestroy {
+export class SyncScrollDirective implements AfterViewInit, OnDestroy, OnChanges {
 
   frozen: ElementRef;
   unfrozen: ElementRef;
 
+  @Input() frozenColumns;
+
   constructor(private el: ElementRef) {}
 
   ngAfterViewInit(): void {
+
     this.frozen = this.el.nativeElement.querySelector('.ui-table-frozen-view .ui-table-scrollable-body');
     this.unfrozen = this.el.nativeElement.querySelector('.ui-table-unfrozen-view .ui-table-scrollable-body');
 
@@ -25,8 +37,18 @@ export class SyncScrollDirective implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.frozen.nativeElement.removeEventListener('scroll');
-    // this.unfrozen.nativeElement.removeEventListener('scroll');
+    //this.frozen.nativeElement.removeEventListener('scroll');
+    //this.unfrozen.nativeElement.removeEventListener('scroll');
+    console.log("DESTROY");
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+  }
+
+  @HostListener('window:scroll', ['$event']) onScrollEvent($event){
+    // console.log($event['Window']);
+    console.log($event);
+
   }
 
 }
