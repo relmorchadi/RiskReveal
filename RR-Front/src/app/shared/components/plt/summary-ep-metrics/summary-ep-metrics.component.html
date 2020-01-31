@@ -60,7 +60,7 @@
               <ng-template pTemplate="header" let-columns>
                 <tr>
                   <th style="width: 100px;">Return Period</th>
-                  <th style="width: 160px;" *ngFor="let col of columns">{{col?.header}}</th>
+                  <th style="width: 160px;text-align: right;" *ngFor="let col of columns">{{col?.header}}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">

@@ -188,7 +188,6 @@ public class SearchService {
             if(facContract.isPresent()) {
                 return this.loadFacWorkspace(workspaceId, uwy, true, facContract);
             }
-
         }
 
         return null;

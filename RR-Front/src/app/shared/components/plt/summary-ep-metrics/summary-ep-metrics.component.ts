@@ -61,7 +61,6 @@ export class SummaryEpMetricsComponent implements OnInit {
   }
 
   curveTypeSelectChange(curveTypes) {
-
     let res = curveTypes;
 
     if(!curveTypes.length) {
