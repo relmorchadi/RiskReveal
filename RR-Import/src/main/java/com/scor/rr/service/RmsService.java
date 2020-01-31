@@ -5,8 +5,10 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
+import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.abstraction.ConfigurationService;
 import com.scor.rr.service.runnables.AnalysisDetailedScanRunnableTask;
 import com.scor.rr.service.runnables.PortfolioDetailedScanRunnableTask;
 import com.scor.rr.util.Utils;
@@ -33,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
 @Component
@@ -82,6 +83,12 @@ public class RmsService {
 
     @Autowired
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
+
+    @Autowired
+    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
+
+    @Autowired
+    private ConfigurationService configurationService;
 
     @Value("${rms.ds.dbname}")
     private String DATABASE;
@@ -217,33 +224,39 @@ public class RmsService {
     public List<Long> saveAnalysisImportSelection(List<ImportSelectionDto> importSelectionDtoList) {
 
         List<Long> rlImportSelectionId = new ArrayList<>();
-        if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty())
+        if (importSelectionDtoList != null && !importSelectionDtoList.isEmpty()) {
             rlImportSelectionRepository.deleteByProjectId(importSelectionDtoList.get(0).getProjectId());
-        importSelectionDtoList
-                .forEach(importSelectionDto -> {
-                    Optional<RLAnalysis> rlAnalysisOptional = rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId());
-                    if (importSelectionDto.getFinancialPerspectives() != null && !importSelectionDto.getFinancialPerspectives().isEmpty())
-                        importSelectionDto.getFinancialPerspectives().forEach(fp -> {
-                            if (rlAnalysisOptional.isPresent()) {
-                                if (importSelectionDto.getDivisions() == null || importSelectionDto.getDivisions().isEmpty()) {
-                                    RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get());
-                                    rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
-                                    rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
-                                    for (String code : importSelectionDto.getTargetRAPCodes()) {
-                                        RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
-                                        rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
-                                        rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
-                                    }
-                                } else {
-                                    importSelectionDto.getDivisions().forEach(division -> {
-                                        RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get(), division);
+            importSelectionDtoList
+                    .forEach(importSelectionDto -> {
+                        Optional<RLAnalysis> rlAnalysisOptional = rlAnalysisRepository.findById(importSelectionDto.getRlAnalysisId());
+                        if (importSelectionDto.getFinancialPerspectives() != null && !importSelectionDto.getFinancialPerspectives().isEmpty())
+                            importSelectionDto.getFinancialPerspectives().forEach(fp -> {
+                                if (rlAnalysisOptional.isPresent()) {
+                                    if (importSelectionDto.getDivisions() == null || importSelectionDto.getDivisions().isEmpty()) {
+                                        RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get());
                                         rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
                                         rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
-                                    });
+                                        for (String code : importSelectionDto.getTargetRAPCodes()) {
+                                            RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
+                                            rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
+                                            rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
+                                        }
+                                    } else {
+                                        importSelectionDto.getDivisions().forEach(division -> {
+                                            RLImportSelection rlImportSelection = new RLImportSelection(importSelectionDto, fp, rlAnalysisOptional.get(), division);
+                                            rlImportSelection = rlImportSelectionRepository.save(rlImportSelection);
+                                            rlImportSelectionId.add(rlImportSelection.getRlImportSelectionId());
+                                            for (String code : importSelectionDto.getTargetRAPCodes()) {
+                                                RLImportTargetRAPSelection rlImportTargetRAPSelection = new RLImportTargetRAPSelection(code, rlImportSelection);
+                                                rlImportSelection.addTargetRap(rlImportTargetRAPSelection);
+                                                rlImportTargetRAPSelectionRepository.save(rlImportTargetRAPSelection);
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        });
-                });
+                            });
+                    });
+        }
         return rlImportSelectionId;
     }
 
@@ -322,11 +335,15 @@ public class RmsService {
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
+                            rlAnalysisRepository.save(rlAnalysis);
+                            List<RLAnalysisToTargetRAP> targetRaps = rLAnalysisToTargetRAPRepository.findByRlAnalysisIdAndDefaultIsTrue(rlAnalysis.getRlAnalysisId());
+                            if (targetRaps != null && !targetRaps.isEmpty())
+                                rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
                             allScannedAnalysis.add(rlAnalysis);
                             cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
                             //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
                         });
-                rlAnalysisRepository.saveAll(allScannedAnalysis);
+//                rlAnalysisRepository.saveAll(allScannedAnalysis);
 
                 rlAnalysisProfileRegionsRepository.saveAll(
                         this.getRdmAllAnalysisProfileRegions(instanceId, rdmId, rdmName, multiKeyListEntry.getValue())
@@ -471,9 +488,9 @@ public class RmsService {
 
         this.logger.debug("Service starts executing the query ...");
 
-        if (!StringUtils.isEmpty(keyword)){
-            sql += ", @filter='" + keyword+"'";
-            countSql += ", @filter='" + keyword+"'";
+        if (!StringUtils.isEmpty(keyword)) {
+            sql += ", @filter='" + keyword + "'";
+            countSql += ", @filter='" + keyword + "'";
         }
 
         List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
@@ -485,7 +502,7 @@ public class RmsService {
                 Integer.class);
 
         this.logger.debug("the data returned ", dataSources);
-        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount) ;
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount);
     }
 
     public List<RdmAnalysisBasic> listRdmAnalysisBasic(String instanceId, Long id, String name) {
@@ -1048,7 +1065,7 @@ public class RmsService {
             if (topLevelRegionPeril != null) {
                 systemRegionPeril = crawlDownToSystemRegionPeril(topLevelRegionPeril);
             } else {
-                logger.error("no top level RegionPeil found for analysis '{}':'{}' from RDM '{}':'{}'",
+                logger.error("no top level RegionPeril found for analysis '{}':'{}' from RDM '{}':'{}'",
                         rlAnalysis.getRlId(), rlAnalysis.getAnalysisName(), rlAnalysis.getRdmId(), rlAnalysis.getRdmName());
             }
         } else {
@@ -1095,7 +1112,7 @@ public class RmsService {
                     candidates.add(child);
                 }
             }
-            if (candidates.size() > 1) {
+            if (candidates.size() < 1) {
                 return node.getRegionPeril().getRegionPerilCode();
             } else {
                 for (RegionPerilNode c : candidates) {

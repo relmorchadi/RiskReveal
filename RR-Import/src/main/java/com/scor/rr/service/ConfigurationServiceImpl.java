@@ -200,6 +200,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     }
 
     @Override
+    public boolean checkIfProjectHasScannedDataSources(Long projectId) {
+        return !rlModelDataSourceRepository.findByProjectId(projectId).isEmpty();
+    }
+
+    @Override
     public List<RLDataSourcesDto> getDataSourcesWithSelectedAnalysis(Long projectId) {
 
         List<RLImportedDataSourcesAndAnalysis> data = rlImportedDataSourcesAndAnalysisRepository.findByProjectId(projectId);
