@@ -122,7 +122,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public List<RegionPerilDto> getRegionPeril(Long rlAnalysisId) {
-        return rlAnalysisToRegionPerilsRepository.findByRlModelAnalysisId(rlAnalysisId).stream()
+        return rlAnalysisToRegionPerilsRepository.findByRlModelAnalysisIdOrderByRegionPerilCode(rlAnalysisId).stream()
                 .map(element -> modelMapper.map(element, RegionPerilDto.class))
                 .collect(toList());
     }

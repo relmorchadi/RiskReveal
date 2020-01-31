@@ -39,7 +39,7 @@
       <p-table [columns]="scrollableColsResults" [frozenColumns]="frozenColsResults"
                [value]="data.analysis" [scrollHeight]="'175px'"
                [resizableColumns]="true" columnResizeMode="expand"
-               #rt [scrollable]="true" frozenWidth="445px" syncScroll>
+               #rt [scrollable]="true" frozenWidth="445px">
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
             <ng-container *ngFor="let col of columns">
