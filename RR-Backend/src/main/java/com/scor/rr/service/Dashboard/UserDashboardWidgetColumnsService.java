@@ -35,6 +35,7 @@ public class UserDashboardWidgetColumnsService {
                 userDashboardWidgetColumns.setVisible(col.isVisible());
                 userDashboardWidgetColumns.setSort(col.getSorting());
                 userDashboardWidgetColumns.setSortType(col.getSortType());
+                userDashboardWidgetColumns.setDataColumnType(col.getDataColumnType());
                 userDashboardWidgetColumns.setColumnHeader(col.getColumnHeader());
                 listCols.add(userDashboardWidgetColumns);
             }
@@ -65,6 +66,7 @@ public class UserDashboardWidgetColumnsService {
                 userDashboardWidgetColumns.setVisible(col.isVisible());
                 userDashboardWidgetColumns.setSort(col.getSort());
                 userDashboardWidgetColumns.setSortType(col.getSortType());
+                userDashboardWidgetColumns.setDataColumnType(col.getDataColumnType());
                 userDashboardWidgetColumns.setColumnHeader(col.getColumnHeader());
                 listCols.add(userDashboardWidgetColumns);
             }
