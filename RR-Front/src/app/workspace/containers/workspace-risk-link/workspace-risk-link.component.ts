@@ -504,7 +504,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getCheckedData() {
-        //const data = this.filterData(this.getTableData());
         if (this.state.selectedEDMOrRDM === 'EDM') {
             const selection = _.filter(this.state.portfolios.data, item => item.selected);
             this.allCheckedAnalysis = selection.length === this.state.portfolios.data.length && selection.length > 0;
