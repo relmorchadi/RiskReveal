@@ -704,11 +704,11 @@ export class RiskLinkStateService {
             const currentDivision = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
             if (currentSelection !== null) {
                 if (state.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
-                    draft.content[wsIdentifier].riskLink.analysis = this._facDataFactor(state.content[wsIdentifier].riskLink.analysis,
+                    draft.content[wsIdentifier].riskLink.selection.analysis = this._facDataFactor(state.content[wsIdentifier].riskLink.analysis,
                         state.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentSelection, 'RDM'
                     );
                 } else {
-                    draft.content[wsIdentifier].riskLink.portfolios = this._facDataFactor(state.content[wsIdentifier].riskLink.portfolios,
+                    draft.content[wsIdentifier].riskLink.selection.portfolios = this._facDataFactor(state.content[wsIdentifier].riskLink.portfolios,
                         state.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentSelection, 'EDM'
                     );
                 }
