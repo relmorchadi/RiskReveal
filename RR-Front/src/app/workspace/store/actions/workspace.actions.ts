@@ -43,11 +43,6 @@ export class SetCurrentTab {
   constructor(public payload?: any) {}
 }
 
-export class CreateNewFac {
-  static readonly type = '[Workspace] New Fac Data';
-  constructor(public payload?: any) {}
-}
-
 export class ToggleWsDetails {
   static readonly type = '[Workspace] Toggle workspace details';
   constructor(public wsId: string) {}

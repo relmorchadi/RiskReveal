@@ -270,6 +270,10 @@ export class TableComponent implements OnInit {
     }
   }
 
+  resize(event) {
+    console.log(event);
+  }
+
   log(dt: HTMLElement) {
     console.log(dt);
   }

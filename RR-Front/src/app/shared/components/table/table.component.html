@@ -10,6 +10,7 @@
          [scrollable]="true"
          [scrollHeight]="tableHeight"
          [responsive]="false"
+         (onColResize)="resize($event)"
          class="table-ngPrime"
          scrollIndicator
          [step]="35"
