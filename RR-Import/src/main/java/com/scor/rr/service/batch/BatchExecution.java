@@ -155,6 +155,7 @@ public class BatchExecution {
 
         ProjectEntity project = projectOp.get();
         Optional<WorkspaceEntity> myWorkspaceOp = workspaceRepository.findById(project.getWorkspaceId());
+        ProjectConfigurationForeWriter projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(project.getProjectId());
 
         if (!myWorkspaceOp.isPresent()) {
             log.error("Error. No workspace found");
@@ -164,12 +165,13 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
-        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "Fac" : "";
+        String projectContext = projectConfigurationForeWriter != null ? "Fac" : "Manual";
+        String workspaceMarketChannel = projectContext.equals("Manual") ? "Treaty" : "Fac";
 
-        if (workspaceMarketChannel.equalsIgnoreCase("")) {
-            log.error("Error. workspace market channel is not found");
-            return null;
-        }
+//        if (workspaceMarketChannel.equalsIgnoreCase("")) {
+//            log.error("Error. workspace market channel is not found");
+//            return null;
+//        }
 
         ContractSearchResult contractSearchResult =
                 contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
@@ -180,15 +182,11 @@ public class BatchExecution {
 
         ModellingSystemInstanceEntity modellingSystemInstance = modellingSystemInstanceRepository.findById(instanceId).orElse(null);
 
-        ProjectConfigurationForeWriter projectConfigurationForeWriter = null;
         ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
 
         if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
-            projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(projectId);
-            if (projectConfigurationForeWriter != null) {
-                projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
-                        .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
-            }
+            projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
+                    .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
         }
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
