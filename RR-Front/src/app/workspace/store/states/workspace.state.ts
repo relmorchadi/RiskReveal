@@ -111,7 +111,7 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static getSelectedProject(state: WorkspaceModel) {
+  static getSelectedProject(state: WorkspaceModel) : any{
     const wsIdentifier = state.currentTab.wsIdentifier;
     return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
   }

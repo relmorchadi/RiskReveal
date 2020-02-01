@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angu
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Actions, ofAction, ofActionCompleted, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -235,6 +235,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 'info', 'bottomRight', 4000);
         });
 
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionDispatched(fromWs.AutoAttachEndsAction)
+            ).subscribe((p) => {
+            const {withDetailScan, allAnalysis, allPortfolios} = p.payload;
+            if (withDetailScan && _.isEmpty(allAnalysis) && _.isEmpty(allPortfolios))
+                alert('No auto attach suggestions available on this Workspace');
+        });
+
         this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
         this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
         this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
@@ -268,7 +278,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 debounceTime(500)
             ).subscribe(p => {
             console.log('After success : LoadSummaryOrDefaultDataSourcesAction');
-            const {edms, rdms,currentDataSource} = this.state.selection;
+            const {edms, rdms, currentDataSource} = this.state.selection;
             const dataSources = [..._.values(edms), ..._.values(rdms)];
             if (!_.isEmpty(dataSources) && !currentDataSource) {
                 this.toggleItemsListRDM(_.first(dataSources));
@@ -396,7 +406,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }), new fromWs.PatchAddToBasketStateAction()]);
         if (this.tabStatus === 'FAC') {
             this.setFilterDivision();
-        }else {
+        } else {
             if (type === 'RDM') {
                 this.getRiskLinkAnalysis(0);
             } else {
@@ -533,7 +543,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     clearSelection(item, target) {
         // console.log("clear selection ", {item, target})
-        this.dispatch(new fromWs.DeleteEdmRdmAction({rlDataSourceId: item.rlDataSourceId, rmsId: item.rmsId, target: target}));
+        this.dispatch(new fromWs.DeleteEdmRdmAction({
+            rlDataSourceId: item.rlDataSourceId,
+            rmsId: item.rmsId,
+            target: target
+        }));
     }
 
     getNumberOfSelected(item, source) {
@@ -769,8 +783,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     autoAttach() {
         console.log('Auto attach');
         const divisionsIds = _.map(this.state.financialValidator.division.data, d => d.divisionNumber);
-        const edmIds = _.map(_.values(this.state.selection.edms), item => item.rlModelDataSourceId);
-        const rdmIds = _.map(_.values(this.state.selection.rdms), item => item.rlModelDataSourceId);
+        const edmIds = _.map(_.values(this.state.selection.edms), item => item.rlDataSourceId);
+        const rdmIds = _.map(_.values(this.state.selection.rdms), item => item.rlDataSourceId);
         if (_.size(edmIds) == 0 && _.size(rdmIds) == 0) {
             alert('No available Edms / Rdms to attach');
             return;
@@ -787,6 +801,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             edmIds,
             rdmIds,
             wsId: this.ws.wsId,
+            withDetailScan: true
         }))
     }
 
