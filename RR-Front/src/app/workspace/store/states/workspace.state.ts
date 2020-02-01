@@ -1041,7 +1041,7 @@ export class WorkspaceState {
 
   @Action(fromWS.DeleteEdmRdmAction)
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
-    this.riskLinkFacade.deleteEdmRdm(ctx, payload);
+    return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
   @Action(fromWS.LoadDivisionSelection)

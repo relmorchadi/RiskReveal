@@ -223,4 +223,10 @@ public class ConfigurationResource {
         return ResponseEntity.ok(configurationService.getAutoAttach(wsId, edmIds, rdmIds, divisionsIds));
     }
 
+    @DeleteMapping("data-source")
+    public ResponseEntity<?> deleteDataSources(@RequestParam Long rlModelDataSourceId){
+        configurationService.deleteRlDataSource(rlModelDataSourceId);
+        return ResponseEntity.ok().build();
+    }
+
 }

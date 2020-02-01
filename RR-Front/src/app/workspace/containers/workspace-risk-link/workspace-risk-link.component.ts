@@ -532,7 +532,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     clearSelection(item, target) {
-        this.dispatch(new fromWs.DeleteEdmRdmAction({rmsId: item.rmsId, target: target}));
+        // console.log("clear selection ", {item, target})
+        this.dispatch(new fromWs.DeleteEdmRdmAction({rlDataSourceId: item.rlDataSourceId, rmsId: item.rmsId, target: target}));
     }
 
     getNumberOfSelected(item, source) {
