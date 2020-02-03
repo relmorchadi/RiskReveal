@@ -199,7 +199,7 @@ public class ConvertToSCORFormatService {
         return RepeatStatus.FINISHED;
     }
 
-    @Value("${ihub.treaty.out.path}")
+    @Value("${ihub.treaty.out.path}") // todo change it not ihub
     private String filePath;
 
     public Path getIhubPath() {
