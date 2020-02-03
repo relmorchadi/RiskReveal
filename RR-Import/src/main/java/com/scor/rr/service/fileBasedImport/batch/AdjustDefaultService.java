@@ -31,14 +31,7 @@ public class AdjustDefaultService {
     @Autowired
     TargetRapRepository targetRapRepository;
 
-    private final String defAdjNonRMSURL;
-
     private TransformationPackageNonRMS transformationPackage;
-
-    public AdjustDefaultService(String batchRestHost, String batchRestPort, String batchRestDefAdj) {
-        final URI uri = UriComponentsBuilder.newInstance().scheme("http").host(batchRestHost).port(Integer.parseInt(batchRestPort)).build().toUri();
-        defAdjNonRMSURL = UriComponentsBuilder.fromUri(uri).path(batchRestDefAdj).build().toString();
-    }
 
     @Value(value = "${thread.creation.service}")
     private String threadCreationURL;

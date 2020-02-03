@@ -20,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 public class FileBasedImportJob {
 
     @Autowired
+    ELTConformer eltConformer;
+
+    @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
