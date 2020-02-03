@@ -20,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 public class FileBasedImportJob {
 
     @Autowired
+    ELTConformer eltConformer;
+
+    @Autowired
     private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
@@ -133,41 +136,4 @@ public class FileBasedImportJob {
                 .next(getConformPLTStep())
                 .next(getAdjustDefaultStep());
     }
-
-
-//
-//     <!--step 1-->
-//        <batch:step id="loadLossDataFile" next="convertToSCORFormat">
-//            <batch:tasklet ref="loadLossDataFileTasklet"/>
-//        </batch:step>
-//
-//        <!--step 2-->
-//        <batch:step id="convertToSCORFormat" next="calculateEPCEPSForSourcePLT">
-//            <batch:tasklet ref="convertToScorFormatTasklet"/>
-//        </batch:step>
-//
-//        <!--step 3-->
-//        <batch:step id="calculateEPCEPSForSourcePLT" next="conformPLT">
-//            <batch:tasklet ref="calculateEPCEPSForSourcePLTTasklet"/>
-//        </batch:step>
-//
-//        <!--step 4-->
-//        <batch:step id="conformPLT" next="adjustDefault">
-//            <batch:tasklet ref="conformPLTTasklet"/>
-//        </batch:step>
-//
-//        <!--&lt;!&ndash;step 5&ndash;&gt;-->
-//        <!--<batch:step id="adjustDefault" next="createThreadAndPersistPLT">-->
-//        <!--<batch:tasklet ref="adjustDefaultTasklet"/>-->
-//        <!--<batch:end on="*" />-->
-//        <!--<batch:fail on="FAILED" />-->
-//        <!--</batch:step>-->
-//
-//        <!--step 5-->
-//        <batch:step id="adjustDefault">
-//            <batch:tasklet ref="adjustDefaultTasklet"/>
-//            <batch:end on="*" />
-//            <batch:fail on="FAILED" />
-//        </batch:step>
-
 }

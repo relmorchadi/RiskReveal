@@ -1,13 +1,10 @@
 package com.scor.rr.service.fileBasedImport.batch;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.PLTLossData;
 import com.scor.rr.domain.enums.*;
 import com.scor.rr.repository.*;
-import com.scor.rr.util.PathUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.slf4j.Logger;
@@ -15,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
@@ -23,14 +19,12 @@ import sun.nio.ch.DirectBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
@@ -50,23 +44,21 @@ public class ConformPLTService {
     private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
     @Autowired
-    private SummaryStatisticsDetailRepository summaryStatisticsDetailRepository;
-
-    @Autowired
-    private RegionPerilRepository regionPerilRepository;
-
-    @Autowired
     private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
     @Autowired
-    private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
+    private CurrencyRepository currencyRepository;
 
-    private Gson gson = new Gson();
+    @Autowired
+    private ExchangerateRepository exchangerateRepository;
 
     private TransformationPackageNonRMS transformationPackage;
 
     public RepeatStatus conformPLT() throws Exception {
+
         log.debug("Start CONFORM_PLT");
+        Date startDate = new Date();
+
         for (TransformationBundleNonRMS bundle : transformationPackage.getBundles()) {
             // start new step (import progress) : step 4 CONFORM_PLT for this analysis in loop of many analysis :
             // only valid sourceResults after step 1 are converted to bundles
@@ -78,6 +70,7 @@ public class ConformPLTService {
 //            projectImportAssetLogA.setStartDate(startDate);
 //            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
             // --------------------------------------------------------------
+            // TODO logic here
 
             for (PLTBundleNonRMS pltBundle : bundle.getPltBundles()) {
                 makeConformedPurePLTHeader(pltBundle, bundle);
@@ -87,172 +80,144 @@ public class ConformPLTService {
 //            Date endDate = new Date();
 //            projectImportAssetLogA.setEndDate(endDate);
 //            projectImportAssetLogRepository.save(projectImportAssetLogA);
-            log.info("Finish import progress STEP 4 : CONFORM_PLT for RRAnalysis : {}", bundle.getRrAnalysis().getRrAnalysisId());
+            log.info("Finish import progress STEP 4 : CONFORM_PLT for RRAnalysis : {}", bundle.getRrAnalysis().getId());
         }
         return RepeatStatus.FINISHED;
     }
 
     public PltHeaderEntity makeConformedPurePLTHeader(PLTBundleNonRMS pltBundle, TransformationBundleNonRMS bundle) {
-        PltHeaderEntity originalPLT = pltBundle.getHeader(); // not saved yet
+
+        PltHeaderEntity originalPLT = pltBundle.getHeader();
         PltHeaderEntity conformedPLT = new PltHeaderEntity();
 
         // TODO a) source ccy --> target ccy
         conformedPLT.setPltHeaderId(originalPLT.getPltHeaderId());
-        conformedPLT.setLossDataFilePath(null);
-        conformedPLT.setLossDataFileName(null);
-//        conformedPLT.setPltStatisticList(null);
-//        conformedPLT.setPltGrouping(PLTGrouping.UnGrouped);
-//        conformedPLT.setPltInuring(PLTInuring.None);
-//        conformedPLT.setPltStatus(PLTStatus.Pending);
-//        conformedPLT.setInuringPackageDefinition(null);
-        conformedPLT.setPltSimulationPeriods(originalPLT.getPltSimulationPeriods());
+        conformedPLT.setPltLossDataFile(null);
+        conformedPLT.setPltStatisticList(null);
+        conformedPLT.setPltGrouping(PLTGrouping.UnGrouped);
+        conformedPLT.setPltInuring(PLTInuring.None);
+        conformedPLT.setPltStatus(PLTStatus.Pending);
+        conformedPLT.setInuringPackageDefinition(null);
+        // TODO how ???
+        conformedPLT.setPltSimulationPeriods(bundle.getSourceResult().getPltSimulationPeriods());
         conformedPLT.setPltType(PLTType.Pure.toString());
-        conformedPLT.setProjectId(originalPLT.getProjectId());
-        conformedPLT.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-        conformedPLT.setCurrencyCode(bundle.getRrAnalysis().getTargetCurrency());
-        conformedPLT.setTargetRAPId(originalPLT.getTargetRAPId());
-        conformedPLT.setRegionPerilId(originalPLT.getRegionPerilId());
-//        conformedPLT.setFinancialPerspective(originalPLT.getFinancialPerspective());
-//        conformedPLT.setAdjustmentStructure(null);
-//        conformedPLT.setCatAnalysisDefinition(null);
-//        conformedPLT.setSourcePLTHeader(null);
-//        conformedPLT.setSystemShortName(originalPLT.getSystemShortName());
-//        conformedPLT.setUserShortName(originalPLT.getUserShortName());
-        conformedPLT.setThreadName(originalPLT.getThreadName());
-//        conformedPLT.setTags(null);
+        conformedPLT.setProject(originalPLT.getProject());
+        conformedPLT.setRrRepresentationDatasetId(transformationPackage.getRrRepresentationDatasetId());
+        conformedPLT.setRrAnalysisId(bundle.getRrAnalysis().getId());
+        conformedPLT.setRrLossTableId(originalPLT.getRrLossTableId());
+        CurrencyEntity currency = currencyRepository.findByCode(bundle.getRrAnalysis().getTargetCurrency());
+        conformedPLT.setCurrency(currency);
+        conformedPLT.setTargetRap(originalPLT.getTargetRap());
+        conformedPLT.setRegionPeril(originalPLT.getRegionPeril());
+        conformedPLT.setFinancialPerspective(originalPLT.getFinancialPerspective());
+        conformedPLT.setAdjustmentStructure(null);
+        conformedPLT.setCatAnalysisDefinition(null);
+        conformedPLT.setSourcePLTHeader(null);
+        conformedPLT.setSystemShortName(originalPLT.getSystemShortName());
+        conformedPLT.setUserShortName(originalPLT.getUserShortName());
+        conformedPLT.setTags(null);
         conformedPLT.setCreatedDate(new Date());
-//        conformedPLT.setxActPublicationDate(null);
-//        conformedPLT.setxActUsed(false);
-//        conformedPLT.setxActAvailable(false);
-//        conformedPLT.setGeneratedFromDefaultAdjustment(false);
-//        conformedPLT.setUserSelectedGrain(bundle.getRrAnalysis().getGrain());
-//        conformedPLT.setExportedDPM(false);
+        conformedPLT.setxActPublicationDate(null);
+        conformedPLT.setxActUsed(false);
+        conformedPLT.setxActAvailable(false);
+        conformedPLT.setGeneratedFromDefaultAdjustement(false);
+        conformedPLT.setUserSelectedGrain(bundle.getRrAnalysis().getGrain());
+        conformedPLT.setExportedDPM(false);
+
         conformedPLT.setGeoCode(bundle.getRrAnalysis().getGeoCode());
         conformedPLT.setGeoDescription(bundle.getRrAnalysis().getGeoCode());
         conformedPLT.setPerilCode(bundle.getRrAnalysis().getPeril());
-//        conformedPLT.setEngineType(bundle.getRrAnalysis().getModel());
-//        conformedPLT.setInstanceId(bundle.getInstanceId());
-        conformedPLT.setImportSequence(importSequence.intValue());
+        conformedPLT.setEngineType(bundle.getRrAnalysis().getModel());
+        conformedPLT.setInstanceId(bundle.getInstanceId());
+        conformedPLT.setImportSequence(getImportSequence());
         conformedPLT.setSourceLossModelingBasis(originalPLT.getSourceLossModelingBasis());
         conformedPLT.setUdName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1.T0");
-        conformedPLT.setDefaultPltName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1");
-        pltHeaderRepository.save(conformedPLT);
+        conformedPLT.setPltName(bundle.getRrAnalysis().getRegionPeril() + "_" + bundle.getRrAnalysis().getFinancialPerspective() + "_LMF1");
+
 
         // TODO b) apply proportion and unit multiplier
         // TODO c) calculate EPC, EPS for conformed PLT
+        List<SummaryStatisticHeaderEntity> confRrStatisticHeaders = new ArrayList<>();
+        Map<AnalysisFinancialPerspective, Map<StatisticMetric, List<RREPCurve>>> fp2Metric2EPCurves = new HashMap<>();
+        Map<AnalysisFinancialPerspective, RRSummaryStatistic> fp2SumStat = new HashMap<>(); // ELTEPSummaryStatistic
+
         double proportion = bundle.getSourceResult().getProportion() == null ? 1: bundle.getSourceResult().getProportion().doubleValue() / 100;
         double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1: bundle.getSourceResult().getUnitMultiplier().doubleValue();
-        double exchangeRate = bundle.getRrAnalysis().getExchangeRate();
         log.info("Conforming EP curves and sum stats for conformedPLT {}, proportion {}, multiplier {}", conformedPLT.getPltHeaderId(), proportion, multiplier);
 
-        // only one - one : orig - conf SummaryStatisticHeaderEntity
-        LossDataHeaderEntity lossDataHeaderEntity = lossDataHeaderEntityRepository.findByModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-        SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeaderEntity.getLossDataHeaderId(),"PLT").get(0);
-        SummaryStatisticHeaderEntity confSummaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity();
-        confSummaryStatisticHeaderEntity.setCov(origSummaryStatisticHeaderEntity.getCov());
-        confSummaryStatisticHeaderEntity.setPurePremium(origSummaryStatisticHeaderEntity.getPurePremium() * proportion * multiplier * exchangeRate);
-        confSummaryStatisticHeaderEntity.setStandardDeviation(origSummaryStatisticHeaderEntity.getStandardDeviation() * proportion * multiplier * exchangeRate);
-        // todo calculate OEP, AEP 10 50 100 250 500 1000
-        summaryStatisticHeaderRepository.save(confSummaryStatisticHeaderEntity);
+        RRSummaryStatistic confSumStat = conformSummaryStatistic(originalPLT.getPltStatisticList().get(0).getStatisticData().getSummaryStatistic(), proportion, multiplier, bundle.getRrAnalysis().getExchangeRate()); // ELTEPSummaryStatistic
 
-        // List<AnalysisEpCurves> list : years of 1 metric --> write to file EPC
-        Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve = new HashMap<>();
-        List<EPCurveHeaderEntity> origEPCurveHeaderEntities = epCurveHeaderEntityRepository.findByLossDataId(lossDataHeaderEntity.getLossDataHeaderId());
-        List<EPCurveHeaderEntity> conformedEpCurvesHeaders = new ArrayList<>();
-        List<AnalysisEpCurves> confEPCurvesList = new ArrayList<>();
-        for (EPCurveHeaderEntity epCurveHeaderEntity : origEPCurveHeaderEntities) {
-            Type listType = new TypeToken<ArrayList<RREPCurve>>() {
-            }.getType();
-            List<AnalysisEpCurves> confEPCurves =
-                    conformELTEPCurves(
-                            gson.fromJson(epCurveHeaderEntity.getEPCurves(), listType),
-                            proportion,
-                            multiplier,
-                            exchangeRate);
-            confEPCurvesList.addAll(confEPCurves);
-            EPCurveHeaderEntity conformedEPCurvesHeader = EPCurveHeaderEntity.builder()
-                    .entity(epCurveHeaderEntity.getEntity())
-                    .lossDataType(epCurveHeaderEntity.getLossDataType())
-                    .statisticMetric(epCurveHeaderEntity.getStatisticMetric())
-                    .ePCurves(gson.toJson(confEPCurves))
-                    .lossDataId(conformedPLT.getPltHeaderId())
-                    .financialPerspective(epCurveHeaderEntity.getFinancialPerspective())
-                    .build();
-            conformedEpCurvesHeaders.add(conformedEPCurvesHeader);
+        Map<StatisticMetric, List<RREPCurve>> metricToEPCurve = new HashMap<>();
 
-            // SummaryStatisticsDetail
-            SummaryStatisticsDetail confRrStatisticDetail = new SummaryStatisticsDetail();
-            confRrStatisticDetail.setSummaryStatisticHeaderId(confSummaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
-            confRrStatisticDetail.setPltHeaderId(conformedPLT.getPltHeaderId());
-            confRrStatisticDetail.setLossType("PLT");
-            StatisticMetric metric = epCurveHeaderEntity.getStatisticMetric();
-            confRrStatisticDetail.setCurveType(metric.toString());
-            // todo fill 630 RP2, ..., RP 100000
-            summaryStatisticsDetailRepository.save(confRrStatisticDetail);
+        for (SummaryStatisticHeaderEntity rrStatisticHeader : originalPLT.getPltStatisticList()) {
+            RRFinancialPerspective fp = rrStatisticHeader.getFinancialPerspective();
+            StatisticMetric metric = rrStatisticHeader.getStatisticData().getStatisticMetric();
+            List<RREPCurve> confEPCurves = conformELTEPCurves(rrStatisticHeader.getStatisticData().getEpCurves(), proportion, multiplier, bundle.getRrAnalysis().getExchangeRate());
 
-            // put into a map to write to file
+            SummaryStatisticHeaderEntity confRrStatisticHeader = new SummaryStatisticHeaderEntity();
+//            mongoDBSequence.nextSequenceId(confRrStatisticHeader);
+            confRrStatisticHeader.setProjectId(getProjectId());
+            confRrStatisticHeader.setLossTableId(conformedPLT.getPltHeaderId());
+            confRrStatisticHeader.setLossDataType("PLT");
+            confRrStatisticHeader.setFinancialPerspective(fp.getCode());
+            confRrStatisticHeader.getStatisticData().setStatisticMetric(metric);
+            confRrStatisticHeader.getStatisticData().setSummaryStatistic(confSumStat);
+            confRrStatisticHeader.getStatisticData().setEpCurves(confEPCurves);
+
+            confRrStatisticHeaders.add(confRrStatisticHeader);
+
             metricToEPCurve.put(metric, confEPCurves);
         }
-        epCurveHeaderEntityRepository.saveAll(conformedEpCurvesHeaders);
+        conformedPLT.setPltStatisticList(confRrStatisticHeaders);
+        log.debug("conformed PLT id {} currency {}, ", conformedPLT.getPltHeaderId(), conformedPLT.getCurrency());
 
         // TODO d) write as bin file to ihub : DAT, EPC, EPS
-        // EPC file : write all 4 metrics into 1 file
-        RegionPerilEntity regionPerilEntity = regionPerilRepository.findById(conformedPLT.getRegionPerilId()).get();
+
         String epCurveFilename = makePLTEPCurveFilename(
                 conformedPLT.getCreatedDate(),
-                regionPerilEntity.getRegionPerilCode(),
-                "FP", // conformedPLT.getFinancialPerspective().getFullCode(),
-                conformedPLT.getCurrencyCode(),
+                conformedPLT.getRegionPeril().getRegionPerilCode(),
+                conformedPLT.getFinancialPerspective().getFullCode(),
+                conformedPLT.getCurrency().getCode(),
                 XLTOT.TARGET,
-                conformedPLT.getTargetRAPId(),
+                conformedPLT.getTargetRap().getTargetRapId(),
                 conformedPLT.getPltSimulationPeriods(),
                 PLTPublishStatus.PURE,
                 0, // pure PLT
                 conformedPLT.getPltHeaderId(),
                 getFileExtension());
 
-        BinFile pltEPCFile = writePLTEPCurves(metricToEPCurve, epCurveFilename);
-        conformedEpCurvesHeaders.forEach(epCurveHeaderEntity -> {
-            epCurveHeaderEntity.setEPCFilePath(pltEPCFile.getPath());
-            epCurveHeaderEntity.setEPCFileName(pltEPCFile.getFileName());
-        });
-
-        // EPS file : write all into 1 file : cov, pure premium, standard deviation
         String sumstatFilename = makePLTSummaryStatFilename(
                 conformedPLT.getCreatedDate(),
-                regionPerilEntity.getRegionPerilCode(), // conformedPLT.getRegionPeril().getRegionPerilCode(),
-                "FP",
-                conformedPLT.getCurrencyCode(),
+                conformedPLT.getRegionPeril().getRegionPerilCode(),
+                conformedPLT.getFinancialPerspective().getFullCode(),
+                conformedPLT.getCurrency().getCode(),
                 XLTOT.TARGET,
-                conformedPLT.getTargetRAPId(),
+                conformedPLT.getTargetRap().getTargetRapId(),
                 conformedPLT.getPltSimulationPeriods(),
                 PLTPublishStatus.PURE,
                 0, // pure PLT
-                conformedPLT.getPltHeaderId(),
+                conformedPLT.getId(),
                 getFileExtension());
-        BinFile pltEPSFile = writePLTSummaryStatistics(confSummaryStatisticHeaderEntity, sumstatFilename);
-        confSummaryStatisticHeaderEntity.setEPSFileName(pltEPSFile.getFileName());
-        confSummaryStatisticHeaderEntity.setEPSFilePath(pltEPSFile.getPath());
-        summaryStatisticHeaderRepository.save(confSummaryStatisticHeaderEntity);
+
+        writePLTEPCurves(metricToEPCurve, epCurveFilename);
+        writePLTSummaryStatistics(confSumStat, sumstatFilename);
 
         // DAT file
         //Loss data fle
         String filename = makePLTFileName(
                 conformedPLT.getCreatedDate(),
-                regionPerilEntity.getRegionPerilCode(), // conformedPLT.getRegionPeril().getRegionPerilCode(),
-                "FP", // conformedPLT.getFinancialPerspective().getCode()
-                conformedPLT.getCurrencyCode(),
+                conformedPLT.getRegionPeril().getRegionPerilCode(),
+                conformedPLT.getFinancialPerspective().getCode(),
+                conformedPLT.getCurrency().getCode(),
                 XLTOT.TARGET,
-                conformedPLT.getTargetRAPId(),
+                conformedPLT.getTargetRap().getTargetRapId(),
                 conformedPLT.getPltSimulationPeriods(),
                 PLTPublishStatus.PURE,
                 0, // pure PLT, no thread number
-                conformedPLT.getPltHeaderId(),
+                conformedPLT.getId(),
                 getFileExtension());
         File file = makeFullFile(getPrefixDirectory(), filename);
-//        conformedPLT.setPltLossDataFile(new BinFile(file));
-        conformedPLT.setLossDataFileName(file.getName());
-        conformedPLT.setLossDataFilePath(file.getPath());
+        conformedPLT.setPltLossDataFile(new BinFile(file));
 
         long pic = System.currentTimeMillis();
         List<PLTLossData> pltLossDataList = bundle.getPltLossDataList();
@@ -268,7 +233,19 @@ public class ConformPLTService {
         }
 
         // TODO e) persist conformed PLT into data base
-        pltHeaderRepository.save(conformedPLT);
+        conformedPLT.setPltStatisticList(confRrStatisticHeaders);
+        summaryStatisticHeaderRepository.save(confRrStatisticHeaders);
+        daoService.persistScorPLTHeader(conformedPLT); // todo
+
+        LossDataHeaderEntity rrLossTable = lossDataHeaderEntityRepository.findByRrAnalysisIdAndLossTableTypeAndFileDataFormatAndOriginalTarget(
+                bundle.getRrAnalysis().getId(),
+                "PLT",
+               "Treaty",
+                RRLossTableType.CONFORMED.toString());
+        if (rrLossTable != null) {
+            rrLossTable.setLossDataFile(new LossDataFile(file.getName(),file.getParent()));
+            lossDataHeaderEntityRepository.save(rrLossTable);
+        }
 
         log.info("Conformed PLT Header {}", conformedPLT.getPltHeaderId());
         return conformedPLT;
@@ -278,13 +255,18 @@ public class ConformPLTService {
         FileChannel out = null;
         MappedByteBuffer buffer = null;
         file = makeFullFile(getPrefixDirectory(), file.getName());
-        Comparator<PLTLossData> cmp = (o1, o2) -> new CompareToBuilder()
-                .append(o1.getSimPeriod(), o2.getSimPeriod())
-                .append(o1.getEventDate(), o2.getEventDate())
-                .append(o1.getEventId(), o2.getEventId())
-                .append(o1.getSeq(), o2.getSeq())
-                .toComparison();
-        list.sort(cmp);
+        Comparator<PLTLossData> cmp = new Comparator<PLTLossData>() {
+            @Override
+            public int compare(PLTLossData o1, PLTLossData o2) {
+                return new CompareToBuilder()
+                        .append(o1.getSimPeriod(), o2.getSimPeriod())
+                        .append(o1.getEventDate(), o2.getEventDate())
+                        .append(o1.getEventId(), o2.getEventId())
+                        .append(o1.getSeq(), o2.getSeq())
+                        .toComparison();
+            }
+        };
+        Collections.sort(list, cmp);
         try {
             int size = list.size() * 26;
             out = new RandomAccessFile(file, "rw").getChannel();
@@ -309,6 +291,14 @@ public class ConformPLTService {
         }
     }
 
+    private RRSummaryStatistic conformSummaryStatistic(RRSummaryStatistic input, double proportion, double multiplier, double exchangeRate) {
+        RRSummaryStatistic output = new RRSummaryStatistic();
+        output.setCov(input.getCov());
+        output.setPurePremium(input.getPurePremium() * proportion * multiplier * exchangeRate);
+        output.setStandardDeviation(input.getStandardDeviation() * proportion * multiplier * exchangeRate);
+        return output;
+    }
+
     private List<PLTLossData> conformPltLossData(List<PLTLossData> inputs, double proportion, double multiplier, double exchangeRate) {
         List<PLTLossData> outputs = new ArrayList<>();
 
@@ -324,21 +314,25 @@ public class ConformPLTService {
         return outputs;
     }
 
-    private List<AnalysisEpCurves> conformELTEPCurves(List<AnalysisEpCurves> inputs, double proportion, double multiplier, double exchangeRate) {
-        List<AnalysisEpCurves> outputs = new ArrayList<>();
-        for (AnalysisEpCurves input : inputs) {
-            AnalysisEpCurves output = new AnalysisEpCurves();
-
-            output.setExeceedanceProb(input.getExeceedanceProb());
-            output.setLoss(input.getLoss() * proportion * multiplier * exchangeRate);
-
-            output.setAnalysisId(input.getAnalysisId());
-            output.setEpTypeCode(input.getEpTypeCode());
-            output.setFinPerspCode(input.getFinPerspCode());
-
+    private List<RREPCurve> conformELTEPCurves(List<RREPCurve> inputs, double proportion, double multiplier, double exchangeRate) {
+        List<RREPCurve> outputs = new ArrayList<>();
+        for (RREPCurve input : inputs) {
+            RREPCurve output = new RREPCurve();
             outputs.add(output);
+
+            output.setExceedanceProbability(input.getExceedanceProbability());
+            output.setReturnPeriod(input.getReturnPeriod());
+            output.setLossAmount(input.getLossAmount() * proportion * multiplier * exchangeRate);
         }
         return outputs;
+    }
+
+    public DAOService getDaoService() {
+        return daoService;
+    }
+
+    public void setDaoService(DAOService daoService) {
+        this.daoService = daoService;
     }
 
     public TransformationPackageNonRMS getTransformationPackage() {
@@ -350,33 +344,18 @@ public class ConformPLTService {
     }
 
 
-    public BinFile writePLTEPCurves(Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve, String filename) {
+    public BinFile writePLTEPCurves(Map<StatisticMetric, List<RREPCurve>> metricToEPCurve, String filename) {
         File file = makeFullFile(getPrefixDirectory(), filename);
         return writePLTEPCurves(metricToEPCurve, file);
     }
 
-    // todo from BaseNonRMSBean
-    public File makeFullFile(String prefixDirectory, String filename) {
-        final Path fullPath = getIhubPath().resolve(prefixDirectory);
-        try {
-            Files.createDirectories(fullPath);
-        } catch (IOException e) {
-            log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
-        }
-        final File parent = fullPath.toFile();
-
-        File file = new File(parent, filename);
-        return file;
-    }
-
-    public BinFile writePLTEPCurves(Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve, File file) {
-        List<AnalysisEpCurves> curveAEP = metricToEPCurve.get(StatisticMetric.AEP);
-        List<AnalysisEpCurves> curveOEP = metricToEPCurve.get(StatisticMetric.OEP);
-        List<AnalysisEpCurves> curveTVarAEP = metricToEPCurve.get(StatisticMetric.TVAR_AEP);
-        List<AnalysisEpCurves> curveTVarOEP = metricToEPCurve.get(StatisticMetric.TVAR_OEP);
-        List<AnalysisEpCurves> curveEEF = metricToEPCurve.get(StatisticMetric.EEF);
-        List<AnalysisEpCurves> curveCEP = metricToEPCurve.get(StatisticMetric.CEP);
+    public BinFile writePLTEPCurves(Map<StatisticMetric, List<RREPCurve>> metricToEPCurve, File file) {
+        List<RREPCurve> curveAEP = metricToEPCurve.get(StatisticMetric.AEP);
+        List<RREPCurve> curveOEP = metricToEPCurve.get(StatisticMetric.OEP);
+        List<RREPCurve> curveTVarAEP = metricToEPCurve.get(StatisticMetric.TVAR_AEP);
+        List<RREPCurve> curveTVarOEP = metricToEPCurve.get(StatisticMetric.TVAR_OEP);
+        List<RREPCurve> curveEEF = metricToEPCurve.get(StatisticMetric.EEF);
+        List<RREPCurve> curveCEP = metricToEPCurve.get(StatisticMetric.CEP);
 
         int nCurveAEP = curveAEP == null ? 0 : curveAEP.size();
         int nCurveOEP = curveOEP == null ? 0 : curveOEP.size();
@@ -402,45 +381,45 @@ public class ConformPLTService {
             final short codeEEF = Integer.valueOf(20).shortValue();
             final short codeCEP = Integer.valueOf(21).shortValue();
             if (curveAEP != null) {
-                for (AnalysisEpCurves pltepCurve : curveAEP) {
+                for (RREPCurve pltepCurve : curveAEP) {
                     buffer.putShort(codeAEP);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
             if (curveOEP != null) {
-                for (AnalysisEpCurves pltepCurve : curveOEP) {
+                for (RREPCurve pltepCurve : curveOEP) {
                     buffer.putShort(codeOEP);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
             if (curveTVarAEP != null) {
-                for (AnalysisEpCurves pltepCurve : curveTVarAEP) {
+                for (RREPCurve pltepCurve : curveTVarAEP) {
                     buffer.putShort(codeAEPTCE);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
             if (curveTVarOEP != null) {
-                for (AnalysisEpCurves pltepCurve : curveTVarOEP) {
+                for (RREPCurve pltepCurve : curveTVarOEP) {
                     buffer.putShort(codeOEPTCE);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
             if (curveEEF != null) {
-                for (AnalysisEpCurves pltepCurve : curveEEF) {
+                for (RREPCurve pltepCurve : curveEEF) {
                     buffer.putShort(codeEEF);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
             if (curveCEP != null) {
-                for (AnalysisEpCurves pltepCurve : curveCEP) {
+                for (RREPCurve pltepCurve : curveCEP) {
                     buffer.putShort(codeCEP);
-                    buffer.putDouble(pltepCurve.getExeceedanceProb().doubleValue());
-                    buffer.putDouble(pltepCurve.getLoss());
+                    buffer.putDouble(pltepCurve.getExceedanceProbability());
+                    buffer.putDouble(pltepCurve.getLossAmount());
                 }
             }
         } catch (IOException e) {
@@ -473,12 +452,12 @@ public class ConformPLTService {
         ) == null;
     }
 
-    public BinFile writePLTSummaryStatistics(SummaryStatisticHeaderEntity summaryStatistics, String filename) {
+    public BinFile writePLTSummaryStatistics(RRSummaryStatistic summaryStatistics, String filename) {
         File file = makeFullFile(filename);
         return writePLTSummaryStatistics(summaryStatistics, file);
     }
 
-    public BinFile writePLTSummaryStatistics(SummaryStatisticHeaderEntity summaryStatistics, File file) { // PLTSummaryStatistic
+    public BinFile writePLTSummaryStatistics(RRSummaryStatistic summaryStatistics, File file) { // PLTSummaryStatistic
         FileChannel out=null;
         MappedByteBuffer buffer=null;
         try {
@@ -516,215 +495,5 @@ public class ConformPLTService {
         return file;
     }
 
-    @Value("${ihub.treaty.out.path}") // todo change it not ihub
-    private String filePath;
-
-    public Path getIhubPath() {
-        return Paths.get(filePath);
-    }
-
-    @Value("#{jobParameters['fileExtension']}")
-    private String fileExtension;
-
-    @Value("#{jobParameters['importSequence']}")
-    private Long importSequence;
-
-    @Value("#{jobParameters['contractId']}")
-    private String contractId;
-
-    @Value("#{jobParameters['projectId']}")
-    private Long projectId;
-
-    @Value("#{jobParameters['uwYear']}")
-    private Integer uwYear;
-
-    @Value("#{jobParameters['clientId']}")
-    private Long clientId;
-
-    @Value("#{jobParameters['reinsuranceType']}")
-    private String reinsuranceType;
-
-    @Value("#{jobParameters['prefix']}")
-    private String prefix;
-
-    @Value("#{jobParameters['clientName']}")
-    private String clientName;
-
-    @Value("#{jobParameters['division']}")
-    private String division;
-
-    @Value("#{jobParameters['sourceVendor']}")
-    private String sourceVendor;
-
-    @Value("#{jobParameters['modelSystemVersion']}")
-    private String modelSystemVersion;
-
-    @Value("#{jobParameters['periodBasis']}")
-    private String periodBasis;
-
-    public String getFileExtension() {
-        return fileExtension;
-    }
-
-    public void setFileExtension(String fileExtension) {
-        this.fileExtension = fileExtension;
-    }
-
-    public String getPrefixDirectory() {
-        return PathUtils.getPrefixDirectory(clientName, clientId, contractId, uwYear, projectId);
-    }
-
-    protected synchronized String makePLTSummaryStatFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
-        return makeTTFileName(
-                reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear.toString(),
-                XLTAssetType.PLT,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency,
-                projectId,
-                periodBasis,
-                XLTOrigin.INTERNAL,
-                XLTSubType.EPS,
-                xltot,
-                targetRapId,
-                simulationPeriod,
-                pltPublishStatus,
-                threadNum,
-                uniqueId,
-                importSequence,
-                fileExtension
-        );
-    }
-
-    public static String makeTTFileName(
-            String reinsuranceType,
-            String prefix,
-            String clientName,
-            String contractId,
-            String division,
-            String uwYear,
-            XLTAssetType XLTAssetType,
-            Date date,
-            String sourceVendor,
-            String modelSystemVersion,
-            String regionPeril,
-            String fp,
-            String currency,
-            Long projectId,
-            String periodBasis,
-            XLTOrigin origin,
-            XLTSubType subType,
-            XLTOT currencySource,
-            Long targetRapId,
-            Integer simulationPeriod,
-            PLTPublishStatus pltPublishStatus,
-            Integer threadNum, // 0 for pure PLT
-            Long uniqueId,
-            Long importSequence,
-            String fileExtension) {
-        return PathUtils.makeTTFileName(reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear,
-                XLTAssetType,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency != null ? currency : null,
-                projectId.toString(),
-                periodBasis,
-                origin,
-                subType,
-                currencySource,
-                targetRapId,
-                simulationPeriod,
-                pltPublishStatus,
-                threadNum, // 0 for pure PLT
-                uniqueId,
-                importSequence,
-                null,
-                null,
-                null,
-                fileExtension);
-    }
-
-    protected synchronized String makePLTEPCurveFilename(
-            Date date, String regionPeril, String fp, String currency, XLTOT xltot, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus, Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
-        return makeTTFileName(
-                reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear.toString(),
-                XLTAssetType.PLT,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency,
-                projectId,
-                periodBasis,
-                XLTOrigin.INTERNAL,
-                XLTSubType.EPC,
-                xltot,
-                targetRapId,
-                simulationPeriod,
-                pltPublishStatus,
-                threadNum,
-                uniqueId,
-                importSequence,
-                fileExtension
-        );
-    }
-
-    protected synchronized String makePLTFileName(
-            Date date, String regionPeril, String fp, String currency, XLTOT currencySource, Long targetRapId, Integer simulationPeriod, PLTPublishStatus pltPublishStatus,
-            Integer threadNum, // 0 for pure PLT
-            Long uniqueId, String fileExtension) {
-        return makeTTFileName(
-                reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear.toString(),
-                XLTAssetType.PLT,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency,
-                projectId,
-                periodBasis,
-                XLTOrigin.INTERNAL,
-                XLTSubType.DAT,
-                currencySource,
-                targetRapId,
-                simulationPeriod,
-                pltPublishStatus,
-                threadNum, // 0 for pure PLT
-                uniqueId,
-                importSequence,
-                fileExtension
-        );
-    }
 
 }

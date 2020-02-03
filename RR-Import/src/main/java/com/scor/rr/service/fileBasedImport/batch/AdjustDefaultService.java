@@ -1,20 +1,13 @@
 package com.scor.rr.service.fileBasedImport.batch;
 
-import com.scor.rr.domain.AdjustmentThread;
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.TargetRapEntity;
-import com.scor.rr.domain.dto.PLTBundle;
-import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.repository.TargetRapRepository;
-import com.scor.rr.service.state.TransformationBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,104 +28,76 @@ public class AdjustDefaultService {
 
     private TransformationPackageNonRMS transformationPackage;
 
-    public AdjustDefaultService(String batchRestHost, String batchRestPort, String batchRestDefAdj) {
+    public DefaultAdjuster(String batchRestHost, String batchRestPort, String batchRestDefAdj) {
         final URI uri = UriComponentsBuilder.newInstance().scheme("http").host(batchRestHost).port(Integer.parseInt(batchRestPort)).build().toUri();
         defAdjNonRMSURL = UriComponentsBuilder.fromUri(uri).path(batchRestDefAdj).build().toString();
     }
 
-    @Value(value = "${thread.creation.service}")
-    private String threadCreationURL;
-
-    @Value(value = "${thread.calculation.service}")
-    private String threadCalculationURL;
-
-    @Value(value = "${thread.calculation.service.aep}")
-    private String aEPMetricURL;
-
-    @Value(value = "${thread.calculation.service.oep}")
-    private String oEPMetricURL;
-
-    @Value(value = "${thread.calculation.service.aepTvAR}")
-    private String aEPTvARMetricURL;
-
-    @Value(value = "${thread.calculation.service.oepTvAR}")
-    private String oEPTvARMetricURL;
-
-    @Value(value = "${thread.calculation.service.summary}")
-    private String summaryStatURL;
-
 
 
     public RepeatStatus adjustDefault() throws Exception {
-        log.debug("Starting default adjustment");
+
+        log.debug("Start ADJUST_DEFAULT");
+//        Date startDate = new Date();
+
         for (TransformationBundleNonRMS bundle : transformationPackage.getBundles()) {
-            if (bundle.getPltBundles() != null) {
+            // start new step (import progress) : step 5 ADJUST_DEFAULT for this analysis in loop of many analysis :
+//            ProjectImportAssetLog projectImportAssetLogA = new ProjectImportAssetLog();
+//            mongoDBSequence.nextSequenceId(projectImportAssetLogA);
+//            projectImportAssetLogA.setProjectId(getProjectId());
+//            projectImportAssetLogA.setStepId(5);
+//            projectImportAssetLogA.setStepName(StepNonRMS.getStepNameFromStepIdForAnalysis(projectImportAssetLogA.getStepId()));
+//            projectImportAssetLogA.setStartDate(startDate);
+//            projectImportAssetLogA.setProjectImportLogId(bundle.getProjectImportLogAnalysisId());
+            // --------------------------------------------------------------
+
+//            if (bundle.getPltBundles() == null) {
+//                projectImportAssetLogA.getErrorMessages().add(String.format("ERROR no PLTs found", bundle.getRrAnalysis().getId()));
+//                Date endDate = new Date();
+//                projectImportAssetLogA.setEndDate(endDate);
+//                projectImportAssetLogRepository.save(projectImportAssetLogA);
+//                log.info("Finish import progress STEP 5 : ADJUST_DEFAULT for analysis: {}", bundle.getRrAnalysis().getId());
+//                continue;
+//            }
+
+            log.info("{} threads", bundle.getPltBundles().size());
+            for (PLTBundleNonRMS pltBundle : bundle.getPltBundles()) {
+                PltHeaderEntity pltHeader = pltBundle.getHeader();
+                TargetRapEntity targetRap = targetRapRepository.findById(pltHeader.getTargetRAPId()).get();
+
+                String projectId = pltHeader.getProjectId().toString();
+                String pltHeaderId = pltHeader.getPltHeaderId().toString();
+//                Long analysisId = bundle.getRmsAnalysis().getAnalysisId();
+//                String analysisName = bundle.getRmsAnalysis().getAnalysisName();
+                Long analysisId = bundle.getRrAnalysis().getAnalysisId();
+                String analysisName = bundle.getRrAnalysis().getAnalysisName();
+                Integer targetRapId = targetRap.getTargetRAPId().intValue();
+                String sourceConfigVendor = "NonRMS";
+
+                DefaultAdjustmentRequest defAdjRequest = new DefaultAdjustmentRequest(pltHeaderId);
+                defAdjRequest.setProjectId(projectId);
+                defAdjRequest.setAnalysisId(analysisId);
+                defAdjRequest.setAnalysisName(analysisName);
+//                defAdjRequest.setRdmId(rdmId);
+//                defAdjRequest.setRdmName(rdm);
+                defAdjRequest.setTargetRapId(targetRapId);
+
                 RestTemplate restTemplate = new RestTemplate();
-                for (PLTBundleNonRMS pltBundle : bundle.getPltBundles()) {
-                    if (!pltBundle.getPltError()) {
+                final Integer response = restTemplate.postForObject(defAdjNonRMSURL, null, Integer.class,
+                        projectId, pltHeaderId, "", "", "", "", targetRapId, sourceConfigVendor);
 
-                        HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
-                                new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));
-
-                        ResponseEntity<AdjustmentThread> response = restTemplate
-                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThread.class);
-
-                        if (response.getStatusCode().equals(HttpStatus.OK)) {
-                            AdjustmentThread adjustmentThread = response.getBody();
-
-                            if (adjustmentThread != null && adjustmentThread.getAdjustmentThreadId() != null) {
-
-                                HttpHeaders requestHeaders = new HttpHeaders();
-                                requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-                                HttpEntity<String> request = new HttpEntity<>(requestHeaders);
-
-                                UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
-                                        .queryParam("threadId", adjustmentThread.getAdjustmentThreadId());
-
-                                ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
-                                        .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
-
-                                if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
-                                    log.info("Calculation for thread has ended successfully");
-                                    //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
-                                } else {
-                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
-                                }
-                            }
-                            //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
-                        } else {
-                            log.error("An error has occurred {}", response.getStatusCodeValue());
-                        }
-                        this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
-                    }
-                }
-            } else {
-                log.error("ERROR : no PLTs were found");
+//                log.info("rdmName {}, rdmId {}, TargetRAP {} found, 100k-PLT {}", rdm, rdmId, targetRap.getTargetRapId(), pltHeader100k.getId());
+                log.info("Response from default adjustment: {}", response);
             }
+
+            // finis step 5 ADJUST_DEFAULT for one analysis in loop for of many analysis
+//            Date endDate = new Date();
+//            projectImportAssetLogA.setEndDate(endDate);
+//            projectImportAssetLogRepository.save(projectImportAssetLogA);
+            log.info("Finish import progress STEP 5 : ADJUST_DEFAULT for RRAnalysis : {}", bundle.getRrAnalysis().getRrAnalysisId());
         }
 
-        log.debug("Default adjustment completed");
         return RepeatStatus.FINISHED;
-    }
-
-    private void calculateSummaryStat(PltHeaderEntity pltHeader, RestTemplate restTemplate) {
-
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
-
-        HttpEntity<String> request = new HttpEntity<>(requestHeaders);
-
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(summaryStatURL)
-                .queryParam("pltId", pltHeader.getPltHeaderId());
-
-        ResponseEntity<SummaryStatisticHeaderEntity> response = restTemplate
-                .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, SummaryStatisticHeaderEntity.class);
-
-        if (response.getStatusCode().equals(HttpStatus.OK))
-            log.info("stats calculation has ended successfully for the PLT with Id {}", pltHeader.getPltHeaderId());
-        else
-            log.info("stats calculation has failed for the PLT with Id {}", pltHeader.getPltHeaderId());
     }
 
     public TransformationPackageNonRMS getTransformationPackage() {
