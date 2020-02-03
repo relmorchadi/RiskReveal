@@ -15,11 +15,9 @@ public class CarContractDto {
     private String carId;
     private Long projectId;
     private String carName;
-    private String carStatus;
     private String contractId;
-    private String contractName;
+    private String ContractName;
     private Long uwYear;
-    private String uwAnalysis;
     private String businessType;
     private String lob;
     private String client;

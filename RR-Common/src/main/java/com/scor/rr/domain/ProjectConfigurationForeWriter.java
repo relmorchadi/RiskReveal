@@ -23,6 +23,7 @@ public class ProjectConfigurationForeWriter {
                                           String carType,
                                           String carStatus,
                                           String carName,
+                                          String uwAnalysis,
                                           Date requestCreationDate,
                                           Integer requestCreationBy,
                                           String code,
@@ -32,6 +33,7 @@ public class ProjectConfigurationForeWriter {
         this.carType = carType;
         this.carStatus = carStatus;
         this.carName = carName;
+        this.uwAnalysis = uwAnalysis;
         this.lastUpdateDate = requestCreationDate;
         this.lastUpdateBy = requestCreationBy;
         this.requestCreationDate = requestCreationDate;
@@ -62,6 +64,9 @@ public class ProjectConfigurationForeWriter {
 
     @Column(name = "CARName")
     private String carName;
+
+    @Column(name = "UwAnalysis")
+    private String uwAnalysis;
 
     @Column(name = "AssignedTo")
     private Long assignedTo;
