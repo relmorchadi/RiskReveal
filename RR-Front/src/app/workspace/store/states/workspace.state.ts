@@ -111,7 +111,7 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static getSelectedProject(state: WorkspaceModel) {
+  static getSelectedProject(state: WorkspaceModel) : any{
     const wsIdentifier = state.currentTab.wsIdentifier;
     return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
   }
@@ -1041,7 +1041,7 @@ export class WorkspaceState {
 
   @Action(fromWS.DeleteEdmRdmAction)
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
-    this.riskLinkFacade.deleteEdmRdm(ctx, payload);
+    return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
   @Action(fromWS.LoadDivisionSelection)

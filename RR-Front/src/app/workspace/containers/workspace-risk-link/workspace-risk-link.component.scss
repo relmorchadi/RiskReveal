@@ -28,7 +28,8 @@
   .ant-dropdown-menu {
     margin-top: -4px;
     padding: 10px;
-
+    max-height: 250px;
+    overflow: auto;
     li {
       cursor: pointer;
 

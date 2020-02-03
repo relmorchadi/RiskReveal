@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
@@ -330,6 +332,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             analysisPortfolioByDivision.put(divisionNumber, data);
         });
         return analysisPortfolioByDivision;
+    }
+
+    @Override
+    public void deleteRlDataSource(Long rlDataSourceId) {
+        Integer status= rlModelDataSourceRepository.deleteRLModelDataSourceById(rlDataSourceId);
+        if(status == -1)
+            throw new RuntimeException("Failed delete for RL DataSource with ID : " + rlDataSourceId);
     }
 
     private List<RLAnalysisDto> findAnalysis(Long rdmId, String keyword) {
