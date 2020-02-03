@@ -56,7 +56,7 @@ export default {
         highlight: true,
         visible: true,
         edit: false
-      },/*
+      },/**
       {
         field: 'occurrenceBasis',
         header: 'Occurrence Basis',
@@ -67,19 +67,19 @@ export default {
         highlight: true,
         visible: true,
         edit: false
-      },*/
-      // {
-      //   field: 'targetRap',
-      //   header: 'Target RAP',
-      //   width: '180px',
-      //   type: 'text',
-      //   sorting: '',
-      //   filtered: true,
-      //   highlight: false,
-      //   visible: true,
-      //   edit: true
-      // },
-      /*{
+      },
+      {
+        field: 'targetRap',
+        header: 'Target RAP',
+        width: '180px',
+        type: 'text',
+        sorting: '',
+        filtered: true,
+        highlight: false,
+        visible: true,
+        edit: true
+      }, */
+      {
         field: 'targetRaps',
         header: 'PEQT',
         width: '80px',
@@ -88,8 +88,9 @@ export default {
         filtered: true,
         highlight: false,
         visible: true,
-        edit: false
-      },
+        edit: false,
+        canOverride: false
+      }, /**
       {
         field: 'unitMultiplier',
         header: 'Unit Multiplier',
@@ -329,7 +330,8 @@ export default {
         filtered: true,
         highlight: false,
         visible: true,
-        edit: false
+        edit: false,
+        canOverride: true
       },
       {
         field: 'unitMultiplier',

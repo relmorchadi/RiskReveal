@@ -34,4 +34,6 @@ public class RLImportedDataSourcesAndAnalysis {
     private String type;
     @Column(name = "ProjectId")
     private Long projectId;
+    @Column(name = "InstanceId")
+    private String instanceId;
 }

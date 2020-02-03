@@ -11,7 +11,6 @@ import {TableModule} from 'primeng/table';
 import {FacWidgetComponent} from './components/fac-widget/fac-widget.component';
 import {FacChartWidgetComponent} from './components/fac-chart-widget/fac-chart-widget.component';
 import {CalendarModule} from 'primeng/calendar';
-import {NgxEchartsModule} from 'ngx-echarts';
 import { FacSubsidiaryChartComponent } from './components/fac-subsidiary-chart/fac-subsidiary-chart.component';
 
 const routes = [
@@ -23,7 +22,6 @@ const routes = [
   declarations: [...CONTAINERS, SliderRightComponent, RenewalContractScopeComponent, FacWidgetComponent, FacChartWidgetComponent, FacSubsidiaryChartComponent],
   imports: [
     CalendarModule,
-    NgxEchartsModule,
     GridsterModule,
     MultiSelectModule,
     SharedModule,

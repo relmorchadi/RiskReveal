@@ -208,7 +208,7 @@ public class PathUtils {
                                          Integer threadId,
                                          Integer nodeId,
                                          String fileExtension) {
-        return PathUtils.makePLTFileName(workspaceEntity != null && workspaceEntity.getWorkspaceMarketChannel() != null && 2 == workspaceEntity.getWorkspaceMarketChannel() ? "F" : "T",
+        return PathUtils.makePLTFileName(workspaceEntity != null && workspaceEntity.getWorkspaceMarketChannel() != null && "FAC".equals(workspaceEntity.getWorkspaceMarketChannel()) ? "F" : "T",
                 null,
                 workspaceEntity != null ? workspaceEntity.getClientName() : null,
                 workspaceEntity != null ? workspaceEntity.getWorkspaceContextCode() : null,

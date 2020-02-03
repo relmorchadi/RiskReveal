@@ -68,12 +68,11 @@ public class ProjectService {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() -> {
-                            MarketChannelEntity marketChannelEntity = marketChannelRepository.findByMarketChannelCode("FAC");
                             WorkspaceEntity newWs = workspaceEntityRepository.save(
                                     new WorkspaceEntity(
                                             facNum,
                                             uwy,
-                                            marketChannelEntity != null ? marketChannelEntity.getMarketChannelId() : null,
+                                            "FAC",
                                             facNum, //FIXME: workspace name and client name - check with Shaun
                                             facNum));
                             return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId()));
@@ -86,7 +85,7 @@ public class ProjectService {
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() ->
                         contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(wsId, uwy)
-                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), null,
+                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), "TTY",
                                         targetContract.getWorkspaceName(),targetContract.getCedantName())))
                                 .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))

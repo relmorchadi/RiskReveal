@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.persistence.Entity;
 import java.util.Objects;
@@ -79,6 +81,7 @@ public class EventBasedAdjustmentParameter {
 
     @ManyToOne
     @JoinColumn(name = "AdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    @JsonBackReference
     public AdjustmentNode getAdjustmentNode() {
         return adjustmentNode;
     }

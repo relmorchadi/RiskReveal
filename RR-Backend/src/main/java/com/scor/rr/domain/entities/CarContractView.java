@@ -25,12 +25,16 @@ public class CarContractView {
     private Long projectId;
     @Column(name = "CarName")
     private String carName;
+    @Column(name = "CarStatus")
+    private String carStatus;
     @Column(name = "ContractId")
     private String contractId;
     @Column(name = "ContractName")
-    private String ContractName;
+    private String contractName;
     @Column(name = "UwYear")
     private Long uwYear;
+    @Column(name = "UwAnalysis")
+    private String uwAnalysis;
     @Column(name = "BusinessType")
     private String businessType;
     @Column(name = "Lob")

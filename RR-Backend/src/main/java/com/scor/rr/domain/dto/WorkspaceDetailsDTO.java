@@ -29,16 +29,11 @@ public class WorkspaceDetailsDTO {
     private Boolean isPinned;
     private String currency;
     private String contractDatasource;
-    private Long marketChannel;
+    private String marketChannel;
     private List<String> treatySections;
     private List<Integer> years;
     private List<ProjectCardView> projects;
-    private Integer expectedRegionPerils;
-    private Integer expectedExposureSummaries;
-    private Integer qualifiedPLTs;
-    private Integer expectedPublishedForPricing;
-    private Integer expectedPriced;
-    private Integer expectedAccumulation;
+
 
     public WorkspaceDetailsDTO(WorkspaceEntity workspaceEntity) {
         this.id = workspaceEntity.getWorkspaceContextCode();
@@ -49,7 +44,7 @@ public class WorkspaceDetailsDTO {
     }
 
 
-    public WorkspaceDetailsDTO(ContractSearchResult contract, Long marketChannel) {
+    public WorkspaceDetailsDTO(ContractSearchResult contract, String marketChannel) {
         this.id = contract.getId();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();

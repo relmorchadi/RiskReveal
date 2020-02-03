@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -33,4 +34,5 @@ public class RLAnalysisDetailedDto {
     private String regionName;
     private Long proportion = 100L;
     private Double unitMultiplier = 1.0d;
+    private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 }
