@@ -20,32 +20,24 @@ import java.util.Optional;
 @Component
 @Service
 public class CatRequestService {
-    private static final Logger log= LoggerFactory.getLogger(CatRequestService.class);
-
+    private static final Logger log = LoggerFactory.getLogger(CatRequestService.class);
+    private static final long CAR_ID_OFFSET = 100000;
     @Autowired
     private ProjectService projectService;
-
     @Autowired
     private UserRrRepository userRrRepository;
-
     @Autowired
     private SubsidiaryRepository subsidiaryRepository;
-
     @Autowired
     private ClientRepository clientRepository;
-
     @Autowired
     private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
-
     @Autowired
     private ProjectConfigurationForeWriterContractRepository projectConfigurationForeWriterContractRepository;
-
     @Autowired
     private ProjectConfigurationForeWriterDivisionRepository projectConfigurationForeWriterDivisionRepository;
 
-    private static final long CAR_ID_OFFSET = 100000;
-
-    public String createRequest(CatRequestData data){
+    public String createRequest(CatRequestData data) {
         log.debug("{}", data);
         final Date date = new Date();
 
@@ -76,7 +68,6 @@ public class CatRequestService {
                 CARType.FAC.getCode(),
                 CARStatus.NEW,
                 null,
-                data.uwAnalysisName,
                 date,
                 1, //FIXME: check with SHAUN: data.userFN + " " + data.userLN
                 null,
@@ -105,8 +96,9 @@ public class CatRequestService {
                 clientEntity != null ? clientEntity.getClientshortname() : data.insurNumber.toString(),
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
                 data.lob,
-                data.sector
-                ));
+                data.sector,
+                data.uwAnalysisName
+        ));
 
 
         data.divisions.forEach(division -> projectConfigurationForeWriterDivisionRepository.save(new ProjectConfigurationForeWriterDivision(1,
@@ -125,7 +117,7 @@ public class CatRequestService {
         final Integer endorsementNumber;
         final String facNumber;
         final Integer insurNumber;
-        final String  label;
+        final String label;
         final String lob;
         final Integer order;
         final String sector;
@@ -160,7 +152,7 @@ public class CatRequestService {
         }
     }
 
-    public static class CatRequestDivision{
+    public static class CatRequestDivision {
         final String currency;
         final String coverageType;
         final String lob;
