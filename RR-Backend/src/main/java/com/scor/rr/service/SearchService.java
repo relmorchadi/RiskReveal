@@ -172,14 +172,14 @@ public class SearchService {
 
         //FAC
 
-        facSearchCountMapper(FacTableNames.CLIENT, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.UW_YEAR, facUWYearCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.CONTRACT_CODE, facContractCodeCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.CONTRACT_NAME, facContractNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.UW_ANALYSIS, facUwAnalysisCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.CAREQUEST_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper(FacTableNames.ASSIGNED_TO, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CLIENT, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_YEAR, facUWYearCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_CODE, facContractCodeCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_NAME, facContractNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_ANALYSIS, facUwAnalysisCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAREQUEST_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.ASSIGNED_TO, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
     }
 
     public Page<TreatyView> getTreaty(String keyword, int size) {
@@ -197,17 +197,6 @@ public class SearchService {
 
     public Page<WorkspaceYears> getWorkspaceYear(String keyword, int size) {
         return workspaceYearsRepository.findByLabelLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
-    }
-
-    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-        String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
-        String countQueryString = queryHelper.generateCountQuery(filter);
-        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-        Query countQuery = entityManager.createNativeQuery(countQueryString);
-        List<Object[]> resultList = resultsQuery.getResultList();
-        Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
     }
 
     public SearchCountResult countInWorkspace(TreatyTableNames table, String keyword, int size) {
@@ -342,7 +331,7 @@ public class SearchService {
         return this.searchCount(facSearchCountMapper, tables, keyword, size);
     }
 
-    public SearchCountResult searchCount(Map<TreatyTableNames, BiFunction<String, Pageable, Page>> jpaFunctions, TreatyTableNames table, String keyword, int size) {
+    public SearchCountResult searchCount(Map<?, BiFunction<String, Pageable, Page>> jpaFunctions, TreatyTableNames table, String keyword, int size) {
         return new SearchCountResult(ofNullable(jpaFunctions.get(table))
                 .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
