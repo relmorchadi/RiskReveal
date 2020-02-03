@@ -237,15 +237,16 @@ public class ConformPLTService {
         summaryStatisticHeaderRepository.save(confRrStatisticHeaders);
         daoService.persistScorPLTHeader(conformedPLT); // todo
 
-        LossDataHeaderEntity rrLossTable = lossDataHeaderEntityRepository.findByRrAnalysisIdAndLossTableTypeAndFileDataFormatAndOriginalTarget(
-                bundle.getRrAnalysis().getId(),
-                "PLT",
-               "Treaty",
-                RRLossTableType.CONFORMED.toString());
-        if (rrLossTable != null) {
-            rrLossTable.setLossDataFile(new LossDataFile(file.getName(),file.getParent()));
-            lossDataHeaderEntityRepository.save(rrLossTable);
-        }
+        // rrLossTable non rms : SOURCE, never CONFORMED so file always text from 1st step
+//        LossDataHeaderEntity rrLossTable = lossDataHeaderEntityRepository.findByRrAnalysisIdAndLossTableTypeAndFileDataFormatAndOriginalTarget(
+//                bundle.getRrAnalysis().getId(),
+//                "PLT",
+//               "Treaty",
+//                RRLossTableType.CONFORMED.toString());
+//        if (rrLossTable != null) {
+//            rrLossTable.setLossDataFile(new LossDataFile(file.getName(),file.getParent()));
+//            lossDataHeaderEntityRepository.save(rrLossTable);
+//        }
 
         log.info("Conformed PLT Header {}", conformedPLT.getPltHeaderId());
         return conformedPLT;

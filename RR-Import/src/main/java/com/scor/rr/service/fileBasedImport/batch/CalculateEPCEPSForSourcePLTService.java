@@ -1,11 +1,11 @@
 package com.scor.rr.service.fileBasedImport.batch;
 
+import com.google.common.collect.Ordering;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.PLTLossData;
 import com.scor.rr.domain.enums.RRLossTableType;
 import com.scor.rr.domain.enums.StatisticMetric;
-import com.scor.rr.repository.LossDataHeaderEntityRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderRepository;
+import com.scor.rr.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -32,6 +32,14 @@ public class CalculateEPCEPSForSourcePLTService {
     @Autowired
     private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
+    @Autowired
+    private SummaryStatisticsDetailRepository summaryStatisticsDetailRepository;
+
+    @Autowired
+    private EPCurveHeaderEntityRepository epCurveHeaderEntityRepository;
+
+    @Autowired
+    private DefaultReturnPeriodRepository defaultReturnPeriodRepository;
 //    @Autowired
 //    private DAOService daoService;
 
@@ -45,12 +53,12 @@ public class CalculateEPCEPSForSourcePLTService {
             return;
         }
         MathContext mc = MathContext.DECIMAL64;
-        List<DefaultReturnPeriodEntity> defaultRPS = daoService.findDefaultReturnPeriods();
+        List<DefaultReturnPeriodEntity> defaultRPS = defaultReturnPeriodRepository.findAll();
         epRPMap = new HashMap<>(defaultRPS.size());
         rpEPMap = new HashMap<>(defaultRPS.size());
         for (DefaultReturnPeriodEntity drp : defaultRPS) {
-            epRPMap.put(new BigDecimal(drp.getExcedanceProbability(), mc).setScale(5, RoundingMode.HALF_UP).stripTrailingZeros(), drp.getReturnPeriod());
-            rpEPMap.put(drp.getReturnPeriod(), drp.getExcedanceProbability());
+            epRPMap.put(new BigDecimal(drp.getExceedanceProbability(), mc).setScale(5, RoundingMode.HALF_UP).stripTrailingZeros(), drp.getReturnPeriod());
+            rpEPMap.put(drp.getReturnPeriod(), drp.getExceedanceProbability());
         }
     }
 
@@ -76,9 +84,9 @@ public class CalculateEPCEPSForSourcePLTService {
 
             for (PLTBundleNonRMS pltBundleNonRMS : pltBundleNonRMSList) {
                 PltHeaderEntity pltHeader = pltBundleNonRMS.getHeader();
-                if (pltHeader.getId() == null) {
-                    daoService.getMongoDBSequence().nextSequenceId(pltHeader);
-                }
+//                if (pltHeader.getPltHeaderId() == null) {
+//                    daoService.getMongoDBSequence().nextSequenceId(pltHeader);
+//                }
 
                 // create RRLossTable
                 LossDataHeaderEntity rrLossTable = new LossDataHeaderEntity();
@@ -86,66 +94,89 @@ public class CalculateEPCEPSForSourcePLTService {
 //                rrLossTable.setProjectId(getProjectId());
 //                rrLossTable.setRrRepresentationDatasetId(transformationPackage.getRrRepresentationDatasetId());
                 rrLossTable.setModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-                rrLossTable.setLossTableType("PLT");
+                rrLossTable.setLossTableType("PLT"); // non rms so PLT
                 rrLossTable.setFileDataFormat("Treaty");
                 rrLossTable.setOriginalTarget(RRLossTableType.SOURCE.toString());
-                if (pltHeader.getPltLossDataFile() != null) {
-                    rrLossTable.setLossDataFile(new LossDataFile(pltHeader.getPltLossDataFile().getFileName(), pltHeader.getPltLossDataFile().getPath()));
+                if (pltHeader.getLossDataFileName() != null) {
+//                    rrLossTable.setLossDataFile(new LossDataFile(pltHeader.getPltLossDataFile().getFileName(), pltHeader.getPltLossDataFile().getPath()));
+                    rrLossTable.setLossDataFileName(pltHeader.getLossDataFileName());
+                    rrLossTable.setLossDataFilePath(pltHeader.getLossDataFilePath());
                 }
 
 
-                RRFinancialPerspective rrFinancialPerspective = null;
-                if (bundle.getRrAnalysis().getFinancialPerspective() != null) {
-                    rrFinancialPerspective = new RRFinancialPerspective(bundle.getRrAnalysis().getSourceModellingVendor(),
-                            bundle.getRrAnalysis().getSourceModellingSystem(),
-                            bundle.getRrAnalysis().getSourceModellingSystemVersion() != null ? bundle.getRrAnalysis().getSourceModellingSystemVersion().toString() : null,
-                            bundle.getRrAnalysis().getFinancialPerspective());
-                }
+                // todo no need ?
+//                RRFinancialPerspective rrFinancialPerspective = null;
+//                if (bundle.getRrAnalysis().getFinancialPerspective() != null) {
+//                    rrFinancialPerspective = new RRFinancialPerspective(bundle.getRrAnalysis().getSourceModellingVendor(),
+//                            bundle.getRrAnalysis().getSourceModellingSystem(),
+//                            bundle.getRrAnalysis().getSourceModellingSystemVersion() != null ? bundle.getRrAnalysis().getSourceModellingSystemVersion().toString() : null,
+//                            bundle.getRrAnalysis().getFinancialPerspective());
+//                }
 
-                rrLossTable.setFinancialPerspective(rrFinancialPerspective);
+//                rrLossTable.setFinancialPerspective(rrFinancialPerspective);
                 rrLossTable.setCurrency(bundle.getRrAnalysis().getSourceCurrency()); //  source currency
-                rrLossTable.setRegionPeril(bundle.getRrAnalysis().getRegionPeril());
-                rrLossTable.setExchangeRate(1.0);
-                rrLossTable.setProportion(bundle.getRrAnalysis().getProportion());
-                rrLossTable.setUnitsMultiplier(bundle.getRrAnalysis().getUnitMultiplier());
-                rrLossTable.setUserSelectedGrain(bundle.getRrAnalysis().getGrain());
+//                rrLossTable.setRegionPeril(bundle.getRrAnalysis().getRegionPeril());
+//                rrLossTable.setExchangeRate(1.0);
+//                rrLossTable.setProportion(bundle.getRrAnalysis().getProportion());
+//                rrLossTable.setUnitsMultiplier(bundle.getRrAnalysis().getUnitMultiplier());
+//                rrLossTable.setUserSelectedGrain(bundle.getRrAnalysis().getGrain());
+                lossDataHeaderEntityRepository.save(rrLossTable);
 
-                RRSummaryStatistic summaryStatistic = new RRSummaryStatistic(); // PLT
+//                RRSummaryStatistic summaryStatistic = new RRSummaryStatistic(); // PLT
                 Map<StatisticMetric, List<RREPCurve>> metricToEPCurve = new HashMap<>();
 
+                SummaryStatisticHeaderEntity summaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity(); // PLT
+                summaryStatisticHeaderEntity.setLossDataId(rrLossTable.getLossDataHeaderId());
+                summaryStatisticHeaderEntity.setLossDataType("PLT"); // non rms : all is PTL
+                summaryStatisticHeaderEntity.setFinancialPerspective("FP");
+                summaryStatisticHeaderEntity.setCurrency(rrLossTable.getCurrency());
+                // todo fill other data
+                summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+
                 log.debug("runCalculationForLosses for ptlHearer id {} - {} simulation periods", pltHeader.getPltHeaderId(), pltHeader.getPltSimulationPeriods());
-                runCalculationForLosses(pltHeader.getPltSimulationPeriods(), bundle.getPltLossDataList(), epRPMap, rpEPMap, summaryStatistic, metricToEPCurve);
+                runCalculationForLosses(pltHeader.getPltSimulationPeriods(), bundle.getPltLossDataList(), epRPMap, rpEPMap, summaryStatisticHeaderEntity, metricToEPCurve);
 
                 List<SummaryStatisticHeaderEntity> rrStatisticHeaderList = new ArrayList<>();
-                List<String> rrStatisticHeaderIdsList = new ArrayList<>();
+//                List<String> rrStatisticHeaderIdsList = new ArrayList<>();
 
                 for (Map.Entry<StatisticMetric, List<RREPCurve>> entry : metricToEPCurve.entrySet()) {
-                    SummaryStatisticHeaderEntity rrStatisticHeader = new SummaryStatisticHeaderEntity();
-                    daoService.getMongoDBSequence().nextSequenceId(rrStatisticHeader);
-                    rrStatisticHeader.setProjectId(getProjectId());
-                    rrStatisticHeader.setLossDataType(RRStatisticHeader.STAT_DATA_TYPE_PLT);
-                    rrStatisticHeader.setLossTableId(rrLossTable.getId());
-                    rrStatisticHeader.getStatisticData().setSummaryStatistic(summaryStatistic);
-                    rrStatisticHeader.getStatisticData().setStatisticMetric(entry.getKey());
-                    rrStatisticHeader.getStatisticData().setEpCurves(entry.getValue());
-                    rrStatisticHeader.setFinancialPerspective(rrLossTable.getFinancialPerspective());
-                    rrStatisticHeaderList.add(rrStatisticHeader);
-                    rrStatisticHeaderIdsList.add(rrStatisticHeader.getId());
+                    SummaryStatisticsDetail summaryStatisticsDetail = new SummaryStatisticsDetail();
+//                    daoService.getMongoDBSequence().nextSequenceId(rrStatisticHeader);
+//                    rrStatisticHeader.setProjectId(getProjectId());
+                    summaryStatisticsDetail.setSummaryStatisticHeaderId(summaryStatisticsDetail.getSummaryStatisticHeaderId());
+                    summaryStatisticsDetail.setPltHeaderId(null); // todo no need SummaryStatisticsDetail for LossDataHeader ?
+                    summaryStatisticsDetail.setLossType("PLT");
+                    summaryStatisticsDetail.setCurveType(entry.getKey().toString());
+//                    rrStatisticHeader.getStatisticData().setSummaryStatistic(summaryStatistic);
+//                    rrStatisticHeader.getStatisticData().setStatisticMetric(entry.getKey());
+//                    rrStatisticHeader.getStatisticData().setEpCurves(entry.getValue());
+//                    rrStatisticHeader.setFinancialPerspective(rrLossTable.getFinancialPerspective());
+//                    rrStatisticHeaderList.add(rrStatisticHeader);
+//                    rrStatisticHeaderIdsList.add(rrStatisticHeader.getId());
+                    summaryStatisticsDetailRepository.save(summaryStatisticsDetail);
+
+                    EPCurveHeaderEntity epCurveHeaderEntity = new EPCurveHeaderEntity(); // PLT
+                    epCurveHeaderEntity.setLossDataId(rrLossTable.getLossDataHeaderId());
+                    epCurveHeaderEntity.setFinancialPerspective("FP");
+                    epCurveHeaderEntity.setLossDataType("PLT");
+                    epCurveHeaderEntity.setStatisticMetric(entry.getKey());
+                    epCurveHeaderEntityRepository.save(epCurveHeaderEntity);
                 }
 
-                pltHeader.setPltStatisticList(rrStatisticHeaderList);
+//                pltHeader.setPltStatisticList(rrStatisticHeaderList);
 
-                List<StatFile> statFiles = new ArrayList<>();
+//                List<StatFile> statFiles = new ArrayList<>();
+//
+//                StatFile statFile = new StatFile();
+//                statFile.setFinancialPerspective(rrFinancialPerspective);
+//                statFile.setStatisticHeaders(rrStatisticHeaderIdsList);
+//                statFiles.add(statFile);
+//                rrLossTable.setStatFiles(statFiles);
+                // todo do other thing to save gain ?
+//                lossDataHeaderEntityRepository.save(rrLossTable);
+//                summaryStatisticHeaderRepository.saveAll(rrStatisticHeaderList);
 
-                StatFile statFile = new StatFile();
-                statFile.setFinancialPerspective(rrFinancialPerspective);
-                statFile.setStatisticHeaders(rrStatisticHeaderIdsList);
-                statFiles.add(statFile);
-                rrLossTable.setStatFiles(statFiles);
-                lossDataHeaderEntityRepository.save(rrLossTable);
-                summaryStatisticHeaderRepository.save(rrStatisticHeaderList);
-
-                pltHeader.setRrLossTableId(rrLossTable.getLossDataHeaderId());
+//                pltHeader.setRrLossTableId(rrLossTable.getLossDataHeaderId());
             }
 
             // finis step 3 CALCULATE_EPC_EPS_FOR_SOURCE_PLT for one analysis in loop for of many analysis
@@ -154,16 +185,24 @@ public class CalculateEPCEPSForSourcePLTService {
 //            projectImportAssetLogRepository.save(projectImportAssetLogA);
             log.info("Finish import progress STEP 3 : CALCULATE_EPC_EPS_FOR_SOURCE_PLT for RRAnalysis : {}", bundle.getRrAnalysis().getRrAnalysisId());
         }
-
-
         return RepeatStatus.FINISHED;
     }
 
+    public static <T extends Comparable> Boolean isSortedReversely(List<T> list) {
+        if (list == null || list.size() == 0) {
+            return true;
+        }
+        return Ordering.natural().reverse().isOrdered(list);
+    }
+
+    public static <T> void sortReverse(List<T> list) {
+        Collections.sort(list, Collections.<T>reverseOrder());
+    }
 
     public void runCalculationForLosses(int nYears, List<PLTLossData> sortedLossData, Map<BigDecimal, Integer> epRPMap, Map<Integer, Double> rpEPMap, SummaryStatisticHeaderEntity pltSummaryStatistic, Map<StatisticMetric, List<RREPCurve>> metricToEPCurve) {
-        if (!TransformationUtils.isSortedReversely(sortedLossData)) {
+        if (!isSortedReversely(sortedLossData)) {
             log.info("Resorting data due to float conversion");
-            TransformationUtils.sortReverse(sortedLossData);
+            sortReverse(sortedLossData);
         }
 
         MathContext mc = MathContext.DECIMAL64;
@@ -248,10 +287,6 @@ public class CalculateEPCEPSForSourcePLTService {
                     curvesEEF.add(new RREPCurve(rpEEF, rpEPMap.get(rpEEF), lossEEF));
                 }
             }
-            // TODO - remove - test
-//            Double lossEEF = lossesEEF.get(i);
-//            Double rpEEF = 1d / epEEF.doubleValue();
-//            curvesEEF.add(new PLTEPCurve(rpEEF.intValue(), epEEF.doubleValue(), lossEEF));
 
             // CEP
             if (i < nLossesEEF) {
@@ -271,12 +306,6 @@ public class CalculateEPCEPSForSourcePLTService {
                     // OEP-TCE
                     curvesOEPTCE.add(new RREPCurve(rpEEF, rpEPMap.get(rpEEF), lossOEPTCE / rank)); // PLTEPC
                 }
-
-                // TODO - test - remove
-//                Double lossOEP = lossesOEP.get(i);
-//                lossOEPTCE += lossOEP;
-//                curvesOEP.add(new PLTEPCurve(rpEEF.intValue(), epEEF.doubleValue(), lossOEP));
-//                curvesOEPTCE.add(new PLTEPCurve(rpEEF.intValue(), epEEF.doubleValue(), 1d * lossOEPTCE / rank));
             }
 
             if (i < nLossesAEP) {
@@ -288,13 +317,6 @@ public class CalculateEPCEPSForSourcePLTService {
                     // AEP-TCE
                     curvesAEPTCE.add(new RREPCurve(rpEEF, rpEPMap.get(rpEEF), lossAEPTCE / rank)); // PLTEPC
                 }
-
-//                // TODO - test - remove
-//                Double lossAEP = lossesAEP.get(i);
-//                lossAEPTCE += lossAEP;
-//                curvesAEP.add(new PLTEPCurve(rpEEF.intValue(), epEEF.doubleValue(), lossAEP));
-//                curvesAEPTCE.add(new PLTEPCurve(rpEEF.intValue(), epEEF.doubleValue(), 1d * lossAEPTCE / rank));
-
                 aalSum = aalSum.add(BigDecimal.valueOf(lossAEP).subtract(purePremium, mc).pow(2, mc), mc);
             }
         }
@@ -315,8 +337,9 @@ public class CalculateEPCEPSForSourcePLTService {
         metricToEPCurve.put(StatisticMetric.AEP, curvesAEP);
         metricToEPCurve.put(StatisticMetric.TVAR_OEP, curvesOEPTCE);
         metricToEPCurve.put(StatisticMetric.TVAR_AEP, curvesAEPTCE);
-        metricToEPCurve.put(StatisticMetric.EEF, curvesEEF);
-        metricToEPCurve.put(StatisticMetric.CEP, curvesCEP);
+        // activate after
+//        metricToEPCurve.put(StatisticMetric.EEF, curvesEEF);
+//        metricToEPCurve.put(StatisticMetric.CEP, curvesCEP);
     }
 
     public TransformationPackageNonRMS getTransformationPackage() {
