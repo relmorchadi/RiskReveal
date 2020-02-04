@@ -173,7 +173,7 @@ export class DashboardState implements NgxsOnInit {
         const dataFilters = {
             filterConfig: payload || {},
             pageNumber: 0,
-            size: 50,
+            size: 1000,
             sortConfig: []
         };
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(

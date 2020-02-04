@@ -9,7 +9,6 @@
          [columnResizeMode]="'expand'"
          [scrollable]="true"
          [scrollHeight]="tableHeight"
-         [responsive]="false"
          (onColResize)="resize($event)"
          class="table-ngPrime"
          scrollIndicator
@@ -27,18 +26,22 @@
           {{col?.header}}
           <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
             <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-               (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+               (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
             <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-               (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-            <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
-               style="font-size: 1.4em;"></i>
+               (click)="sortChange(col?.field,sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
+            <i *ngSwitchDefault class="icon-direction" style="font-size: 1.4em;"
+               (click)="sortChange(col?.field,sortData[col.field], col.columnId)"></i>
           </ng-container>
         </span>
         <!--        (input)="filterCol($event.target.value, col?.filterParam)"-->
         <div class="search-bar-table" *ngIf="col?.filtered">
           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-          <input *ngIf="col?.header?.length > 0" pInputText type="text"
-                 (input)="filter(col?.field, $event.target.value)" [ngModel]="FilterData[col?.field]">
+          <input *ngIf="col?.header?.length > 0 && fromSearch" pInputText type="text"
+                 (input)="filter(col?.field, $event.target.value, col.columnId)"
+                 [ngModel]="FilterData[col?.field]">
+          <input *ngIf="col?.header?.length > 0 && !fromSearch" pInputText type="text"
+                 (input)="filter(col?.field, $event.target.value, col.columnId)"
+                 [ngModel]="col?.filterCriteria">
         </div>
       </th>
     </tr>

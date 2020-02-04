@@ -28,19 +28,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   selectedDashboard: any;
   searchMode = 'Treaty';
 
-  newCols: any;
-  inProgressCols: any;
-  archivedCols: any;
-
-  immutableNew: any;
-  immutableInProgress: any;
-  immutableArchive: any;
+  immutableCols: any;
 
   manageNewPopUp = false;
   manageInProgressPopUp = false;
   manageArchivedPopUp = false;
 
-  dashboardsMockData = [];
   tabs = [1, 2, 3];
   idSelected: number;
   idTab = 0;
@@ -56,8 +49,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   @Select(DashboardState.getRefData) refWidget$;
 
   dashboards: any;
-  dashboardCopy: any;
   refWidget: any;
+  editedWidget: any;
 
   newFacCars: any;
   inProgressFacCars: any;
@@ -177,12 +170,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.setTabValue();
   }
 
-  resetImmutable() {
-/*    this.immutableNew = [...this.newCols];
-    this.immutableInProgress = [...this.inProgressCols];
-    this.immutableArchive = [...this.archivedCols];*/
-  }
-
   dataParam(data) {
     return _.sortBy(_.map(data, item => {
       return {...item, carRequestId: _.toInteger(_.split(item.carRequestId, '-')[1])}
@@ -225,16 +212,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   updateDashboardAction(payload) {
     const {dashboardId, updatedDashboard} = payload;
-    this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(
-        tap(data => {
-          const frontData = {
-            ...updatedDashboard,
-            name: updatedDashboard.dashboardName
-          };
-          this.dashboards = _.map(this.dashboards, item => {
-            return item.id === dashboardId ? _.merge({}, item, frontData) : item;
-          });
-        }),
+    const frontData = {
+      ...updatedDashboard,
+      name: updatedDashboard.dashboardName
+    };
+    this.dashboards = _.map(this.dashboards, item => {
+      return item.id === dashboardId ? _.merge({}, item, frontData) : item;
+    });
+    this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
         catchError(err => {
           return of();
         })
@@ -336,20 +321,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }*/
   }
 
-  openPopUp(event) {
-    switch (event) {
-      case 'newCar':
-        this.manageNewPopUp = true;
-        break;
-      case 'inProgressCar':
-        this.manageInProgressPopUp = true;
-        break;
-      case 'archivedCar':
-        this.manageArchivedPopUp = true;
-        break;
-    }
-  }
-
   changeWidgetHeight(widgetItem, position) {
     const resizedWidget = _.find(this.selectedDashboard.widgets, item => item.id === widgetItem.widgetId);
 
@@ -367,24 +338,50 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       widgetId: resizedWidget.widgetId
     };
 
-     this.updateWidgetsDataAction({updatedWidget: newPosition, updatedDash: null})
+    this.updateWidgetsDataAction({updatedWidget: newPosition, updatedDash: null})
+  }
+
+  openPopUp(event) {
+    const {scope, widgetCol, widgetId} = event;
+    switch (scope) {
+      case 'newCar':
+        this.manageNewPopUp = true;
+        this.immutableCols = [...widgetCol];
+        break;
+      case 'inProgressCar':
+        this.manageInProgressPopUp = true;
+        this.immutableCols = [...widgetCol];
+        break;
+      case 'archivedCar':
+        this.manageArchivedPopUp = true;
+        this.immutableCols = [...widgetCol];
+        break;
+    }
+    this.editedWidget = _.find(this.selectedDashboard.widgets , item => item.id === widgetId)
   }
 
   closePopUp() {
     this.manageNewPopUp = false;
     this.manageInProgressPopUp = false;
     this.manageArchivedPopUp = false;
-    this.resetImmutable();
   }
 
-  saveColumns(event, scope) {
-    if (scope === 'new') {
-      this.newCols = [...event];
-    } else if (scope === 'inProgress') {
-      this.inProgressCols = [...event];
-    } else if (scope === 'archived') {
-      this.archivedCols = [...event];
-    }
+  saveColumns(event) {
+    const tableCols = _.map(event, (item, index) => {
+      return {columnId: item.columnId,
+        order: index + 1,
+        visible: item.display}
+    });
+    this.dashboards = _.map(this.dashboards, item => {
+      if (item.id === this.selectedDashboard.id) {
+        return {...item, widgets: _.map(item.widgets, widget => {
+            if (widget.userDashboardWidgetId === this.editedWidget.id) {
+              return {...widget, columns: [...event]}
+            } else {return widget}
+          })}
+      } else {return item}
+    });
+    this.dashboardAPI.manageColumnsWidget(tableCols).subscribe();
     this.closePopUp();
   }
 
@@ -442,8 +439,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   changeDashboardName(name) {
-    if (!_.isEmpty(_.trim(name.target.value))) {
-      this.updateDash(this.selectedDashboard, {dashboardName: name.target.value});
+    if (!_.isEmpty(_.trim(name))) {
+      this.updateDash(this.selectedDashboard, {dashboardName: name});
+      this.selectedDashboard.name = name;
     } else {
       this.notificationService.createNotification('Information',
           'The Name of the dashboard shouldn\'t Be Empty!',
@@ -494,7 +492,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
-  changeItemPosition() {
+  updateColsListener($event) {
+    const {widgetId, dashCols} = $event;
+    this.dashboards = _.map(this.dashboards, dash => {
+      return dash.id === this.selectedDashboard.id ? {...dash, widgets: _.map(dash.widgets, item => {
+      return item.id === widgetId ? {...item, columns: dashCols} : item})
+    } : dash });
+
+    console.log(_.find(this.dashboards, item => item.id === this.selectedDashboard.id))
   }
 
   selectTab(id: any) {
@@ -573,6 +578,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       field: item.dashboardWidgetColumnName,
       header: item.columnHeader,
       width: item.dashboardWidgetColumnWidth + 'px',
+      widthNumber: item.dashboardWidgetColumnWidth,
       type: item.dataColumnType,
       display: item.visible,
       filtered: true,
