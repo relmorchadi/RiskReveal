@@ -9,7 +9,6 @@ import {BaseContainer} from "../../../shared/base";
 import {ofActionCompleted, Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
-import {DashData} from "./data";
 import {catchError, first, tap, timeout} from "rxjs/operators";
 import {LoadReferenceWidget} from "../../../core/store/actions";
 import {Actions, ofActionDispatched} from '@ngxs/store';
@@ -23,7 +22,6 @@ import {of} from "rxjs";
 })
 export class DashboardEntryComponent extends BaseContainer implements OnInit {
   protected options: GridsterConfig;
-  protected item: any = {x: 0, y: 0, cols: 3, rows: 2};
   newDashboardTitle: any;
   selectedDashboard: any;
   searchMode = 'Treaty';
@@ -45,7 +43,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   showAdd: any;
 
   @Select(DashboardState.getFacData) facData$;
-  @Select(DashboardState.getDashboards) dashboards$;
   @Select(DashboardState.getRefData) refWidget$;
 
   dashboards: any;
@@ -72,8 +69,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dispatch([new LoadReferenceWidget(),
-      new fromHD.LoadDashboardsAction({userId: 1}), new fromHD.LoadDashboardFacDataAction()]);
+    this.dispatch([new LoadReferenceWidget(), new fromHD.LoadDashboardFacDataAction()]);
     this.facData$.pipe().subscribe(value => {
       this.newFacCars = this.dataParam(_.get(value, 'new', []));
       this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
@@ -85,15 +81,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
-/*    this.dashboards$.pipe().subscribe(value => {
-      this.dashboards = value;
-      if (this.initDash && this.dashboards !== null) {
-        this.idSelected = this.dashboards[0].id;
-        this.dashboardChange(this.idSelected);
-        this.initDash = false;
-      }
-      this.detectChanges();
-    });*/
     this.loadDashboardAction();
 
     this.options = {
@@ -146,7 +133,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       resizable: {
         enabled: true,
         stop: (item, itemComponent) => {
-          console.log(item, itemComponent);
           this.changeWidgetHeight(item, itemComponent.$item);
         }
       },
@@ -219,6 +205,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.dashboards = _.map(this.dashboards, item => {
       return item.id === dashboardId ? _.merge({}, item, frontData) : item;
     });
+    this.selectedDashboard = _.find(this.dashboards, item => item.id === dashboardId);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
     this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
         catchError(err => {
           return of();
@@ -367,15 +355,22 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   saveColumns(event) {
-    const tableCols = _.map(event, (item, index) => {
+    let tableCols = _.map(event, (item, index: number) => {
       return {columnId: item.columnId,
         order: index + 1,
-        visible: item.display}
+        visible: true}
     });
+    event = _.map(event , item => ({...item, visible: true, display: true}));
     this.dashboards = _.map(this.dashboards, item => {
       if (item.id === this.selectedDashboard.id) {
         return {...item, widgets: _.map(item.widgets, widget => {
             if (widget.userDashboardWidgetId === this.editedWidget.id) {
+              _.forEach(widget.columns, element => {
+                if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
+                  tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
+                  event = [...event, {element, visible: false}];
+                }
+              });
               return {...widget, columns: [...event]}
             } else {return widget}
           })}
@@ -504,13 +499,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   selectTab(id: any) {
     this.idSelected = id;
-    const filterData = this.dashboards.filter(ds => ds.id === id);
-    this.selectedDashboard = filterData[0];
+    this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
   }
 
   dashboardChange(id: any) {
     this.idSelected = id;
-    this.selectedDashboard = this.dashboards.filter(ds => ds.id === id)[0];
+    this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
     if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboards.forEach(
@@ -561,8 +557,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       position: {
         cols: widget.colSpan,
         rows: widget.rowSpan,
-        x: widget.colPosition,
-        y: widget.rowPosition,
+        col: widget.colPosition,
+        row: widget.rowPosition,
         minItemRows: widget.minItemRows,
         minItemCols: widget.minItemCols,
         widgetId: widget.userDashboardWidgetId,
