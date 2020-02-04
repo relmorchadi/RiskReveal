@@ -28,7 +28,7 @@ public class RdmAnalysis {
     private String subPeril;
     private String lossAmplification;
     private Long status;
-    private int analysisMode;
+    private String analysisMode;
     private int engineTypeCode;
     private String engineType;
     private String engineVersion;
