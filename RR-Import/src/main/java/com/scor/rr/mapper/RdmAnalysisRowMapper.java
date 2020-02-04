@@ -36,7 +36,8 @@ public class RdmAnalysisRowMapper implements RowMapper<RdmAnalysis> {
         rdmAnalysis.setSubPeril(rs.getString("sub_peril"));
         rdmAnalysis.setLossAmplification(rs.getString("loss_amplification"));
         rdmAnalysis.setStatus(rs.getLong("status"));
-        rdmAnalysis.setAnalysisMode(rs.getInt("analysis_mode"));
+        // TODO : Waiting for huw's feedback (basic = distributed) != (detailed = 2)
+        rdmAnalysis.setAnalysisMode(rs.getString("analysis_mode"));
         rdmAnalysis.setEngineTypeCode(rs.getInt("enginetype_code"));
         rdmAnalysis.setEngineType(rs.getString("engine_type"));
         rdmAnalysis.setEngineVersion(rs.getString("engine_version"));
