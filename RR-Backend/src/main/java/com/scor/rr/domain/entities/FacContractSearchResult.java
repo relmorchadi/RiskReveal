@@ -35,4 +35,14 @@ public class FacContractSearchResult {
     @Column(name = "AssignedUser")
     private Long assignedUser;
 
+    public FacContractSearchResult(String client, String workspaceContextCode, Integer uwYear, String workspaceName, String uwAnalysis, String carequestId, String carStatus, Long assignedUser) {
+        this.client = client;
+        this.workspaceContextCode = workspaceContextCode;
+        this.uwYear = uwYear;
+        this.workspaceName = workspaceName;
+        this.uwAnalysis = uwAnalysis;
+        this.carequestId = carequestId;
+        this.carStatus = carStatus;
+        this.assignedUser = assignedUser;
+    }
 }

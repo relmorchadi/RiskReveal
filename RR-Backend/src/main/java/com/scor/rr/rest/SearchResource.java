@@ -55,9 +55,14 @@ public class SearchResource {
 //        return searchService.getWorkspaces(filter, offset,size);
 //    }
 
-    @GetMapping("searchcount")
-    SearchCountResult countInWorkspace(@RequestParam TreatyTableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
-        return searchService.countInWorkspace(table, keyword, size);
+    @GetMapping("searchcount/treaty")
+    SearchCountResult treatySearchCount(@RequestParam TreatyTableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
+        return searchService.treatySearchCount(table, keyword, size);
+    }
+
+    @GetMapping("searchcount/fac")
+    SearchCountResult facSearchCount(@RequestParam FacTableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){
+        return searchService.facSearchCount(table, keyword, size);
     }
 
     @PostMapping
