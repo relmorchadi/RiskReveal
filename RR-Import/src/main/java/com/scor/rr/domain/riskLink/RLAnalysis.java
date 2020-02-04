@@ -79,7 +79,7 @@ public class RLAnalysis {
     @Column(name = "LossAmplification")
     private String lossAmplification;
     @Column(name = "AnalysisMode")
-    private Integer analysisMode;
+    private String analysisMode;
     @Column(name = "EngineTypeCode")
     private Integer engineTypeCode;
     @Column(name = "EngineType")
@@ -120,8 +120,8 @@ public class RLAnalysis {
     private String regionName;
     @Column(name = "StatusDescription")
     private String statusDescription;
-    @Column(name = "Grouping")
-    private String grouping;
+    @Column(name = "isGroup")
+    private Boolean isGroup;
 
     @OneToOne(mappedBy = "rlAnalysis")
     @JsonBackReference
@@ -175,5 +175,11 @@ public class RLAnalysis {
         this.profileKey = null;
         this.purePremium = null;
         this.exposureTIV = null;
+        this.groupType = rdmAnalysisBasic.getGroupTypeName();
+        this.cedant = rdmAnalysisBasic.getCedant();
+        this.lob = rdmAnalysisBasic.getLobName();
+        this.isGroup = rdmAnalysisBasic.getGrouping();
+        this.regionName = rdmAnalysisBasic.getRegionName();
+        this.analysisMode = rdmAnalysisBasic.getModeName();
     }
 }
