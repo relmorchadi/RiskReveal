@@ -4,6 +4,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.dto.TargetBuild.FacWorkspaceDTO;
 import com.scor.rr.domain.dto.TargetBuild.TreatyWorkspaceDTO;
+import com.scor.rr.domain.entities.FacContractCurrency;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
@@ -54,8 +55,6 @@ public class SearchService {
     @Autowired
     private ContractSearchResultRepository contractSearchResultRepository;
 
-    @Autowired
-    private ContractSearchResultFacRepository contractSearchResultFacRepository;
 
     @Autowired
     private CedantCodeCountRepository cedantCodeCountRepository;
@@ -123,19 +122,64 @@ public class SearchService {
     @Autowired
     CarDivisionsRepository carDivisionsRepository;
 
-    Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
+    @Autowired
+    FacContractCurrencyRepository facContractCurrencyRepository;
 
+    @Autowired
+    FacSearchQuery facSearchQuery;
+
+    Map<TreatyTableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
+    Map<FacTableNames, BiFunction<String, Pageable, Page>> facSearchCountMapper = new HashMap();
+
+    //Fac Search Count Repos
+
+    @Autowired
+    FacClientCountRepository facClientCountRepository;
+
+    @Autowired
+    FacUWYearCounRepository facUWYearCounRepository;
+
+    @Autowired
+    FacContractCodeCounRepository facContractCodeCounRepository;
+
+    @Autowired
+    FacContractNameCountRepository facContractNameCountRepository;
+
+    @Autowired
+    FacUwAnalysisCountRepository facUwAnalysisCountRepository;
+
+    @Autowired
+    FacCARequestIdCountRepository facCARequestIdCountRepository;
+
+    @Autowired
+    FacCARStatusCountRepository facCARStatusCountRepository;
+
+    @Autowired
+    FacAssignedToCountRepository facAssignedToCountRepository;
 
     @PostConstruct
     private void feedCountMapper() {
-        countMapper.put(TableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
-        countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        //TREATY
+
+        countMapper.put(TreatyTableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+//        countMapper.put(TreatyTableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
+        countMapper.put(TreatyTableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+//        countMapper.put(TreatyTableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+
+        //FAC
+
+        facSearchCountMapper.put(FacTableNames.CLIENT, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_YEAR, facUWYearCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_CODE, facContractCodeCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_NAME, facContractNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_ANALYSIS, facUwAnalysisCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAREQUEST_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.ASSIGNED_TO, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
     }
 
     public Page<TreatyView> getTreaty(String keyword, int size) {
@@ -155,18 +199,7 @@ public class SearchService {
         return workspaceYearsRepository.findByLabelLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
-    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-        String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
-        String countQueryString = queryHelper.generateCountQuery(filter);
-        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-        Query countQuery = entityManager.createNativeQuery(countQueryString);
-        List<Object[]> resultList = resultsQuery.getResultList();
-        Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
-    }
-
-    public SearchCountResult countInWorkspace(TableNames table, String keyword, int size) {
+    public SearchCountResult countInWorkspace(TreatyTableNames table, String keyword, int size) {
         return new SearchCountResult(ofNullable(countMapper.get(table))
                 .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
@@ -220,12 +253,14 @@ public class SearchService {
                 .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
                 .orElse(new ArrayList<>());
         if (wsOpt.isPresent()) {
+            Optional<FacContractCurrency> currency = this.facContractCurrencyRepository.findById(wsOpt.get().getWorkspaceId());
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
             return buildFacWS(
                     wsOpt.get(),
                     projects,
                     workspaceId,
-                    uwy
+                    uwy,
+                    currency.isPresent() ? currency.get().getCurrency() : null
             );
         } else {
             throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
@@ -256,7 +291,8 @@ public class SearchService {
     private FacWorkspaceDTO buildFacWS(WorkspaceEntity ws,
                                        List<ProjectCardView> projects,
                                        String workspaceId,
-                                       String uwy) {
+                                       String uwy,
+                                       String currency) {
         FacWorkspaceDTO detailsDTO= new FacWorkspaceDTO(ws);
         detailsDTO.setProjects(projects.stream().map(projectCardView -> {
             projectCardView.setDivisions(carDivisionsRepository.findAllDivisions(projectCardView.getCarRequestId()));
@@ -264,12 +300,44 @@ public class SearchService {
         }).collect(Collectors.toList()));
         detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
 
+        detailsDTO.setCurrency(currency);
         detailsDTO.setYears(Arrays.asList(Integer.valueOf(uwy)));
         return detailsDTO;
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+        if(request.getType().equals(SearchType.TREATY)) {
+            return this.treatyContractSearch(request);
+        } else if(request.getType().equals(SearchType.FAC)) {
+            return this.facContractSearch(request);
+        } else {
+            return null;
+        }
 
+    }
+
+    Page<?> facContractSearch(ExpertModeFilterRequest request) {
+        String resultsQueryString = facSearchQuery.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
+        String countQueryString = facSearchQuery.generateCountQuery(request.getFilter(), request.getKeyword());
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<ContractSearchResult> contractSearchResult = map(resultList);
+        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+    }
+
+    public SearchCountResult searchCountFac(TreatyTableNames tables, String keyword, int size) {
+        return this.searchCount(facSearchCountMapper, tables, keyword, size);
+    }
+
+    public SearchCountResult searchCount(Map<?, BiFunction<String, Pageable, Page>> jpaFunctions, TreatyTableNames table, String keyword, int size) {
+        return new SearchCountResult(ofNullable(jpaFunctions.get(table))
+                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
+                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
+    }
+
+    Page<?> treatyContractSearch(ExpertModeFilterRequest request) {
         if (request.getFromSavedSearch() != null) {
             if (!request.getFilter().isEmpty()) {
                 Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
@@ -337,6 +405,7 @@ public class SearchService {
         Object total = countQuery.getSingleResult();
         List<ContractSearchResult> contractSearchResult = map(resultList);
         return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+
     }
 
     private List<ContractSearchResult> map(List<Object[]> resultList) {
