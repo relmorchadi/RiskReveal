@@ -2,8 +2,10 @@ package com.scor.rr.domain;
 
 
 import com.scor.rr.domain.enums.StatisticMetric;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,6 +13,8 @@ import javax.persistence.*;
 @Table(name = "EPCurveHeader")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class EPCurveHeaderEntity {
 
     @Id
