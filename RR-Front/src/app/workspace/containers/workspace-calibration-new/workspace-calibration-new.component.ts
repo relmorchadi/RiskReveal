@@ -561,13 +561,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
 
     let resCols = [...head, ...middle , ...tail];
-    const lastCol = resCols[resCols.length - 2];
-    const diff = Math.abs(expandedMaxWidth - expandedWidth);
-    console.log(diff);
-    const newColMinWidth = _.toNumber(lastCol.minWidth);
-    let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  diff : - diff);
-
-    resCols = _.map(resCols, (col, i)  => (_.toNumber(i) != (resCols.length - 2)) ?  col : {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''});
+    // const lastCol = resCols[resCols.length - 2];
+    // const diff = Math.abs(expandedMaxWidth - expandedWidth);
+    // const newColMinWidth = _.toNumber(lastCol.minWidth);
+    // let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
+    //
+    // resCols = _.map(resCols, (col, i)  => (_.toNumber(i) != (resCols.length - 2)) ?  col : {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''});
     res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
     res.frozenColumns= resCols;
 
