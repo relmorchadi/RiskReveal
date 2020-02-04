@@ -167,7 +167,29 @@
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + col?.unit }">
             <ng-container>
-              <div class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{ rowData[col.fields] }}</div>
+              <div class="text-elipsice" style="padding: 0 5px;" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal', 'text-align' : col?.textAlign ? col?.textAlign : 'left'}">
+                <span *ngIf="!col?.isNumeric && col?.fields != 'pltStatus'">
+                  {{ rowData[col.fields] }}
+                </span>
+                <span *ngIf="col?.isNumeric">
+                  {{ rowData[col.fields] | number: '1.0-9' }}
+                </span>
+                <span *ngIf="col?.fields == 'pltStatus'">
+                    <div class="td-wrapper-check">
+                      <div>
+                        <i [ngClass]="{ 'icon-history-alt iconYellow': rowData[col.fields] =='In progress',
+                                                       'icon-check-circle iconGreen': rowData[col.fields] =='Valid' ,
+                                                       'icon-lock-alt iconRed':  rowData[col.fields] =='Locked',
+                                                       'icon-error_24px iconRed2': rowData[col.fields] =='Fail',
+                                                       'icon-star iconBlue': rowData[col.fields] =='Pending',
+                                                       'icon-report_problem_24px iconYellow2': rowData[col.fields] =='Requires Regeneration' }"
+                           [nz-tooltip]="rowData[col.fields]"
+                           class="tooltipMsg">
+                        </i>
+                      </div>
+                    </div>
+                </span>
+              </div>
             </ng-container>
           </td>
           <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'peril'" [ngStyle]="{'width': col?.width + col?.unit , 'textAlign': 'center'}">

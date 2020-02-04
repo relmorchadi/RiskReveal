@@ -3,11 +3,11 @@ package com.scor.rr.domain.dto;
 import com.scor.rr.domain.TreatyTableNames;
 import org.springframework.data.domain.Page;
 
-public class SearchCountResult {
+public class SearchCountResult <T> {
     public Page<?> result;
-    public TreatyTableNames mappingTable;
+    public T mappingTable;
 
-    public SearchCountResult(Page<?> result, TreatyTableNames mappingTable) {
+    public SearchCountResult(Page<?> result, T mappingTable) {
         this.result= result;
         this.mappingTable= mappingTable;
     }

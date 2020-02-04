@@ -5,6 +5,7 @@ import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.dto.TargetBuild.FacWorkspaceDTO;
 import com.scor.rr.domain.dto.TargetBuild.TreatyWorkspaceDTO;
 import com.scor.rr.domain.entities.FacContractCurrency;
+import com.scor.rr.domain.entities.FacContractSearchResult;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
@@ -199,12 +200,6 @@ public class SearchService {
         return workspaceYearsRepository.findByLabelLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
-    public SearchCountResult countInWorkspace(TreatyTableNames table, String keyword, int size) {
-        return new SearchCountResult(ofNullable(countMapper.get(table))
-                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
-                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
-    }
-
     public Object getWorkspaceDetails(String workspaceId, String uwy, String wsType) {
 
         if("TTY".equals(wsType)) return loadTreatyWorkspace(workspaceId, uwy, false, null);
@@ -323,16 +318,12 @@ public class SearchService {
         Query countQuery = entityManager.createNativeQuery(countQueryString);
         List<Object[]> resultList = resultsQuery.getResultList();
         Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+        List<FacContractSearchResult> result = mapFacContract(resultList);
+        return new PageImpl<>(result, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
     }
 
-    public SearchCountResult searchCountFac(TreatyTableNames tables, String keyword, int size) {
-        return this.searchCount(facSearchCountMapper, tables, keyword, size);
-    }
-
-    public SearchCountResult searchCount(Map<?, BiFunction<String, Pageable, Page>> jpaFunctions, TreatyTableNames table, String keyword, int size) {
-        return new SearchCountResult(ofNullable(jpaFunctions.get(table))
+    public SearchCountResult facSearchCount(FacTableNames table, String keyword, int size) {
+        return new SearchCountResult<FacTableNames>(ofNullable(facSearchCountMapper.get(table))
                 .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
                 .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
@@ -408,9 +399,21 @@ public class SearchService {
 
     }
 
+    public SearchCountResult treatySearchCount(TreatyTableNames table, String keyword, int size) {
+        return new SearchCountResult<TreatyTableNames>(ofNullable(countMapper.get(table))
+                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
+                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
+    }
+
     private List<ContractSearchResult> map(List<Object[]> resultList) {
         return resultList.stream().map((r) ->
                 new ContractSearchResult((String) r[0], (String) r[1], (String) r[2], (String) r[3], (String) r[4], (Integer) r[5])
+        ).collect(Collectors.toList());
+    }
+
+    private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
+        return resultList.stream().map((r) ->
+                new FacContractSearchResult((String) r[0], (String) r[1], (Integer) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (Long) r[7])
         ).collect(Collectors.toList());
     }
 

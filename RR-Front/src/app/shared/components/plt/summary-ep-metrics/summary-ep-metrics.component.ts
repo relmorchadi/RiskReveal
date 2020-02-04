@@ -101,4 +101,11 @@ export class SummaryEpMetricsComponent implements OnInit {
     })
   }
 
+  removeReturnPeriod(rp) {
+    this.actionDispatcher.emit({
+      type: "Delete RP",
+      payload: rp
+    })
+  }
+
 }
