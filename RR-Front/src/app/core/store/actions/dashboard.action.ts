@@ -3,8 +3,18 @@ export class LoadDashboardsAction {
     constructor(public payload?: any) {}
 }
 
-export class CreatNewDashboardAction {
+export class LoadReferenceWidget {
+    static readonly type = '[Dashboard] Load Reference Widget For Dashboard';
+    constructor(public payload?: any) {}
+}
+
+export class CreateNewDashboardAction {
     static readonly type = '[Dashboard] Create New Dashboard For User';
+    constructor(public payload?: any) {}
+}
+
+export class CreateWidgetAction {
+    static readonly type = '[Dashboard] Create Widget For Dashboard';
     constructor(public payload?: any) {}
 }
 
@@ -13,13 +23,28 @@ export class DeleteDashboardAction {
     constructor(public payload?: any) {}
 }
 
+export class DeleteWidgetAction {
+    static readonly type = '[Dashboard] Delete Widget From Dashboard';
+    constructor(public payload?: any) {}
+}
+
+export class DeleteAllWidgetByRefAction {
+    static readonly type = '[Dashboard] Delete All Widget By Reference From Dashboard';
+    constructor(public payload?: any) {}
+}
+
+export class DuplicateWidgetAction {
+    static readonly type = '[Dashboard] Duplicate Widget Into Dashboard';
+    constructor(public payload?: any) {}
+}
+
 export class UpdateDashboardAction {
     static readonly type = '[Dashboard] Update Dashboard Data';
     constructor(public payload?: any) {}
 }
 
-export class SaveDashboardStateAction {
-    static readonly type = '[Dashboard] Save Dashboard State';
+export class UpdateWidgetAction {
+    static readonly type = '[Dashboard] Update Widget Data';
     constructor(public payload?: any) {}
 }
 

@@ -159,7 +159,7 @@ nz-header {
 }
 
 .delete-icon {
-  display: none;
+  font-size: 18px;
   color: rgba(0, 0, 0, 0.6);
 }
 
@@ -170,9 +170,6 @@ nz-header {
 .edit-dashboard-section:hover {
   .hover-input {
     border-bottom: 1px solid rgba(0, 0, 0, 0.6);
-  }
-  .delete-icon {
-    display: inline;
   }
 }
 

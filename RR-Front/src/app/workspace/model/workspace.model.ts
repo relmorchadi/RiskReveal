@@ -11,7 +11,6 @@ export class WorkspaceModel {
     adjustmentTypes: any[],
     status: any[]
   };
-  facWs: {data: any[], sequence: any};
   savedData: {riskLink: {
     edmrdmSelection: any
   }};
