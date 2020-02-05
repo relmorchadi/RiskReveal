@@ -158,6 +158,15 @@ public class SearchService {
     @Autowired
     FacAssignedToCountRepository facAssignedToCountRepository;
 
+    @Autowired
+    FacPltCountRepository facPltCountRepository;
+
+    @Autowired
+    FacProjectIdCountRepository facProjectIdCountRepository;
+
+    @Autowired
+    FacProjectNameCountRepository facProjectNameCountRepository;
+
     @PostConstruct
     private void feedCountMapper() {
         //TREATY
@@ -181,6 +190,9 @@ public class SearchService {
         facSearchCountMapper.put(FacTableNames.CAR_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.ASSIGNED_TO, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PLT, facPltCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PROJECT_ID, facProjectIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PROJECT_NAME, facProjectNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
     }
 
     public Page<TreatyView> getTreaty(String keyword, int size) {
