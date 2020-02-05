@@ -11,7 +11,7 @@ public enum FacTableNames {
     PLT("plt"),
     PROJECT_ID("projct_id"),
     PROJECT_NAME("projct_name"),
-    ASSIGNED_TO("assigned_to");
+    USR("assigned_to");
 
     private String value;
     FacTableNames(String value) {

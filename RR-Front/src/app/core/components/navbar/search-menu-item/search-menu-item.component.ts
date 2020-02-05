@@ -116,7 +116,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
       .pipe(takeUntil(this.unSubscribe$))
       .subscribe((value) => {
         value && value.length > 1 && this.updatePossibleShortCuts(value);
-        this.store.dispatch(new SearchActions.SearchInputValueChange(value))
+        this.store.dispatch(new SearchActions.SearchInputValueChange(value));
         this._contractChoicesSearch(value);
       });
   }
@@ -139,7 +139,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
     this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword));
   }, 350);
 
-  onEnter(evt: KeyboardEvent) {
+  onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
     const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
@@ -195,13 +195,13 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   selectSearchBadge(key, value) {
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword));
+    this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword, this.searchMode));
     this.searchInput.nativeElement.focus();
   }
 
   private _contractChoicesSearch(keyword) {
     if (keyword && keyword.length && this.state.visibleSearch)
-      this.store.dispatch(new SearchActions.SearchContractsCountAction(keyword));
+      this.store.dispatch(new SearchActions.SearchContractsCountAction({keyword, searchMode: this.searchMode}));
   }
 
   addBadgeFromResultList(key) {
@@ -277,7 +277,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
     let index = _.findIndex(this.state.badges, row => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {
-      this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword));
+      this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword, this.searchMode));
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
   }

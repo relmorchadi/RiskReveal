@@ -189,7 +189,7 @@ public class SearchService {
         facSearchCountMapper.put(FacTableNames.UW_ANALYSIS, facUwAnalysisCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.CAR_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        facSearchCountMapper.put(FacTableNames.ASSIGNED_TO, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.USR, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.PLT, facPltCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.PROJECT_ID, facProjectIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.PROJECT_NAME, facProjectNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
