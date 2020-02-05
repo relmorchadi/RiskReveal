@@ -35,7 +35,7 @@ public class FacContractSearchResult {
     @Column(name = "AssignedUser")
     private Long assignedUser;
 
-    public FacContractSearchResult(String client, String workspaceContextCode, Integer uwYear, String workspaceName, String uwAnalysis, String carequestId, String carStatus, Long assignedUser) {
+    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, Long assignedUser) {
         this.client = client;
         this.workspaceContextCode = workspaceContextCode;
         this.uwYear = uwYear;

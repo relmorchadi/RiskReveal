@@ -17,7 +17,7 @@ import produce from "immer";
 @Component({
   selector: 'app-workspace-calibration-new',
   templateUrl: './workspace-calibration-new.component.html',
-  styleUrls: ['./workspace-calibration-new.component.scss']
+  styleUrls: ['./workspace-calibration-new.component.scss'],
 })
 export class WorkspaceCalibrationNewComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 

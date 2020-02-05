@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 @Component
 public class FacSearchQuery implements QueryInterface {
 
-    String[] globalSearchColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedUser"};
-    String[] groupByColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedUser"};
+    String[] globalSearchColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
+    String[] groupByColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
 
     @Override
     public String generateSqlQuery(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword, int offset, int size) {
