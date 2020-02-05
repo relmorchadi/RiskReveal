@@ -1,4 +1,4 @@
-package com.scor.rr.configuration;
+package com.scor.rr.proxy.config;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,4 +75,6 @@ public class SwaggerConfig {
                 null,
                 null, new ArrayList<>());
     }
+
 }
+
