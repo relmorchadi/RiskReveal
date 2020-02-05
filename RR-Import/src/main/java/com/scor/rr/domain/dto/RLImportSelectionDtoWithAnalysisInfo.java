@@ -28,6 +28,7 @@ public class RLImportSelectionDtoWithAnalysisInfo {
     private String occurrenceBasis;
     private String occurrenceBasisOverrideReason;
     private List<String> targetRAPCodes;
+    private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
     private List<Integer> divisions;
     private List<String> financialPerspectives;
 

@@ -23,16 +23,12 @@ export class CreateFacProjectPopupComponent implements OnInit {
   newProject: any;
   newProjectForm: FormGroup;
 
-  @Select(WorkspaceState.getFacSequence) facSequence$;
-  facSequence;
-
   constructor(private store: Store) {
     this.unSubscribe$ = new Subject<void>();
   }
 
   ngOnInit() {
     this.initNewProjectForm();
-    this.facSequence$.subscribe(value => this.facSequence = value);
   }
 
   ngOnDestroy(): void {

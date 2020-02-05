@@ -11,7 +11,6 @@ import * as fromPlt from '../actions/plt_main.actions';
 import {PltStateService} from '../../services/store/plt-state.service';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
-import {Data} from '../../../shared/data/fac-data';
 import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 import {ContractService} from "../../services/contract.service";
 import {CalibrationNewService} from "../../services/calibration-new.service";
@@ -27,10 +26,6 @@ const initialState: WorkspaceModel = {
     basis: [],
     adjustmentTypes: [],
     status: []
-  },
-  facWs: {
-    data: Data.facWs,
-    sequence: 137
   },
   savedData: {
     riskLink: {
@@ -95,23 +90,13 @@ export class WorkspaceState {
   }
 
   @Selector()
-  static getFacData(state: WorkspaceModel) {
-    return state.facWs.data;
-  }
-
-  @Selector()
-  static getFacSequence(state: WorkspaceModel) {
-    return state.facWs.sequence;
-  }
-
-  @Selector()
   static getCurrentTabStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].workspaceType;
   }
 
   @Selector()
-  static getSelectedProject(state: WorkspaceModel) {
+  static getSelectedProject(state: WorkspaceModel) : any{
     const wsIdentifier = state.currentTab.wsIdentifier;
     return _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
   }
@@ -468,11 +453,6 @@ export class WorkspaceState {
   @Action(fromWS.OpenWS)
   openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
-  }
-
-  @Action(fromWS.CreateNewFac)
-  createNewFac(ctx: StateContext<WorkspaceModel>, payload: fromWS.CreateNewFac) {
-    this.wsService.createNewFac(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)
@@ -1041,7 +1021,7 @@ export class WorkspaceState {
 
   @Action(fromWS.DeleteEdmRdmAction)
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
-    this.riskLinkFacade.deleteEdmRdm(ctx, payload);
+    return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
   @Action(fromWS.LoadDivisionSelection)

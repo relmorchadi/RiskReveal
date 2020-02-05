@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angu
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Actions, ofAction, ofActionCompleted, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -235,10 +235,22 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 'info', 'bottomRight', 4000);
         });
 
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionDispatched(fromWs.AutoAttachEndsAction)
+            ).subscribe((p) => {
+            const {withDetailScan, allAnalysis, allPortfolios} = p.payload;
+            if (withDetailScan && _.isEmpty(allAnalysis) && _.isEmpty(allPortfolios))
+                alert('No auto attach suggestions available on this Workspace');
+        });
+
         this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
         this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
         this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
         this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
+
+        this._autoSelectFirstDataSource();
 
         this.datasourceKeywordFc.valueChanges
             .pipe(this.unsubscribeOnDestroy)
@@ -256,6 +268,22 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }
         }
 
+    }
+
+    private _autoSelectFirstDataSource() {
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionSuccessful(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
+                debounceTime(500)
+            ).subscribe(p => {
+            console.log('After success : LoadSummaryOrDefaultDataSourcesAction');
+            const {edms, rdms, currentDataSource} = this.state.selection;
+            const dataSources = [..._.values(edms), ..._.values(rdms)];
+            if (!_.isEmpty(dataSources) && !currentDataSource) {
+                this.toggleItemsListRDM(_.first(dataSources));
+            }
+        });
     }
 
     loadSummaryOrDefaultDataSources() {
@@ -378,6 +406,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }), new fromWs.PatchAddToBasketStateAction()]);
         if (this.tabStatus === 'FAC') {
             this.setFilterDivision();
+        } else {
+            if (type === 'RDM') {
+                this.getRiskLinkAnalysis(0);
+            } else {
+                this.getRiskLinkPortfolio(0);
+            }
         }
         this.UpdateCheckboxStatus();
     }
@@ -480,7 +514,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     getCheckedData() {
-        //const data = this.filterData(this.getTableData());
         if (this.state.selectedEDMOrRDM === 'EDM') {
             const selection = _.filter(this.state.portfolios.data, item => item.selected);
             this.allCheckedAnalysis = selection.length === this.state.portfolios.data.length && selection.length > 0;
@@ -509,7 +542,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     clearSelection(item, target) {
-        this.dispatch(new fromWs.DeleteEdmRdmAction({rmsId: item.rmsId, target: target}));
+        // console.log("clear selection ", {item, target})
+        this.dispatch(new fromWs.DeleteEdmRdmAction({
+            rlDataSourceId: item.rlDataSourceId,
+            rmsId: item.rmsId,
+            target: target
+        }));
     }
 
     getNumberOfSelected(item, source) {
@@ -579,28 +617,28 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     @Debounce()
-    onPortfolioFilter(param){
+    onPortfolioFilter(param) {
         this.getRiskLinkPortfolio(0);
     }
 
     @Debounce()
-    onAnalysisFilter(param){
+    onAnalysisFilter(param) {
         this.getRiskLinkAnalysis(0);
     }
 
     @Debounce()
-    lazyloadAnalysis({first, rows}){
-        const page = Math.round(first/rows);
+    lazyloadAnalysis({first, rows}) {
+        const page = Math.round(first / rows);
         this.getRiskLinkAnalysis(page, rows);
     }
 
     @Debounce()
-    lazyloadPortfolios({first, rows}){
-        const page = Math.round(first/rows);
-        this.getRiskLinkPortfolio(page,rows);
+    lazyloadPortfolios({first, rows}) {
+        const page = Math.round(first / rows);
+        this.getRiskLinkPortfolio(page, rows);
     }
 
-    private getRiskLinkAnalysis(page=this.state.analysis.page,size= this.state.analysis. size){
+    private getRiskLinkAnalysis(page = this.state.analysis.page, size = this.state.analysis.size) {
         return this.dispatch(new fromWs.GetRiskLinkAnalysisAction({
             rdmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
@@ -611,7 +649,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }));
     }
 
-    private getRiskLinkPortfolio(page=this.portfolios.page, size=this.portfolios.size){
+    private getRiskLinkPortfolio(page = this.portfolios.page, size = this.portfolios.size) {
         return this.dispatch(new fromWs.GetRiskLinkPortfolioAction({
             edmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
@@ -622,8 +660,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }));
     }
 
-    private parseFilter(filter){
-        let finalFilter= {...filter};
+    private parseFilter(filter) {
+        let finalFilter = {...filter};
         _.keys(finalFilter).filter(key => !finalFilter[key]).forEach(key => delete finalFilter[key]);
         return finalFilter;
     }
@@ -631,7 +669,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     updateAllChecked(scope) {
         const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
         /**
-        if (scope === 'analysis') {
+         if (scope === 'analysis') {
             if (selectedInChunk === 0) {
                 this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
                     action: 'selectChunk',
@@ -742,16 +780,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.destroy();
     }
 
-    autoAttach(){
+    autoAttach() {
         console.log('Auto attach');
-        const divisionsIds  = _.map(this.state.financialValidator.division.data, d => d.divisionNumber);
-        const edmIds= _.map(_.values(this.state.selection.edms), item => item.rlModelDataSourceId );
-        const rdmIds= _.map(_.values(this.state.selection.rdms), item => item.rlModelDataSourceId );
-        if( _.size(edmIds) == 0 && _.size(rdmIds) == 0 ){
+        const divisionsIds = _.map(this.state.financialValidator.division.data, d => d.divisionNumber);
+        const edmIds = _.map(_.values(this.state.selection.edms), item => item.rlDataSourceId);
+        const rdmIds = _.map(_.values(this.state.selection.rdms), item => item.rlDataSourceId);
+        if (_.size(edmIds) == 0 && _.size(rdmIds) == 0) {
             alert('No available Edms / Rdms to attach');
             return;
         }
-        if( _.size(divisionsIds) == 0 ){
+        if (_.size(divisionsIds) == 0) {
             alert('No available Edms / Rdms to attach');
             return;
         }
@@ -763,6 +801,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             edmIds,
             rdmIds,
             wsId: this.ws.wsId,
+            withDetailScan: true
         }))
     }
 
@@ -779,7 +818,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(data => {
                 const [p, summary] = data;
                 const {projectId} = p;
-                if(this.tabStatus == 'FAC' && this._nonUniqDivisionPerAnalysis(summary.analysis)){
+                if (this.tabStatus == 'FAC' && this._nonUniqDivisionPerAnalysis(summary.analysis)) {
                     alert('You cannot import multiple Analysis Region Peril for the same divisions !');
                     return;
                 }
@@ -793,14 +832,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             });
     }
 
-    private _nonUniqDivisionPerAnalysis(analysis): boolean{
+    private _nonUniqDivisionPerAnalysis(analysis): boolean {
         let data = {};
-        for(let a of analysis) {
-            if(data[a.rpCode])
+        for (let a of analysis) {
+            if (data[a.rpCode])
                 data[a.rpCode].push(...a.divisions);
             else
-                data[a.rpCode]= [...a.divisions];
-            if( _.size(data[a.rpCode]) > 1 )
+                data[a.rpCode] = [...a.divisions];
+            if (_.size(data[a.rpCode]) > 1)
                 return true;
         }
         return false;

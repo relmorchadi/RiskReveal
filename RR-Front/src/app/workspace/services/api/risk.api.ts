@@ -158,11 +158,18 @@ export class RiskApi {
         })
     }
 
-
     getAutoAttach(divisionsIds, edmIds, rdmIds, wsId) {
         return this.http.get(`${this.IMPORT_URL}import/config/AutoAttach`, {
             params: {
                 divisionsIds, edmIds, rdmIds, wsId
+            }
+        });
+    }
+
+    deleteDataSource(rlModelDataSourceId) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/data-source`, {
+            params: {
+                rlModelDataSourceId
             }
         });
     }

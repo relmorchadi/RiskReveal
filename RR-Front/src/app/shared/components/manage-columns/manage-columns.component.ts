@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-manage-columns',
@@ -10,20 +11,21 @@ export class ManageColumnsComponent implements OnInit {
 
   @Input('columns') columns: any[];
   @Input('visible') visible: boolean;
+  @Input('fromDash') fromDash: boolean = false;
 
   @Output('onSubmit') onSubmit: EventEmitter<any> = new EventEmitter<any>();
   @Output('onCancel') onCancel: EventEmitter<any> = new EventEmitter<any>();
 
-  listOfAvailbleColumnsCache: any[];
-  listOfAvailbleColumns: any[];
+  listOfAvailableColumnsCache: any[];
+  listOfAvailableColumns: any[];
   listOfUsedColumns: any[];
 
   constructor() {
-    this.listOfAvailbleColumnsCache = [];
+    this.listOfAvailableColumnsCache = [];
   }
 
   ngOnInit() {
-    this.listOfAvailbleColumns = [];
+    this.listOfAvailableColumns = [];
   }
 
   resetColumns() {
@@ -36,8 +38,14 @@ export class ManageColumnsComponent implements OnInit {
   }
 
   onShow() {
-    this.listOfAvailbleColumnsCache = [...this.listOfAvailbleColumns];
-    this.listOfUsedColumns = this.columns;
+    if (this.fromDash) {
+      this.listOfAvailableColumns = _.filter(this.columns, item => !item.visible);
+      this.listOfAvailableColumnsCache = [...this.listOfAvailableColumns];
+      this.listOfUsedColumns = _.filter(this.columns, item => item.visible);
+    } else {
+      this.listOfAvailableColumnsCache = [...this.listOfAvailableColumns];
+      this.listOfUsedColumns = this.columns;
+    }
   }
 
   drop(event: CdkDragDrop<any>) {
@@ -65,18 +73,18 @@ export class ManageColumnsComponent implements OnInit {
   }
 
   onHide() {
-    console.log(this.listOfAvailbleColumns, this.listOfUsedColumns, this.listOfAvailbleColumnsCache);
+    console.log(this.listOfAvailableColumns, this.listOfUsedColumns, this.listOfAvailableColumnsCache);
   }
 
   dropAll(dir: string) {
     if (dir === 'right') {
       const t = this.listOfUsedColumns;
-      this.listOfUsedColumns = this.listOfAvailbleColumns;
-      this.listOfAvailbleColumns = t;
+      this.listOfUsedColumns = this.listOfAvailableColumns;
+      this.listOfAvailableColumns = t;
     }
     if (dir === 'left') {
-      const t = this.listOfAvailbleColumns;
-      this.listOfAvailbleColumns = this.listOfUsedColumns;
+      const t = this.listOfAvailableColumns;
+      this.listOfAvailableColumns = this.listOfUsedColumns;
       this.listOfUsedColumns = t;
     }
   }

@@ -83,7 +83,7 @@ public class FileBasedImportJob {
     private AccLocFilesHandler accLocFilesHandler;
 
     @Autowired
-    private ProjectImportRunStatus carStatus;
+    private ProjectImportRunAndCARStatus carStatus;
 
     @Autowired
     @Qualifier(value = "AccReader")

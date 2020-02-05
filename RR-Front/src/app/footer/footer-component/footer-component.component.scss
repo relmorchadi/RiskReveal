@@ -1,15 +1,17 @@
 :host {
   position: fixed;
+  z-index: 999;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   bottom: 0;
   right: 3px;
-  width: fit-content;
+  width: 100%;
   padding: 0 25px;
   font-weight: bold;
-  height: 13px;
+  height: 18px;
   font-size: .9em;
-  background-color: transparent;
+  border-top: .5px solid rgba(0,0,0,0.35);
+  background-color: #FFFFFF;
   color: #14617A;
 }

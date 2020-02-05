@@ -3,13 +3,9 @@ import {GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
-import {Data} from '../../../core/model/data';
-import * as moment from 'moment';
-import {dashData} from '../../../shared/data/dashboard-data';
-import {OpenWS} from '../../../workspace/store/actions';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/api/workspace.api';
-import {WorkspaceState} from '../../../workspace/store/states';
+import {DashboardApi} from "../../../core/service/api/dashboard.api";
 
 @Component({
   selector: 'app-fac-widget',
@@ -21,6 +17,7 @@ export class FacWidgetComponent implements OnInit {
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
   @Output('managePopUp') openPopUp: any = new EventEmitter<any>();
+  @Output('widgetColsUpdate') updateColsWidth: any = new EventEmitter<any>();
 
   private dropdown: NzDropdownContextComponent;
 
@@ -30,31 +27,33 @@ export class FacWidgetComponent implements OnInit {
   dashboard: any;
   @Input()
   data: any;
-  @Input('tableCols')
-  dashCols: any;
 
   identifier: number;
   itemName: any;
-  type: any;
+  widgetId: any;
+  dashCols: any;
   persisted: any;
   newDashboard: any;
   editName = false;
   tabIndex = 1;
   filters = {};
   newSort = {};
+  sortList = [];
   globalSort = {};
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
-              private cdRef: ChangeDetectorRef,
+              private cdRef: ChangeDetectorRef, private dashboardAPI: DashboardApi,
               private wsApi: WsApi) {
   }
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
     this.identifier = this.itemWidget.id;
-    this.type = this.itemWidget.type;
+    this.widgetId = this.itemWidget.widgetId;
     this.itemName = this.itemWidget.name;
-    this.persisted =  this.itemWidget.persisted;
+    this.dashCols = this.itemWidget.columns;
+
+    this.sortFirstUpdate();
   }
 
   selectTab(index) {
@@ -80,28 +79,51 @@ export class FacWidgetComponent implements OnInit {
   }
 
   openPopUpAction(scope) {
-    this.openPopUp.emit(scope);
+    this.openPopUp.emit({scope, widgetCol: this.dashCols, widgetId: this.itemWidget.id});
   }
 
   sortChange(event) {
-    console.log(event);
-    this.type === 'newCar' ? this.newSort = event : this.globalSort = event;
+    this.globalSort = event.newSort;
+    this.sortList = event.newSortingList;
+    if (_.isEmpty(event.sortType)) {
+      this.dashboardAPI.updateSortCols(event.columnId, 0, '').subscribe();
+    } else {
+      _.forEach(this.sortList, (item, key) => {
+        this.dashboardAPI.updateSortCols(item.columnId, key + 1, item.sortType).subscribe();
+      });
+    }
+    //this.dashboardAPI.updateSortCols(event.columnId, sortCounter, event.sortType).subscribe();
+  }
+
+  sortFirstUpdate() {
+    const sort = _.orderBy(_.filter(this.dashCols, item => item.sort !== 0), item => item.sort);
+    this.sortList = _.map(sort, item => ({columnId: item.columnId, sortType: item.sortType}));
+    _.forEach(sort, item => this.globalSort = _.merge({}, this.globalSort,{[item.field]: item.sortType}));
   }
 
   filterData($event) {
-    if ($event[_.keys($event)[0]]) {
-      this.filters =  _.merge({}, this.filters, $event) ;
-    } else {
-      this.filters =  _.omit(this.filters, _.keys($event)[0]);
-    }
+    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue).subscribe();
   }
 
-  duplicateItem(itemName: any): void {
-    this.duplicate.emit(itemName);
+  resizeTable($event) {
+    const {delta, element: {cellIndex, offsetWidth}} = $event;
+    const selectedColumn: any = _.filter(this.dashCols, item => item.display)[cellIndex];
+    const {widthNumber, columnId} = selectedColumn;
+    const previousWidth = offsetWidth - delta;
+    const percentage = delta/previousWidth;
+    const newWidth = _.toInteger(widthNumber + widthNumber * percentage);
+    this.dashboardAPI.updateColsWidth(columnId, newWidth).subscribe();
+    const dashCols = _.map(this.dashCols, item => {return item.columnId === columnId ? {...item,
+      width: newWidth + 'px', widthNumber: newWidth} : item});
+    this.updateColsWidth.emit({dashCols, widgetId: this.identifier});
   }
 
-  deleteItem(id, persistent): void {
-    this.delete.emit({id, persistent});
+  duplicateItem(): void {
+    this.duplicate.emit(this.itemWidget.id);
+  }
+
+  deleteItem(): void {
+    this.delete.emit(this.itemWidget.id);
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
@@ -112,9 +134,9 @@ export class FacWidgetComponent implements OnInit {
     this.dropdown.close();
   }
 
-  validateName(keyboardMap, id) {
+  validateName(keyboardMap) {
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId: id, newName: keyboardMap.target.value, persistent: this.persisted});
+      this.changeName.emit({item: this.itemWidget, newName: keyboardMap.target.value});
       this.editName = false;
     }
   }

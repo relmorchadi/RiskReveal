@@ -10,4 +10,5 @@ public interface UserRrRepository extends JpaRepository<UserRrEntity, Long> {
     UserRrEntity findByUserName(int userId);
 
     UserRrEntity findByWindowsUser(String windowsUser);
+    UserRrEntity findByUserId(long userId);
 }
