@@ -4,6 +4,7 @@ import com.scor.rr.domain.entities.Project.ProjectCardView;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigInteger;
 
 @Entity
 @Table(name = "vw_FacContractSearchResult")
@@ -35,7 +36,7 @@ public class FacContractSearchResult {
     @Column(name = "AssignedUser")
     private Long assignedUser;
 
-    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, Long assignedUser) {
+    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser) {
         this.client = client;
         this.workspaceContextCode = workspaceContextCode;
         this.uwYear = uwYear;
@@ -43,6 +44,6 @@ public class FacContractSearchResult {
         this.uwAnalysis = uwAnalysis;
         this.carequestId = carequestId;
         this.carStatus = carStatus;
-        this.assignedUser = assignedUser;
+        this.assignedUser = assignedUser.longValue();
     }
 }
