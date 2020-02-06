@@ -10,103 +10,6 @@ import produce from 'immer';
 import {RiskLink} from "../model/risk-link.model";
 import {RLAnalysisFilter} from "../model/rl-analysis-filter.model";
 import {RlPortfolioFilter} from "../model/rl-portfolio-filter.model";
-import {WorkspaceState} from "../store/states/workspace.state";
-
-
-const instanceName = 'AZU-P1-RL18-SQL16';
-
-const testSummary2 = {
-    "analysis": [
-        {
-            "selected": false,
-            "rlAnalysisId": 9,
-            "rlModelDataSourceId": 1,
-            "projectId": 18,
-            "rdmId": 131,
-            "rdmName": "AA2012_SyntheticCurve_R",
-            "rlId": 19,
-            "analysisName": "UK_Fire_Evt",
-            "analysisDescription": "UK Fire Per Event",
-            "defaultGrain": "UK_Fire_Evt",
-            "analysisCurrency": "GBP",
-            "rlExchangeRate": null,
-            "region": "EU",
-            "peril": "WS",
-            "geoCode": "",
-            "rpCode": "EUWS",
-            "systemRegionPeril": "EUWS",
-            "subPeril": "WS Wind",
-            "defaultOccurrenceBasis": null,
-            "regionName": null,
-            // To be added fields
-            "financialPerspectives": [],
-            "targetCurrency": "EUR",
-            "peqt": [],
-            "unitMultiplier": 1,
-            "proportion": 100,
-            "targetRaps": [],
-            "overrideReason": null,
-            "occurrenceBasis": null
-        },
-        {
-            "selected": false,
-            "rlAnalysisId": 10,
-            "rlModelDataSourceId": 1,
-            "projectId": 18,
-            "rdmId": 131,
-            "rdmName": "AA2012_SyntheticCurve_R",
-            "rlId": 20,
-            "analysisName": "BE_ENG_All",
-            "analysisDescription": "Belgium Engineering",
-            "defaultGrain": "BE_ENG_All",
-            "analysisCurrency": "EUR",
-            "rlExchangeRate": null,
-            "region": "EU",
-            "peril": "WS",
-            "geoCode": "",
-            "rpCode": "EUWS",
-            "systemRegionPeril": "EUWS",
-            "subPeril": "WS Wind",
-            "defaultOccurrenceBasis": null,
-            "regionName": null,
-            // To be added fields
-            "financialPerspectives": [],
-            "targetCurrency": "EUR",
-            "peqt": [],
-            "unitMultiplier": 1,
-            "proportion": 100,
-            "targetRaps": [],
-            "overrideReason": null,
-            "occurrenceBasis": null
-        }
-    ],
-    "portfolios": [
-        {
-            "selected": false,
-            "rlPortfolioId": 349,
-            "entity": 1,
-            "projectId": 10,
-            "edmId": 130,
-            "edmName": "AA2012_SyntheticCurve_E",
-            "rlId": 1,
-            "number": "PT_ENG_ALL_inEUR | PT_ENG_ALL_inEUR | EQ",
-            "name": "PT_ENG_ALL_inEUR",
-            "created": "2011-11-22T11:04:45.000+0000",
-            "description": "",
-            "type": "AGG",
-            "peril": "EQ",
-            "agSource": "",
-            "agCedent": "PT_as_FIDELIDADE",
-            "agCurrency": "EUR",
-            "targetCurrency": "EUR",
-            "unitMultiplier": 1,
-            "proportion": 100,
-            "tiv": 0.00,
-            "importLocationLevel": false
-        }
-    ],
-    "sourceEpHeaders": []
-};
 
 @Injectable({
     providedIn: 'root'
@@ -295,13 +198,15 @@ export class RiskLinkStateService {
                         draft.content[wsIdentifier].riskLink.selection.edms[key] = {
                             ...selectedItem,
                             scanning: true,
-                            instanceId: payload.instanceId
+                            instanceId: payload.instanceId,
+                            instanceName: payload.instanceName
                         }
                     } else if (selectedItem.type == 'RDM') {
                         draft.content[wsIdentifier].riskLink.selection.rdms[key] = {
                             ...selectedItem,
                             scanning: true,
-                            instanceId: payload.instanceId
+                            instanceId: payload.instanceId,
+                            instanceName: payload.instanceName
                         }
                     }
                 });
@@ -547,16 +452,15 @@ export class RiskLinkStateService {
     }
 
     basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
-        const {selectedDS, projectId, instanceId} = payload;
-        const state = ctx.getState();
+        const {selectedDS, projectId, instanceId, instanceName} = payload;
         return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
             .pipe(mergeMap((response: any[]) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
                         const parsedResponse = this._parseBasicScanResponse(response);
-                        const edms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.edms), item =>
+                        const edms = _.filter(_.toArray(draft.content[wsIdentifier].riskLink.selection.edms), item =>
                             _.includes(_.keys(parsedResponse.edms), `${item.rmsId}`));
-                        const rdms = _.filter(_.toArray(state.content[wsIdentifier].riskLink.selection.rdms), item =>
+                        const rdms = _.filter(_.toArray(draft.content[wsIdentifier].riskLink.selection.rdms), item =>
                             _.includes(_.keys(parsedResponse.rdms), `${item.rmsId}`));
                         draft.content[wsIdentifier].riskLink.selection.edms = {
                             ...draft.content[wsIdentifier].riskLink.selection.edms, ...Object.assign(
@@ -1308,7 +1212,7 @@ export class RiskLinkStateService {
 
 
     rescanDataSource(ctx: StateContext<WorkspaceModel>, payload: any) {
-        const {datasource, projectId, instanceId} = payload;
+        const {datasource, projectId, instanceId, instanceName} = payload;
         return this.riskApi.rescanDataSource(datasource, projectId, instanceId, instanceName)
             .pipe(mergeMap((response: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
