@@ -145,7 +145,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 }
                 continue;
             }
-            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
+            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(bundle.getModelAnalysis().getRrAnalysisId())
                     .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
                     .map(Optional::get)

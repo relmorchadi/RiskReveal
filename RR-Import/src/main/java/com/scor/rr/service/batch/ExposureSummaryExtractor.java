@@ -23,6 +23,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,8 @@ import java.util.zip.ZipOutputStream;
 public class ExposureSummaryExtractor {
 
     private static final Logger log = LoggerFactory.getLogger(ExposureSummaryExtractor.class);
+    @Value("${rms.ds.dbname}")
+    protected String database;
     @Value("#{jobParameters['projectId']}")
     protected String projectId;
     @Value("#{jobParameters['division']}")
@@ -72,6 +75,8 @@ public class ExposureSummaryExtractor {
     @Autowired
     private RLExposureSummaryItemRepository exposureSummaryItemRepository;
     @Autowired
+    private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
+    @Autowired
     private RmsService rmsService;
     @Autowired
     private ExposureWriter exposureWriter;
@@ -97,7 +102,8 @@ public class ExposureSummaryExtractor {
                 Map<MultiKey, List<ModelPortfolioEntity>> portfoliosPerEdm = new HashMap<>();
 
                 modelPortfolios.forEach(modelPortfolio -> {
-                    MultiKey edmKey = createEdmKey(modelPortfolio.getSourceModellingSystemInstance(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
+                    ModellingSystemInstanceEntity instanceEntity = modellingSystemInstanceRepository.findByName(modelPortfolio.getSourceModellingSystemInstance());
+                    MultiKey edmKey = createEdmKey(instanceEntity.getModellingSystemInstanceId(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
                     if (portfoliosPerEdm.get(edmKey) != null)
                         portfoliosPerEdm.get(edmKey).add(modelPortfolio);
                     else
@@ -149,9 +155,9 @@ public class ExposureSummaryExtractor {
                             List<RLExposureSummaryItem> allRLExposureSummaries = new ArrayList<>();
                             Map<String, Object> params = new HashMap<>();
 
-                            params.put("edm_id", edmId);
-                            params.put("edm_name", edmName);
-                            params.put("run_id", runId);
+                            params.put("Edm_id", edmId);
+                            params.put("Edm_name", edmName);
+                            params.put("RunID", runId);
 
                             //NOTE: we could process all ExposureViewDefinitions with type Source first, then reuse the RLExposureSummaryItem for conforming
                             // Avoid invoking SummaryByCountry multiple times
@@ -174,11 +180,12 @@ public class ExposureSummaryExtractor {
                                             //
                                             globalViewSummary = globalViewSummaryRepository.save(globalViewSummary);
 
-                                            NamedParameterJdbcTemplate template = rmsService.createNamedParameterTemplate(instance);
+                                            JdbcTemplate template = rmsService.getJdbcTemplate(instance);
+
+                                            String query = "EXEC " + database + ".dbo." + exposureViewQuery.getQuery() + " @Edm_Id=" + edmId + ", @Edm_name=" + edmName + ", @RunID=" + runId;
 
                                             List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
-                                                    exposureViewQuery.getQuery(),
-                                                    params,
+                                                    query,
                                                     new RLExposureSummaryItemRowMapper(globalViewSummary));
 
                                             allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems));
