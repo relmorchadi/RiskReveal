@@ -190,8 +190,8 @@ public class BatchExecution {
         }
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
-        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult.getId();
-        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult.getCedantName();
+        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
+        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ?  contractSearchResult.getCedantName() : "";
         String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";

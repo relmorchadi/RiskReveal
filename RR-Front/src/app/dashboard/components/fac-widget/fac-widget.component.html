@@ -9,11 +9,13 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
-                   [tableColumn]="dashCols"
+                   [tableColumn]="dashCols" [sortList]="sortList"
                    [listOfData]="data"
-                   [virtualScroll]="false"
+                   [virtualScroll]="false" [fromSearch]="false"
                    (dbClickItem)="openFacItem($event)"
+                   (resizeChange)="resizeTable($event)"
                    (updateFavStatus)="valueFavChange($event)"
+                   (filterData)="filterData($event)"
                    (sortDataChange)="sortChange($event)"
                    [sortData]="globalSort"
                    [totalRecords]="data?.length">
@@ -23,11 +25,13 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true"
-                   [tableColumn]="dashCols"
+                   [tableColumn]="dashCols" [sortList]="sortList"
                    [listOfData]="filterAssign()"
-                   [virtualScroll]="false"
+                   [virtualScroll]="false" [fromSearch]="false"
                    (dbClickItem)="openFacItem($event)"
+                   (resizeChange)="resizeTable($event)"
                    (updateFavStatus)="valueFavChange($event)"
+                   (filterData)="filterData($event)"
                    (sortDataChange)="sortChange($event)"
                    [sortData]="globalSort"
                    [totalRecords]="data?.length">
@@ -40,13 +44,14 @@
 <ng-container *ngIf="widgetId === 1">
   <div class="renewal-contract-table">
     <app-table [sortable]="true"
-               [tableColumn]="dashCols"
-               [listOfData]="data"
+               [tableColumn]="dashCols" [sortList]="sortList"
+               [listOfData]="data" [fromSearch]="false"
                [virtualScroll]="false" [filterModeFront]="false"
                (sortDataChange)="sortChange($event)"
+               (resizeChange)="resizeTable($event)"
                (dbClickItem)="openFacItem($event)"
                (updateFavStatus)="valueFavChange($event)"
-               [sortData]="newSort" (filterData)="filterData($event)"
+               [sortData]="globalSort" (filterData)="filterData($event)"
                [totalRecords]="data?.length">
     </app-table>
   </div>
@@ -63,8 +68,8 @@
       <nz-dropdown [nzTrigger]="'click'">
         <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
         <ul nz-menu nzSelectable>
-          <li (click)="duplicateItem(itemName)" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
-          <li (click)="deleteItem(identifier, persisted)" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
+          <li (click)="duplicateItem()" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+          <li (click)="deleteItem()" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
         </ul>
       </nz-dropdown>
 

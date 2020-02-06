@@ -45,18 +45,21 @@
                   <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard"
                                   [itemWidget]="item" [data]="newFacCars"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard"
                                   [itemWidget]="item" [data]="inProgressFacCars"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard"
                                   [itemWidget]="item" [data]="archivedFacCars"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                  (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
@@ -79,16 +82,16 @@
       </ng-container>
     </nz-tabset>
   </nz-content>
-  <app-manage-columns [visible]="manageNewPopUp" [columns]="immutableNew"
-                      (onSubmit)="saveColumns($event, 'new')"
+  <app-manage-columns [visible]="manageNewPopUp" [columns]="immutableCols"
+                      (onSubmit)="saveColumns($event)" [fromDash]="true"
                       (onCancel)="closePopUp()"></app-manage-columns>
 
-  <app-manage-columns [visible]="manageInProgressPopUp" [columns]="immutableInProgress"
-                      (onSubmit)="saveColumns($event, 'inProgress')"
+  <app-manage-columns [visible]="manageInProgressPopUp" [columns]="immutableCols"
+                      (onSubmit)="saveColumns($event)" [fromDash]="true"
                       (onCancel)="closePopUp()"></app-manage-columns>
 
-  <app-manage-columns [visible]="manageArchivedPopUp" [columns]="immutableArchive"
-                      (onSubmit)="saveColumns($event, 'archived')"
+  <app-manage-columns [visible]="manageArchivedPopUp" [columns]="immutableCols"
+                      (onSubmit)="saveColumns($event)" [fromDash]="true"
                       (onCancel)="closePopUp()"></app-manage-columns>
   <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
@@ -106,7 +109,7 @@
         Dashboard <br>
         Preferences
         <button nz-popconfirm (nzOnConfirm)="addDashboard()" (nzOnCancel)="emptyField()" (click)="focusInput()" [nzTitle]="dash" class="add-workspace-btn" nz-button
-                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" [nzVisible]="showAdd" #popConfirm>
+                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" [(nzVisible)]="showAdd" #popConfirm>
           <i nz-icon type="plus"></i>
         </button>
         <ng-template #dash>
@@ -132,7 +135,7 @@
         </nz-select>
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input"
-                 (change)="changeDashboardName($event)" [ngModel]="selectedDashboard?.name">
+                 (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard?.name">
           <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted" *ngIf="dashboards?.length > 1"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
             nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'"

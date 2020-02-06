@@ -6,7 +6,7 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {SearchNavBarState} from '../../../core/store/states';
+import {DashboardState, SearchNavBarState} from '../../../core/store/states';
 import {
   CloseAllTagsAction, CloseGlobalSearchAction,
   CloseTagByIndexAction, DeleteSearchItem, LoadMostUsedSavedSearch,
@@ -45,9 +45,13 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Select(SearchNavBarState.getShowSavedSearch)
   savedSearchVisibility$;
 
+  @Select(DashboardState.getSelectedDashboard)
+  selectedDashboard$;
+
   sortData: any;
 
   savedSearch;
+  searchMode: any;
   badges;
 
   expandWorkspaceDetails = false;
@@ -157,6 +161,95 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   extraColumns = [];
   extraColumnsCache = [];
 
+  columnsFac = [
+    {
+      field: 'checkbox',
+      header: '',
+      width: '20px',
+      display: true,
+      sorted: true,
+      filtered: false,
+      type: 'checkbox',
+      class: 'icon-check_24px',
+    },
+    {
+      field: 'countryName',
+      header: 'Country',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'CountryName'
+    },
+    {
+      field: 'cedantName',
+      header: 'Cedent Name',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'CedantName'
+    },
+    {
+      field: 'cedantCode',
+      header: 'Cedant Code',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'CedantCode'
+    },
+    {
+      field: 'uwYear',
+      header: 'Uw Year',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'UwYear'
+    },
+    {
+      field: 'workspaceName',
+      header: 'Workspace Name',
+      width: '160px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'WorkspaceName'
+    },
+    {
+      field: 'workSpaceId',
+      header: 'Workspace Context',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'WorkspaceId'
+    },
+    {
+      field: 'openInHere',
+      header: '',
+      width: '20px',
+      type: 'icon',
+      class: 'icon-fullscreen_24px',
+      handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)),
+      display: false,
+      sorted: false,
+      filtered: false
+    },
+    {
+      field: 'openInPopup',
+      header: '',
+      width: '20px',
+      type: 'icon',
+      class: 'icon-open_in_new_24px',
+      handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)),
+      display: false,
+      sorted: false,
+      filtered: false
+    }
+  ];
+
   private _filter = {};
   searchContent;
   manageColumns: boolean = false;
@@ -187,6 +280,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         this._loadData();
         this.detectChanges();
       });
+
+    this.selectedDashboard$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.searchMode = _.get(value, 'searchMode', 'treaty');
+      this.detectChanges();
+    });
+
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
       this.detectChanges();
@@ -312,14 +411,17 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filters,
       keyword
     } = this.filter;
+
     let params = {
       keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
       filter: filters,
       sort: this.getSortColumns(this.sortData),
       offset,
       size: size,
-      fromSavedSearch: this.fromSavedSearch
+      fromSavedSearch: this.fromSavedSearch,
+      type: _.toUpper(this.searchMode)
     };
+
     this.searchSub$ = this._searchService.expertModeSearch(params)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
@@ -345,7 +447,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           totalPages: totalPages
         };
 
-        if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+        // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+
+
         this.dispatch(new LoadRecentSearch());
         if(this.fromSavedSearch) {
           this.dispatch(new LoadMostUsedSavedSearch());
