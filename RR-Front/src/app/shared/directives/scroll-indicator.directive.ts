@@ -83,7 +83,7 @@ export class ScrollIndicatorDirective implements AfterViewInit, OnDestroy {
 
     _.forEach(this.tooltip.nativeElement.children, node => {
       this.renderer.removeChild(this.tooltip.nativeElement, node);
-    })
+    });
 
     this.tooltip.nativeElement.textContent = '';
 

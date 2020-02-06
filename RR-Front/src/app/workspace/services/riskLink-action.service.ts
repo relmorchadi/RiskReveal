@@ -1,10 +1,5 @@
 import {StateContext} from '@ngxs/store';
 import * as fromWs from '../store/actions';
-import {
-    LoadBasicAnalysisFacPerDivisionAction, LoadDivisionSelection,
-    SaveDivisionSelection
-
-} from '../store/actions';
 import * as _ from 'lodash';
 import {catchError, count, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
@@ -15,7 +10,7 @@ import produce from 'immer';
 import {RiskLink} from "../model/risk-link.model";
 import {RLAnalysisFilter} from "../model/rl-analysis-filter.model";
 import {RlPortfolioFilter} from "../model/rl-portfolio-filter.model";
-import {WorkspaceState} from "../store/states";
+// import {WorkspaceState} from "../store/states";
 
 
 const instanceName = 'AZU-P1-RL18-SQL16';
@@ -150,7 +145,7 @@ export class RiskLinkStateService {
         const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
         const newValue = _.merge({}, state.content[wsIdentifier].riskLink.display, {[payload.key]: payload.value});
         if (payload.key === 'displayTable' && !state.content[wsIdentifier].riskLink.display.displayTable) {
-            ctx.dispatch([new LoadBasicAnalysisFacPerDivisionAction()]);
+            ctx.dispatch([new fromWs.LoadBasicAnalysisFacPerDivisionAction()]);
         }
         ctx.patchState(
             produce(ctx.getState(), draft => {
@@ -171,7 +166,7 @@ export class RiskLinkStateService {
             const oldValue = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
             const data = [...state.content[wsIdentifier].riskLink.analysis.data, ...state.content[wsIdentifier].riskLink.portfolios.data];
             if (data.length > 0) {
-                ctx.dispatch(new SaveDivisionSelection(oldValue));
+                ctx.dispatch(new fromWs.SaveDivisionSelection(oldValue));
             }
         }
         ctx.patchState(
@@ -462,7 +457,7 @@ export class RiskLinkStateService {
                 ...draft.content[wsIdentifier].riskLink.facSelection[selectedDivision]
             }
         }));
-        ctx.dispatch(new LoadDivisionSelection());
+        ctx.dispatch(new fromWs.LoadDivisionSelection());
     }
 
     saveEditAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1458,6 +1453,7 @@ export class RiskLinkStateService {
     }
 
     private addDataSourcesSelection(ctx: StateContext<WorkspaceModel>, dataSources, scanning = true) {
+        const state = ctx.getState();
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
             if (!_.isEmpty(dataSources)) {
@@ -1489,10 +1485,11 @@ export class RiskLinkStateService {
                     const divisionsIds = _.map(riskLink.financialValidator.division.data, d => d.divisionNumber);
                     const edmIds = _.map(_.values(riskLink.selection.edms), item => item.rlDataSourceId);
                     const rdmIds = _.map(_.values(riskLink.selection.rdms), item => item.rlDataSourceId);
+                    const selectedProject: any = _.filter(state.content[wsIdentifier].projects, item => item.selected)[0];
                     if (!_.isEmpty(divisionsIds) && (!_.isEmpty(edmIds) || !_.isEmpty(rdmIds)))
                         ctx.dispatch(new fromWs.AutoAttachAction({
                             instanceId: draft.content[wsIdentifier].riskLink.financialValidator.rmsInstance.selected.instanceId,
-                            projectId: WorkspaceState.getSelectedProject(draft).projectId,
+                            projectId: selectedProject.projectId,
                             divisionsIds,
                             edmIds,
                             rdmIds,

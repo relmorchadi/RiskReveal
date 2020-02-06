@@ -136,6 +136,7 @@ public class EpMetricsService {
 
                     userRPEntity.setUserId(request.getUserId());
                     userRPEntity.setRp(rp);
+                    userRPEntity.setScreen(request.getScreen());
                     userRPEntity.setIsDeleted(true);
                 }
 

@@ -1,6 +1,6 @@
 package com.scor.rr.domain;
 
-public enum TableNames {
+public enum TreatyTableNames {
     CEDANT_CODE("cedant_code"),
     CEDANT_NAME("cedant_name"),
     COUNTRY_NAME("country"),
@@ -10,7 +10,7 @@ public enum TableNames {
     UW_YEAR("year");
 
     private String value;
-    TableNames(String value) {
+    TreatyTableNames(String value) {
         this.value= value;
     }
     public String getValue() {
