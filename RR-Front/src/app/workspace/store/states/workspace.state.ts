@@ -1,7 +1,6 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import {PatchCalibrationStateAction, SaveRPs} from '../actions';
 import * as fromInuring from '../actions/inuring.actions';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
@@ -876,8 +875,8 @@ export class WorkspaceState {
     this.calibrationService.saveAdjustmentApplication(ctx, payload);
   }
 
-  @Action(PatchCalibrationStateAction)
-  patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
+  @Action(fromWS.PatchCalibrationStateAction)
+  patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: fromWS.PatchCalibrationStateAction) {
     this.calibrationService.patchSearchState(ctx, payload);
   }
 
