@@ -149,7 +149,7 @@ public class ExposureSummaryExtractor {
 
                         if (runId != null) {
                             // NOTE: be careful the volumetric you are keeping in memory at the same time.
-                            // It could be out of memory if user is importing too much portfolios.
+                            // It could be out of memory if user is importing too many portfolios.
                             // Some kinds of buffering may be better.
                             List<ExposureSummaryData> allRRExposureSummaries = new ArrayList<>();
                             List<RLExposureSummaryItem> allRLExposureSummaries = new ArrayList<>();
@@ -198,9 +198,9 @@ public class ExposureSummaryExtractor {
                                         }
                                     });
 
-                            log.info("Info: Start saving risk link exposure summaries");
-                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
-                            log.info("Info: Saving risk link exposure summaries has ended");
+//                            log.info("Info: Start saving risk link exposure summaries");
+//                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
+//                            log.info("Info: Saving risk link exposure summaries has ended");
 
                             log.info("Info: Start saving risk reveal exposure summaries");
                             exposureSummaryDataRepository.saveAll(allRRExposureSummaries);
@@ -297,7 +297,7 @@ public class ExposureSummaryExtractor {
                                 }
                             });
 
-                            rmsService.removeEDMPortfolioContext(instance, runId);
+                            //rmsService.removeEDMPortfolioContext(instance, runId);
                         } else {
                             log.error("Error: runId is null");
                         }
