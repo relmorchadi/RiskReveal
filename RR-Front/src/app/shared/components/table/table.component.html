@@ -125,7 +125,6 @@
            [(selection)]="selectedRow"
            [columnResizeMode]="'expand'"
            scrollIndicator
-           (click)="log(dt)"
            [step]="35"
   >
     <ng-template pTemplate="colgroup" let-columns>
@@ -137,7 +136,7 @@
       <tr>
         <th *ngFor="let col of columns" [pResizableColumnDisabled]="col.field=='checkbox'" pResizableColumn>
         <span
-          [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden','border-right': col.field=='checkbox' ?'none': '1px solid #c8c8c8'}"
+          [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}"
               style="display:flex;justify-content: space-between">
           {{col?.header}}
           <ng-container *ngIf="col.type === 'checkbox'">
@@ -147,11 +146,11 @@
           </ng-container>
            <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+                 (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
               <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
-              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
-                 style="font-size: 1.4em;"></i>
+                 (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction"
+                 (click)="sortChange(col?.field,sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
             </ng-container>
         </span>
           <div class="search-bar-table" *ngIf="col?.filtered">

@@ -264,7 +264,6 @@ export class TableComponent implements OnInit {
         this.sortDataChange.emit(_.omit(this.sortData, `${field}`));
       }
     } else {
-      console.log(this.sortList);
       if (!sortCol) {
         this.sortDataChange.emit({newSort: _.merge({}, this.sortData, {[field]: 'asc'}),
           newSortingList: [...this.sortList, {columnId, sortType: 'asc'}],

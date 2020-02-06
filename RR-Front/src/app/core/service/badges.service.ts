@@ -9,16 +9,16 @@ export class BadgesService {
 
   readonly regularExpession = /(\w*:){1}(((\w|\"|\*)*\s)*)/g;
 
-   shortcuts = {}
+  shortcuts = {};
 
   constructor() {
 
   }
 
-  public initShortCuts(shortCuts: ShortCut[]) {
+  public initShortCuts(shortCuts: ShortCut[], searchMode) {
     let newShortCuts = {};
 
-    _.forEach(shortCuts, shortCut => {
+    _.forEach(_.filter(shortCuts, item => searchMode === 'Treaty' ? item.type === 'TTY' : item.type === 'FAC'), shortCut => {
       newShortCuts[_.trim(shortCut.shortCutAttribute, ':')] = shortCut.shortCutLabel;
     });
 
@@ -57,10 +57,9 @@ export class BadgesService {
     }
   }
 
-  public transformKeyword(expr: any) {
+  public transformKeyword(expr: any, searchMode) {
     return expr.replace(/(\w*:){1}/g, (match, shortcut, keyword) => {
       let shortCutExist = this.shortcuts[_.toLower(_.trim(shortcut, ':'))];
-      console.log(shortCutExist ? shortCutExist + ":" : shortcut)
       return shortCutExist ? shortCutExist + ":" : shortcut;
     });
   }
