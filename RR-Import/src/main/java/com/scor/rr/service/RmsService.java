@@ -905,7 +905,7 @@ public class RmsService {
         return this.getJdbcTemplate(instanceId).queryForList(query, args);
     }
 
-    private JdbcTemplate getJdbcTemplate(String instanceId) {
+    public JdbcTemplate getJdbcTemplate(String instanceId) {
         return new JdbcTemplate(rmsInstanceCache.getDataSource(instanceId));
     }
 
