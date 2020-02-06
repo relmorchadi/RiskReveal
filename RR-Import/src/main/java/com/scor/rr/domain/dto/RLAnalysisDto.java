@@ -28,6 +28,6 @@ public class RLAnalysisDto {
     private String subPeril;
     private String lossAmplification;
     private String region;
-    private Integer analysisMode;
+    private String analysisMode;
     private String analysisCurrency;
 }

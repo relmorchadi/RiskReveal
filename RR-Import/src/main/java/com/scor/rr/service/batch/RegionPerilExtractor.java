@@ -274,7 +274,7 @@ public class RegionPerilExtractor {
 
                 log.info("Finish import progress STEP 1 : LOAD_REGION_PERIL for analysis: {}", sourceResultId);
 
-                mapAnalysisRRAnalysisIds.put(sourceResultId, fpRRAnalysis);
+                mapAnalysisRRAnalysisIds.put(sourceResultId, new HashMap<>(fpRRAnalysis));
             }
 
             transformationPackage.setMapAnalysisRRAnalysisIds(mapAnalysisRRAnalysisIds);
