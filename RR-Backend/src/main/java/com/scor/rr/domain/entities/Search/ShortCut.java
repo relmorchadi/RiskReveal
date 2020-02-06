@@ -17,13 +17,13 @@ public class ShortCut {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long shortCutId;
 
-    @Column(unique = true)
     private String shortCutLabel;
 
-    @Column(unique = true)
     private String shortCutAttribute;
 
-    @Column(unique = true, nullable = false, updatable = false)
     private String mappingTable;
+
+    private String type;
+
 
 }

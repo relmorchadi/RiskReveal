@@ -9,8 +9,10 @@ import * as _ from 'lodash';
 
 const initiateState: DashboardModel = {
     config: null,
-    tabs: null,
-    dashboards: null,
+    tabs: {
+        selectedDashboard: null,
+        tabIndex: 0
+    },
     referenceWidget: {
         fac: null,
         treaty: null
@@ -42,115 +44,13 @@ export class DashboardState implements NgxsOnInit {
     }
 
     @Selector()
-    static getDashboards(state: DashboardModel) {
-        return state.dashboards;
+    static getSelectedDashboard(state: DashboardModel) {
+        return state.tabs.selectedDashboard;
     }
 
     @Selector()
     static getRefData(state: DashboardModel) {
         return state.referenceWidget;
-    }
-
-    @Action(fromHD.LoadDashboardsAction)
-    loadDashboards(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardsAction) {
-        const {userId} = payload;
-        return this.dashboardAPI.getDashboards(userId).pipe(
-            mergeMap(data => {
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    let dashboards = [];
-                    _.forEach(data, item => {
-                        dashboards = [...dashboards, this._formatData(item)]
-                    });
-                    draft.dashboards = dashboards;
-                }));
-                return of();
-            })
-        )
-    }
-
-    @Action(fromHD.CreateNewDashboardAction)
-    creatNewDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.CreateNewDashboardAction) {
-        const state = ctx.getState();
-        return this.dashboardAPI.creatDashboards(payload).pipe(
-            tap(data => {
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.dashboards = [...state.dashboards, this._formatData(data)];
-                }));
-            })
-        )
-    }
-
-    @Action(fromHD.CreateWidgetAction)
-    createWidgetForDash(ctx: StateContext<DashboardModel>, {payload}: fromHD.CreateWidgetAction) {
-        const state = ctx.getState();
-        const {selectedDashboard, widget} = payload;
-        console.log(widget);
-        return this.dashboardAPI.createWidget(widget).pipe(
-            tap((data: any) => {
-                const {userDashboardWidget, columns} = data;
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.dashboards = _.map(state.dashboards, item => {
-                        if (item.id === selectedDashboard) {
-                            return {...item, widgets: [...item.widgets, {...this._formatWidget(userDashboardWidget),
-                                    columns: this._formatColumns(columns)}]
-                            };
-                        }
-                        return item;
-                    });
-                }));
-            })
-        )
-    }
-
-    @Action(fromHD.DeleteDashboardAction)
-    deleteDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.DeleteDashboardAction) {
-        const {dashboardId} = payload;
-        const state = ctx.getState();
-        return this.dashboardAPI.deleteDashboards(dashboardId).pipe(
-            tap(data => {
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.dashboards = _.filter(state.dashboards, item => item.id !== dashboardId);
-                }));
-            })
-        )
-    }
-
-    @Action(fromHD.DeleteWidgetAction)
-    deleteWidget(ctx: StateContext<DashboardModel>, {payload}: fromHD.DeleteWidgetAction) {
-        const {dashboardWidgetId, selectedDashboard} = payload;
-        const state = ctx.getState();
-        return this.dashboardAPI.deleteWidget(dashboardWidgetId).pipe(
-            tap(data => {
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.dashboards = _.map(state.dashboards, item => {
-                        if (item.id === selectedDashboard.id) {
-                            return {...item, widget: _.filter(item.widget, widgetItem =>
-                                    widgetItem.userDashboardWidgetId !== dashboardWidgetId)};
-                        }
-                        return item;
-                    });
-                }));
-            })
-        )
-    }
-
-    @Action(fromHD.UpdateDashboardAction)
-    updateDashboard(ctx: StateContext<DashboardModel>, {payload}: fromHD.UpdateDashboardAction) {
-        const state = ctx.getState();
-        const {dashboardId, updatedDashboard} = payload;
-        return this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).pipe(
-            tap(data => {
-                const frontData = {
-                    ...updatedDashboard,
-                    name: updatedDashboard.dashboardName
-                };
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.dashboards = _.map(state.dashboards, item => {
-                        return item.id === dashboardId ? _.merge({}, item, frontData) : item;
-                    });
-                }));
-            })
-        )
     }
 
     @Action(fromHD.LoadReferenceWidget)
@@ -167,13 +67,23 @@ export class DashboardState implements NgxsOnInit {
         )
     }
 
+    @Action(fromHD.ChangeSelectedDashboard)
+    changeSelected(ctx: StateContext<DashboardModel>, {payload}: fromHD.ChangeSelectedDashboard) {
+        const {selectedDashboard} = payload;
+        const state = ctx.getState();
+        const tabIndex = _.get(payload, 'tabIndex', state.tabs.tabIndex);
+        ctx.patchState(produce(ctx.getState(), draft => {
+            draft.tabs = {selectedDashboard, tabIndex};
+        }));
+    }
+
     @Action(fromHD.LoadDashboardFacDataAction)
     loadDashboardFacData(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardFacDataAction) {
         const state = ctx.getState();
         const dataFilters = {
             filterConfig: payload || {},
             pageNumber: 0,
-            size: 50,
+            size: 1000,
             sortConfig: []
         };
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(

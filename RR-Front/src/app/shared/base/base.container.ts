@@ -27,6 +27,10 @@ export abstract class BaseContainer {
       this._baseCdr.detectChanges();
   }
 
+  protected markForCheck() {
+    if (!this._baseCdr['destroyed']) this._baseCdr.markForCheck();
+  }
+
   protected destroy() {
     this.unSubscriton$.next();
     this.unSubscriton$.complete();

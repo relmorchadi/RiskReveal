@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 export class DashboardApi {
     protected URL = `${backendUrl()}DashBoard/`;
     protected WidgetURL = this.URL + 'Widget/';
+    protected TableURL = `${backendUrl()}DashboardWidgetColumns/`;
 
     constructor(private http: HttpClient) {
     }
@@ -51,6 +52,25 @@ export class DashboardApi {
 
     updateWidget(widget) {
         return this.http.put(`${this.WidgetURL}update`, widget, {responseType: 'text' as 'json'});
+    }
+
+    manageColumnsWidget(tableCols) {
+        return this.http.put(`${this.TableURL}updateVisibilityAndOrder`, tableCols, {responseType: 'text' as 'json'});
+    }
+
+    updateColsWidth(columnId, width) {
+        return this.http.put(`${this.TableURL}updateWidth`, {}, {params: {columnId, width},
+            responseType: 'text' as 'json'});
+    }
+
+    updateSortCols(columnId, sort, sortType) {
+        return this.http.put(`${this.TableURL}updateSort`, {}, {params: {columnId, sort, sortType},
+            responseType: 'text' as 'json'});
+    }
+
+    updateFilterCols(columnId, filter) {
+        return this.http.put(`${this.TableURL}updateFilter`, {}, {params: {columnId, filter},
+            responseType: 'text' as 'json'});
     }
 
     getFacDashboardResources(filters): Observable<any>  {
