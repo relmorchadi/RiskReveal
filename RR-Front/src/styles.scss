@@ -136,3 +136,7 @@ body .ui-toast .ui-toast-message.ui-toast-message-success {
 .ui-table-frozen-view .ui-table-scrollable-body::-webkit-scrollbar {
   width: 0px;
 }
+
+mwlResizable {
+  box-sizing: border-box; // required for the enableGhostResize option to work
+}

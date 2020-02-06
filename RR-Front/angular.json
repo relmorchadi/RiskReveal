@@ -43,7 +43,8 @@
               "src/assets/scss/styles.scss",
               "src/theme.less",
               "src/styles.scss",
-              "node_modules/angular2-draggable/css/resizable.min.css"
+              "node_modules/angular2-draggable/css/resizable.min.css",
+              "node_modules/angular-resize-element/bundles/style.scss"
             ],
             "scripts": [],
             "es5BrowserSupport": true

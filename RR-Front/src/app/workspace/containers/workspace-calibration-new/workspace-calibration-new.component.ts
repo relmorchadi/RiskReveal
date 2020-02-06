@@ -333,6 +333,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
       this.columnsConfig= config;
+      console.log(config);
       this.calibrationTableService.updateColumnsConfigCache(config);
       this.detectChanges();
     })
@@ -565,7 +566,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     // const diff = Math.abs(expandedMaxWidth - expandedWidth);
     // const newColMinWidth = _.toNumber(lastCol.minWidth);
     // let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
-    //
+    // //
     // resCols = _.map(resCols, (col, i)  => (_.toNumber(i) != (resCols.length - 2)) ?  col : {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''});
     res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
     res.frozenColumns= resCols;
