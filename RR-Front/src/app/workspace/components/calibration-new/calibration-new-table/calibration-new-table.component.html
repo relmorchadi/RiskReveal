@@ -251,12 +251,7 @@
 
   <!--HEADER-->
   <ng-template #leftHeader>
-    <div mwlResizable
-            [enableGhostResize]="false"
-            [resizeEdges]="{bottom: false, right: true, top: false, left: false}"
-            (resizeEnd)="onTableSeparatorResize($event, dt)"
-
-            class="flex-vertical-layout spread-layout">
+    <div class=" flex-vertical-layout spread-layout" style="position: relative;" #resizeContainer>
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
         <span class="title">PLTs</span>
         <div class="icon-wrapper">
@@ -282,6 +277,10 @@
           <i class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
         </div>
       </div>
+      <div class="resize resize__right"
+           (resizeEnd)="onTableSeparatorResize($event)"
+           [targetElement]="resizeContainer"
+           [direction]="AngularResizeElementDirection.RIGHT"></div>
     </div>
   </ng-template>
 

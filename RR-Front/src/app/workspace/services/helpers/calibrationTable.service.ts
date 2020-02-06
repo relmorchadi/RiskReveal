@@ -46,13 +46,13 @@ export class CalibrationTableService {
     CalibrationTableService.frozenCols = [
       {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
       {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true}
+      {field: 'pltName', header: 'PLT Name', width: "120", unit: 'px', resizable: true, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsHead = [
       {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true},
       {field: 'pltId', header: 'PLT Id', width: "50", unit: 'px', resizable: true, isFrozen: true, filter: true, sortable: true},
-      {field: 'pltName', header: 'PLT Name', width: "80", unit: 'px', resizable: true, isFrozen: true, filter: true, sortable: true}
+      {field: 'pltName', header: 'PLT Name', width: "120", unit: 'px', resizable: true, isFrozen: true, filter: true, sortable: true}
     ];
 
     CalibrationTableService.frozenColsTail = [
@@ -84,11 +84,10 @@ export class CalibrationTableService {
   }
 
   columnHandler = {
-
     "fac-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
+      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : [...this.epMetrics] );
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -100,9 +99,9 @@ export class CalibrationTableService {
     },
     "fac-adjustments": (isExpanded) => {
       const c = {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}
-      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
+      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );;
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -117,22 +116,19 @@ export class CalibrationTableService {
 
   init = () =>  {
     const a = [...CalibrationTableService.frozenColsHead, ...CalibrationTableService.frozenColsTail];
-    const r = {
+    this.updateColumnsConfig({
       frozenColumns: a,
       frozenWidth: _.reduce(a, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
       columns: [{header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}],
       columnsLength: a.length
-    };
-    this.updateColumnsConfig(r);
-    this.updateColumnsConfigCache(r);
+    });
+    this.updateColumnsConfigCache(this.columnsConfig$.getValue())
   };
 
   getColumns(view, isExpanded) {
     try {
-      console.log("FOUND");
       const tmp = this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
       this.updateColumnsConfig(tmp);
-      this.updateColumnsConfigCache(tmp);
     } catch(e) {
       this.updateColumnsConfig({
         frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',
