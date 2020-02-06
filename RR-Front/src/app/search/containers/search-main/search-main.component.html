@@ -19,7 +19,7 @@
                 No Result Found
               </ng-container>
               <ng-template #paginationHighlight>
-                <div *ngIf="dt.selectedRows && dt.selectedRows.length; else noSelects">
+                <div *ngIf="dt?.selectedRows && dt?.selectedRows?.length; else noSelects">
                   {{dt?.selectedRows?.length}} of {{paginationOption?.total}} selected
                 </div>
                 <ng-template #noSelects>
@@ -98,7 +98,7 @@
         <app-table [tableColumn]="columns" [sortable]="false"
                    [rows]="100"
                    [totalRecords]="paginationOption?.total"
-                   #dt
+                   #dt *ngIf="searchMode === 'Treaty'"
                    [listOfData]="contracts"
                    [virtualScroll]="true"
                    (selectOne)="openWorkspaceInSlider($event)"
@@ -109,6 +109,24 @@
                    (sortDataChange)="sortChange($event)"
                    [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
+                   [activateContextMenu]="true"
+                   [loading]="loading">
+        </app-table>
+
+        <app-table [tableColumn]="columnsFac" [sortable]="false"
+                   [rows]="100"
+                   [totalRecords]="paginationOption?.total"
+                   #dtFac *ngIf="searchMode === 'Fac'"
+                   [listOfData]="contracts"
+                   [virtualScroll]="true"
+                   (selectOne)="openWorkspaceInSlider($event)"
+                   [tableWidth]="'1000px'"
+                   [tableHeight]="'calc(100vh - 210px)'"
+                   (loadMore)="loadMore($event)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="sortData"
+                   (dbClickItem)="openWorkspace($event?.workspaceName, $event?.uwYear)"
                    [activateContextMenu]="true"
                    [loading]="loading">
         </app-table>

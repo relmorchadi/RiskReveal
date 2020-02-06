@@ -51,7 +51,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   sortData: any;
 
   savedSearch;
-  searchMode: any;
+  searchMode: any = 'Treaty';
   badges;
 
   expandWorkspaceDetails = false;
@@ -173,8 +173,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       class: 'icon-check_24px',
     },
     {
-      field: 'countryName',
-      header: 'Country',
+      field: 'client',
+      header: 'Client',
       width: '90px',
       display: true,
       sorted: true,
@@ -182,22 +182,31 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       queryParam: 'CountryName'
     },
     {
-      field: 'cedantName',
-      header: 'Cedent Name',
+      field: 'assignedTo',
+      header: 'Assigned User',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'CedantName'
+      queryParam: 'assignedTo'
     },
     {
-      field: 'cedantCode',
-      header: 'Cedant Code',
+      field: 'carStatus',
+      header: 'CAR Status',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'CedantCode'
+      queryParam: 'carStatus'
+    },
+    {
+      field: 'uwAnalysis',
+      header: 'Uw Analysis',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'uwAnalysis'
     },
     {
       field: 'uwYear',
@@ -218,13 +227,13 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       queryParam: 'WorkspaceName'
     },
     {
-      field: 'workSpaceId',
+      field: 'workSpaceContextCode',
       header: 'Workspace Context',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'WorkspaceId'
+      queryParam: 'workSpaceContextCode'
     },
     {
       field: 'openInHere',
@@ -232,7 +241,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       width: '20px',
       type: 'icon',
       class: 'icon-fullscreen_24px',
-      handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)),
+      handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)),
       display: false,
       sorted: false,
       filtered: false
@@ -243,7 +252,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       width: '20px',
       type: 'icon',
       class: 'icon-open_in_new_24px',
-      handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)),
+      handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)),
       display: false,
       sorted: false,
       filtered: false
@@ -282,7 +291,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
 
     this.selectedDashboard$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.searchMode = _.get(value, 'searchMode', 'treaty');
+      this.searchMode = _.get(value, 'searchMode', 'Treaty');
       this.detectChanges();
     });
 
@@ -309,7 +318,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   openWorkspace(wsId, year) {
     console.log('this is selected');
-    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
+    if (this.searchMode === 'Treaty') {
+      this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
+    } else {
+      this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'FAC'}));
+    }
+
   }
 
   navigateToTab(value) {
@@ -412,51 +426,54 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       keyword
     } = this.filter;
 
-    let params = {
-      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
-      filter: filters,
-      sort: this.getSortColumns(this.sortData),
-      offset,
-      size: size,
-      fromSavedSearch: this.fromSavedSearch,
-      type: _.toUpper(this.searchMode)
-    };
+    setTimeout(() => {
+      let params = {
+        keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
+        filter: filters,
+        sort: this.getSortColumns(this.sortData),
+        offset,
+        size: size,
+        fromSavedSearch: this.fromSavedSearch,
+        type: _.toUpper(this.searchMode)
+      };
 
-    this.searchSub$ = this._searchService.expertModeSearch(params)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe((data: any) => {
-        this.contracts = _.map(data.content, item => ({...item, selected: false}));
-        this.loading = false;
-        const {
-          pageable: {
-            offset,
-            pageNumber,
-            pageSize
-          },
-          size,
-          totalElements,
-          totalPages
-        } = data;
+      this.searchSub$ = this._searchService.expertModeSearch(params)
+          .pipe(this.unsubscribeOnDestroy)
+          .subscribe((data: any) => {
+            this.contracts = _.map(data.content, item => ({...item, selected: false}));
+            this.loading = false;
+            const {
+              pageable: {
+                offset,
+                pageNumber,
+                pageSize
+              },
+              size,
+              totalElements,
+              totalPages
+            } = data;
 
-        this.paginationOption = {
-          offset,
-          pageNumber: pageNumber + 1,
-          pageSize,
-          size,
-          total: totalElements,
-          totalPages: totalPages
-        };
+            this.paginationOption = {
+              offset,
+              pageNumber: pageNumber + 1,
+              pageSize,
+              size,
+              total: totalElements,
+              totalPages: totalPages
+            };
 
-        // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+            // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
 
 
-        this.dispatch(new LoadRecentSearch());
-        if(this.fromSavedSearch) {
-          this.dispatch(new LoadMostUsedSavedSearch());
-          this.fromSavedSearch = false;
-        }
-        this.detectChanges();
-      });
+            this.dispatch(new LoadRecentSearch());
+            if(this.fromSavedSearch) {
+              this.dispatch(new LoadMostUsedSavedSearch());
+              this.fromSavedSearch = false;
+            }
+            this.detectChanges();
+          });
+    }, 1000);
+
   }
 
   dropColumn(event: CdkDragDrop<any>) {
