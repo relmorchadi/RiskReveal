@@ -224,7 +224,7 @@
 
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-index="index" let-isLastColumn="isLastColumn">
-      <th [id]="col?.field" [attr.isFrozen]="col?.isFrozen" [attr.index]="index" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
+      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
 
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
