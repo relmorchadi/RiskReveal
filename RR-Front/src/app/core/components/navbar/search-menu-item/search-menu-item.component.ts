@@ -25,6 +25,7 @@ import {ShortCut} from "../../../model/shortcut.model";
 import {DashboardState, SearchNavBarState} from "../../../store/states";
 import {BaseContainer} from "../../../../shared/base";
 import {DashboardApi} from "../../../service/api/dashboard.api";
+import {PatchSearchStateAction} from "../../../store/actions/search-nav-bar.action";
 
 
 @Component({
@@ -91,7 +92,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
       this.searchMode = _.get(value, 'searchMode', null);
       this.resetToDash = this.searchMode !== null;
       this.resetToDash ? this.mainSearchMode = this.searchMode : null;
-      this.badgeService.initShortCuts(this.searchShortCuts, this.searchMode);
+      this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: this.useAlternative()}));
+      this.badgeService.initShortCuts(this.searchShortCuts, this.useAlternative());
       this.detectChanges();
     });
 
@@ -317,6 +319,12 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   replaceExpressionWithShortCut(possibleShortCut: string) {
     event.preventDefault();
     this.contractFilterFormGroup.get('globalKeyword').patchValue(possibleShortCut + ":");
+  }
+
+  dispatchSearchMode($event) {
+    this.resetToDash = false;
+    this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: $event}));
+    this.badgeService.initShortCuts(this.searchShortCuts, $event);
   }
 
   useAlternative() {

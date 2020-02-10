@@ -152,7 +152,7 @@
                 <div>
                     <nz-select class="a-dropdown-small" style="width: 100px;" nzShowSearch
                                [nzAllowClear]="false" nzPlaceHolder="Select Search Mode"
-                               (ngModelChange)="resetToDash = false"
+                               (ngModelChange)="dispatchSearchMode($event)"
                                [(ngModel)]="mainSearchMode" [ngModelOptions]="{standalone: true}"
                     >
                         <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
