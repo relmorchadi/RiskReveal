@@ -23,12 +23,12 @@
       <div
         cdkDropList
         [id]="'availableListOfColumns'"
-        #availbleListOfColumns="cdkDropList"
+        #availableListOfColumns="cdkDropList"
         [cdkDropListConnectedTo]="[usedListOfColumns]"
-        [cdkDropListData]="listOfAvailbleColumns"
+        [cdkDropListData]="listOfAvailableColumns"
         class="m-box-d"
         (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
+        <ng-container *ngFor="let col of listOfAvailableColumns; let i=index">
           <div class="m-box-drag" cdkDrag>
             <div class="m-box-overlay">
               <div class="left">
@@ -77,7 +77,7 @@
         cdkDropList
         [id]="'usedListOfColumns'"
         #usedListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[availbleListOfColumns]"
+        [cdkDropListConnectedTo]="[availableListOfColumns]"
         [cdkDropListData]="listOfUsedColumns"
         class="m-box-d"
         (cdkDropListDropped)="drop($event)">

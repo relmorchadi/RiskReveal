@@ -82,53 +82,77 @@ public class UserDashboardWidgetColumnsService {
     }
 
     public void updateColumnWidth(long columnId, int columnWidth) throws RRException {
-        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
-        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
-
-        userDashboardWidgetColumns.setDashboardWidgetColumnWidth(columnWidth);
-        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+//        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
+//        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
+//
+//        userDashboardWidgetColumns.setDashboardWidgetColumnWidth(columnWidth);
+//        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+        userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnWidth(columnId,columnWidth);
     }
 
     public void updateColumnFilter(long columnId, String filter) throws RRException {
-        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
-        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
-
-        userDashboardWidgetColumns.setFilterCriteria(filter);
-        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+//        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
+//        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
+//
+//        userDashboardWidgetColumns.setFilterCriteria(filter);
+//        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+        userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnFilter(columnId,filter);
 
 
     }
 
     public void updateColumnSort(long columnId, int sort,String sortType) throws RRException {
-        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
-        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
-
-        userDashboardWidgetColumns.setSort(sort);
-        userDashboardWidgetColumns.setSortType(sortType);
-        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+//        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
+//        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);
+//
+//        userDashboardWidgetColumns.setSort(sort);
+//        userDashboardWidgetColumns.setSortType(sortType);
+//        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
+        userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnSort(columnId,sort,sortType);
 
 
     }
 
     public void updateOrderAndVisibility(List<OrderAndVisibilityRequest> request) throws RRException {
 
+//        if(!request.isEmpty()){
+//            List<UserDashboardWidgetColumns> list = new ArrayList<>();
+//            for(OrderAndVisibilityRequest row : request){
+//                UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(row.getColumnId());
+//                if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(row.getColumnId());
+//
+//                userDashboardWidgetColumns.setDashboardWidgetColumnOrder(row.getOrder());
+//                userDashboardWidgetColumns.setVisible(row.isVisible());
+//                list.add(userDashboardWidgetColumns);
+//
+//            }
+//            userDashboardWidgetColumnsRepository.saveAll(list);
+//        }
+        int counter = 0;
+
+        System.out.println("this is the request size" + request.size());
+
         if(!request.isEmpty()){
-            List<UserDashboardWidgetColumns> list = new ArrayList<>();
+            String columnIdArray = "";
+            String isVisibleArray = "";
+            String orderArray = "";
+
+            counter = request.size() + 1;
+
             for(OrderAndVisibilityRequest row : request){
                 UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(row.getColumnId());
                 if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(row.getColumnId());
 
-                userDashboardWidgetColumns.setDashboardWidgetColumnOrder(row.getOrder());
-                userDashboardWidgetColumns.setVisible(row.isVisible());
-                list.add(userDashboardWidgetColumns);
+                columnIdArray = columnIdArray + "," + userDashboardWidgetColumns.getUserDashboardWidgetColumnId();
+                isVisibleArray = isVisibleArray + "," + row.isVisible();
+                orderArray = orderArray + "," + row.getOrder();
+
+
 
             }
-            userDashboardWidgetColumnsRepository.saveAll(list);
-        }
+            userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnVisibilityAndOrder(columnIdArray,isVisibleArray,orderArray,counter);
 
-
-
-    }
+    }}
 
 
 

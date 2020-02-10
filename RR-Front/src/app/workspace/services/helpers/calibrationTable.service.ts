@@ -84,10 +84,11 @@ export class CalibrationTableService {
   }
 
   columnHandler = {
+
     "fac-epMetrics": (isExpanded) => {
-      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
+      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : this.epMetrics );
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : [...this.epMetrics] );
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -99,9 +100,9 @@ export class CalibrationTableService {
     },
     "fac-adjustments": (isExpanded) => {
       const c = {header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}
-      const frozenColumns = ( isExpanded ? [] : this.columnsConfigCache.frozenColumns);
+      const frozenColumns = ( isExpanded ? [] : [...this.columnsConfigCache.frozenColumns]);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );
+      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, c] : [c] );;
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -116,19 +117,22 @@ export class CalibrationTableService {
 
   init = () =>  {
     const a = [...CalibrationTableService.frozenColsHead, ...CalibrationTableService.frozenColsTail];
-    this.updateColumnsConfig({
+    const r = {
       frozenColumns: a,
       frozenWidth: _.reduce(a, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
       columns: [{header: 'Default',field: 'Default', width: "40", unit: 'px', icon:'', filter: false, sort: false}],
       columnsLength: a.length
-    });
-    this.updateColumnsConfigCache(this.columnsConfig$.getValue())
+    };
+    this.updateColumnsConfig(r);
+    this.updateColumnsConfigCache(r);
   };
 
   getColumns(view, isExpanded) {
     try {
+      console.log("FOUND");
       const tmp = this.columnHandler[`${this.isFac ? "fac" : "treaty"}-${view}`](isExpanded);
       this.updateColumnsConfig(tmp);
+      this.updateColumnsConfigCache(tmp);
     } catch(e) {
       this.updateColumnsConfig({
         frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',

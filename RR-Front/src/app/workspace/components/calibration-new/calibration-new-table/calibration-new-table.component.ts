@@ -4,9 +4,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input,
+  Input, OnChanges,
   OnInit,
-  Output
+  Output, SimpleChanges
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
 import * as fromWorkspaceStore from "../../../store";
@@ -21,7 +21,7 @@ import * as tableStore from "../../../../shared/components/plt/plt-main-table/st
   styleUrls: ['./calibration-new-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked, OnChanges {
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
@@ -87,6 +87,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
   ngAfterViewInit() {
   }
+
   ngAfterViewChecked(): void {
 
   }
@@ -390,6 +391,10 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
         payload: _.omit(this.tableConfig.sortData, `${field}`)
       });
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+
   }
 
 }

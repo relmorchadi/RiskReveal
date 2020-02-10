@@ -15,14 +15,17 @@ import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
 import {closeSearch, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
-import {Actions, Store} from '@ngxs/store';
+import {Actions, Select, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {HelperService} from "../../../../shared/helper.service";
 import {BadgesService } from "../../../service/badges.service";
 import {ShortCut} from "../../../model/shortcut.model";
-import {SearchNavBarState} from "../../../store/states";
+import {DashboardState, SearchNavBarState} from "../../../store/states";
+import {BaseContainer} from "../../../../shared/base";
+import {DashboardApi} from "../../../service/api/dashboard.api";
+import {PatchSearchStateAction} from "../../../store/actions/search-nav-bar.action";
 
 
 @Component({
@@ -34,25 +37,29 @@ import {SearchNavBarState} from "../../../store/states";
     '(document:keydown)': 'onKeyPress($event)'
   }
 })
-export class SearchMenuItemComponent implements OnInit, OnDestroy {
+export class SearchMenuItemComponent extends BaseContainer implements OnInit, OnDestroy {
 
   readonly componentName: string = 'search-pop-in';
 
   searchShortCuts: ShortCut[];
 
-  @ViewChild('searchInput')
-  searchInput: ElementRef;
+  @ViewChild('searchInput') searchInput: ElementRef;
+
+  @Select(DashboardState.getSelectedDashboard) selectedDashboard$;
+
   contractFilterFormGroup: FormGroup;
   subscriptions: Subscription;
   scrollParams;
   state: SearchNavBar = null;
   private unSubscribe$: Subject<void>;
-  searchMode: string = 'Treaty';
+  searchMode: string = null;
+  mainSearchMode: string = 'Fac';
+  resetToDash = false;
   searchConfigPopInVisible: boolean = false;
   inputDisabled: boolean = true;
   mapTableNameToBadgeKey: any;
   showListOfShortCuts: boolean;
-  possibleShortCuts: string[];
+  possibleShortCuts: {shortCutLabel: any, type: any}[];
 
   @Input('state')
   set setState(value) {
@@ -63,8 +70,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
               private _notifcationService: NotificationService, private store: Store,
               private actions$: Actions, private cdRef: ChangeDetectorRef,
-              private badgeService: BadgesService
+              private badgeService: BadgesService, _baseStore: Store,
+              _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.contractFilterFormGroup = this._fb.group({
       globalKeyword: ['']
     });
@@ -75,13 +84,22 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
         this.store.dispatch(new SearchActions.CloseSearchPopIns());
     });
     this.showListOfShortCuts = false;
-    this.possibleShortCuts= [];
+    this.possibleShortCuts = [];
   }
 
   ngOnInit() {
+    this.selectedDashboard$.pipe().subscribe(value => {
+      this.searchMode = _.get(value, 'searchMode', null);
+      this.resetToDash = this.searchMode !== null;
+      this.resetToDash ? this.mainSearchMode = this.searchMode : null;
+      this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: this.useAlternative()}));
+      this.badgeService.initShortCuts(this.searchShortCuts, this.useAlternative());
+      this.detectChanges();
+    });
 
     this.store.select(SearchNavBarState.getShortCuts).subscribe( shortCuts => {
       this.searchShortCuts = this.updateShortCuts(shortCuts);
+      this.badgeService.initShortCuts(this.searchShortCuts, this.useAlternative());
       this.detectChanges();
     });
 
@@ -95,9 +113,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   private updateShortCuts = _.memoize((shortCuts) => {
-    return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable));
+    return _.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) =>
+        new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type));
   });
-
 
   private _subscribeGlobalKeywordChanges() {
     this._unsubscribeToFormChanges();
@@ -106,14 +124,14 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unSubscribe$))
       .subscribe((value) => {
         value && value.length > 1 && this.updatePossibleShortCuts(value);
-        this.store.dispatch(new SearchActions.SearchInputValueChange(value))
+        this.store.dispatch(new SearchActions.SearchInputValueChange(value));
         this._contractChoicesSearch(value);
       });
   }
 
   updatePossibleShortCuts(expr) {
     if( !_.includes(expr, ":")) {
-      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.shortCutLabel), _.toLower(expr))), shortCut => shortCut.shortCutLabel);
+      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.shortCutLabel), _.toLower(expr))), shortCut => ({shortCutLabel :shortCut.shortCutLabel, type: shortCut.type}));
     } else {
       this.possibleShortCuts = [];
     }
@@ -125,11 +143,11 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   onDoublePoints = _.debounce(($event: KeyboardEvent) => {
-    console.log(this.badgeService.transformKeyword(this.globalKeyword));
-    this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword));
+    // console.log(this.badgeService.transformKeyword(this.globalKeyword));
+    this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword, this.useAlternative()));
   }, 350);
 
-  onEnter(evt: KeyboardEvent) {
+  onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
     const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
@@ -185,13 +203,13 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   selectSearchBadge(key, value) {
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword));
+    this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword, this.useAlternative()));
     this.searchInput.nativeElement.focus();
   }
 
   private _contractChoicesSearch(keyword) {
     if (keyword && keyword.length && this.state.visibleSearch)
-      this.store.dispatch(new SearchActions.SearchContractsCountAction(keyword));
+      this.store.dispatch(new SearchActions.SearchContractsCountAction({keyword, searchMode: this.useAlternative()}));
   }
 
   addBadgeFromResultList(key) {
@@ -233,6 +251,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.togglePopup();
   }
 
+  filterBySearchMode(data) {
+    return _.filter(data, item => item.type === (this.useAlternative() === 'Treaty' ? 'TTY' : 'FAC'));
+  }
+
   get globalKeyword() {
     return this.contractFilterFormGroup.get('globalKeyword').value;
   }
@@ -267,7 +289,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     let index = _.findIndex(this.state.badges, row => row.key == badge.key);
     this.store.dispatch(new SearchActions.CloseBadgeByIndexAction(index));
     if (this.globalKeyword.length > 0) {
-      this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword));
+      this.store.dispatch(new SearchActions.SelectBadgeAction(this.convertExpressionToBadge(this.globalKeyword), this.globalKeyword, this.useAlternative()));
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: this.convertBadgeToExpression([badge])});
   }
@@ -297,5 +319,15 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   replaceExpressionWithShortCut(possibleShortCut: string) {
     event.preventDefault();
     this.contractFilterFormGroup.get('globalKeyword').patchValue(possibleShortCut + ":");
+  }
+
+  dispatchSearchMode($event) {
+    this.resetToDash = false;
+    this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: $event}));
+    this.badgeService.initShortCuts(this.searchShortCuts, $event);
+  }
+
+  useAlternative() {
+    return this.resetToDash ? this.searchMode : this.mainSearchMode;
   }
 }

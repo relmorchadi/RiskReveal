@@ -76,6 +76,12 @@
       td:nth-child(1) {
         text-align: center;
       }
+
+      td:hover {
+        .icon-trash-alt {
+          visibility: visible !important;
+        }
+      }
     }
   }
 }

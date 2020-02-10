@@ -6,7 +6,7 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {SearchNavBarState} from '../../../core/store/states';
+import {DashboardState, SearchNavBarState} from '../../../core/store/states';
 import {
   CloseAllTagsAction, CloseGlobalSearchAction,
   CloseTagByIndexAction, DeleteSearchItem, LoadMostUsedSavedSearch,
@@ -45,9 +45,13 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Select(SearchNavBarState.getShowSavedSearch)
   savedSearchVisibility$;
 
+  @Select(SearchNavBarState.getSearchTarget)
+  selectedDashboard$;
+
   sortData: any;
 
   savedSearch;
+  searchMode: any = 'Treaty';
   badges;
 
   expandWorkspaceDetails = false;
@@ -157,6 +161,113 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   extraColumns = [];
   extraColumnsCache = [];
 
+  columnsFac = [
+    {
+      field: 'checkbox',
+      header: '',
+      width: '20px',
+      display: true,
+      sorted: true,
+      filtered: false,
+      type: 'checkbox',
+      class: 'icon-check_24px',
+    },
+    {
+      field: 'client',
+      header: 'Client',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'CountryName'
+    },
+    {
+      field: 'uwYear',
+      header: 'Uw Year',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'UwYear'
+    },
+    {
+      field: 'workspaceName',
+      header: 'Contract Code',
+      width: '160px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'WorkspaceName'
+    },
+    {
+      field: 'workSpaceContextCode',
+      header: 'Contract Name',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'workSpaceContextCode'
+    },
+    {
+      field: 'uwAnalysis',
+      header: 'Uw Analysis',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'uwAnalysis'
+    },
+    {
+      field: 'carequestId',
+      header: 'CAR ID',
+      width: '70px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'carequestId'
+    },
+    {
+      field: 'carStatus',
+      header: 'CAR Status',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'carStatus'
+    },
+    {
+      field: 'assignedTo',
+      header: 'Assigned User',
+      width: '90px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'assignedTo'
+    },
+    {
+      field: 'openInHere',
+      header: '',
+      width: '20px',
+      type: 'icon',
+      class: 'icon-fullscreen_24px',
+      handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)),
+      display: false,
+      sorted: false,
+      filtered: false
+    },
+    {
+      field: 'openInPopup',
+      header: '',
+      width: '20px',
+      type: 'icon',
+      class: 'icon-open_in_new_24px',
+      handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)),
+      display: false,
+      sorted: false,
+      filtered: false
+    }
+  ];
+
   private _filter = {};
   searchContent;
   manageColumns: boolean = false;
@@ -187,6 +298,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         this._loadData();
         this.detectChanges();
       });
+
+    this.selectedDashboard$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.searchMode = value;
+      this.detectChanges();
+    });
+
     this.badges$.pipe(this.unsubscribeOnDestroy).subscribe(badges => {
       this.badges = badges;
       this.detectChanges();
@@ -209,8 +326,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    console.log('this is selected');
-    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
+    if (this.searchMode === 'Treaty') {
+      this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
+    } else {
+      this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'FAC'}));
+    }
+
   }
 
   navigateToTab(value) {
@@ -312,47 +433,55 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filters,
       keyword
     } = this.filter;
-    let params = {
-      keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
-      filter: filters,
-      sort: this.getSortColumns(this.sortData),
-      offset,
-      size: size,
-      fromSavedSearch: this.fromSavedSearch
-    };
-    this.searchSub$ = this._searchService.expertModeSearch(params)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe((data: any) => {
-        this.contracts = _.map(data.content, item => ({...item, selected: false}));
-        this.loading = false;
-        const {
-          pageable: {
-            offset,
-            pageNumber,
-            pageSize
-          },
-          size,
-          totalElements,
-          totalPages
-        } = data;
 
-        this.paginationOption = {
-          offset,
-          pageNumber: pageNumber + 1,
-          pageSize,
-          size,
-          total: totalElements,
-          totalPages: totalPages
-        };
+    setTimeout(() => {
+      let params = {
+        keyword: this._badgeService.clearString(this._badgeService.parseAsterisk(_.trim(keyword))),
+        filter: filters,
+        sort: this.getSortColumns(this.sortData),
+        offset,
+        size: size,
+        fromSavedSearch: this.fromSavedSearch,
+        type: _.toUpper(this.searchMode)
+      };
 
-        if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
-        this.dispatch(new LoadRecentSearch());
-        if(this.fromSavedSearch) {
-          this.dispatch(new LoadMostUsedSavedSearch());
-          this.fromSavedSearch = false;
-        }
-        this.detectChanges();
-      });
+      this.searchSub$ = this._searchService.expertModeSearch(params)
+          .pipe(this.unsubscribeOnDestroy)
+          .subscribe((data: any) => {
+            this.contracts = _.map(data.content, item => ({...item, selected: false}));
+            this.loading = false;
+            const {
+              pageable: {
+                offset,
+                pageNumber,
+                pageSize
+              },
+              size,
+              totalElements,
+              totalPages
+            } = data;
+
+            this.paginationOption = {
+              offset,
+              pageNumber: pageNumber + 1,
+              pageSize,
+              size,
+              total: totalElements,
+              totalPages: totalPages
+            };
+
+            // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
+
+
+            this.dispatch(new LoadRecentSearch());
+            if(this.fromSavedSearch) {
+              this.dispatch(new LoadMostUsedSavedSearch());
+              this.fromSavedSearch = false;
+            }
+            this.detectChanges();
+          });
+    }, 1000);
+
   }
 
   dropColumn(event: CdkDragDrop<any>) {
