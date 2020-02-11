@@ -31,7 +31,7 @@ public class PltBrowserResource {
         return tagService.assignTagToPlts(request);
     }
 
-    @PostMapping("delete")
+    /*@PostMapping("delete")
     public Boolean deletePLT(@RequestBody PLTHeaderDeleteRequest request) {
         return pltBrowserService.deletePLTheader(request);
     }
@@ -39,6 +39,6 @@ public class PltBrowserResource {
     @PostMapping("restore")
     public Boolean deletePLT(@RequestBody List<Long> pltHeaderIds) {
         return pltBrowserService.restorePLTHeader(pltHeaderIds);
-    }
+    }*/
 
 }

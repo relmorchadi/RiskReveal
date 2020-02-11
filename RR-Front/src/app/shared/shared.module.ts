@@ -20,6 +20,8 @@ import {AngularResizedEventModule} from 'angular-resize-event';
 import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
+import { AngularResizeElementModule } from 'angular-resize-element';
+import { IMPLEMENTATIONS } from './implementations'
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
@@ -39,9 +41,10 @@ import {NgxEchartsModule} from 'ngx-echarts';
     AngularDraggableModule,
     ColorGithubModule,
     AngularResizedEventModule,
-    NgxEchartsModule
+    NgxEchartsModule,
+    AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, ...IMPLEMENTATIONS],
   exports: [
     CommonModule,
     NgZorroAntdModule,
@@ -57,6 +60,7 @@ import {NgxEchartsModule} from 'ngx-echarts';
     ColorGithubModule,
     AngularResizedEventModule,
     NgxEchartsModule,
+    AngularResizeElementModule,
     ...COMPONENTS,
     ...PIPES,
       ...DIRECTIVES
