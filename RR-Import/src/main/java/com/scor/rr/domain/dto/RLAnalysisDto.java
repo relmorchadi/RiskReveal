@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
@@ -15,6 +16,8 @@ public class RLAnalysisDto {
 
     private Long rlAnalysisId;
     private Long rlId;
+    private Long rdmId;
+    private String rdmName;
     private String analysisName;
     private String analysisDescription;
     private String engineType;
@@ -25,6 +28,6 @@ public class RLAnalysisDto {
     private String subPeril;
     private String lossAmplification;
     private String region;
-    private Integer analysisMode;
+    private String analysisMode;
     private String analysisCurrency;
 }

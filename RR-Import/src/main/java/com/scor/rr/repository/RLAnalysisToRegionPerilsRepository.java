@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RLAnalysisToRegionPerilsRepository extends JpaRepository<RLAnalysisToRegionPeril, Long> {
 
-    List<RLAnalysisToRegionPeril> findByRlModelAnalysisId(Long rlAnalysisId);
+    List<RLAnalysisToRegionPeril> findByRlModelAnalysisIdOrderByRegionPerilCode(Long rlAnalysisId);
 }

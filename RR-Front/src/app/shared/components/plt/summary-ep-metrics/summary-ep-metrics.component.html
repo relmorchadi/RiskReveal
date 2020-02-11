@@ -26,7 +26,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Unit</span>
               <span class="dropdown-item-selected">
-                  Unit
+                  {{summaryEpMetricsConfig?.selectedFinancialUnit}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -59,15 +59,19 @@
                      class="table metric-table">
               <ng-template pTemplate="header" let-columns>
                 <tr>
-                  <th>Return Period</th>
-                  <th *ngFor="let col of columns">{{col?.header}}</th>
+                  <th style="width: 100px;">Return Period</th>
+                  <th style="width: 160px;text-align: right;" *ngFor="let col of columns">{{col?.header}}</th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
-                  <td>{{rowData}}</td>
-                  <td *ngFor="let col of epMetricsTableConfig.columns">
-                    {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
+                  <td style="width: 100px;">
+                    <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-left"
+                       style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
+                    {{rowData}}
+                  </td>
+                  <td style="width: 160px;" *ngFor="let col of epMetricsTableConfig.columns">
+                    {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}
                   </td>
                 </tr>
               </ng-template>
@@ -127,12 +131,11 @@
           </div>
       </nz-tab>
       <nz-tab [nzTitle]="chart">
-          <ng-template #chart><i class="icon-show_chart_24px"
-                                 style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
-          </ng-template>
-          <div class="metric-chart-content">
-            <img src="../../../../assets/images/RRchartInVision.png">
-          </div>
+        <ng-template #chart><i class="icon-show_chart_24px" style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i></ng-template>
+        <app-ep-chart
+                [chartOption]="chartOption"
+                [updateOption]="updateOption"
+        ></app-ep-chart>
         </nz-tab>
     </nz-tabset>
   </div>

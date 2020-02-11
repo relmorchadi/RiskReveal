@@ -73,7 +73,7 @@
                               </span>
                             </span>
                           </a>
-                          <ul style="padding:0" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
+                          <ul style="padding:0; max-height: 250px; overflow: auto" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
                             <li (click)="selectProject(item.projectId)" *ngFor="let item of filterListProject()" nz-menu-item>
                               <ng-container *ngIf="item.projectType === 'FAC'">
                                 {{item?.carRequestId}} [{{item?.projectId}}] - {{item?.carRequestStatus}}

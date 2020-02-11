@@ -26,6 +26,7 @@ export class TableComponent implements OnInit {
   @Output('onRowUnselect') onRowUnselect: any = new EventEmitter<any>();
   @Output('updateFavStatus') updateStatus: any = new EventEmitter<any>();
   @Output('sortDataChange') sortDataChange: any = new EventEmitter<any>();
+  @Output('resizeChange') resizeTable: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -58,6 +59,10 @@ export class TableComponent implements OnInit {
   selectionMode: string = null;
   @Input()
   filterModeFront: boolean = true;
+  @Input()
+  fromSearch: boolean = true;
+  @Input()
+  sortList = [];
 
   _activateContextMenu: boolean;
 
@@ -107,6 +112,7 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.applyFirstFilters();
   }
 
   getItems() {
@@ -248,26 +254,52 @@ export class TableComponent implements OnInit {
       return _.isNil(this.activateContextMenu) || this.activateContextMenu ? this.contextMenu : null;
   }
 
-  sortChange(field: any, sortCol: any) {
-    console.log('called for sort', sortCol);
-    if (!sortCol) {
-      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'asc'}));
-    } else if (sortCol === 'asc') {
-      this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'desc'}));
-    } else if (sortCol === 'desc') {
+  sortChange(field: any, sortCol: any, columnId) {
+    if(this.fromSearch) {
+      if (!sortCol) {
+        this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'asc'}));
+      } else if (sortCol === 'asc') {
+        this.sortDataChange.emit(_.merge({}, this.sortData, {[field]: 'desc'}));
+      } else if (sortCol === 'desc') {
         this.sortDataChange.emit(_.omit(this.sortData, `${field}`));
+      }
+    } else {
+      if (!sortCol) {
+        this.sortDataChange.emit({newSort: _.merge({}, this.sortData, {[field]: 'asc'}),
+          newSortingList: [...this.sortList, {columnId, sortType: 'asc'}],
+          columnId, sortType: 'asc'});
+      } else if (sortCol === 'asc') {
+        this.sortDataChange.emit({newSort: _.merge({}, this.sortData, {[field]: 'desc', columnId}),
+          newSortingList: _.map(this.sortList, item => {return item.columnId === columnId ? {columnId, sortType: 'desc'} : item}),
+          columnId, sortType: 'desc'});
+      } else if (sortCol === 'desc') {
+        this.sortDataChange.emit({newSort: _.omit(this.sortData, `${field}`),
+          newSortingList: _.filter(this.sortList, item => item.columnId !== columnId),
+          columnId, sortType: ''});
+      }
     }
   }
 
-  filter(key: string, value) {
+  applyFirstFilters() {
+    _.forEach(this.tableColumn, col => {
+      if (!_.isEmpty(_.trim(col.filterCriteria)))
+        this.FilterData =  _.merge({}, this.FilterData, {[col.field]: col.filterCriteria}) ;
+    })
+  }
+
+  filter(key: string, value, colId) {
     if (value) {
       this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
     } else {
       this.FilterData =  _.omit(this.FilterData, [key]);
     }
     if (!this.filterModeFront) {
-      this.filterData.emit({[key]: value});
+      this.filterData.emit({filteredValue: value, colId});
     }
+  }
+
+  resize(event) {
+    this.resizeTable.emit(event);
   }
 
   log(dt: HTMLElement) {

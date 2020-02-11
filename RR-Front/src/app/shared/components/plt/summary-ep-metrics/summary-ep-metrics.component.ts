@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from "../../../message";
 import * as _ from 'lodash';
+import EChartOption = echarts.EChartOption;
 
 @Component({
   selector: 'app-summary-ep-metrics',
@@ -50,6 +51,9 @@ export class SummaryEpMetricsComponent implements OnInit {
     lowerBound: number
   };
 
+  @Input() chartOption: EChartOption;
+  @Input() updateOption: EChartOption;
+
   constructor() { }
 
   ngOnInit() {
@@ -57,7 +61,6 @@ export class SummaryEpMetricsComponent implements OnInit {
   }
 
   curveTypeSelectChange(curveTypes) {
-
     let res = curveTypes;
 
     if(!curveTypes.length) {
@@ -65,11 +68,8 @@ export class SummaryEpMetricsComponent implements OnInit {
     }
 
     this.actionDispatcher.emit({
-      type: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? "Hide Metric" : "Show Metric",
-      payload: {
-        curveTypes: res,
-        difference: res.length < this.summaryEpMetricsConfig.selectedCurveType.length ? _.difference(this.summaryEpMetricsConfig.selectedCurveType, res) : _.difference(res, this.summaryEpMetricsConfig.selectedCurveType)
-      }
+      type: "Selected CurveTypes Change",
+      payload: res
     })
   }
 
@@ -98,6 +98,13 @@ export class SummaryEpMetricsComponent implements OnInit {
     this.actionDispatcher.emit({
       type: "ADD Return period",
       payload: this.returnPeriodConfig.returnPeriodInput
+    })
+  }
+
+  removeReturnPeriod(rp) {
+    this.actionDispatcher.emit({
+      type: "Delete RP",
+      payload: rp
     })
   }
 

@@ -2,10 +2,8 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {EntryComponent} from './entry.component';
 import {MainComponent} from '../core/containers/main/main.component';
-import {SubmissionPageComponent} from '../submission-page/containers/submission-page/submission-page.component';
 
 const routes: Routes = [
-  {path: 'CreateNewFile', component: SubmissionPageComponent},
   {path: '', component: MainComponent, children: [
     {data: {title: 'RR- Workspace'}, path: 'workspace', loadChildren: '../workspace/workspace.module#WorkspaceModule'},
     {data: {title: 'RR- Dashboard'}, path: 'dashboard', loadChildren: '../dashboard/dashboard.module#DashboardModule'},

@@ -78,6 +78,15 @@ export class AddToBasketAction {
   constructor() {}
 }
 
+export class AutoAttachAction{
+  static readonly type = '[Risk Link] Auto Attach  Workspace';
+  constructor(public payload?: any) {}
+}
+export class AutoAttachEndsAction{
+  static readonly type = '[Risk Link] Auto Attach  Workspace ends';
+  constructor(public payload?: any) {}
+}
+
 export class TriggerImportAction {
   static readonly type = '[Risk Link] Trigger Import';
   constructor(public payload?: any) {}

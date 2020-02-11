@@ -2,6 +2,10 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.ContractSearchResult;
+import com.scor.rr.domain.dto.TargetBuild.FacWorkspaceDTO;
+import com.scor.rr.domain.dto.TargetBuild.TreatyWorkspaceDTO;
+import com.scor.rr.domain.entities.FacContractCurrency;
+import com.scor.rr.domain.entities.FacContractSearchResult;
 import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.domain.entities.Search.*;
 import com.scor.rr.domain.dto.*;
@@ -28,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -51,6 +56,7 @@ public class SearchService {
 
     @Autowired
     private ContractSearchResultRepository contractSearchResultRepository;
+
 
     @Autowired
     private CedantCodeCountRepository cedantCodeCountRepository;
@@ -115,19 +121,79 @@ public class SearchService {
     @Autowired
     RecentSearchItemRepository recentSearchItemRepository;
 
-    Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
+    @Autowired
+    CarDivisionsRepository carDivisionsRepository;
 
+    @Autowired
+    FacContractCurrencyRepository facContractCurrencyRepository;
+
+    @Autowired
+    FacSearchQuery facSearchQuery;
+
+    Map<TreatyTableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
+    Map<FacTableNames, BiFunction<String, Pageable, Page>> facSearchCountMapper = new HashMap();
+
+    //Fac Search Count Repos
+
+    @Autowired
+    FacClientCountRepository facClientCountRepository;
+
+    @Autowired
+    FacUWYearCounRepository facUWYearCounRepository;
+
+    @Autowired
+    FacContractCodeCounRepository facContractCodeCounRepository;
+
+    @Autowired
+    FacContractNameCountRepository facContractNameCountRepository;
+
+    @Autowired
+    FacUwAnalysisCountRepository facUwAnalysisCountRepository;
+
+    @Autowired
+    FacCARequestIdCountRepository facCARequestIdCountRepository;
+
+    @Autowired
+    FacCARStatusCountRepository facCARStatusCountRepository;
+
+    @Autowired
+    FacAssignedToCountRepository facAssignedToCountRepository;
+
+    @Autowired
+    FacPltCountRepository facPltCountRepository;
+
+    @Autowired
+    FacProjectIdCountRepository facProjectIdCountRepository;
+
+    @Autowired
+    FacProjectNameCountRepository facProjectNameCountRepository;
 
     @PostConstruct
     private void feedCountMapper() {
-        countMapper.put(TableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
-        countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        //TREATY
+
+        countMapper.put(TreatyTableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+//        countMapper.put(TreatyTableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
+        countMapper.put(TreatyTableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+//        countMapper.put(TreatyTableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+
+        //FAC
+
+        facSearchCountMapper.put(FacTableNames.CLIENT, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_YEAR, facUWYearCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_CODE, facContractCodeCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CONTRACT_NAME, facContractNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.UW_ANALYSIS, facUwAnalysisCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAR_ID, facCARequestIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CAR_STATUS, facCARStatusCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.USR, facAssignedToCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PLT, facPltCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PROJECT_ID, facProjectIdCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.PROJECT_NAME, facProjectNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
     }
 
     public Page<TreatyView> getTreaty(String keyword, int size) {
@@ -147,41 +213,29 @@ public class SearchService {
         return workspaceYearsRepository.findByLabelLikeOrderByLabel("%" + keyword + "%", PageRequest.of(0, size));
     }
 
-    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-        String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
-        String countQueryString = queryHelper.generateCountQuery(filter);
-        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-        Query countQuery = entityManager.createNativeQuery(countQueryString);
-        List<Object[]> resultList = resultsQuery.getResultList();
-        Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
-    }
+    public Object getWorkspaceDetails(String workspaceId, String uwy, String wsType) {
 
-    public SearchCountResult countInWorkspace(TableNames table, String keyword, int size) {
-        return new SearchCountResult(ofNullable(countMapper.get(table))
-                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
-                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
-    }
+        if("TTY".equals(wsType)) return loadTreatyWorkspace(workspaceId, uwy, false, null);
+        if("FAC".equals(wsType)) return loadFacWorkspace(workspaceId, uwy, false, null);
 
-    public WorkspaceDetailsDTO getWorkspaceDetails(String workspaceId, String uwy, String wsType) {
-        WorkspaceDetailsDTO res= null;
+        if("".equals(wsType)) {
+            List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+            if(!CollectionUtils.isEmpty(contracts)) {
+                return this.loadTreatyWorkspace(workspaceId, uwy, true, contracts);
+            }
 
-        if("TTY".equals(wsType)) res = loadTreatyWorkspace(workspaceId, uwy);
-        if("FAC".equals(wsType)) res = loadFacWorkspace(workspaceId, uwy);
+            Optional<WorkspaceEntity> facContract = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
 
-        if(res == null) res = loadFacWorkspace(workspaceId, uwy);
-        if(res == null) res = loadTreatyWorkspace(workspaceId, uwy);
-
-        if( res != null ) {
-            return res;
-        } else {
-            throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
+            if(facContract.isPresent()) {
+                return this.loadFacWorkspace(workspaceId, uwy, true, facContract);
+            }
         }
-    };
 
-    WorkspaceDetailsDTO loadTreatyWorkspace(String workspaceId, String uwy) {
-        List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
+        return null;
+    }
+
+    TreatyWorkspaceDTO loadTreatyWorkspace(String workspaceId, String uwy, boolean alreadyChecked, List<ContractSearchResult> ct) {
+        List<ContractSearchResult> contracts = !alreadyChecked ? contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy) : ct;
         List<Integer> years = contractSearchResultRepository.findDistinctYearsByWorkSpaceId(workspaceId);
         Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
         List<ProjectCardView> projects = wsOpt
@@ -189,44 +243,32 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-            Long marketChannel = null;
-            if(wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
-            WorkspaceEntity ws = new WorkspaceEntity();
-            if(wsOpt.isPresent()) {
-                ws = wsOpt.get();
-            }
-            return buildWorkspaceDetails(
-                    ws,
+            return buildTtyWS(
                     contracts,
                     years,
                     projects,
                     workspaceId,
-                    uwy,
-                    marketChannel
+                    uwy
             );
         } else {
             throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
         }
     }
 
-    WorkspaceDetailsDTO loadFacWorkspace(String workspaceId, String uwy) {
-        Optional<WorkspaceEntity> wsOpt = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy));
+    FacWorkspaceDTO loadFacWorkspace(String workspaceId, String uwy, boolean alreadyChecked, Optional<WorkspaceEntity> ws) {
+        Optional<WorkspaceEntity> wsOpt = !alreadyChecked ? workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceId, Integer.valueOf(uwy)) : ws;
+        List<ProjectCardView> projects = wsOpt
+                .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
+                .orElse(new ArrayList<>());
         if (wsOpt.isPresent()) {
-            List<ProjectCardView> projects = wsOpt
-                    .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
-                    .orElse(new ArrayList<>());
-            List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
-            List<Integer> years = workspaceEntityRepository.findDistinctYearsByWorkspaceContextCode(workspaceId);
+            Optional<FacContractCurrency> currency = this.facContractCurrencyRepository.findById(wsOpt.get().getWorkspaceId());
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
-            Long marketChannel = null;
-            if (wsOpt.isPresent()) marketChannel = wsOpt.get().getWorkspaceMarketChannel();
-            return buildWorkspaceDetails(wsOpt.get(),
-                    contracts,
-                    years,
+            return buildFacWS(
+                    wsOpt.get(),
                     projects,
                     workspaceId,
                     uwy,
-                    marketChannel
+                    currency.isPresent() ? currency.get().getCurrency() : null
             );
         } else {
             throw new RuntimeException("No corresponding workspace for the Workspace ID / UWY : " + workspaceId + " / " + uwy);
@@ -234,55 +276,72 @@ public class SearchService {
     }
 
 
-    private WorkspaceDetailsDTO buildWorkspaceDetails(WorkspaceEntity workspaceEntity,
-                                                      List<ContractSearchResult> contracts,
-                                                      List<Integer> years,
-                                                      List<ProjectCardView> projects,
-                                                      String workspaceId,
-                                                      String uwy,
-                                                      Long marketChannel) {
-        WorkspaceDetailsDTO detailsDTO = null;
-        if (contracts != null && !contracts.isEmpty()) {
-            ContractSearchResult firstWs = contracts.get(0);
-            detailsDTO = new WorkspaceDetailsDTO(firstWs, marketChannel);
-        } else {
-            detailsDTO = new WorkspaceDetailsDTO(workspaceEntity);
-        }
+    private TreatyWorkspaceDTO buildTtyWS(
+            List<ContractSearchResult> contracts,
+            List<Integer> years,
+            List<ProjectCardView> projects,
+            String workspaceId,
+            String uwy) {
+        TreatyWorkspaceDTO detailsDTO;
+        ContractSearchResult firstWs = contracts.get(0);
+        detailsDTO = new TreatyWorkspaceDTO(firstWs, "TTY");
         detailsDTO.setProjects(projects);
-        Integer uwYear = Integer.parseInt(uwy);
-        if (contracts != null && !contracts.isEmpty()) {
-            detailsDTO.setTreatySections(contracts);
-        } else {
-            detailsDTO.setTreatySection(workspaceId);
-        }
-        if (years != null && !years.isEmpty()) {
-            detailsDTO.setYears(years);
-        } else {
-            detailsDTO.setYear(uwYear);
-        }
+        detailsDTO.setTreatySections(contracts);
+        detailsDTO.setYear(Integer.parseInt(uwy));
+        detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
 
-        getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, uwYear, 1L), detailsDTO);
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
 
         return detailsDTO;
     }
 
-    private WorkspaceDetailsDTO getCount(List<Map<String, Object>> arr, WorkspaceDetailsDTO ws) {
-        if( arr.size() > 0 ) {
-            Map<String, Object> tmp = arr.get(0);
-            ws.setExpectedAccumulation( tmp.get("expectedAccumulation") != null ? (Integer) tmp.get("expectedAccumulation") : null);
-            ws.setExpectedExposureSummaries( tmp.get("expectedExposureSummaries") != null ?  (Integer) tmp.get("expectedExposureSummaries") : null);
-            ws.setExpectedPriced( tmp.get("expectedPriced") != null ? (Integer) tmp.get("expectedPriced") : null );
-            ws.setExpectedPublishedForPricing(  tmp.get("expectedPublishedForPricing") != null ? (Integer) tmp.get("expectedPublishedForPricing"): null );
-            ws.setExpectedRegionPerils( tmp.get("expectedRegionPerils") != null ? (Integer) tmp.get("expectedRegionPerils") :null );
-            ws.setIsFavorite( tmp.get("isFavorite") != null ? (Boolean) tmp.get("isFavorite") : null );
-            ws.setQualifiedPLTs( tmp.get("qualifiedPLTs") != null ? (Integer) tmp.get("qualifiedPLTs") : null );
-            return ws;
-        } else return ws;
+    private FacWorkspaceDTO buildFacWS(WorkspaceEntity ws,
+                                       List<ProjectCardView> projects,
+                                       String workspaceId,
+                                       String uwy,
+                                       String currency) {
+        FacWorkspaceDTO detailsDTO= new FacWorkspaceDTO(ws);
+        detailsDTO.setProjects(projects.stream().map(projectCardView -> {
+            projectCardView.setDivisions(carDivisionsRepository.findAllDivisions(projectCardView.getCarRequestId()));
+            return projectCardView;
+        }).collect(Collectors.toList()));
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
+
+        detailsDTO.setCurrency(currency);
+        detailsDTO.setYears(Arrays.asList(Integer.valueOf(uwy)));
+        return detailsDTO;
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+        if(request.getType().equals(SearchType.TREATY)) {
+            return this.treatyContractSearch(request);
+        } else if(request.getType().equals(SearchType.FAC)) {
+            return this.facContractSearch(request);
+        } else {
+            return null;
+        }
 
+    }
+
+    Page<?> facContractSearch(ExpertModeFilterRequest request) {
+        String resultsQueryString = facSearchQuery.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
+        String countQueryString = facSearchQuery.generateCountQuery(request.getFilter(), request.getKeyword());
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<FacContractSearchResult> result = mapFacContract(resultList);
+        return new PageImpl<>(result, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+    }
+
+    public SearchCountResult facSearchCount(FacTableNames table, String keyword, int size) {
+        return new SearchCountResult<FacTableNames>(ofNullable(facSearchCountMapper.get(table))
+                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
+                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
+    }
+
+    Page<?> treatyContractSearch(ExpertModeFilterRequest request) {
         if (request.getFromSavedSearch() != null) {
             if (!request.getFilter().isEmpty()) {
                 Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
@@ -350,11 +409,24 @@ public class SearchService {
         Object total = countQuery.getSingleResult();
         List<ContractSearchResult> contractSearchResult = map(resultList);
         return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+
+    }
+
+    public SearchCountResult treatySearchCount(TreatyTableNames table, String keyword, int size) {
+        return new SearchCountResult<TreatyTableNames>(ofNullable(countMapper.get(table))
+                .map(callback -> callback.apply(keyword, PageRequest.of(0, size)))
+                .orElseThrow(() -> new RuntimeException("Table parameter not found")), table);
     }
 
     private List<ContractSearchResult> map(List<Object[]> resultList) {
         return resultList.stream().map((r) ->
                 new ContractSearchResult((String) r[0], (String) r[1], (String) r[2], (String) r[3], (String) r[4], (Integer) r[5])
+        ).collect(Collectors.toList());
+    }
+
+    private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
+        return resultList.stream().map((r) ->
+                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
         ).collect(Collectors.toList());
     }
 

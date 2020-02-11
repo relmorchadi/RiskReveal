@@ -1,7 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {GatewayModule} from './entry-point/gateway.module';
-import {SubmissionPageModule} from './submission-page/submission-page.module';
 import {EntryComponent} from './entry-point/entry.component';
 import {CoreModule} from './core/core.module';
 import {FormsModule} from '@angular/forms';
@@ -15,7 +14,6 @@ import {DndModule} from 'ngx-drag-drop';
   imports: [
     BrowserModule,
     CoreModule.forRoot(),
-    SubmissionPageModule,
     GatewayModule,
     FormsModule,
     HttpClientModule,

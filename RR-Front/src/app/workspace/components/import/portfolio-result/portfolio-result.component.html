@@ -33,7 +33,7 @@
       </div>
       <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
-               [scrollable]="true" [value]="portfolios" frozenWidth="485px" syncScroll>
+               [scrollable]="true" [value]="portfolios" frozenWidth="485px">
         <ng-template let-columns pTemplate="colgroup">
           <colgroup>
             <ng-container *ngFor="let col of columns">

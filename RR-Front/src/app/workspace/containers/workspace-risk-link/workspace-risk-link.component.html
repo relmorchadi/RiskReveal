@@ -121,11 +121,11 @@
                    [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': state?.display?.displayListRDMEDM}">
                 <div class="search-bar"
                      [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': state?.display?.displayListRDMEDM}">
-                  <i class="search-bar-icon-search" (click)="focusInput()" nz-icon nzType="search"
+                  <i class="search-bar-icon-search" (click)="toggleDatasourcesDisplay()" nz-icon nzType="search"
                      nzTheme="outline"></i>
                   <div class="search-bar-text"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       *ngIf="!state.display.displayListRDMEDM" (click)="focusInput()">Select EDM & RDM
+                       *ngIf="!state.display.displayListRDMEDM" (click)="toggleDatasourcesDisplay()">Select EDM & RDM
                   </div>
                   <input placeholder="Select EDM & RDM"
                          [formControl]="datasourceKeywordFc"
@@ -133,7 +133,7 @@
                          #searchInput>
                   <div class="search-bar-text displayed-info"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       (click)="focusInput()" *ngIf="state.display.displayListRDMEDM">
+                       (click)="toggleDatasourcesDisplay()" *ngIf="state.display.displayListRDMEDM">
                     <span class="search-bar-text-title">EDM & RDM</span>
                     <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                   </div>
@@ -173,7 +173,7 @@
                             </div>
                           </ng-template>
                           <ng-template let-car pTemplate="loadingItem">
-                            <div class="loading-text"></div>
+                            <div *ngIf="state?.listEdmRdm?.totalElements && !state?.listEdmRdm?.last" class="loading-text"></div>
                           </ng-template>
                         </p-virtualScroller>
                       </div>
@@ -186,8 +186,8 @@
               </div>
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
-<!--              <button style="margin-right: 10px" (click)="autoAttach()" *ngIf="tabStatus === 'FAC'"-->
-<!--                      class="a-buttons-outlined-mini">Auto Attach</button>-->
+              <button style="margin-right: 10px" (click)="autoAttach()" *ngIf="tabStatus === 'FAC'"
+                      class="a-buttons-outlined-mini">Auto Attach</button>
               <button *ngIf="collapsehead" nz-button> ADVANCED</button>
               <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
@@ -362,7 +362,7 @@
                           <div class="text-data" (click)="selectRows(rowData, i)"
                                *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
                           <div *ngIf="col.type === 'icon'">
-                            <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                            <i *ngIf="(summary$ | async)?.portfolios[rowData.rlPortfolioId]" style="font-size: 19px; color: #848484;"
                                class="icon-upload_24px"></i>
                           </div>
                         </td>
@@ -432,7 +432,7 @@
                             <div class="text-data" (click)="selectRows(rowData, i)"
                                  *ngIf="col.type === 'date'"><span>{{rowData[col.field]}}</span></div>
                             <div *ngIf="col.type === 'icon'">
-                              <i *ngIf="rowData[col.field]" style="font-size: 19px; color: #848484;"
+                              <i *ngIf="(summary$ | async)?.analysis[rowData.rlAnalysisId]" style="font-size: 19px; color: #848484;"
                                  class="icon-upload_24px"></i>
                             </div>
                           </td>

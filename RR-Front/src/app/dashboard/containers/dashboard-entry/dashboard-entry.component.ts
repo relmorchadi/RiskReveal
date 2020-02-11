@@ -6,12 +6,14 @@ import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from '../../../shared/notification.service';
 import {NavigationStart, Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
-import {Select, Store} from "@ngxs/store";
+import {ofActionCompleted, Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
-import {DashData} from "./data";
-import {elementStylingMap} from "@angular/core/src/render3";
-import {createViewChild} from "@angular/compiler/src/core";
+import {catchError, first, tap, timeout} from "rxjs/operators";
+import {LoadReferenceWidget} from "../../../core/store/actions";
+import {Actions, ofActionDispatched} from '@ngxs/store';
+import {DashboardApi} from "../../../core/service/api/dashboard.api";
+import {of} from "rxjs";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -20,244 +22,33 @@ import {createViewChild} from "@angular/compiler/src/core";
 })
 export class DashboardEntryComponent extends BaseContainer implements OnInit {
   protected options: GridsterConfig;
-  protected item: any = {x: 0, y: 0, cols: 3, rows: 2};
   newDashboardTitle: any;
   selectedDashboard: any;
   searchMode = 'Treaty';
 
-  newFacHeight = '115px';
-  inProgressFacHeight = '115px';
-  archivedFacHeight = '115px';
-
-  newCols: any;
-  inProgressCols: any;
-  archivedCols: any;
-
-  immutableNew: any;
-  immutableInProgress: any;
-  immutableArchive: any;
+  immutableCols: any;
 
   manageNewPopUp = false;
   manageInProgressPopUp = false;
   manageArchivedPopUp = false;
 
-  dashboards: any = [
-    {
-      id: 0,
-      name: 'Dashboard N°1',
-      visible: true,
-      items: [
-/*        {
-          id: 1,
-          name: 'Renewal Contract Scope',
-          selected: true,
-          icon: 'icon-window-section',
-          componentName: 'RenewalContractScopeComponent',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 2,
-          name: 'Priced PLTs Changed',
-          icon: 'icon-sliders-v-alt',
-          selected: false,
-          componentName: 'Priced PLTs Changed',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 3,
-          name: 'Contract Scope Changed',
-          icon: 'icon-adjust-circle',
-          selected: false,
-          componentName: 'Contract Scope Changed',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 4,
-          name: 'Latest Published PLTs',
-          icon: 'icon-window-grid',
-          selected: false,
-          componentName: 'Latest Published PLTs',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 5,
-          name: 'Renewal Tracker',
-          icon: 'icon-history-alt',
-          selected: false,
-          componentName: 'Renewal Tracker',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
-      ],
-      fac: [
-        {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'NewFacWidgetComponent', selected: false,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
-        },
-        {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'InProgressFacWidgetComponent', selected: false,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
-        },
-        {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'ArchivedFacWidgetComponent', selected: false,
-          position: {cols: 3, rows: 1, col: 0, row: 0}
-        },
-        {
-          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
-          componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-        },
-        {
-          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
-          componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-        }
-      ]
-    },
-    {
-      id: 1,
-      name: 'Fac Dashboard',
-      visible: true,
-      items: [
-        /*{
-          id: 1,
-          name: 'Renewal Contract Scope',
-          selected: false,
-          icon: 'icon-window-section',
-          componentName: 'RenewalContractScopeComponent',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 2,
-          name: 'Priced PLTs Changed',
-          icon: 'icon-sliders-v-alt',
-          selected: false,
-          componentName: 'Priced PLTs Changed',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 3,
-          name: 'Contract Scope Changed',
-          icon: 'icon-adjust-circle',
-          selected: false,
-          componentName: 'Contract Scope Changed',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 4,
-          name: 'Latest Published PLTs',
-          icon: 'icon-window-grid',
-          selected: false,
-          componentName: 'Latest Published PLTs',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        },
-        {
-          id: 5,
-          name: 'Renewal Tracker',
-          icon: 'icon-history-alt',
-          selected: false,
-          componentName: 'Renewal Tracker',
-          position: {cols: 3, rows: 2, col: 0, row: 0}
-        }*/
-      ],
-      fac: [
-        {
-          id: 99, icon: 'icon-camera-focus', name: 'New CARs', type: 'newCar',
-          componentName: 'NewFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
-        },
-        {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress CARs', type: 'inProgressCar',
-          componentName: 'InProgressFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
-        },
-        {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived CARs', type: 'archivedCar',
-          componentName: 'ArchivedFacWidgetComponent', selected: true,
-          position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
-        },
-        {
-          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status', type: 'chart',
-          componentName: 'facChartWidgetComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-        },
-        {
-          id: 103, icon: 'icon-camera-focus', name: 'CARs by Subsidiary', type: 'subsidiaryChart',
-          componentName: 'facSubsidiaryChartComponent', selected: false,
-          position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-        }
-      ]
-    },
-  ];
-
-  dashboardsMockData = [];
-  dashboardTitle = 'Dashboard N°1';
   tabs = [1, 2, 3];
   idSelected: number;
   idTab = 0;
   rightSliderCollapsed = false;
+  initDash = true;
 
-  widgetsMockData = {
-    treaty: [
-/*      {
-        id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
-        componentName: 'RenewalContractScopeComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
-      },
-      {
-        id: 2, icon: 'icon-sliders-v-alt', title: 'Priced PLTs Changed',
-        componentName: 'Priced PLTs Changed', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
-      },
-      {
-        id: 3, icon: 'icon-adjust-circle', title: 'Contract Scope Changed',
-        componentName: 'Contract Scope Changed', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
-      },
-      {
-        id: 4, icon: 'icon-window-grid', title: 'Latest Published PLTs',
-        componentName: 'Latest Published PLTs', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
-      },
-      {
-        id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
-        componentName: 'Renewal Tracker', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0}
-      },*/
-    ],
-    fac: [
-      {
-        id: 99, icon: 'icon-camera-focus', title: 'New CARs', type: 'newCar',
-        componentName: 'NewFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'NewFacWidgetComponent'}
-      },
-      {
-        id: 100, icon: 'icon-camera-focus', title: 'In Progress CARs', type: 'inProgressCar',
-        componentName: 'InProgressFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'InProgressFacWidgetComponent'}
-      },
-      {
-        id: 101, icon: 'icon-camera-focus', title: 'Archived CARs', type: 'archivedCar',
-        componentName: 'ArchivedFacWidgetComponent', selected: true,
-        position: {cols: 3, rows: 1, col: 0, row: 0, componentName: 'ArchivedFacWidgetComponent'}
-      },
-      {
-        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status', type: 'chart',
-        componentName: 'facChartWidgetComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-      },
-      {
-        id: 103, icon: 'icon-camera-focus', title: 'CARs by Subsidiary', type: 'subsidiaryChart',
-        componentName: 'facSubsidiaryChartComponent', selected: true,
-        position: {cols: 3, rows: 2, col: 0, row: 0, minItemRows: 2}
-      }
-    ]
-  };
   previousUrl: string;
 
+  showAdd: any;
+
   @Select(DashboardState.getFacData) facData$;
+  @Select(DashboardState.getRefData) refWidget$;
+
+  dashboards: any;
+  refWidget: any;
+  editedWidget: any;
+
   newFacCars: any;
   inProgressFacCars: any;
   archivedFacCars: any;
@@ -265,24 +56,33 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   searchInput: ElementRef;
   @ViewChild('searchInput') set assetInput(elRef: ElementRef) {
     this.searchInput = elRef;
-    // this.detectChanges();
   }
+
+  @ViewChild('popConfirm') confirmPopUp;
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
   constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService,
-              private router: Router, _baseStore: Store,
+              private router: Router, _baseStore: Store, private action: Actions, private dashboardAPI: DashboardApi,
               _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.dispatch(new fromHD.LoadDashboardFacDataAction());
+    this.dispatch([new LoadReferenceWidget(), new fromHD.LoadDashboardFacDataAction()]);
     this.facData$.pipe().subscribe(value => {
-      this.newFacCars = _.get(value, 'new', []);
-      this.inProgressFacCars = _.get(value, 'inProgress', []);
-      this.archivedFacCars = _.get(value, 'archived', []);
+      this.newFacCars = this.dataParam(_.get(value, 'new', []));
+      this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
+      this.archivedFacCars = this.dataParam(_.get(value, 'archived', []));
     });
+
+    this.refWidget$.pipe().subscribe( value => {
+      this.refWidget = value;
+      this.detectChanges();
+    });
+
+    this.loadDashboardAction();
+
     this.options = {
       gridType: GridType.VerticalFixed,
       compactType: 'compactUp',
@@ -326,8 +126,16 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dropOverItems: true,
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
+        stop: (item, itemComponent) => {
+          //this.changeWidgetHeight(item, itemComponent);
+        }
       },
-      resizable: {enabled: true},
+      resizable: {
+        enabled: true,
+        stop: (item, itemComponent) => {
+          this.changeWidgetHeight(item, itemComponent.$item);
+        }
+      },
       swap: true,
       pushItems: true,
       disablePushOnDrag: true,
@@ -340,17 +148,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       scrollToNewItems: false
     };
 
-    this.newCols = DashData.cols;
-    this.inProgressCols = DashData.cols;
-    this.archivedCols = DashData.cols;
-
-    this.resetImmutable();
-
-    this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
-    this.updateDashboardMockData();
-    this.idSelected = this.dashboardsMockData[0].id;
-    this.dashboardChange(this.idSelected);
-
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         window.localStorage.setItem('previousUrl', this.router.url);
@@ -359,81 +156,228 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     this.setTabValue();
   }
 
-  resetImmutable() {
-    this.immutableNew = [...this.newCols];
-    this.immutableInProgress = [...this.inProgressCols];
-    this.immutableArchive = [...this.archivedCols];
+  dataParam(data) {
+    return _.sortBy(_.map(data, item => {
+      return {...item, carRequestId: _.toInteger(_.split(item.carRequestId, '-')[1])}
+    }), ['carRequestId']).reverse();
+  }
+
+  loadDashboardAction() {
+    this.dashboardAPI.getDashboards(1).subscribe(data => {
+      let dashboards = [];
+      _.forEach(data, item => {
+        dashboards = [...dashboards, this._formatData(item)]
+      });
+      this.dashboards = dashboards;
+      if (this.initDash && this.dashboards !== null) {
+        this.idSelected = this.dashboards[0].id;
+        this.dashboardChange(this.idSelected);
+        this.initDash = false;
+      }
+    });
+  }
+
+  createNewDashboardAction(payload) {
+    this.dashboardAPI.creatDashboards(payload).subscribe(data => {
+          this.dashboards = [...this.dashboards, this._formatData(data)];
+          this.idTab = this.dashboards.length - 1;
+          this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
+          this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
+        }
+    )
+  }
+
+  deleteDashboardAction(payload) {
+    const {dashboardId} = payload;
+    this.dashboardAPI.deleteDashboards(dashboardId).subscribe(data => {
+      this.dashboards = _.filter(this.dashboards, item => item.id !== dashboardId);
+      this.idSelected = _.get(this.dashboards, '[0].id', '');
+      this.dashboardChange(this.idSelected);
+    })
+  }
+
+  updateDashboardAction(payload) {
+    const {dashboardId, updatedDashboard} = payload;
+    const frontData = {
+      ...updatedDashboard,
+      name: updatedDashboard.dashboardName
+    };
+    this.dashboards = _.map(this.dashboards, item => {
+      return item.id === dashboardId ? _.merge({}, item, frontData) : item;
+    });
+    this.selectedDashboard = _.find(this.dashboards, item => item.id === dashboardId);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
+    this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
+        catchError(err => {
+          return of();
+        })
+    )
+  }
+
+  createNewWidgetAction(payload) {
+    const {selectedDashboard, widget} = payload;
+    this.dashboardAPI.createWidget(widget).subscribe((data: any) => {
+      const {userDashboardWidget, columns} = data;
+      this.dashboards = _.map(this.dashboards, item => {
+        if (item.id === selectedDashboard) {
+          return {
+            ...item, widgets: [...item.widgets, {
+              ...this._formatWidget(userDashboardWidget),
+              columns: this._formatColumns(columns)
+            }]
+          };
+        }
+        return item;
+      });
+      this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
+      this.detectChanges();
+    })
+  }
+
+  duplicateWidgetAction(payload) {
+    this.dashboardAPI.duplicateWidget(payload).subscribe((data: any) => {
+      const {userDashboardWidget, columns} = data;
+      this.dashboards = _.map(this.dashboards, item => {
+        if (item.id === this.selectedDashboard.id) {
+          return {
+            ...item, widgets: [...item.widgets, {
+              ...this._formatWidget(userDashboardWidget),
+              columns: this._formatColumns(columns)
+            }]
+          };
+        }
+        return item;
+      });
+      this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
+      this.detectChanges();
+    })
+  }
+
+  deleteWidgetAction(payload) {
+    this.dashboards = _.map(this.dashboards, item => {
+      if (item.id === this.selectedDashboard.id) {
+        return {...item, widgets: _.filter(item.widgets, widgetItem =>
+              widgetItem.userDashboardWidgetId !== payload)};
+      }
+      return item;
+    });
+    this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
+    this.dashboardAPI.deleteWidget(payload).subscribe()
+  }
+
+  deleteAllDashboardByRef(payload) {
+    const {selectedDashboard, refId} = payload;
+    this.dashboards = _.map(this.dashboards, item => {
+      if (item.id === selectedDashboard.id) {
+        return {...item, widgets: _.filter(item.widgets, widgetItem =>
+              widgetItem.widgetId !== refId)};
+      }
+      return item;
+    });
+    this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
+    this.dashboardAPI.deleteAllWidgetByRef(selectedDashboard.id, refId).subscribe();
+  }
+
+  updateWidgetsDataAction(payload) {
+    const {updatedWidget, updatedDash} = payload;
+    const widgetId = updatedWidget.userDashboardWidgetId;
+
+    if(updatedDash !== null) {
+      this.dashboards = _.map(this.dashboards, item => {
+        if (item.id === this.selectedDashboard.id) {
+          return {...item, widgets: _.map(item.widgets, widget => {
+              if (widget.userDashboardWidgetId === widgetId) {
+                return {...widget, ...updatedDash}
+              } else {return widget}
+            })}
+        } else {return item}
+      });
+    }
+
+    this.dashboardAPI.updateWidget(updatedWidget).subscribe();
+    this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
   }
 
   setTabValue() {
-    this.idTab = 1;
-    this.dashboardChange(1);
-    const data = window.localStorage.getItem('previousUrl');
-    console.log(data);
-    if (data === '/CreateNewFile') {
+/*    const visibleDash = _.filter(this.dashboards, item => item.visible);
+    if (visibleDash.length > 1) {
+      setTimeout(() => {
+        this.idTab = 1;
+        const idDash = _.get(this.dashboards[1], 'id', 1);
+        this.dashboardChange(idDash);
+      }, 500);
+    }*/
+  }
 
-    }
+  changeWidgetHeight(widgetItem, position) {
+    const resizedWidget = _.find(this.selectedDashboard.widgets, item => item.id === widgetItem.widgetId);
+
+    const newPosition = {
+      colSpan: position.cols,
+      rowSpan: position.rows,
+      colPosition: position.x,
+      rowPosition: position.y,
+      minItemRows: position.minItemRows,
+      minItemCols: position.minItemCols,
+      userAssignedName: resizedWidget.name,
+      userDashboardId: resizedWidget.userDashboardId,
+      userDashboardWidgetId: resizedWidget.userDashboardWidgetId,
+      userID: resizedWidget.userID,
+      widgetId: resizedWidget.widgetId
+    };
+
+    this.updateWidgetsDataAction({updatedWidget: newPosition, updatedDash: null})
   }
 
   openPopUp(event) {
-    switch (event) {
+    const {scope, widgetCol, widgetId} = event;
+    switch (scope) {
       case 'newCar':
         this.manageNewPopUp = true;
+        this.immutableCols = [...widgetCol];
         break;
       case 'inProgressCar':
         this.manageInProgressPopUp = true;
+        this.immutableCols = [...widgetCol];
         break;
       case 'archivedCar':
         this.manageArchivedPopUp = true;
+        this.immutableCols = [...widgetCol];
         break;
     }
+    this.editedWidget = _.find(this.selectedDashboard.widgets , item => item.id === widgetId)
   }
 
   closePopUp() {
     this.manageNewPopUp = false;
     this.manageInProgressPopUp = false;
     this.manageArchivedPopUp = false;
-    this.resetImmutable();
   }
 
-  saveColumns(event, scope) {
-    if (scope === 'new') {
-      this.newCols = [...event];
-    } else if (scope === 'inProgress') {
-      this.inProgressCols = [...event];
-    } else if (scope === 'archived') {
-      this.archivedCols = [...event];
-    }
+  saveColumns(event) {
+    let tableCols = _.map(event, (item, index: number) => {
+      return {columnId: item.columnId,
+        order: index + 1,
+        visible: true}
+    });
+    event = _.map(event , item => ({...item, visible: true, display: true}));
+    this.dashboards = _.map(this.dashboards, item => {
+      if (item.id === this.selectedDashboard.id) {
+        return {...item, widgets: _.map(item.widgets, widget => {
+            if (widget.userDashboardWidgetId === this.editedWidget.id) {
+              _.forEach(widget.columns, element => {
+                if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
+                  tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
+                  event = [...event, {element, visible: false}];
+                }
+              });
+              return {...widget, columns: [...event]}
+            } else {return widget}
+          })}
+      } else {return item}
+    });
+    this.dashboardAPI.manageColumnsWidget(tableCols).subscribe();
     this.closePopUp();
-  }
-
-  addDashboard() {
-    const {treaty, fac}: any = this.widgetsMockData;
-    const selectedTreatyComponent = _.filter(treaty, (e: any) => e.selected);
-    const selectedFacComponent = _.filter(fac, (e: any) => e.selected);
-    const item = {
-      id: this.dashboards[this.dashboards.length - 1 ].id + 1,
-      name: this.newDashboardTitle,
-      visible: true,
-      items: _.map(selectedTreatyComponent,
-        (dt: any, key) => {
-        return {...dt, id: key, name: dt.title, selected: false}
-      }
-      ),
-      fac: _.map(selectedFacComponent,
-        (dt: any, key) => {
-        return {...dt, id: key, name: dt.title, selected: false}
-      })
-    };
-    if (item.name != null) {
-      this.dashboards = [...this.dashboards, item];
-      this.dashboardTitle = this.newDashboardTitle || '';
-      this.updateDashboardMockData();
-      this.emptyField();
-      this.idTab = this.dashboards.length - 1;
-      this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
-      this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
-    }
   }
 
   emptyField() {
@@ -448,14 +392,37 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     })
   }
 
+  addDashboard() {
+    const item = {userId: 1, dashboardName: this.newDashboardTitle};
+    if (!_.isEmpty(_.trim(item.dashboardName))) {
+      this.createNewDashboardAction(item);
+      this.emptyField();
+      /*.pipe(first()).subscribe(()=>{},()=>{},()=>{});*/
+    } else {
+      this.notificationService.createNotification('Information',
+          'An Error Occurred While Creating a New Dashboard Please Verify the name isn\'t Empty before creating a New Dashboard',
+          'error', 'bottomRight', 6000);
+      this.emptyField();
+    }
+  }
+
+  updateDash(tab, newObject, redirect = false): void {
+    const dashboard = {
+      dashBoardSequence: tab.dashBoardSequence,
+      dashboardName: tab.dashboardName,
+      searchMode: tab.searchMode,
+      userDashboardId: tab.id,
+      userId: 1,
+      visible: tab.visible
+    };
+    this.updateDashboardAction({dashboardId: tab.id,
+      updatedDashboard: _.merge({}, dashboard, newObject)});
+    redirect ? this.selectedDashboard = this.dashboards.filter(ds => ds.id === tab.id)[0] : null;
+  }
+
   deleteDashboard() {
     if (this.dashboards.length > 1) {
-      this.dashboards = _.filter(this.dashboards, (e: any) => this.idSelected != e.id);
-      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-      this.updateDashboardMockData();
-
-      this.idSelected = _.get(this.dashboards, '[0].id', '');
-      this.dashboardChange(this.idSelected);
+      this.deleteDashboardAction({dashboardId : this.idSelected});
       this.notificationService.createNotification('Information',
         'The dashboard has been deleted successfully.',
         'info', 'bottomRight', 4000);
@@ -464,64 +431,85 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         'you can not delete this dashboard you need at least one!',
         'error', 'bottomRight', 4000);
     }
-
   }
 
   changeDashboardName(name) {
-    if (name != '') {
-      const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
-      if (dashIndex != -1) this.dashboards[dashIndex].name = name;
-      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-      this.updateDashboardMockData();
+    if (!_.isEmpty(_.trim(name))) {
+      this.updateDash(this.selectedDashboard, {dashboardName: name});
+      this.selectedDashboard.name = name;
+    } else {
+      this.notificationService.createNotification('Information',
+          'The Name of the dashboard shouldn\'t Be Empty!',
+          'error', 'bottomRight', 4000);
     }
   }
 
-  updateDashboardMockData() {
-    this.dashboardsMockData = this.dashboards; // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
-    console.log('here 2');
-  }
-
-  routerNavigate() {
-    this.router.navigate(['/CreateNewFile']);
-  }
-
-  changeItemPosition() {
-    let rowEmpty = true;
-    this.selectedDashboard.items.forEach(ds => {
-      if (ds.selected && ds.position.y === 0 ) {
-        rowEmpty = false;
-      }
-    });
-    if (rowEmpty) {
-      const selectedItem = this.selectedDashboard.items.filter(ds => ds.selected === true);
-      this.selectedDashboard.items.forEach(ds => {
-        if  (ds.id === selectedItem[0].id) {
-          ds.position.y = 0;
-        }
-      });
+  addRemoveItem(item) {
+    const selectedWidget =
+    _.filter(this.selectedDashboard.widgets, (itemWidget: any) => item.widgetId === itemWidget.widgetId);
+    if (selectedWidget.length === 0) {
+      this.createNewWidgetAction({selectedDashboard: this.selectedDashboard.id,
+      widget: {
+        dashoardId: this.selectedDashboard.id,
+        referenceWidgetId:item.widgetId,
+        userId: 1
+      }});
+    } else {
+      this.deleteAllDashboardByRef({selectedDashboard: this.selectedDashboard, refId: item.widgetId})
     }
-    this.itemChanges();
   }
 
-  itemChanges() {
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+  changeWidgetName({item, newName}: any) {
+    if (_.isEmpty(_.trim(newName))) {
+      this.notificationService.createNotification('Information',
+          'The Widget Name Cannot Be Empty!',
+          'error', 'bottomRight', 6000);
+    } else {
+      const updatedWidget = {
+        colPosition: item.position.x,
+        colSpan: item.position.cols,
+        minItemCols: item.position.minItemCols,
+        minItemRows: item.position.minItemRows,
+        rowPosition: item.position.y,
+        rowSpan: item.position.rows,
+        userAssignedName: newName,
+        userDashboardId: item.userDashboardId,
+        userDashboardWidgetId: item.userDashboardWidgetId,
+        userID: item.userID,
+        widgetId: item.widgetId,
+      };
+
+      const updatedDash = {
+        name: newName
+      };
+
+      this.updateWidgetsDataAction({updatedWidget, updatedDash});
+    }
+  }
+
+  updateColsListener($event) {
+    const {widgetId, dashCols} = $event;
+    this.dashboards = _.map(this.dashboards, dash => {
+      return dash.id === this.selectedDashboard.id ? {...dash, widgets: _.map(dash.widgets, item => {
+      return item.id === widgetId ? {...item, columns: dashCols} : item})
+    } : dash });
+
+    console.log(_.find(this.dashboards, item => item.id === this.selectedDashboard.id))
   }
 
   selectTab(id: any) {
     this.idSelected = id;
-    const filterData = this.dashboards.filter(ds => ds.id === id);
-    this.selectedDashboard = filterData[0];
+    this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
   }
 
   dashboardChange(id: any) {
-    const name: any = _.get(_.find(this.dashboardsMockData, {id}), 'name');
-    this.dashboardTitle = name || '';
     this.idSelected = id;
-    const filterData = this.dashboardsMockData.filter(ds => ds.id === id);
-    this.selectedDashboard = filterData[0];
-    if (filterData[0].visible === true) {
+    this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
+    if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
-      this.dashboardsMockData.forEach(
+      this.dashboards.forEach(
         ds => {
           if (ds.visible === true && ds.id < id) {
             ++idSel;
@@ -530,157 +518,67 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       );
       this.idTab = idSel;
     }
-  }
-
-  deleteItem(dashboardId: any, itemId: any) {
-    /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
-       this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId > 5) {
-      dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
-    } else {
-      dashboard.items = dashboard.items.map(item => {
-        if (item.id === itemId) {
-          return {...item, selected: false};
-        } else {
-          return item;
-        }
-      });
-    }
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-  }
-
-  deleteItemFac(dashboardId: any, itemId: any) {
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId > 102 || itemId < 99) {
-      dashboard.fac = dashboard.fac.filter(ds => ds.id !== itemId);
-    } else {
-      dashboard.fac = dashboard.fac.map(item => {
-        if (item.id === itemId) {
-          return {...item, selected: false};
-        } else {
-          return item;
-        }
-      });
-    }
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-  }
-
-  changeName(dashboardId: any, {itemId, newName}: any) {
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId <= 5) {
-      const newItem = dashboard.items.filter(ds => ds.id === itemId);
-      const copy = Object.assign({}, newItem[0], {
-        name: newName,
-        id: dashboard.items.length + 1
-      });
-      dashboard.items.push(copy);
-      newItem[0].selected = false;
-    } else {
-      let index = _.findIndex(dashboard.items, {id: itemId});
-      dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
-    }
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-    // this.editName = false;
-  }
-
-  changeNameFac(dashboardId: any, {itemId, newName}: any) {
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    if (itemId > 102 && itemId < 99) {
-      const newItem = dashboard.fac.filter(ds => ds.id === itemId);
-      const copy = Object.assign({}, newItem[0], {
-        name: newName,
-        id: dashboard.items.length + 1
-      });
-      dashboard.fac.push(copy);
-      newItem[0].selected = false;
-    } else {
-      let index = _.findIndex(dashboard.items, {id: itemId});
-      dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
-    }
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-    // this.editName = false;
-  }
-
-  duplicate(dashboardId: any, itemName: any) {
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
-    const copy = Object.assign({}, duplicatedItem[0], {
-      id: dashboard.items.length + 1,
-      selected: true,
-    });
-    dashboard.items = [...dashboard.items, copy];
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-  }
-
-  duplicateFac(dashboardId: any, itemName: any) {
-    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    const duplicatedItem: any = dashboard.fac.filter(ds => ds.name === itemName);
-    const copy = Object.assign({}, duplicatedItem[0], {
-      id: dashboard.items.length + 1,
-      selected: true,
-    });
-    dashboard.fac = [...dashboard.fac, copy];
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-  }
-
-  activeView(tab) {
-    this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = true : null);
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-    this.idSelected = tab.id;
-    this.idTab = tab.id;
-  }
-
-  closeTab(tab): void {
-    this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = false : null);
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-    const filterData = this.dashboards.filter(ds => ds.id === tab.id);
-    this.selectedDashboard = filterData[0];
-  }
-
-  addRemoveItem(item, dashboard) {
-    dashboard.items.forEach(ds => {
-      if (ds.id === item.id) {
-        ds.selected = !ds.selected;
-      }
-    });
-    _.forEach(this.dashboards , ds => {
-      if (ds.id === dashboard.id) {
-        ds = dashboard;
-      }
-    });
-    this.updateDashboardMockData();
-  }
-
-  addRemoveItemFac(item, dashboard) {
-    dashboard.fac.forEach(ds => {
-      if (ds.id === item.id) {
-        ds.selected = !ds.selected;
-      }
-    });
-    _.forEach(this.dashboards , ds => {
-      if (ds.id === dashboard.id) {
-        ds = dashboard;
-      }
-    });
-    this.updateDashboardMockData();
+    this.detectChanges();
   }
 
   onEnterAdd(keyEvent) {
     if (keyEvent.key === 'Enter') {
+      this.showAdd = false;
       keyEvent.target.value !== '' ? this.addDashboard() : null;
     }
   }
 
-  loopOverDashboard(dashboard: any) {
-    return _.concat(dashboard.items, dashboard.fac) ;
+  getSelection(item) {
+    return _.filter(_.get(this.selectedDashboard, 'widgets', []),
+            items => items.widgetId === item.widgetId).length > 0;
+  }
+
+  private _formatData(data) {
+    const userDashboard = _.get(data, 'userDashboard', data);
+    return {
+      ...userDashboard,
+      id: userDashboard.userDashboardId,
+      name: userDashboard.dashboardName,
+      widgets: _.map(_.get(data, 'widgets', []), (dashWidget: any) => {
+        const widget = dashWidget.userDashboardWidget;
+        return {
+          ...this._formatWidget(widget),
+          columns: this._formatColumns(dashWidget.columns)
+        }
+      }),
+    }
+  }
+
+  private _formatWidget(widget) {
+    return {
+      ...widget,
+      id: widget.userDashboardWidgetId,
+      name: widget.userAssignedName,
+      position: {
+        cols: widget.colSpan,
+        rows: widget.rowSpan,
+        col: widget.colPosition,
+        row: widget.rowPosition,
+        minItemRows: widget.minItemRows,
+        minItemCols: widget.minItemCols,
+        widgetId: widget.userDashboardWidgetId,
+      }
+    }
+  }
+
+  private _formatColumns(columns) {
+    return _.map(_.orderBy(columns, col => col.dashboardWidgetColumnOrder, 'asc'), item => ({
+      ...item,
+      columnId: item.userDashboardWidgetColumnId,
+      WidgetId: item.userDashboardWidgetId,
+      field: item.dashboardWidgetColumnName,
+      header: item.columnHeader,
+      width: item.dashboardWidgetColumnWidth + 'px',
+      widthNumber: item.dashboardWidgetColumnWidth,
+      type: item.dataColumnType,
+      display: item.visible,
+      filtered: true,
+      sorted: true,
+    }))
   }
 }

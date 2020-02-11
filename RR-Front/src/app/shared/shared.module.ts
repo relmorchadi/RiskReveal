@@ -19,6 +19,8 @@ import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
 import {AngularResizedEventModule} from 'angular-resize-event';
 import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
+import {NgxEchartsModule} from 'ngx-echarts';
+import { AngularResizeElementModule } from 'angular-resize-element';
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
@@ -37,7 +39,9 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
     DragDropModuleAngular,
     AngularDraggableModule,
     ColorGithubModule,
-    AngularResizedEventModule
+    AngularResizedEventModule,
+    NgxEchartsModule,
+    AngularResizeElementModule
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -54,6 +58,8 @@ import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
     SidebarModule,
     ColorGithubModule,
     AngularResizedEventModule,
+    NgxEchartsModule,
+    AngularResizeElementModule,
     ...COMPONENTS,
     ...PIPES,
       ...DIRECTIVES

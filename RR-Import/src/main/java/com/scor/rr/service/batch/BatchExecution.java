@@ -155,6 +155,7 @@ public class BatchExecution {
 
         ProjectEntity project = projectOp.get();
         Optional<WorkspaceEntity> myWorkspaceOp = workspaceRepository.findById(project.getWorkspaceId());
+        ProjectConfigurationForeWriter projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(project.getProjectId());
 
         if (!myWorkspaceOp.isPresent()) {
             log.error("Error. No workspace found");
@@ -164,12 +165,13 @@ public class BatchExecution {
         WorkspaceEntity myWorkspace = myWorkspaceOp.get();
 
         String workspaceCode = myWorkspace.getWorkspaceContextCode();
-        String workspaceMarketChannel = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "Treaty" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "Fac" : "";
+        String projectContext = projectConfigurationForeWriter != null ? "Fac" : "Manual";
+        String workspaceMarketChannel = projectContext.equals("Manual") ? "Treaty" : "Fac";
 
-        if (workspaceMarketChannel.equalsIgnoreCase("")) {
-            log.error("Error. workspace market channel is not found");
-            return null;
-        }
+//        if (workspaceMarketChannel.equalsIgnoreCase("")) {
+//            log.error("Error. workspace market channel is not found");
+//            return null;
+//        }
 
         ContractSearchResult contractSearchResult =
                 contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(workspaceCode, myWorkspace.getWorkspaceUwYear()).orElse(null);
@@ -180,23 +182,19 @@ public class BatchExecution {
 
         ModellingSystemInstanceEntity modellingSystemInstance = modellingSystemInstanceRepository.findById(instanceId).orElse(null);
 
-        ProjectConfigurationForeWriter projectConfigurationForeWriter = null;
         ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
 
         if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
-            projectConfigurationForeWriter = projectConfigurationForeWriterRepository.findByProjectId(projectId);
-            if (projectConfigurationForeWriter != null) {
-                projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
-                        .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
-            }
+            projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
+                    .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
         }
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
-        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult.getId();
-        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult.getCedantName();
+        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
+        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ?  contractSearchResult.getCedantName() : "";
         String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
-        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals(1L) ? "T" : myWorkspace.getWorkspaceMarketChannel().equals(2L) ? "F" : "";
+        String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
         String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
         String division = "1"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT

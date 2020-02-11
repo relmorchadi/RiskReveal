@@ -21,9 +21,11 @@ public class AdjustmentNode {
     private String userNarrative;
     private AdjustmentNode cloningSource;
 
-    private List<ReturnPeriodBandingAdjustmentParameter> nonLinearAdjustment;
+    private List<ReturnPeriodBandingAdjustmentParameter> linear;
 
-    private List<ScalingAdjustmentParameter> linearAdjustment;
+    private List<ScalingAdjustmentParameter> scalingBased;
+
+    private List<EventBasedAdjustmentParameter> eventBased;
 
     @Column(name = "UserNarrative")
     public String getUserNarrative() {
@@ -177,22 +179,34 @@ public class AdjustmentNode {
 
     @OneToMany(mappedBy = "adjustmentNode")
     @JsonManagedReference
-    public List<ReturnPeriodBandingAdjustmentParameter> getNonLinearAdjustment() {
-        return nonLinearAdjustment;
-    }
-
-    public void setNonLinearAdjustment(List<ReturnPeriodBandingAdjustmentParameter> nonLinearAdjustment) {
-        this.nonLinearAdjustment = nonLinearAdjustment;
+    public List<ReturnPeriodBandingAdjustmentParameter> getLinear() {
+        return linear;
     }
 
     @OneToMany(mappedBy = "adjustmentNode")
     @JsonManagedReference
-    public List<ScalingAdjustmentParameter> getLinearAdjustment() {
-        return linearAdjustment;
+    public void setLinear(List<ReturnPeriodBandingAdjustmentParameter> linear) {
+        this.linear = linear;
     }
 
-    public void setLinearAdjustment(List<ScalingAdjustmentParameter> linearAdjustment) {
-        this.linearAdjustment = linearAdjustment;
+    @OneToMany(mappedBy = "adjustmentNode")
+    @JsonManagedReference
+    public List<ScalingAdjustmentParameter> getScalingBased() {
+        return scalingBased;
+    }
+
+    public void setScalingBased(List<ScalingAdjustmentParameter> scalingBased) {
+        this.scalingBased = scalingBased;
+    }
+
+    @OneToMany(mappedBy = "adjustmentNode")
+    @JsonManagedReference
+    public List<EventBasedAdjustmentParameter> getEventBased() {
+        return eventBased;
+    }
+
+    public void setEventBased(List<EventBasedAdjustmentParameter> eventBased) {
+        this.eventBased = eventBased;
     }
 
     @Override

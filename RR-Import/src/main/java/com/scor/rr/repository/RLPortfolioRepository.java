@@ -1,6 +1,7 @@
 package com.scor.rr.repository;
 
 import com.scor.rr.domain.EdmPortfolio;
+import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLPortfolio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -37,5 +38,7 @@ public interface RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>,
 
     List<RLPortfolio> findByRlModelDataSourceRlModelDataSourceId(Long rlModelDataSourceId);
 
+    @Query(value = "select rlp from RLPortfolio rlp where rlp.number= :name and rlp.rlModelDataSource.rlModelDataSourceId= :edmId")
+    List<RLPortfolio> findByEdmIdAndNumber(@Param("edmId") Long edmId, @Param("name") String name);
 
 }

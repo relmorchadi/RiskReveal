@@ -1,7 +1,6 @@
 package com.scor.rr.domain.dto;
 
 public class ImportFilePLTData {
-
     private int eventId;
     private int year;
     private int month;
@@ -25,7 +24,7 @@ public class ImportFilePLTData {
     }
 
     public int getEventId() {
-        return eventId;
+        return this.eventId;
     }
 
     public void setEventId(int eventId) {
@@ -33,7 +32,7 @@ public class ImportFilePLTData {
     }
 
     public int getYear() {
-        return year;
+        return this.year;
     }
 
     public void setYear(int year) {
@@ -41,7 +40,7 @@ public class ImportFilePLTData {
     }
 
     public int getMonth() {
-        return month;
+        return this.month;
     }
 
     public void setMonth(int month) {
@@ -49,7 +48,7 @@ public class ImportFilePLTData {
     }
 
     public int getDay() {
-        return day;
+        return this.day;
     }
 
     public void setDay(int day) {
@@ -57,7 +56,7 @@ public class ImportFilePLTData {
     }
 
     public int getRepetition() {
-        return repetition;
+        return this.repetition;
     }
 
     public void setRepetition(int repetition) {
@@ -65,7 +64,7 @@ public class ImportFilePLTData {
     }
 
     public float getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(float value) {
@@ -73,7 +72,7 @@ public class ImportFilePLTData {
     }
 
     public float getMaxExposure() {
-        return maxExposure;
+        return this.maxExposure;
     }
 
     public void setMaxExposure(float maxExposure) {
@@ -81,23 +80,14 @@ public class ImportFilePLTData {
     }
 
     public String getEventDate() {
-        return eventDate;
+        return this.eventDate;
     }
 
     public void setEventDate(String eventDate) {
         this.eventDate = eventDate;
     }
 
-    @Override
     public String toString() {
-        return "ImportFilePLTData{" +
-                "eventId=" + eventId +
-                ", year=" + year +
-                ", month=" + month +
-                ", day=" + day +
-                ", repetition=" + repetition +
-                ", value=" + value +
-                ", maxExposure=" + maxExposure +
-                '}';
+        return "ImportFilePLTData{eventId=" + this.eventId + ", year=" + this.year + ", month=" + this.month + ", day=" + this.day + ", repetition=" + this.repetition + ", value=" + this.value + ", maxExposure=" + this.maxExposure + '}';
     }
 }

@@ -209,13 +209,24 @@ public class ConfigurationResource {
     @GetMapping(value = "get-global-data-sources")
     public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
         try {
-            if (configurationService.checkIfProjectHasConfigurations(projectId))
+            if (configurationService.checkIfProjectHasScannedDataSources(projectId))
                 return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
                 return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("AutoAttach")
+    public ResponseEntity<?> autoAttachWs(@RequestParam String wsId, @RequestParam List<Long> rdmIds,@RequestParam List<Long> edmIds, @RequestParam List<Long> divisionsIds){
+        return ResponseEntity.ok(configurationService.getAutoAttach(wsId, edmIds, rdmIds, divisionsIds));
+    }
+
+    @DeleteMapping("data-source")
+    public ResponseEntity<?> deleteDataSources(@RequestParam Long rlModelDataSourceId){
+        configurationService.deleteRlDataSource(rlModelDataSourceId);
+        return ResponseEntity.ok().build();
     }
 
 }

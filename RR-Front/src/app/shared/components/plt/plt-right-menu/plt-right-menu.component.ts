@@ -15,20 +15,22 @@ import * as rightMenuStore from './store';
 import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
 import * as _ from 'lodash';
 import {BaseContainer} from "../../../base";
-import {ofActionSuccessful, Store} from "@ngxs/store";
+import { Store } from "@ngxs/store";
 import {Router} from "@angular/router";
 import {CalibrationAPI} from "../../../../workspace/services/api/calibration.api";
 import {PltApi} from "../../../../workspace/services/api/plt.api";
-import {filter, map, mergeMap, switchMap, take, takeWhile, tap} from "rxjs/operators";
-import {empty, EMPTY, forkJoin, of, Subscription} from "rxjs";
+import {filter, mergeMap, take, takeWhile, tap} from "rxjs/operators";
+import { forkJoin, of, Subscription} from "rxjs";
 import {WorkspaceState} from "../../../../workspace/store";
-import * as fromWorkspaceStore from "../../../../workspace/store";
+import EChartOption = echarts.EChartOption;
+import {ExchangeRatePipe} from "../../../pipes/exchange-rate.pipe";
 
 @Component({
   selector: 'app-plt-right-menu',
   templateUrl: './plt-right-menu.component.html',
   styleUrls: ['./plt-right-menu.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ExchangeRatePipe]
 })
 export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDestroy, OnChanges  {
 
@@ -69,10 +71,11 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   };
 
   epMetrics;
+  currentEpMetrics;
 
   epMetricsSubscriptions: any;
 
-  rps;
+  rps: any;
 
   epMetricsLosses;
 
@@ -90,13 +93,19 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     lowerBound: number
   };
 
+  //Echart
+
+  chartOption: EChartOption;
+  updateOption: EChartOption;
+
   //Sub
   exchangeRatesSubscription: Subscription;
 
   constructor(
       _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
       private calibrationAPI: CalibrationAPI,
-      private pltAPI: PltApi
+      private pltAPI: PltApi,
+      private exChangeRatePipe: ExchangeRatePipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.selectedPLT= {};
@@ -287,7 +296,34 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       isValid: false,
       lowerBound: null,
       upperBound: null
-    }
+    };
+
+    this.chartOption = {
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '0px',
+        data:[{name: 'OEP',icon: 'circle'}, {name: 'AEP',icon: 'circle'}, {name: 'AEP-TVAR',icon: 'circle'}, {name: 'OEP-TVAR',icon: 'circle'}]
+      },
+      grid: {
+        left: '15%',
+        right: '1%'
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+      },
+      yAxis: {
+        type: 'value',
+        splitNumber: 5
+      },
+      series: []
+    };
+
+    this.updateOption= this.chartOption;
   }
 
   ngOnInit() {
@@ -422,6 +458,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
               mergeMap(summary => {
               this.pltCache[summary.pltId] = summary;
               this.selectedPLT= summary;
+              this.summaryEpMetricsConfig = {
+                  ...this.summaryEpMetricsConfig,
+                selectedCurrency: summary.pltCcy
+              };
               if(init) {
                 let res= _.map([this.selectedPLT], el => el.pltCcy);
 
@@ -456,6 +496,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   loadEpMetrics(pltHeaderId, curve) {
+    this.appendColumn(curve);
     if(!this.epMetrics[pltHeaderId]) this.epMetrics[pltHeaderId] = {};
     if(!this.epMetrics[pltHeaderId] || !_.keys(this.epMetrics[pltHeaderId][curve]).length) {
       this.epMetrics[pltHeaderId][curve]= {};
@@ -474,22 +515,51 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                 curveType
               } = metrics;
 
-              if(!this.rps[pltId].length) this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+              if(!this.rps[pltId].length) {
+                this.rps[pltId] = _.keys(_.omit(metrics, ['pltId', 'curveType', 'AAL']));
+                this.loadEpChartxAxis(pltId);
+              }
 
               if(curveType && (pltId || pltId === 0)) {
                 this.epMetrics[pltId]= {
                   ...this.epMetrics[pltId],
                   [curveType]: metrics
                 };
-                this.appendColumn(curveType);
+                this.currentEpMetrics = this.epMetrics[pltId];
               }
-
-              this.detectChanges();
+              this.loadEpChartData(pltHeaderId);
               this.epMetricsSubscriptions[pltHeaderId][curve] && this.epMetricsSubscriptions[pltHeaderId][curve].unsubscribe();
-
             }
+            this.detectChanges();
           });
+    } else {
+      this.loadEpChartData(this.inputs.pltHeaderId);
     }
+  }
+
+  loadEpChartData(pltId) {
+    let series= [];
+    _.forEach(this.summaryEpMetricsConfig.selectedCurveType, curveType => {
+      series.push({
+        name: curveType,
+        type: 'line',
+        data: _.values(_.omit(this.currentEpMetrics[curveType], ['pltId', 'curveType', 'AAL']))
+      })
+    });
+    this.chartOption = _.assign({}, this.chartOption, {series});
+  }
+
+  loadEpChartxAxis(pltId) {
+    this.updateOption = _.assign({}, this.updateOption, {
+      xAxis: {
+        data: this.rps[pltId]
+      }
+    });
+    this.chartOption = _.assign({}, this.chartOption, {
+      xAxis: {
+        data: this.rps[pltId]
+      }
+    });
   }
 
   loadEpMetricsLosses(pltHeaderId) {
@@ -521,6 +591,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         this.hideMetric(action.payload);
         break;
 
+      case "Selected CurveTypes Change":
+        this.selectedCurveTypesChange(action.payload);
+        break;
+
       case "Select Financial Unit":
         this.selectFinancialUnit(action.payload);
         break;
@@ -537,12 +611,14 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         this.addRP(action.payload);
         break;
 
+      case "Delete RP":
+        this.deleteRP(action.payload);
+        break;
+
       default:
         console.log(action);
         break;
     }
-
-    console.log(this.epMetricsTableConfig, this.epMetrics);
 
   }
 
@@ -618,6 +694,17 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     }
   }
 
+  deleteRP(rp) {
+    this.calibrationAPI.deleteListOfRPsByUserId(1, [rp], 'PLT Manager')
+        .pipe(take(1))
+        .subscribe(() => {
+          _.forEach(this.rps, (e,k) => {
+            this.rps[k] = _.filter(this.rps[k], e => e != rp);
+          });
+         this.detectChanges();
+        })
+  }
+
   handleEPMetricsReload(rp, pltHeaderId) {
     this.epMetrics[pltHeaderId] = {};
     this.rps[pltHeaderId]= _.sortBy([...this.rps[pltHeaderId], rp], v => v);
@@ -637,6 +724,9 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
   showMetric({curveTypes, difference}) {
 
+    console.log("SHOW METRIC");
+    console.log({curveTypes, difference});
+
     _.forEach(difference, curveType => {
       this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
     });
@@ -644,9 +734,15 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       ...this.summaryEpMetricsConfig,
       selectedCurveType: curveTypes
     };
+
+    console.log(this.epMetricsTableConfig.columns, this.summaryEpMetricsConfig.selectedCurveType);
   }
 
   hideMetric({curveTypes, difference}) {
+
+    console.log("HIDE METRIC");
+    console.log({curveTypes, difference});
+
     this.epMetricsTableConfig= {
       columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(difference, column => column == col.header))
     };
@@ -654,6 +750,33 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       ...this.summaryEpMetricsConfig,
       selectedCurveType: curveTypes
     };
+
+    console.log(this.epMetricsTableConfig.columns, this.summaryEpMetricsConfig.selectedCurveType);
+  }
+
+  selectedCurveTypesChange(selectedCurveTypes) {
+
+    const toDelete = _.difference(this.summaryEpMetricsConfig.selectedCurveType, selectedCurveTypes);
+    const toLoad = _.difference(selectedCurveTypes,this.summaryEpMetricsConfig.selectedCurveType);
+
+    this.summaryEpMetricsConfig = {
+      ...this.summaryEpMetricsConfig,
+      selectedCurveType: selectedCurveTypes
+    };
+
+    this.epMetricsTableConfig= {
+      columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(toDelete, column => col.header == column))
+    };
+
+    _.forEach(toLoad, curveType => {
+      this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
+    });
+
+    if(!toLoad.length && _.every(selectedCurveTypes, curve => this.epMetrics[this.inputs.pltHeaderId][curve])) {
+      this.loadEpChartData(this.inputs.pltHeaderId);
+      this.detectChanges();
+    }
+
   }
 
   selectFinancialUnit(financialUnit) {
@@ -681,11 +804,27 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
             ...this.summaryEpMetricsConfig,
             selectedCurrency: currency
           };
+          this.convertDataByExchangeRate();
           this.detectChanges();
           this.exchangeRatesSubscription && this.exchangeRatesSubscription.unsubscribe();
         });
 
-
   }
+
+  convertDataByExchangeRate() {
+    this.currentEpMetrics = this.epMetrics[this.selectedPLT.pltId];
+    const plt = this.epMetrics[this.selectedPLT.pltId];
+
+    _.forEach(plt, (e,curveType) => {
+      const rps = _.omit(this.epMetrics[this.selectedPLT.pltId][curveType], ['pltId', 'curveType', 'AAL']);
+      _.forEach(rps, (loss, rp) => {
+        this.currentEpMetrics[curveType][rp] = this.exChangeRatePipe.transform(this.epMetrics[this.selectedPLT.pltId][curveType][rp], this.exchangeRates, this.selectedPLT.pltCcy , this.summaryEpMetricsConfig.selectedCurrency)
+      })
+    });
+
+    this.loadEpChartData(this.selectedPLT.pltId);
+  }
+
+
 
 }

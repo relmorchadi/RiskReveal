@@ -26,7 +26,7 @@ export class WorkspaceService {
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {wsId, uwYear, route, type, carSelected} = payload;
     ctx.patchState({loading: true});
-    return this.wsApi.searchWorkspace(wsId, uwYear, type ? type : 'TTY')
+    return this.wsApi.searchWorkspace(wsId, uwYear, type)
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
@@ -47,12 +47,12 @@ export class WorkspaceService {
         wsId,
         uwYear,
         ...ws,
-        projects: _.map(projects, (prj, index: any) => {
+        projects: _.map(projects.reverse(), (prj, index: any) => {
           prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
         }),
-        workspaceType: ws.marketChannel == 2 ? 'fac' : 'treaty',
+        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
         isPinned: false,
         collapseWorkspaceDetail: true,
         route,
@@ -163,21 +163,6 @@ export class WorkspaceService {
         carSelected
       }));
     }
-  }
-
-  createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
-    const state = ctx.getState();
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const newData = [payload, ...draft.facWs.data];
-      draft.facWs.data = _.map(newData, item => {
-        if (item.uwanalysisContractContractId === payload.uwanalysisContractContractId && item.uwanalysisContractYear === payload.uwanalysisContractYear) {
-          return ((item.carStatus === 'New' || item.carStatus === 'In Progress') && item.id !== payload.id) ? {...item, carStatus: 'Canceled'} : {...item};
-        } else {
-          return {...item};
-        }
-      });
-      draft.facWs.sequence = draft.facWs.sequence + 1;
-    }));
   }
 
   openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenMultiWS) {

@@ -25,7 +25,6 @@ export class ExchangeRatePipe implements PipeTransform {
   };
 
   transform(value: any, exchangeRates, source, target): any {
-    console.log(exchangeRates, source);
 
     if(exchangeRates[source]) {
       if (this.mainCurrencies[_.upperCase(target)]) {

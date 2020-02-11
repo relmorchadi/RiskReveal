@@ -76,6 +76,11 @@ td, th {
   }
 }
 
+.shortCut-PopUp {
+  width: 415px;
+  border-radius: 10px;
+}
+
 ul.badges-list {
   list-style: none;
   padding-left: 2px;
@@ -302,6 +307,7 @@ ul.badges-list {
       line-height: 30px !important;
       background-color: transparent !important;
       flex: 0 0 90%;
+      white-space: nowrap;
     }
 
     .tags-wrapper-left {

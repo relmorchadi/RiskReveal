@@ -150,6 +150,12 @@
           border-bottom: 0px solid rgba(0, 0, 0, 0.15);
         }
       }
+
+      .ui-column-resizer {
+        width: 2.6px !important;
+        border: none !important;
+        background-color: #d8cdcd;
+      }
     }
 
     .ui-table-tbody {

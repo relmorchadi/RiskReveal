@@ -32,7 +32,8 @@ public class RLDataSourcesDto {
         this.setDataSourceName(rlImportedDataSourcesAndAnalysis.getRlDataSourceName());
         this.setDataSourceType(rlImportedDataSourcesAndAnalysis.getType());
         this.rlModelIdList = new ArrayList<>();
-        this.rlModelIdList.add(rlImportedDataSourcesAndAnalysis.getRlModelId());
+        this.addToRlModelIdList(rlImportedDataSourcesAndAnalysis.getRlModelId());
+        this.instanceId= rlImportedDataSourcesAndAnalysis.getInstanceId();
     }
 
     public RLDataSourcesDto(RLSavedDataSource rlSavedDataSource) {
@@ -46,6 +47,7 @@ public class RLDataSourcesDto {
     }
 
     public void addToRlModelIdList(Long id) {
-        this.rlModelIdList.add(id);
+        if(id != null)
+            this.rlModelIdList.add(id);
     }
 }

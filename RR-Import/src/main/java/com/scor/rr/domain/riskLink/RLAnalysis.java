@@ -4,6 +4,7 @@ package com.scor.rr.domain.riskLink;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -78,7 +79,7 @@ public class RLAnalysis {
     @Column(name = "LossAmplification")
     private String lossAmplification;
     @Column(name = "AnalysisMode")
-    private Integer analysisMode;
+    private String analysisMode;
     @Column(name = "EngineTypeCode")
     private Integer engineTypeCode;
     @Column(name = "EngineType")
@@ -119,8 +120,11 @@ public class RLAnalysis {
     private String regionName;
     @Column(name = "StatusDescription")
     private String statusDescription;
+    //@Column(name = "isGroup")
+    @Transient
+    private Boolean isGroup;
     @Column(name = "Grouping")
-    private String grouping;
+    private String isGrouping;
 
     @OneToOne(mappedBy = "rlAnalysis")
     @JsonBackReference
@@ -137,6 +141,9 @@ public class RLAnalysis {
     @OneToMany(mappedBy = "rlAnalysis", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonBackReference
     private List<RLAnalysisProfileRegion> rlAnalysisProfileRegions;
+
+    @Transient
+    private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;
@@ -171,5 +178,11 @@ public class RLAnalysis {
         this.profileKey = null;
         this.purePremium = null;
         this.exposureTIV = null;
+        this.groupType = rdmAnalysisBasic.getGroupTypeName();
+        this.cedant = rdmAnalysisBasic.getCedant();
+        this.lob = rdmAnalysisBasic.getLobName();
+        this.isGroup = rdmAnalysisBasic.getGrouping();
+        this.regionName = rdmAnalysisBasic.getRegionName();
+        this.analysisMode = rdmAnalysisBasic.getModeName();
     }
 }

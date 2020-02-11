@@ -67,7 +67,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: false,
-        width: '60',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -78,9 +78,9 @@ export class PltTableService {
         fields: 'pltStatus',
         header: 'PLT Status',
         sorted: true,
-        filtred: true,
+        filtred: false,
         resizable: false,
-        width: '55',
+        width: '40',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -93,7 +93,7 @@ export class PltTableService {
         sorted: true,
         filtred: false,
         resizable: false,
-        width: '55',
+        width: '70',
         unit: 'px',
         type: 'indicator',
         active: true
@@ -175,7 +175,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '80',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -188,7 +188,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '80',
+        width: '340',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -227,7 +227,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '80',
+        width: '300',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -240,7 +240,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '80',
+        width: '300',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -410,7 +410,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '70',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -423,7 +423,7 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '53',
+        width: '150',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -519,10 +519,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -533,10 +534,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -547,10 +549,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -561,10 +564,9 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
-        unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -575,10 +577,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -589,10 +592,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -603,10 +607,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -617,10 +622,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -631,10 +637,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -645,10 +652,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -659,10 +667,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -673,10 +682,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -687,10 +697,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -701,10 +712,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -715,10 +727,11 @@ export class PltTableService {
         sorted: true,
         filtred: true,
         resizable: true,
-        width: '40',
+        width: '100',
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -811,7 +824,7 @@ export class PltTableService {
         icon: null,
         type: 'field',
         active: true
-      },
+      }
     ]
   }
 
