@@ -172,10 +172,11 @@ export class SearchNavBarState implements NgxsOnInit {
     const {keyword, searchMode} = payload;
     let expression: any = keyword;
     const state = ctx.getState();
+
     const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
     const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
-
-    const checkShortCut: any[] = this.checkShortCut(state.shortcuts, expression) || [];
+    const searchShortCut = searchMode === 'Treaty' ? treatyShortcuts : facShortcuts;
+    const checkShortCut: any[] = this.checkShortCut(searchShortCut, expression) || [];
 
     if (checkShortCut.length > 0) {
       expression = checkShortCut[1];
@@ -188,6 +189,8 @@ export class SearchNavBarState implements NgxsOnInit {
     });
 
     const api = (expr, mapping) => (searchMode === 'Treaty' ? this.searchLoader(expr, mapping) : this.searchLoaderFac(expr, mapping));
+
+    console.log(expression, checkShortCut);
 
     return (!checkShortCut[0] ? forkJoin(
       ...(searchMode == 'Treaty' ? treatyShortcuts : facShortcuts).map(shortCut => api(expression, shortCut.mappingTable))
@@ -486,8 +489,8 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   private checkShortCut(shortCuts: ShortCut[], keyword: string) {
-    const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, shortCut.shortCutLabel));
-    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length + 1) : keyword ] : null;
+    const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, _.camelCase(shortCut.shortCutLabel)));
+    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length) : keyword ] : null;
   }
 
   private searchLoader(keyword, table = '') {

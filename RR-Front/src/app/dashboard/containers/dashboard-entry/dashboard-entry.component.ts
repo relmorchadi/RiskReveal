@@ -158,7 +158,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   dataParam(data) {
     return _.sortBy(_.map(data, item => {
-      return {...item, carRequestId: _.toInteger(_.split(item.carRequestId, '-')[1])}
+      return {...item, carRequestId: _.toInteger(item.carRequestId)}
     }), ['carRequestId']).reverse();
   }
 

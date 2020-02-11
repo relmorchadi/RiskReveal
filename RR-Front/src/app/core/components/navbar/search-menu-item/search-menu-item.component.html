@@ -102,7 +102,7 @@
                             <li style="display: flex; height: 31px;"
                                 *ngFor="let possibleShortCut of filterBySearchMode(possibleShortCuts); let i=index;"
                                 scrollItem
-                                (onTrigger)="replaceExpressionWithShortCut(possibleShortCut.shortCulLabel)"
+                                (onTrigger)="replaceExpressionWithShortCut(possibleShortCut.shortCutLabel)"
                                 (click)="replaceExpressionWithShortCut(possibleShortCut.shortCutLabel)">
                                 <p [innerHtml]="possibleShortCut.shortCutLabel | startCase | boldSpan: globalKeyword"></p>
                             </li>

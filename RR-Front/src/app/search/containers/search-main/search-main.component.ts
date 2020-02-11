@@ -391,23 +391,23 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     let keyword= "";
 
     _.forEach(_.isString(this.searchContent) ? [] : (this.searchContent || []), item => {
-
       if(item.key == "global search") {
         keyword = item.value;
       } else {
         tags.push({
           ...item,
+          key: this._badgeService.transformToMapping(item.key),
           value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value))
         })
       }
-
     });
 
-    let tableFilter = _.map(this._filter, (value, key) => ({key, value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
+    let tableFilter = _.map(this._filter, (value, key) => ({key: this._badgeService.transformToMapping(key),
+      value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
     return {
       filters: _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
         ...item,
-        field: _.camelCase(item.key),
+        field: item.key,
         operator: item.operator || 'LIKE'
       })),
       keyword
@@ -444,6 +444,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         fromSavedSearch: this.fromSavedSearch,
         type: _.toUpper(this.searchMode)
       };
+      console.log(params);
 
       this.searchSub$ = this._searchService.expertModeSearch(params)
           .pipe(this.unsubscribeOnDestroy)

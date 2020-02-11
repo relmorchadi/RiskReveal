@@ -2,9 +2,12 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {EntryComponent} from './entry.component';
 import {MainComponent} from '../core/containers/main/main.component';
+import {AuthGuard} from "./guards/auth.gards";
+import { JwtModule } from "@auth0/angular-jwt";
+import { HttpClientModule } from "@angular/common/http";
 
 const routes: Routes = [
-  {path: '', component: MainComponent, children: [
+  {path: '', canActivate: [AuthGuard] ,component: MainComponent, children: [
     {data: {title: 'RR- Workspace'}, path: 'workspace', loadChildren: '../workspace/workspace.module#WorkspaceModule'},
     {data: {title: 'RR- Dashboard'}, path: 'dashboard', loadChildren: '../dashboard/dashboard.module#DashboardModule'},
     //{data: {title: 'RR- PLT Comparer'}, path: 'plt-comparer', loadChildren: '../plt-comparer/plt-comparer.module#PltComparerModule'},
@@ -16,9 +19,19 @@ const routes: Routes = [
   ]}
 ];
 
+export function tokenGetter() {
+  return localStorage.getItem("token");
+}
+
 @NgModule({
   declarations: [EntryComponent],
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+      }
+    })],
   exports: [RouterModule, EntryComponent]
 })
 export class GatewayModule { }

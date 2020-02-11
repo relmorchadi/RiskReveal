@@ -1,14 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import {BaseContainer} from "../../../shared/base";
+import * as fromHD from "../../store/actions";
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
+export class MainComponent extends BaseContainer implements OnInit {
   leftNavbarIsCollapsed = false;
   tabs = [ 1, 2, 3 ];
-  constructor() {
+
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
     localStorage.removeItem('pltData');
     localStorage.setItem('pltData', JSON.stringify([
       {

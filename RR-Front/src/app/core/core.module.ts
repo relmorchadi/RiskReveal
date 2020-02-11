@@ -21,6 +21,9 @@ import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from './store';
 import {GlobalErrorHandler, MyStorageEngine} from "./config";
 import {FooterModule} from "../footer/footer.module";
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {TokenInterceptor} from "./service/auth/token.interceptor";
+import {JwtInterceptor} from "./service/auth/jwt.interceptor";
 
 
 registerLocaleData(en);
@@ -28,7 +31,7 @@ registerLocaleData(en);
 @NgModule({
   declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
   providers: [
-    {provide: ErrorHandler, useClass: GlobalErrorHandler}
+      {provide: ErrorHandler, useClass: GlobalErrorHandler},
   ],
     imports: [
         NgZorroAntdModule,
@@ -53,8 +56,10 @@ export class CoreModule {
   static forRoot() {
     return {
       ngModule: CoreModule,
-      providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
-        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
+      providers: [{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
+          // {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+          {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
+          {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };
   }
 }
