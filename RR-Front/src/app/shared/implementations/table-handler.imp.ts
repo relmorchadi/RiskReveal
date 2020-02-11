@@ -27,9 +27,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   _totalColumnWidth: number;
   totalColumnWidth$: BehaviorSubject<number>;
 
-  _data: any[];
-  data$: BehaviorSubject<any[]>;
-
   protected containerWidth: number;
 
   constructor() {

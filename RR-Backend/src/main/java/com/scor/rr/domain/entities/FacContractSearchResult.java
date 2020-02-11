@@ -45,7 +45,7 @@ public class FacContractSearchResult {
     @Column(name = "ProjectName")
     private String projectName;
 
-    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser, BigInteger plt, BigInteger projectId, String projectName) {
+    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser) {
         this.client = client;
         this.workspaceContextCode = workspaceContextCode;
         this.uwYear = uwYear;
@@ -54,8 +54,5 @@ public class FacContractSearchResult {
         this.carequestId = carequestId;
         this.carStatus = carStatus;
         this.assignedTo = assignedUser != null ? assignedUser.longValue() : null;
-        this.plt = plt != null ? plt.longValue() : null;
-        this.projectId = projectId != null ? projectId.longValue() : null;
-        this.projectName = projectName;
     }
 }
