@@ -40,6 +40,11 @@ export class FacSubsidiaryChartComponent implements OnInit {
     }
   };
 
+  initOps = {
+    height: '400px',
+    width: '1600px'
+  };
+
   chartOption: any = {
     legend: {
       data: [],

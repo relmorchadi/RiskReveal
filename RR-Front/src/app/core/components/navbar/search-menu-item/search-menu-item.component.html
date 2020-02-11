@@ -1,190 +1,188 @@
 <form class="my-class" [formGroup]="contractFilterFormGroup">
 
-  <nz-input-group class="global-search-input-grp"
-                  [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
-                  [nzSuffix]="suffixIconSearch"
-                  [nzAddOnBefore]="prefixIconTag">
-    <input
-      searchInput
-      [ngClass]="{'search-page-active-border': isSearchRoute()}"
-            (onEnter)="onEnter($event)"
-            (onBackspace)="onBackspace($event)"
-            (onDelete)="onDelete($event)"
-            (onDoublePoints)="onDoublePoints($event)"
-           #searchInput
-           formControlName="globalKeyword"
-           (click)="focusInput($event)"
-           class="search-input" type="text" nz-input [placeholder]="'Search for ' + searchMode || 'Treaty' ">
-  </nz-input-group>
+    <nz-input-group class="global-search-input-grp"
+                    [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
+                    [nzSuffix]="suffixIconSearch"
+                    [nzAddOnBefore]="prefixIconTag">
+        <input searchInput
+               [ngClass]="{'search-page-active-border': isSearchRoute()}"
+               (onEnter)="onEnter($event)"
+               (onBackspace)="onBackspace($event)"
+               (onDelete)="onDelete($event)"
+               (onDoublePoints)="onDoublePoints($event)"
+               #searchInput
+               formControlName="globalKeyword"
+               (click)="focusInput($event)"
+               class="search-input" type="text" nz-input [placeholder]="'Search for ' + useAlternative() || 'Treaty' ">
+    </nz-input-group>
 
-  <ng-template #prefixIconTag>
-    <div class="prefix-wrapper">
-      <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover
-              [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
-        <i class="icon-code_24px"></i>
-      </button>
-<!--      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
-              (click)="toggleSearchConfigPopIn()" style="font-size: 16px; margin-right: 0px"
-              nz-popover [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
-        <i nz-icon nzType="setting" nzTheme="outline"></i>
-      </button>-->
-      <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
-              (nzVisibleChange)="closeSearch()" [nzContent]="searchDropdown" nz-popover nzPlacement="bottomLeft"
-              nzTrigger="click">
-      </button>
-      <div class="chips-wrapper">
-        <app-chip-tag (dblclick)="onChangeTagValue(item)" (onclick)="closeSearchBadge($event, i)"
-                      *ngFor="let item of state?.badges; let i = index"
-                      [closeStatus]="true" [key]="item.key | startCase" [value]="item.value"></app-chip-tag>
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #suffixIconSearch>
-    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
-       nzTheme="outline"></i>
-    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
-       class="icon-search_24px"></i>
-  </ng-template>
-
-  <ng-template #searchDropdown>
-    <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px">
-      <!-- List Of Shortcuts -->
-
-      <div scrollManager class="search-history" *ngIf="state?.showLastSearch; else basicTable">
-        <div class="search-history-component" style="position: relative;">
-          <div class="header-wrapper">
-            <span class="search-history-header">RECENT SEARCH</span>
-            <!--                <span class="search-history-viewAll">See All</span>-->
-          </div>
-          <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
-            <li scrollItem  (onTrigger)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)" *ngFor="let recentSearch of state?.recentSearch" (click)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)" (dblclick)="selectSearchAndRedirect(recentSearch?.items, recentSearch?.globalSearchKeyword)">
-                <div *ngFor="let instance of recentSearch?.items" class="chip-container">
-                  <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase" [value]="instance.value"></app-chip-tag>
-                </div>
-            </li>
-          </ul>
-
-          <ng-template #emptyRecent>
-            <div>
-<!--              <nz-empty></nz-empty>-->
+    <ng-template #prefixIconTag>
+        <div class="prefix-wrapper">
+            <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover
+                    [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+                <i class="icon-code_24px"></i>
+            </button>
+            <!--      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
+                          (click)="toggleSearchConfigPopIn()" style="font-size: 16px; margin-right: 0px"
+                          nz-popover [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
+                    <i nz-icon nzType="setting" nzTheme="outline"></i>
+                  </button>-->
+            <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
+                    (nzVisibleChange)="closeSearch()" [nzContent]="searchDropdown" nz-popover nzPlacement="bottomLeft"
+                    nzTrigger="click">
+            </button>
+            <div class="chips-wrapper">
+                <app-chip-tag (dblclick)="onChangeTagValue(item)" (onclick)="closeSearchBadge($event, i)"
+                              *ngFor="let item of state?.badges; let i = index"
+                              [closeStatus]="true" [key]="item.key | startCase" [value]="item.value"></app-chip-tag>
             </div>
-          </ng-template>
         </div>
-        <div class="search-history-component" style="position: relative;">
-          <div class="header-wrapper">
-            <span class="search-history-header">SAVED SEARCH</span>
-            <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
-          </div>
-          <ul style="line-height: normal" *ngIf="state?.mostUsedSavedSearch && state?.mostUsedSavedSearch?.length > 0;else emptyRecent">
-            <li scrollItem *ngFor="let item of state?.mostUsedSavedSearch;" (click)="appendSearchBadges(item?.badges)">
-              <div class="chip-container" *ngFor="let badge of item?.badges">
-                <app-chip-tag [closeStatus]="false" [key]="badge?.key | startCase" [value]="badge?.value"></app-chip-tag>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
+    </ng-template>
 
-      <ng-template #basicTable>
-        <div scrollManager class="result-wrapper">
-          <div class="search-result-wrapper" *ngIf="showListOfShortCuts">
-          <span class="search-result-span">Attribute Labels</span>
-            <ul class="search-result-list">
-              <li style="display: flex; height: 31px;"
-                  *ngFor="let possibleShortCut of possibleShortCuts; let i=index;"
-                  scrollItem
-                  (onTrigger)="replaceExpressionWithShortCut(possibleShortCut)"
-                  (click)="replaceExpressionWithShortCut(possibleShortCut)">
-                <p [innerHtml]="possibleShortCut | startCase | boldSpan: globalKeyword"></p>
-              </li>
-            </ul>
-          </div>
-          <ng-container *ngIf="(state?.data | keys).length && !state?.emptyResult; else loadingTemp">
-            <div class="search-result-wrapper" *ngFor="let table of (state?.data | keyvalue);">
+    <ng-template #suffixIconSearch>
+        <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()"
+           nzType="close"
+           nzTheme="outline"></i>
+        <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
+           class="icon-search_24px"></i>
+    </ng-template>
+
+    <ng-template #searchDropdown>
+        <div class="search-contextual-table" nz-menu style="height: 300px; overflow: auto; width: 750px">
+            <!-- List Of Shortcuts -->
+
+            <div scrollManager class="search-history" *ngIf="state?.showLastSearch; else basicTable">
+                <div class="search-history-component" style="position: relative;">
+                    <div class="header-wrapper">
+                        <span class="search-history-header">RECENT SEARCH</span>
+                        <!--                <span class="search-history-viewAll">See All</span>-->
+                    </div>
+                    <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
+                        <li scrollItem
+                            (onTrigger)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)"
+                            *ngFor="let recentSearch of state?.recentSearch"
+                            (click)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)"
+                            (dblclick)="selectSearchAndRedirect(recentSearch?.items, recentSearch?.globalSearchKeyword)">
+                            <div *ngFor="let instance of recentSearch?.items" class="chip-container">
+                                <app-chip-tag [closeStatus]="false" [key]="instance.key | startCase"
+                                              [value]="instance.value"></app-chip-tag>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <ng-template #emptyRecent>
+                        <div>
+                            <!--              <nz-empty></nz-empty>-->
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="search-history-component" style="position: relative;">
+                    <div class="header-wrapper">
+                        <span class="search-history-header">SAVED SEARCH</span>
+                        <span (click)="seeAllSavedSearch()" class="search-history-viewAll">See All</span>
+                    </div>
+                    <ul style="line-height: normal"
+                        *ngIf="state?.mostUsedSavedSearch && state?.mostUsedSavedSearch?.length > 0;else emptyRecent">
+                        <li scrollItem *ngFor="let item of state?.mostUsedSavedSearch;"
+                            (click)="appendSearchBadges(item?.badges)">
+                            <div class="chip-container" *ngFor="let badge of item?.badges">
+                                <app-chip-tag [closeStatus]="false" [key]="badge?.key | startCase"
+                                              [value]="badge?.value"></app-chip-tag>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <ng-template #basicTable>
+                <div scrollManager class="result-wrapper">
+                    <div class="search-result-wrapper" *ngIf="showListOfShortCuts">
+                        <span class="search-result-span">Attribute Labels</span>
+                        <ul class="search-result-list">
+                            <li style="display: flex; height: 31px;"
+                                *ngFor="let possibleShortCut of filterBySearchMode(possibleShortCuts); let i=index;"
+                                scrollItem
+                                (onTrigger)="replaceExpressionWithShortCut(possibleShortCut.shortCulLabel)"
+                                (click)="replaceExpressionWithShortCut(possibleShortCut.shortCutLabel)">
+                                <p [innerHtml]="possibleShortCut.shortCutLabel | startCase | boldSpan: globalKeyword"></p>
+                            </li>
+                        </ul>
+                    </div>
+                    <ng-container *ngIf="(state?.data | keys).length && !state?.emptyResult; else loadingTemp">
+                        <div class="search-result-wrapper" *ngFor="let table of (state?.data | keyvalue);">
               <span (click)="addBadgeFromResultList(table.key)"
                     class="search-result-span"
                     *ngIf="table.value.length > 0">{{table.key}}</span>
-              <ul class="search-result-list">
-                <li style="display: flex; height: 31px;" *ngFor="let row of table.value;"
-                    scrollItem
-                    (onTrigger)="selectSearchBadge(mapTableNameToBadgeKey[table.key], row.label)"
-                    (click)="selectSearchBadge(mapTableNameToBadgeKey[table.key], row.label)">
-                  <span>{{row.countOccur}}</span>
-                  <p [innerHtml]="row.label| boldSpan: state.searchValue"></p>
-                  <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
-                </li>
-              </ul>
+                            <ul class="search-result-list">
+                                <li style="display: flex; height: 31px;" *ngFor="let row of table.value;"
+                                    scrollItem
+                                    (onTrigger)="selectSearchBadge(mapTableNameToBadgeKey[table.key], row.label)"
+                                    (click)="selectSearchBadge(mapTableNameToBadgeKey[table.key], row.label)">
+                                    <span>{{row.countOccur}}</span>
+                                    <p [innerHtml]="row.label| boldSpan: state.searchValue"></p>
+                                    <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+                                </li>
+                            </ul>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-template>
+            <ng-template #loadingTemp>
+                <ng-container *ngIf="state?.loading;else emptyState">
+                    <nz-skeleton [nzActive]="true"></nz-skeleton>
+                    <nz-skeleton [nzActive]="true"></nz-skeleton>
+                </ng-container>
+                <ng-template #emptyState>
+                    <div>
+                        <nz-empty [nzNotFoundContent]="'No Corresponding Results !'"></nz-empty>
+                    </div>
+                </ng-template>
+            </ng-template>
+            <div class="more-results-sction">
+                <button (click)="onEnter($event)" class="more-results-button" nz-button nzType="default">MORE RESULTS
+                </button>
             </div>
-          </ng-container>
         </div>
-      </ng-template>
-      <ng-template #loadingTemp>
-        <ng-container *ngIf="state?.loading;else emptyState">
-          <nz-skeleton [nzActive]="true"></nz-skeleton>
-          <nz-skeleton [nzActive]="true"></nz-skeleton>
-        </ng-container>
-        <ng-template #emptyState>
-          <div>
-            <nz-empty [nzNotFoundContent]="'No Corresponding Results !'"></nz-empty>
-          </div>
-        </ng-template>
-      </ng-template>
-      <div class="more-results-sction">
-        <button (click)="onEnter($event)" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
-      </div>
-    </div>
-  </ng-template>
+    </ng-template>
 
-  <ng-template #tagDropdown>
-    <div class="search-contextual-table"
-         [ngStyle]="{'width': state.shortcuts.length > 10 ? '550px' : '415px'}" nz-menu style="border-radius: 10px">
-<!--        <div class="tag-header">
-          <span>SEARCH MODE</span>
-          <div>
-            <nz-select
-              class="a-dropdown-small"
-              style="width: 100px;"
-              nzShowSearch
-              [nzAllowClear]="false"
-              nzPlaceHolder="Select Search Mode"
-              [(ngModel)]="searchMode"
-              [ngModelOptions]="{standalone: true}"
-            >
-              <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
-              <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
-            </nz-select>
-          </div>
-        </div>-->
-      <div class="tag-body" style="margin-bottom: 8px">
-          <div class="tag-body-header">
-            <div style="line-height: 17px;">Using "" will display the results with the exact search term.<br/>
-                  Eg: c:"axa"
+    <ng-template #tagDropdown>
+        <div class="search-contextual-table shortCut-PopUp">
+            <div class="tag-header">
+                <span>SEARCH MODE</span>
+                <div>
+                    <nz-select class="a-dropdown-small" style="width: 100px;" nzShowSearch
+                               [nzAllowClear]="false" nzPlaceHolder="Select Search Mode"
+                               (ngModelChange)="dispatchSearchMode($event)"
+                               [(ngModel)]="mainSearchMode" [ngModelOptions]="{standalone: true}"
+                    >
+                        <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+                        <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+                    </nz-select>
+                </div>
             </div>
-          </div>
+            <div class="tag-body" style="margin-bottom: 8px">
+                <div class="tag-body-header">
+                    <div style="line-height: 17px;">Using "" will display the results with the exact search term.<br/>
+                        Eg: c:"axa"
+                    </div>
+                </div>
+            </div>
+            <div class="tag-body">
+                <div class="tag-body-header">
+                    <i class="icon-info_24px"></i>
+                    <span>Shortcut List:</span>
+                </div>
+                <div class="tags-wrapper">
+                    <div style="width:75%; margin:auto">
+                        <div class="holds-up" *ngFor="let item of  filterBySearchMode(state?.shortcuts); let i = index">
+                            <div class="tags-wrapper-left" >{{item?.shortCutLabel | startCase}}</div>
+                            <div class="tags-wrapper-right">{{item?.shortCutAttribute}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="tag-body">
-          <div class="tag-body-header">
-              <i class="icon-info_24px"></i>
-              <span>Shortcut List:</span>
-          </div>
-          <div class="tags-wrapper">
-            <div [ngStyle]="{'width': state.shortcuts.length > 10 ? '45%' : '75%'}" style="margin:auto">
-              <div class="holds-up" *ngFor="let item of state?.shortcuts; let i = index">
-                  <div class="tags-wrapper-left" *ngIf="i < 10">{{item?.shortCutLabel | startCase}}</div>
-                  <div class="tags-wrapper-right" *ngIf="i < 10">{{item?.shortCutAttribute}}</div>
-              </div>
-            </div>
-            <div *ngIf="state?.shortcuts.length > 10" style="width:45%; margin:auto">
-              <div class="holds-up" *ngFor="let item of state?.shortcuts; let i = index">
-                  <div class="tags-wrapper-left" *ngIf="i >= 10">{{item?.shortCutLabel | startCase}}</div>
-                  <div class="tags-wrapper-right" *ngIf="i >= 10">{{item?.shortCutAttribute}}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
-  </ng-template>
+    </ng-template>
 
 </form>
 

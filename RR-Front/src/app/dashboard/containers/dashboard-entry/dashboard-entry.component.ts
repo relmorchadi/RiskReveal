@@ -253,16 +253,16 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     })
   }
 
-  deleteWidgetAction(payload) {
+  deleteWidgetAction(widgetId) {
     this.dashboards = _.map(this.dashboards, item => {
       if (item.id === this.selectedDashboard.id) {
         return {...item, widgets: _.filter(item.widgets, widgetItem =>
-              widgetItem.userDashboardWidgetId !== payload)};
+              widgetItem.userDashboardWidgetId !== widgetId)};
       }
       return item;
     });
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
-    this.dashboardAPI.deleteWidget(payload).subscribe()
+    this.dashboardAPI.deleteWidget(widgetId).subscribe()
   }
 
   deleteAllDashboardByRef(payload) {

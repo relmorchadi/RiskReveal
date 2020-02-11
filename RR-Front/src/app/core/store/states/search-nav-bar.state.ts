@@ -46,7 +46,7 @@ const initiaState: SearchNavBar = {
   actualGlobalKeyword: '',
   keywordBackup: '',
   searchValue: '',
-  searchTarget: 'treaty',
+  searchTarget: 'Fac',
   badges: [],
   data: {},
   loading: false,
@@ -150,11 +150,10 @@ export class SearchNavBarState implements NgxsOnInit {
     return this._searchService.loadShort()
       .pipe(
         tap( (shortCuts: any[]) => {
-          this._badgesService.initShortCuts(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)));
           ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT",  "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable)));
-             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)))
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY'));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')));
+             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
           }));
         })
       )
@@ -175,7 +174,6 @@ export class SearchNavBarState implements NgxsOnInit {
     const state = ctx.getState();
     const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
     const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
-    console.log(facShortcuts)
 
     const checkShortCut: any[] = this.checkShortCut(state.shortcuts, expression) || [];
 
