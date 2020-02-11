@@ -8,6 +8,16 @@ TABLE STYLE
   background-color: #663366;
 }
 
+:host{
+  ::ng-deep{
+    .ui-table-scrollable-wrapper {
+      display: flex;
+    }
+  }
+}
+
+
+
 .empty-notif-wrapper {
   display: flex;
   white-space: nowrap;

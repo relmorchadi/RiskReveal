@@ -20,12 +20,10 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/refs`, {params});
     }
 
-    scanDatasources(dataSources: any[], projectId, instanceId, instanceName) {
+    scanDatasources(dataSources: any[], projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }

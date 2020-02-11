@@ -1,12 +1,15 @@
-.toolkit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
+:host{
+  .toolkit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .cols-manager-pop-up {
+    .ui-dialog-content {
+      overflow: hidden;
+    }
+  }
 }
 
-.cols-manager-pop-up {
-   .ui-dialog-content {
-     overflow: hidden;
-   }
-}

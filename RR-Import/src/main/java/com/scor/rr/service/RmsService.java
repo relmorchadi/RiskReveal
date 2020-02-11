@@ -116,25 +116,25 @@ public class RmsService {
     /********** Scan Basic / Detailed **********/
 
 
-    public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId, String instanceId, String instanceName) {
+    public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId) {
         return dataSources.stream().map(dataSource -> {
 
             RLModelDataSource rlModelDataSource =
-                    rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), instanceId, dataSource.getRmsId());
+                    rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
 
             if (rlModelDataSource != null) {
                 rlAnalysisRepository.deleteByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
                 rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
             } else {
-                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceId, instanceName);
+                rlModelDataSource = new RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
 
             Integer count = null;
             if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
-                count = scanAnalysisBasicForRdm(instanceId, rlModelDataSource);
+                count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
             } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
-                count = scanPortfolioBasicForEdm(instanceId, rlModelDataSource);
+                count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
             }
             rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);
             rlModelDataSource.setCount(count);
@@ -142,12 +142,10 @@ public class RmsService {
         }).collect(toList());
     }
 
-    public RLModelDataSource singleBasicScan(DataSource dataSource, Long projectId, String instanceId, String instanceName) {
+    public RLModelDataSource singleBasicScan(DataSource dataSource, Long projectId) {
         return this.basicScan(
                 new ArrayList<>(Collections.singleton(dataSource)),
-                projectId,
-                instanceId,
-                instanceName
+                projectId
         ).get(0);
     }
 
