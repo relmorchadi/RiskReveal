@@ -5,7 +5,6 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
-import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import com.scor.rr.mapper.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.ConfigurationService;
@@ -336,9 +335,7 @@ public class RmsService {
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             rlAnalysisRepository.save(rlAnalysis);
-                            List<RLAnalysisToTargetRAP> targetRaps = rLAnalysisToTargetRAPRepository.findByRlAnalysisIdAndDefaultIsTrue(rlAnalysis.getRlAnalysisId());
-                            if (targetRaps != null && !targetRaps.isEmpty())
-                                rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
+                            rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
                             allScannedAnalysis.add(rlAnalysis);
                             cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
                             //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
@@ -905,7 +902,7 @@ public class RmsService {
         return this.getJdbcTemplate(instanceId).queryForList(query, args);
     }
 
-    private JdbcTemplate getJdbcTemplate(String instanceId) {
+    public JdbcTemplate getJdbcTemplate(String instanceId) {
         return new JdbcTemplate(rmsInstanceCache.getDataSource(instanceId));
     }
 

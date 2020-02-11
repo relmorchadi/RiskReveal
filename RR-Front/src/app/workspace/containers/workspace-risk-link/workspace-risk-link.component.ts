@@ -461,6 +461,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
                 this.dispatch(new fromWs.DatasourceScanAction({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+                    instanceName: this.state.financialValidator.rmsInstance.selected.instanceName,
                     selectedDS,
                     projectId
                 }));
@@ -475,6 +476,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 const projectId = p.projectId;
                 this.dispatch(new fromWs.ReScanDataSource({
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+                    instanceName: this.state.financialValidator.rmsInstance.selected.instanceName,
                     datasource,
                     projectId
                 }));

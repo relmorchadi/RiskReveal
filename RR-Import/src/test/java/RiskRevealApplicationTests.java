@@ -169,7 +169,7 @@ public class RiskRevealApplicationTests {
         //rdmAnalysis.setSubPeril(); for a null a value
         rdmAnalysis.setLossAmplification("Unknown");
         rdmAnalysis.setStatus(102L);
-        rdmAnalysis.setAnalysisMode("Distributed");
+        rdmAnalysis.setAnalysisMode("2");
         rdmAnalysis.setEngineTypeCode(101);
         rdmAnalysis.setEngineType("ALM");
         rdmAnalysis.setEngineVersion("15.0.1625.0");

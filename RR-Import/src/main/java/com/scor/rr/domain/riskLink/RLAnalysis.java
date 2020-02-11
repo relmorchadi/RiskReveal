@@ -120,8 +120,11 @@ public class RLAnalysis {
     private String regionName;
     @Column(name = "StatusDescription")
     private String statusDescription;
-    @Column(name = "isGroup")
+    //@Column(name = "isGroup")
+    @Transient
     private Boolean isGroup;
+    @Column(name = "Grouping")
+    private String isGrouping;
 
     @OneToOne(mappedBy = "rlAnalysis")
     @JsonBackReference

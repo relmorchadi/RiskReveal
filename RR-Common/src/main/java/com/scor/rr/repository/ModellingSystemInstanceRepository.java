@@ -12,4 +12,5 @@ public interface ModellingSystemInstanceRepository extends JpaRepository<Modelli
             " where msi.active=true")
     List<ModellingSystemInstanceEntity> findActiveInstances();
 
+    ModellingSystemInstanceEntity findByName(String sourceModellingSystemInstance);
 }
