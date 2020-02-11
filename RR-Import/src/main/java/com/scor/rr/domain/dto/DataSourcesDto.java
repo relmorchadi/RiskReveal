@@ -13,6 +13,7 @@ public class DataSourcesDto {
 
     private List<DataSourceDto> dataSources;
     private String instanceId;
+    private String instanceName;
     private Long projectId;
     private Long userId;
 }

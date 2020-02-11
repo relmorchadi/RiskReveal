@@ -294,14 +294,12 @@ export class RiskLinkStateService {
                     if (selectedItem.type == 'EDM') {
                         draft.content[wsIdentifier].riskLink.selection.edms[key] = {
                             ...selectedItem,
-                            scanning: true,
-                            instanceId: payload.instanceId
+                            scanning: true
                         }
                     } else if (selectedItem.type == 'RDM') {
                         draft.content[wsIdentifier].riskLink.selection.rdms[key] = {
                             ...selectedItem,
-                            scanning: true,
-                            instanceId: payload.instanceId
+                            scanning: true
                         }
                     }
                 });
@@ -547,9 +545,9 @@ export class RiskLinkStateService {
     }
 
     basicScanEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
-        const {selectedDS, projectId, instanceId} = payload;
+        const {selectedDS, projectId} = payload;
         const state = ctx.getState();
-        return this.riskApi.scanDatasources(selectedDS, projectId, instanceId, instanceName)
+        return this.riskApi.scanDatasources(selectedDS, projectId)
             .pipe(mergeMap((response: any[]) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
@@ -566,7 +564,9 @@ export class RiskLinkStateService {
                                             ...item,
                                             scanning: false,
                                             count: _.get(parsedResponse.edms, `${item.rmsId}.count`, 0),
-                                            rlDataSourceId: _.get(parsedResponse.edms, `${item.rmsId}.rlDataSourceId`, undefined)
+                                            rlDataSourceId: _.get(parsedResponse.edms, `${item.rmsId}.rlDataSourceId`, undefined),
+                                            instanceId: _.get(parsedResponse.edms, `${item.rmsId}.instanceId`, undefined),
+                                            instanceName: _.get(parsedResponse.edms, `${item.rmsId}.instanceName`, undefined)
                                         }
                                     }))
                             )
@@ -579,7 +579,9 @@ export class RiskLinkStateService {
                                         ...item,
                                         scanning: false,
                                         count: _.get(parsedResponse.rdms, `${item.rmsId}.count`, 0),
-                                        rlDataSourceId: _.get(parsedResponse.rdms, `${item.rmsId}.rlDataSourceId`, undefined)
+                                        rlDataSourceId: _.get(parsedResponse.rdms, `${item.rmsId}.rlDataSourceId`, undefined),
+                                        instanceId: _.get(parsedResponse.rdms, `${item.rmsId}.instanceId`, undefined),
+                                        instanceName: _.get(parsedResponse.rdms, `${item.rmsId}.instanceName`, undefined)
                                     }
                                 }))
                             )
@@ -601,7 +603,9 @@ export class RiskLinkStateService {
                     [item.rlId]: {
                         rmsId: item.rlId,
                         count: item.count,
-                        rlDataSourceId: item.rlModelDataSourceId
+                        rlDataSourceId: item.rlModelDataSourceId,
+                        instanceId: item.instanceId,
+                        instanceName: item.instanceName
                     }
                 });
             } else if (item.type === 'RDM') {
@@ -609,7 +613,9 @@ export class RiskLinkStateService {
                     [item.rlId]: {
                         rmsId: item.rlId,
                         count: item.count,
-                        rlDataSourceId: item.rlModelDataSourceId
+                        rlDataSourceId: item.rlModelDataSourceId,
+                        instanceId: item.instanceId,
+                        instanceName: item.instanceName
                     }
                 });
             }
@@ -1442,10 +1448,12 @@ export class RiskLinkStateService {
         this.addDataSourcesSelection(ctx, content);
         ctx.dispatch(new fromWs.DatasourceScanAction({
             instanceId,
-            selectedDS: _.map(content, ({dataSourceId, dataSourceType, dataSourceName}) => ({
+            selectedDS: _.map(content, ({dataSourceId, dataSourceType, dataSourceName, instanceId, instanceName}) => ({
                 name: dataSourceName,
                 rmsId: dataSourceId,
-                type: dataSourceType
+                type: dataSourceType,
+                instanceId,
+                instanceName
             })),
             projectId
         }));
@@ -1513,7 +1521,9 @@ export class RiskLinkStateService {
             dataSources = _.map(_.concat(_.values(edms), _.values(rdms)), item => ({
                 dataSourceId: item.rmsId,
                 dataSourceName: item.name,
-                dataSourceType: item.type
+                dataSourceType: item.type,
+                instanceId: item.instanceId,
+                instanceName: item.instanceName
             }));
         }
 
