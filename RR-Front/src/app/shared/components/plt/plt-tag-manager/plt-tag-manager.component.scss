@@ -1,147 +1,150 @@
-::ng-deep .tag-manager-pop-up {
+:host{
+  ::ng-deep .tag-manager-pop-up {
 
-  ::ng-deep .ui-dialog-titlebar {
-    padding: .5em .75em !important;
-  }
-
-  ::ng-deep .ui-dialog-content {
-    padding: 0 !important;
-    margin: 0;
-    display: flex;
-    flex-flow: column;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow: visible !important;
-
-    .a-chips-input-mini {
-      max-width: 100% !important;
-      margin: 5px 5px !important;
+    ::ng-deep .ui-dialog-titlebar {
+      padding: .5em .75em !important;
     }
 
-    .content {
+    ::ng-deep .ui-dialog-content {
+      padding: 0 !important;
+      margin: 0;
+      display: flex;
+      flex-flow: column;
       justify-content: flex-start;
       flex-wrap: nowrap;
-
-      .content-wrapper {
-        display: flex;
-        flex-flow: column;
-        flex: 1;
-        justify-content: flex-start;
-        flex-wrap: nowrap;
-      }
-
-      .assigned-tags {
-        padding: 7px;
-      }
-
-      .section {
-        margin: 7px 0;
-      }
-
-      .tag-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        margin: 7px 0 0 0;
-
-        .all, .subsets {
-          flex: 1;
-
-          .a-chips-input-mini {
-            margin: 3px 2px;
-          }
-        }
-      }
-
-    }
-  }
-
-  .ant-collapse {
-    border: none;
-  }
-  .ant-collapse-content {
-    border:none;
-    overflow: visible;
-  }
-  .ant-collapse > .ant-collapse-item {
-    border-bottom: none;
-  }
-  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
-    background-color: white;
-    border-top: 1px solid #c8c8c8;
-  }
-  .ant-collapse-content > .ant-collapse-content-box {
-    padding: 0 16px;
-  }
-
-  .ui-dialog-footer .footer {
-    display: flex;
-    justify-content: space-between;
-
-    .footer-left {
-      display: flex;
-      align-items: center;
-
-      .color-container {
-        display: flex;
-        justify-content: center;
-        margin: 0;
-        position: relative;
-
-        .color {
-          margin: 0 9px;
-          display: block;
-          width: 40px;
-          height: 40px;
-          cursor: pointer;
-          position: relative;
-        }
-
-        color-chrome, color-sketch{
-          display: block;
-          max-width: 234px;
-          min-width: 200px;
-          position: absolute;
-          bottom: 9px;
-          left: 52px;
-          z-index: 10000;
-        }
-
-        color-sketch {
-          .sketch-picker {
-            border-radius: 0;
-            box-shadow: none;
-          }
-        }
-      }
-    }
-
-    .footer-right {
-      display: flex;
-      align-items: center;
-    }
-
-    .msg-err {
-      position: absolute;
-      bottom: -17px;
-    }
-  }
-
-  .tag-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
-
-    .all, .subsets {
-      flex: 1;
+      overflow: visible !important;
 
       .a-chips-input-mini {
-        margin: 3px 2px;
+        max-width: 100% !important;
+        margin: 5px 5px !important;
+      }
+
+      .content {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+
+        .content-wrapper {
+          display: flex;
+          flex-flow: column;
+          flex: 1;
+          justify-content: flex-start;
+          flex-wrap: nowrap;
+        }
+
+        .assigned-tags {
+          padding: 7px;
+        }
+
+        .section {
+          margin: 7px 0;
+        }
+
+        .tag-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          flex-direction: column;
+          align-items: center;
+          margin: 7px 0 0 0;
+
+          .all, .subsets {
+            flex: 1;
+
+            .a-chips-input-mini {
+              margin: 3px 2px;
+            }
+          }
+        }
+
+      }
+    }
+
+    .ant-collapse {
+      border: none;
+    }
+    .ant-collapse-content {
+      border:none;
+      overflow: visible;
+    }
+    .ant-collapse > .ant-collapse-item {
+      border-bottom: none;
+    }
+    .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+      background-color: white;
+      border-top: 1px solid #c8c8c8;
+    }
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding: 0 16px;
+    }
+
+    .ui-dialog-footer .footer {
+      display: flex;
+      justify-content: space-between;
+
+      .footer-left {
+        display: flex;
+        align-items: center;
+
+        .color-container {
+          display: flex;
+          justify-content: center;
+          margin: 0;
+          position: relative;
+
+          .color {
+            margin: 0 9px;
+            display: block;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            position: relative;
+          }
+
+          color-chrome, color-sketch{
+            display: block;
+            max-width: 234px;
+            min-width: 200px;
+            position: absolute;
+            bottom: 9px;
+            left: 52px;
+            z-index: 10000;
+          }
+
+          color-sketch {
+            .sketch-picker {
+              border-radius: 0;
+              box-shadow: none;
+            }
+          }
+        }
+      }
+
+      .footer-right {
+        display: flex;
+        align-items: center;
+      }
+
+      .msg-err {
+        position: absolute;
+        bottom: -17px;
+      }
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+
+      .all, .subsets {
+        flex: 1;
+
+        .a-chips-input-mini {
+          margin: 3px 2px;
+        }
       }
     }
   }
 }
+
