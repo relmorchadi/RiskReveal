@@ -1220,8 +1220,8 @@ export class RiskLinkStateService {
 
 
     rescanDataSource(ctx: StateContext<WorkspaceModel>, payload: any) {
-        const {datasource, projectId, instanceId, instanceName} = payload;
-        return this.riskApi.rescanDataSource(datasource, projectId, instanceId, instanceName)
+        const {datasource, projectId} = payload;
+        return this.riskApi.rescanDataSource(datasource, projectId)
             .pipe(mergeMap((response: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);

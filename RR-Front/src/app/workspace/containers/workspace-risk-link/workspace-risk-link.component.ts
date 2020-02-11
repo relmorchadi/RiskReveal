@@ -472,8 +472,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(p => {
                 const projectId = p.projectId;
                 this.dispatch(new fromWs.ReScanDataSource({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    instanceName: this.state.financialValidator.rmsInstance.selected.instanceName,
                     datasource,
                     projectId
                 }));

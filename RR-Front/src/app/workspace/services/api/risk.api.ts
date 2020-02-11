@@ -28,12 +28,10 @@ export class RiskApi {
         });
     }
 
-    rescanDataSource(dataSource: any, projectId, instanceId, instanceName) {
+    rescanDataSource(dataSource: any, projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/single-basic-scan`, dataSource, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }
