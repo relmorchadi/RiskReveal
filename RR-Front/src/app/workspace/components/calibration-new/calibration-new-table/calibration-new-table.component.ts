@@ -16,6 +16,7 @@ import {ActivatedRoute} from "@angular/router";
 import * as _ from 'lodash';
 import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
 import {AngularResizeElementDirection} from "angular-resize-element";
+import {el} from "@angular/platform-browser/testing/src/browser_util";
 @Component({
   selector: 'app-calibration-new-table',
   templateUrl: './calibration-new-table.component.html',
@@ -299,9 +300,11 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
-  onColumnResize({delta, element}) {
-    const isFrozen = element.attributes[6].value;
-    const index = element.attributes[7].value;
+  onColumnResize(event) {
+    console.log(event);
+    const {delta, element} = event;
+    const isFrozen = element.attributes['aria-details'].value;
+    const index = element.attributes['aria-colindex'].value;
     if(!this.tableConfig.isExpanded && isFrozen) {
       this.actionDispatcher.emit({
         type: "Resize frozen Column",
