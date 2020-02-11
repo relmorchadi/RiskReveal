@@ -45,7 +45,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   @Select(SearchNavBarState.getShowSavedSearch)
   savedSearchVisibility$;
 
-  @Select(DashboardState.getSelectedDashboard)
+  @Select(SearchNavBarState.getSearchTarget)
   selectedDashboard$;
 
   sortData: any;
@@ -182,22 +182,31 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       queryParam: 'CountryName'
     },
     {
-      field: 'assignedTo',
-      header: 'Assigned User',
+      field: 'uwYear',
+      header: 'Uw Year',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'assignedTo'
+      queryParam: 'UwYear'
     },
     {
-      field: 'carStatus',
-      header: 'CAR Status',
+      field: 'workspaceName',
+      header: 'Contract Code',
+      width: '160px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'WorkspaceName'
+    },
+    {
+      field: 'workSpaceContextCode',
+      header: 'Contract Name',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'carStatus'
+      queryParam: 'workSpaceContextCode'
     },
     {
       field: 'uwAnalysis',
@@ -209,31 +218,31 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       queryParam: 'uwAnalysis'
     },
     {
-      field: 'uwYear',
-      header: 'Uw Year',
+      field: 'carequestId',
+      header: 'CAR ID',
+      width: '70px',
+      display: true,
+      sorted: true,
+      filtered: true,
+      queryParam: 'carequestId'
+    },
+    {
+      field: 'carStatus',
+      header: 'CAR Status',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'UwYear'
+      queryParam: 'carStatus'
     },
     {
-      field: 'workspaceName',
-      header: 'Workspace Name',
-      width: '160px',
-      display: true,
-      sorted: true,
-      filtered: true,
-      queryParam: 'WorkspaceName'
-    },
-    {
-      field: 'workSpaceContextCode',
-      header: 'Workspace Context',
+      field: 'assignedTo',
+      header: 'Assigned User',
       width: '90px',
       display: true,
       sorted: true,
       filtered: true,
-      queryParam: 'workSpaceContextCode'
+      queryParam: 'assignedTo'
     },
     {
       field: 'openInHere',
@@ -291,7 +300,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
 
     this.selectedDashboard$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-      this.searchMode = _.get(value, 'searchMode', 'Treaty');
+      this.searchMode = value;
       this.detectChanges();
     });
 
@@ -317,7 +326,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    console.log('this is selected');
     if (this.searchMode === 'Treaty') {
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
     } else {

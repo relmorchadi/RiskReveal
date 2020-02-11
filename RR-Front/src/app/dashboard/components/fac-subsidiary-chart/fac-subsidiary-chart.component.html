@@ -2,7 +2,9 @@
    class="icon-drag_indicator_24px drag-handler"></i>
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
-<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)" #chartS></div>
+<div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"
+     [initOpts]="initOps"
+     #chartS></div>
 
 <div class="widget-footer">
   <div class="filter-div">
@@ -39,7 +41,7 @@
       <nz-dropdown [nzTrigger]="'click'">
         <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
         <ul nz-menu nzSelectable>
-          <li (click)="duplicateItem(itemName)" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+          <li (click)="duplicateItem(identifier)" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
           <li (click)="deleteItem(identifier)" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
         </ul>
       </nz-dropdown>

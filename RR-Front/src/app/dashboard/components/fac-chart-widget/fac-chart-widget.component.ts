@@ -18,6 +18,8 @@ export class FacChartWidgetComponent implements OnInit {
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
 
+  updateVisibility = false;
+
   private dropdown: NzDropdownContextComponent;
   uwyUnits;
   cedants = Data.cedant;
@@ -38,35 +40,12 @@ export class FacChartWidgetComponent implements OnInit {
     }
   };
 
-  chartOption: any = {
-    legend: {
-      data: ['New', 'In Progress', 'Cancelled', 'Superseded', 'Completed', 'Priced'],
-      align: 'left',
-      left: 10
-    },
-    tooltip: {},
-    toolbox: {
-      feature: {
-        magicType: {
-          title: {
-            stack: 'stack',
-            tiled: 'tiled',
-          },
-          type: ['stack', 'tiled']
-        },
-      },
-    },
-    xAxis: {
-      type: 'category',
-      data: []
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [],
-    color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
+  initOps = {
+    height: '400px',
+    width: '1600px'
   };
 
+  chartOption: any;
   myChart: any;
 
   @ViewChild('chartA') chart;
@@ -106,6 +85,38 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.chartOption = {
+      legend: {
+        data: ['New', 'In Progress', 'Cancelled', 'Superseded', 'Completed', 'Priced'],
+        align: 'left',
+        left: 10
+      },
+      tooltip: {},
+      toolbox: {
+        feature: {
+          magicType: {
+            title: {
+              stack: 'stack',
+              tiled: 'tiled',
+            },
+            type: ['stack', 'tiled']
+          },
+        },
+      },
+      xAxis: {
+        type: 'category',
+        data: []
+      },
+      yAxis: {
+        type: 'value'
+      },
+      style: {
+
+      },
+      series: [],
+      color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
+    };
+    console.log('loader', this.chartOption);
     this.newDashboard = this.dashboard;
     this.facData$.subscribe(rValue => {
       const newD = _.get(rValue, 'new', []);
@@ -129,6 +140,7 @@ export class FacChartWidgetComponent implements OnInit {
 
   onChartInit(instance) {
     setTimeout(() => {
+      //instance._api. offsetHeight = 450;
       this.myChart = instance;
       this.setValues();
     }, 1000);

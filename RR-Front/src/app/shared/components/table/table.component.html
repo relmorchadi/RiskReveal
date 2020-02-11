@@ -68,7 +68,7 @@
             </div>
             <div *ngIf="col?.type === 'date'" style="display:flex">
               <i class="icon-calendar-alt" style="margin-right: 4px"></i>
-              <span class="text-wrapper">{{rowData[col?.field] | date: 'dd-MM-yyyy'}}</span>
+              <span class="text-wrapper">{{rowData[col?.field]}}</span>
             </div>
             <div class="fav-status-info" (click)="updateFavValue(rowData)" *ngIf="col?.type === 'favStatus'">
               <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>

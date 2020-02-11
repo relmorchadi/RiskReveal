@@ -263,12 +263,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
-      this.dispatch(new fromWorkspaceStore.loadAllPlts({
+      /*this.dispatch(new fromWorkspaceStore.loadAllPlts({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
-      }));
+      }));*/
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {

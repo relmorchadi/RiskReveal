@@ -3,6 +3,7 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from "@ngxs/store";
 import * as fromHD from "../actions";
 import {DashboardApi} from "../../service/api/dashboard.api";
 import {catchError, mergeMap, tap} from "rxjs/operators";
+import * as moment from "moment";
 import {of} from "rxjs";
 import produce from "immer";
 import * as _ from 'lodash';
@@ -59,7 +60,7 @@ export class DashboardState implements NgxsOnInit {
             mergeMap((data: any) => {
                 console.log(data);
                 ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.referenceWidget.fac = _.filter(data, item => item.widgetMode === 'Fac');
+                    draft.referenceWidget.fac = _.filter(this._formatDate(data), item => item.widgetMode === 'Fac');
                     draft.referenceWidget.treaty = _.filter(data, item => item.widgetMode === 'Treaty');
                 }));
                 return of();
@@ -88,7 +89,7 @@ export class DashboardState implements NgxsOnInit {
         };
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
             mergeMap((data: any) => {
-                const fixData = _.map(data.content, item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
+                const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
                     draft.data.fac = {
                         new: _.filter(fixData, item => item.carStatus === 'New'),
@@ -137,50 +138,12 @@ export class DashboardState implements NgxsOnInit {
         )
     }
 
-    private _formatData(data) {
-        const userDashboard = _.get(data, 'userDashboard', data);
-        return {
-            ...userDashboard,
-            id: userDashboard.userDashboardId,
-            name: userDashboard.dashboardName,
-            widgets: _.map(_.get(data, 'widgets', []), (dashWidget: any) => {
-                const widget = dashWidget.userDashboardWidget;
-                return {
-                    ...this._formatWidget(widget),
-                    columns: this._formatColumns(dashWidget.columns)
-                }
-            }),
-        }
-    }
-
-    private _formatWidget(widget) {
-        return {
-            ...widget,
-            id: widget.userDashboardWidgetId,
-            name: widget.userAssignedName,
-            position: {
-                cols: widget.colSpan,
-                rows: widget.rowSpan,
-                x: widget.colPosition,
-                y: widget.rowPosition,
-                minItemRows: widget.minItemRows,
-                minItemCols: widget.minItemCols
-            }
-        }
-    }
-
-    private _formatColumns(columns) {
-        return _.map(_.orderBy(columns, col => col.dashboardWidgetColumnOrder, 'asc'), item => ({
-            ...item,
-            columnId: item.userDashboardWidgetColumnId,
-            WidgetId: item.userDashboardWidgetId,
-            field: item.dashboardWidgetColumnId,
-            header: item.columnHeader,
-            width: item.dashboardWidgetColumnWidth + 'px',
-            display: item.visible,
-            filtered: true,
-            sorted: true,
-        }))
+    private _formatDate(data) {
+        return _.map(data, item => {
+            const formatCDate = moment(item.creationDate).format('DD-MM-YYYY');
+            const formatLDate = moment(item.lastUpdateDate).format('DD-MM-YYYY');
+            return {...item, creationDate: formatCDate, lastUpdateDate: formatLDate}
+        })
     }
 
 }

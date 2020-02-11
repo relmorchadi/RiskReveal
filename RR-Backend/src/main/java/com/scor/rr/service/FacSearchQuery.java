@@ -6,14 +6,33 @@ import com.scor.rr.domain.enums.Operator;
 import com.scor.rr.service.abstraction.QueryInterface;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class FacSearchQuery implements QueryInterface {
 
+    Map<String, String> facSearchCountMapper = new HashMap();
+
     String[] globalSearchColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
     String[] groupByColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
+
+    @PostConstruct
+    private void feedCountMapper() {
+
+        facSearchCountMapper.put("CLIENT", "Client");
+        facSearchCountMapper.put("UW_YEAR", "UWYear");
+        facSearchCountMapper.put("CONTRACT_CODE", "WorkspaceContextCode");
+        facSearchCountMapper.put("CONTRACT_NAME", "WorkspaceName");
+        facSearchCountMapper.put("UW_ANALYSIS", "UwAnalysis");
+        facSearchCountMapper.put("CAR_ID",  "CARequestId");
+        facSearchCountMapper.put("CAR_STATUS", "CARStatus");
+        facSearchCountMapper.put("USR", "AssignedTo");
+        facSearchCountMapper.put("PLT", "Plt");
+        facSearchCountMapper.put("PROJECT_ID", "ProjectId");
+        facSearchCountMapper.put("PROJECT_NAME", "ProjectName");
+    }
 
     @Override
     public String generateSqlQuery(List<ExpertModeFilter> filter, List<ExpertModeSort> sort, String keyword, int offset, int size) {
@@ -50,10 +69,10 @@ public class FacSearchQuery implements QueryInterface {
     public String generateClause(String columnName, String keyword, Operator operator) {
         switch (operator) {
             case EQUAL:
-                return " c." + columnName + " = '" + escape(keyword) + "' ";
+                return " c." + this.facSearchCountMapper.get(columnName) + " = '" + escape(keyword) + "' ";
             case LIKE:
             default:
-                return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
+                return " lower(c." + this.facSearchCountMapper.get(columnName) + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
         }
     }
 
