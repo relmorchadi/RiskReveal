@@ -43,21 +43,21 @@
                                           class="no-drag">
                   </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="newFacCars"
+                                  [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="inProgressFacCars"
+                                  [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard"
-                                  [itemWidget]="item" [data]="archivedFacCars"
+                                  [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"

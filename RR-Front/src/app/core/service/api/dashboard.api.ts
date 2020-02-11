@@ -74,7 +74,7 @@ export class DashboardApi {
     }
 
     getFacDashboardResources(filters): Observable<any>  {
-        return this.http.post(`${backendUrl()}dashboard/`, filters);
+        return this.http.post(`${backendUrl()}dashboard/getData`, filters);
     }
 
 }

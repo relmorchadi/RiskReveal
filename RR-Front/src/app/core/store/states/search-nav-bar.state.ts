@@ -190,8 +190,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
     const api = (expr, mapping) => (searchMode === 'Treaty' ? this.searchLoader(expr, mapping) : this.searchLoaderFac(expr, mapping));
 
-    console.log(expression, checkShortCut);
-
     return (!checkShortCut[0] ? forkJoin(
       ...(searchMode == 'Treaty' ? treatyShortcuts : facShortcuts).map(shortCut => api(expression, shortCut.mappingTable))
     ) : api(expression, checkShortCut[0]))

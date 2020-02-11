@@ -33,7 +33,6 @@ export class BadgesService {
   }
 
   public generateBadges(expression, shortcuts = this.shortcuts): { newExpr: string, badges: any[]} {
-     console.log(expression);
     if (!`${expression} `.match(this.regularExpession))
       return {
         newExpr: expression,

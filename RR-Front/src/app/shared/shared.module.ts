@@ -21,6 +21,7 @@ import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
+import { IMPLEMENTATIONS } from './implementations'
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
@@ -43,7 +44,7 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     NgxEchartsModule,
     AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, ...IMPLEMENTATIONS],
   exports: [
     CommonModule,
     NgZorroAntdModule,

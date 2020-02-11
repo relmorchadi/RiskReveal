@@ -9,7 +9,7 @@ import {BaseContainer} from "../../../shared/base";
 import {ofActionCompleted, Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
-import {catchError, first, tap, timeout} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import {LoadReferenceWidget} from "../../../core/store/actions";
 import {Actions, ofActionDispatched} from '@ngxs/store';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
@@ -69,12 +69,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dispatch([new LoadReferenceWidget(), new fromHD.LoadDashboardFacDataAction()]);
-    this.facData$.pipe().subscribe(value => {
-      this.newFacCars = this.dataParam(_.get(value, 'new', []));
-      this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
-      this.archivedFacCars = this.dataParam(_.get(value, 'archived', []));
-    });
+    this.dispatch([new LoadReferenceWidget()]);
 
     this.refWidget$.pipe().subscribe( value => {
       this.refWidget = value;

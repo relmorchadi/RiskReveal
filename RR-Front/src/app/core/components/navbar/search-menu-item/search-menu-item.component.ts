@@ -105,7 +105,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
     this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(first(v => v)).subscribe( mapTableNameToBadgeKey => {
       this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
-      console.log(mapTableNameToBadgeKey);
       this.detectChanges();
     });
 
@@ -143,13 +142,13 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onDoublePoints = _.debounce(($event: KeyboardEvent) => {
-    // console.log(this.badgeService.transformKeyword(this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword, this.useAlternative()));
   }, 350);
 
   onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
+    console.log(globalKeywordBadge);
     const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
     this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
@@ -175,7 +174,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
     let expression = "";
     let globalExprLength = 0;
     let index;
-    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       if(! (badge.key == "global search") ) {
         index = this.searchShortCuts.findIndex(row => {
@@ -197,11 +195,11 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   convertExpressionToBadge(expression) {
     const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, _.camelCase(shortCut.shortCutLabel)));
-    return foundShortCut ? { key: _.camelCase(foundShortCut.shortCutLabel), operator: "LIKE", value: expression.substring(foundShortCut.shortCutLabel.length + 1) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
+    return foundShortCut ? { key: _.camelCase(foundShortCut.shortCutLabel), operator: "LIKE", value: expression.substring(foundShortCut.shortCutLabel.length) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
   }
 
   selectSearchBadge(key, value) {
-    console.log(key);
+    console.log(this.mapTableNameToBadgeKey, key);
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key: _.camelCase(key), value}, this.globalKeyword, this.useAlternative()));

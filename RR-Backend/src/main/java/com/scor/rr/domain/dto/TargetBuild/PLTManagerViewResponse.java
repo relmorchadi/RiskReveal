@@ -1,20 +1,20 @@
 package com.scor.rr.domain.dto.TargetBuild;
 
-import com.scor.rr.domain.entities.PLTManagerView;
-import com.scor.rr.domain.entities.Tag;
-import lombok.Data;
 
-import java.util.Set;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
 
 @Data
+@NoArgsConstructor
 public class PLTManagerViewResponse {
-    Set<PLTManagerView> plts;
-    Set<PLTManagerView> deletedPlts;
-    Set<Tag> tags;
+    List<Map<String, Object>> plts;
+    Integer totalCount;
 
-    public PLTManagerViewResponse(Set<PLTManagerView> plts, Set<PLTManagerView> deletedPlts, Set<Tag> tags) {
+    public PLTManagerViewResponse(List<Map<String, Object>> plts, Integer totalCount) {
         this.plts = plts;
-        this.deletedPlts = deletedPlts;
-        this.tags = tags;
+        this.totalCount = totalCount;
     }
 }

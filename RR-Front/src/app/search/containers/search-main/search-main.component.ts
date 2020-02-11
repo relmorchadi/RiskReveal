@@ -444,7 +444,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         fromSavedSearch: this.fromSavedSearch,
         type: _.toUpper(this.searchMode)
       };
-      console.log(params);
 
       this.searchSub$ = this._searchService.expertModeSearch(params)
           .pipe(this.unsubscribeOnDestroy)

@@ -57,7 +57,7 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       providers: [{provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true},
-          // {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+          {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
           {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
           {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };

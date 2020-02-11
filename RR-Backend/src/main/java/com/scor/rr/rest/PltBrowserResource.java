@@ -7,9 +7,11 @@ import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.service.PltBrowserService;
 import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -25,13 +27,16 @@ public class PltBrowserResource {
     @GetMapping
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
 
+    @GetMapping("columns")
+    public ResponseEntity<?> getColumns() { return ResponseEntity.ok(pltBrowserService.getColumns());}
+
 
     @PostMapping("assign-user-tag")
     public Boolean assignUpdateUserTag(@RequestBody AssignTagToPltsRequest request) {
         return tagService.assignTagToPlts(request);
     }
 
-    @PostMapping("delete")
+    /*@PostMapping("delete")
     public Boolean deletePLT(@RequestBody PLTHeaderDeleteRequest request) {
         return pltBrowserService.deletePLTheader(request);
     }
@@ -39,6 +44,6 @@ public class PltBrowserResource {
     @PostMapping("restore")
     public Boolean deletePLT(@RequestBody List<Long> pltHeaderIds) {
         return pltBrowserService.restorePLTHeader(pltHeaderIds);
-    }
+    }*/
 
 }

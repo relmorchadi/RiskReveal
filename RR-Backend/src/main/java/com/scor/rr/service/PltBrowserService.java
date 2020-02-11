@@ -9,14 +9,21 @@ import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.repository.*;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Component
+@Slf4j
 public class PltBrowserService {
 
     @Autowired
@@ -34,6 +41,8 @@ public class PltBrowserService {
     TagRepository tagRepository;
     @Autowired
     PLTHeaderTagRepository pltHeaderTagRepository;
+    @Autowired
+    EntityManager entityManager;
 
     PLTManagerViewHelperResponse appendTagsToPLTs(Set<PLTManagerView> plts, WorkspaceEntity ws) {
         HashMap<Long, Tag> pltHeaderTagCount = new HashMap<>();
@@ -64,16 +73,85 @@ public class PltBrowserService {
     }
 
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
-        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
-        Set<PLTManagerView> plts = pltManagerViewRepository.findPLTs(request.getWsId(), request.getUwYear());
-        Set<PLTManagerView> deletedPlts = pltManagerViewRepository.findDeletedPLTs(request.getWsId(), request.getUwYear());
 
-        PLTManagerViewHelperResponse pltManagerViewHelperResponse = appendTagsToPLTs(plts, ws);
+        PLTManagerViewResponse response= new PLTManagerViewResponse();
 
-        return new PLTManagerViewResponse(pltManagerViewHelperResponse.getPlts(), deletedPlts, pltManagerViewHelperResponse.getTags());
+        response.setPlts(this.pltManagerViewRepository.getPLTManagerData(
+                request.getWorkspaceContextCode(),
+                request.getWorkspaceUwYear(),
+                request.getEntity(),
+                "A798",
+                request.getPageNumber(),
+                request.getPageSize(),
+                request.getSelectionList(),
+                request.getSortSelectedFirst(),
+                request.getSortSelectedAction()
+        ));
+
+        response.setTotalCount(this.useGetPLTManagerDataCountProc(request));
+
+
+        return response;
+
     }
 
-    public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
+    public List<Map<String, Object>> getColumns() {
+        try {
+            return this.pltManagerViewRepository.getColumns("A798", 2L);
+        } catch (Exception ex) {
+            log.error("Couldn't Get PLT Manager Columns with message: {}", ex.getMessage());
+        }
+        return null;
+    }
+
+    Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {
+        StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("dbonew.usp_PLTManagerGetThreadEndPLTsCount")
+                .registerStoredProcedureParameter(
+                        "WorkspaceContextCode",
+                        String.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "WorkspaceUwYear",
+                        Integer.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "Entity",
+                        Integer.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "UserCode",
+                        String.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "TotalRecCount",
+                        Integer.class,
+                        ParameterMode.OUT
+                )
+                .registerStoredProcedureParameter(
+                        "FilteredRecCount",
+                        Integer.class,
+                        ParameterMode.OUT
+                )
+                .setParameter("WorkspaceContextCode", request.getWorkspaceContextCode())
+                .setParameter("WorkspaceUwYear", request.getWorkspaceUwYear())
+                .setParameter("Entity", request.getEntity())
+                .setParameter("UserCode", "A798");
+
+        try {
+            query.execute();
+            return (Integer) query.getOutputParameterValue("FilteredRecCount");
+
+        } finally {
+            query.unwrap(ProcedureOutputs.class).release();
+        }
+    }
+
+    /*public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
         request.getPltHeaderIds().forEach( pltHeaderId -> {
             Optional<PltHeaderEntity> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
             PltHeaderEntity pltHeaderEntity;
@@ -115,5 +193,5 @@ public class PltBrowserService {
             }
         });
         return true;
-    }
+    }*/
 }
