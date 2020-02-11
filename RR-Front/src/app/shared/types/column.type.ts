@@ -1,11 +1,13 @@
 export interface Column {
+  viewContextColumnId: number;
+  userCode: string;
   displayName: string;
   columnOrder: number;
   isVisible: boolean;
   isResizable: boolean;
   minWidth: number;
   maxWidth: number;
-  defaultWidth: number;
+  width: number;
   sortOrder: number;
   sortType: string;
   columnName: string;

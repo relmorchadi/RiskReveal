@@ -51,4 +51,8 @@ public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, 
             @Param("SortSelectedFirst") Boolean SortSelectedFirst,
             @Param("SortSelectedAction") String SortSelectedAction
             );
+
+
+    @Query(value = "EXEC dbonew.usp_GetColumnsByUserCodeAndViewContext @UserCode =:UserCode, @ViewContext =:ViewContext", nativeQuery = true)
+    List<Map<String, Object>> getColumns(@Param("UserCode") String userCode, @Param("ViewContext") Long viewContext);
 }

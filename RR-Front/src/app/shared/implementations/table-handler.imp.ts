@@ -5,6 +5,7 @@ import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
 import {catchError} from 'rxjs/operators';
+import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 @Injectable()
 export class TableHandlerImp implements TableHandlerInterface {
@@ -44,19 +45,28 @@ export class TableHandlerImp implements TableHandlerInterface {
     })
   }
 
-  public loadData() {
-    return this._api.loadData();
+  initApi(url) {
+    console.log(url);
+    this._api.setUrl(url);
+  }
+
+  public loadData(request: FetchViewContextDataRequest) {
+    return this._api.getData(request);
   }
 
   public loadColumns() {
-    return this._api.loadColumns();
+    return this._api.getColumns();
   }
 
-  initTable() {
+  initTable(request: FetchViewContextDataRequest) {
     forkJoin(
         this.loadColumns(),
-        this.loadData()
+        this.loadData(request)
     ).subscribe( ([columns, data]: any) => {
+      console.log({
+        columns,
+        data
+      });
       this.updateColumns(columns);
       this.updateTotalColumnWidth(columns);
       this.updateData(data);
@@ -75,9 +85,9 @@ export class TableHandlerImp implements TableHandlerInterface {
 
               if(this._columns[index]) {
                 const column = this._columns[index];
-                const currentColumnWidth = column.defaultWidth;
+                const currentColumnWidth = column.width;
                 const newColumnWidth = currentColumnWidth + delta;
-                const newColumns = _.merge([], this._columns, { [index]: { defaultWidth: newColumnWidth}});
+                const newColumns = _.merge([], this._columns, { [index]: { width: newColumnWidth}});
                 this.updateColumns(newColumns);
                 this.updateTotalColumnWidth(newColumns);
               }
@@ -108,13 +118,12 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateTotalColumnWidth(columns) {
-    const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.defaultWidth, 1);
+    const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.width, 1);
     this._totalColumnWidth = totalWidth > this.containerWidth ? this.containerWidth : totalWidth;
     this.totalColumnWidth$.next(this._totalColumnWidth);
   }
 
   private updateVisibleColumns(c) {
-    console.log(c);
     this._visibleColumns = c;
     this.visibleColumns$.next(c);
   }

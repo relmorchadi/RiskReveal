@@ -31,6 +31,7 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
   ngOnInit() {
     super.ngOnInit();
 
+
     this._handler.data$.subscribe(d => {
       this.data= d;
       this.detectChanges();

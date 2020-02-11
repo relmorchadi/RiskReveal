@@ -9,8 +9,10 @@ import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
 import com.scor.rr.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 
 
 @Component
+@Slf4j
 public class PltBrowserService {
 
     @Autowired
@@ -70,13 +73,6 @@ public class PltBrowserService {
     }
 
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
-//        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
-//        Set<PLTManagerView> plts = pltManagerViewRepository.findPLTs(request.getWsId(), request.getUwYear());
-//        Set<PLTManagerView> deletedPlts = pltManagerViewRepository.findDeletedPLTs(request.getWsId(), request.getUwYear());
-//
-//        PLTManagerViewHelperResponse pltManagerViewHelperResponse = appendTagsToPLTs(plts, ws);
-//
-//        return new PLTManagerViewResponse(pltManagerViewHelperResponse.getPlts(), deletedPlts, pltManagerViewHelperResponse.getTags());
 
         PLTManagerViewResponse response= new PLTManagerViewResponse();
 
@@ -84,7 +80,7 @@ public class PltBrowserService {
                 request.getWorkspaceContextCode(),
                 request.getWorkspaceUwYear(),
                 request.getEntity(),
-                "1",
+                "A798",
                 request.getPageNumber(),
                 request.getPageSize(),
                 request.getSelectionList(),
@@ -97,6 +93,15 @@ public class PltBrowserService {
 
         return response;
 
+    }
+
+    public List<Map<String, Object>> getColumns() {
+        try {
+            return this.pltManagerViewRepository.getColumns("A798", 2L);
+        } catch (Exception ex) {
+            log.error("Couldn't Get PLT Manager Columns with message: {}", ex.getMessage());
+        }
+        return null;
     }
 
     Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {
@@ -135,7 +140,7 @@ public class PltBrowserService {
                 .setParameter("WorkspaceContextCode", request.getWorkspaceContextCode())
                 .setParameter("WorkspaceUwYear", request.getWorkspaceUwYear())
                 .setParameter("Entity", request.getEntity())
-                .setParameter("UserCode", "1");
+                .setParameter("UserCode", "A798");
 
         try {
             query.execute();

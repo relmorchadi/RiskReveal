@@ -1,5 +1,6 @@
 import {BehaviorSubject, Observable} from 'rxjs';
 import { Column } from '../types/column.type'
+import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 export interface TableHandlerInterface {
 
@@ -25,6 +26,7 @@ export interface TableHandlerInterface {
   onRowSelect(rowId: number);
 
   init(config: any): void;
-  initTable(): void;
+  initApi(url: string): void;
+  initTable(request: FetchViewContextDataRequest): void;
 
 }

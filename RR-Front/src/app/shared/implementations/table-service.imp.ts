@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { HttpClient } from '@angular/common/http';
 import { Data, Columns } from '../data/payload.data'
+import {backendUrl} from "../api";
 
 @Injectable()
 export class TableServiceImp implements TableServiceInterface {
@@ -16,16 +17,13 @@ export class TableServiceImp implements TableServiceInterface {
     this._url = url;
   }
 
-  loadData() {
-    return Data;
-  }
-
-  loadColumns() {
-    return Columns;
+  getColumns() {
+    console.log("working");
+    return this._http.get(`${this._url}columns`);
   }
 
   getData(params): Observable<any> {
-    return this._http.get(`${this._url}data`, { params });
+    return this._http.get(`${this._url}`, { params });
   }
 
   updateColumnFilter(body): Observable<any> {

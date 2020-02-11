@@ -5,6 +5,7 @@ import { TableServiceImp } from '../implementations/table-service.imp';
 import { TableHandlerImp } from '../implementations/table-handler.imp';
 import { Column } from '../types/column.type';
 import {Injector, OnInit, ChangeDetectorRef, ViewChild, AfterViewInit} from '@angular/core';
+import {backendUrl} from "../api";
 
 
 export class BaseTable implements TableInterface , OnInit, AfterViewInit {
@@ -21,6 +22,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
   _handler: TableHandlerInterface;
 
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
+    console.log("init")
     this._injectors = {
       'plt-manager': ({
         api: this.injector.get<TableServiceImp>(TableServiceImp),
@@ -44,12 +46,22 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
     this._handler.init({
       _api: api
     });
+    this._handler.initApi(`${backendUrl()}plt/`);
   }
 
   getApiInjector = (key) => this._injectors[key]
 
   protected initTable() {
-    this._handler.initTable();
+    this._handler.initTable({
+      workspaceContextCode: "FA0044610",
+      workspaceUwYear: 2019,
+      entity: 1,
+      pageNumber: 1,
+      pageSize: 1000,
+      selectionList: "",
+      sortSelectedFirst: false,
+      sortSelectedAction: ""
+  });
   }
 
   onColumnResize(event) {
