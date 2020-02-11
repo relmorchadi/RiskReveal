@@ -21,7 +21,7 @@ public class DashboardView {
     private Long id;
 
     @Column(length = 30)
-    private String carRequestId;
+    private Long carRequestId;
 
     private Date lastUpdateDate;
 

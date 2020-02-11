@@ -10,4 +10,7 @@ public interface UserDashboardWidgetRepository extends JpaRepository<UserDashboa
     UserDashboardWidget findByUserDashboardWidgetId(long id);
     List<UserDashboardWidget> findByUserDashboardId(long id);
     List<UserDashboardWidget> findByUserDashboardIdAndWidgetId(long id,long refId);
+
+
+
 }
