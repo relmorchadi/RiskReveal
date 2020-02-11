@@ -25,6 +25,7 @@ import {ShortCut} from "../../../model/shortcut.model";
 import {DashboardState, SearchNavBarState} from "../../../store/states";
 import {BaseContainer} from "../../../../shared/base";
 import {DashboardApi} from "../../../service/api/dashboard.api";
+import {PatchSearchStateAction} from "../../../store/actions/search-nav-bar.action";
 
 
 @Component({
@@ -91,7 +92,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
       this.searchMode = _.get(value, 'searchMode', null);
       this.resetToDash = this.searchMode !== null;
       this.resetToDash ? this.mainSearchMode = this.searchMode : null;
-      this.badgeService.initShortCuts(this.searchShortCuts, this.searchMode);
+      this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: this.useAlternative()}));
+      this.badgeService.initShortCuts(this.searchShortCuts, this.useAlternative());
       this.detectChanges();
     });
 
@@ -103,7 +105,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
     this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(first(v => v)).subscribe( mapTableNameToBadgeKey => {
       this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
-      console.log(mapTableNameToBadgeKey);
       this.detectChanges();
     });
 
@@ -118,18 +119,18 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   private _subscribeGlobalKeywordChanges() {
     this._unsubscribeToFormChanges();
     this.subscriptions = this.contractFilterFormGroup.get('globalKeyword')
-      .valueChanges
-      .pipe(takeUntil(this.unSubscribe$))
-      .subscribe((value) => {
-        value && value.length > 1 && this.updatePossibleShortCuts(value);
-        this.store.dispatch(new SearchActions.SearchInputValueChange(value));
-        this._contractChoicesSearch(value);
-      });
+        .valueChanges
+        .pipe(takeUntil(this.unSubscribe$))
+        .subscribe((value) => {
+          value && value.length > 1 && this.updatePossibleShortCuts(value);
+          this.store.dispatch(new SearchActions.SearchInputValueChange(value));
+          this._contractChoicesSearch(value);
+        });
   }
 
   updatePossibleShortCuts(expr) {
     if( !_.includes(expr, ":")) {
-      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower(shortCut.shortCutLabel), _.toLower(expr))), shortCut => ({shortCutLabel :shortCut.shortCutLabel, type: shortCut.type}));
+      this.possibleShortCuts = _.map(_.filter(this.searchShortCuts, shortCut => _.includes(_.toLower( _.camelCase(shortCut.shortCutLabel)), _.toLower(expr))), shortCut => ({shortCutLabel: _.camelCase(shortCut.shortCutLabel), type: shortCut.type}));
     } else {
       this.possibleShortCuts = [];
     }
@@ -141,13 +142,13 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   onDoublePoints = _.debounce(($event: KeyboardEvent) => {
-    // console.log(this.badgeService.transformKeyword(this.globalKeyword));
     this.contractFilterFormGroup.get('globalKeyword').patchValue(this.badgeService.transformKeyword(this.globalKeyword, this.useAlternative()));
   }, 350);
 
   onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
+    console.log(globalKeywordBadge);
     const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
     this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
@@ -173,16 +174,15 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
     let expression = "";
     let globalExprLength = 0;
     let index;
-    console.log(badges);
     _.forEach(badges, (badge, i: number) => {
       if(! (badge.key == "global search") ) {
         index = this.searchShortCuts.findIndex(row => {
-          return row.shortCutLabel == badge.key;
+          return _.camelCase(row.shortCutLabel) == _.camelCase(badge.key);
         });
         if(i == badges.length - 1) {
-          expression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value;
+          expression += _.camelCase(this.searchShortCuts[index].shortCutLabel) + ":" + badge.value;
         } else {
-          expression += this.searchShortCuts[index].shortCutLabel + ":" + badge.value + " ";
+          expression += _.camelCase(this.searchShortCuts[index].shortCutLabel) + ":" + badge.value + " ";
         }
       } else {
         expression = expression.substring(globalExprLength);
@@ -194,14 +194,15 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   convertExpressionToBadge(expression) {
-    const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, shortCut.shortCutLabel));
-    return foundShortCut ? { key: foundShortCut.shortCutLabel, operator: "LIKE", value: expression.substring(foundShortCut.shortCutLabel.length + 1) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
+    const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, _.camelCase(shortCut.shortCutLabel)));
+    return foundShortCut ? { key: _.camelCase(foundShortCut.shortCutLabel), operator: "LIKE", value: expression.substring(foundShortCut.shortCutLabel.length) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
   }
 
   selectSearchBadge(key, value) {
+    console.log(this.mapTableNameToBadgeKey, key);
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword, this.useAlternative()));
+    this.store.dispatch(new SearchActions.SelectBadgeAction({key: _.camelCase(key), value}, this.globalKeyword, this.useAlternative()));
     this.searchInput.nativeElement.focus();
   }
 
@@ -316,7 +317,13 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   replaceExpressionWithShortCut(possibleShortCut: string) {
     event.preventDefault();
-    this.contractFilterFormGroup.get('globalKeyword').patchValue(possibleShortCut + ":");
+    this.contractFilterFormGroup.get('globalKeyword').patchValue(_.camelCase(possibleShortCut) + ":");
+  }
+
+  dispatchSearchMode($event) {
+    this.resetToDash = false;
+    this.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: $event}));
+    this.badgeService.initShortCuts(this.searchShortCuts, $event);
   }
 
   useAlternative() {

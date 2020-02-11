@@ -26,7 +26,6 @@ public class FacContractSearchResult {
     @Column(name = "UwAnalysis")
     private String uwAnalysis;
 
-    @Id
     @Column(name = "CARequestId", length = 30)
     private String carequestId;
 
@@ -35,6 +34,16 @@ public class FacContractSearchResult {
 
     @Column(name = "AssignedTo")
     private Long assignedTo;
+
+    @Id
+    @Column(name = "Plt")
+    private Long plt;
+
+    @Column(name = "ProjectId")
+    private Long projectId;
+
+    @Column(name = "ProjectName")
+    private String projectName;
 
     public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser) {
         this.client = client;

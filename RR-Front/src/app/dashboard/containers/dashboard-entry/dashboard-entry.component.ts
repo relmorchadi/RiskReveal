@@ -9,7 +9,7 @@ import {BaseContainer} from "../../../shared/base";
 import {ofActionCompleted, Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
 import {DashboardState} from "../../../core/store/states";
-import {catchError, first, tap, timeout} from "rxjs/operators";
+import {catchError} from "rxjs/operators";
 import {LoadReferenceWidget} from "../../../core/store/actions";
 import {Actions, ofActionDispatched} from '@ngxs/store';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
@@ -158,7 +158,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   dataParam(data) {
     return _.sortBy(_.map(data, item => {
-      return {...item, carRequestId: _.toInteger(_.split(item.carRequestId, '-')[1])}
+      return {...item, carRequestId: _.toInteger(item.carRequestId)}
     }), ['carRequestId']).reverse();
   }
 
@@ -253,16 +253,16 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     })
   }
 
-  deleteWidgetAction(payload) {
+  deleteWidgetAction(widgetId) {
     this.dashboards = _.map(this.dashboards, item => {
       if (item.id === this.selectedDashboard.id) {
         return {...item, widgets: _.filter(item.widgets, widgetItem =>
-              widgetItem.userDashboardWidgetId !== payload)};
+              widgetItem.userDashboardWidgetId !== widgetId)};
       }
       return item;
     });
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
-    this.dashboardAPI.deleteWidget(payload).subscribe()
+    this.dashboardAPI.deleteWidget(widgetId).subscribe()
   }
 
   deleteAllDashboardByRef(payload) {
@@ -299,14 +299,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   setTabValue() {
-/*    const visibleDash = _.filter(this.dashboards, item => item.visible);
-    if (visibleDash.length > 1) {
-      setTimeout(() => {
-        this.idTab = 1;
-        const idDash = _.get(this.dashboards[1], 'id', 1);
-        this.dashboardChange(idDash);
-      }, 500);
-    }*/
+    /*    const visibleDash = _.filter(this.dashboards, item => item.visible);
+        if (visibleDash.length > 1) {
+          setTimeout(() => {
+            this.idTab = 1;
+            const idDash = _.get(this.dashboards[1], 'id', 1);
+            this.dashboardChange(idDash);
+          }, 500);
+        }*/
   }
 
   changeWidgetHeight(widgetItem, position) {
@@ -424,12 +424,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (this.dashboards.length > 1) {
       this.deleteDashboardAction({dashboardId : this.idSelected});
       this.notificationService.createNotification('Information',
-        'The dashboard has been deleted successfully.',
-        'info', 'bottomRight', 4000);
+          'The dashboard has been deleted successfully.',
+          'info', 'bottomRight', 4000);
     } else {
       this.notificationService.createNotification('Information',
-        'you can not delete this dashboard you need at least one!',
-        'error', 'bottomRight', 4000);
+          'you can not delete this dashboard you need at least one!',
+          'error', 'bottomRight', 4000);
     }
   }
 
@@ -446,14 +446,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   addRemoveItem(item) {
     const selectedWidget =
-    _.filter(this.selectedDashboard.widgets, (itemWidget: any) => item.widgetId === itemWidget.widgetId);
+        _.filter(this.selectedDashboard.widgets, (itemWidget: any) => item.widgetId === itemWidget.widgetId);
     if (selectedWidget.length === 0) {
       this.createNewWidgetAction({selectedDashboard: this.selectedDashboard.id,
-      widget: {
-        dashoardId: this.selectedDashboard.id,
-        referenceWidgetId:item.widgetId,
-        userId: 1
-      }});
+        widget: {
+          dashoardId: this.selectedDashboard.id,
+          referenceWidgetId:item.widgetId,
+          userId: 1
+        }});
     } else {
       this.deleteAllDashboardByRef({selectedDashboard: this.selectedDashboard, refId: item.widgetId})
     }
@@ -491,8 +491,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     const {widgetId, dashCols} = $event;
     this.dashboards = _.map(this.dashboards, dash => {
       return dash.id === this.selectedDashboard.id ? {...dash, widgets: _.map(dash.widgets, item => {
-      return item.id === widgetId ? {...item, columns: dashCols} : item})
-    } : dash });
+          return item.id === widgetId ? {...item, columns: dashCols} : item})
+      } : dash });
 
     console.log(_.find(this.dashboards, item => item.id === this.selectedDashboard.id))
   }
@@ -510,11 +510,11 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboards.forEach(
-        ds => {
-          if (ds.visible === true && ds.id < id) {
-            ++idSel;
-          }
-        },
+          ds => {
+            if (ds.visible === true && ds.id < id) {
+              ++idSel;
+            }
+          },
       );
       this.idTab = idSel;
     }
@@ -530,7 +530,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   getSelection(item) {
     return _.filter(_.get(this.selectedDashboard, 'widgets', []),
-            items => items.widgetId === item.widgetId).length > 0;
+        items => items.widgetId === item.widgetId).length > 0;
   }
 
   private _formatData(data) {

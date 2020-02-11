@@ -12,6 +12,7 @@ import {PltTagManagerComponent} from "./plt/plt-tag-manager/plt-tag-manager.comp
 import {InputComponent} from "./input/input.component";
 import {SummaryEpMetricsComponent} from "./plt/summary-ep-metrics/summary-ep-metrics.component";
 import {EpChartComponent} from "./plt/ep-chart/ep-chart.component";
+import {GlobalTableComponent} from "./global-table/global-table.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -27,7 +28,8 @@ export const COMPONENTS = [
   PltTagManagerComponent,
   InputComponent,
   SummaryEpMetricsComponent,
-  EpChartComponent
+  EpChartComponent,
+  GlobalTableComponent
 ];
 
 export * from './table/table.component';

@@ -4,6 +4,12 @@ import lombok.Data;
 
 @Data
 public class PLTManagerViewRequest {
-    String wsId;
-    Integer uwYear;
+    String workspaceContextCode;
+    Integer workspaceUwYear;
+    Integer entity;
+    Integer pageNumber;
+    Integer pageSize;
+    String selectionList;
+    Boolean sortSelectedFirst;
+    String sortSelectedAction;
 }
