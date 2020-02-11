@@ -26,7 +26,6 @@ public class FacContractSearchResult {
     @Column(name = "UwAnalysis")
     private String uwAnalysis;
 
-    @Id
     @Column(name = "CARequestId", length = 30)
     private String carequestId;
 
@@ -36,7 +35,17 @@ public class FacContractSearchResult {
     @Column(name = "AssignedTo")
     private Long assignedTo;
 
-    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser) {
+    @Id
+    @Column(name = "Plt")
+    private Long plt;
+
+    @Column(name = "ProjectId")
+    private Long projectId;
+
+    @Column(name = "ProjectName")
+    private String projectName;
+
+    public FacContractSearchResult(String client, Integer uwYear, String workspaceContextCode, String workspaceName, String uwAnalysis, String carequestId, String carStatus, BigInteger assignedUser, BigInteger plt, BigInteger projectId, String projectName) {
         this.client = client;
         this.workspaceContextCode = workspaceContextCode;
         this.uwYear = uwYear;
@@ -45,5 +54,8 @@ public class FacContractSearchResult {
         this.carequestId = carequestId;
         this.carStatus = carStatus;
         this.assignedTo = assignedUser != null ? assignedUser.longValue() : null;
+        this.plt = plt != null ? plt.longValue() : null;
+        this.projectId = projectId != null ? projectId.longValue() : null;
+        this.projectName = projectName;
     }
 }

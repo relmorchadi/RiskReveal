@@ -344,7 +344,7 @@ public class SearchService {
     Page<?> treatyContractSearch(ExpertModeFilterRequest request) {
         if (request.getFromSavedSearch() != null) {
             if (!request.getFilter().isEmpty()) {
-                Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
+                Long treatySearchId = request.getFilter().get(0).getSearchId();
 
                 if (treatySearchId != null) {
                     Optional<TreatySearch> treatySearchOpt = this.treatySearchRepository.findById(treatySearchId);
@@ -426,7 +426,7 @@ public class SearchService {
 
     private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
         return resultList.stream().map((r) ->
-                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
+                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7], (BigInteger) r[8], (BigInteger) r[9], (String) r[10])
         ).collect(Collectors.toList());
     }
 

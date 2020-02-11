@@ -12,5 +12,5 @@ public class ExpertModeFilter {
     String field;
     String value;
     Operator operator;
-    Long treatySearchId;
+    Long searchId;
 }

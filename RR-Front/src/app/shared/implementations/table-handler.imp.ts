@@ -27,6 +27,9 @@ export class TableHandlerImp implements TableHandlerInterface {
   _totalColumnWidth: number;
   totalColumnWidth$: BehaviorSubject<number>;
 
+  _data: any[];
+  data$: BehaviorSubject<any[]>;
+
   protected containerWidth: number;
 
   constructor() {
@@ -63,13 +66,11 @@ export class TableHandlerImp implements TableHandlerInterface {
         this.loadColumns(),
         this.loadData(request)
     ).subscribe( ([columns, data]: any) => {
-      console.log({
-        columns,
-        data
-      });
+      const {totalCount, plts} = data;
+
       this.updateColumns(columns);
       this.updateTotalColumnWidth(columns);
-      this.updateData(data);
+      this.updateData(plts);
     })
   }
 
