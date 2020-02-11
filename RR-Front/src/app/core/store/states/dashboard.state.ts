@@ -4,7 +4,7 @@ import * as fromHD from "../actions";
 import {DashboardApi} from "../../service/api/dashboard.api";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import * as moment from "moment";
-import {of} from "rxjs";
+import {forkJoin, of} from "rxjs";
 import produce from "immer";
 import * as _ from 'lodash';
 
@@ -87,6 +87,7 @@ export class DashboardState implements NgxsOnInit {
             size: 1000,
             sortConfig: []
         };
+
         return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
             mergeMap((data: any) => {
                 const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
