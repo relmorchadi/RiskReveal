@@ -83,11 +83,11 @@ export class BadgesService {
   }
 
   public initShortCutsFromKeysMapper(shortCuts: ShortCut[]) {
-     let newMapper= {};
+    let newMapper= {};
 
-     _.forEach(shortCuts, shortCut => {
-       newMapper[_.trim(shortCut.shortCutAttribute, ':')] = _.startCase(shortCut.shortCutLabel);
-     });
+    _.forEach(shortCuts, shortCut => {
+      newMapper[_.trim(shortCut.shortCutAttribute, ':')] = _.startCase(shortCut.shortCutLabel);
+    });
 
     return newMapper;
   }

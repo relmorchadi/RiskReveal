@@ -292,12 +292,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     });
 
     this.searchContent$
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(({value}) => {
-        this._checkSearchContent(value);
-        this._loadData();
-        this.detectChanges();
-      });
+        .pipe(this.unsubscribeOnDestroy)
+        .subscribe(({value}) => {
+          this._checkSearchContent(value);
+          this._loadData();
+          this.detectChanges();
+        });
 
     this.selectedDashboard$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.searchMode = value;
@@ -343,9 +343,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspaceInSlider(contract) {
-/*    this.currentWorkspace = contract;
-    this.sliceValidator = true;
-    this.expandWorkspaceDetails = true;*/
+    /*    this.currentWorkspace = contract;
+        this.sliceValidator = true;
+        this.expandWorkspaceDetails = true;*/
   }
 
   popUpWorkspace(wsId, year) {
@@ -494,26 +494,26 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     if (previousContainer === container) {
       if (container.id == "usedListOfColumns") {
         moveItemInArray(
-          this.columnsCache,
-          event.previousIndex + 1,
-          event.currentIndex + 1
+            this.columnsCache,
+            event.previousIndex + 1,
+            event.currentIndex + 1
         );
         console.log(container.id, this.columnsCache);
       }
     } else {
       if (this.extraColumnsCache.length > 0) {
         transferArrayItem(
-          event.previousContainer.data,
-          event.container.data,
-          event.previousIndex,
-          event.currentIndex
+            event.previousContainer.data,
+            event.container.data,
+            event.previousIndex,
+            event.currentIndex
         );
       } else {
         transferArrayItem(
-          event.previousContainer.data,
-          event.container.data,
-          event.previousIndex + 1,
-          event.currentIndex + 1
+            event.previousContainer.data,
+            event.container.data,
+            event.previousIndex + 1,
+            event.currentIndex + 1
         );
       }
     }

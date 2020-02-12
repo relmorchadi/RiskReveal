@@ -119,13 +119,13 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   private _subscribeGlobalKeywordChanges() {
     this._unsubscribeToFormChanges();
     this.subscriptions = this.contractFilterFormGroup.get('globalKeyword')
-      .valueChanges
-      .pipe(takeUntil(this.unSubscribe$))
-      .subscribe((value) => {
-        value && value.length > 1 && this.updatePossibleShortCuts(value);
-        this.store.dispatch(new SearchActions.SearchInputValueChange(value));
-        this._contractChoicesSearch(value);
-      });
+        .valueChanges
+        .pipe(takeUntil(this.unSubscribe$))
+        .subscribe((value) => {
+          value && value.length > 1 && this.updatePossibleShortCuts(value);
+          this.store.dispatch(new SearchActions.SearchInputValueChange(value));
+          this._contractChoicesSearch(value);
+        });
   }
 
   updatePossibleShortCuts(expr) {
