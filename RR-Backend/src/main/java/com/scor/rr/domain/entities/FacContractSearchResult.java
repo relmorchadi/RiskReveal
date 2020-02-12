@@ -11,7 +11,10 @@ import java.math.BigInteger;
 @Data
 public class FacContractSearchResult {
 
-    @Column(name = "Client")
+    @Column(name = "ClientName")
+    private String clientName;
+
+    @Column(name = "ClientCode")
     private String client;
 
     @Column(name = "WorkspaceContextCode", length = 55)
