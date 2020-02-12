@@ -7,6 +7,7 @@ import {WsApi} from '../../../workspace/services/api/workspace.api';
 import * as _ from 'lodash';
 import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
+import {DashboardApi} from "../../../core/service/api/dashboard.api";
 
 @Component({
   selector: 'app-fac-chart-widget',
@@ -68,18 +69,18 @@ export class FacChartWidgetComponent implements OnInit {
   private mockDataCache;
   tabIndex = 1;
 
-  @Select(DashboardState.getFacData) facData$;
   data: any[];
   filteredData: any[];
 
-  analystList: any;
+  analystList: any[] = [];
+  assignedAnalyst: any[] = [];
   selectedAnalyst = 'ALL';
 
   dateTo: any;
   dateFrom: any;
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
-              private cdRef: ChangeDetectorRef,
+              private cdRef: ChangeDetectorRef, private dashboardAPI: DashboardApi,
               private wsApi: WsApi) {
     this.uwyUnits = _.uniqBy(this.mockData, 'UNDERWRITINGUNITCODE');
   }
@@ -118,16 +119,6 @@ export class FacChartWidgetComponent implements OnInit {
     };
     console.log('loader', this.chartOption);
     this.newDashboard = this.dashboard;
-    this.facData$.subscribe(rValue => {
-      const newD = _.get(rValue, 'new', []);
-      const inPD = _.get(rValue, 'inProgress', []);
-      const archiveD = _.get(rValue, 'archived', []);
-      const value = [...newD, ...inPD, ...archiveD];
-      this.data = value;
-      this.filteredData = value;
-      this.analystList = [..._.uniq(value.map(item => item.assignedAnalyst)), 'ALL'];
-      this.detectChanges();
-    });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
       uwUnit: ''
@@ -138,12 +129,53 @@ export class FacChartWidgetComponent implements OnInit {
     });
   }
 
+/*  onChartInit(instance) {
+    this.myChart = instance;
+    this.dashboardAPI.getWidgetCarStatusCount().subscribe((data: any) => {
+      this.assignedAnalyst = _.map(data.assignedAnalyst, item => item === '' ? 'Unassigned' : item);
+      this.analystList = [...this.assignedAnalyst, 'ALL'];
+
+      let newData = [];
+      let inProgressData = [];
+      let cancelledData = [];
+      let supersededData = [];
+      let completedData = [];
+      let pricedData = [];
+
+      _.forEach(data.content, item => {
+        newData = [...newData, _.get(item, 'new', 0)];
+        inProgressData = [...inProgressData, _.get(item, 'inProgress', 0)];
+        cancelledData = [...cancelledData, _.get(item, 'cancelled', 0)];
+        supersededData = [...supersededData, _.get(item, 'superseded', 0)];
+        completedData = [...completedData, _.get(item, 'completed', 0)];
+        pricedData = [...pricedData, _.get(item, 'priced', 0)];
+      });
+
+      this.setValues({newData, inProgressData, cancelledData, supersededData, completedData, pricedData});
+    })
+  }*/
+
   onChartInit(instance) {
-    setTimeout(() => {
-      //instance._api. offsetHeight = 450;
+    const dataParams = {
+      carStatus: 'Chart',
+      entity: 1,
+      pageNumber: 1,
+      pageSize: 1000,
+      selectionList: '',
+      sortSelectedAction: '',
+      sortSelectedFirst: false,
+      userCode: "DEV",
+      userDashboardWidgetId: 0
+    };
+
+    this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
+      this.data = data.content;
+      this.filteredData = data.content;
+      this.analystList = [..._.uniq(data.content.map(item => item.assignedAnalyst)), 'ALL'];
+      this.detectChanges();
       this.myChart = instance;
       this.setValues();
-    }, 1000);
+    });
   }
 
   selectTab(index) {
@@ -167,7 +199,6 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   validateName(keyboardMap, id) {
-
     if (keyboardMap.key === 'Enter') {
       this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
       this.editName = false;
@@ -184,15 +215,67 @@ export class FacChartWidgetComponent implements OnInit {
   }
 
   changeUserFilter(value) {
-    if (value === 'ALL') {
+/*    if (value === 'ALL') {
       this.filteredData = [...this.data];
       this.chart.xAxis.data = _.uniq(this.data.map(item => item.assignedAnalyst));
     } else {
       this.filteredData = _.filter(this.data, item => item.assignedAnalyst === value);
       this.chart.xAxis.data = [value];
       this.setValues();
-    }
+    }*/
   }
+
+/*  setValues(chartData) {
+    this.myChart.setOption({
+      xAxis: {
+        data: this.assignedAnalyst
+      },
+      series: [
+        {
+          name: 'New',
+          data: chartData.newData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'In Progress',
+          data: chartData.inProgressData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Cancelled',
+          data: chartData.cancelledData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Superseded',
+          data: chartData.supersededData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Completed',
+          data: chartData.completedData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        },
+        {
+          name: 'Priced',
+          data: chartData.pricedData,
+          type: 'bar',
+          stack: 'one',
+          itemStyle: this.itemStyle,
+        }
+      ],
+    });
+  }*/
 
   setValues() {
     const dataChart = _.uniq(this.filteredData.map(item => item.assignedAnalyst)) || [];
@@ -204,22 +287,22 @@ export class FacChartWidgetComponent implements OnInit {
     let pricedData = [];
     _.forEach(dataChart,
         item => newData = [...newData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'New').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'New').length]);
     _.forEach(dataChart,
         item => inProgressData = [...inProgressData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'In Progress').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'In Progress').length]);
     _.forEach(dataChart,
         item => cancelledData = [...cancelledData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'Cancelled').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'Cancelled').length]);
     _.forEach(dataChart,
         item => supersededData = [...supersededData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'Superseded').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'Superseded').length]);
     _.forEach(dataChart,
         item => completedData = [...completedData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'Completed').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'Completed').length]);
     _.forEach(dataChart,
         item => pricedData = [...pricedData, _.filter(this.filteredData, fac =>
-                fac.assignedAnalyst == item && fac.carStatus === 'Priced').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'Priced').length]);
     this.myChart.setOption({
       xAxis: {
         data: dataChart

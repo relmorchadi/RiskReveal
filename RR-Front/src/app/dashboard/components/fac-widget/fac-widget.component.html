@@ -8,9 +8,9 @@
     class="tabs-standard-top">
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
+        <app-table [sortable]="true" [virtualScroll]="virtualScroll"
                    [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
-                   [tableColumn]="dashCols" [sortList]="sortList"
+                   [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
                    [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
                    (dbClickItem)="openFacItem($event)"
                    (resizeChange)="resizeTable($event)"
@@ -23,7 +23,7 @@
     </nz-tab>
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
+        <app-table [sortable]="true" [virtualScroll]="virtualScroll" [secondaryLoader]="secondaryLoad"
                    [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
                    [tableColumn]="dashCols" [sortList]="sortList" [filterModeFront]="false"
                    [listOfData]="filterAssign()"
@@ -43,8 +43,8 @@
 
 <ng-container *ngIf="widgetId === 1">
   <div class="renewal-contract-table">
-    <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
-               [rows]="50" [totalRecords]="dataCounter"
+    <app-table [sortable]="true" [virtualScroll]="virtualScroll"
+               [rows]="50" [totalRecords]="dataCounter" [secondaryLoader]="secondaryLoad"
                [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
                [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
                (loadMore)="loadMore($event)"

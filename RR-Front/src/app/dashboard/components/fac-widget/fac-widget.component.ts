@@ -33,6 +33,9 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
   @Select(DashboardState.getFacData)facData$;
   @Select(DashboardState.getDataCounter)dataCounter$;
+  @Select(DashboardState.getVirtualScroll)virtualScroll$;
+
+  virtualScroll: any;
 
   carStatus = {"1": 'NEW', "2": 'In Progress', "3": 'Archived'};
 
@@ -48,6 +51,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   data: any = [];
   dataCounter = {};
   loading = false;
+  secondaryLoad = false;
 
   filters = {};
   newSort = {};
@@ -77,9 +81,13 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
     this.dataCounter$.pipe().subscribe(value => {
       this.dataCounter = _.get(value, `${this.identifier}`, 0);
-      console.log(value, this.dataCounter);
       this.detectChanges();
     });
+
+    this.virtualScroll$.pipe().subscribe(value => {
+      this.virtualScroll =  _.get(value, `${this.identifier}`, false);
+      this.detectChanges();
+    })
   }
 
   selectTab(index) {
@@ -111,11 +119,29 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   sortChange(event) {
     this.globalSort = event.newSort;
     this.sortList = event.newSortingList;
+    const carStatus = this.carStatus[this.widgetId];
+    this.secondaryLoad = true;
     if (_.isEmpty(event.sortType)) {
-      this.dashboardAPI.updateSortCols(event.columnId, 0, '').subscribe();
+      this.dashboardAPI.updateSortCols(event.columnId, 0, '').subscribe(
+          () => {}, () => {}, () => {
+            this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+                () => {}, () => {}, () => {
+                  this.secondaryLoad = false;
+                  this.detectChanges();
+                }
+            );
+          });
     } else {
       _.forEach(this.sortList, (item, key) => {
-        this.dashboardAPI.updateSortCols(item.columnId, key + 1, item.sortType).subscribe();
+        this.dashboardAPI.updateSortCols(item.columnId, key + 1, item.sortType)
+            .subscribe(() => {}, () => {}, () => {
+              this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+                  () => {}, () => {}, () => {
+                    this.secondaryLoad = false;
+                    this.detectChanges();
+                  }
+              );
+            });
       });
     }
     //this.dashboardAPI.updateSortCols(event.columnId, sortCounter, event.sortType).subscribe();
@@ -129,9 +155,15 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
   filterData($event) {
     const carStatus = this.carStatus[this.widgetId];
+    this.secondaryLoad = true;
     this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
         .subscribe(() => {}, () => {}, () => {
-          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}))
+          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+              () => {}, () => {}, () => {
+                this.secondaryLoad = false;
+                this.detectChanges();
+              }
+          );
         });
   }
 
@@ -180,8 +212,10 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     const carStatus = this.carStatus[this.widgetId];
     this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
         .subscribe(() => {}, ()=> {}, () => {
-      this.loading = false;
-    })
+          console.log('dispatch');
+          this.loading = false;
+          this.detectChanges();
+        })
   }
 
   loadMore(event) {

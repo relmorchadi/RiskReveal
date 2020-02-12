@@ -110,9 +110,8 @@
                     </div>
                     <ng-container *ngIf="(state?.data | keys).length && !state?.emptyResult; else loadingTemp">
                         <div class="search-result-wrapper" *ngFor="let table of (state?.data | keyvalue);">
-              <span (click)="addBadgeFromResultList(table.key)"
-                    class="search-result-span"
-                    *ngIf="table.value.length > 0">{{table.key}}</span>
+                            <span (click)="addBadgeFromResultList(table.key)" class="search-result-span"
+                                  *ngIf="table.value.length > 0">{{tableHeader(table.key)}}</span>
                             <ul class="search-result-list">
                                 <li style="display: flex; height: 31px;" *ngFor="let row of table.value;"
                                     scrollItem

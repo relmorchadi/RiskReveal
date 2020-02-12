@@ -35,10 +35,13 @@ export class TableComponent implements OnInit {
   FilterData: any = {};
 
   @Input('sortData') sortData;
+  sortedData: any;
   filterInput: any;
 
   @Input()
   loading: boolean;
+  @Input()
+  secondaryLoader: boolean;
   @Input()
   rows;
   @Input()

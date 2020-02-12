@@ -21,7 +21,8 @@ const initiateState: DashboardModel = {
     data: {
         fac: {},
         treaty: {},
-        dataCounter: {}
+        dataCounter: {},
+        virtualScroll: {},
     }
 };
 
@@ -48,6 +49,11 @@ export class DashboardState implements NgxsOnInit {
     @Selector()
     static getDataCounter(state: DashboardModel) {
         return state.data.dataCounter;
+    }
+
+    @Selector()
+    static getVirtualScroll(state: DashboardModel) {
+        return state.data.virtualScroll;
     }
 
     @Selector()
@@ -93,7 +99,7 @@ export class DashboardState implements NgxsOnInit {
             carStatus,
             entity: 1,
             pageNumber: pageNumber,
-            pageSize: 50,
+            pageSize: 100,
             selectionList: '',
             sortSelectedAction: '',
             sortSelectedFirst: false,
@@ -105,8 +111,9 @@ export class DashboardState implements NgxsOnInit {
             mergeMap((data: any) => {
                 const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.data.fac[identifier] = _.orderBy(fixData, item => item.carRequestId, 'desc');
+                    draft.data.fac[identifier] = fixData;
                     draft.data.dataCounter[identifier] = data.refCount;
+                    draft.data.virtualScroll[identifier] = data.refCount > 100;
                 }));
                 return of(ctx.dispatch(new fromHD.LoadDashboardFacDataSuccessAction()));
             }),
