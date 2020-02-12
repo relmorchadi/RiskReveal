@@ -9,9 +9,9 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
-                   [rows]="50" [totalRecords]="dataCounter"
+                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
                    [tableColumn]="dashCols" [sortList]="sortList"
-                   [listOfData]="data" [fromSearch]="false"
+                   [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
                    (dbClickItem)="openFacItem($event)"
                    (resizeChange)="resizeTable($event)"
                    (updateFavStatus)="valueFavChange($event)"
@@ -24,8 +24,8 @@
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
         <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
-                   [rows]="50" [totalRecords]="dataCounter"
-                   [tableColumn]="dashCols" [sortList]="sortList"
+                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
+                   [tableColumn]="dashCols" [sortList]="sortList" [filterModeFront]="false"
                    [listOfData]="filterAssign()"
                    [fromSearch]="false"
                    (loadMore)="loadMore($event)"

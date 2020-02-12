@@ -112,7 +112,7 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.applyFirstFilters();
+
   }
 
   getItems() {
@@ -280,20 +280,14 @@ export class TableComponent implements OnInit {
     }
   }
 
-  applyFirstFilters() {
-    _.forEach(this.tableColumn, col => {
-      if (!_.isEmpty(_.trim(col.filterCriteria)))
-        this.FilterData =  _.merge({}, this.FilterData, {[col.field]: col.filterCriteria}) ;
-    })
-  }
-
   filter(key: string, value, colId) {
-    if (value) {
-      this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
-    } else {
-      this.FilterData =  _.omit(this.FilterData, [key]);
-    }
-    if (!this.filterModeFront) {
+     if (this.filterModeFront) {
+       if (value) {
+         this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
+       } else {
+         this.FilterData =  _.omit(this.FilterData, [key]);
+       }
+     } else {
       this.filterData.emit({filteredValue: value, colId});
     }
   }

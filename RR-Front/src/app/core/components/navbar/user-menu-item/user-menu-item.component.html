@@ -7,70 +7,9 @@
 
 <ng-template #userPopoverContent>
   <div class="tabs-popover-content">
-
-    <div>
-<!--      <span class="user-config-title">General Settings</span>-->
-      <div>
-<!--        <div class="user-config-item">
-          <span>Search Target :</span>
-          <nz-select class="dropdown-default"
-                     style="width: 150px;"
-                     [ngModel]="searchTarget"
-                     (ngModelChange)="changeSearch()"
-                     nzShowSearch>
-            <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
-            <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
-          </nz-select>
-        </div>-->
-      </div>
-    </div>
-
     <div class="user-config-footer">
       <button (click)="navigateToUserPreference()" class="a-button-text">GENERAL SETTINGS</button>
     </div>
-
   </div>
-
-<!--  <ng-template #userPrefHeaderContent>
-    <span style="width: 5px">User Preferences &nbsp;
-      &lt;!&ndash;<span class="badge badge-light tab-badge">12</span>&ndash;&gt;
-    </span>
-  </ng-template>-->
 </ng-template>
-
-
-<!--nz-modal
-  [(nzVisible)]="isVisible"
-  [nzTitle]="preferencesConfig"
-  (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleOk()"
-  [nzOkLoading]="isOkLoading"
->
-  <div nz-row>
-    <div nz-col nzSpan="12">
-      Default Import
-    </div>
-    <div nz-col nzSpan="12">
-      <nz-select
-        style="width: 200px;"
-        nzShowSearch
-        nzAllowClear
-        class="dropdown-default"
-        nzPlaceHolder="Select an import"
-        [(ngModel)]="defaultImport"
-      >
-        <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
-        <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
-        <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
-      </nz-select>
-    </div>
-  </div>
-</nz-modal>-->
-
-
-<!--<ng-template #preferencesConfig>
-  <span>
-    <i class="icon-settings_24px"></i> User Preferences
-  </span>
-</ng-template>-->
 

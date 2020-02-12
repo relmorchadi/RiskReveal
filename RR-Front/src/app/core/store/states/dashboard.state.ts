@@ -96,8 +96,8 @@ export class DashboardState implements NgxsOnInit {
             pageSize: 50,
             selectionList: '',
             sortSelectedAction: '',
-            sortSelectedFirst: true,
-            userCode: "1",
+            sortSelectedFirst: false,
+            userCode: "DEV",
             userDashboardWidgetId: identifier
         };
 

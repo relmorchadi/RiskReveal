@@ -128,7 +128,11 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   filterData($event) {
-    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue).subscribe();
+    const carStatus = this.carStatus[this.widgetId];
+    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
+        .subscribe(() => {}, () => {}, () => {
+          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}))
+        });
   }
 
   resizeTable($event) {

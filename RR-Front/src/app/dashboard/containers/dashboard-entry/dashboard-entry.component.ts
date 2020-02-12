@@ -382,7 +382,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   focusInput() {
     // this.assetInput;
     setTimeout(dt => {
-      console.log(this.searchInput);
       this.searchInput.nativeElement.focus();
     })
   }
@@ -392,7 +391,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (!_.isEmpty(_.trim(item.dashboardName))) {
       this.createNewDashboardAction(item);
       this.emptyField();
-      /*.pipe(first()).subscribe(()=>{},()=>{},()=>{});*/
     } else {
       this.notificationService.createNotification('Information',
           'An Error Occurred While Creating a New Dashboard Please Verify the name isn\'t Empty before creating a New Dashboard',

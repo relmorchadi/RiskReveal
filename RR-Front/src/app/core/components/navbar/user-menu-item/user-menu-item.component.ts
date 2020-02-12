@@ -41,15 +41,6 @@ export class UserMenuItemComponent implements OnInit {
     });
   }
 
-  handleOk(): void {
-    localStorage.setItem('importConfig', this.defaultImport);
-    this.isVisible = false;
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
-  }
-
   navigateToUserPreference() {
     this.router.navigateByUrl(`/userPreference`);
     this.visible = false;
