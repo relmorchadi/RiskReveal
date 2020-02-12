@@ -12,7 +12,7 @@ export class AuthenticationApi {
     }
 
     Authentication() {
-        return this.http.get(`${this.URL}login`);
+        return this.http.get(`${this.URL}login`, {withCredentials: true});
     }
 
 }

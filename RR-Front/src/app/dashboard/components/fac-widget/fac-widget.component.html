@@ -8,33 +8,33 @@
     class="tabs-standard-top">
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true"
+        <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
+                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
                    [tableColumn]="dashCols" [sortList]="sortList"
-                   [listOfData]="data"
-                   [virtualScroll]="false" [fromSearch]="false"
+                   [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
                    (dbClickItem)="openFacItem($event)"
                    (resizeChange)="resizeTable($event)"
                    (updateFavStatus)="valueFavChange($event)"
                    (filterData)="filterData($event)"
                    (sortDataChange)="sortChange($event)"
-                   [sortData]="globalSort"
-                   [totalRecords]="data?.length">
+                   [sortData]="globalSort">
         </app-table>
       </div>
     </nz-tab>
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true"
-                   [tableColumn]="dashCols" [sortList]="sortList"
+        <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
+                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
+                   [tableColumn]="dashCols" [sortList]="sortList" [filterModeFront]="false"
                    [listOfData]="filterAssign()"
-                   [virtualScroll]="false" [fromSearch]="false"
+                   [fromSearch]="false"
+                   (loadMore)="loadMore($event)"
                    (dbClickItem)="openFacItem($event)"
                    (resizeChange)="resizeTable($event)"
                    (updateFavStatus)="valueFavChange($event)"
                    (filterData)="filterData($event)"
                    (sortDataChange)="sortChange($event)"
-                   [sortData]="globalSort"
-                   [totalRecords]="data?.length">
+                   [sortData]="globalSort">
         </app-table>
       </div>
     </nz-tab>
@@ -43,16 +43,17 @@
 
 <ng-container *ngIf="widgetId === 1">
   <div class="renewal-contract-table">
-    <app-table [sortable]="true"
-               [tableColumn]="dashCols" [sortList]="sortList"
-               [listOfData]="data" [fromSearch]="false"
-               [virtualScroll]="false" [filterModeFront]="false"
+    <app-table [sortable]="true" [virtualScroll]="dataCounter > 50"
+               [rows]="50" [totalRecords]="dataCounter"
+               [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
+               [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
+               (loadMore)="loadMore($event)"
                (sortDataChange)="sortChange($event)"
                (resizeChange)="resizeTable($event)"
                (dbClickItem)="openFacItem($event)"
                (updateFavStatus)="valueFavChange($event)"
                [sortData]="globalSort" (filterData)="filterData($event)"
-               [totalRecords]="data?.length">
+               >
     </app-table>
   </div>
 </ng-container>

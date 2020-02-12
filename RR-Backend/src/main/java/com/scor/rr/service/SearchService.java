@@ -425,7 +425,7 @@ public class SearchService {
     private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
         return resultList.stream().map(
                 (r) ->
-                        new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
+                new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
         ).collect(Collectors.toList());
     }
 

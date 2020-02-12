@@ -18,14 +18,8 @@ export class AuthGuard implements CanActivate {
 
     canActivate() {
         const token = localStorage.getItem('token');
-
-        if (token !== null) {
-            const claims:any = this.jwtHelper.decodeToken(token);
-            return true;
-        } else {
-            console.log(token);
-            this.store.dispatch(new AuthenticationAction());
-            return true;
-        }
+        const claims:any = this.jwtHelper.decodeToken(token);
+        this.store.dispatch(new AuthenticationAction());
+        return true;
     }
 }

@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
-import {GeneralConfigState} from '../../../core/store/states';
+import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
@@ -8,13 +8,16 @@ import {WsApi} from '../../../workspace/services/api/workspace.api';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
 import {forkJoin} from "rxjs";
 import * as moment from "moment";
+import {BaseContainer} from "../../../shared/base";
+import {Router} from "@angular/router";
+import * as fromHD from "../../../core/store/actions";
 
 @Component({
   selector: 'app-fac-widget',
   templateUrl: './fac-widget.component.html',
   styleUrls: ['./fac-widget.component.scss']
 })
-export class FacWidgetComponent implements OnInit {
+export class FacWidgetComponent extends BaseContainer implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -28,7 +31,10 @@ export class FacWidgetComponent implements OnInit {
   @Input()
   dashboard: any;
 
-  carStatus = ['Archived', 'Completed', 'Canceled'];
+  @Select(DashboardState.getFacData)facData$;
+  @Select(DashboardState.getDataCounter)dataCounter$;
+
+  carStatus = {"1": 'NEW', "2": 'In Progress', "3": 'Archived'};
 
   identifier: number;
   itemName: any;
@@ -40,7 +46,8 @@ export class FacWidgetComponent implements OnInit {
   tabIndex = 1;
 
   data: any = [];
-  dataCounter = 0;
+  dataCounter = {};
+  loading = false;
 
   filters = {};
   newSort = {};
@@ -49,7 +56,8 @@ export class FacWidgetComponent implements OnInit {
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef, private dashboardAPI: DashboardApi,
-              private wsApi: WsApi) {
+              private wsApi: WsApi, _baseRouter: Router, _baseCdr: ChangeDetectorRef, _baseStore: Store) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
@@ -59,8 +67,19 @@ export class FacWidgetComponent implements OnInit {
     this.itemName = this.itemWidget.name;
     this.dashCols = this.itemWidget.columns;
 
-    this.loadFacData();
+    this.loadFacData(1);
     this.sortFirstUpdate();
+
+    this.facData$.pipe().subscribe(value => {
+      this.data = _.get(value, `${this.identifier}`, []);
+      this.detectChanges();
+    });
+
+    this.dataCounter$.pipe().subscribe(value => {
+      this.dataCounter = _.get(value, `${this.identifier}`, 0);
+      console.log(value, this.dataCounter);
+      this.detectChanges();
+    });
   }
 
   selectTab(index) {
@@ -109,7 +128,11 @@ export class FacWidgetComponent implements OnInit {
   }
 
   filterData($event) {
-    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue).subscribe();
+    const carStatus = this.carStatus[this.widgetId];
+    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
+        .subscribe(() => {}, () => {}, () => {
+          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}))
+        });
   }
 
   resizeTable($event) {
@@ -152,36 +175,16 @@ export class FacWidgetComponent implements OnInit {
     this.editName = true;
   }
 
-  loadFacData() {
-    const dataParams = {
-      entity: 1,
-      pageNumber: 1,
-      pageSize: 50,
-      selectionList: '',
-      sortSelectedAction: '',
-      sortSelectedFirst: true,
-      userCode: "1",
-      userDashboardWidgetId: this.identifier
-    };
+  loadFacData(pageNumber) {
+    this.loading = true;
+    const carStatus = this.carStatus[this.widgetId];
+    this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+        .subscribe(() => {}, ()=> {}, () => {
+      this.loading = false;
+    })
+  }
 
-    if (this.widgetId === 3 ) {
-      return forkJoin(
-          this.carStatus.map(item => this.dashboardAPI.getFacDashboardResources({...dataParams, carStatus: item}))
-      ).subscribe((data:any) => {
-        // console.log(data);
-        data.map(item => {
-          this.data = [...this.data, item.content];
-          this.dataCounter = this.dataCounter + item.refCount;
-        })
-
-      })
-    } else {
-      return this.dashboardAPI.getFacDashboardResources({...dataParams, carStatus: this.widgetId === 1 ? 'NEW' : 'In Progress'})
-          .subscribe( data => {
-        this.data = this._formatDate(data.content);
-        this.dataCounter = data.refCount;
-      })
-    }
+  loadMore(event) {
 
   }
 

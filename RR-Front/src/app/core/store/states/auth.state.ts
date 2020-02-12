@@ -32,6 +32,11 @@ export class AuthState implements NgxsOnInit {
         return state.jwtToken;
     }
 
+    @Selector()
+    static getUser(state: AuthModel) {
+        return state.fullName;
+    }
+
     @Action(fromHD.AuthenticationAction)
     authentication(ctx: StateContext<AuthModel>, {payload}: fromHD.AuthenticationAction) {
         console.log('dispatched');
