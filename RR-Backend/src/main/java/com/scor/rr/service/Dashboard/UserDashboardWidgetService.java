@@ -166,7 +166,7 @@ public class UserDashboardWidgetService {
         }
 
         if(request.getCarStatus().equals("Chart")){
-            request.setCarStatus("Completed','Superseded','Cancelled','Priced,'NEW','In Progress");
+            request.setCarStatus("Completed','Superseded','Cancelled','Priced','In Progress','NEW");
         }
 
         DashboardDataResponse response = new DashboardDataResponse();
