@@ -8,7 +8,7 @@ package com.scor.rr.domain.enums;
  */
 public enum AxisConformerMode {
 
-	REFERENCE("Reference"), FUNCTION("Function"), COPY("Copy"), UNKNOWN("Unknown");
+	Reference("Reference"), Function("Function"), Copy("Copy"), Unknown("Unknown");
 
 	private String code;
 

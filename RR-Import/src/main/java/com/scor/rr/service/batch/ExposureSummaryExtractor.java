@@ -1,12 +1,8 @@
 package com.scor.rr.service.batch;
 
-import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.enums.ExposureSummaryExtractType;
-import com.scor.rr.domain.model.ExposureSummaryExtractFile;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
-import com.scor.rr.domain.riskLink.RLPortfolio;
 import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.LocationLevelExposure;
@@ -24,14 +20,10 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 @Service
 @StepScope
@@ -134,7 +126,7 @@ public class ExposureSummaryExtractor {
                         String edmName = (String) edm.getKey(2);
 
                         List<String> portfolioAndConformedCurrencyList =
-                                entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getCurrency())
+                                entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getPortfolioType() + "~" + modelPortfolio.getCurrency())
                                         .collect(Collectors.toList());
 
                         //Note: add excludeRegionPerils (type varchar) into ModelPortfolio and RlPortfolioSelection.
@@ -188,116 +180,116 @@ public class ExposureSummaryExtractor {
                                                     query,
                                                     new RLExposureSummaryItemRowMapper(globalViewSummary));
 
-                                            allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems));
+                                            allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems, entry.getValue()));
 
                                             exposureViewDefinitions.stream()
                                                     .filter(derivedDefinition -> derivedDefinition.getBasedOnSummaryAlias().equalsIgnoreCase(exposureViewDefinition.getExposureSummaryAlias()))
-                                                    .forEach(derivedDefinition -> allRRExposureSummaries.addAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems)));
+                                                    .forEach(derivedDefinition -> allRRExposureSummaries.addAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems, entry.getValue())));
 
                                             allRLExposureSummaries.addAll(rlExposureSummaryItems);
                                         }
                                     });
 
-//                            log.info("Info: Start saving risk link exposure summaries");
-//                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
-//                            log.info("Info: Saving risk link exposure summaries has ended");
-
                             log.info("Info: Start saving risk reveal exposure summaries");
                             exposureSummaryDataRepository.saveAll(allRRExposureSummaries);
                             log.info("Info: Saving risk reveal exposure summaries has ended");
 
+                            log.info("Info: Start saving risk link exposure summaries");
+                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
+                            log.info("Info: Saving risk link exposure summaries has ended");
 
-                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
-                            String extractName = "RR_RL_GetEdmDetailSummary";
-                            entry.getValue().forEach(modelPortfolio -> {
 
-                                RLPortfolio rLPortfolio = rlPortfolioRepository.findByRlId(modelPortfolio.getPortfolioId());
-                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getRlId(), modelPortfolio.getDivision());
-                                if (f == null) {
-                                    log.error("Error while creating detail exposure file !");
-                                } else {
-                                    log.debug("Export to file: {}}", f.getAbsolutePath());
-                                    rmsService.extractDetailedExposure(f, edmId, edmName, instance, extractName, portfolioAndConformedCurrencyList, null, runId, rLPortfolio.getRlId(), rLPortfolio.getType());
+//                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
+//                            String extractName = "RR_RL_GetEdmDetailSummary";
+//                            entry.getValue().forEach(modelPortfolio -> {
+//
+//                                RLPortfolio rLPortfolio = rlPortfolioRepository.findByRlId(modelPortfolio.getPortfolioId());
+//                                File f = exposureWriter.makeDetailExposureFile(edmName, rLPortfolio.getRlId(), modelPortfolio.getDivision());
+//                                if (f == null) {
+//                                    log.error("Error while creating detail exposure file !");
+//                                } else {
+//                                    log.debug("Export to file: {}}", f.getAbsolutePath());
+//                                    rmsService.extractDetailedExposure(f, edmId, edmName, instance, extractName, portfolioAndConformedCurrencyList, null, runId, rLPortfolio.getRlId(), rLPortfolio.getType());
+//
+//                                    // dh modified
+//                                    byte[] buffer = new byte[1024];
+//                                    String zipPath = f.getParent();
+//                                    String zipfile = f.getName().replace("txt", "zip");
+//
+//                                    try {
+//                                        FileOutputStream fos = new FileOutputStream((zipPath + "/" + zipfile));
+//                                        ZipOutputStream zos = new ZipOutputStream(fos);
+//                                        ZipEntry ze = new ZipEntry(f.getName());
+//                                        zos.putNextEntry(ze);
+//                                        FileInputStream in = new FileInputStream(f.getAbsolutePath());
+//
+//                                        int len;
+//                                        while ((len = in.read(buffer)) > 0) {
+//                                            zos.write(buffer, 0, len);
+//                                        }
+//                                        f.delete();
+//                                        in.close();
+//                                        zos.closeEntry();
+//                                        zos.close();
+//                                    } catch (FileNotFoundException ex) {
+//                                        log.error("file was not found");
+//                                    } catch (IOException ex) {
+//                                        log.error("an io error has occurred");
+//                                    }
+//                                    log.debug("zip file name {}", zipfile);
+//                                    log.debug("zip file path {}", zipPath);
+//
+//                                    List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
+//                                    extractFiles.add(new ExposureSummaryExtractFile(new BinFile(zipfile, zipPath, null), "Detailed"));
+//                                    exposureWriter.writeExposureSummaryHeader(edmId, edmName, rLPortfolio, modelPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
+//                                }
+//
+//                                log.debug("Extract EDM Detail Summary completed");
+//
+//                                log.debug("Extract Location level Summary started");
+//
+//                                if (modelPortfolio.isImportLocationLevel()) {
+//
+//                                    List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
+//                                    for (String schema : locationLevelExposure.getAllExtractNames()) {
+//                                        String extractFileType = locationLevelExposure.getExtractFileType(schema);
+//                                        if (extractFileType == null) {
+//                                            log.error("Extract file type for {} not found !", schema);
+//                                            continue;
+//                                        }
+//                                        File file = null;
+//                                        if (rLPortfolio != null)
+//                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, rLPortfolio.getRlPortfolioAnalysisRegions(), modelPortfolio.getDivision());
+//                                        else
+//                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, null, modelPortfolio.getDivision());
+//
+//                                        if (file == null) {
+//                                            log.error("Error while creating location level exposure details file for {}!", schema);
+//                                        } else {
+//                                            String query = locationLevelExposure.getQuery(schema);
+//                                            if (query == null) {
+//                                                log.error("Query for {} not found !", schema);
+//                                                continue;
+//                                            }
+//                                            log.debug("Export to file: {}}", file.getAbsolutePath());
+//                                            //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
+//                                            // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
+//                                            // Pass them as parameters for this method.
+//                                            if (rmsService.extractLocationLevelExposureDetails(edmId, edmName, instance, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
+//                                                log.debug("==> success");
+//                                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
+//                                            } else {
+//                                                log.debug("==> failed");
+//                                            }
+//                                        }
+//                                    }
+//                                    if (!extractFiles.isEmpty()) {
+//                                        exposureWriter.writeExposureSummaryHeader(edmId, edmName, rLPortfolio, modelPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
+//                                    }
+//                                }
+//                            });
 
-                                    // dh modified
-                                    byte[] buffer = new byte[1024];
-                                    String zipPath = f.getParent();
-                                    String zipfile = f.getName().replace("txt", "zip");
-
-                                    try {
-                                        FileOutputStream fos = new FileOutputStream((zipPath + "/" + zipfile));
-                                        ZipOutputStream zos = new ZipOutputStream(fos);
-                                        ZipEntry ze = new ZipEntry(f.getName());
-                                        zos.putNextEntry(ze);
-                                        FileInputStream in = new FileInputStream(f.getAbsolutePath());
-
-                                        int len;
-                                        while ((len = in.read(buffer)) > 0) {
-                                            zos.write(buffer, 0, len);
-                                        }
-                                        f.delete();
-                                        in.close();
-                                        zos.closeEntry();
-                                        zos.close();
-                                    } catch (FileNotFoundException ex) {
-                                        log.error("file was not found");
-                                    } catch (IOException ex) {
-                                        log.error("an io error has occurred");
-                                    }
-                                    log.debug("zip file name {}", zipfile);
-                                    log.debug("zip file path {}", zipPath);
-
-                                    List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
-                                    extractFiles.add(new ExposureSummaryExtractFile(new BinFile(zipfile, zipPath, null), "Detailed"));
-                                    exposureWriter.writeExposureSummaryHeader(edmId, edmName, rLPortfolio, modelPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
-                                }
-
-                                log.debug("Extract EDM Detail Summary completed");
-
-                                log.debug("Extract Location level Summary started");
-
-                                if (modelPortfolio.isImportLocationLevel()) {
-
-                                    List<ExposureSummaryExtractFile> extractFiles = new ArrayList<>();
-                                    for (String schema : locationLevelExposure.getAllExtractNames()) {
-                                        String extractFileType = locationLevelExposure.getExtractFileType(schema);
-                                        if (extractFileType == null) {
-                                            log.error("Extract file type for {} not found !", schema);
-                                            continue;
-                                        }
-                                        File file = null;
-                                        if (rLPortfolio != null)
-                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, rLPortfolio.getRlPortfolioAnalysisRegions(), modelPortfolio.getDivision());
-                                        else
-                                            file = exposureWriter.makeLocLevelExposureFile(edmName, modelPortfolio.getPortfolioId(), extractFileType, null, modelPortfolio.getDivision());
-
-                                        if (file == null) {
-                                            log.error("Error while creating location level exposure details file for {}!", schema);
-                                        } else {
-                                            String query = locationLevelExposure.getQuery(schema);
-                                            if (query == null) {
-                                                log.error("Query for {} not found !", schema);
-                                                continue;
-                                            }
-                                            log.debug("Export to file: {}}", file.getAbsolutePath());
-                                            //Note: it's wrong. You must not query to RLExposureSummaryItem (configuration part)
-                                            // As you see, extractLocationLevelExposureDetails needs oly EDM ID, EDM name, Instance (that we are having)
-                                            // Pass them as parameters for this method.
-                                            if (rmsService.extractLocationLevelExposureDetails(edmId, edmName, instance, modelPortfolio.getProjectId(), rLPortfolio, modelPortfolio, file, schema, query)) {
-                                                log.debug("==> success");
-                                                extractFiles.add(new ExposureSummaryExtractFile(new BinFile(file), extractFileType));
-                                            } else {
-                                                log.debug("==> failed");
-                                            }
-                                        }
-                                    }
-                                    if (!extractFiles.isEmpty()) {
-                                        exposureWriter.writeExposureSummaryHeader(edmId, edmName, rLPortfolio, modelPortfolio, ExposureSummaryExtractType.DETAILED_EXPOSURE_SUMMARY, extractFiles);
-                                    }
-                                }
-                            });
-
-                            //rmsService.removeEDMPortfolioContext(instance, runId);
+                            rmsService.removeEDMPortfolioContext(instance, runId);
                         } else {
                             log.error("Error: runId is null");
                         }
@@ -317,7 +309,7 @@ public class ExposureSummaryExtractor {
 
     }
 
-    private List<ExposureSummaryData> transformSummary(ExposureViewDefinition exposureViewDefinition, List<RLExposureSummaryItem> rlExposureSummaryItems) {
+    private List<ExposureSummaryData> transformSummary(ExposureViewDefinition exposureViewDefinition, List<RLExposureSummaryItem> rlExposureSummaryItems, List<ModelPortfolioEntity> modelPortfolios) {
 
         Map<MultiKey, ExposureSummaryData> tempAggregate = new HashMap<>();
 
@@ -334,29 +326,35 @@ public class ExposureSummaryExtractor {
             exposureSummaryData.setConformedCurrencyUSDRate(rlExposureSummaryItem.getConformedCurrencyUSDRate());
             exposureSummaryData.setExposureCurrencyUSDRate(rlExposureSummaryItem.getExposureCurrencyUSDRate());
             exposureSummaryData.setRateDate(rlExposureSummaryItem.getRateDate());
-            exposureSummaryData.setPortfolioId(rlExposureSummaryItem.getPortfolioId());
+            exposureSummaryData.setSourcePortfolioId(rlExposureSummaryItem.getPortfolioId());
             exposureSummaryData.setPortfolioType(rlExposureSummaryItem.getPortfolioType());
+            exposureSummaryData.setEntity(1);
             exposureSummaryData.setFinancialPerspective(rlExposureSummaryItem.getFinancialPerspective());
             //
             if (StringUtils.equalsIgnoreCase(rlExposureSummaryItem.getPeril(), "Total")) {
                 exposureSummaryData.setPerilCode(rlExposureSummaryItem.getPeril());
                 exposureSummaryData.setRegionPerilCode("Unmapped");
-                //exposureSummaryData.setRegionPerilGroupCode("Unmapped");
+                exposureSummaryData.setRegionPerilGroupCode("Unmapped");
             } else {
                 RegionPerilEntity rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode(), rlExposureSummaryItem.getAdmin1Code(), rlExposureSummaryItem.getPeril());
-                if (rp == null) {
-                    rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode().toUpperCase(), "", rlExposureSummaryItem.getPeril().toUpperCase());
-                }
+//                if (rp == null) {
+//                    rp = regionPerilService.findRegionPerilByCountryCodeAdmin1CodePerilCode(rlExposureSummaryItem.getCountryCode().toUpperCase(), "", rlExposureSummaryItem.getPeril().toUpperCase());
+//                }
                 if (rp != null) {
                     exposureSummaryData.setPerilCode(rp.getPerilCode());
                     exposureSummaryData.setRegionPerilCode(rp.getRegionPerilCode());
-                    //exposureSummaryData.setRegionPerilGroupCode(rp.getRegionPerilGroupCode());
+                    exposureSummaryData.setRegionPerilGroupCode(rp.getRegionPerilGroupCode());
                 } else {
                     exposureSummaryData.setPerilCode(rlExposureSummaryItem.getPeril());
                     exposureSummaryData.setRegionPerilCode("Unmapped");
-                    //exposureSummaryData.setRegionPerilGroupCode("Unmapped");
+                    exposureSummaryData.setRegionPerilGroupCode("Unmapped");
                 }
             }
+
+            modelPortfolios.stream().filter(element -> element.getPortfolioId().equals(rlExposureSummaryItem.getPortfolioId()))
+                    .findFirst()
+                    .ifPresent(modelPortfolio -> exposureSummaryData.setModelPortfolioId(modelPortfolio.getModelPortfolioId()));
+
             exposureSummaryData.setLocationCount(rlExposureSummaryItem.getLocationCount());
             exposureSummaryData.setTiv(rlExposureSummaryItem.getTotalTiv());
             //
@@ -398,7 +396,7 @@ public class ExposureSummaryExtractor {
                 item.getExposureCurrency(),
                 item.getFinancialPerspective(),
                 item.getPerilCode(),
-                item.getPortfolioId(),
+                item.getSourcePortfolioId(),
                 item.getPortfolioType(),
                 item.getRegionPerilCode(),
                 item.getRegionPerilGroupCode()});
@@ -409,35 +407,35 @@ public class ExposureSummaryExtractor {
         Integer valueSortOrder = null;
 
         switch (axisConformerDefinition.getSourceAxis()) {
-            case DIMENSION1:
+            case Dimension1:
                 value = itemIn.getDimension1();
                 valueSortOrder = itemIn.getDimensionSort1();
                 break;
-            case DIMENSION2:
+            case Dimension2:
                 value = itemIn.getDimension2();
                 valueSortOrder = itemIn.getDimensionSort2();
                 break;
-            case DIMENSION3:
+            case Dimension3:
                 value = itemIn.getDimension3();
                 valueSortOrder = itemIn.getDimensionSort3();
                 break;
-            case DIMENSION4:
+            case Dimension4:
                 value = itemIn.getDimension4();
                 valueSortOrder = itemIn.getDimensionSort4();
                 break;
-            case COUNTRY:
+            case Country:
                 value = itemIn.getCountryCode();
                 break;
-            case ADMIN1CODE:
+            case Admin1Code:
                 value = itemIn.getAdmin1Code();
                 break;
-            case EXPOSURECURRENCY:
+            case ExposureCurrency:
                 value = itemIn.getExposureCurrency();
                 break;
-            case CONFORMEDCURRENCY:
+            case ConformedCurrency:
                 value = itemIn.getConformedCurrency();
                 break;
-            case REGIONPERIL:
+            case RegionPeril:
                 // necessary for TreeMap...
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
@@ -454,16 +452,16 @@ public class ExposureSummaryExtractor {
                 }
                 //log.warn("RegionPeril axis cannot be used as a source", acd);
                 break;
-            case PERIL:
+            case Peril:
                 value = itemIn.getPeril();
                 break;
-            case FINANCIALPERSPECTIVE:
+            case FinancialPerspective:
                 value = itemIn.getFinancialPerspective();
                 break;
-            case ANALYSISREGION:
+            case AnalysisRegion:
                 value = itemIn.getAnalysisRegionCode();
                 break;
-            case REGIONPERILGROUP:
+            case RegionPerilGroup:
                 // necessary for TreeMap...
                 if (StringUtils.equalsIgnoreCase(itemIn.getPeril(), "Total")) {
                     value = "Unmapped";
@@ -480,7 +478,7 @@ public class ExposureSummaryExtractor {
                 }
                 //log.warn("RegionPeril axis cannot be used as a source", acd);
                 break;
-            case UNDEFINED:
+            case Undefined:
                 break;
             default:
                 log.warn("unknown axis name '{}'", ToStringBuilder.reflectionToString(axisConformerDefinition));
@@ -488,7 +486,7 @@ public class ExposureSummaryExtractor {
         }
 
         switch (axisConformerDefinition.getAxisConformerMode()) {
-            case REFERENCE:
+            case Reference:
                 /*
                  * TODO : ponder a way to propagate the sourceSystem/vendor/version from
                  * the up layer
@@ -504,12 +502,12 @@ public class ExposureSummaryExtractor {
                     log.trace("ExposureSummaryConformerReference not found for tuple '{}':'{}':'{}':'{}':'{}'", "RMS", "RISKLINK", "", axisConformerDefinition.getAxisConformerAlias(), value);
                 }
                 break;
-            case FUNCTION:
+            case Function:
                 RLModelDataSource rlModelDataSource = rlModelDataSourceRepository.findById(itemIn.getGlobalViewSummary().getEdmId()).orElse(null);
                 if (rlModelDataSource != null)
                     value = resolveFunctionalMapping(axisConformerDefinition.getAxisConformerAlias(), Long.valueOf(rlModelDataSource.getRlId()), itemIn);
                 break;
-            case COPY:
+            case Copy:
                 // do nothing to alter buffer value, this is a copy after all :) (y) ;)
                 break;
             default:
@@ -517,50 +515,50 @@ public class ExposureSummaryExtractor {
         }
 
         switch (axisConformerDefinition.getTargetAxis()) {
-            case DIMENSION1:
+            case Dimension1:
                 itemOut.setDimension1(value);
                 itemOut.setDimensionSort1(valueSortOrder);
                 break;
-            case DIMENSION2:
+            case Dimension2:
                 itemOut.setDimension2(value);
                 itemOut.setDimensionSort2(valueSortOrder);
                 break;
-            case DIMENSION3:
+            case Dimension3:
                 itemOut.setDimension3(value);
                 itemOut.setDimensionSort3(valueSortOrder);
                 break;
-            case DIMENSION4:
+            case Dimension4:
                 itemOut.setDimension4(value);
                 itemOut.setDimensionSort4(valueSortOrder);
                 break;
-            case COUNTRY:
+            case Country:
                 itemOut.setCountryCode(value);
                 break;
-            case ADMIN1CODE:
+            case Admin1Code:
                 itemOut.setAdmin1Code(value);
                 break;
-            case EXPOSURECURRENCY:
+            case ExposureCurrency:
                 itemOut.setExposureCurrency(value);
                 break;
-            case CONFORMEDCURRENCY:
+            case ConformedCurrency:
                 itemOut.setConformedCurrency(value);
                 break;
-            case REGIONPERIL:
+            case RegionPeril:
                 itemOut.setRegionPerilCode(value);
                 break;
-            case PERIL:
+            case Peril:
                 itemOut.setPerilCode(value);
                 break;
-            case FINANCIALPERSPECTIVE:
+            case FinancialPerspective:
                 itemOut.setFinancialPerspective(value);
                 break;
-            case ANALYSISREGION:
+            case AnalysisRegion:
                 itemOut.setAnalysisRegionCode(value);
                 break;
-            case REGIONPERILGROUP:
+            case RegionPerilGroup:
                 itemOut.setRegionPerilGroupCode(value);
                 break;
-            case UNDEFINED:
+            case Undefined:
                 break;
             default:
                 log.warn("unknown axis name '{}'", axisConformerDefinition);

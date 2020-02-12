@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ZZ_RegionPerilMapping")
+@Table(name = "RegionPerilMapping")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
