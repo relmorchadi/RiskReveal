@@ -12,6 +12,7 @@ export interface Column {
   sortType: string;
   columnName: string;
   dataColumnType: string;
+  dataDisplayType: string;
   displayType: string;
   filterCriteria: string;
 }

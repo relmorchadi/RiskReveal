@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 })
 export class SyncScrollDirective implements AfterViewInit,AfterViewChecked, OnDestroy, OnChanges {
 
-  @Input() frozenColumns;
+  @Input() classIdentifier;
 
   listener: any[];
 
@@ -30,7 +30,8 @@ export class SyncScrollDirective implements AfterViewInit,AfterViewChecked, OnDe
 
     this.syncScroll(this.frozen, this.unfrozen);*/
 
-    const nodes = this.el.nativeElement.querySelectorAll(".ui-table-scrollable-body");
+    const nodes = this.el.nativeElement.querySelectorAll( `${this.classIdentifier ? '.'+this.classIdentifier : ''} .ui-table-scrollable-body`);
+    console.log(nodes, this.classIdentifier);
 
     if( nodes.length == 2 ) {
 

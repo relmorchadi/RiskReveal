@@ -22,7 +22,6 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
   _handler: TableHandlerInterface;
 
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
-    console.log("init")
     this._injectors = {
       'plt-manager': ({
         api: this.injector.get<TableServiceImp>(TableServiceImp),
@@ -84,10 +83,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
     this.containerWidth = this.container.nativeElement.clientWidth;
   }
 
-  initCustom() {
-    this._handler.init({
-      containerWidth: this.containerWidth
-    })
+  onContainerResize({newWidth, oldWidth}) {
+    if(newWidth != oldWidth) this._handler.onContainerResize(newWidth);
   }
 
 }
