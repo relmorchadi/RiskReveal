@@ -4,7 +4,7 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError} from 'rxjs/operators';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 @Injectable()
@@ -29,6 +29,7 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   _data: any[];
   data$: BehaviorSubject<any[]>;
+  _request: any;
 
   protected containerWidth: number;
 
@@ -63,6 +64,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   initTable(request: FetchViewContextDataRequest) {
+    this._request = request;
     forkJoin(
         this.loadColumns(),
         this.loadData(request)
@@ -83,7 +85,12 @@ export class TableHandlerImp implements TableHandlerInterface {
     //call API
     //Mocking API behavior
 
-    of([1])
+    const col =
+
+    this._api.updateColumnWidth(this._request)
+        .pipe(
+            mergeMap( () => this.reloadColumns())
+        )
         .subscribe(
             () => {
               //On Success
@@ -124,7 +131,6 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   private updateTotalColumnWidth(columns) {
     const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.width, 1);
-    console.log(totalWidth, this.containerWidth);
     this._totalColumnWidth = totalWidth > this.containerWidth ? this.containerWidth : totalWidth;
     this.totalColumnWidth$.next(this._totalColumnWidth);
   }
@@ -140,9 +146,12 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onContainerResize(newWidth) {
-    console.log("onContainerResize")
     this.containerWidth = newWidth;
     this.updateTotalColumnWidth(this._columns);
+  }
+
+  private reloadColumns() {
+    return this.loadColumns()
   }
 
 }

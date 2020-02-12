@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.dto.UpdateColumnWidthRequest;
 import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.entities.Tag;
@@ -8,6 +9,7 @@ import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
+import com.scor.rr.domain.entities.ViewContextColumns;
 import com.scor.rr.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.procedure.ProcedureOutputs;
@@ -41,6 +43,8 @@ public class PltBrowserService {
     TagRepository tagRepository;
     @Autowired
     PLTHeaderTagRepository pltHeaderTagRepository;
+    @Autowired
+    ViewContextColumnsRepository viewContextColumnsRepository;
     @Autowired
     EntityManager entityManager;
 
@@ -102,6 +106,24 @@ public class PltBrowserService {
             log.error("Couldn't Get PLT Manager Columns with message: {}", ex.getMessage());
         }
         return null;
+    }
+
+    public void updateColumnWidth(UpdateColumnWidthRequest request) {
+        Optional<ViewContextColumns> opt = this.viewContextColumnsRepository.findById(request.getViewContextColumnId());
+        Integer newWidth;
+        if(opt.isPresent()) {
+            ViewContextColumns column = opt.get();
+
+            if(column.getMaxWidth() < request.getWidth()) {
+                newWidth = column.getMaxWidth();
+            } else if(column.getMinWidth() > request.getWidth()) {
+                newWidth = column.getMinWidth();
+            } else {
+                newWidth = request.getWidth();
+            }
+
+            this.viewContextColumnsRepository.updateColumnWidth("A798", request.getViewContextColumnId(), newWidth);
+        } else throw new RuntimeException("Column doesn't exist");
     }
 
     Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {

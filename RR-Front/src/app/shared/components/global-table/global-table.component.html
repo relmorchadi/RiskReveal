@@ -1,10 +1,11 @@
 <div class="parent" style="width: 100%;" (resized)="onContainerResize($event)" #tableContainer>
   <div [style.width]="totalColumnWidth + 'px'">
     <p-table
+            dataKey="pltId"
             [value]="data"
             [columns]="columns"
             [scrollable]="true"
-            scrollHeight="200px"
+            scrollHeight="350px"
             [resizableColumns]="true"
             columnResizeMode="expand"
             (onColResize)="onColumnResize($event)"
@@ -16,10 +17,10 @@
       </ng-template>
       <ng-template pTemplate="header" let-cols>
         <tr>
-          <th [attr.id]="i" *ngFor="let col of cols;let i= index;" pResizableColumn>
+          <th [attr.id]="i" *ngFor="let col of cols;let i= index;" pResizableColumn [pResizableColumnDisabled]="!col?.isResizable">
             <span style="display:flex;justify-content: space-between;">
                 {{col?.displayName}}
-                <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+                <ng-container [ngSwitch]="col?.sortType">
                   <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
                   <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
                   <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
