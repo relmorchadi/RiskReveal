@@ -43,6 +43,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   init(attrs) {
+    console.log(attrs);
     _.forEach(attrs, (v, k) => {
       this[k] = v;
     })
@@ -67,7 +68,10 @@ export class TableHandlerImp implements TableHandlerInterface {
         this.loadData(request)
     ).subscribe( ([columns, data]: any) => {
       const {totalCount, plts} = data;
-
+      console.log({
+        plts,
+        columns
+      });
       this.updateColumns(columns);
       this.updateTotalColumnWidth(columns);
       this.updateData(plts);
@@ -120,6 +124,7 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   private updateTotalColumnWidth(columns) {
     const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.width, 1);
+    console.log(totalWidth, this.containerWidth);
     this._totalColumnWidth = totalWidth > this.containerWidth ? this.containerWidth : totalWidth;
     this.totalColumnWidth$.next(this._totalColumnWidth);
   }
@@ -132,6 +137,12 @@ export class TableHandlerImp implements TableHandlerInterface {
   private updateAvailableColumns(c) {
     this._availableColumns = c;
     this.availableColumns$.next(c);
+  }
+
+  onContainerResize(newWidth) {
+    console.log("onContainerResize")
+    this.containerWidth = newWidth;
+    this.updateTotalColumnWidth(this._columns);
   }
 
 }

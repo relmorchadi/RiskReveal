@@ -1,4 +1,4 @@
-<div class="parent" #tableContainer>
+<div class="parent" style="width: 100%;" (resized)="onContainerResize($event)" #tableContainer>
   <div [style.width]="totalColumnWidth + 'px'">
     <p-table
             [value]="data"
@@ -11,22 +11,38 @@
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col *ngFor="let col of columns" [style.width]="col.defaultWidth + 'px'">
+          <col *ngFor="let col of columns" [style.width]="col.width + 'px'">
         </colgroup>
       </ng-template>
       <ng-template pTemplate="header" let-cols>
         <tr>
-          <th [attr.id]="i" *ngFor="let col of cols;let i= index;" pResizableColumn [pResizableColumnDisabled]="!col.isResizable">
-            {{col.displayName}}
+          <th [attr.id]="i" *ngFor="let col of cols;let i= index;" pResizableColumn>
+            <span style="display:flex;justify-content: space-between;">
+                {{col?.displayName}}
+                <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+                  <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
+                  <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
+                  <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
+                </ng-container>
+              </span>
+            <span class="ui-column-resizer" style="cursor: default !important;"></span>
           </th>
+        </tr>
+        <tr>
+          <ng-container *ngFor="let col of cols;let i=index;">
+            <th class="filter-head" [ngClass]="{'icon-header': col?.icon}">
+              <app-input [visible]="true" (onInput)="filter(col?.columnName, $event)" [value]="col?.filterCriteria"></app-input>
+              <span class="ui-column-resizer" style="cursor: default !important;"></span>
+            </th>
+          </ng-container>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-row let-cols="columns">
         <tr>
           <td *ngFor="let col of cols">
-            <ng-container *ngIf="col.displayType == 'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-            <ng-container *ngIf="col.displayType == 'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-            <ng-container *ngIf="col.displayType == 'text'" [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+            <!--<ng-container *ngIf="col.displayType == 'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>-->
+            <!--<ng-container *ngIf="col.displayType == 'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>-->
+            <ng-container [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
           </td>
         </tr>
       </ng-template>
@@ -48,6 +64,6 @@
 
 <ng-template #text let-data>
     <span style="display: block;font-size: 12px;font-weight: 400;">
-        {{data}}
+        <div class="text-ellipsis">{{data}}</div>
     </span>
 </ng-template>
