@@ -20,6 +20,6 @@ export const calibrationUrl: () => string = () => {
 
 export const proxyUrl: () => string = () => {
   const {hostname} = window.location;
-  return environment.production ? `http://${hostname}:9280/risk-reveal-proxy/api/`
+  return environment.production ? `http://${hostname}:9180/risk-reveal-proxy/api/login`
       : environment.PROXY_URI;
 };
