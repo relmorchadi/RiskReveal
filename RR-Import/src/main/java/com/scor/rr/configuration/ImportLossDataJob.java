@@ -334,7 +334,7 @@ public class ImportLossDataJob {
     @Bean(value = "importLossDataFac")
     public Job getImportLossDataFac(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder
-                //.next(extractExposureSummaryStep())
+                .next(extractExposureSummaryStep())
                 .next(extractAccStep())
                 .next(extractLocStep())
                 .next(extractLocFWStep())
@@ -346,7 +346,7 @@ public class ImportLossDataJob {
     @Bean(value = "importLossData")
     public Job getImportLossData(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder
-                //.next(extractExposureSummaryStep())
+                .next(extractExposureSummaryStep())
                 .next(projectImportRunStatusChangeStep())
                 .build();
     }

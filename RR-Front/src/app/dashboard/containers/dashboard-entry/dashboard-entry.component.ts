@@ -69,12 +69,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dispatch([new LoadReferenceWidget(), new fromHD.LoadDashboardFacDataAction()]);
-    this.facData$.pipe().subscribe(value => {
-      this.newFacCars = this.dataParam(_.get(value, 'new', []));
-      this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
-      this.archivedFacCars = this.dataParam(_.get(value, 'archived', []));
-    });
+    this.dispatch([new LoadReferenceWidget()]);
 
     this.refWidget$.pipe().subscribe( value => {
       this.refWidget = value;

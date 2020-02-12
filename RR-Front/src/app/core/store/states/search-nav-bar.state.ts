@@ -172,6 +172,7 @@ export class SearchNavBarState implements NgxsOnInit {
     const {keyword, searchMode} = payload;
     let expression: any = keyword;
     const state = ctx.getState();
+
     const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
     const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
     const searchShortCut = searchMode === 'Treaty' ? treatyShortcuts : facShortcuts;

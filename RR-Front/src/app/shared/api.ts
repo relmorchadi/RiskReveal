@@ -12,14 +12,14 @@ export const importUrl: () => string = () => {
     : environment.IMPORT_URI;
 };
 
-export const utilityBackEndUrl: () => any = () => {
-  return {
-    calibration: `http://localhost:8082/api/`
-  }
-};
-
 export const calibrationUrl: () => string = () => {
   const {hostname} = window.location;
   return environment.production ? `http://${hostname}:8980/risk-reveal-adjustment/api/`
     : environment.CALIBRATION_URI;
+};
+
+export const proxyUrl: () => string = () => {
+  const {hostname} = window.location;
+  return environment.production ? ``
+      : environment.PROXY_URI;
 };

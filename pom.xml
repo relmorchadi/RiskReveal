@@ -19,7 +19,7 @@
 
     <modules>
         <module>RR-Common</module>
-        <module>RR-Front</module>
+<!--        <module>RR-Front</module>-->
         <module>RR-Backend</module>
         <module>RR-Import</module>
         <module>RR-Proxy</module>

@@ -6,6 +6,8 @@ import {Select, Store} from '@ngxs/store';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/api/workspace.api';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
+import {forkJoin} from "rxjs";
+import * as moment from "moment";
 
 @Component({
   selector: 'app-fac-widget',
@@ -25,8 +27,8 @@ export class FacWidgetComponent implements OnInit {
   itemWidget: any;
   @Input()
   dashboard: any;
-  @Input()
-  data: any;
+
+  carStatus = ['Archived', 'Completed', 'Canceled'];
 
   identifier: number;
   itemName: any;
@@ -36,6 +38,10 @@ export class FacWidgetComponent implements OnInit {
   newDashboard: any;
   editName = false;
   tabIndex = 1;
+
+  data: any = [];
+  dataCounter = 0;
+
   filters = {};
   newSort = {};
   sortList = [];
@@ -53,6 +59,7 @@ export class FacWidgetComponent implements OnInit {
     this.itemName = this.itemWidget.name;
     this.dashCols = this.itemWidget.columns;
 
+    this.loadFacData();
     this.sortFirstUpdate();
   }
 
@@ -143,6 +150,47 @@ export class FacWidgetComponent implements OnInit {
 
   activeEdit() {
     this.editName = true;
+  }
+
+  loadFacData() {
+    const dataParams = {
+      entity: 1,
+      pageNumber: 1,
+      pageSize: 50,
+      selectionList: '',
+      sortSelectedAction: '',
+      sortSelectedFirst: true,
+      userCode: "1",
+      userDashboardWidgetId: this.identifier
+    };
+
+    if (this.widgetId === 3 ) {
+      return forkJoin(
+          this.carStatus.map(item => this.dashboardAPI.getFacDashboardResources({...dataParams, carStatus: item}))
+      ).subscribe((data:any) => {
+        // console.log(data);
+        data.map(item => {
+          this.data = [...this.data, item.content];
+          this.dataCounter = this.dataCounter + item.refCount;
+        })
+
+      })
+    } else {
+      return this.dashboardAPI.getFacDashboardResources({...dataParams, carStatus: this.widgetId === 1 ? 'NEW' : 'In Progress'})
+          .subscribe( data => {
+        this.data = this._formatDate(data.content);
+        this.dataCounter = data.refCount;
+      })
+    }
+
+  }
+
+  private _formatDate(data) {
+    return _.map(data, item => {
+      const formatCDate = moment(item.creationDate).format('DD-MM-YYYY');
+      const formatLDate = moment(item.lastUpdateDate).format('DD-MM-YYYY');
+      return {...item, creationDate: formatCDate, lastUpdateDate: formatLDate}
+    })
   }
 
   detectChanges() {
