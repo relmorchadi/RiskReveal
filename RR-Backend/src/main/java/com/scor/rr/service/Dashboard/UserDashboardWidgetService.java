@@ -1,8 +1,10 @@
 package com.scor.rr.service.Dashboard;
 
 import com.google.gson.Gson;
+import com.scor.rr.domain.Response.DashboardChartResponse;
 import com.scor.rr.domain.Response.DashboardDataResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
+import com.scor.rr.domain.dto.DashboardChartData;
 import com.scor.rr.domain.dto.DashboardRequest;
 import com.scor.rr.domain.entities.Dashboard.*;
 import com.scor.rr.domain.entities.DashboardView;
@@ -25,6 +27,7 @@ import javax.persistence.StoredProcedureQuery;
 import javax.transaction.Transactional;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -157,6 +160,15 @@ public class UserDashboardWidgetService {
 
     public DashboardDataResponse getDataForWidget(DashboardRequest request){
 
+        if(request.getCarStatus().equals("Archived")){
+            //might need to add one more
+            request.setCarStatus("Completed','Superseded','Cancelled','Priced");
+        }
+
+        if(request.getCarStatus().equals("Chart")){
+            request.setCarStatus("Completed','Superseded','Cancelled','Priced,'NEW','In Progress");
+        }
+
         DashboardDataResponse response = new DashboardDataResponse();
         postConst();
         response.setRefCount(getTotalCount(request));
@@ -192,5 +204,50 @@ public class UserDashboardWidgetService {
         return (int) fetchDataSource.getOutputParameterValue("FilteredRecCount");
 
 
-    }
-}
+    }}
+
+//    public List<DashboardChartResponse>  getChartData(Date from, Date to){
+//        List<Map<String,Object>>data = userDashboardWidgetRepository.getDataForChart(from,to);
+//        List<DashboardChartResponse> response = new ArrayList<>();
+//        String assignedName = " ";
+//        int counter = 0 ;
+//        if(data != null){
+//            DashboardChartResponse res = new DashboardChartResponse();
+//            for(Map<String,Object> line : data){
+//            for (Map.Entry<String, Object> entry : line.entrySet()) {
+//
+//                if(!assignedName.equals(line.getAssignedAnalyst()) && counter != 0){
+//                    response.add(res);
+//                    res = new DashboardChartResponse();
+//                }
+//                    assignedName = line.getAssignedAnalyst();
+//                    res.setAssignedAnalyst(line.getAssignedAnalyst());
+//                    switch (line.getCarStatus()){
+//                        case "NEW" : res.setNewCars(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Cancelled" : res.setCancelled(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Priced" : res.setPriced(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Superseded" : res.setSuperseded(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "InProgress" : res.setInProgress(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Completed" : res.setCompleted(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        default: break;
+//                    }
+//                    counter ++;
+//
+//                    if(counter == data.size()){
+//                        response.add(res);
+//                    }
+//
+//
+//
+//
+//            }
+//        }
+//        return response;
+//    }
+//}
