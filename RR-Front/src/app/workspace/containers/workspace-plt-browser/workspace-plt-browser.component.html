@@ -92,7 +92,11 @@
 
         </div>
         <div class="PLTs-content">
-          <d-table></d-table>
+          <app-plt-main-table
+                  #dtt
+                  [tableInputs]="tableInputs"
+                  (actionDispatcher)="tableActionDispatcher($event)"
+          ></app-plt-main-table>
         </div>
       </div>
     </div>
