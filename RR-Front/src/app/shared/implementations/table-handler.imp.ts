@@ -4,7 +4,7 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError, mergeMap} from 'rxjs/operators';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 @Injectable()
@@ -85,24 +85,40 @@ export class TableHandlerImp implements TableHandlerInterface {
     //call API
     //Mocking API behavior
 
-    const col =
+    const col = this._visibleColumns[index];
 
-    this._api.updateColumnWidth(this._request)
+    let newWidth = col.width + delta;
+
+    if(newWidth > col.maxWidth) {
+      newWidth = col.maxWidth;
+    } else if( newWidth < col.minWidth) {
+      newWidth = col.minWidth;
+    } else {
+      newWidth = col.width + delta;
+    }
+
+    this._api.updateColumnWidth({
+      viewContextColumnId: col.viewContextColumnId,
+      userCode: null,
+      width: newWidth
+    })
         .pipe(
-            mergeMap( () => this.reloadColumns())
+            mergeMap( () => this.loadColumns()),
         )
         .subscribe(
-            () => {
+            (columns) => {
               //On Success
 
-              if(this._columns[index]) {
+              /*if(this._columns[index]) {
                 const column = this._columns[index];
                 const currentColumnWidth = column.width;
                 const newColumnWidth = currentColumnWidth + delta;
                 const newColumns = _.merge([], this._columns, { [index]: { width: newColumnWidth}});
                 this.updateColumns(newColumns);
                 this.updateTotalColumnWidth(newColumns);
-              }
+              }*/
+              this.updateColumns(columns);
+              this.updateTotalColumnWidth(columns);
             },
             () => {
               //On Error

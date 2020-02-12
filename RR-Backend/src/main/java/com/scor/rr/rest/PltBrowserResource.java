@@ -33,14 +33,9 @@ public class PltBrowserResource {
     public ResponseEntity<?> getColumns() { return ResponseEntity.ok(pltBrowserService.getColumns());}
 
     @PostMapping("columns/width")
-    public ResponseEntity<?> updateColumnWidth(UpdateColumnWidthRequest request) {
-        try {
-            this.pltBrowserService.updateColumnWidth(request);
-            return ResponseEntity.ok().build();
-        } catch(Exception e) {
-            return ResponseEntity.badRequest()
-                    .body("Couldnt update column width: " + e.getMessage());
-        }
+    public ResponseEntity<?> updateColumnWidth(@RequestBody UpdateColumnWidthRequest request) {
+        this.pltBrowserService.updateColumnWidth(request);
+        return ResponseEntity.ok().build();
     }
 
 

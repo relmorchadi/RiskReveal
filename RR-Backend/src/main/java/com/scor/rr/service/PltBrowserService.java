@@ -123,7 +123,7 @@ public class PltBrowserService {
             }
 
             this.viewContextColumnsRepository.updateColumnWidth("A798", request.getViewContextColumnId(), newWidth);
-        } else throw new RuntimeException("Column doesn't exist");
+        }
     }
 
     Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {
