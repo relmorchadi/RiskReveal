@@ -15,7 +15,7 @@ public interface RLSavedDataSourceRepository extends JpaRepository<RLSavedDataSo
 
     List<RLSavedDataSource> findByProjectIdAndInstanceIdAndUserId(Long projectId, String instanceId, Long userId);
 
-    List<RLSavedDataSource> findByInstanceIdAndUserId(String instanceId, Long userId);
+    List<RLSavedDataSource> findByUserId(Long userId);
 
-    void deleteByUserIdAndInstanceId(Long userId, String instanceId);
+    void deleteByUserId(Long userId);
 }

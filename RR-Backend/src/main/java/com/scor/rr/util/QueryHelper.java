@@ -6,6 +6,7 @@ import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import com.scor.rr.domain.enums.Operator;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -13,8 +14,20 @@ import java.util.stream.Collectors;
 public class QueryHelper {
 
 
-    String[] globalSearchColumns={"WorkSpaceId","WorkspaceName","CedantName","CountryName","ProgramName","TreatyName"};
+    String[] globalSearchColumns={"WorkSpaceId","WorkspaceName","CedantCode","CedantName","CountryName","ProgramName","TreatyName"};
     String[] groupByColumns={"CountryName","WorkSpaceId","WorkspaceName","CedantCode","CedantName","UwYear"};
+
+    Map<String, String> searchCountMapper = new HashMap();
+
+    @PostConstruct
+    private void feedCountMapper() {
+
+        searchCountMapper.put("CLIENT_NAME", "CedantName");
+        searchCountMapper.put("CLIENT_CODE", "CedantCode");
+        searchCountMapper.put("UW_YEAR", "UWYear");
+        searchCountMapper.put("CONTRACT_CODE", "WorkSpaceId");
+        searchCountMapper.put("CONTRACT_NAME", "WorkspaceName");
+    }
 
 
     private String generateLikeClause(String columnName, String keyword){
@@ -71,10 +84,10 @@ public class QueryHelper {
         if(columnName.equals("year")) columnName="uwYear";
         switch (operator) {
             case EQUAL:
-                return " c." + columnName + " = '" + escape(keyword) + "' ";
+                return " c." + this.searchCountMapper.get(columnName) + " = '" + escape(keyword) + "' ";
             case LIKE:
             default:
-                return " lower(c." + columnName + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
+                return " lower(c." + this.searchCountMapper.get(columnName) + ") like '%" + escape(keyword.toLowerCase()) + "%' ";
         }
     }
 

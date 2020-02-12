@@ -373,6 +373,14 @@ COMPONENT STYLE
 }
 
 
+:host{
+  ::ng-deep{
+    .ui-table-scrollable-wrapper {
+      display: flex;
+    }
+  }
+}
+
 .col-edit-input{
   width: 70%;
   margin: auto;

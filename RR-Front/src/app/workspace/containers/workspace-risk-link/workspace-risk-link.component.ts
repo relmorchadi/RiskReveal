@@ -277,7 +277,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 ofActionSuccessful(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
                 debounceTime(500)
             ).subscribe(p => {
-            console.log('After success : LoadSummaryOrDefaultDataSourcesAction');
             const {edms, rdms, currentDataSource} = this.state.selection;
             const dataSources = [..._.values(edms), ..._.values(rdms)];
             if (!_.isEmpty(dataSources) && !currentDataSource) {
@@ -339,7 +338,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     setFilterDivision() {
-        console.log('Set Filter division');
         if (!this.state.financialValidator.division.selected) {
             console.error('No selected Division');
             return;
@@ -459,10 +457,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(p => {
                 const projectId = p.projectId;
                 const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
+                const {instanceId, instanceName}= this.state.financialValidator.rmsInstance.selected;
                 this.dispatch(new fromWs.DatasourceScanAction({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    instanceName: this.state.financialValidator.rmsInstance.selected.instanceName,
-                    selectedDS,
+                    selectedDS: _.map(selectedDS, item => ({...item, instanceId, instanceName}) ) ,
                     projectId
                 }));
             });
@@ -475,8 +472,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(p => {
                 const projectId = p.projectId;
                 this.dispatch(new fromWs.ReScanDataSource({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    instanceName: this.state.financialValidator.rmsInstance.selected.instanceName,
                     datasource,
                     projectId
                 }));
@@ -645,7 +640,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             rdmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
             projectId: this.selectedProject.projectId,
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            instanceId: this.state.selection.rdms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterAnalysis),
             userId: 1
         }));
@@ -656,7 +651,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             edmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
             projectId: this.selectedProject.projectId,
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            instanceId: this.state.selection.edms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterPortfolio),
             userId: 1
         }));

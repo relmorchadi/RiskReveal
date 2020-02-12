@@ -26,16 +26,16 @@ public class ConfigurationResource {
     private ConfigurationService configurationService;
 
     @PostMapping("basic-scan")
-    public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId) {
         return ResponseEntity.ok(
-                rmsService.basicScan(dataSources, projectId, instanceId, instanceName)
+                rmsService.basicScan(dataSources, projectId)
         );
     }
 
     @PostMapping("single-basic-scan")
-    public ResponseEntity<?> singleBasicScan(@RequestBody DataSource dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> singleBasicScan(@RequestBody DataSource dataSources, @RequestParam Long projectId) {
         return ResponseEntity.ok(
-                rmsService.singleBasicScan(dataSources, projectId, instanceId, instanceName)
+                rmsService.singleBasicScan(dataSources, projectId)
         );
     }
 
@@ -163,7 +163,7 @@ public class ConfigurationResource {
     @GetMapping(value = "get-default-data-sources")
     public ResponseEntity<?> getDefaultDataSources(@RequestParam Long projectId, @RequestParam Long userId, @RequestParam String instanceId) {
         try {
-            return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+            return new ResponseEntity<>(configurationService.getDefaultDataSources(userId), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,12 +207,12 @@ public class ConfigurationResource {
     }
 
     @GetMapping(value = "get-global-data-sources")
-    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
+    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam Long userId) {
         try {
             if (configurationService.checkIfProjectHasScannedDataSources(projectId))
                 return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
-                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
+                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(userId)), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }

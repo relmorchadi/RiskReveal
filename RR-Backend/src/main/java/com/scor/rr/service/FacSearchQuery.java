@@ -15,13 +15,13 @@ public class FacSearchQuery implements QueryInterface {
 
     Map<String, String> facSearchCountMapper = new HashMap();
 
-    String[] globalSearchColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
-    String[] groupByColumns= {"Client", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
+    String[] globalSearchColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
+    String[] groupByColumns= {"ClientCode", "UWYear", "WorkspaceContextCode", "WorkspaceName", "UwAnalysis", "CARequestId", "CARStatus", "AssignedTo"};
 
     @PostConstruct
     private void feedCountMapper() {
 
-        facSearchCountMapper.put("CLIENT", "Client");
+        facSearchCountMapper.put("CLIENT_CODE", "ClientCode");
         facSearchCountMapper.put("UW_YEAR", "UWYear");
         facSearchCountMapper.put("CONTRACT_CODE", "WorkspaceContextCode");
         facSearchCountMapper.put("CONTRACT_NAME", "WorkspaceName");

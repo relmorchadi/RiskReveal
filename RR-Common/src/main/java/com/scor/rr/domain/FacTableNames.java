@@ -1,7 +1,7 @@
 package com.scor.rr.domain;
 
 public enum FacTableNames {
-    CLIENT("client"),
+    CLIENT_CODE("client_code"),
     UW_YEAR("uw_year"),
     CONTRACT_CODE("contract_code"),
     CONTRACT_NAME("contract_name"),
