@@ -15,6 +15,7 @@ import com.scor.rr.repository.Dashboard.DashboardWidgetRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetColumnsRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetRepository;
+import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import springfox.documentation.spring.web.json.Json;
@@ -170,7 +171,6 @@ public class UserDashboardWidgetService {
         }
 
         DashboardDataResponse response = new DashboardDataResponse();
-        postConst();
         response.setRefCount(getTotalCount(request));
 
         response.setContent(userDashboardRepository.getDataForWidget(request.getCarStatus(),
@@ -196,12 +196,26 @@ public class UserDashboardWidgetService {
     }
 
     public int getTotalCount(DashboardRequest request) {
-        fetchDataSource.setParameter("CarStatus", request.getCarStatus())
+
+        StoredProcedureQuery query = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
+                .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserCode", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("FilteredRecCount", Integer.class, ParameterMode.OUT);
+
+                query.setParameter("CarStatus", request.getCarStatus())
                 .setParameter("Entity", request.getEntity())
                 .setParameter("UserDashboardWidgetId", request.getUserDashboardWidgetId())
                 .setParameter("UserCode", request.getUserCode()).execute();
 
-        return (int) fetchDataSource.getOutputParameterValue("FilteredRecCount");
+        try {
+            query.execute();
+            return (Integer) query.getOutputParameterValue("FilteredRecCount");
+
+        } finally {
+            query.unwrap(ProcedureOutputs.class).release();
+        }
 
 
     }}
