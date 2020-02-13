@@ -210,7 +210,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   loadFacData(pageNumber) {
     this.loading = true;
     const carStatus = this.carStatus[this.widgetId];
-    console.log(carStatus);
     this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
         .subscribe(() => {}, ()=> {}, () => {
           this.loading = false;
