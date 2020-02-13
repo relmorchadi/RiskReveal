@@ -26,16 +26,20 @@ export class TableServiceImp implements TableServiceInterface {
     return this._http.get(`${this._url}`, { params });
   }
 
+  updateColumnWidth(body): Observable<any> {
+    return this._http.post(`${this._url}columns/width`, body);
+  }
+
   updateColumnFilter(body): Observable<any> {
-    return this._http.post(`${this._url}filter`, body);
+    return this._http.post(`${this._url}columns/filter`, body);
   }
 
   updateColumnSort(body): Observable<any> {
-    return this._http.post(`${this._url}sort`, body);
+    return this._http.post(`${this._url}columns/sort`, body);
   }
 
   updateColumnsOrderAndVisibility(body): Observable<any> {
-    return this._http.post(`${this._url}orderandvisibility`, body);
+    return this._http.post(`${this._url}columns/orderandvisibility`, body);
   }
 
 }

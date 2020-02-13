@@ -4,7 +4,7 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError} from 'rxjs/operators';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 @Injectable()
@@ -27,6 +27,8 @@ export class TableHandlerImp implements TableHandlerInterface {
   _totalColumnWidth: number;
   totalColumnWidth$: BehaviorSubject<number>;
 
+  _request: any;
+
   protected containerWidth: number;
 
   constructor() {
@@ -46,7 +48,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   initApi(url) {
-    console.log(url);
     this._api.setUrl(url);
   }
 
@@ -59,12 +60,12 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   initTable(request: FetchViewContextDataRequest) {
+    this._request = request;
     forkJoin(
         this.loadColumns(),
         this.loadData(request)
     ).subscribe( ([columns, data]: any) => {
       const {totalCount, plts} = data;
-
       this.updateColumns(columns);
       this.updateTotalColumnWidth(columns);
       this.updateData(plts);
@@ -76,22 +77,33 @@ export class TableHandlerImp implements TableHandlerInterface {
     //call API
     //Mocking API behavior
 
-    of([1])
-        .subscribe(
-            () => {
-              //On Success
+    const col = this._visibleColumns[index];
 
-              if(this._columns[index]) {
-                const column = this._columns[index];
-                const currentColumnWidth = column.width;
-                const newColumnWidth = currentColumnWidth + delta;
-                const newColumns = _.merge([], this._columns, { [index]: { width: newColumnWidth}});
-                this.updateColumns(newColumns);
-                this.updateTotalColumnWidth(newColumns);
-              }
+    let newWidth = col.width + delta;
+
+    if(newWidth > col.maxWidth) {
+      newWidth = col.maxWidth;
+    } else if( newWidth < col.minWidth) {
+      newWidth = col.minWidth;
+    } else {
+      newWidth = col.width + delta;
+    }
+
+    this._api.updateColumnWidth({
+      viewContextColumnId: col.viewContextColumnId,
+      userCode: null,
+      width: newWidth
+    })
+        .pipe(
+            mergeMap( () => this.loadColumns()),
+        )
+        .subscribe(
+            (columns) => {
+              this.updateColumns(columns);
+              this.updateTotalColumnWidth(columns);
             },
-            () => {
-              //On Error
+            (error) => {
+              console.error(error);
             }
         )
   }
@@ -129,6 +141,15 @@ export class TableHandlerImp implements TableHandlerInterface {
   private updateAvailableColumns(c) {
     this._availableColumns = c;
     this.availableColumns$.next(c);
+  }
+
+  onContainerResize(newWidth) {
+    this.containerWidth = newWidth;
+    this.updateTotalColumnWidth(this._columns);
+  }
+
+  private reloadColumns() {
+    return this.loadColumns()
   }
 
 }

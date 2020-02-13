@@ -24,6 +24,7 @@ export interface TableHandlerInterface {
   onFilter(column: Column, filter: string);
   onSort(column: Column, direction);
   onRowSelect(rowId: number);
+  onContainerResize(newWidth: number);
 
   init(config: any): void;
   initApi(url: string): void;

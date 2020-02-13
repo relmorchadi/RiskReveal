@@ -4,11 +4,23 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceImp } from '../implementations/table-service.imp';
 import { TableHandlerImp } from '../implementations/table-handler.imp';
 import { Column } from '../types/column.type';
-import {Injector, OnInit, ChangeDetectorRef, ViewChild, AfterViewInit} from '@angular/core';
+import {
+  Injector,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild,
+  AfterViewInit,
+  Input,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import {backendUrl} from "../api";
 
 
-export class BaseTable implements TableInterface , OnInit, AfterViewInit {
+export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
+
+  @Input() workspaceContextCode: string;
+  @Input() workspaceUwYear: number;
 
   @ViewChild('tableContainer') container;
   containerWidth: number;
@@ -22,7 +34,6 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
   _handler: TableHandlerInterface;
 
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
-    console.log("init")
     this._injectors = {
       'plt-manager': ({
         api: this.injector.get<TableServiceImp>(TableServiceImp),
@@ -32,7 +43,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.initTable();
+
   }
 
   injectDependencies(key) {
@@ -53,8 +64,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
 
   protected initTable() {
     this._handler.initTable({
-      workspaceContextCode: "FA0044610",
-      workspaceUwYear: 2019,
+      workspaceContextCode: this.workspaceContextCode,
+      workspaceUwYear: this.workspaceUwYear,
       entity: 1,
       pageNumber: 1,
       pageSize: 1000,
@@ -84,10 +95,17 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
     this.containerWidth = this.container.nativeElement.clientWidth;
   }
 
-  initCustom() {
-    this._handler.init({
-      containerWidth: this.containerWidth
-    })
+  onContainerResize({newWidth, oldWidth}) {
+    if(newWidth != oldWidth) this._handler.onContainerResize(newWidth);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const {
+      workspaceContextCode
+    } = changes;
+    if(!workspaceContextCode.previousValue && workspaceContextCode.currentValue) {
+      this.initTable();
+    }
   }
 
 }

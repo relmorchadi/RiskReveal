@@ -56,7 +56,6 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
 
   ngAfterViewInit(): void {
     super.ngAfterViewInit();
-    this.initCustom();
   }
 
   detectChanges() {
@@ -64,7 +63,7 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
+    super.ngOnChanges(changes);
   }
 
   showDialog() {
