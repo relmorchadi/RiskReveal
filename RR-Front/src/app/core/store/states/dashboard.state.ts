@@ -19,8 +19,10 @@ const initiateState: DashboardModel = {
         treaty: null
     },
     data: {
-        fac: null,
-        treaty: null
+        fac: {},
+        treaty: {},
+        dataCounter: {},
+        virtualScroll: {},
     }
 };
 
@@ -42,6 +44,16 @@ export class DashboardState implements NgxsOnInit {
     @Selector()
     static getFacData(state: DashboardModel) {
         return state.data.fac;
+    }
+
+    @Selector()
+    static getDataCounter(state: DashboardModel) {
+        return state.data.dataCounter;
+    }
+
+    @Selector()
+    static getVirtualScroll(state: DashboardModel) {
+        return state.data.virtualScroll;
     }
 
     @Selector()
@@ -81,22 +93,27 @@ export class DashboardState implements NgxsOnInit {
     @Action(fromHD.LoadDashboardFacDataAction)
     loadDashboardFacData(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardFacDataAction) {
         const state = ctx.getState();
-        const dataFilters = {
-            filterConfig: payload || {},
-            pageNumber: 0,
-            size: 1000,
-            sortConfig: []
+        const {identifier, pageNumber, carStatus} = payload;
+
+        const dataParams = {
+            carStatus,
+            entity: 1,
+            pageNumber: pageNumber,
+            pageSize: 100,
+            selectionList: '',
+            sortSelectedAction: '',
+            sortSelectedFirst: false,
+            userCode: "DEV",
+            userDashboardWidgetId: identifier
         };
 
-        return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
+        return this.dashboardAPI.getFacDashboardResources(dataParams).pipe(
             mergeMap((data: any) => {
                 const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
-                    draft.data.fac = {
-                        new: _.filter(fixData, item => item.carStatus === 'New'),
-                        inProgress: _.filter(fixData, item => item.carStatus === 'In Progress'),
-                        archived: _.filter(fixData, item => item.carStatus !== 'New' && item.carStatus !== 'In Progress')
-                    };
+                    draft.data.fac[identifier] = fixData;
+                    draft.data.dataCounter[identifier] = data.refCount;
+                    draft.data.virtualScroll[identifier] = data.refCount > 100;
                 }));
                 return of(ctx.dispatch(new fromHD.LoadDashboardFacDataSuccessAction()));
             }),
@@ -108,35 +125,7 @@ export class DashboardState implements NgxsOnInit {
 
     @Action(fromHD.FilterFacData)
     filterFacData(ctx: StateContext<DashboardModel>, {payload}: fromHD.FilterFacData) {
-        const {data, scope} = payload;
-        const dataFilters = {
-            filterConfig: data || {},
-            pageNumber: 0,
-            size: 50,
-            sortConfig: []
-        };
-        return this.dashboardAPI.getFacDashboardResources(dataFilters).pipe(
-            mergeMap((data: any) => {
-                const fixData = _.map(data.content, item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
-                ctx.patchState(produce(ctx.getState(), draft => {
-                    switch(scope) {
-                        case 'New':
-                            draft.data.fac.new = _.filter(fixData, item => item.carStatus === 'New');
-                            break;
-                        case 'In Progress':
-                            draft.data.fac.inProgress = _.filter(fixData, item => item.carStatus === 'In Progress');
-                            break;
-                        case 'archived':
-                            draft.data.fac.archived = _.filter(fixData, item => item.carStatus !== 'New' && item.carStatus !== 'In Progress');
-                            break;
-                    }
-                }));
-                return of();
-            }),
-            catchError(err => {
-                return of(err);
-            })
-        )
+
     }
 
     private _formatDate(data) {

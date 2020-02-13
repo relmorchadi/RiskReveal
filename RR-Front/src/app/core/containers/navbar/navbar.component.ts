@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {fromEvent} from 'rxjs';
 import {debounceTime, take} from 'rxjs/operators';
 import {Select, Store} from '@ngxs/store';
-import {SearchNavBarState} from '../../store/states';
+import {AuthState, SearchNavBarState} from '../../store/states';
 import {HelperService} from "../../../shared/helper.service";
 import {UpdateWsRouting} from "../../../workspace/store/actions";
 import {Navigate} from "@ngxs/router-plugin";

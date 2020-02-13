@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {SearchService} from '../../../service/search.service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {HelperService} from "../../../../shared/helper.service";
+import {Select} from "@ngxs/store";
+import {AuthState} from "../../../store/states";
 
 @Component({
   selector: 'user-menu-item',
@@ -11,6 +13,10 @@ import {HelperService} from "../../../../shared/helper.service";
 export class UserMenuItemComponent implements OnInit {
 
   readonly componentName:string= 'user-pop-in';
+
+  @Select(AuthState.getUser) user$;
+  user: string = '';
+  userInitials: string = '';
 
   visible: boolean;
   defaultImport;
@@ -27,15 +33,12 @@ export class UserMenuItemComponent implements OnInit {
       if (from != this.componentName)
         this.visible = false;
     });
-  }
-
-  handleOk(): void {
-    localStorage.setItem('importConfig', this.defaultImport);
-    this.isVisible = false;
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
+    this.user$.pipe().subscribe(value => {
+      this.user = value;
+      let initials = value.match(/\b\w/g) || [];
+      initials = ((initials.shift() || '') + '.' + (initials.pop() || '')).toUpperCase();
+      this.userInitials = initials;
+    });
   }
 
   navigateToUserPreference() {

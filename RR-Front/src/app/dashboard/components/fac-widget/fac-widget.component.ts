@@ -1,18 +1,23 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
-import {GeneralConfigState} from '../../../core/store/states';
+import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/api/workspace.api';
 import {DashboardApi} from "../../../core/service/api/dashboard.api";
+import {forkJoin} from "rxjs";
+import * as moment from "moment";
+import {BaseContainer} from "../../../shared/base";
+import {Router} from "@angular/router";
+import * as fromHD from "../../../core/store/actions";
 
 @Component({
   selector: 'app-fac-widget',
   templateUrl: './fac-widget.component.html',
   styleUrls: ['./fac-widget.component.scss']
 })
-export class FacWidgetComponent implements OnInit {
+export class FacWidgetComponent extends BaseContainer implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -25,8 +30,14 @@ export class FacWidgetComponent implements OnInit {
   itemWidget: any;
   @Input()
   dashboard: any;
-  @Input()
-  data: any;
+
+  @Select(DashboardState.getFacData)facData$;
+  @Select(DashboardState.getDataCounter)dataCounter$;
+  @Select(DashboardState.getVirtualScroll)virtualScroll$;
+
+  virtualScroll: any;
+
+  carStatus = {"1": 'NEW', "2": 'In Progress', "3": 'Archived'};
 
   identifier: number;
   itemName: any;
@@ -36,6 +47,12 @@ export class FacWidgetComponent implements OnInit {
   newDashboard: any;
   editName = false;
   tabIndex = 1;
+
+  data: any = [];
+  dataCounter = {};
+  loading = false;
+  secondaryLoad = false;
+
   filters = {};
   newSort = {};
   sortList = [];
@@ -43,7 +60,8 @@ export class FacWidgetComponent implements OnInit {
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
               private cdRef: ChangeDetectorRef, private dashboardAPI: DashboardApi,
-              private wsApi: WsApi) {
+              private wsApi: WsApi, _baseRouter: Router, _baseCdr: ChangeDetectorRef, _baseStore: Store) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
@@ -53,7 +71,23 @@ export class FacWidgetComponent implements OnInit {
     this.itemName = this.itemWidget.name;
     this.dashCols = this.itemWidget.columns;
 
+    this.loadFacData(1);
     this.sortFirstUpdate();
+
+    this.facData$.pipe().subscribe(value => {
+      this.data = _.get(value, `${this.identifier}`, []);
+      this.detectChanges();
+    });
+
+    this.dataCounter$.pipe().subscribe(value => {
+      this.dataCounter = _.get(value, `${this.identifier}`, 0);
+      this.detectChanges();
+    });
+
+    this.virtualScroll$.pipe().subscribe(value => {
+      this.virtualScroll =  _.get(value, `${this.identifier}`, false);
+      this.detectChanges();
+    })
   }
 
   selectTab(index) {
@@ -85,11 +119,29 @@ export class FacWidgetComponent implements OnInit {
   sortChange(event) {
     this.globalSort = event.newSort;
     this.sortList = event.newSortingList;
+    const carStatus = this.carStatus[this.widgetId];
+    this.secondaryLoad = true;
     if (_.isEmpty(event.sortType)) {
-      this.dashboardAPI.updateSortCols(event.columnId, 0, '').subscribe();
+      this.dashboardAPI.updateSortCols(event.columnId, 0, '').subscribe(
+          () => {}, () => {}, () => {
+            this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+                () => {}, () => {}, () => {
+                  this.secondaryLoad = false;
+                  this.detectChanges();
+                }
+            );
+          });
     } else {
       _.forEach(this.sortList, (item, key) => {
-        this.dashboardAPI.updateSortCols(item.columnId, key + 1, item.sortType).subscribe();
+        this.dashboardAPI.updateSortCols(item.columnId, key + 1, item.sortType)
+            .subscribe(() => {}, () => {}, () => {
+              this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+                  () => {}, () => {}, () => {
+                    this.secondaryLoad = false;
+                    this.detectChanges();
+                  }
+              );
+            });
       });
     }
     //this.dashboardAPI.updateSortCols(event.columnId, sortCounter, event.sortType).subscribe();
@@ -102,7 +154,17 @@ export class FacWidgetComponent implements OnInit {
   }
 
   filterData($event) {
-    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue).subscribe();
+    const carStatus = this.carStatus[this.widgetId];
+    this.secondaryLoad = true;
+    this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
+        .subscribe(() => {}, () => {}, () => {
+          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+              () => {}, () => {}, () => {
+                this.secondaryLoad = false;
+                this.detectChanges();
+              }
+          );
+        });
   }
 
   resizeTable($event) {
@@ -143,6 +205,29 @@ export class FacWidgetComponent implements OnInit {
 
   activeEdit() {
     this.editName = true;
+  }
+
+  loadFacData(pageNumber) {
+    this.loading = true;
+    const carStatus = this.carStatus[this.widgetId];
+    this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+        .subscribe(() => {}, ()=> {}, () => {
+          console.log('dispatch');
+          this.loading = false;
+          this.detectChanges();
+        })
+  }
+
+  loadMore(event) {
+
+  }
+
+  private _formatDate(data) {
+    return _.map(data, item => {
+      const formatCDate = moment(item.creationDate).format('DD-MM-YYYY');
+      const formatLDate = moment(item.lastUpdateDate).format('DD-MM-YYYY');
+      return {...item, creationDate: formatCDate, lastUpdateDate: formatLDate}
+    })
   }
 
   detectChanges() {

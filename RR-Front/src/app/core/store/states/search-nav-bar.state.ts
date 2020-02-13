@@ -151,8 +151,10 @@ export class SearchNavBarState implements NgxsOnInit {
       .pipe(
         tap( (shortCuts: any[]) => {
           ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY'));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')));
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["PLT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC'));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["PLT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC')));
              draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
           }));
         })
@@ -172,6 +174,7 @@ export class SearchNavBarState implements NgxsOnInit {
     const {keyword, searchMode} = payload;
     let expression: any = keyword;
     const state = ctx.getState();
+
     const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
     const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
     const searchShortCut = searchMode === 'Treaty' ? treatyShortcuts : facShortcuts;

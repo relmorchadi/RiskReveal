@@ -199,7 +199,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   selectSearchBadge(key, value) {
-    console.log(this.mapTableNameToBadgeKey, key);
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key: _.camelCase(key), value}, this.globalKeyword, this.useAlternative()));
@@ -252,6 +251,12 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   filterBySearchMode(data) {
     return _.filter(data, item => item.type === (this.useAlternative() === 'Treaty' ? 'TTY' : 'FAC'));
+  }
+
+  tableHeader(tableMapping) {
+      const shortcuts = _.find(this.filterBySearchMode(this.state.shortcuts),
+              item => item.mappingTable === tableMapping).shortCutLabel;
+      return shortcuts;
   }
 
   get globalKeyword() {

@@ -69,12 +69,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dispatch([new LoadReferenceWidget(), new fromHD.LoadDashboardFacDataAction()]);
-    this.facData$.pipe().subscribe(value => {
-      this.newFacCars = this.dataParam(_.get(value, 'new', []));
-      this.inProgressFacCars = this.dataParam(_.get(value, 'inProgress', []));
-      this.archivedFacCars = this.dataParam(_.get(value, 'archived', []));
-    });
+    this.dispatch([new LoadReferenceWidget()]);
 
     this.refWidget$.pipe().subscribe( value => {
       this.refWidget = value;
@@ -299,14 +294,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   setTabValue() {
-    /*    const visibleDash = _.filter(this.dashboards, item => item.visible);
-        if (visibleDash.length > 1) {
-          setTimeout(() => {
-            this.idTab = 1;
-            const idDash = _.get(this.dashboards[1], 'id', 1);
-            this.dashboardChange(idDash);
-          }, 500);
-        }*/
+/*    const visibleDash = _.filter(this.dashboards, item => item.visible);
+    if (visibleDash.length > 1) {
+      setTimeout(() => {
+        this.idTab = 1;
+        const idDash = _.get(this.dashboards[1], 'id', 1);
+        this.dashboardChange(idDash);
+      }, 500);
+    }*/
   }
 
   changeWidgetHeight(widgetItem, position) {
@@ -387,7 +382,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   focusInput() {
     // this.assetInput;
     setTimeout(dt => {
-      console.log(this.searchInput);
       this.searchInput.nativeElement.focus();
     })
   }
@@ -397,7 +391,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (!_.isEmpty(_.trim(item.dashboardName))) {
       this.createNewDashboardAction(item);
       this.emptyField();
-      /*.pipe(first()).subscribe(()=>{},()=>{},()=>{});*/
     } else {
       this.notificationService.createNotification('Information',
           'An Error Occurred While Creating a New Dashboard Please Verify the name isn\'t Empty before creating a New Dashboard',
@@ -424,12 +417,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (this.dashboards.length > 1) {
       this.deleteDashboardAction({dashboardId : this.idSelected});
       this.notificationService.createNotification('Information',
-          'The dashboard has been deleted successfully.',
-          'info', 'bottomRight', 4000);
+        'The dashboard has been deleted successfully.',
+        'info', 'bottomRight', 4000);
     } else {
       this.notificationService.createNotification('Information',
-          'you can not delete this dashboard you need at least one!',
-          'error', 'bottomRight', 4000);
+        'you can not delete this dashboard you need at least one!',
+        'error', 'bottomRight', 4000);
     }
   }
 
@@ -446,14 +439,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   addRemoveItem(item) {
     const selectedWidget =
-        _.filter(this.selectedDashboard.widgets, (itemWidget: any) => item.widgetId === itemWidget.widgetId);
+    _.filter(this.selectedDashboard.widgets, (itemWidget: any) => item.widgetId === itemWidget.widgetId);
     if (selectedWidget.length === 0) {
       this.createNewWidgetAction({selectedDashboard: this.selectedDashboard.id,
-        widget: {
-          dashoardId: this.selectedDashboard.id,
-          referenceWidgetId:item.widgetId,
-          userId: 1
-        }});
+      widget: {
+        dashoardId: this.selectedDashboard.id,
+        referenceWidgetId:item.widgetId,
+        userId: 1
+      }});
     } else {
       this.deleteAllDashboardByRef({selectedDashboard: this.selectedDashboard, refId: item.widgetId})
     }
@@ -491,8 +484,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     const {widgetId, dashCols} = $event;
     this.dashboards = _.map(this.dashboards, dash => {
       return dash.id === this.selectedDashboard.id ? {...dash, widgets: _.map(dash.widgets, item => {
-          return item.id === widgetId ? {...item, columns: dashCols} : item})
-      } : dash });
+      return item.id === widgetId ? {...item, columns: dashCols} : item})
+    } : dash });
 
     console.log(_.find(this.dashboards, item => item.id === this.selectedDashboard.id))
   }
@@ -510,11 +503,11 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboards.forEach(
-          ds => {
-            if (ds.visible === true && ds.id < id) {
-              ++idSel;
-            }
-          },
+        ds => {
+          if (ds.visible === true && ds.id < id) {
+            ++idSel;
+          }
+        },
       );
       this.idTab = idSel;
     }
@@ -530,7 +523,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   getSelection(item) {
     return _.filter(_.get(this.selectedDashboard, 'widgets', []),
-        items => items.widgetId === item.widgetId).length > 0;
+            items => items.widgetId === item.widgetId).length > 0;
   }
 
   private _formatData(data) {

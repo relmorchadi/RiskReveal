@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 
 @Component
@@ -21,21 +24,23 @@ public class DashboardService {
     @Autowired
     DashboardSpecification dashboardSpecification;
 
-    public Page<DashboardView> getAll(DashboardRequest request) {
-        Sort s = null;
-        if (request.getSortConfig() != null && !request.getSortConfig().isEmpty()) {
-            SortConfig firstCol = request.getSortConfig().get(0);
+//    public Page<DashboardView> getAll(DashboardRequest request) {
+//        Sort s = null;
+//        if (request.getSortConfig() != null && !request.getSortConfig().isEmpty()) {
+//            SortConfig firstCol = request.getSortConfig().get(0);
+//
+//            s = new Sort(firstCol.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, firstCol.getField());
+//
+//            for (int i = 0; i < request.getSortConfig().size(); i++) {
+//                SortConfig tmp = request.getSortConfig().get(i);
+//                s = s.and(new Sort(tmp.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, tmp.getField()));
+//            }
+//        }
+//
+//        return s == null ? this.dashboardViewRepository.findAll(dashboardSpecification.getFilter(request.getFilterConfig()), PageRequest.of(request.getPageNumber(), request.getSize())) :
+//                this.dashboardViewRepository.findAll(dashboardSpecification.getFilter(request.getFilterConfig()), PageRequest.of(request.getPageNumber(), request.getSize(), s));
+//    }
 
-            s = new Sort(firstCol.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, firstCol.getField());
 
-            for (int i = 0; i < request.getSortConfig().size(); i++) {
-                SortConfig tmp = request.getSortConfig().get(i);
-                s = s.and(new Sort(tmp.getDirection().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC, tmp.getField()));
-            }
-        }
-
-        return s == null ? this.dashboardViewRepository.findAll(dashboardSpecification.getFilter(request.getFilterConfig()), PageRequest.of(request.getPageNumber(), request.getSize())) :
-                this.dashboardViewRepository.findAll(dashboardSpecification.getFilter(request.getFilterConfig()), PageRequest.of(request.getPageNumber(), request.getSize(), s));
-    }
 
 }

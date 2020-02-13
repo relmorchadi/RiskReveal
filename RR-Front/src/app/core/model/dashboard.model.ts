@@ -4,6 +4,8 @@ export class DashboardModel {
     referenceWidget: any;
     data: {
         fac: any,
-        treaty: any
+        treaty: any,
+        dataCounter: any,
+        virtualScroll: any
     }
 }

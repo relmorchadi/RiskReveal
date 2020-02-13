@@ -74,7 +74,19 @@ export class DashboardApi {
     }
 
     getFacDashboardResources(filters): Observable<any>  {
-        return this.http.post(`${backendUrl()}dashboard/`, filters);
+        return this.http.post(`${backendUrl()}dashboard/getData`, filters);
+    }
+
+    getWidgetCarStatusCount(): Observable<any> {
+        return this.http.get(`${backendUrl()}dashboard/`);
+    }
+
+    getWidgetAssignedCountByUwAnalysis(): Observable<any> {
+        return this.http.get(`${backendUrl()}dashboard/`)
+    }
+
+    getWidgetAssignedPercentageByUwAnalysis(): Observable<any> {
+        return this.http.get(`${backendUrl()}dashboard/`)
     }
 
 }

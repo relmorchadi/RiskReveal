@@ -4,6 +4,12 @@
   height: 100%;
 
   ::ng-deep {
+    nz-spin.ant-spin-nested-loading {
+      height: 100%;
+      .ant-spin-container {
+        height: 100%;
+      }
+    }
     .ant-tabs-bar {
       display: none;
     }
