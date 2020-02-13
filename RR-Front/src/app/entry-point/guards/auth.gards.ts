@@ -3,7 +3,7 @@ import {CanActivate, Router} from '@angular/router';
 import {JwtHelperService} from "@auth0/angular-jwt";
 import {AuthService} from "../../core/service/auth.service";
 import {Store} from "@ngxs/store";
-import {AuthenticationAction} from "../../core/store/actions";
+import {AuthenticationAction} from "../../core/store/actions/auth.actions";
 
 @Injectable({
     providedIn: 'root'
@@ -17,9 +17,10 @@ export class AuthGuard implements CanActivate {
     }
 
     canActivate() {
-        const token = localStorage.getItem('token');
-        const claims:any = this.jwtHelper.decodeToken(token);
         this.store.dispatch(new AuthenticationAction());
+        //const token = localStorage.getItem('token');
+        //const claims:any = this.jwtHelper.decodeToken(token);
+
         return true;
     }
 }
