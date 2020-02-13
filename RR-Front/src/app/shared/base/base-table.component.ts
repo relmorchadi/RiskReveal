@@ -19,8 +19,7 @@ import {backendUrl} from "../api";
 
 export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
-  @Input() workspaceContextCode: string;
-  @Input() workspaceUwYear: number;
+  @Input() params: any;
 
   @ViewChild('tableContainer') container;
   containerWidth: number;
@@ -64,8 +63,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   protected initTable() {
     this._handler.initTable({
-      workspaceContextCode: this.workspaceContextCode,
-      workspaceUwYear: this.workspaceUwYear,
+        ...this.params,
       entity: 1,
       pageNumber: 1,
       pageSize: 1000,
@@ -101,9 +99,9 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   ngOnChanges(changes: SimpleChanges): void {
     const {
-      workspaceContextCode
+      params
     } = changes;
-    if(!workspaceContextCode.previousValue && workspaceContextCode.currentValue) {
+    if(!params.previousValue && params.currentValue) {
       this.initTable();
     }
   }
