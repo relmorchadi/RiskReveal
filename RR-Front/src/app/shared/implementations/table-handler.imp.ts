@@ -27,8 +27,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   _totalColumnWidth: number;
   totalColumnWidth$: BehaviorSubject<number>;
 
-  _data: any[];
-  data$: BehaviorSubject<any[]>;
   _request: any;
 
   protected containerWidth: number;
@@ -44,14 +42,12 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   init(attrs) {
-    console.log(attrs);
     _.forEach(attrs, (v, k) => {
       this[k] = v;
     })
   }
 
   initApi(url) {
-    console.log(url);
     this._api.setUrl(url);
   }
 
@@ -70,10 +66,6 @@ export class TableHandlerImp implements TableHandlerInterface {
         this.loadData(request)
     ).subscribe( ([columns, data]: any) => {
       const {totalCount, plts} = data;
-      console.log({
-        plts,
-        columns
-      });
       this.updateColumns(columns);
       this.updateTotalColumnWidth(columns);
       this.updateData(plts);
@@ -107,21 +99,11 @@ export class TableHandlerImp implements TableHandlerInterface {
         )
         .subscribe(
             (columns) => {
-              //On Success
-
-              /*if(this._columns[index]) {
-                const column = this._columns[index];
-                const currentColumnWidth = column.width;
-                const newColumnWidth = currentColumnWidth + delta;
-                const newColumns = _.merge([], this._columns, { [index]: { width: newColumnWidth}});
-                this.updateColumns(newColumns);
-                this.updateTotalColumnWidth(newColumns);
-              }*/
               this.updateColumns(columns);
               this.updateTotalColumnWidth(columns);
             },
-            () => {
-              //On Error
+            (error) => {
+              console.error(error);
             }
         )
   }

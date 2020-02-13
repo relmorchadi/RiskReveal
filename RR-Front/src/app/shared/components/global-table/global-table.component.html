@@ -5,7 +5,7 @@
             [value]="data"
             [columns]="columns"
             [scrollable]="true"
-            scrollHeight="350px"
+            [scrollHeight]="'calc( 100vh - 407px )'"
             [resizableColumns]="true"
             columnResizeMode="expand"
             (onColResize)="onColumnResize($event)"
