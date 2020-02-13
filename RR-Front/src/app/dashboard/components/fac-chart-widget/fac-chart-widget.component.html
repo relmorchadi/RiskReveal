@@ -9,9 +9,13 @@
   <div class="widget-footer">
     <div class="filter-div">
       <span class="filter-label">User</span>
-      <nz-select class="a-dropdown-small" style="width: 150px" (ngModelChange)="changeUserFilter($event)" [(ngModel)]="selectedAnalyst">
-        <nz-option *ngFor="let item of analystList" [nzValue]="item" [nzLabel]="item"></nz-option>
-      </nz-select>
+      <p-multiSelect [(ngModel)]="analystList"
+                     (ngModelChange)="filterDataByUser()"
+                     [options]="assignedAnalyst"
+                     [style]="{width: '150px'}"
+                     defaultLabel="Subsidiary"
+                     appendTo="body"
+                     maxSelectedLabels="1"></p-multiSelect>
     </div>
     <div class="filter-div">
       <span class="filter-label">From</span>

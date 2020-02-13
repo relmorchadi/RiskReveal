@@ -109,14 +109,12 @@ export class DashboardState implements NgxsOnInit {
 
         return this.dashboardAPI.getFacDashboardResources(dataParams).pipe(
             tap((data: any) => {
-                console.log(data);
                 const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
                 ctx.patchState(produce(ctx.getState(), draft => {
                     draft.data.fac[identifier] = fixData;
                     draft.data.dataCounter[identifier] = data.refCount;
                     draft.data.virtualScroll[identifier] = data.refCount > 100;
                 }));
-                return of(ctx.dispatch(new fromHD.LoadDashboardFacDataSuccessAction()));
             }),
             catchError(err => {
                 return of( ctx.dispatch(new fromHD.LoadDashboardFacDataFailAction()));

@@ -28,7 +28,7 @@
           <ng-template #titleTemplate>
             <div class="tabs-header-wrapper">
               {{ dashboard?.name }}
-              <i nz-icon type="close" style="visibility: hidden" (click)="updateDash(dashboard, {visible: !dashboard.visible}, true)"
+              <i nz-icon type="close" style="visibility: hidden" (click)="updateDash(dashboard, {visible: !dashboard.visible}, 'delete')"
                  class="ant-tabs-close-x"></i>
             </div>
           </ng-template>
@@ -42,34 +42,31 @@
                                           (duplicate)="duplicate(dashboard.id, $event)"
                                           class="no-drag">
                   </renewal-contract-scope>-->
-                  <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard"
-                                  [itemWidget]="item"
+                  <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard" [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
-                  <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard"
-                                  [itemWidget]="item"
+                  <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard" [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
-                  <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard"
-                                  [itemWidget]="item"
+                  <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard" [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
                                   (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-widget>
-                  <app-fac-chart-widget *ngIf="item?.widgetId === 4"
+                  <app-fac-chart-widget *ngIf="item?.widgetId === 4" [itemWidget]="item"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                         (changeName)="changeWidgetName($event)"
                                         (delete)="deleteWidgetAction($event)"
                                         (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-chart-widget>
-                  <app-fac-subsidiary-chart *ngIf="item?.widgetId === 5"
+                  <app-fac-subsidiary-chart *ngIf="item?.widgetId === 5" [itemWidget]="item"
                                             [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                             (changeName)="changeWidgetName($event)"
                                             (delete)="deleteWidgetAction($event)"
@@ -96,7 +93,7 @@
   <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
       <i class="clickable-item icon-settings_24px" style="font-size: 24px"
-         (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
+         (click)="openRightSlider()"></i>
     </div>
   </div>
   <div class="collapsed-slider" [ngStyle]="{'display': rightSliderCollapsed ? 'flex' : 'none'}">
@@ -126,11 +123,11 @@
         </div>
         <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                    nzShowSearch class="a-dropdown-small"
-                   nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
+                   nzPlaceHolder="Select Dashboard" [ngModel]="idSelected">
           <nz-option *ngFor="let d of dashboards" nzCustomContent [nzLabel]="d?.name" [nzValue]="d?.id">
             {{d?.name}}
-            <i *ngIf="d.visible" (click)="updateDash(d, {visible: false})" class="icon-remove_red_eye_24px selected-item-icon"></i>
-            <i *ngIf="!d.visible" (click)="updateDash(d, {visible: true})" class="icon-visibility_off_24px selected-item-icon" style="color: gray"></i>
+            <i *ngIf="d.visible" (click)="updateDash(d, {visible: false}, 'delete')" class="icon-remove_red_eye_24px selected-item-icon"></i>
+            <i *ngIf="!d.visible" (click)="updateDash(d, {visible: true}, 'open')" class="icon-visibility_off_24px selected-item-icon" style="color: gray"></i>
           </nz-option>
         </nz-select>
         <div class="edit-dashboard-section">

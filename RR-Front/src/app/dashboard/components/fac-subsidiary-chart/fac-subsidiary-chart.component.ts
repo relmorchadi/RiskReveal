@@ -117,6 +117,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  itemWidget: any;
   newDashboard: any;
   editName = false;
 
@@ -173,7 +175,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   validateName(keyboardMap, id) {
 
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
+      this.changeName.emit({item: this.itemWidget, newName: keyboardMap.target.value});
       this.editName = false;
     }
   }
@@ -214,7 +216,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
     this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
       this.data = data.content;
       this.filteredData = data.content;
-      this.subsidiaryList = [..._.map(_.uniq(data.content.map(item => item.uwAnalysis)), item => ({label: item, value: item}))];
+      this.subsidiaryList = [..._.map(_.uniq(data.content.map(item => item.uwAnalysis)), (item: string) => _.isEmpty(_.trim(item)) ? ({label: 'Unassigned', value: item}) : ({label: item, value: item}))];
       this.selectedSubsidiary = [..._.uniq(data.content.map(item => item.uwAnalysis))];
       this.detectChanges();
       this.myChart = instance;
@@ -260,8 +262,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
         part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
             _.filter(this.data, dt => dt.uwAnalysis === subsItem).length) * 100];
       });
-      series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
-      alternateSeries = [...alternateSeries, {name: item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      series = [...series, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' :item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      alternateSeries = [...alternateSeries, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' : item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
     this.alternateSeriesData = alternateSeries;
 
@@ -270,7 +272,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
         data: this.selectedSubsidiary
       },
       legend: {
-        data: legendData
+        data: _.map(legendData, item => _.isEmpty(_.trim(item)) ? 'Unassigned' : item)
       },
       series: series
     });
@@ -289,7 +291,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   }*/
 
   filterDataBySubsidiary() {
-    // this.setValues();
+    this.setValues();
   }
 
   switchData() {
