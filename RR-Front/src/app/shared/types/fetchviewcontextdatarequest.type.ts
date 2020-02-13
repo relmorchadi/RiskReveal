@@ -1,6 +1,5 @@
 export interface FetchViewContextDataRequest {
-  workspaceContextCode: string;
-  workspaceUwYear: number;
+  [key :string]: any;
   entity: number;
   pageNumber: number;
   pageSize: number;

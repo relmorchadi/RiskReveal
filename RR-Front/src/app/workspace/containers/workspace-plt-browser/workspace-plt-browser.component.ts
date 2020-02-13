@@ -89,7 +89,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     super(_baseRouter, _baseCdr, _baseStore);
     this.lastSelectedId = null;
     this.drawerIndex = 0;
-    this.params = {};
     this.addTagModalPlaceholder = 'Select a Tag';
     this.pltColumnsCache = PltTableService.pltColumns;
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
@@ -215,6 +214,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         tap(({wsId, year}) => {
           this.workspaceId = wsId;
           this.uwy = year;
+          this.params = {
+            workspaceContextCode: wsId,
+            workspaceUwYear: year
+          }
           this.updateLeftMenuInputs('wsId', this.workspaceId);
           this.updateLeftMenuInputs('uwYear', this.uwy);
           this.updateMenuKey('wsIdentifier', this.workspaceId+"-"+this.uwy);

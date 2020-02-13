@@ -4,11 +4,22 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceImp } from '../implementations/table-service.imp';
 import { TableHandlerImp } from '../implementations/table-handler.imp';
 import { Column } from '../types/column.type';
-import {Injector, OnInit, ChangeDetectorRef, ViewChild, AfterViewInit} from '@angular/core';
+import {
+  Injector,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild,
+  AfterViewInit,
+  Input,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import {backendUrl} from "../api";
 
 
-export class BaseTable implements TableInterface , OnInit, AfterViewInit {
+export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
+
+  @Input() params: any;
 
   @ViewChild('tableContainer') container;
   containerWidth: number;
@@ -31,7 +42,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.initTable();
+
   }
 
   injectDependencies(key) {
@@ -52,8 +63,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
 
   protected initTable() {
     this._handler.initTable({
-      workspaceContextCode: "FA0044610",
-      workspaceUwYear: 2019,
+        ...this.params,
       entity: 1,
       pageNumber: 1,
       pageSize: 1000,
@@ -85,6 +95,15 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit {
 
   onContainerResize({newWidth, oldWidth}) {
     if(newWidth != oldWidth) this._handler.onContainerResize(newWidth);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const {
+      params
+    } = changes;
+    if(!params.previousValue && params.currentValue) {
+      this.initTable();
+    }
   }
 
 }
