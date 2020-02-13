@@ -74,6 +74,20 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
   showOverrideOccurrenceBasisDialog=false;
   lastAnalysisIndex= null;
 
+  contextSelectedItem: any;
+  itemCm = [
+    // {
+    //   label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
+    //     // this.editRowPopUp = true;
+    //   }
+    // },
+    {
+      label: 'Delete Item',
+      icon: 'pi pi-trash',
+      command: (event) => this.deleteAnalysisFromBasket(event)
+    },
+  ];
+
   constructor(private store: Store) {
   }
 
@@ -162,5 +176,16 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
       occurrenceBasis,
       analysisIndex: this.lastAnalysisIndex
     }));
+  }
+
+  deleteAnalysisFromBasket(event){
+    const ids = _.map(
+        _.filter(this.data.analysis, item => item.selected),
+        (item:any) => item.rlAnalysisId
+    );
+    this.store.dispatch(new fromRiskLink.DeleteFromImportBasketAction({
+      type: 'ANALYSIS',
+      ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlAnalysisId]
+    }))
   }
 }
