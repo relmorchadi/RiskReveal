@@ -15,7 +15,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity()
+//@EnableWebSecurity()
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -28,8 +28,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().exceptionHandling()
-                .authenticationEntryPoint(unauthorizedHandler).and()
-                .cors().and().authorizeRequests();
+                .and()
+                .cors().and().antMatcher("/**").authorizeRequests().anyRequest().permitAll();
+//                .authenticationEntryPoint(unauthorizedHandler).and()
+//                .cors().and().antMatcher("/**").authorizeRequests();
 //                .antMatchers("/api/**")
 //                .authenticated().and()
 //                .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
