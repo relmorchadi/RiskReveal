@@ -29,10 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler).and()
-                .cors().and().authorizeRequests()
-                .antMatchers("/api/**")
-                .authenticated().and()
-                .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .cors().and().authorizeRequests();
+//                .antMatchers("/api/**")
+//                .authenticated().and()
+//                .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
