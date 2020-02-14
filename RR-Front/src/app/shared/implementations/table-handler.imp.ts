@@ -112,7 +112,11 @@ export class TableHandlerImp implements TableHandlerInterface {
     console.log(columns);
   }
   onFilter(column: Column, filter: string){}
-  onSort(column: Column, direction){}
+
+  onSort(index: number){
+
+  }
+
   onRowSelect(rowId: number){}
 
   private updateColumns (col) {
@@ -128,7 +132,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateTotalColumnWidth(columns) {
-    const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.width, 1);
+    const totalWidth = _.reduce(columns, (acc, curr) => acc + curr.width, 40);
     this._totalColumnWidth = totalWidth > this.containerWidth ? this.containerWidth : totalWidth;
     this.totalColumnWidth$.next(this._totalColumnWidth);
   }

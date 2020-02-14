@@ -22,7 +22,7 @@ export interface TableHandlerInterface {
   onColumnResize(event);
   onManageColumns(columns: Column[]);
   onFilter(column: Column, filter: string);
-  onSort(column: Column, direction);
+  onSort(index: number);
   onRowSelect(rowId: number);
   onContainerResize(newWidth: number);
 

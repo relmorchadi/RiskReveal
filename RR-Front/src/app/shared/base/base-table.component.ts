@@ -81,7 +81,9 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   onFilter(column: Column, filter: string) {}
 
-  onSort(column: Column, direction) {}
+  onSort(index) {
+    this._handler.onSort(index);
+  }
 
   onRowSelect(rowId: number) {}
 
