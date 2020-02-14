@@ -255,7 +255,7 @@
 
 
 <financial-persp-selection-dialog *ngIf="showSelectFinancialPerspDialog" [visible]="showSelectFinancialPerspDialog"
-                                  [data]="data" (close)="showSelectFinancialPerspDialog=false"
+                                  [data]="data" [context]="context" (close)="showSelectFinancialPerspDialog=false"
                                   (loadEpCurves)="loadSourceEpCurveHeaders($event)"
                                   (override)="overrideFinancialPersp($event)"
 ></financial-persp-selection-dialog>
