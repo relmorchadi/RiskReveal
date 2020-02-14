@@ -64,7 +64,7 @@
     <div class="title-wrapper">
       <span *ngIf="!editName" (click)="activeEdit()" class="title-wrapper-name">{{itemName}}</span>
       <div *ngIf="editName" class="edit-dashboard-section">
-        <input class="hover-input" placeholder="" (keydown)="validateName($event)" [(ngModel)]="itemName">
+        <input class="hover-input" placeholder="" (keydown)="validateName($event)" [(ngModel)]="itemName" #inputName>
       </div>
       <nz-dropdown [nzTrigger]="'click'">
         <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
