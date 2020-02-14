@@ -1095,6 +1095,10 @@ export class WorkspaceState {
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+  @Action(fromWS.DeleteFromImportBasketAction)
+  deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.deleteFromImportBasket(ctx, payload);
+  }
 
   @Action(fromWS.OverrideAnalysisRegionPeril)
   overrideAnalysisRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideAnalysisRegionPeril){

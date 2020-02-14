@@ -42,6 +42,21 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
     ]
   };
 
+
+  contextSelectedItem: any;
+  itemCm = [
+    // {
+    //   label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
+    //     // this.editRowPopUp = true;
+    //   }
+    // },
+    {
+      label: 'Delete Item',
+      icon: 'pi pi-trash',
+      command: (event) => this.deletePortfolioFromBasket(event)
+    },
+  ];
+
   constructor(private store:Store) { }
 
   ngOnInit() {
@@ -84,5 +99,16 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
   deleteFromBasket(id,type){
 
+  }
+
+  deletePortfolioFromBasket(event){
+    const ids = _.map(
+          _.filter(this.portfolios, item => item.selected),
+          (item:any) => item.rlPortfolioId
+        );
+    this.store.dispatch(new fromRiskLink.DeleteFromImportBasketAction({
+      type: 'PORTFOLIO',
+      ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlPortfolioId]
+    }))
   }
 }

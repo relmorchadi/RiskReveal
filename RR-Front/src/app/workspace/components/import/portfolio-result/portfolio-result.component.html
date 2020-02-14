@@ -33,6 +33,8 @@
       </div>
       <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
+               [(contextMenuSelection)]="contextSelectedItem"
+               [contextMenu]="cmR"
                [scrollable]="true" [value]="portfolios" frozenWidth="485px">
         <ng-template let-columns pTemplate="colgroup">
           <colgroup>
@@ -79,12 +81,12 @@
           </tr>
         </ng-template>
         <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-          <tr>
+          <tr [pContextMenuRow]="rowData" [pContextMenuRowIndex]="i">
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible && !col.edit"  class="ui-resizable-column"
                   [ngClass]="{'selected-item': rowData?.selected}">
                 <div *ngIf="col.type === 'selection'" style="text-align: center">
-                  <label (ngModelChange)="updateRowData(col.field, $event,i)" [ngModel]="rowData[col.field]"
+                  <label (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)" [ngModel]="rowData[col.field]"
                          nz-checkbox></label>
                 </div>
                 <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
@@ -109,7 +111,7 @@
                      class="text-data">
 
                   <input *ngIf="col.field=='unitMultiplier'; else formattedNumber" type="number" class="col-edit-input"
-                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,i)">
+                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
                   <ng-template #formattedNumber>
                     <span>{{rowData[col.field] | number: '1.2-2'}}</span>
                   </ng-template>
@@ -119,7 +121,7 @@
                      [ngClass]="{'highlight-temp': rowData.highlight}"
                      class="text-data">
                     <input *ngIf="col.field=='proportion'; else formattedNumber" type="number" class="col-edit-input"
-                           [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,i)">
+                           [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
                     <ng-template #formattedNumber>
                       <span>{{rowData[col.field] | number: '1.2-2'}} % </span>
                     </ng-template>
@@ -130,7 +132,7 @@
                      class="text-data"><span>{{rowData[col.field]}}</span></div>
                 <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
                      class="highlight-temp text-data">
-                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length}}</span>
+                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length > 1 ? 'M*' : (rowData[col.field]?.length == 1 ? rowData[col.field][0] : '0' ) }}</span>
                   <ng-template #DivisionInfo>
                     <div class="popover-menu">
                       <ul style="margin-bottom: 0">
@@ -179,4 +181,5 @@
 <!--                          (onCancel)="closePopUp()"></app-manage-columns>-->
     </div>
   </div>
+<p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
 </div>

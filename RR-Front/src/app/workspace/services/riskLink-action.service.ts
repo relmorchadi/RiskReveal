@@ -1019,6 +1019,21 @@ export class RiskLinkStateService {
         }))
     }
 
+    deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, payload: any) {
+        const {type, ids} = payload;
+        ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            switch (_.upperCase(type)) {
+                case 'PORTFOLIO':
+                    draft.content[wsIdentifier].riskLink.summary.portfolios= _.omit(draft.content[wsIdentifier].riskLink.summary.portfolios, ids);
+                    break;
+                case 'ANALYSIS':
+                    draft.content[wsIdentifier].riskLink.summary.analysis= _.omit(draft.content[wsIdentifier].riskLink.summary.analysis, ids);
+                    break;
+            }
+        }))
+    }
+
     autoAttach(ctx: StateContext<WorkspaceModel>, payload: any) {
         const {divisionsIds, edmIds, rdmIds, wsId, projectId, instanceId, withDetailScan} = payload;
         return this.riskApi.getAutoAttach(divisionsIds, edmIds, rdmIds, wsId)
