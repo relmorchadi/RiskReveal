@@ -27,10 +27,10 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store) {
     this.unSubscribe$ = new Subject<void>();
-    console.log('test');
   }
 
   ngOnInit() {
+    console.log('test', this.projectForm, this.newProject);
     this.initNewProjectForm();
   }
 
@@ -57,7 +57,6 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   updateProject() {
-    console.log(this.projectForm);
     this.store.dispatch(new fromWS.EditProject({
       data: {
         projectName: this.projectForm.projectName || '',

@@ -76,7 +76,7 @@
     <div class="a-form-input-wrapper">
       <label class="label-input">Project Name</label>
       <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" placeholder="Insert Name"
-             [(ngModel)]="projectForm.projectName"/>
+             [(ngModel)]="projectForm.projectName" [disabled]="projectForm.projectType === 'FAC'"/>
     </div>
 
     <div class="a-form-input-wrapper">
@@ -96,12 +96,16 @@
       <div class="a-form-input-wrapper">
         <label class="label-input">Reception Date</label>
         <p-calendar [(ngModel)]="projectForm.receptionDate" appendTo="body"
-                    placeholder="Select Date" [showIcon]="true"></p-calendar>
+                    placeholder="Select Date" [showIcon]="true" [disabled]="projectForm.projectType === 'FAC'">
+
+        </p-calendar>
       </div>
       <div class="a-form-input-wrapper">
         <label class="label-input">Due Date</label>
         <p-calendar [(ngModel)]="projectForm.dueDate" appendTo="body"
-                    placeholder="Select Date" [showIcon]="true"></p-calendar>
+                    placeholder="Select Date" [showIcon]="true" [disabled]="projectForm.projectType === 'FAC'">
+
+        </p-calendar>
       </div>
     </div>
 
@@ -111,7 +115,7 @@
     <div class="a-control-buttons">
       <button class="a-button-text-cancel" (click)="cancelCreateProject()">CANCEL</button>
       <button [ngClass]="{'a-buttons-contained-disabled' : !checkValid(), 'a-buttons-contained': checkValid()}"
-              *ngIf="editOption" [disabled]="!checkValid()" (click)="updateProject()">EDIT
+              *ngIf="editOption" [disabled]="!checkValid()" (click)="updateProject()">SAVE
       </button>
       <button
         [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}"
