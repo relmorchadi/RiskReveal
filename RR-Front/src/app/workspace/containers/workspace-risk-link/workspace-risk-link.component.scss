@@ -1,5 +1,10 @@
 @import "~src/assets/scss/variables";
 
+ul.ant-dropdown-menu.ant-dropdown-menu-root.ant-dropdown-menu-light.ant-dropdown-menu-vertical{
+  max-height: 300px;
+  overflow: auto;
+}
+
 :host{
   overflow: hidden;
   display: flex;
