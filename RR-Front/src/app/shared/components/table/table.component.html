@@ -1,27 +1,28 @@
-<ng-container *ngIf="activateContextMenu">
-  <p-contextMenu appendTo="body" #cm [model]="getItems()"></p-contextMenu>
-</ng-container>
 <!--normal table-->
+<p-contextMenu *ngIf="!virtualScroll && activateContextMenu" #cmL [model]="getItems()"></p-contextMenu>
+<p-contextMenu *ngIf="virtualScroll && activateContextMenu" appendTo="body" #cm [model]="getItems()"></p-contextMenu>
+
 <p-table *ngIf="!virtualScroll" [loading]="loading"
-           [columns]="tableColumn"
-           [value]="listOfData | tableSortAndFilter : [sortedData, FilterData]"
-           [resizableColumns]="true"
-           [columnResizeMode]="'expand'"
-           [scrollable]="true"
-           [scrollHeight]="tableHeight"
-           (onColResize)="resize($event)"
-           class="table-ngPrime"
-           scrollIndicator
-           [step]="35"
-  >
-    <ng-template pTemplate="colgroup" let-columns>
+         [columns]="tableColumn"
+         [value]="listOfData | tableSortAndFilter : [sortedData, FilterData]"
+         [(contextMenuSelection)]="contextSelectedItemNv"
+         [contextMenu]="getContextMenu()"
+         [resizableColumns]="true"
+         [columnResizeMode]="'expand'"
+         [scrollable]="true"
+         [scrollHeight]="tableHeight"
+         (onColResize)="resize($event)"
+         class="table-ngPrime"
+         scrollIndicator
+         [step]="35">
+  <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <ng-container *ngFor="let col of columns">
           <col *ngIf="col.visible" [ngStyle]="{'width': col.width}">
         </ng-container>
       </colgroup>
     </ng-template>
-    <ng-template pTemplate="header" let-columns>
+  <ng-template pTemplate="header" let-columns>
       <tr>
         <ng-container *ngFor="let col of columns">
           <th *ngIf="col.visible" pResizableColumn>
@@ -40,23 +41,23 @@
             <div class="search-bar-table" *ngIf="col?.filtered">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
               <input *ngIf="col?.header?.length > 0 && fromSearch" pInputText type="text"
-                     (input)="filter(col?.field, $event.target.value, col.columnId)"
+                     (input)="filter(col?.field, $event, col.columnId)"
                      [ngModel]="FilterData[col?.field]">
               <input *ngIf="col?.header?.length > 0 && !fromSearch" pInputText type="text"
-                     (input)="filter(col?.field, $event.target.value, col.columnId)"
+                     (keyup)="filter(col?.field, $event, col.columnId)" #input
                      [ngModel]="col?.filterCriteria">
             </div>
           </th>
         </ng-container>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
       <tr style="height:34px" *ngIf="secondaryLoader">
         <td *ngFor="let col of columns" class="ui-resizable-column">
           <div class="loading-text"></div>
         </td>
       </tr>
-      <tr *ngIf="!secondaryLoader"
+      <tr *ngIf="!secondaryLoader" [pContextMenuRow]="rowData"
         [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
         <ng-container *ngFor="let col of columns">
           <ng-container *ngIf="col.visible">
@@ -101,37 +102,36 @@
         </ng-container>
       </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage" let-columns>
+  <ng-template pTemplate="emptymessage" let-columns>
       <tr>
         <td [attr.colspan]="columns.length">
           No records found
         </td>
       </tr>
     </ng-template>
-  </p-table>
+</p-table>
 
 <!--virtual scroll-->
 
 <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
-           [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-           [scrollable]="true" [scrollHeight]="tableHeight"
-           [rows]="rows" [loading]="loading"
-           [totalRecords]="totalRecords"
-           [virtualScroll]="true"
-           [virtualRowHeight]="35"
-           (onLazyLoad)="loadDataOnScroll($event)"
-           [lazy]="true"
-           [showLoader]="false"
-           [(contextMenuSelection)]="contextSelectedItem"
-           [contextMenu]="getContextMenu()" class="table-ngPrime"
-           [selectionMode]="selectionMode"
-           (onRowSelect)="rowSelect($event)"
-           (onRowUnselect)="rowUnselect($event)"
-           [(selection)]="selectedRow"
-           [columnResizeMode]="'expand'"
-           scrollIndicator
-           [step]="35"
-  >
+         [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+         [scrollable]="true" [scrollHeight]="tableHeight"
+         [rows]="rows" [loading]="loading"
+         [totalRecords]="totalRecords"
+         [virtualScroll]="true"
+         [virtualRowHeight]="35"
+         (onLazyLoad)="loadDataOnScroll($event)"
+         [lazy]="true"
+         [showLoader]="false"
+         [(contextMenuSelection)]="contextSelectedItem"
+         [contextMenu]="getContextMenu()" class="table-ngPrime"
+         [selectionMode]="selectionMode"
+         (onRowSelect)="rowSelect($event)"
+         (onRowUnselect)="rowUnselect($event)"
+         [(selection)]="selectedRow"
+         [columnResizeMode]="'expand'"
+         scrollIndicator
+         [step]="35">
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
@@ -222,4 +222,3 @@
       </tr>
     </ng-template>
   </p-table>
-

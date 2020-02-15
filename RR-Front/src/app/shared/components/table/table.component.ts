@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, ElementRef,
   EventEmitter,
   HostListener,
   Input,
@@ -11,13 +11,24 @@ import {
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
 
+import {fromEvent, of, Subject} from 'rxjs';
+import {
+  debounceTime,
+  map,
+  distinctUntilChanged,
+  filter
+} from "rxjs/operators";
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent implements OnInit {
+  get sortedData(): any {
+    return this._sortedData;
+  }
   @Output('filterData') filterData: any = new EventEmitter<any>();
   @Output('selectOne') selectOne: any = new EventEmitter<any>();
   @Output('loadMore') loadMore: any = new EventEmitter<any>();
@@ -30,12 +41,19 @@ export class TableComponent implements OnInit {
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
+  @ViewChild('cmL') nvContextMenu;
+
+  input: ElementRef;
+  @ViewChild('input') set assetInput(elRef: ElementRef) {
+    this.input = elRef;
+  };
 
   contextSelectedItem: any;
+  contextSelectedItemNv: any;
   FilterData: any = {};
 
   @Input('sortData') sortData;
-  sortedData: any;
+  private _sortedData: any;
   filterInput: any;
 
   @Input()
@@ -66,17 +84,12 @@ export class TableComponent implements OnInit {
   fromSearch: boolean = true;
   @Input()
   sortList = [];
+  @Input()
+  activateContextMenu = false;
 
   _activateContextMenu: boolean;
 
-  get activateContextMenu(): boolean {
-    return this._activateContextMenu;
-  }
-  @Input('activateContextMenu')
-  set activateContextMenu(value: boolean) {
-    if (!_.isNil(value)) { this._activateContextMenu = value;  } else { this._activateContextMenu = true; }
-  }
-
+  filterQueryChanged: Subject<any> = new Subject<any>();
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -86,24 +99,24 @@ export class TableComponent implements OnInit {
   items = [
     {
       label: 'View Detail', icon: 'pi pi-eye', command: (event) => {
-        this.currentSelectedItem = this.contextSelectedItem;
+        this.currentSelectedItem = this.virtualScroll ? this.contextSelectedItem : this.contextSelectedItemNv;
         this.selectOne.emit(this.contextSelectedItem);
       }
     },
     {
       label: 'Select item',
       icon: 'pi pi-check',
-      command: () => this.selectRow(this.contextSelectedItem , 0)
+      command: () => this.selectRow(this.virtualScroll ? this.contextSelectedItem : this.contextSelectedItemNv , 0)
     },
     {
       label: 'Open item',
       icon: 'pi pi-eject',
-      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInHere')[0], this.contextSelectedItem)
+      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInHere')[0], this.virtualScroll ? this.contextSelectedItem : this.contextSelectedItemNv)
     },
     {
       label: 'Pop Out',
       icon: 'pi pi-eject',
-      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
+      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.virtualScroll ? this.contextSelectedItem : this.contextSelectedItemNv)
     },
   ];
 
@@ -115,7 +128,13 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.filterQueryChanged.pipe(
+        debounceTime(500),
+        distinctUntilChanged()
+    ).subscribe(model => {
+      const {value, colId} = model;
+      this.filterData.emit({filteredValue: value, colId});
+    });
   }
 
   getItems() {
@@ -146,13 +165,13 @@ export class TableComponent implements OnInit {
 
   selectAll() {
     this.listOfData.forEach(
-      ws => ws.selected = true
+        ws => ws.selected = true
     );
   }
 
   unselectAll() {
     this.listOfData.forEach(
-      ws => ws.selected = false
+        ws => ws.selected = false
     );
   }
 
@@ -241,7 +260,8 @@ export class TableComponent implements OnInit {
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
     if (this.contextMenu !== undefined) {
-      this.contextMenu.hide();
+      this.virtualScroll ? this.contextMenu.hide() :
+          this.nvContextMenu.hide();
     }
   }
 
@@ -254,7 +274,9 @@ export class TableComponent implements OnInit {
   }
 
   getContextMenu() {
-      return _.isNil(this.activateContextMenu) || this.activateContextMenu ? this.contextMenu : null;
+    if (this.activateContextMenu) {
+      return this.virtualScroll ? this.contextMenu : this.nvContextMenu;
+    } else return null;
   }
 
   sortChange(field: any, sortCol: any, columnId) {
@@ -283,15 +305,16 @@ export class TableComponent implements OnInit {
     }
   }
 
-  filter(key: string, value, colId) {
-     if (this.filterModeFront) {
-       if (value) {
-         this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
-       } else {
-         this.FilterData =  _.omit(this.FilterData, [key]);
-       }
-     } else {
-      this.filterData.emit({filteredValue: value, colId});
+  filter(key: string, event, colId) {
+    const value = event.target.value;
+    if (this.filterModeFront) {
+      if (value) {
+        this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
+      } else {
+        this.FilterData =  _.omit(this.FilterData, [key]);
+      }
+    } else {
+      this.filterQueryChanged.next({key, value, colId});
     }
   }
 
