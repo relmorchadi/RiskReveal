@@ -308,6 +308,9 @@
                            [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
                            [dataKey]="'rlId'" [lazy]="true" [rows]="20" (onLazyLoad)="lazyloadPortfolios($event)"
+                           syncScroll
+                           [class]="'portfolio-table'"
+                           [classIdentifier]="'portfolio-table'"
                           [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
@@ -377,6 +380,9 @@
                              [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                              [scrollable]="true" scrollHeight="340px" frozenWidth="260px" [rowTrackBy]="rowTrackBy"
                              [dataKey]="'rlId'" [lazy]="true" [rows]="20" (onLazyLoad)="lazyloadAnalysis($event)"
+                             syncScroll
+                             [class]="'analysis-table'"
+                             [classIdentifier]="'analysis-table'"
                             [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading">
                       <!--  -->
                       <ng-template pTemplate="colgroup" let-columns>
