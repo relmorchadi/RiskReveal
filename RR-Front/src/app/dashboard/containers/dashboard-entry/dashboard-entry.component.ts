@@ -165,7 +165,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       });
       this.dashboards = dashboards;
       if (this.initDash && this.dashboards !== null) {
-        this.idSelected = this.dashboards[0].id;
+        this.idSelected = _.get(_.filter(this.dashboards, item => item.visible)[0], 'id', this.dashboards[0].id);
         this.dashboardChange(this.idSelected);
         this.initDash = false;
       }
