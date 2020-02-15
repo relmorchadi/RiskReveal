@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DivisionServiceImpl implements DivisionService {
             carDivisionDto.setLob((String) division.get("lob"));
             carDivisions.add(carDivisionDto);
         }
-
+        carDivisions.sort(Comparator.comparing(CARDivisionDto::getDivisionNumber));
         return carDivisions;
     }
 }
