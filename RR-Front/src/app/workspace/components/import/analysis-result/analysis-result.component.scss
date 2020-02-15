@@ -16,7 +16,12 @@ TABLE STYLE
   }
 }
 
-
+.button-container {
+  display: flex;
+  width: 97%;
+  margin: auto;
+  justify-content: flex-end;
+}
 
 .empty-notif-wrapper {
   display: flex;

@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import {Store} from "@ngxs/store";
 import componentData from './data';
@@ -23,6 +23,9 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
   scrollableColsSummary;
 
   frozenColsSummary;
+
+  @Output('save')
+  saveEmitter= new EventEmitter();
 
   refs = {
     currencies: [
@@ -111,4 +114,9 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
       ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlPortfolioId]
     }))
   }
+
+  savePortfolioSelection(){
+    this.saveEmitter.emit('PORTFOLIO');
+  }
+
 }

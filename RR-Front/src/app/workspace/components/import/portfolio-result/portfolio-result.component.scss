@@ -3,6 +3,13 @@
 COMPONENT STYLE
 =======================================================================================
 */
+.button-container {
+  display: flex;
+  width: 97%;
+  margin: auto;
+  justify-content: flex-end;
+}
+
 .body-wrap-body {
   display: flex;
   flex-direction: column;

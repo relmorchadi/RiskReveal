@@ -169,4 +169,13 @@ export class RiskApi {
             }
         });
     }
+
+    savePortfoliosConfig(portfolioConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-portfolio-import-selection`, portfolioConfig);
+    }
+
+    saveAnalysisConfig(analysisConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
+
+    }
 }

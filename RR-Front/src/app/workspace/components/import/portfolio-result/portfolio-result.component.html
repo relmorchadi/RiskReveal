@@ -1,185 +1,198 @@
 <div *ngIf="portfolios?.length > 0 " class="body-wrap-body">
-  <div class="body-wrapper">
-    <div class="body-wrapper-header">
-      <div class="body-wrapper-header-left">
-        <hr>
-        <div>Exposure Summaries</div>
-      </div>
-      <div class="body-wrapper-header-right-summary">
-        <div class="body-wrapper-header-right">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i (click)="isCollapsed=!isCollapsed" *ngIf="isCollapsed"
-             class="icon-keyboard_arrow_up_24px"></i>
-          <i (click)="isCollapsed=!isCollapsed" *ngIf="!isCollapsed"
-             class="icon-keyboard_arrow_down_24px"></i>
+    <div class="body-wrapper">
+        <div class="body-wrapper-header">
+            <div class="body-wrapper-header-left">
+                <hr>
+                <div>Exposure Summaries</div>
+            </div>
+            <div class="body-wrapper-header-right-summary">
+                <div class="body-wrapper-header-right">
+                    <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+                    <i (click)="isCollapsed=!isCollapsed" *ngIf="isCollapsed"
+                       class="icon-keyboard_arrow_up_24px"></i>
+                    <i (click)="isCollapsed=!isCollapsed" *ngIf="!isCollapsed"
+                       class="icon-keyboard_arrow_down_24px"></i>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <div *ngIf="!isCollapsed" class="summary-info">
-      <div class="menu-icon-wrap">
-        <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
-          <a nz-dropdown style="max-height: 28px;display: flex;">
-            <i class="icon-settings_24px"></i>
-          </a>
-          <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
-            <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
-            <li nz-menu-divider></li>
-<!--            <li (click)="managePopUpSummaries = true" nz-menu-item>Manage Columns</li>-->
-            <li nz-menu-divider></li>
-          </ul>
-        </nz-dropdown>
-      </div>
-      <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
-               [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
-               [(contextMenuSelection)]="contextSelectedItem"
-               [contextMenu]="cmR"
-               [scrollable]="true" [value]="portfolios" frozenWidth="485px">
-        <ng-template let-columns pTemplate="colgroup">
-          <colgroup>
-            <ng-container *ngFor="let col of columns">
-              <ng-container *ngIf="col.visible">
-                <col [ngStyle]="{'width': col.width}">
-              </ng-container>
-            </ng-container>
-          </colgroup>
-        </ng-template>
-        <ng-template let-columns pTemplate="header">
-          <tr>
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible" pResizableColumn>
-                <ng-container *ngIf="col.type === 'selection'">
-<!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'summaries')"></label>
-                  <label style="margin-top:20px" nz-checkbox
-                         [nzIndeterminate]="true"></label>
-                  <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
-                </ng-container>
-                <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
-                  <ng-container [pSortableColumn]="col.field">
-                    {{col.header}}
-<!--                    <ng-container *ngIf="col.sorting" [ngSwitch]="col?.sorting">
-                      <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
-                         class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                      <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
-                         class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                      <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchDefault class="icon-direction"
-                         style="font-size: 1.4em;"></i>
-                    </ng-container>
-                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
-                  </ng-container>
-                  <div *ngIf="col.filtered" class="search-bar-table">
-                    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                    <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText type="text">
-                  </div>
-                </div>
-                <div *ngIf="col.type === 'icon'">
-                  <i class="icon-menu_24px"></i>
-                </div>
-              </th>
-            </ng-container>
-          </tr>
-        </ng-template>
-        <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-          <tr [pContextMenuRow]="rowData" [pContextMenuRowIndex]="i">
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible && !col.edit"  class="ui-resizable-column"
-                  [ngClass]="{'selected-item': rowData?.selected}">
-                <div *ngIf="col.type === 'selection'" style="text-align: center">
-                  <label (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)" [ngModel]="rowData[col.field]"
-                         nz-checkbox></label>
-                </div>
-                <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                <div *ngIf="col.type === 'progress'">
-                  <div class="text-data" *ngIf="col.type === 'progress'">
-                    <ng-container *ngIf="!rowData.isScanning; else scanning">
-                      <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
-                                   [nzWidth]="20" nzType="circle"></nz-progress>
-                    </ng-container>
-                    <ng-template #scanning>
-<!--                      <span class="loading">Scanning</span>-->
-                      <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
-                    </ng-template>
-                  </div>
-                </div>
-                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
+        <div *ngIf="!isCollapsed" class="summary-info">
+            <div class="menu-icon-wrap">
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
+                    <a nz-dropdown style="max-height: 28px;display: flex;">
+                        <i class="icon-settings_24px"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                        <li nz-menu-item>Reset Sort</li>
+                        <li nz-menu-item>Reset Filters</li>
+                        <li nz-menu-item>Reset Sort/Filters</li>
+                        <li nz-menu-divider></li>
+                        <!--            <li (click)="managePopUpSummaries = true" nz-menu-item>Manage Columns</li>-->
+                        <li nz-menu-divider></li>
+                    </ul>
+                </nz-dropdown>
+            </div>
+            <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
+                     [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
+                     [(contextMenuSelection)]="contextSelectedItem"
+                     [contextMenu]="cmR"
+                     [scrollable]="true" [value]="portfolios" frozenWidth="485px">
+                <ng-template let-columns pTemplate="colgroup">
+                    <colgroup>
+                        <ng-container *ngFor="let col of columns">
+                            <ng-container *ngIf="col.visible">
+                                <col [ngStyle]="{'width': col.width}">
+                            </ng-container>
+                        </ng-container>
+                    </colgroup>
+                </ng-template>
+                <ng-template let-columns pTemplate="header">
+                    <tr>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.visible" pResizableColumn>
+                                <ng-container *ngIf="col.type === 'selection'">
+                                    <!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'summaries')"></label>
+                                                      <label style="margin-top:20px" nz-checkbox
+                                                             [nzIndeterminate]="true"></label>
+                                                      <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                                </ng-container>
+                                <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
+                                    <ng-container [pSortableColumn]="col.field">
+                                        {{col.header}}
+                                        <!--                    <ng-container *ngIf="col.sorting" [ngSwitch]="col?.sorting">
+                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
+                                                                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
+                                                                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchDefault class="icon-direction"
+                                                                 style="font-size: 1.4em;"></i>
+                                                            </ng-container>
+                                                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
+                                    </ng-container>
+                                    <div *ngIf="col.filtered" class="search-bar-table">
+                                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                        <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)"
+                                               pInputText type="text">
+                                    </div>
+                                </div>
+                                <div *ngIf="col.type === 'icon'">
+                                    <i class="icon-menu_24px"></i>
+                                </div>
+                            </th>
+                        </ng-container>
+                    </tr>
+                </ng-template>
+                <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                    <tr [pContextMenuRow]="rowData" [pContextMenuRowIndex]="i">
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
+                                [ngClass]="{'selected-item': rowData?.selected}">
+                                <div *ngIf="col.type === 'selection'" style="text-align: center">
+                                    <label (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)"
+                                           [ngModel]="rowData[col.field]"
+                                           nz-checkbox></label>
+                                </div>
+                                <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                                <div *ngIf="col.type === 'progress'">
+                                    <div class="text-data" *ngIf="col.type === 'progress'">
+                                        <ng-container *ngIf="!rowData.isScanning; else scanning">
+                                            <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
+                                                         [nzWidth]="20" nzType="circle"></nz-progress>
+                                        </ng-container>
+                                        <ng-template #scanning>
+                                            <!--                      <span class="loading">Scanning</span>-->
+                                            <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
                         <span *ngIf="rowData?.exposedLocation" class="indicator-flag"
                               style="background-color: #0700CF"></span>
-                </div>
-                <div *ngIf="col.type === 'number'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data">
+                                </div>
+                                <div *ngIf="col.type === 'number'"
+                                     [ngClass]="{'highlight-temp': rowData.highlight}"
+                                     class="text-data">
 
-                  <input *ngIf="col.field=='unitMultiplier'; else formattedNumber" type="number" class="col-edit-input"
-                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
-                  <ng-template #formattedNumber>
-                    <span>{{rowData[col.field] | number: '1.2-2'}}</span>
-                  </ng-template>
+                                    <input *ngIf="col.field=='unitMultiplier'; else formattedNumber" type="number"
+                                           class="col-edit-input"
+                                           [(ngModel)]="rowData[col.field]"
+                                           (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
+                                    <ng-template #formattedNumber>
+                                        <span>{{rowData[col.field] | number: '1.2-2'}}</span>
+                                    </ng-template>
 
-                  </div>
-                <div *ngIf="col.type === 'percentage'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data">
-                    <input *ngIf="col.field=='proportion'; else formattedNumber" type="number" class="col-edit-input"
-                           [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
-                    <ng-template #formattedNumber>
-                      <span>{{rowData[col.field] | number: '1.2-2'}} % </span>
-                    </ng-template>
-                </div>
-                <!--[ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"-->
-                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
-                     [ngClass]="{'highlight-temp': col.highlight}"
-                     class="text-data"><span>{{rowData[col.field]}}</span></div>
-                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
-                     class="highlight-temp text-data">
-                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length > 1 ? 'M*' : (rowData[col.field]?.length == 1 ? rowData[col.field][0] : '0' ) }}</span>
-                  <ng-template #DivisionInfo>
-                    <div class="popover-menu">
-                      <ul style="margin-bottom: 0">
-                        <ng-container *ngFor="let item of rowData[col.field]">
-                          <li> Division N {{item}}</li>
+                                </div>
+                                <div *ngIf="col.type === 'percentage'"
+                                     [ngClass]="{'highlight-temp': rowData.highlight}"
+                                     class="text-data">
+                                    <input *ngIf="col.field=='proportion'; else formattedNumber" type="number"
+                                           class="col-edit-input"
+                                           [(ngModel)]="rowData[col.field]"
+                                           (ngModelChange)="updateRowData(col.field, $event,rowData.rlPortfolioId)">
+                                    <ng-template #formattedNumber>
+                                        <span>{{rowData[col.field] | number: '1.2-2'}} % </span>
+                                    </ng-template>
+                                </div>
+                                <!--[ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"-->
+                                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
+                                     [ngClass]="{'highlight-temp': col.highlight}"
+                                     class="text-data"><span>{{rowData[col.field]}}</span></div>
+                                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
+                                     class="highlight-temp text-data">
+                                    <span nz-tooltip
+                                          [nzTitle]="DivisionInfo">{{rowData[col.field]?.length > 1 ? 'M*' : (rowData[col.field]?.length == 1 ? rowData[col.field][0] : '0') }}</span>
+                                    <ng-template #DivisionInfo>
+                                        <div class="popover-menu">
+                                            <ul style="margin-bottom: 0">
+                                                <ng-container *ngFor="let item of rowData[col.field]">
+                                                    <li> Division N {{item}}</li>
+                                                </ng-container>
+                                            </ul>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                                     class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                                <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"
+                                     [ngClass]="{'highlight-temp': rowData.highlight}"
+                                     class="text-data" style="display: flex;justify-content: center;"><i
+                                        class="icon-trash-alt"></i></div>
+                            </th>
+                            <ng-container *ngIf="col.edit">
+                                <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
+                                    [ngClass]="{'selected-item': rowData?.selected}">
+                                    <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <nz-select
+                                                    style="width: 100%"
+                                                    [(ngModel)]="rowData.targetCurrency"
+                                                    (ngModelChange)="updateRowData(col.field, $event,i)"
+                                                    nzShowSearch
+                                                    class="a-dropdown-small input-wrapper"
+                                                    nzPlaceHolder="TAG CURRENCY"
+                                            >
+                                                <nz-option *ngFor="let c of refs?.currencies" [nzLabel]="c.label"
+                                                           [nzValue]="c.value"></nz-option>
+                                            </nz-select>
+                                        </ng-template>
+                                        <ng-template pTemplate="output">
+                                            <div class="text-data highlight-temp">
+                                                <span>{{rowData.targetCurrency}}</span></div>
+                                        </ng-template>
+                                    </p-cellEditor>
+                                </th>
+                            </ng-container>
                         </ng-container>
-                      </ul>
-                    </div>
-                  </ng-template>
-                </div>
-                <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
-                <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data" style="display: flex;justify-content: center;"><i
-                  class="icon-trash-alt"></i></div>
-              </th>
-              <ng-container *ngIf="col.edit">
-                <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <nz-select
-                        style="width: 100%"
-                        [(ngModel)]="rowData.targetCurrency"
-                        (ngModelChange)="updateRowData(col.field, $event,i)"
-                        nzShowSearch
-                        class="a-dropdown-small input-wrapper"
-                        nzPlaceHolder="TAG CURRENCY"
-                      >
-                        <nz-option *ngFor="let c of refs?.currencies" [nzLabel]="c.label" [nzValue]="c.value"></nz-option>
-                      </nz-select>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      <div class="text-data highlight-temp"><span>{{rowData.targetCurrency}}</span></div>
-                    </ng-template>
-                  </p-cellEditor>
-                </th>
-              </ng-container>
-            </ng-container>
-          </tr>
-        </ng-template>
-      </p-table>
-<!--      <app-manage-columns [visible]="managePopUpSummaries" [columns]="cloneData(scrollableColsSummary)"-->
-<!--                          (onSubmit)="saveColumns($event, 'summaries')"-->
-<!--                          (onCancel)="closePopUp()"></app-manage-columns>-->
+                    </tr>
+                </ng-template>
+            </p-table>
+
+            <!--      <app-manage-columns [visible]="managePopUpSummaries" [columns]="cloneData(scrollableColsSummary)"-->
+            <!--                          (onSubmit)="saveColumns($event, 'summaries')"-->
+            <!--                          (onCancel)="closePopUp()"></app-manage-columns>-->
+        </div>
+        <div *ngIf="!isCollapsed" class="button-container">
+            <button (click)="savePortfolioSelection()" class="a-buttons-contained-mini">SAVE</button>
+        </div>
     </div>
-  </div>
-<p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
+    <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
 </div>

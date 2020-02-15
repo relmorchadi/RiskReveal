@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import componentData from "./data";
@@ -17,6 +17,8 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
   @Input('data')
   data:{analysis, epCurves, targetRaps, regionPerilsByAnalysis}= {analysis: [], epCurves: [], targetRaps: [], regionPerilsByAnalysis: {}};
 
+  @Output('save')
+  saveEmitter= new EventEmitter();
 
   isCollapsed;
   scrollableColsResults;
@@ -187,5 +189,9 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
       type: 'ANALYSIS',
       ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlAnalysisId]
     }))
+  }
+
+  saveAnalysisSelection(){
+    this.saveEmitter.emit('ANALYSIS');
   }
 }

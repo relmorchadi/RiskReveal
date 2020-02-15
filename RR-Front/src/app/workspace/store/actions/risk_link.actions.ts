@@ -250,6 +250,10 @@ export class DeleteFromImportBasketAction{
   static readonly type = '[Risk Link] Delete from Import Basket';
   constructor(public payload: any) {}
 }
+export class SaveImportConfigurationAction{
+  static readonly type = '[Risk Link] Save Import Configuration';
+  constructor(public payload: any) {}
+}
 
 export class OverrideAnalysisRegionPeril{
   static readonly type= '[Risk Link] Override Analysis Region Peril';

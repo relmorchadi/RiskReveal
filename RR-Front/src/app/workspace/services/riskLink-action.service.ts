@@ -968,7 +968,6 @@ export class RiskLinkStateService {
                     console.error('Error while doing the detailed scan', err);
                     let state = ctx.getState();
                     const wsIdentifier = state.currentTab.wsIdentifier;
-                    const {analysis, portfolios} = state.content[wsIdentifier].riskLink.summary;
                     this.patchScanStatus(ctx, false);
                     return of(err);
                 }))
@@ -1021,17 +1020,58 @@ export class RiskLinkStateService {
 
     deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, payload: any) {
         const {type, ids} = payload;
-        ctx.patchState(produce(ctx.getState(), draft => {
+        switch (_.upperCase(type)) {
+            case 'PORTFOLIO':
+                return this.deletePortfolioFromSelection(ctx, ids);
+            case 'ANALYSIS':
+                return this.deleteAnalysisFromSelection(ctx, ids);
+        }
+    }
+
+    private deleteAnalysisFromSelection(ctx: StateContext<WorkspaceModel>, ids){
+        return ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = draft.currentTab.wsIdentifier;
-            switch (_.upperCase(type)) {
-                case 'PORTFOLIO':
-                    draft.content[wsIdentifier].riskLink.summary.portfolios= _.omit(draft.content[wsIdentifier].riskLink.summary.portfolios, ids);
-                    break;
-                case 'ANALYSIS':
-                    draft.content[wsIdentifier].riskLink.summary.analysis= _.omit(draft.content[wsIdentifier].riskLink.summary.analysis, ids);
-                    break;
-            }
-        }))
+            const currentDivision = draft.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
+            const marketChannel = draft.content[wsIdentifier].marketChannel;
+            _.forEach(ids, id => {
+                if(marketChannel == 'FAC'){
+                    const {divisions, rdmId}= draft.content[wsIdentifier].riskLink.summary.analysis[id];
+                    _.forEach(divisions, division => {
+                        if(division != currentDivision)
+                            draft.content[wsIdentifier].riskLink.facSelection[division].analysis[rdmId] = _.omit(draft.content[wsIdentifier].riskLink.facSelection[division].analysis[rdmId],[id]);
+                        else
+                            draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] = _.omit(draft.content[wsIdentifier].riskLink.selection.analysis[rdmId],[id]);
+                    });
+                }else {
+                    const {rdmId}= draft.content[wsIdentifier].riskLink.summary.analysis[id];
+                    draft.content[wsIdentifier].riskLink.selection.analysis[rdmId] = _.omit(draft.content[wsIdentifier].riskLink.selection.analysis[rdmId],[id]);
+                }
+            });
+            draft.content[wsIdentifier].riskLink.summary.analysis= _.omit(draft.content[wsIdentifier].riskLink.summary.analysis, ids);
+        }));
+    }
+
+    private deletePortfolioFromSelection(ctx: StateContext<WorkspaceModel>, ids){
+        return ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            const currentDivision = draft.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
+            const marketChannel = draft.content[wsIdentifier].marketChannel;
+            _.forEach(ids, id => {
+                if(marketChannel == 'FAC'){
+                    const {divisions, edmId}= draft.content[wsIdentifier].riskLink.summary.portfolios[id];
+                    _.forEach(divisions, division => {
+                        if(division != currentDivision)
+                            draft.content[wsIdentifier].riskLink.facSelection[division].portfolios[edmId] = _.omit(draft.content[wsIdentifier].riskLink.facSelection[division].portfolios[edmId] ,[id]);
+                        else
+                            draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] = _.omit(draft.content[wsIdentifier].riskLink.selection.portfolios[edmId],[id]);
+                    });
+                }else {
+                    const {edmId}= draft.content[wsIdentifier].riskLink.summary.portfolios[id];
+                    draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] = _.omit(draft.content[wsIdentifier].riskLink.selection.portfolios[edmId],[id]);
+                }
+            });
+            draft.content[wsIdentifier].riskLink.summary.portfolios= _.omit(draft.content[wsIdentifier].riskLink.summary.portfolios, ids);
+        }));
     }
 
     autoAttach(ctx: StateContext<WorkspaceModel>, payload: any) {
@@ -1114,6 +1154,25 @@ export class RiskLinkStateService {
             }
         });
         return result;
+    }
+
+    saveImportConfiguration(ctx: StateContext<WorkspaceModel>, payload: any) {
+        switch (_.upperCase(payload.type)) {
+            case 'ANALYSIS':
+                return this.riskApi.saveAnalysisConfig(payload.analysisConfig)
+                    .pipe(mergeMap(() => {
+                            return of();
+                        }),
+                        catchError(err => of(err)));
+                break;
+            case 'PORTFOLIO':
+                return this.riskApi.savePortfoliosConfig(payload.portfolioConfig)
+                    .pipe(mergeMap(() => {
+                            return of();
+                        }),
+                        catchError(err => of(err)));
+                break;
+        }
     }
 
     triggerImport(ctx, payload) {

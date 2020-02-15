@@ -467,8 +467,9 @@
 
 
       <div *ngIf=" (summary$ | async) as summary">
-        <portfolio-result [context]="this.tabStatus" [data]="summary.portfolios | toArray"></portfolio-result>
-        <analysis-result [context]="this.tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"></analysis-result>
+        <portfolio-result [context]="this.tabStatus" [data]="summary.portfolios | toArray" (save)="saveConfiguration($event)"></portfolio-result>
+        <analysis-result [context]="this.tabStatus" [data]="{analysis: summary.analysis | toArray, epCurves: summary.sourceEpHeaders, targetRaps: summary.targetRaps, regionPerilsByAnalysis: summary.regionPerils}"
+                         (save)="saveConfiguration($event)"></analysis-result>
         <!--      <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary>-->
         <!-- <app-risk-link-res-summary [data]="summary$ | async"></app-risk-link-res-summary> -->
 
