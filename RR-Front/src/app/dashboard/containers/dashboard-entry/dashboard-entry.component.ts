@@ -213,17 +213,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     const {selectedDashboard, widget} = payload;
     this.dashboardAPI.createWidget(widget).subscribe((data: any) => {
       const {userDashboardWidget, columns} = data;
-      this.dashboards = _.map(this.dashboards, item => {
-        if (item.id === selectedDashboard) {
-          return {
-            ...item, widgets: [...item.widgets, {
-              ...this._formatWidget(userDashboardWidget),
-              columns: this._formatColumns(columns)
-            }]
-          };
-        }
-        return item;
-      });
+      const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === selectedDashboard);
+      this.dashboards = _.merge(this.dashboards, {[dashIndex]: {
+          widgets: [...this.dashboards[dashIndex].widgets, {
+            ...this._formatWidget(userDashboardWidget),
+            columns: this._formatColumns(columns)
+          }]
+        }});
       this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
       this.detectChanges();
     })
@@ -232,43 +228,35 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   duplicateWidgetAction(payload) {
     this.dashboardAPI.duplicateWidget(payload).subscribe((data: any) => {
       const {userDashboardWidget, columns} = data;
-      this.dashboards = _.map(this.dashboards, item => {
-        if (item.id === this.selectedDashboard.id) {
-          return {
-            ...item, widgets: [...item.widgets, {
-              ...this._formatWidget(userDashboardWidget),
-              columns: this._formatColumns(columns)
-            }]
-          };
-        }
-        return item;
-      });
+      const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+      this.dashboards = _.merge(this.dashboards, {[dashIndex]: {
+          widgets: [...this.dashboards[dashIndex].widgets, {
+            ...this._formatWidget(userDashboardWidget),
+            columns: this._formatColumns(columns)
+          }]
+        }});
       this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
       this.detectChanges();
     })
   }
 
   deleteWidgetAction(widgetId) {
-    this.dashboards = _.map(this.dashboards, item => {
-      if (item.id === this.selectedDashboard.id) {
-        return {...item, widgets: _.filter(item.widgets, widgetItem =>
-              widgetItem.userDashboardWidgetId !== widgetId)};
-      }
-      return item;
-    });
+    const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    _.assignIn(this.dashboards[dashIndex], {
+        widgets: _.filter(this.dashboards[dashIndex].widgets,
+                widgetItem => widgetItem.userDashboardWidgetId !== widgetId)
+      });
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
     this.dashboardAPI.deleteWidget(widgetId).subscribe()
   }
 
   deleteAllDashboardByRef(payload) {
     const {selectedDashboard, refId} = payload;
-    this.dashboards = _.map(this.dashboards, item => {
-      if (item.id === selectedDashboard.id) {
-        return {...item, widgets: _.filter(item.widgets, widgetItem =>
-              widgetItem.widgetId !== refId)};
-      }
-      return item;
-    });
+    const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    _.assignIn(this.dashboards[dashIndex],  {
+        widgets: _.filter(this.dashboards[dashIndex].widgets,
+            widgetItem => widgetItem.widgetId !== refId)
+      });
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
     this.dashboardAPI.deleteAllWidgetByRef(selectedDashboard.id, refId).subscribe();
   }
@@ -276,21 +264,26 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   updateWidgetsDataAction(payload) {
     const {updatedWidget, updatedDash} = payload;
     const widgetId = updatedWidget.userDashboardWidgetId;
+    const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    const dashUpdated = _.find(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    const widgetIndex = _.findIndex(dashUpdated.widgets, (item: any) => item.userDashboardWidgetId === widgetId);
 
     if(updatedDash !== null) {
-      this.dashboards = _.map(this.dashboards, item => {
-        if (item.id === this.selectedDashboard.id) {
-          return {...item, widgets: _.map(item.widgets, widget => {
-              if (widget.userDashboardWidgetId === widgetId) {
-                return {...widget, ...updatedDash}
-              } else {return widget}
-            })}
-        } else {return item}
-      });
+      this.dashboards = _.merge(this.dashboards, {[dashIndex]: {
+          widgets: _.merge(this.dashboards[dashIndex].widgets, {[widgetIndex]: {
+            ...this.dashboards[dashIndex].widgets[widgetIndex], ...updatedDash}
+          })
+        }});
     }
 
     this.dashboardAPI.updateWidget(updatedWidget).subscribe();
     this.selectedDashboard = _.find(this.dashboards, item => item.id === this.selectedDashboard.id);
+  }
+
+  openRightSlider() {
+    this.rightSliderCollapsed = true;
+    const dashId = _.get(_.filter(this.dashboards, item => item.visible)[this.idTab], 'id', this.dashboards[0].id);
+    this.selectTab(dashId);
   }
 
   setTabValue() {
@@ -399,7 +392,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
-  updateDash(tab, newObject, redirect = false): void {
+  updateDash(tab, newObject, option = null): void {
     const dashboard = {
       dashBoardSequence: tab.dashBoardSequence,
       dashboardName: tab.dashboardName,
@@ -410,7 +403,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     };
     this.updateDashboardAction({dashboardId: tab.id,
       updatedDashboard: _.merge({}, dashboard, newObject)});
-    redirect ? this.selectedDashboard = this.dashboards.filter(ds => ds.id === tab.id)[0] : null;
+    if (option === 'delete') {
+      const visibleDash: any = _.filter(this.dashboards, item => item.visible && item.userDashboardId !== tab.id);
+      visibleDash.length === 0 ? this.dashboardChange(this.dashboards[0].userDashboardId) :
+          this.dashboardChange(visibleDash[0].userDashboardId);
+    } else if (option === 'open') {
+      this.dashboardChange(tab.id);
+    }
   }
 
   deleteDashboard() {
@@ -459,11 +458,11 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           'error', 'bottomRight', 6000);
     } else {
       const updatedWidget = {
-        colPosition: item.position.x,
+        colPosition: item.position.col,
         colSpan: item.position.cols,
         minItemCols: item.position.minItemCols,
         minItemRows: item.position.minItemRows,
-        rowPosition: item.position.y,
+        rowPosition: item.position.row,
         rowSpan: item.position.rows,
         userAssignedName: newName,
         userDashboardId: item.userDashboardId,
