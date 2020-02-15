@@ -813,14 +813,21 @@ export class RiskLinkStateService {
                         const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
                         const {riskLink} = draft.content[wsIdentifier];
                         const selectedDataSources = [..._.keys(riskLink.selection.edms), ..._.keys(riskLink.selection.rdms)];
-                        draft.content[wsIdentifier].riskLink.listEdmRdm.data = _.merge({},
-                            ...content.map(item => ({
-                                [item.rmsId]: {
-                                    ...item,
-                                    selected: !!_.find(selectedDataSources, d => d == item.rmsId),
-                                }
-                            }))
-                        );
+                        // draft.content[wsIdentifier].riskLink.listEdmRdm.data = _.merge({},
+                        //     ...content.map(item => ({
+                        //         [item.rmsId]: {
+                        //             ...item,
+                        //             selected: !!_.find(selectedDataSources, d => d == item.rmsId),
+                        //         }
+                        //     }))
+                        // );
+                        draft.content[wsIdentifier].riskLink.listEdmRdm.data= {};
+                        _.forEach(content, ds => {
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.data[ds.rmsId]={
+                                ...ds,
+                                selected: !!_.find(selectedDataSources, d => d == ds.rmsId),
+                            }
+                        });
                         draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement = numberOfElement;
                         draft.content[wsIdentifier].riskLink.listEdmRdm.totalElements = totalElements;
                         draft.content[wsIdentifier].riskLink.listEdmRdm.last = last;
