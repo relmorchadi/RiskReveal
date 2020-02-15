@@ -294,10 +294,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 this.unsubscribeOnDestroy,
                 ofActionSuccessful(fromWs.DeleteFromImportBasketAction)
             ).subscribe(({payload}) => {
-                console.log('Delete from import successful', payload);
-            if( payload.type == 'ANALYSIS' ){
+            console.log('Delete from import successful', payload);
+            if (payload.type == 'ANALYSIS') {
                 this.getRiskLinkAnalysis();
-            }else if( payload.type == 'PORTFOLIO'){
+            } else if (payload.type == 'PORTFOLIO') {
                 this.getRiskLinkPortfolio();
             }
         });
@@ -859,7 +859,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }))
     }
 
-    saveConfiguration(type:string) {
+    saveConfiguration(type: string) {
         const projectId = this.selectedProject.projectId;
         if (type == 'ANALYSIS') {
             this.analysisSummary$
