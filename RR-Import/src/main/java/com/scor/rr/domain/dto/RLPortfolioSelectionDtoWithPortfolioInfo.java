@@ -24,6 +24,8 @@ public class RLPortfolioSelectionDtoWithPortfolioInfo {
     private Long rlPortfolioId;
     private List<Integer> divisions;
     private Long projectId;
+    private Long edmId;
+    private String edmName;
 
     public RLPortfolioSelectionDtoWithPortfolioInfo(RLPortfolioSelection element) {
         this.rlId = element.getRlPortfolio().getRlId();
@@ -36,6 +38,8 @@ public class RLPortfolioSelectionDtoWithPortfolioInfo {
         this.unitMultiplier = element.getUnitMultiplier();
         this.proportion = element.getProportion();
         this.divisions = new ArrayList<>();
+        this.edmId= element.getRlPortfolio().getEdmId();
+        this.edmName= element.getRlPortfolio().getEdmName();
         if (element.getDivision() != null)
             this.divisions.add(element.getDivision());
     }

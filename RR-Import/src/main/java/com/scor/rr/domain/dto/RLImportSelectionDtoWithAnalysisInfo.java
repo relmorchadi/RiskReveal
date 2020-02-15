@@ -31,6 +31,8 @@ public class RLImportSelectionDtoWithAnalysisInfo {
     private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
     private List<Integer> divisions;
     private List<String> financialPerspectives;
+    private Long rdmId;
+    private String rdmName;
 
     public RLImportSelectionDtoWithAnalysisInfo(RLImportSelection element) {
         this.rlId = element.getRlAnalysis().getRlId();
@@ -51,6 +53,8 @@ public class RLImportSelectionDtoWithAnalysisInfo {
         if (element.getDivision() != null)
             this.divisions.add(element.getDivision());
         this.financialPerspectives.add(element.getFinancialPerspective());
+        this.rdmId= element.getRlAnalysis().getRdmId();
+        this.rdmName= element.getRlAnalysis().getRdmName();
     }
 
     public void addToDivisionList(Integer division) {
