@@ -479,7 +479,7 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @offset=" + offset + ", @page_size=" + size;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
         //@Todo by BTP Count S/p
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
 

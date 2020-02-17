@@ -126,7 +126,7 @@ public class ExposureSummaryExtractor {
                         String edmName = (String) edm.getKey(2);
 
                         List<String> portfolioAndConformedCurrencyList =
-                                entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getPortfolioType() + "~" + modelPortfolio.getCurrency())
+                                entry.getValue().stream().map(modelPortfolio -> modelPortfolio.getPortfolioId() + "~" + modelPortfolio.getPortfolioType() + "~" + (modelPortfolio.getCurrency() != null ? modelPortfolio.getCurrency() : "USD"))
                                         .collect(Collectors.toList());
 
                         //Note: add excludeRegionPerils (type varchar) into ModelPortfolio and RlPortfolioSelection.
@@ -140,11 +140,6 @@ public class ExposureSummaryExtractor {
                                 null);
 
                         if (runId != null) {
-                            // NOTE: be careful the volumetric you are keeping in memory at the same time.
-                            // It could be out of memory if user is importing too many portfolios.
-                            // Some kinds of buffering may be better.
-                            List<ExposureSummaryData> allRRExposureSummaries = new ArrayList<>();
-                            List<RLExposureSummaryItem> allRLExposureSummaries = new ArrayList<>();
                             Map<String, Object> params = new HashMap<>();
 
                             params.put("Edm_id", edmId);
@@ -180,23 +175,19 @@ public class ExposureSummaryExtractor {
                                                     query,
                                                     new RLExposureSummaryItemRowMapper(globalViewSummary));
 
-                                            allRRExposureSummaries.addAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems, entry.getValue()));
+                                            log.info("Info: Start saving risk reveal exposure summaries");
+                                            exposureSummaryDataRepository.saveAll(this.transformSummary(exposureViewDefinition, rlExposureSummaryItems, entry.getValue()));
+                                            log.info("Info: Saving risk reveal exposure summaries has ended");
+
+                                            log.info("Info: Start saving risk link exposure summaries");
+                                            exposureSummaryItemRepository.saveAll(rlExposureSummaryItems);
+                                            log.info("Info: Saving risk link exposure summaries has ended");
 
                                             exposureViewDefinitions.stream()
                                                     .filter(derivedDefinition -> derivedDefinition.getBasedOnSummaryAlias().equalsIgnoreCase(exposureViewDefinition.getExposureSummaryAlias()))
-                                                    .forEach(derivedDefinition -> allRRExposureSummaries.addAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems, entry.getValue())));
-
-                                            allRLExposureSummaries.addAll(rlExposureSummaryItems);
+                                                    .forEach(derivedDefinition -> exposureSummaryDataRepository.saveAll(this.transformSummary(derivedDefinition, rlExposureSummaryItems, entry.getValue())));
                                         }
                                     });
-
-                            log.info("Info: Start saving risk reveal exposure summaries");
-                            exposureSummaryDataRepository.saveAll(allRRExposureSummaries);
-                            log.info("Info: Saving risk reveal exposure summaries has ended");
-
-                            log.info("Info: Start saving risk link exposure summaries");
-                            exposureSummaryItemRepository.saveAll(allRLExposureSummaries);
-                            log.info("Info: Saving risk link exposure summaries has ended");
 
 
 //                            log.debug("Starting extract EDM Detail Summary: {}", modelPortfolios.size());
