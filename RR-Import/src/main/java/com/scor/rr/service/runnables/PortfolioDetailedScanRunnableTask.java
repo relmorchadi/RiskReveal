@@ -17,7 +17,6 @@ import java.util.concurrent.CountDownLatch;
 @Component
 @Scope("prototype")
 @Data
-@Transactional(transactionManager = "rrTransactionManager")
 public class PortfolioDetailedScanRunnableTask implements Callable<List<RLPortfolio>> {
 
     @Autowired

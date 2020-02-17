@@ -1,6 +1,9 @@
 package com.scor.rr.configuration;
 
-import com.google.common.cache.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalListener;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DataSources;
 import com.scor.rr.repository.ModellingSystemInstanceRepository;
@@ -10,9 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
-
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
