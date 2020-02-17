@@ -20,22 +20,18 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/refs`, {params});
     }
 
-    scanDatasources(dataSources: any[], projectId, instanceId, instanceName) {
+    scanDatasources(dataSources: any[], projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }
 
-    rescanDataSource(dataSource: any, projectId, instanceId, instanceName) {
+    rescanDataSource(dataSource: any, projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/single-basic-scan`, dataSource, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }
@@ -172,5 +168,14 @@ export class RiskApi {
                 rlModelDataSourceId
             }
         });
+    }
+
+    savePortfoliosConfig(portfolioConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-portfolio-import-selection`, portfolioConfig);
+    }
+
+    saveAnalysisConfig(analysisConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
+
     }
 }

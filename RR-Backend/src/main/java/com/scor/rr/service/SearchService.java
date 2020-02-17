@@ -172,18 +172,16 @@ public class SearchService {
     private void feedCountMapper() {
         //TREATY
 
-        countMapper.put(TreatyTableNames.CEDANT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TreatyTableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CLIENT_CODE, cedantCodeCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CLIENT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TreatyTableNames.COUNTRY_NAME, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TreatyTableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TreatyTableNames.UW_YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
-        countMapper.put(TreatyTableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TreatyTableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-//        countMapper.put(TreatyTableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CONTRACT_CODE, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TreatyTableNames.CONTRACT_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 
         //FAC
 
-        facSearchCountMapper.put(FacTableNames.CLIENT, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        facSearchCountMapper.put(FacTableNames.CLIENT_CODE, facClientCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.UW_YEAR, facUWYearCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.CONTRACT_CODE, facContractCodeCounRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         facSearchCountMapper.put(FacTableNames.CONTRACT_NAME, facContractNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -344,7 +342,7 @@ public class SearchService {
     Page<?> treatyContractSearch(ExpertModeFilterRequest request) {
         if (request.getFromSavedSearch() != null) {
             if (!request.getFilter().isEmpty()) {
-                Long treatySearchId = request.getFilter().get(0).getTreatySearchId();
+                Long treatySearchId = request.getFilter().get(0).getSearchId();
 
                 if (treatySearchId != null) {
                     Optional<TreatySearch> treatySearchOpt = this.treatySearchRepository.findById(treatySearchId);
@@ -425,7 +423,8 @@ public class SearchService {
     }
 
     private List<FacContractSearchResult> mapFacContract(List<Object[]> resultList) {
-        return resultList.stream().map((r) ->
+        return resultList.stream().map(
+                (r) ->
                 new FacContractSearchResult((String) r[0], (Integer) r[1], (String) r[2], (String) r[3], (String) r[4], (String) r[5], (String) r[6], (BigInteger) r[7])
         ).collect(Collectors.toList());
     }

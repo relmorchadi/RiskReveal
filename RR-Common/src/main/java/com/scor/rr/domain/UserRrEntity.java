@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.Objects;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "UserRR")
@@ -22,16 +23,19 @@ public class UserRrEntity {
     @Column(name = "Entity")
     private int entity;
 
-    @Column(name = "FirstName", length = 15)
+    @Column(name = "userFirstName")
     private String firstName;
 
-    @Column(name = "LastName", length = 15)
+    @Column(name = "userLastName")
     private String lastName;
+
+    @Column(name = "userRole")
+    private String role;
 
     @Column(name = "UserCode", length = 15)
     private String userCode;
 
-    @Column(name = "omegaUser", length = 15)
+    @Column(name = "OmegaUser", length = 15)
     private String omegaUser;
 
     @Column(name = "WindowsUser", length = 15)

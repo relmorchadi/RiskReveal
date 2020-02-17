@@ -7,6 +7,7 @@ import {WsApi} from "../../../workspace/services/api/workspace.api";
 import * as _ from 'lodash';
 import {DashboardState, GeneralConfigState} from "../../../core/store/states";
 import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
+import {DashboardApi} from "../../../core/service/api/dashboard.api";
 
 @Component({
   selector: 'app-fac-subsidiary-chart',
@@ -38,6 +39,11 @@ export class FacSubsidiaryChartComponent implements OnInit {
       shadowOffsetY: 0,
       shadowColor: 'rgba(0,0,0,0.5)'
     }
+  };
+
+  initOps = {
+    height: '400px',
+    width: '1600px'
   };
 
   chartOption: any = {
@@ -111,6 +117,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
   identifier: number;
   @Input()
   widgetIndex: number;
+  @Input()
+  itemWidget: any;
   newDashboard: any;
   editName = false;
 
@@ -119,37 +127,25 @@ export class FacSubsidiaryChartComponent implements OnInit {
   private defaultUwUnit: string;
   Countries = Data.coutryAlt;
   private mockDataCache;
-  tabIndex = 1;
 
-  @Select(DashboardState.getFacData) facData$;
   data: any[];
   filteredData: any[];
 
   subsidiaryList: any;
+  assignedAnalystList: any;
   selectedSubsidiary = [];
 
   dateTo: any;
   dateFrom: any;
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
-              private cdRef: ChangeDetectorRef,
+              private cdRef: ChangeDetectorRef, private dashboardAPI: DashboardApi,
               private wsApi: WsApi) {
     this.uwyUnits = _.uniqBy(this.mockData, 'UNDERWRITINGUNITCODE');
   }
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    this.facData$.subscribe(rValue => {
-      const newD = _.get(rValue, 'new', []);
-      const inPD = _.get(rValue, 'inProgress', []);
-      const archiveD = _.get(rValue, 'archived', []);
-      const value = [...newD, ...inPD, ...archiveD];
-      this.data = value;
-      this.filteredData = value;
-      this.subsidiaryList = [..._.map(_.uniq(value.map(item => item.uwAnalysis)), item => ({label: item, value: item}))];
-      this.selectedSubsidiary = [..._.uniq(value.map(item => item.uwAnalysis))];
-      this.detectChanges();
-    });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
       uwUnit: ''
@@ -179,7 +175,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   validateName(keyboardMap, id) {
 
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
+      this.changeName.emit({item: this.itemWidget, newName: keyboardMap.target.value});
       this.editName = false;
     }
   }
@@ -204,6 +200,55 @@ export class FacSubsidiaryChartComponent implements OnInit {
     }
   }
 
+  onChartInit(instance) {
+    const dataParams = {
+      carStatus: 'Chart',
+      entity: 1,
+      pageNumber: 1,
+      pageSize: 1000,
+      selectionList: '',
+      sortSelectedAction: '',
+      sortSelectedFirst: false,
+      userCode: "DEV",
+      userDashboardWidgetId: 0
+    };
+
+    this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
+      this.data = data.content;
+      this.filteredData = data.content;
+      this.subsidiaryList = [..._.map(_.uniq(data.content.map(item => item.uwAnalysis)), (item: string) => _.isEmpty(_.trim(item)) ? ({label: 'Unassigned', value: item}) : ({label: item, value: item}))];
+      this.selectedSubsidiary = [..._.uniq(data.content.map(item => item.uwAnalysis))];
+      this.detectChanges();
+      this.myChart = instance;
+      this.setValues();
+    });
+  }
+
+/*
+  onChartInit(instance) {
+    this.myChart = instance;
+    this.dashboardAPI.getWidgetAssignedCountByUwAnalysis().subscribe((data: any) => {
+      this.subsidiaryList = [..._.map(data.uwAnalysis, item => ({label: item, value: item}))];
+      this.selectedSubsidiary = [...data.uwAnalysisList];
+      this.assignedAnalystList = [...data.assignedAnalystList];
+
+      let series = [];
+      let alternateSeries = [];
+      _.forEach(this.assignedAnalystList, assigned => {
+        let trad = [];
+        let part = [];
+        _.forEach(data.content, item => {
+          trad = [...trad, _.get(item, `${assigned}`, 0)];
+          part = [...part, _.get(item, `${assigned}`, 0) / _.get(item, 'count', 1)];
+        });
+        series = [...series, {name: assigned, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+        alternateSeries = [...alternateSeries, {name: assigned, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      });
+      this.alternateSeriesData = alternateSeries;
+      this.setValues(series);
+    })
+  }*/
+
   setValues() {
     const legendData = _.uniq(this.filteredData.map(item => item.assignedAnalyst)) || [];
     let series = [];
@@ -217,8 +262,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
         part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
             _.filter(this.data, dt => dt.uwAnalysis === subsItem).length) * 100];
       });
-      series = [...series, {name: item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
-      alternateSeries = [...alternateSeries, {name: item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      series = [...series, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' :item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
+      alternateSeries = [...alternateSeries, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' : item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
     this.alternateSeriesData = alternateSeries;
 
@@ -227,21 +272,26 @@ export class FacSubsidiaryChartComponent implements OnInit {
         data: this.selectedSubsidiary
       },
       legend: {
-        data: legendData
+        data: _.map(legendData, item => _.isEmpty(_.trim(item)) ? 'Unassigned' : item)
       },
       series: series
     });
   }
 
+/*  setValues(series) {
+    this.myChart.setOption({
+      xAxis: {
+        data: this.selectedSubsidiary
+      },
+      legend: {
+        data: this.assignedAnalystList
+      },
+      series: series
+    });
+  }*/
+
   filterDataBySubsidiary() {
     this.setValues();
-  }
-
-  onChartInit(instance) {
-    setTimeout(() => {
-      this.myChart = instance;
-      this.setValues();
-    }, 1000);
   }
 
   switchData() {

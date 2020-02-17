@@ -12,11 +12,8 @@ import {Message} from "../../../../shared/message";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
-import {ActivatedRoute} from "@angular/router";
 import * as _ from 'lodash';
-import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
 import {AngularResizeElementDirection} from "angular-resize-element";
-import {el} from "@angular/platform-browser/testing/src/browser_util";
 @Component({
   selector: 'app-calibration-new-table',
   templateUrl: './calibration-new-table.component.html',

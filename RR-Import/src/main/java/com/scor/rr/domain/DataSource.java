@@ -14,5 +14,7 @@ public class DataSource {
     private int versionId;
     @JsonIgnore
     private String dateCreated;
+    private String instanceId;
+    private String instanceName;
 
 }

@@ -11,4 +11,6 @@ public class DataSourceDto {
     private String dataSourceName;
     private Long dataSourceId;
     private String dataSourceType;
+    private String instanceId;
+    private String instanceName;
 }

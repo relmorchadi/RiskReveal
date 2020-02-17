@@ -29,4 +29,6 @@ public class RLSavedDataSource {
     private Long userId;
     @Column(name = "InstanceId")
     private String instanceId;
+    @Column(name = "InstanceName")
+    private String instanceName;
 }

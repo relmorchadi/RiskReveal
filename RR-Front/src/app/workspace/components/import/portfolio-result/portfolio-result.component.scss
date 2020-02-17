@@ -3,6 +3,13 @@
 COMPONENT STYLE
 =======================================================================================
 */
+.button-container {
+  display: flex;
+  width: 97%;
+  margin: auto;
+  justify-content: flex-end;
+}
+
 .body-wrap-body {
   display: flex;
   flex-direction: column;
@@ -372,6 +379,14 @@ COMPONENT STYLE
   }
 }
 
+
+:host{
+  ::ng-deep{
+    .ui-table-scrollable-wrapper {
+      display: flex;
+    }
+  }
+}
 
 .col-edit-input{
   width: 70%;

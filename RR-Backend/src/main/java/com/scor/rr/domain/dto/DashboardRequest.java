@@ -6,8 +6,15 @@ import java.util.List;
 
 @Data
 public class DashboardRequest {
-    DashBoardFilter filterConfig;
-    List<SortConfig> sortConfig;
-    Integer pageNumber;
-    Integer size;
+
+    String carStatus;
+    int Entity ;
+    long UserDashboardWidgetId;
+    String userCode;
+    int  PageNumber;
+    int  PageSize;
+    String selectionList;
+    boolean sortSelectedFirst;
+    String sortSelectedAction;
+
 }

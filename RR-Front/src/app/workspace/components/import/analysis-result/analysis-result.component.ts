@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import componentData from "./data";
@@ -17,6 +17,8 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
   @Input('data')
   data:{analysis, epCurves, targetRaps, regionPerilsByAnalysis}= {analysis: [], epCurves: [], targetRaps: [], regionPerilsByAnalysis: {}};
 
+  @Output('save')
+  saveEmitter= new EventEmitter();
 
   isCollapsed;
   scrollableColsResults;
@@ -73,6 +75,20 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
   showOverridePEQTDialog=false;
   showOverrideOccurrenceBasisDialog=false;
   lastAnalysisIndex= null;
+
+  contextSelectedItem: any;
+  itemCm = [
+    // {
+    //   label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
+    //     // this.editRowPopUp = true;
+    //   }
+    // },
+    {
+      label: 'Delete Item',
+      icon: 'pi pi-trash',
+      command: (event) => this.deleteAnalysisFromBasket(event)
+    },
+  ];
 
   constructor(private store: Store) {
   }
@@ -162,5 +178,20 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
       occurrenceBasis,
       analysisIndex: this.lastAnalysisIndex
     }));
+  }
+
+  deleteAnalysisFromBasket(event){
+    const ids = _.map(
+        _.filter(this.data.analysis, item => item.selected),
+        (item:any) => item.rlAnalysisId
+    );
+    this.store.dispatch(new fromRiskLink.DeleteFromImportBasketAction({
+      type: 'ANALYSIS',
+      ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlAnalysisId]
+    }))
+  }
+
+  saveAnalysisSelection(){
+    this.saveEmitter.emit('ANALYSIS');
   }
 }

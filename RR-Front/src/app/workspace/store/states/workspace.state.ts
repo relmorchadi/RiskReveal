@@ -363,6 +363,18 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getRiskLinkAnalysisSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary.analysis;
+  }
+
+  @Selector()
+  static getRiskLinkPortfolioSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary.portfolios;
+  }
+
+  @Selector()
   static getFlatSelectedAnalysisPortfolio(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const {analysis, portfolios} = state.content[wsIdentifier].riskLink.selection;
@@ -1094,6 +1106,14 @@ export class WorkspaceState {
   @Action(fromWS.PatchPortfolioResultAction)
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
+  }
+  @Action(fromWS.DeleteFromImportBasketAction)
+  deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.deleteFromImportBasket(ctx, payload);
+  }
+  @Action(fromWS.SaveImportConfigurationAction)
+  saveImportConfiguration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.saveImportConfiguration(ctx, payload);
   }
 
   @Action(fromWS.OverrideAnalysisRegionPeril)

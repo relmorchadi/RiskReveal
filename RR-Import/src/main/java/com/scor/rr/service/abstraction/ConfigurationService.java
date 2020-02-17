@@ -30,7 +30,7 @@ public interface ConfigurationService {
 
     void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
 
-    List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId);
+    List<RLDataSourcesDto> getDefaultDataSources(Long userId);
 
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 

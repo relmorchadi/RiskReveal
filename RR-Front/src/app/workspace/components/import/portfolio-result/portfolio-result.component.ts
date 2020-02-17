@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import {Store} from "@ngxs/store";
 import componentData from './data';
@@ -24,6 +24,9 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
   frozenColsSummary;
 
+  @Output('save')
+  saveEmitter= new EventEmitter();
+
   refs = {
     currencies: [
       {label: "Main Liablity Currency (MLC)", value: "USD"},
@@ -41,6 +44,21 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
       {label: "XXC", value: "XXC"}
     ]
   };
+
+
+  contextSelectedItem: any;
+  itemCm = [
+    // {
+    //   label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
+    //     // this.editRowPopUp = true;
+    //   }
+    // },
+    {
+      label: 'Delete Item',
+      icon: 'pi pi-trash',
+      command: (event) => this.deletePortfolioFromBasket(event)
+    },
+  ];
 
   constructor(private store:Store) { }
 
@@ -85,4 +103,20 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
   deleteFromBasket(id,type){
 
   }
+
+  deletePortfolioFromBasket(event){
+    const ids = _.map(
+          _.filter(this.portfolios, item => item.selected),
+          (item:any) => item.rlPortfolioId
+        );
+    this.store.dispatch(new fromRiskLink.DeleteFromImportBasketAction({
+      type: 'PORTFOLIO',
+      ids: _.size(ids) ? ids :  [this.contextSelectedItem.rlPortfolioId]
+    }))
+  }
+
+  savePortfolioSelection(){
+    this.saveEmitter.emit('PORTFOLIO');
+  }
+
 }

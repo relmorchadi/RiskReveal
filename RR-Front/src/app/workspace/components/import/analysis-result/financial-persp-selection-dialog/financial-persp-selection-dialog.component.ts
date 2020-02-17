@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import * as _ from "lodash";
+import {NotificationService} from "../../../../../shared/services";
 
 @Component({
   selector: 'financial-persp-selection-dialog',
@@ -13,6 +14,12 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
 
   @Input('data')
   data: { analysis, epCurves };
+
+  /**
+   * Context to define if the Workspace Type is Fac or Treaty
+   */
+  @Input('context')
+  context;
 
   @Output('close')
   closeEmitter = new EventEmitter();
@@ -28,7 +35,6 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
   distinctRdms = [];
 
   changes = {analysis: {}, epCurves: {}, fpApplication: 'currentSelection'};
-
 
   colsFinancialAnalysis = [
     {
@@ -102,6 +108,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
       visible: true
     },
   ];
+
   colsFinancialStandard = [
     {
       field: 'selected',
@@ -200,7 +207,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     },
   ];
 
-  constructor() {
+  constructor(private _notificationService:NotificationService) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -238,6 +245,16 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
   }
 
   applyChanges() {
+    /**
+     * Check that no multiple FPs selection is applied
+     */
+    if(_.upperCase(this.context) == 'FAC' && !this.isUniqueFinancialPerspective(_.values(this.changes.analysis))){
+      // Alert that you cannot do it for multiple FP per analysis
+      this._notificationService.createNotification('Error',
+          'Please make sure that you choose one Financial Perspective per Analysis!',
+          'error', 'bottomRight', 4000);
+      return;
+    }
     this.overrideEmitter.emit(this.changes.analysis);
   }
 
@@ -338,4 +355,11 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     return _.toArray(this.changes.analysis).filter((item:any) => item.selected).length;
   }
 
+  private isUniqueFinancialPerspective(data){
+    for(let item of data){
+      if (_.size(item.financialPerspectives) != 1)
+        return false;
+    }
+    return true;
+  }
 }

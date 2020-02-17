@@ -18,8 +18,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
@@ -166,24 +164,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(transactionManager = "rrTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
-        rlSavedDataSourceRepository.deleteByUserIdAndInstanceId(dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+        rlSavedDataSourceRepository.deleteByUserId(dataSourcesDto.getUserId());
 
         if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
             dataSourcesDto.getDataSources().forEach(dataSource -> {
                 RLSavedDataSource rlSavedDataSource = modelMapper.map(dataSource, RLSavedDataSource.class);
-
-                rlSavedDataSource.setInstanceId(dataSourcesDto.getInstanceId());
                 rlSavedDataSource.setProjectId(dataSourcesDto.getProjectId());
                 rlSavedDataSource.setUserId(dataSourcesDto.getUserId());
-
                 rlSavedDataSourceRepository.save(rlSavedDataSource);
             });
         }
     }
 
     @Override
-    public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
-        return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
+    public List<RLDataSourcesDto> getDefaultDataSources(Long userId) {
+        return rlSavedDataSourceRepository.findByUserId(userId).stream()
                 .map(RLDataSourcesDto::new).collect(toList());
     }
 

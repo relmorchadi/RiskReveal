@@ -102,7 +102,7 @@
                             <li style="display: flex; height: 31px;"
                                 *ngFor="let possibleShortCut of filterBySearchMode(possibleShortCuts); let i=index;"
                                 scrollItem
-                                (onTrigger)="replaceExpressionWithShortCut(possibleShortCut.shortCulLabel)"
+                                (onTrigger)="replaceExpressionWithShortCut(possibleShortCut.shortCutLabel)"
                                 (click)="replaceExpressionWithShortCut(possibleShortCut.shortCutLabel)">
                                 <p [innerHtml]="possibleShortCut.shortCutLabel | startCase | boldSpan: globalKeyword"></p>
                             </li>
@@ -110,9 +110,8 @@
                     </div>
                     <ng-container *ngIf="(state?.data | keys).length && !state?.emptyResult; else loadingTemp">
                         <div class="search-result-wrapper" *ngFor="let table of (state?.data | keyvalue);">
-              <span (click)="addBadgeFromResultList(table.key)"
-                    class="search-result-span"
-                    *ngIf="table.value.length > 0">{{table.key}}</span>
+                            <span (click)="addBadgeFromResultList(table.key)" class="search-result-span"
+                                  *ngIf="table.value.length > 0">{{tableHeader(table.key)}}</span>
                             <ul class="search-result-list">
                                 <li style="display: flex; height: 31px;" *ngFor="let row of table.value;"
                                     scrollItem
@@ -152,7 +151,7 @@
                 <div>
                     <nz-select class="a-dropdown-small" style="width: 100px;" nzShowSearch
                                [nzAllowClear]="false" nzPlaceHolder="Select Search Mode"
-                               (ngModelChange)="resetToDash = false"
+                               (ngModelChange)="dispatchSearchMode($event)"
                                [(ngModel)]="mainSearchMode" [ngModelOptions]="{standalone: true}"
                     >
                         <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
