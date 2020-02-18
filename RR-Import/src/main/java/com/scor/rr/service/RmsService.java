@@ -327,6 +327,16 @@ public class RmsService {
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
                 RLModelDataSource dataSource = rlModelDataSourcesRepository.findByRlIdAndNameAndProjectId(rdmId, rdmName, projectId);
+
+                rlAnalysisProfileRegionsRepository.saveAll(
+                        this.getRdmAllAnalysisProfileRegions(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
+                                .stream()
+                                .map(analysisProfileRegion -> {
+                                    RLAnalysis analysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
+                                    return new RLAnalysisProfileRegion(analysisProfileRegion, analysis);
+                                })
+                                .collect(toList()));
+
                 this.listRdmAnalysis(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
                         .forEach(rdmAnalysis -> {
                             RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
@@ -336,18 +346,7 @@ public class RmsService {
                             rlAnalysisRepository.save(rlAnalysis);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
                             allScannedAnalysis.add(rlAnalysis);
-                            cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
-                            //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
                         });
-//                rlAnalysisRepository.saveAll(allScannedAnalysis);
-
-                rlAnalysisProfileRegionsRepository.saveAll(
-                        this.getRdmAllAnalysisProfileRegions(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
-                                .stream()
-                                .map(analysisProfileRegion -> new RLAnalysisProfileRegion(analysisProfileRegion, cache.get(analysisProfileRegion.getAnalysisId()) != null ?
-                                        cache.get(analysisProfileRegion.getAnalysisId()) :
-                                        rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId)))
-                                .collect(toList()));
             }
         }
 
