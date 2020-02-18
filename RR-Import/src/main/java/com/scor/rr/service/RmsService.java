@@ -440,7 +440,7 @@ public class RmsService {
                         })
                         .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
 
-                this.removeEDMPortfolioContext(instanceId, runId);
+                this.removeEDMPortfolioContext(dataSource.getInstanceId(), runId);
             }
         }
         return allScannedPortfolios;
