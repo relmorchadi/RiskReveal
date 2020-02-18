@@ -333,6 +333,7 @@ public class RmsService {
                                 .stream()
                                 .map(analysisProfileRegion -> {
                                     RLAnalysis analysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
+                                    rlAnalysisProfileRegionsRepository.deleteByAnalysisId(analysis.getRlAnalysisId());
                                     return new RLAnalysisProfileRegion(analysisProfileRegion, analysis);
                                 })
                                 .collect(toList()));
