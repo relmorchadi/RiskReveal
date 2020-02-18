@@ -350,7 +350,8 @@ public class RmsService {
             }
         }
 
-        return allScannedAnalysi}
+        return allScannedAnalysis;
+    }
 
     private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysis rdmAnalysis) {
         if (rlAnalysis != null) {
