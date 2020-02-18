@@ -1,4 +1,5 @@
 export interface Column {
+  viewContextId: number;
   viewContextColumnId: number;
   userCode: string;
   displayName: string;

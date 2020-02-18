@@ -13,6 +13,7 @@ import {InputComponent} from "./input/input.component";
 import {SummaryEpMetricsComponent} from "./plt/summary-ep-metrics/summary-ep-metrics.component";
 import {EpChartComponent} from "./plt/ep-chart/ep-chart.component";
 import {GlobalTableComponent} from "./global-table/global-table.component";
+import {GlobalManageColumnsComponent} from "./global-manage-columns/global-manage-columns.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -29,7 +30,8 @@ export const COMPONENTS = [
   InputComponent,
   SummaryEpMetricsComponent,
   EpChartComponent,
-  GlobalTableComponent
+  GlobalTableComponent,
+  GlobalManageColumnsComponent
 ];
 
 export * from './table/table.component';

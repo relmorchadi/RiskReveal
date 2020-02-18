@@ -29,22 +29,6 @@
       width: 100%;
       height: calc(100vh - 196px);
 
-      .left, .right {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex-wrap: nowrap;
-      }
-
-      .left {
-        flex: 1;
-      }
-
-      .right {
-        flex: 0;
-        align-items: center;
-      }
-
       .tabset-right {
         background: #fff;
         display: flex;

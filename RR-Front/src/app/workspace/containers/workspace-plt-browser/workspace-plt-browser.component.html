@@ -34,66 +34,8 @@
         (actionDispatcher)="tagsActionDispatcher($event)"
       >
       </plt-tag-manager>
-      <div (resized)="onTableContainerResize($event)" class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
-        <div class="title-as-tab">
-          <div class="div-title">
-            <span class="title">PLTs</span>
-          </div>
-
-
-          <div class="right">
-            <div *ngIf="!tableInputs['showDeleted'] && tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ( tableInputs['selectedListOfPlts']?.length  > 1 ?  ' PLTs are selected'  : ' PLT is selected')}}</p>
-              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
-                <a style="max-height: 28px;display: flex;" nz-dropdown>
-                  <i class="icon-menu_24px"></i>
-                </a>
-                <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item (click)="deletePlt()">Delete</li>
-                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
-                  <li nz-menu-item >Calibrate</li>
-                </ul>
-              </nz-dropdown>
-            </div>
-            <div *ngIf="tableInputs['showDeleted'] && tableInputs['selectedListOfDeletedPlts']?.length" style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfDeletedPlts']?.length + ( tableInputs['selectedListOfDeletedPlts']?.length  > 1 ?  ' Deleted PLTs are selected'  : ' Deleted PLT is selected')}}</p>
-              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
-                <a style="max-height: 28px;display: flex;" nz-dropdown>
-                  <i class="icon-menu_24px"></i>
-                </a>
-                <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item (click)="deletePlt()">Delete</li>
-                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
-                  <li nz-menu-item >Calibrate</li>
-                </ul>
-              </nz-dropdown>
-            </div>
-            <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
-              <a style="max-height: 28px;display: flex;" nz-dropdown>
-                <i class="icon-settings_24px"></i>
-              </a>
-              <ul nz-menu style="font-size: 12px">
-                <li nz-menu-item (click)="resetSort()">Reset Sort</li>
-                <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
-                <li nz-menu-item (click)="resetSort();resetFilters()">Reset Sort/Filters</li>
-
-                <li nz-menu-divider></li>
-
-                <li nz-menu-item (click)="toggleColumnsManager()" >Manage Columns</li>
-                <li (click)="exportTable()" nz-menu-item>Export</li>
-
-                <li nz-menu-divider></li>
-
-                <li (click)="unselectAll()" nz-menu-item>Unselect All</li>
-
-              </ul>
-            </nz-dropdown>
-          </div>
-
-        </div>
-        <div class="PLTs-content">
-          <d-table [params]="params"></d-table>
-        </div>
+      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
+        <d-table [params]="params"></d-table>
       </div>
     </div>
   </div>
@@ -104,5 +46,3 @@
   (actionDispatcher)="rightMenuActionDispatcher($event)"
   [Inputs]="rightMenuInputs"
 ></app-plt-right-menu>
-
-<app-manage-columns [visible]="managePopUp" [columns]="tableInputs.pltColumns" (onSubmit)="saveColumns($event)" (onCancel)="resetColumns()"></app-manage-columns>

@@ -8,10 +8,6 @@ import {BaseTable} from "../../base/base-table.component";
 })
 export class GlobalTableComponent extends BaseTable implements OnInit, AfterViewInit, OnChanges {
 
-  totalColumnWidth: number;
-  data: any[];
-  columns: any[];
-
   isModalVisible: boolean;
 
   visibleList = [];
@@ -31,13 +27,20 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
   ngOnInit() {
     super.ngOnInit();
 
+    this.loading$ = this._handler.loading$;
 
     this._handler.data$.subscribe(d => {
       this.data= d;
       this.detectChanges();
     });
 
+    this._handler.totalRecords$.subscribe(t => {
+      this.totalRecords= t;
+      this.detectChanges();
+    });
+
     this._handler.visibleColumns$.subscribe(c => {
+      this.isModalVisible = false;
       this.columns= [
         ...c
       ];
@@ -53,7 +56,23 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     this._handler.totalColumnWidth$.subscribe(totalColumnWidth => {
       this.totalColumnWidth = totalColumnWidth;
       this.detectChanges();
+    });
+
+    this._handler.selectedIds$.subscribe( s => {
+      this.selectedIds = s;
+      this.detectChanges();
+    });
+
+    this._handler.sortSelectedAction$.subscribe( s => {
+      this.sortSelectedAction = s;
+      this.detectChanges();
+    });
+
+    this._handler.selectAll$.subscribe( s => {
+      this.selectAll = s;
+      this.detectChanges()
     })
+
   }
 
   ngAfterViewInit(): void {
@@ -72,15 +91,19 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     this.isModalVisible = true;
   }
 
-  handleManageColumsActions(action) {
+  handleManageColumnsActions(action) {
     switch (action.type) {
+
       case "Manage Columns":
         this._handler.onManageColumns(action.payload);
+        break;
+
+      case "Close":
+        this.isModalVisible= false;
         break;
 
       default:
         console.log(action);
     }
   }
-
 }

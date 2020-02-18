@@ -18,12 +18,15 @@ export class TableServiceImp implements TableServiceInterface {
   }
 
   getColumns() {
-    console.log("working");
     return this._http.get(`${this._url}columns`);
   }
 
   getData(params): Observable<any> {
     return this._http.get(`${this._url}`, { params });
+  }
+
+  getIDs(params): Observable<any> {
+    return this._http.get(`${this._url}ids`, { params });
   }
 
   updateColumnWidth(body): Observable<any> {

@@ -308,6 +308,8 @@ public class SearchService {
 
         detailsDTO.setCurrency(currency);
         detailsDTO.setYears(Arrays.asList(Integer.valueOf(uwy)));
+
+
         return detailsDTO;
     }
 

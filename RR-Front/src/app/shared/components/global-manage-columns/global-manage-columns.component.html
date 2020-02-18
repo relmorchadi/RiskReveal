@@ -1,13 +1,11 @@
 <p-dialog
-  [visible]="visible"
-  [styleClass]="'m-dialog-modal-col-manager'"
-  [autoZIndex]="false"
-  [baseZIndex]="1"
-  [closable]="false"
-  [modal]="true"
-  [responsive]="true"
-  (onHide)="onHide()"
-  (onShow)="onShow()"
+        [visible]="true"
+        [styleClass]="'m-dialog-modal-col-manager'"
+        [autoZIndex]="false"
+        [baseZIndex]="1"
+        [closable]="false"
+        [modal]="true"
+        [responsive]="true"
 >
   <p-header>
     <div class="header">
@@ -15,20 +13,19 @@
       <i style="cursor: pointer" (click)="resetColumns()" class="icon-close_24px"></i>
     </div>
   </p-header>
-
   <div class="content">
 
     <div style="display: flex;flex-direction: column;">
       <h6>Available columns:</h6>
       <div
-        cdkDropList
-        [id]="'availableListOfColumns'"
-        #availableListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[usedListOfColumns]"
-        [cdkDropListData]="listOfAvailableColumns"
-        class="m-box-d"
-        (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let col of listOfAvailableColumns; let i=index">
+              cdkDropList
+              [id]="'availableListOfColumns'"
+              #availableListOfColumns="cdkDropList"
+              [cdkDropListConnectedTo]="[usedListOfColumns]"
+              [cdkDropListData]="_availableList"
+              class="m-box-d"
+              (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of _availableList; let i=index">
           <div class="m-box-drag" cdkDrag>
             <div class="m-box-overlay">
               <div class="left">
@@ -45,12 +42,6 @@
                   {{col.displayName}}
                 </span>
               </div>
-              <!--
-              <div class="right">
-                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-              </div>
-              -->
             </div>
           </div>
         </ng-container>
@@ -74,14 +65,14 @@
     <div style="display: flex;flex-direction: column;">
       <h6>Show these columns in order:</h6>
       <div
-        cdkDropList
-        [id]="'usedListOfColumns'"
-        #usedListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[availableListOfColumns]"
-        [cdkDropListData]="listOfUsedColumns"
-        class="m-box-d"
-        (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
+              cdkDropList
+              [id]="'visible'"
+              #usedListOfColumns="cdkDropList"
+              [cdkDropListConnectedTo]="[availableListOfColumns]"
+              [cdkDropListData]="_visibleList"
+              class="m-box-d"
+              (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of _visibleList;let i=index">
           <div class="m-box-drag" cdkDrag>
             <div class="m-box-overlay">
               <div class="left">
@@ -98,14 +89,8 @@
                 </div>
                 <span class="subtitle-2">
                   {{col.displayName}}
-              </span>
+                </span>
               </div>
-              <!--
-              <div class="right">
-                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-              </div>
-              -->
             </div>
           </div>
         </ng-container>
@@ -116,9 +101,7 @@
   <p-footer>
     <div class="footer">
       <button (click)="resetColumns()" class="a-button-text-cancel">cancel</button>
-      <button class="a-buttons-contained" (click)="saveColumns()">
-        Save
-      </button>
+      <button class="a-buttons-contained" (click)="onManageColumns()">Save</button>
     </div>
   </p-footer>
 </p-dialog>

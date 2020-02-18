@@ -15,6 +15,8 @@ import {
   SimpleChanges
 } from '@angular/core';
 import {backendUrl} from "../api";
+import * as _ from 'lodash';
+import {Observable} from "rxjs";
 
 
 export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
@@ -24,12 +26,19 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   @ViewChild('tableContainer') container;
   containerWidth: number;
 
+  loading$: Observable<boolean>;
+
   data: any[];
   columns: Column[];
 
-  _injectors: any;
+  selectedIds: any;
+  selectAll: boolean;
+  sortSelectedAction: string;
 
-  _api: TableServiceInterface;
+  totalRecords: number;
+  totalColumnWidth: number;
+
+  _injectors: any;
   _handler: TableHandlerInterface;
 
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
@@ -38,11 +47,26 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
         api: this.injector.get<TableServiceImp>(TableServiceImp),
         handler: this.injector.get<TableHandlerImp>(TableHandlerImp)
       })
-    }
+    };
+
+    this.selectedIds= {};
   }
 
   ngOnInit() {
 
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const {
+      params
+    } = changes;
+    if(!params.previousValue && params.currentValue) {
+      this.initTable();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.containerWidth = this.container.nativeElement.clientWidth;
   }
 
   injectDependencies(key) {
@@ -59,18 +83,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  getApiInjector = (key) => this._injectors[key]
-
   protected initTable() {
-    this._handler.initTable({
-        ...this.params,
-      entity: 1,
-      pageNumber: 1,
-      pageSize: 1000,
-      selectionList: "",
-      sortSelectedFirst: false,
-      sortSelectedAction: ""
-  });
+    this._handler.initTable(this.params);
   }
 
   onColumnResize(event) {
@@ -79,33 +93,32 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   onManageColumns(oldColumns: Column[], newColumns: Column[]) {}
 
-  onFilter(column: Column, filter: string) {}
+  onFilter = _.debounce((index, filter: string) => {
+    this._handler.onFilter(index, filter);
+  }, 500);
 
   onSort(index) {
     this._handler.onSort(index);
   }
 
-  onRowSelect(rowId: number) {}
-
-  protected detectChanges() {
-    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
+  onRowSelect(i: number) {
+    this._handler.onRowSelect(i);
   }
 
-  ngAfterViewInit(): void {
-    this.containerWidth = this.container.nativeElement.clientWidth;
+  onCheckAll() {
+    this._handler.onCheckAll();
   }
 
   onContainerResize({newWidth, oldWidth}) {
     if(newWidth != oldWidth) this._handler.onContainerResize(newWidth);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const {
-      params
-    } = changes;
-    if(!params.previousValue && params.currentValue) {
-      this.initTable();
-    }
+  onVirtualScroll(event) {
+    this._handler.onVirtualScroll(event);
+  }
+
+  protected detectChanges() {
+    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
   }
 
 }

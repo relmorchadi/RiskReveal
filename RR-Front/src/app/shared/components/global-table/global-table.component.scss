@@ -1,5 +1,13 @@
 :host {
   ::ng-deep {
+
+    .table-container-loading {
+      min-height: calc(100vh - 333px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
       margin-top: -362px;
       margin-left: -473px;
