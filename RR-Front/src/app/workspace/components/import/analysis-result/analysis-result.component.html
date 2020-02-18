@@ -40,6 +40,9 @@
                [value]="data.analysis" [scrollHeight]="'175px'"
                [(contextMenuSelection)]="contextSelectedItem"
                [contextMenu]="cmR"
+               syncScroll
+               [class]="'analysis-result-table'"
+               [classIdentifier]="'analysis-result-table'"
                [resizableColumns]="true" columnResizeMode="expand"
                #rt [scrollable]="true" frozenWidth="445px">
         <ng-template pTemplate="colgroup" let-columns>

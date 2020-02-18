@@ -35,6 +35,9 @@
                      [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
                      [(contextMenuSelection)]="contextSelectedItem"
                      [contextMenu]="cmR"
+                     syncScroll
+                     [class]="'portfolio-result-table'"
+                     [classIdentifier]="'portfolio-result-table'"
                      [scrollable]="true" [value]="portfolios" frozenWidth="485px">
                 <ng-template let-columns pTemplate="colgroup">
                     <colgroup>
