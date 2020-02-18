@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RLAnalysisProfileRegionsRepository extends JpaRepository<RLAnalysisProfileRegion, Long> {
+
     List<RLAnalysisProfileRegion> findByRlAnalysisRlAnalysisId(Long rlAnalysisId);
 
     @Procedure(procedureName = "dbonew.usp_RiskLinkDeleteRlAnalysisProfileRegionByAnalysis")

@@ -317,7 +317,6 @@ public class RmsService {
                     .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
 
 //            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
-//
 //            ExecutorService executorService = Executors.newFixedThreadPool(1);
 //            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
 
@@ -381,7 +380,9 @@ public class RmsService {
 
     private void updateRLPortfolio(RLPortfolio rlPortfolio, EdmPortfolio edmPortfolio) {
         rlPortfolio.setTiv(edmPortfolio.getTiv());
-        //rlPortfolio.setNumber(edmPortfolio.getNumber());
+        rlPortfolio.setAgCedent(edmPortfolio.getAgCedant());
+        rlPortfolio.setAgCurrency(edmPortfolio.getAgCurrency());
+        rlPortfolio.setAgSource(edmPortfolio.getAgSource());
     }
 
     private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
@@ -458,8 +459,9 @@ public class RmsService {
     private List<String> getPortfolioIdPortfolioTypeCurrencyByEdm(Long edmId, String edmName, List<PortfolioHeader> rlPortfolioList) {
         return rlPortfolioList.stream().filter(item -> item.getEdmId().longValue() == edmId.longValue() && item.getEdmName().equals(edmName))
                 .map(portfolioHeader -> {
-                    String currency = portfolioHeader.getCurrency() == null ? "USD" : portfolioHeader.getCurrency();
-                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType() + "~" + currency;
+//                    String currency = portfolioHeader.getCurrency() == null ? "USD" : portfolioHeader.getCurrency();
+//                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType() + "~" + currency;
+                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType();
                 }).collect(toList());
     }
 
