@@ -361,6 +361,12 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.summary;
   }
+  @Selector()
+  static getRiskLinkSummarySelectionSize(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios}=state.content[wsIdentifier].riskLink.summary;
+    return _.size(_.values(analysis))  + _.size(_.values(portfolios));
+  }
 
   @Selector()
   static getRiskLinkAnalysisSummary(state: WorkspaceModel){
