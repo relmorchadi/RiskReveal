@@ -22,6 +22,8 @@ public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSumma
         RLExposureSummaryItem tmp = new RLExposureSummaryItem();
         //
         tmp.setGlobalViewSummary(globalViewSummary);
+        tmp.setEdmId(globalViewSummary.getEdmId());
+        tmp.setEntity(1L);
         tmp.setPortfolioId(rs.getLong("port_id"));
         tmp.setPortfolioType(rs.getString("port_type"));
         tmp.setExposureSummaryName(rs.getString("SummaryName"));

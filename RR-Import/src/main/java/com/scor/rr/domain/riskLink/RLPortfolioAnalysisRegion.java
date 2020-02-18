@@ -18,7 +18,7 @@ public class RLPortfolioAnalysisRegion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rlPortfolioAnalysisRegionId;
 
-    @Column(name="Entity")
+    @Column(name = "Entity")
     private Integer entity;
 
     @Column(name = "AnalysisRegion")
@@ -48,6 +48,7 @@ public class RLPortfolioAnalysisRegion {
 
     public RLPortfolioAnalysisRegion(EdmAllPortfolioAnalysisRegions portfolioAnalysisRegions, RLPortfolio rlPortfolio) {
         this.analysisRegion = portfolioAnalysisRegions.getAnalysisRegion();
+        this.entity = 1;
         this.analysisRegionName = portfolioAnalysisRegions.getAnalysisRegionDesc();
         this.peril = portfolioAnalysisRegions.getPeril();
         this.locationCount = portfolioAnalysisRegions.getLocCount();

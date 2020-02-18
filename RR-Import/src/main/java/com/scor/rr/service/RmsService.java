@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.ScanLevelEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
 import com.scor.rr.mapper.*;
@@ -416,8 +417,8 @@ public class RmsService {
                 Long edmId = (Long) multiKeyListEntry.getKey().getKey(0);
                 String edmName = (String) multiKeyListEntry.getKey().getKey(1);
 
-                runId = createEDMPortfolioContext(instanceId, edmId, edmName, multiKeyListEntry.getValue(), new ArrayList<String>());
                 RLModelDataSource dataSource = rlModelDataSourcesRepository.findByRlIdAndNameAndProjectId(edmId, edmName, projectId);
+                runId = createEDMPortfolioContext(dataSource.getInstanceId(), edmId, edmName, multiKeyListEntry.getValue(), new ArrayList<String>());
 
                 this.listEdmPortfolio(dataSource.getInstanceId(), edmId, edmName, multiKeyListEntry.getValue())
                         .forEach(edmPortfolio -> {
@@ -428,16 +429,16 @@ public class RmsService {
                         });
 
                 rlPortfolioRepository.saveAll(allScannedPortfolios);
-//                this.getEdmAllPortfolioAnalysisRegions(instanceId, edmId, edmName, runId)
-//                        .stream()
-//                        .map(portfolioAnalysisRegions -> {
-//                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
-//                            rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
-//                            rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
-//                            rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
-//                            return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
-//                        })
-//                        .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
+                this.getEdmAllPortfolioAnalysisRegions(dataSource.getInstanceId(), edmId, edmName, runId)
+                        .stream()
+                        .map(portfolioAnalysisRegions -> {
+                            RLPortfolio rlPortfolio = rlPortfolioRepository.findByEdmIdAndEdmNameAndRlIdAndProjectId(edmId, edmName, portfolioAnalysisRegions.getPortfolioId(), projectId);
+                            rlPortfolio.getRlPortfolioScanStatus().setScanLevel(ScanLevelEnum.Detailed);
+                            rlPortfolio = rlPortfolioRepository.save(rlPortfolio);
+                            rlPortfolioAnalysisRegionRepository.deleteByRlPortfolioRlPortfolioId(rlPortfolio.getRlPortfolioId());
+                            return new RLPortfolioAnalysisRegion(portfolioAnalysisRegions, rlPortfolio);
+                        })
+                        .forEach(analysisProfileRegion -> rlPortfolioAnalysisRegionRepository.save(analysisProfileRegion));
 
                 this.removeEDMPortfolioContext(instanceId, runId);
             }

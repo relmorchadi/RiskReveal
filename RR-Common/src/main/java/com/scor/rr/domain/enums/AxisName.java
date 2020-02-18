@@ -8,11 +8,11 @@ package com.scor.rr.domain.enums;
  */
 public enum AxisName {
 
-	DIMENSION1("Dimension1"), DIMENSION2("Dimension2"), DIMENSION3("Dimension3"), DIMENSION4("Dimension4"),
-	FINANCIALPERSPECTIVE("FinancialPerspective"), EXPOSURECURRENCY("ExposureCurrency"),
-	CONFORMEDCURRENCY("ConformedCurrency"), COUNTRY("CountryView"), ADMIN1CODE("Admin1Code"), PERIL("Peril"),
-	REGIONPERIL("RegionPeril"), REGIONPERILGROUP("RegionPerilGroup"), ANALYSISREGION("AnalysisRegion"),
-	UNDEFINED("Undefined");
+	Dimension1("Dimension1"), Dimension2("Dimension2"), Dimension3("Dimension3"), Dimension4("Dimension4"),
+	FinancialPerspective("FinancialPerspective"), ExposureCurrency("ExposureCurrency"),
+	ConformedCurrency("ConformedCurrency"), Country("CountryView"), Admin1Code("Admin1Code"), Peril("Peril"),
+	RegionPeril("RegionPeril"), RegionPerilGroup("RegionPerilGroup"), AnalysisRegion("AnalysisRegion"),
+	Undefined("Undefined");
 
 	private String code;
 

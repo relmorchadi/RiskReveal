@@ -1,8 +1,5 @@
 package com.scor.rr.service;
 
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
 import java.util.Arrays;
 import java.util.List;
 

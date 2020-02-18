@@ -18,7 +18,7 @@ import javax.sql.DataSource;
 @Configuration
 public class RmsConfig {
 
-    @Value(value = "rms.ds.dbname")
+    @Value(value = "${rms.ds.dbname}")
     private String dbName;
 
     @Primary
@@ -40,12 +40,6 @@ public class RmsConfig {
         dataSourceTransactionManager.setDataSource(createRmsDataSource());
         dataSourceTransactionManager.setEnforceReadOnly(true);
         return dataSourceTransactionManager;
-    }
-
-    @Bean(name = "jdbcRms")
-    @Autowired
-    public JdbcTemplate createJdbcTemplateRms(@Qualifier("dbRms") DataSource rmsDS) {
-        return new JdbcTemplate(rmsDS);
     }
 
     @Bean
