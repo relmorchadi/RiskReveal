@@ -26,7 +26,6 @@ public class BatchConfiguration {
     public DataSourceTransactionManager getDataSourceTransactionManager() {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
         dataSourceTransactionManager.setDataSource(dataSource);
-        dataSourceTransactionManager.setTransactionSynchronization(0);
         return dataSourceTransactionManager;
     }
 
