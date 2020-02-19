@@ -34,6 +34,13 @@
       <span class="test-list">PLT Manager</span>
     </span>
   </li>
+  <li (click)="routerNavigate('Exposures')" [nzTitle]="isCollapsed ? 'Exposure Manager' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-adjust-half mb-2"></i></i>
+      <span class="test-list">Exposure Manager</span>
+    </span>
+  </li>
   <!--li (click)="routerNavigate('JobManager')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Job Manager' : ''">
           <span title>
             <i nz-icon><i class="icon-bag-alt"></i></i>

@@ -1,13 +1,27 @@
 <div class="a-app-wrapper">
   <div class="a-app-header">
     <h4>Exposures</h4>
-    <app-pin
-      (pinWs)="pinWorkspace()"
-      [active]="!workspaceInfo?.isPinned"
-    >
-    </app-pin>
   </div>
   <div class="app-body">
+
+    <div class="exposures-lef-menu">
+      <exposures-left-menu>
+
+      </exposures-left-menu>
+    </div>
+    <div class="exposures-table-container">
+      <div class="exposures-header">
+        <exposures-header>
+
+        </exposures-header>
+      </div>
+
+      <div class="exposures-main-table">
+        <exposures-main-table (actionDispatcher)="mainTableActionDispatcher($event)"
+                              [tableConfig]="tableConfig">
+        </exposures-main-table>
+      </div>
+    </div>
 
   </div>
 </div>

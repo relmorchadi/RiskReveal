@@ -1,0 +1,22 @@
+.path-content {
+  color: #585858;
+  display: flex;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
+  }
+
+  .icon-wrapper {
+    margin-top: 10px;
+    margin-right: 4px;
+
+    .icon-chevron_right_24px, .icon-chevron_left_24px {
+      font-size: 24px;
+    }
+  }
+}
