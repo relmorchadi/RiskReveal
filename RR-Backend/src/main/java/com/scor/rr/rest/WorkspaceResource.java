@@ -3,7 +3,9 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
+import com.scor.rr.domain.dto.UserWorkspaceTabsRequest;
 import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.domain.entities.UserWorkspaceTabs;
 import com.scor.rr.service.SearchService;
 import com.scor.rr.service.WorkspaceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +63,14 @@ public class WorkspaceResource {
     ResponseEntity<String> togglePinnedWorkspace(@RequestBody WorkspaceToggleRequest request) {
         return this.workspaceService.togglePinnedWorkspace(request);
     }
+
+    @GetMapping("tabs/{userCode}")
+    ResponseEntity<List<UserWorkspaceTabs>> getTabs(@PathVariable String userCode) { return this.workspaceService.getTabs(userCode);}
+
+    @PostMapping("tabs/close")
+    ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.closeTab(request);}
+
+    @PostMapping("tabs/open")
+    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request);}
 
 }
