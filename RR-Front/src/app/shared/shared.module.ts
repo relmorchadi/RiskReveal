@@ -4,8 +4,7 @@ import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
-import {HighlightDirective} from './highlight.directive';
-import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primeng';
+import {ContextMenuModule, DialogModule, MultiSelectModule, ProgressSpinnerModule} from 'primeng/primeng';
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
@@ -21,7 +20,6 @@ import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
-import { IMPLEMENTATIONS } from './implementations'
 
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
@@ -37,6 +35,7 @@ import { IMPLEMENTATIONS } from './implementations'
     ColorSketchModule,
     MultiSelectModule,
     SidebarModule,
+    ProgressSpinnerModule,
     DragDropModuleAngular,
     AngularDraggableModule,
     ColorGithubModule,
@@ -44,7 +43,7 @@ import { IMPLEMENTATIONS } from './implementations'
     NgxEchartsModule,
     AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, ...IMPLEMENTATIONS],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
     CommonModule,
     NgZorroAntdModule,

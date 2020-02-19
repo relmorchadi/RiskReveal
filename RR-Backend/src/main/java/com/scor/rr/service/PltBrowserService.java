@@ -1,6 +1,6 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.dto.UpdateColumnWidthRequest;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.entities.Tag;
@@ -13,6 +13,7 @@ import com.scor.rr.domain.entities.ViewContextColumns;
 import com.scor.rr.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.procedure.ProcedureOutputs;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -171,6 +172,28 @@ public class PltBrowserService {
         } finally {
             query.unwrap(ProcedureOutputs.class).release();
         }
+    }
+
+    public void updateColumnSort(UpdateColumnSortRequest request) {
+        this.viewContextColumnsRepository.updateColumnSort("A798", request.getViewContextId(), request.getViewContextColumnId());
+    }
+
+    public void updateColumnFilterCriteria(UpdateColumnFilterCriteriaRequest request) {
+        this.viewContextColumnsRepository.updateColumnFilterCriteria("A798", request.getViewContextId(), request.getViewContextColumnId(), request.getFilterCriteria());
+    }
+
+    public void updateColumnOrderAndVisibility(UpdateColumnOrderAndVisibilityRequest request) {
+        this.viewContextColumnsRepository.updateColumnOrderAndVisibility("A798", request.getViewContextId(), request.getColumnsList());
+    }
+
+    public List<Map<String, Object>> getIDs(PLTManagerIDsRequest request) {
+        try {
+            return this.pltManagerViewRepository.getIDs(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), 1, "A798");
+        } catch (Exception e) {
+            log.error("Couldn't Get PLT Manager IDs with message: {}", e.getMessage());
+        }
+
+        return new ArrayList<>();
     }
 
     /*public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {

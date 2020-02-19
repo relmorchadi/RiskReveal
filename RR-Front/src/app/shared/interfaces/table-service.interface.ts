@@ -6,6 +6,7 @@ export interface TableServiceInterface {
 
   getColumns(): Observable<any>;
   getData(params): Observable<any>;
+  getIDs(params): Observable<any>;
   updateColumnWidth(body): Observable<any>;
   updateColumnFilter(body): Observable<any>;
   updateColumnSort(body): Observable<any>;

@@ -7,6 +7,23 @@ export interface TableHandlerInterface {
   _data: any[];
   data$: BehaviorSubject<any[]>;
 
+  _selectedIds: any[];
+  selectedIds$: BehaviorSubject<any[]>;
+
+  _sortSelectedAction: string;
+  sortSelectedAction$: BehaviorSubject<string>;
+
+  _sortSelectedFirst: boolean;
+  sortSelectedFirst$: BehaviorSubject<boolean>;
+
+  _selectAll: boolean;
+  selectAll$: BehaviorSubject<boolean>;
+
+  loading$: BehaviorSubject<boolean>;
+
+  totalRecords: number;
+  totalRecords$: BehaviorSubject<number>;
+
   _columns: Column[];
   columns$: BehaviorSubject<Column[]>;
 
@@ -21,13 +38,16 @@ export interface TableHandlerInterface {
 
   onColumnResize(event);
   onManageColumns(columns: Column[]);
-  onFilter(column: Column, filter: string);
-  onSort(column: Column, direction);
-  onRowSelect(rowId: number);
+  onFilter(index: number, filter: string);
+  onSort(index: number);
+  onRowSelect(i: number);
+  onCheckAll();
   onContainerResize(newWidth: number);
+  onVirtualScroll(event);
 
   init(config: any): void;
   initApi(url: string): void;
-  initTable(request: FetchViewContextDataRequest): void;
+  initTable(params: any): void;
+  reloadTable(request: FetchViewContextDataRequest): Observable<any>;
 
 }

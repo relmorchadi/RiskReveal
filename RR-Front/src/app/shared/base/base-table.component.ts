@@ -12,25 +12,37 @@ import {
   AfterViewInit,
   Input,
   OnChanges,
-  SimpleChanges
+  SimpleChanges, Output, EventEmitter
 } from '@angular/core';
 import {backendUrl} from "../api";
+import * as _ from 'lodash';
+import {Observable} from "rxjs";
+import {Message} from "../message";
 
 
 export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
-  @Input() workspaceContextCode: string;
-  @Input() workspaceUwYear: number;
+  @Input() params: any;
+  @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter();
 
   @ViewChild('tableContainer') container;
   containerWidth: number;
 
+  loading$: Observable<boolean>;
+
   data: any[];
   columns: Column[];
+  rows: number;
+
+  selectedIds: any;
+  selectedItem: any;
+  selectAll: boolean;
+  sortSelectedAction: string;
+
+  totalRecords: number;
+  totalColumnWidth: number;
 
   _injectors: any;
-
-  _api: TableServiceInterface;
   _handler: TableHandlerInterface;
 
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
@@ -39,11 +51,28 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
         api: this.injector.get<TableServiceImp>(TableServiceImp),
         handler: this.injector.get<TableHandlerImp>(TableHandlerImp)
       })
-    }
+    };
+
+    this.selectedIds= {};
+    this.rows=6;
   }
 
   ngOnInit() {
 
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const {
+      params
+    } = changes;
+    if(!params.previousValue && params.currentValue) {
+      this.initTable();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.containerWidth = this.container.nativeElement.clientWidth;
+    window.dispatchEvent(new Event('resize'));
   }
 
   injectDependencies(key) {
@@ -60,19 +89,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  getApiInjector = (key) => this._injectors[key]
-
   protected initTable() {
-    this._handler.initTable({
-      workspaceContextCode: this.workspaceContextCode,
-      workspaceUwYear: this.workspaceUwYear,
-      entity: 1,
-      pageNumber: 1,
-      pageSize: 1000,
-      selectionList: "",
-      sortSelectedFirst: false,
-      sortSelectedAction: ""
-  });
+    this._handler.initTable(this.params);
   }
 
   onColumnResize(event) {
@@ -81,31 +99,36 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   onManageColumns(oldColumns: Column[], newColumns: Column[]) {}
 
-  onFilter(column: Column, filter: string) {}
+  onFilter = _.debounce((index, filter: string) => {
+    this._handler.onFilter(index, filter);
+  }, 500);
 
-  onSort(column: Column, direction) {}
-
-  onRowSelect(rowId: number) {}
-
-  protected detectChanges() {
-    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
+  onSort(index) {
+    this._handler.onSort(index);
   }
 
-  ngAfterViewInit(): void {
-    this.containerWidth = this.container.nativeElement.clientWidth;
+  onRowSelect(i: number) {
+    this._handler.onRowSelect(i);
+  }
+
+  onCheckAll() {
+    this._handler.onCheckAll();
   }
 
   onContainerResize({newWidth, oldWidth}) {
     if(newWidth != oldWidth) this._handler.onContainerResize(newWidth);
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    const {
-      workspaceContextCode
-    } = changes;
-    if(!workspaceContextCode.previousValue && workspaceContextCode.currentValue) {
-      this.initTable();
-    }
+  onVirtualScroll(event) {
+    this._handler.onVirtualScroll(event);
+  }
+
+  rowsChange(rows) {
+    console.log(rows);
+  }
+
+  protected detectChanges() {
+    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
   }
 
 }

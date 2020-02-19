@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 @Directive({
   selector: '[syncScroll]'
 })
-export class SyncScrollDirective implements AfterViewInit,AfterViewChecked, OnDestroy, OnChanges {
+export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
 
   @Input() classIdentifier;
 
