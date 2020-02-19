@@ -4,7 +4,9 @@ import com.scor.rr.domain.entities.UserWorkspaceTabs;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserWorkspaceTabsRepository extends JpaRepository<UserWorkspaceTabs, Long> {
     List<UserWorkspaceTabs> findAllByUserCodeOrderByOpenedDateDesc(String userCode);
+    Optional<UserWorkspaceTabs> findByUserCodeAndWorkspaceId(String userCode, Long workspaceId);
 }
