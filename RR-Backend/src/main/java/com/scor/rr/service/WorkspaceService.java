@@ -3,17 +3,24 @@ package com.scor.rr.service;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
+import com.scor.rr.domain.dto.UserWorkspaceTabsRequest;
+import com.scor.rr.domain.entities.UserWorkspaceTabs;
+import com.scor.rr.repository.UserWorkspaceTabsRepository;
 import com.scor.rr.repository.WorkspacePoPin.*;
 import com.scor.rr.util.OffsetPageRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class WorkspaceService {
 
     @Autowired
@@ -36,6 +43,9 @@ public class WorkspaceService {
 
     @Autowired
     PinnedWorkspaceViewRepository pinnedWorkspaceViewRepository;
+
+    @Autowired
+    UserWorkspaceTabsRepository workspaceTabsRepository;
 
     public List<WorkspaceEntity> getFavoriteWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
         return this.favoriteWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size))
@@ -111,5 +121,34 @@ public class WorkspaceService {
         this.pinnedWorkspaceRepository.togglePinnedWorkspace(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserId());
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
+
+    public ResponseEntity<List<UserWorkspaceTabs>> getTabs(String userCode) {
+        try {
+            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrdOrderByOpenedDateDesc(userCode));
+        } catch(Exception e) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
+
+    public ResponseEntity<?> closeTab(UserWorkspaceTabsRequest request) {
+        try {
+            this.workspaceTabsRepository.deleteById(request.getUserWorkspaceTabsId());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Couldn't DELETE Tab with message: {}", e.getMessage());
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    public ResponseEntity<?> openTab(UserWorkspaceTabsRequest request) {
+        try {
+            return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(request.getUserWorkspaceTabsId(), request.getWorkspaceId(), request.getUserCode(), new Date())));
+        } catch (Exception e) {
+            log.error("Couldn't CREATE Tab with message: {}", e.getMessage());
+            return ResponseEntity.ok().build();
+        }
+    }
+
+
 
 }
