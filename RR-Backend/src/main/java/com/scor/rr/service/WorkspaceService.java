@@ -143,12 +143,12 @@ public class WorkspaceService {
 
     public ResponseEntity<?> openTab(UserWorkspaceTabsRequest request) {
         try {
-            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceId(request.getUserCode(), request.getWorkspaceId());
+            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(request.getUserCode(), request.getWorkspaceContextCode(), request.getWorkspaceUwYear());
 
             if(opt.isPresent()) {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), request.getWorkspaceId(), request.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserCode(), new Date())));
             } else {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, request.getWorkspaceId(), request.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserCode(), new Date())));
             }
 
         } catch (Exception e) {
