@@ -35,7 +35,10 @@
       >
       </plt-tag-manager>
       <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
-        <d-table [params]="params"></d-table>
+        <d-table
+                [params]="params"
+                (actionDispatcher)="handleTableActions($event)"
+        ></d-table>
       </div>
     </div>
   </div>

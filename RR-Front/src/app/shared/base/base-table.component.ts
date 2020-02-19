@@ -12,16 +12,18 @@ import {
   AfterViewInit,
   Input,
   OnChanges,
-  SimpleChanges
+  SimpleChanges, Output, EventEmitter
 } from '@angular/core';
 import {backendUrl} from "../api";
 import * as _ from 'lodash';
 import {Observable} from "rxjs";
+import {Message} from "../message";
 
 
 export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
   @Input() params: any;
+  @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter();
 
   @ViewChild('tableContainer') container;
   containerWidth: number;
@@ -30,8 +32,10 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   data: any[];
   columns: Column[];
+  rows: number;
 
   selectedIds: any;
+  selectedItem: any;
   selectAll: boolean;
   sortSelectedAction: string;
 
@@ -50,6 +54,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     };
 
     this.selectedIds= {};
+    this.rows=6;
   }
 
   ngOnInit() {
@@ -67,6 +72,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   ngAfterViewInit(): void {
     this.containerWidth = this.container.nativeElement.clientWidth;
+    window.dispatchEvent(new Event('resize'));
   }
 
   injectDependencies(key) {
@@ -115,6 +121,10 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   onVirtualScroll(event) {
     this._handler.onVirtualScroll(event);
+  }
+
+  rowsChange(rows) {
+    console.log(rows);
   }
 
   protected detectChanges() {

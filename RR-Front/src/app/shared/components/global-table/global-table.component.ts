@@ -14,6 +14,12 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
 
   availableList = [];
 
+  contextMenu = [
+    {
+      label: 'View Detail', command: () => {console.log(this.selectedItem); this.actionDispatcher.emit({ type: 'View Detail', payload: this.selectedItem });}
+    }
+    ];
+
   constructor(_injector: Injector, cdRef: ChangeDetectorRef) {
     super(_injector, cdRef);
     this.injectDependencies('plt-manager');

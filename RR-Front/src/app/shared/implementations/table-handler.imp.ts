@@ -10,6 +10,7 @@ import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.
 @Injectable()
 export class TableHandlerImp implements TableHandlerInterface {
 
+  offset: number= 10;
   private _api: TableServiceInterface;
 
   _data: any[];
@@ -47,7 +48,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   params: any;
 
   config= {
-    pageSize: 2,
+    pageSize: 10,
     entity: 1
   };
 
@@ -190,21 +191,11 @@ export class TableHandlerImp implements TableHandlerInterface {
       columnsList: _.join(_.map(columns, col => col.viewContextColumnId + ',' + col.isVisible + ',' + col.columnOrder), ';')
     })
         .pipe(
-            switchMap( () => this.reloadTable({
-              ...this.params,
-              ...this.config,
-              pageNumber: 1,
-              selectionList: _.join(this._selectedIds, ','),
-              sortSelectedFirst: this._sortSelectedFirst,
-              sortSelectedAction: this._sortSelectedAction
-            })),
+            switchMap( () => this.loadColumns()),
         )
         .subscribe(
-            ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
+            (columns) => {
               this.updateColumns(columns);
-              this.updateData(plts);
             },
             (error) => {
               console.error(error);
@@ -290,10 +281,6 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.updateSelectedIDs(newIds);
 
     this.updateSelectAll(_.every(this._selectedIds, e => e));
-
-    console.log("******  SELECTION ********")
-    console.log(this._selectAll);
-    console.log(this._selectedIds)
   }
 
   onContainerResize(newWidth) {
@@ -311,10 +298,6 @@ export class TableHandlerImp implements TableHandlerInterface {
     });
 
     this.updateSelectedIDs(newIds);
-
-    console.log("******  SELECTION ********")
-    console.log(this._selectAll);
-    console.log(this._selectedIds)
   }
 
   onVirtualScroll(event) {

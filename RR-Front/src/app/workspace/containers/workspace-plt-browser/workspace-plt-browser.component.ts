@@ -134,6 +134,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.select(WorkspaceState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
   }
 
+  openedPlt: any;
+
   ngOnInit() {
 
     this.handler.visibleColumns$.subscribe((cols) => {
@@ -256,6 +258,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     switch (action.type) {
       case rightMenuStore.closeDrawer:
         this.updateMenuKey('visible', false);
+        this.updateMenuKey('pltHeaderId', null);
         break;
 
       case rightMenuStore.setSelectedTabByIndex:
@@ -343,7 +346,28 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.detectChanges();
   }
 
+
   resizing() {
     this.detectChanges();
   }
+
+  handleTableActions(action: Message) {
+    switch (action.type) {
+      case 'View Detail':
+        this.openPltInDrawer(action.payload);
+    }
+  }
+
+  closePltInDrawer() {
+    this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+      wsIdentifier: this.workspaceId + '-' + this.uwy
+    }));
+  }
+
+  openPltInDrawer(plt) {
+    this.openedPlt = plt;
+    this.updateMenuKey('pltHeaderId', plt.pltId);
+    this.updateMenuKey('visible', true);
+  }
+
 }

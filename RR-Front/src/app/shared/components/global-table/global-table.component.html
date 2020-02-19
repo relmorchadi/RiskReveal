@@ -1,102 +1,106 @@
-<div class="title-as-tab">
-  <div class="div-title">
-    <span class="title">PLTs</span>
-  </div>
-  <div class="right">
-    <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
-      <a style="max-height: 28px;display: flex;" nz-dropdown>
-        <i class="icon-settings_24px"></i>
-      </a>
-      <ul nz-menu style="font-size: 12px">
+<div tRows [tableClass]="'plt-list'" (heightChange)="rowsChange($event)" #cte class="table-container">
+  <div class="title-as-tab">
+    <div class="div-title">
+      <span class="title">PLTs</span>
+    </div>
+    <div class="right">
+      <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
+        <a style="max-height: 28px;display: flex;" nz-dropdown>
+          <i class="icon-settings_24px"></i>
+        </a>
+        <ul nz-menu style="font-size: 12px">
 
-        <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
+          <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
 
-      </ul>
-    </nz-dropdown>
+        </ul>
+      </nz-dropdown>
+    </div>
   </div>
-</div>
-<div class="PLTs-content">
-  <div
-          #tableContainer class="parent"
-          [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
-          (resized)="onContainerResize($event)"
-          >
-    <div *ngIf="columns.length > 1" [style.width]="totalColumnWidth + 'px'">
-      <p-table
-              dataKey="pltId" [value]="data" [columns]="columns"
-              [loading]="loading$ | async"
-              [scrollable]="true" [scrollHeight]="'92px'"
-              [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
-              [virtualRowHeight]="46" [lazy]="true" [virtualScroll]="true" [rows]="1" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
-      >
-        <ng-template pTemplate="colgroup" let-columns>
-          <colgroup>
-            <col [style.width]="40 + 'px'">
-            <col *ngFor="let col of columns" [style.width]="col.width + 'px'">
-          </colgroup>
-        </ng-template>
-        <ng-template pTemplate="header" let-cols>
-          <tr>
-            <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
-              <label nz-checkbox
-                     [nzChecked]="selectAll"
-                     (nzCheckedChange)="onCheckAll()"
-              ></label>
-              <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: -1, sortType: sortSelectedAction}"></ng-container>
-            </th>
-            <th [attr.id]="i" pResizableColumn [pResizableColumnDisabled]="!col?.isResizable" *ngFor="let col of cols;let i= index;">
-              <ng-container [ngSwitch]="col?.dataDisplayType">
-                <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="primary_header_indicator" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
-                <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="primary_header_status" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
-                <ng-container *ngSwitchDefault [ngTemplateOutlet]="primary_header_default" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
-              </ng-container>
-            </th>
-          </tr>
-          <tr>
-            <th></th>
-            <ng-container *ngFor="let col of cols;let i=index;">
-              <ng-container [ngSwitch]="col?.dataDisplayType">
-                <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="secondary_header_indecator" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
-                <ng-container *ngSwitchDefault [ngTemplateOutlet]="secondary_header_default" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
-              </ng-container>
-            </ng-container>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-row let-i="rowIndex" let-cols="columns">
-          <tr style="height:45.56px">
-            <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
-              <div style="padding-left: 9px;">
+  <div class="PLTs-content">
+    <div
+            #tableContainer class="parent"
+            [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
+            (resized)="onContainerResize($event)"
+    >
+      <div *ngIf="columns.length > 1" [style.width]="totalColumnWidth + 'px'">
+        <p-table
+                tRows [tableClass]="'plt-list'"
+                [class]="'plt-list'"
+                (heightChange)="rowsChange($event)"
+                dataKey="pltId" [value]="data" [columns]="columns"
+                [loading]="loading$ | async"
+                [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
+                [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
+                [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
+                [virtualRowHeight]="45.556" [lazy]="true" [virtualScroll]="true" [rows]="rows" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
+        >
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col [style.width]="40 + 'px'">
+              <col *ngFor="let col of columns" [style.width]="col.width + 'px'">
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-cols>
+            <tr>
+              <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
                 <label nz-checkbox
-                       [nzChecked]="selectedIds[row.pltId]"
-                       (nzCheckedChange)="onRowSelect(row.pltId)"></label>
-              </div>
-            </td>
-            <td *ngFor="let col of cols">
-              <ng-container [ngSwitch]="col?.dataDisplayType">
-                <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="indicator" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-                <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="status" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-                <ng-container *ngSwitchCase="'date'" [ngTemplateOutlet]="date" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-                <ng-container *ngSwitchCase="'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-                <ng-container *ngSwitchCase="'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-                <ng-container *ngSwitchDefault [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                       [nzChecked]="selectAll"
+                       (nzCheckedChange)="onCheckAll()"
+                ></label>
+                <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: -1, sortType: sortSelectedAction}"></ng-container>
+              </th>
+              <th [attr.id]="i" pResizableColumn [pResizableColumnDisabled]="!col?.isResizable" *ngFor="let col of cols;let i= index;">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="primary_header_indicator" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
+                  <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="primary_header_status" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="primary_header_default" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
+                </ng-container>
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <ng-container *ngFor="let col of cols;let i=index;">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="secondary_header_indecator" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="secondary_header_default" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
+                </ng-container>
               </ng-container>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="loadingbody" let-columns="columns">
-          <tr style="height: 46px">
-            <td *ngFor="let col of columns">
-              <div class="loading-text"></div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-    <div *ngIf="!(columns.length > 1)" [style.width]="totalColumnWidth + 'px'">
-      <p-progressSpinner></p-progressSpinner>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row let-i="rowIndex" let-cols="columns">
+            <tr [pContextMenuRow]="row" style="height:45.556px">
+              <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
+                <div style="padding-left: 9px;">
+                  <label nz-checkbox
+                         [nzChecked]="selectedIds[row.pltId]"
+                         (nzCheckedChange)="onRowSelect(row.pltId)"></label>
+                </div>
+              </td>
+              <td *ngFor="let col of cols">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="indicator" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="status" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'date'" [ngTemplateOutlet]="date" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div *ngIf="!(columns.length > 1)" [style.width]="totalColumnWidth + 'px'">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
     </div>
   </div>
 </div>
+
+
+<!--Context Menu-->
+
+<p-contextMenu #cm [model]="contextMenu" appendTo="body"></p-contextMenu>
 
 <!--Header-Templates-->
 
