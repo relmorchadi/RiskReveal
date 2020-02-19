@@ -479,13 +479,9 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
-        //@Todo by BTP Count S/p
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset/size) + ", @page_size=" + size;
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
-
-
         this.logger.debug("Service starts executing the query ...");
-
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";
             countSql += ", @filter='" + keyword + "'";
