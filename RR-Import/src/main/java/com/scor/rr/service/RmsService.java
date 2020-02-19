@@ -114,6 +114,10 @@ public class RmsService {
     @Autowired
     private PortfolioDetailedScanRunnableTask portfolioDetailedScanRunnableTask;
 
+    @Autowired
+    private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
+
+
     /********** Scan Basic / Detailed **********/
 
 
@@ -123,11 +127,12 @@ public class RmsService {
             RLModelDataSource rlModelDataSource =
                     rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
 
+            ModellingSystemInstanceEntity instanceEntity = modellingSystemInstanceRepository.findByName(dataSource.getInstanceId());
             if (rlModelDataSource != null) {
                 rlAnalysisRepository.deleteByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
                 rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
             } else {
-                rlModelDataSource = new RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
+                rlModelDataSource = new RLModelDataSource(dataSource, projectId, instanceEntity.getModellingSystemInstanceId(), instanceEntity.getName());
                 rlModelDataSourcesRepository.save(rlModelDataSource);
             }
 
