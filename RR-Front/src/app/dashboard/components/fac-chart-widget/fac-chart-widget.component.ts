@@ -42,8 +42,7 @@ export class FacChartWidgetComponent implements OnInit {
   };
 
   initOps = {
-    height: '400px',
-    width: '1600px'
+    height: '360px'
   };
 
   chartOption: any;
