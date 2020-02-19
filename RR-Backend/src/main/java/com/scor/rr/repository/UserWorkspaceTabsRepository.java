@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserWorkspaceTabsRepository extends JpaRepository<UserWorkspaceTabs, Long> {
     List<UserWorkspaceTabs> findAllByUserCodeOrderByOpenedDateDesc(String userCode);
-    Optional<UserWorkspaceTabs> findByUserCodeAndWorkspaceId(String userCode, Long workspaceId);
+    Optional<UserWorkspaceTabs> findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(String userCode, String workspaceContextCode, Integer workspaceUwYear);
 }
