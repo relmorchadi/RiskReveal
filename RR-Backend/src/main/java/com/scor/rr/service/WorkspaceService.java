@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -149,7 +150,14 @@ public class WorkspaceService {
 
     public ResponseEntity<?> openTab(UserWorkspaceTabsRequest request) {
         try {
-            return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(request.getUserWorkspaceTabsId(), request.getWorkspaceId(), request.getUserCode(), new Date())));
+            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceId(request.getUserCode(), request.getWorkspaceId());
+
+            if(opt.isPresent()) {
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), request.getWorkspaceId(), request.getUserCode(), new Date())));
+            } else {
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, request.getWorkspaceId(), request.getUserCode(), new Date())));
+            }
+
         } catch (Exception e) {
             log.error("Couldn't CREATE Tab with message: {}", e.getMessage());
             return ResponseEntity.ok().build();
