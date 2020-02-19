@@ -22,6 +22,7 @@ import {BadgesService} from "../../../core/service/badges.service";
 import {catchError, distinctUntilChanged, takeUntil, tap} from "rxjs/operators";
 import {LoadRecentSearch} from "../../../core/store/actions";
 import {combineLatest, of} from "rxjs";
+import {falseIfMissing} from "protractor/built/util";
 
 
 @Component({
@@ -81,8 +82,11 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
   ];
   columnsCache = [];
+  columnsFacCache = [];
   extraColumns = [];
+  extraColumnsFac = [];
   extraColumnsCache = [];
+  extraColumnsCacheFac = [];
 
   columnsFac = [
     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
@@ -154,6 +158,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   initColumns() {
     this.columnsCache = _.merge([], this.columns);
     this.extraColumnsCache = _.merge([], this.extraColumns);
+    this.columnsFacCache = _.merge([], this.columnsFac);
+    this.extraColumnsCacheFac = _.merge([], this.extraColumnsFac);
   }
 
   openWorkspace(wsId, year) {
@@ -161,15 +167,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
     } else {
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'FAC'}));
-    }
-
-  }
-
-  navigateToTab(value) {
-    if (value.routing == 0) {
-      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/projects`]);
-    } else {
-      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/${value.routing}`]);
     }
   }
 
@@ -250,11 +247,15 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   getSortColumns(sortData) {
-    return _.map(sortData, (order, col) => ({columnName: this.mapColToQuery(col), order}))
+    return _.map(sortData, (order, col) => ({columnName: this.mapColToQuery(col), order: _.toUpper(order)}))
   }
 
   mapColToQuery(col) {
-    return _.find(this.columns, column => column.field == col).queryParam;
+    if (this.searchMode === 'Treaty') {
+      return _.find(this.columns, column => column.field == col).queryParam;
+    } else {
+      return _.find(this.columnsFac, column => column.field == col).queryParam;
+    }
   }
 
   private _loadData(offset = 0, size = 100, filter: boolean = false) {
@@ -316,7 +317,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   dropColumn(event: CdkDragDrop<any>) {
-    console.log(event);
     const {
       previousContainer,
       container
@@ -324,76 +324,140 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
     if (previousContainer === container) {
       if (container.id == "usedListOfColumns") {
-        moveItemInArray(
-            this.columnsCache,
-            event.previousIndex + 1,
-            event.currentIndex + 1
-        );
-        console.log(container.id, this.columnsCache);
+        if (this.searchMode === 'Treaty') {
+          moveItemInArray(
+              this.columnsCache,
+              event.previousIndex + 1,
+              event.currentIndex + 1
+          );
+        } else {
+          moveItemInArray(
+              this.columnsFacCache,
+              event.previousIndex + 1,
+              event.currentIndex + 1
+          );
+        }
       }
     } else {
-      if (this.extraColumnsCache.length > 0) {
-        transferArrayItem(
-            event.previousContainer.data,
-            event.container.data,
-            event.previousIndex,
-            event.currentIndex
-        );
+      if (this.searchMode === 'Treaty') {
+        if (this.extraColumnsCache.length > 0) {
+          transferArrayItem(
+              event.previousContainer.data,
+              event.container.data,
+              event.previousIndex,
+              event.currentIndex
+          );
+        } else {
+          transferArrayItem(
+              event.previousContainer.data,
+              event.container.data,
+              event.previousIndex + 1,
+              event.currentIndex + 1
+          );
+        }
       } else {
-        transferArrayItem(
-            event.previousContainer.data,
-            event.container.data,
-            event.previousIndex + 1,
-            event.currentIndex + 1
-        );
+        if (this.extraColumnsCacheFac.length > 0) {
+          transferArrayItem(
+              event.previousContainer.data,
+              event.container.data,
+              event.previousIndex,
+              event.currentIndex
+          );
+        } else {
+          transferArrayItem(
+              event.previousContainer.data,
+              event.container.data,
+              event.previousIndex + 1,
+              event.currentIndex + 1
+          );
+        }
       }
+
     }
   }
 
+  openPopUp() {
+    this.manageColumns = true;
+    this.initColumns();
+  }
+
   saveColumns() {
-    this.columns = this.columnsCache;
-    this.extraColumns = this.extraColumnsCache;
-    this.columns.splice(_.findIndex(this.columns, row => row.field == 'checkbox'), 1);
-    this.columns.unshift({
-      field: 'checkbox',
-      header: '',
-      width: '20px',
-      visible: true,
-      display: true,
-      sorted: true,
-      filtered: false,
-      type: 'checkbox',
-      class: 'icon-check_24px',
-    });
+    if(this.searchMode === 'Treaty') {
+      this.columns = [...this.columnsCache];
+      this.extraColumns = [...this.extraColumnsCache];
+      this.columns.splice(_.findIndex(this.columns, row => row.field == 'checkbox'), 1);
+      this.columns.unshift({
+        field: 'checkbox',
+        header: '',
+        width: '20px',
+        visible: true,
+        display: true,
+        sorted: true,
+        filtered: false,
+        type: 'checkbox',
+        class: 'icon-check_24px',
+      });
+    } else {
+      this.columnsFac = [...this.columnsFacCache];
+      this.extraColumnsFac = [...this.extraColumnsCacheFac];
+      this.columnsFac.splice(_.findIndex(this.columnsFac, row => row.field == 'checkbox'), 1);
+      this.columnsFac.unshift({
+        field: 'checkbox',
+        header: '',
+        width: '20px',
+        visible: true,
+        display: true,
+        sorted: true,
+        filtered: false,
+        type: 'checkbox',
+        class: 'icon-check_24px',
+      });
+    }
+    console.log(this.columnsFac, this.extraColumnsFac);
     this.manageColumns = false;
-    this.cdRef.detectChanges();
-    console.log('columns==>', this.columns);
-    console.log('extraColumns==>', this.extraColumns)
+    this.detectChanges();
   }
 
   dropAll(side: string) {
     if (side == 'right') {
-      this.columnsCache = [...this.columnsCache, ...this.extraColumnsCache];
-      this.extraColumnsCache = [];
+      if (this.searchMode === 'Treaty') {
+        this.columnsCache = [...this.columnsCache, ...this.extraColumnsCache];
+        this.extraColumnsCache = [];
+      } else {
+        this.columnsFacCache = [...this.columnsFacCache, ...this.extraColumnsCacheFac];
+        this.extraColumnsCacheFac = [];
+      }
+
     } else if (side == 'left') {
-      this.extraColumnsCache = [...this.extraColumnsCache, ...this.columnsCache];
-      this.columnsCache = [];
+      if (this.searchMode === 'Treaty') {
+        this.extraColumnsCache = [...this.extraColumnsCache, ...this.columnsCache];
+        this.columnsCache = [];
+      } else {
+        this.extraColumnsCacheFac = [...this.extraColumnsCacheFac, ...this.columnsFacCache];
+        this.columnsFacCache = [];
+      }
     }
   }
 
   closeManageColumns() {
     this.manageColumns = false;
-    this.columnsCache = this.columns;
-    this.extraColumnsCache = this.extraColumns;
+    if (this.searchMode === 'Treaty') {
+      this.columnsCache = this.columns;
+      this.extraColumnsCache = this.extraColumns;
+    } else {
+      this.columnsFacCache = this.columnsFac;
+      this.extraColumnsCacheFac = this.extraColumnsFac;
+    }
   }
 
   openSavedSearch() {
     this.saveSearchPopup = true;
   }
+
   saveSearch() {
     if (this.searchContent.length > 0) {
       this.store.dispatch(new saveSearch({
-        searchType: "TREATY",
+        searchType: this.searchMode === 'Treaty' ? "TREATY" : "FAC",
         label: this.searchLabel,
         items: this.searchContent
       }));

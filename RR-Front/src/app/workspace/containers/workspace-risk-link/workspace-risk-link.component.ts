@@ -125,6 +125,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     @Select(WorkspaceState.getRiskLinkSummary)
     summary$;
+    @Select(WorkspaceState.getRiskLinkSummarySelectionSize)
+    summarySelectionSize$;
 
     @Select(WorkspaceState.getRiskLinkAnalysisSummary)
     analysisSummary$;

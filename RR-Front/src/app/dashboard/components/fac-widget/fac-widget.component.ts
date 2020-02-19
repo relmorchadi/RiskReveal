@@ -1,4 +1,14 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {DashboardState, GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
@@ -11,6 +21,7 @@ import * as moment from "moment";
 import {BaseContainer} from "../../../shared/base";
 import {Router} from "@angular/router";
 import * as fromHD from "../../../core/store/actions";
+import {debounce} from "rxjs/operators";
 
 @Component({
   selector: 'app-fac-widget',
@@ -34,6 +45,11 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   @Select(DashboardState.getFacData)facData$;
   @Select(DashboardState.getDataCounter)dataCounter$;
   @Select(DashboardState.getVirtualScroll)virtualScroll$;
+
+  inputName: ElementRef;
+  @ViewChild('inputName') set assetInput(elRef: ElementRef) {
+    this.inputName = elRef;
+  };
 
   virtualScroll: any;
 
@@ -205,6 +221,9 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
   activeEdit() {
     this.editName = true;
+    setTimeout(() => {
+      this.inputName.nativeElement.select();
+    }, 100);
   }
 
   loadFacData(pageNumber) {

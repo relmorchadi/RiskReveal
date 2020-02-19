@@ -493,7 +493,7 @@
             </div>
 
             <div class="body-wrap-footer-right">
-              <button style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
+              <button *ngIf="summarySelectionSize$ | async" style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
             </div>
           </div>
         </div>
