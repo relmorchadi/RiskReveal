@@ -20,7 +20,7 @@ export class TableRowsDirective {
     const node = document.querySelector('.' + this.tableClass + ' .ui-table-scrollable-body');
     if(node) {
       const element: any = new ElementRef(node);
-      const rows = Math.floor((element.nativeElement.offsetHeight - 8) / 45.556);
+      const rows = Math.ceil((element.nativeElement.offsetHeight - 8) / 45.556);
       console.log(rows, element.nativeElement.offsetHeight);
       this.heightChange.emit(rows);
     }
