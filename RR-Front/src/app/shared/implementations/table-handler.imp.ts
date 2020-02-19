@@ -48,6 +48,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   params: any;
 
   config= {
+    offset: 10,
     pageSize: 10,
     entity: 1
   };
@@ -301,10 +302,13 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onVirtualScroll(event) {
-    if (event.first === this.totalRecords)
-      this.loadChunk(event.first, this.config.pageSize);
-    else
-      this.loadChunk(event.first, event.rows);
+
+    if(event.first != this.config.offset || this.config.pageSize != event.rows) {
+      if (event.first === this.totalRecords)
+        this.loadChunk(event.first, this.config.pageSize);
+      else
+        this.loadChunk(event.first, event.rows);
+    }
   }
 
   loadChunk(offset, size) {
