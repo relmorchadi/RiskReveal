@@ -124,7 +124,7 @@ public class WorkspaceService {
 
     public ResponseEntity<List<UserWorkspaceTabs>> getTabs(String userCode) {
         try {
-            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrdOrderByOpenedDateDesc(userCode));
+            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByOpenedDateDesc(userCode));
         } catch(Exception e) {
             return ResponseEntity.ok(new ArrayList<>());
         }
