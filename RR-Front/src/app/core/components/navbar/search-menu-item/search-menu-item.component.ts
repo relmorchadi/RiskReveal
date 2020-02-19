@@ -14,7 +14,7 @@ import { first, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
-import {closeSearch, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
+import {closeSearch, LoadShortCuts, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
 import {Actions, Select, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
@@ -88,6 +88,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   ngOnInit() {
+    this.dispatch(new LoadShortCuts());
     this.selectedDashboard$.pipe().subscribe(value => {
       this.searchMode = _.get(value, 'searchMode', null);
       this.resetToDash = this.searchMode !== null;
@@ -199,6 +200,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   selectSearchBadge(key, value) {
+    console.log(this.mapTableNameToBadgeKey);
     event.preventDefault();
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key: _.camelCase(key), value}, this.globalKeyword, this.useAlternative()));

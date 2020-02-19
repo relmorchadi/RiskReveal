@@ -43,6 +43,7 @@
 
 <ng-container *ngIf="widgetId === 1">
   <div class="renewal-contract-table">
+<!--    [ngStyle]="{'width': ColsTotalWidth + 'px'}"-->
     <app-table [sortable]="true" [virtualScroll]="virtualScroll"
                [rows]="50" [totalRecords]="dataCounter" [secondaryLoader]="secondaryLoad"
                [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
