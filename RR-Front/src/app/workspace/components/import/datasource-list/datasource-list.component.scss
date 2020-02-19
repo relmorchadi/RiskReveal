@@ -1,0 +1,68 @@
+.poover-menu-item {
+  .text {
+    font-size: 10px;
+    padding-top: 2px;
+  }
+
+  .logo {
+    font-size: 10px;
+    line-height: 20px;
+    margin-right: 5px;
+  }
+
+  .loading {
+    padding-top: 2px;
+    font-size: 10px;
+  }
+}
+
+.poover-menu-item-active {
+  background-color: #FCF9D6;
+}
+
+.no-check{
+  display: inline-block;
+  margin: 0px 5px;
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  border-collapse: separate;
+  transition: all 0.3s;
+
+  &:hover {
+    border: 1.1px solid #0700CF;
+  }
+}
+
+.check {
+  width: 16px;
+  height: 16px;
+  background-color: #0700CF;
+  color: #FFFFFF;
+  font-size: 14px !important;
+  display: inline-block;
+  border-radius: 2px;
+  margin: 0 5px;
+  vertical-align: middle;
+  text-align: center;
+
+  i {
+    font-weight: bold;
+    margin-left: 1px;
+    margin-top: 1px;
+    display: flex;
+  }
+}
+.loading-text {
+  height: 20px;
+  margin: auto;
+  margin-left: 12px;
+  width: 97%;
+  background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+  background-size: 400% 100%;
+  -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
+  animation: ant-skeleton-loading 1.4s ease infinite;
+}
