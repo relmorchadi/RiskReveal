@@ -21,8 +21,11 @@ public class UserWorkspaceTabs {
     @Column(name = "UserWorkspaceTabsId")
     private Long userWorkspaceTabsId;
 
-    @Column(name = "WorkspaceId")
-    private Long workspaceId;
+    @Column(name = "WorkspaceContextCode")
+    private String workspaceContextCode;
+
+    @Column(name = "WorkspaceUwYear")
+    private Integer workspaceUwYear;
 
     @Column(name = "UserCode", length = 10)
     private String userCode;

@@ -6,7 +6,8 @@ import lombok.Data;
 public class UserWorkspaceTabsRequest {
 
     private Long userWorkspaceTabsId;
-    private Long workspaceId;
+    private Integer workspaceUwYear;
+    private String workspaceContextCode;
     private String userCode;
 
 }
