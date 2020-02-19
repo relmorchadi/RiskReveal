@@ -10,7 +10,7 @@
   <p-header>
     <div class="header">
       <h6>Manage Columns</h6>
-      <i style="cursor: pointer" (click)="resetColumns()" class="icon-close_24px"></i>
+      <i style="cursor: pointer" (click)="close()" class="icon-close_24px"></i>
     </div>
   </p-header>
   <div class="content">
@@ -51,13 +51,13 @@
     <div class="toolkit">
       <div class="toolkit-cnt">
         <div class="all right">
-          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+          <i style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
         </div>
         <span>
           All
         </span>
         <div class="all left">
-          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+          <i style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="resetColumns()" class="a-button-text-cancel">cancel</button>
+      <button (click)="close()" class="a-button-text-cancel">cancel</button>
       <button class="a-buttons-contained" (click)="onManageColumns()">Save</button>
     </div>
   </p-footer>
