@@ -133,6 +133,8 @@ public class ExposureSummaryExtractor {
                         // List<String> portfolioExcludedRegionPeril will be built in a similar way as portfolioAndConformedCurrencyList (as describe in documentation) or by default null
                         // It contains a list of excluded region perils, separated by comma.
                         // How we can populate this field could be discussed later based on the screen design.
+
+                        log.info("preparing context for {}", portfolioAndConformedCurrencyList);
                         Integer runId = rmsService.createEDMPortfolioContext(instance,
                                 edmId,
                                 edmName,
@@ -171,6 +173,7 @@ public class ExposureSummaryExtractor {
 
                                             String query = "EXEC " + database + ".dbo." + exposureViewQuery.getQuery() + " @Edm_Id=" + edmId + ", @Edm_name=" + edmName + ", @RunID=" + runId;
 
+                                            log.info("calling summary procedure {} for runId {}", exposureViewQuery.getQuery(), runId);
                                             List<RLExposureSummaryItem> rlExposureSummaryItems = template.query(
                                                     query,
                                                     new RLExposureSummaryItemRowMapper(globalViewSummary));
