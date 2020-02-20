@@ -9,7 +9,7 @@ import {UnauthorizedComponent} from "../core/containers";
 
 const routes: Routes = [
   {path: 'unauthorized', data: {title: 'Error- 401'}, component: UnauthorizedComponent},
-  {path: '', canActivate: [AuthGuard] ,component: MainComponent, children: [
+  {path: '', component: MainComponent, children: [
     {data: {title: 'RR- Workspace'}, path: 'workspace', loadChildren: '../workspace/workspace.module#WorkspaceModule'},
     {data: {title: 'RR- Dashboard'}, path: 'dashboard', loadChildren: '../dashboard/dashboard.module#DashboardModule'},
     //{data: {title: 'RR- PLT Comparer'}, path: 'plt-comparer', loadChildren: '../plt-comparer/plt-comparer.module#PltComparerModule'},

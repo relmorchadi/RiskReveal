@@ -178,8 +178,16 @@ public class PltBrowserService {
         this.viewContextColumnsRepository.updateColumnSort("A798", request.getViewContextId(), request.getViewContextColumnId());
     }
 
+    public void resetColumnSort(ResetColumnSortRequest request) {
+        this.viewContextColumnsRepository.resetColumnSort("A798", request.getViewContextId());
+    }
+
     public void updateColumnFilterCriteria(UpdateColumnFilterCriteriaRequest request) {
         this.viewContextColumnsRepository.updateColumnFilterCriteria("A798", request.getViewContextId(), request.getViewContextColumnId(), request.getFilterCriteria());
+    }
+
+    public void resetColumnFilterCriteria(ResetColumnFilterCriteriaRequest request) {
+        this.viewContextColumnsRepository.resetColumnFilterCriteria("A798", request.getViewContextId());
     }
 
     public void updateColumnOrderAndVisibility(UpdateColumnOrderAndVisibilityRequest request) {

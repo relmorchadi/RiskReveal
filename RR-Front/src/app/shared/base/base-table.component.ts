@@ -103,8 +103,16 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.onFilter(index, filter);
   }, 500);
 
+  onResetFilter() {
+    this._handler.onResetFilter();
+  }
+
   onSort(index) {
     this._handler.onSort(index);
+  }
+
+  onResetSort() {
+    this._handler.onResetSort();
   }
 
   onRowSelect(i: number) {
