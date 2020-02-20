@@ -242,7 +242,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onResetSort() {
-    this.onApiSuccessLoadDataAndColumns(this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
+    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
   onRowSelect(id: number){
