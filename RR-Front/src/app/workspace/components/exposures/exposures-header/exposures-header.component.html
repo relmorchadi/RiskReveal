@@ -1,0 +1,108 @@
+<div class="table-header-right" [ngClass]="'button-toggle-empetric-config'" style="background-color: #fff">
+    <div  class="title-as-tab" style="height: 58px; width: 100% !important;">
+          <span class="title" style="margin-right: 16px">
+           Exposure Manager
+          </span>
+        <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'135px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Global Exposure View</span>
+                        <span class="dropdown-item-selected">
+                        {{"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let view of headerConfig?.exposureViews" nz-menu-item (click)="changeCurrencie(view)">
+                        {{view}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Currency</span>
+                        <span class="dropdown-item-selected">
+                        {{"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let currency of headerConfig?.currencies" nz-menu-item (click)="changeCurrencie(currency)">
+                        {{currency}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Financial Unit</span>
+                        <span class="dropdown-item-selected">
+                  {{"choose"}}
+                </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li
+                            *ngFor="let financialUnit of headerConfig?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">
+                        {{financialUnit}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Division</span>
+                        <span class="dropdown-item-selected">
+                        {{"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let division of headerConfig?.divisions" nz-menu-item (click)="changeDivision(division)">
+                        {{division}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Portfolio</span>
+                        <span class="dropdown-item-selected">
+                        {{"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let portfolio of headerConfig?.portfolios" nz-menu-item (click)="changePortfolio(portfolio)">
+                        {{portfolio}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+    </div>
+</div>

@@ -102,19 +102,19 @@
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <!--              <ng-template pTemplate="footer" let-columns>

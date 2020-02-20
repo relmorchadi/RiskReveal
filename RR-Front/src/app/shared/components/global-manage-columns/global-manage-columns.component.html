@@ -1,0 +1,107 @@
+<p-dialog
+        [visible]="true"
+        [styleClass]="'m-dialog-modal-col-manager'"
+        [autoZIndex]="false"
+        [baseZIndex]="1"
+        [closable]="false"
+        [modal]="true"
+        [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>Manage Columns</h6>
+      <i style="cursor: pointer" (click)="close()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="content">
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+              cdkDropList
+              [id]="'availableListOfColumns'"
+              #availableListOfColumns="cdkDropList"
+              [cdkDropListConnectedTo]="[usedListOfColumns]"
+              [cdkDropListData]="_availableList"
+              class="m-box-d"
+              (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of _availableList; let i=index">
+          <div class="m-box-drag" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+                  {{col.displayName}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+              cdkDropList
+              [id]="'visible'"
+              #usedListOfColumns="cdkDropList"
+              [cdkDropListConnectedTo]="[availableListOfColumns]"
+              [cdkDropListData]="_visibleList"
+              class="m-box-d"
+              (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of _visibleList;let i=index">
+          <div class="m-box-drag" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+                  {{col.displayName}}
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="close()" class="a-button-text-cancel">cancel</button>
+      <button class="a-buttons-contained" (click)="onManageColumns()">Save</button>
+    </div>
+  </p-footer>
+</p-dialog>

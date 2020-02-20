@@ -1,4 +1,5 @@
 export interface Column {
+  viewContextId: number;
   viewContextColumnId: number;
   userCode: string;
   displayName: string;
@@ -13,6 +14,5 @@ export interface Column {
   columnName: string;
   dataColumnType: string;
   dataDisplayType: string;
-  displayType: string;
   filterCriteria: string;
 }

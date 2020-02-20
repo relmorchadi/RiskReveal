@@ -14,6 +14,9 @@ import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-ta
 import {AdjustmentPopUpNewComponent} from "./calibration-new/adjustment-pop-up-new/adjustment-pop-up-new.component";
 import {ReturnPeriodPopUpComponent} from "./calibration-new/return-period-pop-up/return-period-pop-up.component";
 import {NonLinearAdjustmentTableComponent} from "./calibration-new/non-linear-adjustment-table/non-linear-adjustment-table.component";
+import {ExposuresMainTableComponent} from "./exposures/exposures-main-table/exposures-main-table.component";
+import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-header.component";
+import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
 
 export const COMPONENTS = [
   LeftMenuComponent,
@@ -36,7 +39,10 @@ export const COMPONENTS = [
   FinancialPerspSelectionDialogComponent,
   OverridePeqtDialogComponent,
   OverrideOccurenceBasisDialogComponent,
-    NonLinearAdjustmentTableComponent
+    NonLinearAdjustmentTableComponent,
+    ExposuresMainTableComponent,
+    ExposuresHeaderComponent,
+    ExposuresLeftMenuComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

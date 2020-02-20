@@ -1,0 +1,82 @@
+<div class="table-wrapper">
+    <p-table [columns]="columns" [frozenColumns]="frozenColumns"
+             [frozenValue]="frozenValues" [value]="values"
+             [scrollable]="true"
+             syncScroll
+             (sortFunction)="onSort($event)"
+             scrollHeight="calc( 100vh - 435px )" frozenWidth="500px">
+        <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+                <col *ngFor="let col of columns" style="width:100px">
+            </colgroup>
+        </ng-template>
+        <ng-template pTemplate="frozenheader" let-columns>
+            <tr>
+                <ng-container *ngFor="let col of columns">
+                    <th [colSpan]="col.field == 'metric' ? 2 : 1"
+                        [pSortableColumn]="col.field">
+                        <span>{{col.header}}</span>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <ng-container *ngFor="let col of columns">
+                    <th [pSortableColumn]="col.field">
+                        <span>{{col.header}}</span>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="frozenrows" let-rowData let-columns="columns">
+            <tr (mouseenter)="onMouseEnter(rowData)"
+                (mouseleave)="onMouseLeave(rowData)"
+                [ngClass]="{'row-hover':rowData.hover}">
+                <ng-container *ngFor="let col of columns">
+                    <td [colSpan]="col.field == 'metric' ? 2 : 1">
+                        <b>{{rowData[col.field]}}</b>
+                    </td>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="frozenbody" let-rowData let-rowIndex="rowIndex" let-columns="columns">
+            <tr (mouseenter)="onMouseEnter(rowData)"
+                (mouseleave)="onMouseLeave(rowData)"
+                [ngClass]="{'row-hover':rowData.hover}">
+                <ng-container *ngFor="let col of columns">
+                    <ng-container *ngIf="col.field == 'metric'">
+                        <td [ngClass]="{'grouped-metric-first' : rowIndex < values.length - 1 &&
+                                         rowData['metric'] == values[rowIndex + 1]['metric'],
+                                        'grouped-metric-next':rowIndex > 0 &&
+                                         rowData['metric'] == values[rowIndex - 1]['metric']}">
+                            {{rowData[col.field]}}
+                        </td>
+                        <td>
+                            {{rowData['state']}}
+                        </td>
+                    </ng-container>
+                    <ng-container *ngIf="col.field != 'metric'">
+                        <td>
+                            {{rowData[col.field]}}
+                        </td>
+                    </ng-container>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr (mouseenter)="onMouseEnter(rowData)"
+                (mouseleave)="onMouseLeave(rowData)"
+                [ngClass]="{'row-hover':rowData.hover}">
+                <ng-container *ngFor="let col of columns">
+                    <ng-container>
+                        <td>
+                            {{rowData[col.field]}}
+                        </td>
+                    </ng-container>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+

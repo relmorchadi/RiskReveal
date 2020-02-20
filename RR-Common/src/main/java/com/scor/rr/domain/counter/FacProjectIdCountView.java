@@ -8,7 +8,7 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "vw_Fac_ProjectName_Count")
+@Table(name = "vw_Fac_ProjectId_Count")
 public class FacProjectIdCountView {
 
     @Id

@@ -125,6 +125,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     @Select(WorkspaceState.getRiskLinkSummary)
     summary$;
+    @Select(WorkspaceState.getRiskLinkSummarySelectionSize)
+    summarySelectionSize$;
 
     @Select(WorkspaceState.getRiskLinkAnalysisSummary)
     analysisSummary$;
@@ -201,7 +203,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             this.portfolios = _.merge({}, value);
             this.detectChanges();
         });
-        this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.selectedProject$.pipe(this.unsubscribeOnDestroy, debounceTime(500)).subscribe(value => {
             this.selectedProject = value;
             this.tabStatus = _.get(value, 'projectType', null);
             this.importInit();
@@ -302,14 +304,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }
         });
 
+        this._autoSelectFirstDataSource();
 
         this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
         this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
         this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
         this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
-
-        this._autoSelectFirstDataSource();
-
         this.datasourceKeywordFc.valueChanges
             .pipe(this.unsubscribeOnDestroy)
             .pipe(debounceTime(500))
@@ -332,7 +332,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.actions$
             .pipe(
                 this.unsubscribeOnDestroy,
-                ofActionSuccessful(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
+                ofActionCompleted(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
                 debounceTime(500)
             ).subscribe(p => {
             const {edms, rdms, currentDataSource} = this.state.selection;

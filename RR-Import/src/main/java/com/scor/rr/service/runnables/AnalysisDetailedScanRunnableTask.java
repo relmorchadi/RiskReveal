@@ -19,6 +19,7 @@ import java.util.concurrent.CountDownLatch;
 @Scope("prototype")
 @Data
 @Slf4j
+@Transactional(transactionManager = "rrTransactionManager")
 public class AnalysisDetailedScanRunnableTask implements Callable<List<RLAnalysis>> {
 
     @Autowired

@@ -1,10 +1,10 @@
 package com.scor.rr.rest;
 
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
-import com.scor.rr.domain.dto.UpdateColumnWidthRequest;
 import com.scor.rr.service.PltBrowserService;
 import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +28,9 @@ public class PltBrowserResource {
     @GetMapping
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
 
+    @GetMapping("ids")
+    public ResponseEntity<?> getIDs(PLTManagerIDsRequest request) { return ResponseEntity.ok(pltBrowserService.getIDs(request));}
+
     @GetMapping("columns")
     public ResponseEntity<?> getColumns() { return ResponseEntity.ok(pltBrowserService.getColumns());}
 
@@ -37,6 +40,23 @@ public class PltBrowserResource {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("columns/sort")
+    public ResponseEntity<?> updateColumnSort(@RequestBody UpdateColumnSortRequest request) {
+        this.pltBrowserService.updateColumnSort(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/filter")
+    public ResponseEntity<?> updateColumnFilterCriteria(@RequestBody UpdateColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.updateColumnFilterCriteria(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/orderandvisibility")
+    public ResponseEntity<?> updateColumnOrderAndVisibility(@RequestBody UpdateColumnOrderAndVisibilityRequest request) {
+        this.pltBrowserService.updateColumnOrderAndVisibility(request);
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping("assign-user-tag")
     public Boolean assignUpdateUserTag(@RequestBody AssignTagToPltsRequest request) {

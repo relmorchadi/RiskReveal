@@ -1,0 +1,31 @@
+<div *ngIf="leftMenuConfig?.pathTab" class="path-content">
+    <ng-template #path>
+        <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
+    </ng-template>
+    <div class="upPartLeftMenu">
+        <span class="wsHeader" [ngStyle]="{'background-color': leftMenuConfig.wsHeaderSelected && !leftMenuConfig.showDeleted ?  '#FDFBDF' : 'white'}"
+              (click)="resetPath()">
+          <i class="icon-window-section"></i>
+          <span class="body-info">{{leftMenuConfig?.wsId}} - {{leftMenuConfig?.uwYear}}</span>
+      </span>
+        <ul class="title-list">
+            <li *ngFor="let project of leftMenuConfig.projects" (click)="filter('projectId',null,project.projectId)"
+                class="clickable-item"
+                [ngClass]="{'active-path': project.selected}">
+                <i class="icon-assignment_24px"></i>
+                <span class="body-list"
+                      [nz-tooltip]="project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')">{{( project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+            </li>
+            <li>
+                <div class="plt-trash" [ngStyle]="{'display': leftMenuConfig.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': leftMenuConfig.showDeleted ? 'rgb(253, 251, 223)' : 'white'}" style="font-size: 0.7em;">
+                    <div class="cnt" (click)="toggleDeletedPlts()">
+                        <i class="icon-trash-alt"></i>
+                        <span> Deleted PLTs </span>
+                    </div>
+                    <span class="deleted-counter">{{leftMenuConfig.deletedPltsLength}}</span>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+</div>
