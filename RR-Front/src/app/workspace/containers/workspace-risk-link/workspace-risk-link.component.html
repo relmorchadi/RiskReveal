@@ -232,7 +232,7 @@
                        <span class="loading">Scanning</span>
                        <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
                       </ng-container>
-                      <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
+                      <i *ngIf="!itemsE.scanning" (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
@@ -256,7 +256,7 @@
                         <span class="loading">Scanning</span>
                         <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
                       </ng-container>
-                      <i (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
+                      <i *ngIf="!itemsR.scanning" (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
