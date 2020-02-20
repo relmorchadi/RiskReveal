@@ -39,7 +39,9 @@ export interface TableHandlerInterface {
   onColumnResize(event);
   onManageColumns(columns: Column[]);
   onFilter(index: number, filter: string);
+  onResetFilter();
   onSort(index: number);
+  onResetSort();
   onRowSelect(i: number);
   onCheckAll();
   onContainerResize(newWidth: number);

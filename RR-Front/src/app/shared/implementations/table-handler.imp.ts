@@ -224,6 +224,12 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   }
 
+  onResetFilter() {
+
+    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])))
+
+  }
+
   onSort(index: number){
     if(index == -1) {
       this.updateSortSelectionAction();
@@ -233,6 +239,10 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.onApiSuccessLoadDataAndColumns(
         () => this._api.updateColumnSort(_.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId'])),
     );
+  }
+
+  onResetSort() {
+    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
   onRowSelect(id: number){
@@ -352,6 +362,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private onApiSuccessLoadDataAndColumns = (api) => {
+    this.loading$.next(true);
     api()
         .pipe(
             switchMap( () => this.reloadTable({
@@ -369,6 +380,7 @@ export class TableHandlerImp implements TableHandlerInterface {
               this.updateTotalRecords(totalCount);
               this.updateColumns(columns);
               this.updateData(plts);
+              this.loading$.next(false);
             },
             (error) => {
               console.error(error);
