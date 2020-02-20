@@ -239,7 +239,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   loadMore(event) {
-
+    console.log(event, this.dataCounter);
   }
 
   private _formatDate(data) {

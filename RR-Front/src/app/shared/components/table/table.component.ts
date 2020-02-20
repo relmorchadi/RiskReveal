@@ -86,6 +86,8 @@ export class TableComponent implements OnInit {
   sortList = [];
   @Input()
   activateContextMenu = false;
+  @Input()
+  virtualRowHeight: any;
 
   _activateContextMenu: boolean;
 

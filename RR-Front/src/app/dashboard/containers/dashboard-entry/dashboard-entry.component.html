@@ -23,8 +23,7 @@
 
     <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
       <ng-container *ngFor="let dashboard of dashboards">
-        <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
-                [nzTitle]="titleTemplate">
+        <nz-tab (nzClick)="selectTab(dashboard?.id)" *ngIf="dashboard?.visible" [nzTitle]="titleTemplate">
           <ng-template #titleTemplate>
             <div class="tabs-header-wrapper">
               {{ dashboard?.name }}
@@ -32,49 +31,51 @@
                  class="ant-tabs-close-x"></i>
             </div>
           </ng-template>
-          <div style="height: calc(100vh - 150px); width:100%">
-            <gridster  [options]="options" style="background-color: transparent">
-                <gridster-item *ngFor="let item of dashboard.widgets" [item]="item?.position">
-<!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
-                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                          (delete)="deleteItem(dashboard.id, $event)"
-                                          (changeName)="changeName(dashboard.id, $event)"
-                                          (duplicate)="duplicate(dashboard.id, $event)"
-                                          class="no-drag">
-                  </renewal-contract-scope>-->
-                  <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard" [itemWidget]="item"
-                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
-                                  (widgetColsUpdate)="updateColsListener($event)"
-                                  (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
-                  </app-fac-widget>
-                  <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard" [itemWidget]="item"
-                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
-                                  (widgetColsUpdate)="updateColsListener($event)"
-                                  (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
-                  </app-fac-widget>
-                  <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard" [itemWidget]="item"
-                                  (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
-                                  (widgetColsUpdate)="updateColsListener($event)"
-                                  (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
-                  </app-fac-widget>
-                  <app-fac-chart-widget *ngIf="item?.widgetId === 4" [itemWidget]="item"
-                                        [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                        (changeName)="changeWidgetName($event)"
-                                        (delete)="deleteWidgetAction($event)"
-                                        (duplicate)="duplicateWidgetAction($event)" class="no-drag">
-                  </app-fac-chart-widget>
-                  <app-fac-subsidiary-chart *ngIf="item?.widgetId === 5" [itemWidget]="item"
-                                            [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                            (changeName)="changeWidgetName($event)"
-                                            (delete)="deleteWidgetAction($event)"
-                                            (duplicate)="duplicateWidgetAction($event)" class="no-drag">
-                  </app-fac-subsidiary-chart>
-                </gridster-item>
-            </gridster>
-          </div>
+          <ng-template nz-tab>
+            <div style="height: calc(100vh - 150px); width:100%">
+              <gridster  [options]="options" style="background-color: transparent">
+                  <gridster-item *ngFor="let item of dashboard.widgets" [item]="item?.position">
+  <!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
+                      [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                            (delete)="deleteItem(dashboard.id, $event)"
+                                            (changeName)="changeName(dashboard.id, $event)"
+                                            (duplicate)="duplicate(dashboard.id, $event)"
+                                            class="no-drag">
+                    </renewal-contract-scope>-->
+                    <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard" [itemWidget]="item"
+                                    (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                    (widgetColsUpdate)="updateColsListener($event)"
+                                    (delete)="deleteWidgetAction($event)"
+                                    (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                    </app-fac-widget>
+                    <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard" [itemWidget]="item"
+                                    (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                    (widgetColsUpdate)="updateColsListener($event)"
+                                    (delete)="deleteWidgetAction($event)"
+                                    (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                    </app-fac-widget>
+                    <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard" [itemWidget]="item"
+                                    (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
+                                    (widgetColsUpdate)="updateColsListener($event)"
+                                    (delete)="deleteWidgetAction($event)"
+                                    (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                    </app-fac-widget>
+                    <app-fac-chart-widget *ngIf="item?.widgetId === 4" [itemWidget]="item"
+                                          [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                          (changeName)="changeWidgetName($event)"
+                                          (delete)="deleteWidgetAction($event)"
+                                          (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                    </app-fac-chart-widget>
+                    <app-fac-subsidiary-chart *ngIf="item?.widgetId === 5" [itemWidget]="item"
+                                              [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                              (changeName)="changeWidgetName($event)"
+                                              (delete)="deleteWidgetAction($event)"
+                                              (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                    </app-fac-subsidiary-chart>
+                  </gridster-item>
+              </gridster>
+            </div>
+          </ng-template>
         </nz-tab>
       </ng-container>
     </nz-tabset>
