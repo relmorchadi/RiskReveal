@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  .unauthorized-layout {
+    width: fit-content;
+    margin: auto;
+    display: flex;
+
+    .icon-modifier-class {
+      font-size: 84px;
+      padding-right: 5px;
+      color: orange;
+    }
+  }
+}
