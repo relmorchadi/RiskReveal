@@ -76,10 +76,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
-    ctx.dispatch(new LoadShortCuts());
-    ctx.dispatch(new LoadRecentSearch());
-    ctx.dispatch(new LoadSavedSearch());
-    ctx.dispatch(new LoadMostUsedSavedSearch());
   }
 
   /**
@@ -465,6 +461,7 @@ export class SearchNavBarState implements NgxsOnInit {
     return this._searchService.saveSearch({...payload, userId: 1})
       .pipe(
         tap( searchItem => {
+          console.log(searchItem);
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.savedSearch = [...draft.savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
           }))

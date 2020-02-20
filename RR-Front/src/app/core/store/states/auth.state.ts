@@ -1,11 +1,15 @@
 import {AuthModel} from "../../model/auth.model";
-import {Action, NgxsOnInit, Selector, State, StateContext} from "@ngxs/store";
+import {Action, NgxsOnInit, Selector, State, StateContext, Store} from "@ngxs/store";
 import * as fromHD from "../actions";
 import {AuthenticationApi} from "../../service/api/authentication.api";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import produce from "immer";
 import {of} from "rxjs";
 import {DashboardModel} from "../../model/dashboard.model";
+import {LoadShortCuts} from "../actions";
+import {LoadRecentSearch} from "../actions";
+import {LoadSavedSearch} from "../actions";
+import {LoadMostUsedSavedSearch} from "../actions";
 
 const initiateState: AuthModel = {
   fullName: '',
@@ -21,10 +25,11 @@ const initiateState: AuthModel = {
 export class AuthState implements NgxsOnInit {
     ctx = null;
 
-    constructor(private authAPI: AuthenticationApi) {}
+    constructor(private authAPI: AuthenticationApi, private store: Store) {}
 
     ngxsOnInit(ctx?: StateContext<any>): void | any {
         this.ctx = ctx;
+        ctx.dispatch(new fromHD.AuthenticationAction());
     }
 
     @Selector()
@@ -39,7 +44,6 @@ export class AuthState implements NgxsOnInit {
 
     @Action(fromHD.AuthenticationAction)
     authentication(ctx: StateContext<AuthModel>, {payload}: fromHD.AuthenticationAction) {
-        console.log('dispatched');
         return this.authAPI.Authentication().pipe(
             tap( (data: AuthModel)  => {
                 ctx.patchState(produce(ctx.getState(), draft => {
@@ -49,6 +53,8 @@ export class AuthState implements NgxsOnInit {
                     draft.jwtToken = data.jwtToken;
                 }));
                 window.localStorage.setItem('token', data.jwtToken);
+                this.store.dispatch(
+                    [new LoadShortCuts(), new LoadRecentSearch(), new LoadSavedSearch(), new LoadMostUsedSavedSearch()]);
             }),
             catchError(err => {
                 console.log(err);
