@@ -9,7 +9,9 @@ export interface TableServiceInterface {
   getIDs(params): Observable<any>;
   updateColumnWidth(body): Observable<any>;
   updateColumnFilter(body): Observable<any>;
+  resetColumnFilter(body): Observable<any>;
   updateColumnSort(body): Observable<any>;
+  resetColumnSort(body): Observable<any>;
   updateColumnsOrderAndVisibility(body): Observable<any>;
 
   setUrl(url);

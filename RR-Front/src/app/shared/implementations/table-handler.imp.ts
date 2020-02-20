@@ -246,6 +246,30 @@ export class TableHandlerImp implements TableHandlerInterface {
     })
   }
 
+  onResetFilter() {
+    this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId']))
+        .pipe(
+        switchMap( () => this.reloadTable({
+          ...this.params,
+          ...this.config,
+          pageNumber: 1,
+          selectionList: _.join(this._selectedIds, ','),
+          sortSelectedFirst: this._sortSelectedFirst,
+          sortSelectedAction: this._sortSelectedAction
+        })),
+            ).subscribe(
+                ([columns, data]: any) => {
+          const {totalCount, plts} = data;
+          this.updateTotalRecords(totalCount);
+          this.updateColumns(columns);
+          this.updateData(plts);
+        },
+        (error) => {
+          console.error(error);
+        }
+        );
+  }
+
   onSort(index: number){
 
     if(index == -1) {
@@ -275,6 +299,30 @@ export class TableHandlerImp implements TableHandlerInterface {
               console.error(error);
             }
         )
+  }
+
+  onResetSort() {
+    this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId']))
+        .pipe(
+            switchMap( () => this.reloadTable({
+              ...this.params,
+              ...this.config,
+              pageNumber: 1,
+              selectionList: _.join(this._selectedIds, ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            })),
+        ).subscribe(
+        ([columns, data]: any) => {
+          const {totalCount, plts} = data;
+          this.updateTotalRecords(totalCount);
+          this.updateColumns(columns);
+          this.updateData(plts);
+        },
+        (error) => {
+          console.error(error);
+        }
+    );
   }
 
   onRowSelect(id: number){
