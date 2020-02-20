@@ -190,23 +190,18 @@ export class RiskLinkStateService {
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.display.displayListRDMEDM = true;
-            _.toArray(draft.content[wsIdentifier].riskLink.listEdmRdm.data)
-                .filter(item => item.selected)
+            _.toArray(payload.selectedDS)
                 .forEach(selectedItem => {
                     const key = selectedItem.rmsId;
                     if (selectedItem.type == 'EDM') {
                         draft.content[wsIdentifier].riskLink.selection.edms[key] = {
                             ...selectedItem,
-                            scanning: true,
-                            instanceId: payload.instanceId,
-                            instanceName: payload.instanceName
+                            scanning: true
                         }
                     } else if (selectedItem.type == 'RDM') {
                         draft.content[wsIdentifier].riskLink.selection.rdms[key] = {
                             ...selectedItem,
-                            scanning: true,
-                            instanceId: payload.instanceId,
-                            instanceName: payload.instanceName
+                            scanning: true
                         }
                     }
                 });
