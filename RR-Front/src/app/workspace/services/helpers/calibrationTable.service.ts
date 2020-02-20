@@ -91,7 +91,7 @@ export class CalibrationTableService {
     "fac-epMetrics": (isExpanded) => {
       const frozenColumns = ( isExpanded ? null : this.columnsConfigCache.frozenColumns);
       const frozenWidth = ( isExpanded ? '0px' : this.columnsConfigCache.frozenWidth);
-      const columns = ( isExpanded ? [...this.columnsConfigCache.frozenColumns, ...this.epMetrics] : this.epMetrics );
+      const columns = ( isExpanded ? [..._.uniqBy([...this.columnsConfigCache.frozenColumns, ...CalibrationTableService.frozenColsExpanded], 'field'), ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
       return ({

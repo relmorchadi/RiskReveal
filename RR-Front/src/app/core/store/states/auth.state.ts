@@ -6,10 +6,7 @@ import {catchError, mergeMap, tap} from "rxjs/operators";
 import produce from "immer";
 import {of} from "rxjs";
 import {DashboardModel} from "../../model/dashboard.model";
-import {LoadShortCuts} from "../actions";
-import {LoadRecentSearch} from "../actions";
-import {LoadSavedSearch} from "../actions";
-import {LoadMostUsedSavedSearch} from "../actions";
+import {LoadMostUsedSavedSearch, LoadRecentSearch, LoadSavedSearch, LoadShortCuts} from "../actions";
 
 const initiateState: AuthModel = {
   fullName: '',

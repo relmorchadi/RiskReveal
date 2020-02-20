@@ -84,11 +84,11 @@ public class AccLocFilesHandler extends AbstractWriter {
             } catch (IOException ex) {
                 log.error("reading/writing error has occurred while copying forewriter files to the iHub");
                 ex.printStackTrace();
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             } catch (Exception ex) {
                 log.error("unknown error has occurred while copying forewriter files to the iHub");
                 ex.printStackTrace();
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
         }
         return RepeatStatus.FINISHED;

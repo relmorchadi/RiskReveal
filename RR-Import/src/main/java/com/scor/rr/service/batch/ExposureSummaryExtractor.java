@@ -95,11 +95,14 @@ public class ExposureSummaryExtractor {
 
                 modelPortfolios.forEach(modelPortfolio -> {
                     ModellingSystemInstanceEntity instanceEntity = modellingSystemInstanceRepository.findByName(modelPortfolio.getSourceModellingSystemInstance());
-                    MultiKey edmKey = createEdmKey(instanceEntity.getModellingSystemInstanceId(), modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
-                    if (portfoliosPerEdm.get(edmKey) != null)
-                        portfoliosPerEdm.get(edmKey).add(modelPortfolio);
-                    else
-                        portfoliosPerEdm.put(edmKey, new ArrayList<>(Collections.singleton(modelPortfolio)));
+                    if (instanceEntity != null) {
+                        MultiKey edmKey = createEdmKey(instanceEntity.getModellingSystemInstanceId(),
+                                modelPortfolio.getDataSourceId(), modelPortfolio.getDataSourceName());
+                        if (portfoliosPerEdm.get(edmKey) != null)
+                            portfoliosPerEdm.get(edmKey).add(modelPortfolio);
+                        else
+                            portfoliosPerEdm.put(edmKey, new ArrayList<>(Collections.singleton(modelPortfolio)));
+                    }
                 });
 
                 ExposureView defaultExposureView = exposureViewRepository.findByDefaultView(true);
@@ -298,7 +301,7 @@ public class ExposureSummaryExtractor {
             return RepeatStatus.FINISHED;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return RepeatStatus.CONTINUABLE;
+            return RepeatStatus.FINISHED;
         }
 
     }
