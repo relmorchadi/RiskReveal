@@ -333,7 +333,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
       this.columnsConfig= config;
-      console.log(config);
       this.calibrationTableService.updateColumnsConfigCache(config);
       this.detectChanges();
     })

@@ -107,6 +107,7 @@ public class ProjectService {
                 prj.setAssignedTo(request.getAssignedTo());
                 prj.setProjectName(request.getProjectName());
                 prj.setProjectDescription(request.getProjectDescription());
+                prj.setDueDate(request.getDueDate());
                 projectEntityRepository.save(prj);
 
                 return new ResponseEntity<>(projectCardViewRepository.findByProjectId(request.getProjectId()), HttpStatus.OK);
