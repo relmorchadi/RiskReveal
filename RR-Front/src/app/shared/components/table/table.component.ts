@@ -175,10 +175,17 @@ export class TableComponent implements OnInit {
     );
   }
 
-  filterCol(searchValue: string, searchAddress: string): void {
-    this.event.first = 0;
-    let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
-    body.scrollTop = 0;
+  filterCol(searchValue: string, searchAddress: string, key): void {
+    if(this.virtualScroll) {
+      this.event.first = 0;
+      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+      body.scrollTop = 0;
+    }
+    if (searchValue) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: searchValue}) ;
+    } else {
+      this.FilterData =  _.omit(this.FilterData, [key]);
+    }
     this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
   }
 
@@ -307,15 +314,14 @@ export class TableComponent implements OnInit {
 
   filter(key: string, event, colId) {
     const value = event.target.value;
-    if (this.filterModeFront) {
-      if (value) {
-        this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
-      } else {
-        this.FilterData =  _.omit(this.FilterData, [key]);
-      }
+    console.log(value);
+    if (value) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
     } else {
-      this.filterQueryChanged.next({key, value, colId});
+      this.FilterData =  _.omit(this.FilterData, [key]);
     }
+    this.filterQueryChanged.next({key, value, colId});
+
   }
 
   resize(event) {

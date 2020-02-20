@@ -106,7 +106,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.virtualScroll =  _.get(value, `${this.identifier}`, false);
       this.detectChanges();
     });
-    console.log(this.ColsTotalWidth);
   }
 
   selectTab(index) {

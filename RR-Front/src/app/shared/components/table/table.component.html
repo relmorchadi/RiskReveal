@@ -41,7 +41,7 @@
             <div class="search-bar-table" *ngIf="col?.filtered">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
               <input *ngIf="col?.header?.length > 0 && fromSearch" pInputText type="text"
-                     (input)="filter(col?.field, $event, col.columnId)"
+                     (input)="filterCol($event.target.value, col?.queryParam, col?.field)"
                      [ngModel]="FilterData[col?.field]">
               <input *ngIf="col?.header?.length > 0 && !fromSearch" pInputText type="text"
                      (keyup)="filter(col?.field, $event, col.columnId)" #input
@@ -118,11 +118,10 @@
          [scrollable]="true" [scrollHeight]="tableHeight"
          [rows]="rows" [loading]="loading"
          [totalRecords]="totalRecords"
-         [virtualScroll]="true"
+         [virtualScroll]="true" [lazyLoadOnInit]="fromSearch"
          [virtualRowHeight]="35"
          (onLazyLoad)="loadDataOnScroll($event)"
-         [lazy]="true"
-         [showLoader]="false"
+         [lazy]="true" [showLoader]="false"
          [(contextMenuSelection)]="contextSelectedItem"
          [contextMenu]="getContextMenu()" class="table-ngPrime"
          [selectionMode]="selectionMode"
@@ -160,7 +159,10 @@
         </span>
           <div class="search-bar-table" *ngIf="col?.filtered">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-            <input pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam)">
+            <input *ngIf="fromSearch" pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam, col?.field)"
+                   [ngModel]="FilterData[col?.field]">
+            <input *ngIf="!fromSearch" pInputText type="text" (input)="filter(col?.field, $event, col.columnId)"
+                   [ngModel]="col?.filterCriteria">
           </div>
         </th>
       </tr>

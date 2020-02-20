@@ -3,6 +3,7 @@ import {Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import {BaseContainer} from "../../../shared/base";
 import * as fromHD from "../../store/actions";
+import {AuthenticationApi} from "../../service/api/authentication.api";
 
 @Component({
   selector: 'app-main',

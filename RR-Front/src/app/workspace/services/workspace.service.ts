@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
-import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
@@ -21,6 +21,17 @@ export class WorkspaceService {
   constructor(private wsApi: WsApi,
               private projectApi: ProjectApi,
               private store: Store) {
+  }
+
+  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
+    return this.wsApi.getOpenedTabs(1).pipe(
+        tap(data => {
+          _.forEach(data, (item: any) => {
+            ctx.dispatch(new fromWS.LoadWS(
+                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', type: 'TTY'}))
+          })
+        })
+    );
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
@@ -155,13 +166,8 @@ export class WorkspaceService {
         wsIdentifier
       }));
     } else {
-      return ctx.dispatch(new fromWS.LoadWS({
-        wsId,
-        uwYear,
-        route,
-        type,
-        carSelected
-      }));
+      //this.wsApi.openTab();
+      return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear, route, type, carSelected}));
     }
   }
 

@@ -362,44 +362,7 @@ public class SearchService {
         String keyword;
         keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
 
-        if(!keyword.equals("") || request.getFilter().size() > 0) {
-            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdOrderBySearchDateDesc(1);
-            int recentSearchesLength = recentSearches.size();
 
-            if( recentSearchesLength == 7 ) {
-                RecentSearch SearchItem = recentSearches.get(recentSearchesLength - 1);
-                recentSearchRepository.delete(SearchItem);
-            }
-
-            RecentSearch newSearch = new RecentSearch();
-            newSearch.setUserId(1);
-            recentSearchRepository.save(newSearch);
-
-            List<RecentSearchItem> items= new ArrayList<>();
-
-            if(!keyword.equals("")) {
-                RecentSearchItem newSearchItem = new RecentSearchItem();
-                newSearchItem.setKey("global search");
-                newSearchItem.setOperator("LIKE");
-                newSearchItem.setValue(keyword);
-                newSearchItem.setRecentSearchId(newSearch.getId());
-                items.add(newSearchItem);
-            }
-
-            request.getFilter()
-                    .forEach( expertModeFilter -> {
-                        if(!expertModeFilter.getValue().equals("")) {
-                            RecentSearchItem newSearchItem = new RecentSearchItem();
-                            newSearchItem.setKey(expertModeFilter.getField());
-                            newSearchItem.setOperator(expertModeFilter.getOperator().value);
-                            newSearchItem.setValue(expertModeFilter.getValue().replace("%", "").trim());
-                            newSearchItem.setRecentSearchId(newSearch.getId());
-                            items.add(newSearchItem);
-                        }
-                    });
-
-            recentSearchItemRepository.saveAll(items);
-        }
 
         String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());

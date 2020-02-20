@@ -457,6 +457,11 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromWS.InitWorkspace)
+  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
+    return this.wsService.initWs(ctx, payload);
+  }
+
   @Action(fromWS.LoadWS)
   loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWS) {
     return this.wsService.loadWs(ctx, payload);
