@@ -272,7 +272,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
 
     this.summaryEpMetricsConfig = {
       selectedCurrency: 'USD',
-      selectedCurveType: ['OEP'],
+      selectedCurveType: ['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'],
       selectedFinancialUnit: 'Unit'
     };
 
@@ -391,7 +391,9 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   loadOnChange(pltHeaderId, index, init) {
-    this.appendColumn('OEP');
+    _.forEach(this.summaryEpMetricsConfig.selectedCurveType, curveType => {
+      this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);
+    });
     this.loadSummary(pltHeaderId, init);
     this.loadTab(index);
   }
@@ -723,9 +725,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   showMetric({curveTypes, difference}) {
-
-    console.log("SHOW METRIC");
-    console.log({curveTypes, difference});
 
     _.forEach(difference, curveType => {
       this.handleEpMetricsTabLoading(this.inputs.pltHeaderId, curveType);

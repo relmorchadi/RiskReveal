@@ -166,42 +166,19 @@ export class TableHandlerImp implements TableHandlerInterface {
       newWidth = col.width + delta;
     }
 
-    this._api.updateColumnWidth({
+    this.onApiSuccessLoadColumns(() => this._api.updateColumnWidth({
       viewContextColumnId: col.viewContextColumnId,
       userCode: null,
       width: newWidth
-    })
-        .pipe(
-            switchMap( () => this.loadColumns()),
-        )
-        .subscribe(
-            (columns) => {
-              this.updateColumns(columns);
-              this.updateTotalColumnWidth(columns);
-            },
-            (error) => {
-              console.error(error);
-            }
-        )
+    }));
   }
 
   onManageColumns(columns: Column[]){
-
-    this._api.updateColumnsOrderAndVisibility({
-      viewContextId: 2,
-      columnsList: _.join(_.map(columns, col => col.viewContextColumnId + ',' + col.isVisible + ',' + col.columnOrder), ';')
-    })
-        .pipe(
-            switchMap( () => this.loadColumns()),
-        )
-        .subscribe(
-            (columns) => {
-              this.updateColumns(columns);
-            },
-            (error) => {
-              console.error(error);
-            }
-        )
+    this.onApiSuccessLoadColumns(
+        () => this._api.updateColumnsOrderAndVisibility({
+          viewContextId: 2,
+          columnsList: _.join(_.map(columns, col => col.viewContextColumnId + ',' + col.isVisible + ',' + col.columnOrder), ';')
+        }))
   }
 
   onFilter(index: number, filterCriteria: string){
@@ -244,37 +221,28 @@ export class TableHandlerImp implements TableHandlerInterface {
       const newSelection = { ...this._selectedIds, ...newIds };
       this.updateSelectedIDs(newSelection);
     })
+
+  }
+
+  onResetFilter() {
+
+    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])))
+
   }
 
   onSort(index: number){
-
     if(index == -1) {
       this.updateSortSelectionAction();
       this.updateSortSelectionFirst();
     }
 
-    this._api.updateColumnSort(_.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId']))
-        .pipe(
-            switchMap( () => this.reloadTable({
-              ...this.params,
-              ...this.config,
-              pageNumber: 1,
-              selectionList: _.join(this._selectedIds, ','),
-              sortSelectedFirst: this._sortSelectedFirst,
-              sortSelectedAction: this._sortSelectedAction
-            })),
-        )
-        .subscribe(
-            ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
-              this.updateColumns(columns);
-              this.updateData(plts);
-            },
-            (error) => {
-              console.error(error);
-            }
-        )
+    this.onApiSuccessLoadDataAndColumns(
+        () => this._api.updateColumnSort(_.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId'])),
+    );
+  }
+
+  onResetSort() {
+    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
   onRowSelect(id: number){
@@ -309,6 +277,7 @@ export class TableHandlerImp implements TableHandlerInterface {
       else
         this.loadChunk(event.first, event.rows);
     }
+
   }
 
   loadChunk(offset, size) {
@@ -318,7 +287,7 @@ export class TableHandlerImp implements TableHandlerInterface {
       ...this.config,
       pageNumber: Math.floor(offset / size) + 1,
       pageSize: size,
-      selectionList: _.join(this._selectedIds, ','),
+      selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
       sortSelectedFirst: this._sortSelectedFirst,
       sortSelectedAction: this._sortSelectedAction
     }).subscribe(({totalCount, plts}) => {
@@ -390,6 +359,72 @@ export class TableHandlerImp implements TableHandlerInterface {
   private updateSelectAll(s) {
     this._selectAll = s;
     this.selectAll$.next(this._selectAll);
+  }
+
+  private onApiSuccessLoadDataAndColumns = (api) => {
+    this.loading$.next(true);
+    api()
+        .pipe(
+            switchMap( () => this.reloadTable({
+              ...this.params,
+              ...this.config,
+              pageNumber: 1,
+              selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            })),
+        )
+        .subscribe(
+            ([columns, data]: any) => {
+              const {totalCount, plts} = data;
+              this.updateTotalRecords(totalCount);
+              this.updateColumns(columns);
+              this.updateData(plts);
+              this.loading$.next(false);
+            },
+            (error) => {
+              console.error(error);
+            }
+        )
+  }
+
+  private onApiSuccessLoadData = (api) => {
+    api()
+        .pipe(
+            switchMap( () => this.loadData({
+              ...this.params,
+              ...this.config,
+              pageNumber: 1,
+              selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            }))
+        )
+        .subscribe(
+            (data) => {
+              const {totalCount, plts} = data;
+              this.updateTotalRecords(totalCount);
+              this.updateData(plts);
+            },
+            (error) => {
+              console.error(error);
+            }
+        )
+  }
+
+  private onApiSuccessLoadColumns = (api) => {
+    api()
+        .pipe(
+            switchMap( () => this.loadColumns())
+        )
+        .subscribe(
+            (columns) => {
+              this.updateColumns(columns);
+            },
+            (error) => {
+              console.error(error);
+            }
+        )
   }
 
 }

@@ -46,9 +46,21 @@ public class PltBrowserResource {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("columns/sort/reset")
+    public ResponseEntity<?> resetColumnSort(@RequestBody ResetColumnSortRequest request) {
+        this.pltBrowserService.resetColumnSort(request);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("columns/filter")
     public ResponseEntity<?> updateColumnFilterCriteria(@RequestBody UpdateColumnFilterCriteriaRequest request) {
         this.pltBrowserService.updateColumnFilterCriteria(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("columns/filter/reset")
+    public ResponseEntity<?> resetColumnFilterCriteria(@RequestBody ResetColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.resetColumnFilterCriteria(request);
         return ResponseEntity.ok().build();
     }
 

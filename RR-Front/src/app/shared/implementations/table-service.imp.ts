@@ -45,4 +45,12 @@ export class TableServiceImp implements TableServiceInterface {
     return this._http.post(`${this._url}columns/orderandvisibility`, body);
   }
 
+  resetColumnFilter(body): Observable<any> {
+    return this._http.post(`${this._url}columns/filter/reset`, body);
+  }
+
+  resetColumnSort(body): Observable<any> {
+    return this._http.post(`${this._url}columns/sort/reset`, body);
+  }
+
 }
