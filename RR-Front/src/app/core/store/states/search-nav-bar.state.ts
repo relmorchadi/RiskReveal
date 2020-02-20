@@ -76,10 +76,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
-    ctx.dispatch(new LoadShortCuts());
-    ctx.dispatch(new LoadRecentSearch());
-    ctx.dispatch(new LoadSavedSearch());
-    ctx.dispatch(new LoadMostUsedSavedSearch());
   }
 
   /**
