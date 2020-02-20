@@ -362,6 +362,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private onApiSuccessLoadDataAndColumns = (api) => {
+    this.loading$.next(true);
     api()
         .pipe(
             switchMap( () => this.reloadTable({
@@ -379,6 +380,7 @@ export class TableHandlerImp implements TableHandlerInterface {
               this.updateTotalRecords(totalCount);
               this.updateColumns(columns);
               this.updateData(plts);
+              this.loading$.next(false);
             },
             (error) => {
               console.error(error);
