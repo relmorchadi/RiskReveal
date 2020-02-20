@@ -1461,6 +1461,7 @@ export class RiskLinkStateService {
                         count: ds.modelCount,
                         scanning,
                         instanceId: ds.instanceId,
+                        instanceName: ds.instanceName,
                         rlDataSourceId: ds.rlDataSourceId
                     };
                     if (value.type === 'EDM') {
