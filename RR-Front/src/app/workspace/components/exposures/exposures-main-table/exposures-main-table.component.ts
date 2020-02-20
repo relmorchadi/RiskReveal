@@ -1,6 +1,13 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
+
+/*
+ * Date : 20/2/2020.
+ * Author : Reda El Morchadi
+ */
+
+import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {Store} from "@ngxs/store";
 import {Observable, Subscription} from "rxjs";
+import {ExposuresMainTableConfig} from "../../../model/exposures-main-table-config.model";
 
 @Component({
     selector: 'exposures-main-table',
@@ -8,16 +15,14 @@ import {Observable, Subscription} from "rxjs";
     styleUrls: ['./exposures-main-table.component.scss']
 })
 
-export class ExposuresMainTableComponent implements OnInit, OnDestroy {
+export class ExposuresMainTableComponent implements OnInit,AfterViewInit, OnDestroy {
 
 
-    @Input('tableConfig') tableConfig: Observable<any>;
+    @Input('tableConfig') tableConfig:ExposuresMainTableConfig;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
-    tableConfigSub: Subscription;
-    columns: [];
-    frozenColumns: [];
-    values: [];
-    frozenValues: [];
+
+
+
 
     constructor(private store: Store) {
 
@@ -25,16 +30,15 @@ export class ExposuresMainTableComponent implements OnInit, OnDestroy {
 
 
     ngOnInit(): void {
-        this.tableConfigSub = this.tableConfig.subscribe((config: any) => {
-            this.columns = config.columns;
-            this.frozenColumns = config.frozenColumns;
-            this.values = config.values;
-            this.frozenValues = config.frozenValues;
-        })
+
+    }
+
+    ngAfterViewInit(): void {
+
     }
 
     ngOnDestroy(): void {
-        this.tableConfigSub.unsubscribe();
+
     }
 
 

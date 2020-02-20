@@ -1,0 +1,26 @@
+<!--
+  ~ Date : 20/2/2020.
+  ~ Author : Reda El Morchadi
+  -->
+
+<div class="right-menu-container" [ngClass]="{'slideInRight':rightMenuConfig.visibility,'slideInLeft': !rightMenuConfig.visibility}">
+    <div class="right-menu-header">
+        <div class="right-menu-title">
+            <span class="title" style="margin-right: 16px">
+                 {{rightMenuConfig.content}}
+            </span>
+
+        </div>
+        <div class="right-menu-close">
+            <i class="icon-arrow_forward_ios_24px close-button" (click)="closeRightMenu()"></i>
+        </div>
+
+    </div>
+    <div class="right-menu-content">
+
+    </div>
+    <div class="right-menu-footer">
+
+    </div>
+
+</div>

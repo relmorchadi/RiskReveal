@@ -22,6 +22,7 @@ export class ExposuresTableService  {
         return this._api.loadTableConfig();
     }
 
+
     public sortTableColumn(sortConfig) {
          this._api.sortTableColumn(sortConfig);
     }
