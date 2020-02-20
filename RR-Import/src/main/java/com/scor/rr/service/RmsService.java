@@ -532,7 +532,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolioBasic> listEdmPortfolioBasic(String instanceId, Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name='" + name +"'";
         this.logger.debug("Service starts executing the query ...");
         List<EdmPortfolioBasic> edmPortfolioBasic = getJdbcTemplate(instanceId).query(
                 sql, new EdmPortfolioBasicRowMapper()
@@ -542,7 +542,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<String> portfolioList) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name=" + name;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name='" + name +"'";
         List<EdmPortfolio> edmPortfolios = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
 

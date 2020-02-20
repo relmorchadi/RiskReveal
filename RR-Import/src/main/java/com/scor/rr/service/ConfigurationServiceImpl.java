@@ -352,7 +352,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private Long getModelDsId(String instanceId, Long projectId, Long userId, Long rmsId) {
         return ofNullable(rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId))
-                .map(ds -> ds.getRlModelDataSourceId())
+                .map(RLModelDataSource::getRlModelDataSourceId)
                 .orElseThrow(() -> new RuntimeException("No available DataSource For given params : " + instanceId + "/" + projectId + "/" + rmsId));
 
     }
