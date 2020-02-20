@@ -34,7 +34,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.initNewProjectForm();
 
-    this.wsApi.getAllUsers().subscribe(u => {
+    this.wsApi.getAllUsers().subscribe((u:any) => {
       this.users = u;
     })
   }
