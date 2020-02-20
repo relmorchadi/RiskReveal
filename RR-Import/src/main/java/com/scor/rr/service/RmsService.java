@@ -85,7 +85,7 @@ public class RmsService {
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
 
     @Autowired
-    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
+    private PEQTRegionPerilMappingRepository peqtRegionPerilMappingRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -1040,10 +1040,10 @@ public class RmsService {
                 if (rp != null) {
                     String rootRegionPerilCode = rlAnalysis.getRpCode();
                     //TODO: need to define a new ref table
-//                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPeril(analysis.getRpCode());
-//                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPeril())) {
-//                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPeril();
-//                    }
+                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPerilCode(rlAnalysis.getRpCode());
+                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
+                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPerilCode();
+                    }
                     if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {
                         fillWithParenting(regionPerilMap, rp, analysisProfileRegion);
                     }
