@@ -6,6 +6,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import * as fromWS from '../../../store/actions/workspace.actions'
 import {EventListener} from "@angular/core/src/debug/debug_node";
+import {WsApi} from "../../../services/api/workspace.api";
 
 @Component({
   selector: 'app-create-project-popup',
@@ -23,15 +24,19 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   @Input('edit') editOption: any;
   @Input('editForm') projectForm: any;
 
-  editValue = 'Nathalie Dulac';
   newProjectForm: FormGroup;
+  users: any[];
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private wsApi: WsApi) {
     this.unSubscribe$ = new Subject<void>();
   }
 
   ngOnInit() {
     this.initNewProjectForm();
+
+    this.wsApi.getAllUsers().subscribe(u => {
+      this.users = u;
+    })
   }
 
   ngOnDestroy(): void {
@@ -60,10 +65,11 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     this.store.dispatch(new fromWS.EditProject({
       data: {
         projectName: this.projectForm.projectName || '',
-        assignedTo: 1,
+        assignedTo: this.projectForm.assignedTo,
         projectId: this.projectForm.projectId || '',
-        projectDescription: this.projectForm.projectDescription || ''
-      },
+        projectDescription: this.projectForm.projectDescription || '',
+        dueDate: new Date(this.projectForm.dueDate) || new Date()
+      }
     }))
   }
 

@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
 import {backendUrl} from "../../../shared/api";
 
 @Injectable({
@@ -15,6 +14,10 @@ export class WsApi {
 
   searchWorkspace(workspaceContextCode = '', workspaceContextUwYear = '', type = '') {
     return this._http.get(`${this.api}`, { params: {workspaceContextCode, workspaceContextUwYear, type} });
+  }
+
+  getAllUsers() {
+    return this._http.get(`${backendUrl() + 'user/all'}`);
   }
 
 }
