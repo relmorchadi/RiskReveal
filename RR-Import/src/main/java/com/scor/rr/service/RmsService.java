@@ -86,7 +86,7 @@ public class RmsService {
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
 
     @Autowired
-    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
+    private PEQTRegionPerilMappingRepository peqtRegionPerilMappingRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -548,7 +548,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolioBasic> listEdmPortfolioBasic(String instanceId, Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name='" + name +"'";
         this.logger.debug("Service starts executing the query ...");
         List<EdmPortfolioBasic> edmPortfolioBasic = getJdbcTemplate(instanceId).query(
                 sql, new EdmPortfolioBasicRowMapper()
@@ -558,7 +558,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<String> portfolioList) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name=" + name;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name='" + name +"'";
         List<EdmPortfolio> edmPortfolios = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
 
@@ -1056,10 +1056,10 @@ public class RmsService {
                 if (rp != null) {
                     String rootRegionPerilCode = rlAnalysis.getRpCode();
                     //TODO: need to define a new ref table
-//                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPeril(analysis.getRpCode());
-//                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPeril())) {
-//                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPeril();
-//                    }
+                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPerilCode(rlAnalysis.getRpCode());
+                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
+                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPerilCode();
+                    }
                     if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {
                         fillWithParenting(regionPerilMap, rp, analysisProfileRegion);
                     }

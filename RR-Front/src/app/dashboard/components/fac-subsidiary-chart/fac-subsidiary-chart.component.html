@@ -3,8 +3,7 @@
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
 <div echarts [options]="chartOption" class="demo-chart" (chartInit)="onChartInit($event)"
-     [initOpts]="initOps"
-     #chartS></div>
+     [initOpts]="initOps" #chartS></div>
 
 <div class="widget-footer">
   <div class="filter-div">

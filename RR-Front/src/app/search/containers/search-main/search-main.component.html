@@ -165,7 +165,7 @@
            [id]="'availableListOfColumns'"
            #availbleListOfAdjColumns="cdkDropList"
            [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
-           [cdkDropListData]="extraColumnsCache"
+           [cdkDropListData]="searchMode === 'Treaty' ? extraColumnsCache : extraColumnsCacheFac"
            class="m-box-d"
            (cdkDropListDropped)="dropColumn($event)">
         <ng-container *ngIf="searchMode === 'Treaty'">

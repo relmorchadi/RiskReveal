@@ -1,10 +1,11 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import * as fromWS from '../../../store/actions/workspace.actions'
+import {EventListener} from "@angular/core/src/debug/debug_node";
 
 @Component({
   selector: 'app-create-project-popup',
@@ -30,7 +31,6 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('test', this.projectForm, this.newProject);
     this.initNewProjectForm();
   }
 
@@ -78,6 +78,10 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   patchNewProject() {
     this.newProject && this.newProjectForm.patchValue(this.newProject);
+  }
+
+  @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {
+    this.editOption ? this.updateProject() : this.createUpdateProject();
   }
 
   initNewProjectForm() {

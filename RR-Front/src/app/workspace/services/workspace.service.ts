@@ -309,7 +309,7 @@ export class WorkspaceService {
       map( (prj: any) => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
           return item.projectId === projectId ? {...prj, projectType: prj.carRequestId === null ? 'TREATY' : 'FAC'
-            , selected: item.selected} : {...item};
+            , selected: item.selected, projectName, projectDescription} : {...item};
         }) : null;
       }))
     ), catchError(err => {
