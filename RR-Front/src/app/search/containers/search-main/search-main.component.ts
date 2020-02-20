@@ -399,7 +399,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     } else {
       this.columnsFac = [...this.columnsFacCache];
-      this.extraColumnsFac = [...this.extraColumnsCacheFac];
+      this.extraColumnsFac = [...this.extraColumnsCacheFac] ;
       this.columnsFac.splice(_.findIndex(this.columnsFac, row => row.field == 'checkbox'), 1);
       this.columnsFac.unshift({
         field: 'checkbox',

@@ -59,7 +59,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   itemName: any;
   widgetId: any;
   dashCols: any;
-  persisted: any;
+  ColsTotalWidth: any = 0;
   newDashboard: any;
   editName = false;
   tabIndex = 1;
@@ -86,7 +86,9 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     this.widgetId = this.itemWidget.widgetId;
     this.itemName = this.itemWidget.name;
     this.dashCols = this.itemWidget.columns;
-
+    _.forEach(this.dashCols, item => {
+      this.ColsTotalWidth = this.ColsTotalWidth + item.widthNumber + 5;
+    });
     this.loadFacData(1);
     this.sortFirstUpdate();
 
@@ -103,7 +105,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     this.virtualScroll$.pipe().subscribe(value => {
       this.virtualScroll =  _.get(value, `${this.identifier}`, false);
       this.detectChanges();
-    })
+    });
+    console.log(this.ColsTotalWidth);
   }
 
   selectTab(index) {
