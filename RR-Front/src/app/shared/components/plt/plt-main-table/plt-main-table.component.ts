@@ -312,6 +312,32 @@ export class PltMainTableComponent implements OnInit {
     }
   }
 
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        this.actionDispatcher.emit({
+          type: tableStore.toggleSelectedPlts,
+          payload: _.zipObject(
+              _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
+              _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
+          )
+        })
+      } else {
+        this.lastSelectedId = i;
+      }
+      return;
+    }
+  }
+
   rowTrackBy = (index, item) => {
     return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
   }
@@ -338,32 +364,6 @@ export class PltMainTableComponent implements OnInit {
   protected detectChanges() {
     if (!this._baseCdr['destroyed'])
       this._baseCdr.detectChanges();
-  }
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.actionDispatcher.emit({
-          type: tableStore.toggleSelectedPlts,
-          payload: _.zipObject(
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
-          )
-        })
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
   }
 
   getElHeight() {
