@@ -122,18 +122,21 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         dragHandleClass: 'drag-handler',
         ignoreContentClass: 'no-drag',
         stop: (item, itemComponent) => {
-          //this.changeWidgetHeight(item, itemComponent);
-        }
+          itemComponent.itemChanged
+          this.changeWidgetHeight(item, itemComponent.$item);
+        },
       },
       resizable: {
         enabled: true,
         stop: (item, itemComponent) => {
           this.changeWidgetHeight(item, itemComponent.$item);
-        }
+        },
+      },
+      optionsChanged: (event) => {
+        console.log(event);
       },
       swap: true,
       pushItems: true,
-      disablePushOnDrag: true,
       disablePushOnResize: false,
       pushDirections: {north: true, east: true, south: true, west: true},
       pushResizeItems: true,

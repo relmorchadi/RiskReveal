@@ -11,8 +11,14 @@
 
 .deleteSearch {
   visibility: hidden;
-  color: white;background-color: red;
-  height: 14px;
+  color: #000000;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background-color: #E4E4E4;
+  font-weight: bold;
   border-radius: 25px;
   margin-right: 7px;
 }
@@ -375,7 +381,7 @@ nz-layout {
 }
 
 .search-cell-container:hover {
-  background-color: #f1f5f9;
+  background-color: #FAFAFA;
 }
 
 .saved-search-arrow {
