@@ -20,6 +20,7 @@
       </ng-template>
 
       <nz-tab (nzSelect)="selectWorkspace(wsIdentifier,k)" [nzTitle]="titleTemplate">
+        <ng-template nz-tab>
         <div nz-row>
           <div nz-col nzSpan="24">
             <div class="row tab-detail p-2 header-tab-wrapper">
@@ -235,6 +236,7 @@
             </div>
           </div>
         </div>
+        </ng-template>
       </nz-tab>
     </ng-container>
   </nz-tabset>
