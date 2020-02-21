@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
+import {backendUrl} from "../../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectApi {
 
-  private readonly api = environment.API_URI + 'workspace/projects';
+  private readonly api = backendUrl() + 'workspace/projects';
 
   constructor(private http: HttpClient) {
   }
