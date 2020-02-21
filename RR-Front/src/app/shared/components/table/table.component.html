@@ -136,79 +136,85 @@
          [step]="35">
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
-        <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+        <ng-container  *ngFor="let col of columns">
+          <col *ngIf="col.visible" [ngStyle]="{'width': col?.width}">
+        </ng-container>
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
       <tr>
-        <th *ngFor="let col of columns" [pResizableColumnDisabled]="col.field=='checkbox'" pResizableColumn>
-        <span
-          [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}"
-              style="display:flex;justify-content: space-between">
-          {{col?.header}}
-          <ng-container *ngIf="col.type === 'checkbox'">
-            <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
+        <ng-container *ngFor="let col of columns" >
+          <th *ngIf="col.visible" [pResizableColumnDisabled]="col.field=='checkbox'" pResizableColumn>
+            <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex;justify-content: space-between">
+              {{col?.header}}
+              <ng-container *ngIf="col.type === 'checkbox'">
+                <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
                    [nzIndeterminate]="indeterminate"></label>
-            <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
-          </ng-container>
-           <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
-              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                 (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
-              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                 (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
-              <i *ngSwitchDefault class="icon-direction"
-                 (click)="sortChange(col?.field,sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
-            </ng-container>
-        </span>
-          <div class="search-bar-table" *ngIf="col?.filtered">
-            <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-            <input *ngIf="fromSearch" pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam, col?.field)"
-                   [ngModel]="FilterData[col?.field]">
-            <input *ngIf="!fromSearch" pInputText type="text" (input)="filter(col?.field, $event, col.columnId)"
-                   [ngModel]="col?.filterCriteria">
-          </div>
-        </th>
+                <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
+              </ng-container>
+              <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
+                <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                  (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
+                <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                  (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
+                <i *ngSwitchDefault class="icon-direction"
+                  (click)="sortChange(col?.field,sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
+              </ng-container>
+            </span>
+            <div class="search-bar-table" *ngIf="col?.filtered">
+              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+              <input *ngIf="fromSearch" pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam, col?.field)"
+                     [ngModel]="FilterData[col?.field]">
+              <input *ngIf="!fromSearch" pInputText type="text" (input)="filter(col?.field, $event, col.columnId)"
+                     [ngModel]="col?.filterCriteria">
+            </div>
+          </th>
+        </ng-container>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
       <tr style="height:34px" *ngIf="secondaryLoader">
-        <td *ngFor="let col of columns" class="ui-resizable-column">
-          <div class="loading-text"></div>
-        </td>
+        <ng-container *ngFor="let col of columns">
+          <td *ngIf="col.visible" class="ui-resizable-column">
+            <div class="loading-text"></div>
+          </td>
+        </ng-container>
       </tr>
       <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData" *ngIf="!secondaryLoader"
           [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
         <ng-container *ngFor="let col of columns">
-          <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
-            <div style="display:flex">
-              <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
-            </div>
-          </td>
-          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
-              (dblclick)="doubleClickRow(rowData)"
-              (click)="selectRow(rowData, i)">
-            <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
-              <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-              <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
-            </div>
-            <div class="fav-status-info" *ngIf="col?.type === 'favStatus'">
-              <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
-              <i *ngIf="rowData[col?.field]" class="icon-star_24px"></i>
-            </div>
-            <ng-container *ngIf="col?.type === 'rowStatus'">
+          <ng-container *ngIf="col.visible">
+            <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
+              <div style="display:flex">
+                <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
+              </div>
+            </td>
+            <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
+                (dblclick)="doubleClickRow(rowData)"
+                (click)="selectRow(rowData, i)">
+              <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
+                <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+                <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+              </div>
+              <div class="fav-status-info" *ngIf="col?.type === 'favStatus'">
+                <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
+                <i *ngIf="rowData[col?.field]" class="icon-star_24px"></i>
+              </div>
+              <ng-container *ngIf="col?.type === 'rowStatus'">
 
-            </ng-container>
-          </td>
-          <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
-            <div style="display:flex">
-              <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
-            </div>
-          </td>
-          <td *ngIf="col?.type === 'multi-icons'" class="ui-resizable-column">
-            <div style="display:flex">
-              <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
-            </div>
-          </td>
+              </ng-container>
+            </td>
+            <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
+              <div style="display:flex">
+                <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'multi-icons'" class="ui-resizable-column">
+              <div style="display:flex">
+                <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
+              </div>
+            </td>
+          </ng-container>
         </ng-container>
       </tr>
     </ng-template>

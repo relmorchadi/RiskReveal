@@ -133,7 +133,6 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       },
       swap: true,
       pushItems: true,
-      disablePushOnDrag: true,
       disablePushOnResize: false,
       pushDirections: {north: true, east: true, south: true, west: true},
       pushResizeItems: true,
