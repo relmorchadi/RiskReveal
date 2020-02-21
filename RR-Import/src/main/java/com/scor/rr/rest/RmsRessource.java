@@ -1,14 +1,17 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.enums.DataSourceType;
 import com.scor.rr.service.RmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,11 +24,15 @@ public class RmsRessource {
     RmsService rmsService;
 
     @GetMapping("listAvailableDataSources")
-    public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "20") int size) {
+    public ResponseEntity<?> listAvailableDataSources(@RequestParam String instanceId, @RequestParam(required = false) String keyword, @RequestParam(defaultValue = "0") int offset, @RequestParam(defaultValue = "20") int size, @RequestParam(required = false) DataSourceType type) {
 
         this.logger.debug("controller starts getting dataSource ...");
 
-        Page<DataSource> dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size);
+        Page<DataSource> dataSources;
+        if (type != null)
+            dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size, type);
+        else
+            dataSources = rmsService.listAvailableDataSources(instanceId, keyword, offset, size);
 
         return ResponseEntity.ok(dataSources);
     }
