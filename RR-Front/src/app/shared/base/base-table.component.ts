@@ -37,6 +37,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   selectedIds: any;
   selectedItem: any;
   selectAll: boolean;
+  indeterminate: boolean;
   sortSelectedAction: string;
 
   totalRecords: number;
@@ -54,7 +55,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     };
 
     this.selectedIds= {};
-    this.rows=6;
+    this.rows= 10;
   }
 
   ngOnInit() {
@@ -79,7 +80,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     const {
       api,
       handler
-    } = this._injectors[key]
+    } = this._injectors[key];
 
     //this._api = api;
     this._handler = handler;
@@ -115,8 +116,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.onResetSort();
   }
 
-  onRowSelect(i: number) {
-    this._handler.onRowSelect(i);
+  onRowSelect(id: number, index: number, $event: MouseEvent) {
+    this._handler.onRowSelect(id, index, $event);
   }
 
   onCheckAll() {
@@ -132,7 +133,11 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   rowsChange(rows) {
-    console.log(rows);
+    if(rows != this.rows && rows) {
+      console.log("Resized : ", rows);
+      this._handler.setPageSize(rows);
+      this.rows = rows;
+    }
   }
 
   protected detectChanges() {

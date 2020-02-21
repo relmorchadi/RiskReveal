@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -213,14 +213,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
             this.importInit();
-            this.detectChanges();
-        });
-        this.actions$
-            .pipe(
-                this.unsubscribeOnDestroy,
-                ofActionDispatched(SetCurrentTab)
-            ).subscribe(({payload}) => {
-            if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
             this.detectChanges();
         });
 
