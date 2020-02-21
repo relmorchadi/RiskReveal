@@ -65,7 +65,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   tabIndex = 1;
 
   data: any = [];
-  dataCounter = {};
+  dataCounter = 10;
+  rows: any;
   loading = false;
   secondaryLoad = false;
 
@@ -98,7 +99,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     });
 
     this.dataCounter$.pipe().subscribe(value => {
-      this.dataCounter = _.get(value, `${this.identifier}`, 0);
+      this.dataCounter = _.get(value, `${this.identifier}`, 10);
       this.detectChanges();
     });
 
@@ -106,7 +107,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.virtualScroll =  _.get(value, `${this.identifier}`, false);
       this.detectChanges();
     });
-    console.log(this.ColsTotalWidth);
   }
 
   selectTab(index) {
@@ -240,7 +240,26 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   loadMore(event) {
+    const carStatus = this.carStatus[this.widgetId];
+    const pageNumber =  (event.first / (event.rows / 2)) + 1;
+    this.loading = true;
+    if (event.rows === 50) {
+      this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+          .subscribe(() => {}, ()=> {}, () => {
+            this.loading = false;
+            this.detectChanges();
+          });
+    }
+  }
 
+  changeHeight($event) {
+    this.rows = $event;
+    console.log('rows', this.rows);
+  }
+
+  getNumberOfRows() {
+    console.log(Math.floor(this.dataCounter / 2));
+    return 25 > this.dataCounter ? Math.floor(this.dataCounter / 2) : 25;
   }
 
   private _formatDate(data) {

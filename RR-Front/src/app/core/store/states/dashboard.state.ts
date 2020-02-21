@@ -99,7 +99,7 @@ export class DashboardState implements NgxsOnInit {
             carStatus,
             entity: 1,
             pageNumber: pageNumber,
-            pageSize: 100,
+            pageSize: 50,
             selectionList: '',
             sortSelectedAction: '',
             sortSelectedFirst: false,

@@ -42,8 +42,8 @@
                   <div class="line"></div>
                 </div>
                 <span class="subtitle-2">
-                  {{col.displayName}}
-                </span>
+              {{col.header}}
+              </span>
               </div>
               <!--
               <div class="right">
@@ -97,7 +97,7 @@
                   <div class="line"></div>
                 </div>
                 <span class="subtitle-2">
-                  {{col.displayName}}
+              {{col?.header || col?.tooltip}}
               </span>
               </div>
               <!--
