@@ -1,15 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {environment} from "../../../../environments/environment";
 import {of} from "rxjs";
 import {ExposuresMainTableConfig} from "../../model/exposures-main-table-config.model";
+import {backendUrl} from "../../../shared/api";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ExposuresApi {
 
-    private readonly URL = environment.API_URI + 'exposures/';
+    private readonly URL = backendUrl() + 'exposures/';
 
     private readonly fakeTableConfig :ExposuresMainTableConfig = {
         columns:[
@@ -57,7 +57,8 @@ export class ExposuresApi {
               euws:2352215411, iteq:5326451254,greq:2552153234,treq:355471821,
                 pteq:2352215411, nzeq:5326451254,nahu:2552153234,useq:355471821,
                 cneq:2352215411, cnty:5326451254,jpws:2552153234 }]
-    }
+    };
+
     constructor(private _http: HttpClient) {
     }
 
