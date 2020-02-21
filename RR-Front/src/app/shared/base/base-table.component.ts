@@ -132,6 +132,10 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.onVirtualScroll(event);
   }
 
+  onExport() {
+    this._handler.onExport();
+  }
+
   rowsChange(rows) {
     if(rows != this.rows && rows) {
       console.log("Resized : ", rows);
