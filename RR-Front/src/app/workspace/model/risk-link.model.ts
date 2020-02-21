@@ -114,7 +114,7 @@ export class RiskLink {
         this.financialValidator = {
             rmsInstance: {
                 data: refData.rmsInstances,
-                selected: refData.rmsInstances[0]
+                selected: _.last(refData.rmsInstances)
             },
             financialPerspectiveELT: {
                 data: refData.financialPerspectives,
