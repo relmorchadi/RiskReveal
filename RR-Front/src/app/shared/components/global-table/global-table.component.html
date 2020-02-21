@@ -1,4 +1,4 @@
-<div tRows [tableClass]="'plt-list'" (heightChange)="rowsChange($event)" #cte class="table-container">
+<div #cte class="table-container">
   <div class="title-as-tab">
     <div class="div-title">
       <span class="title">PLTs</span>
@@ -9,6 +9,11 @@
           <i class="icon-settings_24px"></i>
         </a>
         <ul nz-menu style="font-size: 12px">
+
+          <li nz-menu-item (click)="onResetFilter()" >Reset Filters</li>
+          <li nz-menu-item (click)="onResetSort()" >Reset Sort</li>
+
+          <li nz-menu-divider></li>
 
           <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
 

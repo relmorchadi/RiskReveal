@@ -22,7 +22,7 @@ public class ProjectResource {
     }
 
     @PutMapping()
-    public ResponseEntity updateProject(ProjectEditRequest request) {
+    public ResponseEntity updateProject(@RequestBody ProjectEditRequest request) {
         return projectService.updateProject(request);
     }
 

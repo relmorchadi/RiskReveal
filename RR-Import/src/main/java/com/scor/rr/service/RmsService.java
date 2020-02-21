@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.DataSourceType;
 import com.scor.rr.domain.enums.ScanLevelEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
@@ -479,21 +480,36 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
-        //@Todo by BTP Count S/p
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset/size) + ", @page_size=" + size;
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
-
-
         this.logger.debug("Service starts executing the query ...");
-
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";
             countSql += ", @filter='" + keyword + "'";
         }
 
-        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
-                sql,
-                new DataSourceRowMapper());
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
+
+        Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
+                countSql,
+                Integer.class);
+
+        this.logger.debug("the data returned ", dataSources);
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount);
+    }
+
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size, DataSourceType type) {
+        if(type == null)
+            throw new RuntimeException("No data source type specified for data sources extraction !");
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type="+ type.getValue() +" , @count_only=1";
+        this.logger.debug("Service starts executing the query ...");
+        if (!StringUtils.isEmpty(keyword)) {
+            sql += ", @filter='" + keyword + "'";
+            countSql += ", @filter='" + keyword + "'";
+        }
+
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
 
         Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
                 countSql,
