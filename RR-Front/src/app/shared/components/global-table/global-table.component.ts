@@ -77,6 +77,11 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     this._handler.selectAll$.subscribe( s => {
       this.selectAll = s;
       this.detectChanges()
+    });
+
+    this._handler.indeterminate$.subscribe(i => {
+      this.indeterminate = i;
+      this.detectChanges();
     })
 
   }
@@ -111,5 +116,9 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
       default:
         console.log(action);
     }
+  }
+
+  log(t) {
+    console.log(t.rows);
   }
 }

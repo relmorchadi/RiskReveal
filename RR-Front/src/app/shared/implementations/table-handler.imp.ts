@@ -4,8 +4,9 @@ import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError, map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
+import {catchError, debounceTime, exhaustMap, map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
+import * as tableStore from "../components/plt/plt-main-table/store";
 
 @Injectable()
 export class TableHandlerImp implements TableHandlerInterface {
@@ -21,6 +22,8 @@ export class TableHandlerImp implements TableHandlerInterface {
   _selectedIds: any;
   selectedIds$: BehaviorSubject<any>;
 
+  selectionConfig: { lastSelectedId: number, lastClick: string };
+
   _sortSelectedAction: string;
   sortSelectedAction$: BehaviorSubject<string>;
 
@@ -29,6 +32,9 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   _selectAll: boolean;
   selectAll$: BehaviorSubject<boolean>;
+
+  _indeterminate: boolean;
+  indeterminate$: BehaviorSubject<boolean>;
 
   totalRecords: number;
   totalRecords$: BehaviorSubject<number>;
@@ -47,9 +53,9 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   params: any;
 
-  config= {
-    offset: 10,
-    pageSize: 10,
+  config = {
+    pageNumber: 1,
+    pageSize: 8,
     entity: 1
   };
 
@@ -67,12 +73,18 @@ export class TableHandlerImp implements TableHandlerInterface {
 
     this.selectedIds$ = new BehaviorSubject({});
     this._selectedIds = {};
+    this.selectionConfig = {
+      lastSelectedId: null,
+      lastClick: null
+    };
     this.sortSelectedAction$ = new BehaviorSubject('');
     this._sortSelectedAction ='';
     this.sortSelectedFirst$= new BehaviorSubject(false);
     this._sortSelectedFirst= false;
     this.selectAll$= new BehaviorSubject(false);
     this._selectAll= false;
+    this.indeterminate$= new BehaviorSubject(false);
+    this._indeterminate= false;
   }
 
   init(attrs) {
@@ -93,6 +105,12 @@ export class TableHandlerImp implements TableHandlerInterface {
     return this._api.getColumns();
   }
 
+  public setPageSize(rows) {
+    // this.config.pageSize = rows;
+    //
+    // this.loadChunk(this.config.pageNumber * rows, rows);
+  }
+
   private loadSelectedIds () {
     return this._api.getIDs(this.params);
   }
@@ -104,11 +122,10 @@ export class TableHandlerImp implements TableHandlerInterface {
     })
   }
 
-  loadDataSubscription(){
+  public loadDataSubscription(){
     this.loadData({
       ...this.params,
       ...this.config,
-      pageNumber: 1,
       selectionList: _.join(this._selectedIds, ','),
       sortSelectedFirst: this._sortSelectedFirst,
       sortSelectedAction: this._sortSelectedAction
@@ -192,7 +209,6 @@ export class TableHandlerImp implements TableHandlerInterface {
         switchMap( () => this.reloadTable({
           ...this.params,
           ...this.config,
-          pageNumber: 1,
           selectionList: _.join(this._selectedIds, ','),
           sortSelectedFirst: this._sortSelectedFirst,
           sortSelectedAction: this._sortSelectedAction
@@ -225,9 +241,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onResetFilter() {
-
     this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])))
-
   }
 
   onSort(index: number){
@@ -237,7 +251,7 @@ export class TableHandlerImp implements TableHandlerInterface {
     }
 
     this.onApiSuccessLoadDataAndColumns(
-        () => this._api.updateColumnSort(_.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId'])),
+        () => this._api.updateColumnSort(_.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId'])).pipe(debounceTime(500)),
     );
   }
 
@@ -245,11 +259,57 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
-  onRowSelect(id: number){
-    const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
-    this.updateSelectedIDs(newIds);
+  onRowSelect(id: number, index: number, $event: MouseEvent) {
+    const isSelected = _.findIndex(this._selectedIds, (v, k) => k == id) >= 0;
+    if ($event.ctrlKey || $event.shiftKey) {
+      this.selectionConfig.lastClick = 'withKey';
+      this.handlePLTClickWithKey(id, index, !isSelected, $event);
+    } else {
+      this.selectionConfig.lastSelectedId = index;
+      const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
+      this.updateSelectedIDs(newIds);
+      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      this.selectionConfig.lastClick = null;
+    }
+  }
 
-    this.updateSelectAll(_.every(this._selectedIds, e => e));
+  private handlePLTClickWithKey(id: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
+      this.updateSelectedIDs(newIds);
+      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      this.selectionConfig.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.selectionConfig.lastSelectedId) this.selectionConfig.lastSelectedId = 0;
+      if (this.selectionConfig.lastSelectedId  >= 0) {
+        const max = _.max([i, this.selectionConfig.lastSelectedId]);
+        const min = _.min([i, this.selectionConfig.lastSelectedId]);
+
+        //Filter concerned range of data
+        const data = _.filter(this._data, (plt, i) => i <= max && i >= min);
+        const newIds = {};
+
+        //Select all filtered PLTs
+        _.forEach(data, plt => {
+          newIds[plt.pltId] = true;
+        });
+
+        this.updateSelectedIDs(newIds);
+        const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+        this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+        this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      } else {
+        this.selectionConfig.lastSelectedId = i;
+      }
+      return;
+    }
   }
 
   onContainerResize(newWidth) {
@@ -260,33 +320,42 @@ export class TableHandlerImp implements TableHandlerInterface {
   onCheckAll() {
     const newIds = {};
 
-    this.updateSelectAll(!this._selectAll)
-
     _.forEach(this._selectedIds, (v,k) => {
-      newIds[k] = this._selectAll;
+      newIds[k] = this._selectAll ? false : !this._indeterminate;
     });
 
     this.updateSelectedIDs(newIds);
+    const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+    this.updateSelectAll(this.totalRecords == numberOfSelectedRows);
+    this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
   }
 
   onVirtualScroll(event) {
+    const {
+      pageNumber,
+      pageSize
+    } = this.config;
 
-    if(event.first != this.config.offset || this.config.pageSize != event.rows) {
+    if(event.first != (pageNumber * pageSize) || this.config.pageSize != event.rows) {
+      this.config.pageSize= event.rows;
       if (event.first === this.totalRecords)
         this.loadChunk(event.first, this.config.pageSize);
       else
-        this.loadChunk(event.first, event.rows);
+        this.loadChunk(event.first, this.config.pageSize);
     }
 
   }
 
   loadChunk(offset, size) {
+    this.config = {
+      pageSize: size,
+      pageNumber: Math.floor( offset / size),
+      entity: 1
+    };
     this.loading$.next(true);
     this.loadData({
       ...this.params,
       ...this.config,
-      pageNumber: Math.floor(offset / size) + 1,
-      pageSize: size,
       selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
       sortSelectedFirst: this._sortSelectedFirst,
       sortSelectedAction: this._sortSelectedAction
@@ -361,6 +430,11 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.selectAll$.next(this._selectAll);
   }
 
+  private updateIndeterminate(i) {
+    this._indeterminate = i;
+    this.indeterminate$.next(this._indeterminate);
+  }
+
   private onApiSuccessLoadDataAndColumns = (api) => {
     this.loading$.next(true);
     api()
@@ -368,7 +442,6 @@ export class TableHandlerImp implements TableHandlerInterface {
             switchMap( () => this.reloadTable({
               ...this.params,
               ...this.config,
-              pageNumber: 1,
               selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
               sortSelectedFirst: this._sortSelectedFirst,
               sortSelectedAction: this._sortSelectedAction
@@ -386,7 +459,7 @@ export class TableHandlerImp implements TableHandlerInterface {
               console.error(error);
             }
         )
-  }
+  };
 
   private onApiSuccessLoadData = (api) => {
     api()
@@ -394,7 +467,6 @@ export class TableHandlerImp implements TableHandlerInterface {
             switchMap( () => this.loadData({
               ...this.params,
               ...this.config,
-              pageNumber: 1,
               selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
               sortSelectedFirst: this._sortSelectedFirst,
               sortSelectedAction: this._sortSelectedAction

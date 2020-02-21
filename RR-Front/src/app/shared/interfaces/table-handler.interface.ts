@@ -10,6 +10,8 @@ export interface TableHandlerInterface {
   _selectedIds: any[];
   selectedIds$: BehaviorSubject<any[]>;
 
+  selectionConfig: { lastSelectedId: number, lastClick: string };
+
   _sortSelectedAction: string;
   sortSelectedAction$: BehaviorSubject<string>;
 
@@ -18,6 +20,9 @@ export interface TableHandlerInterface {
 
   _selectAll: boolean;
   selectAll$: BehaviorSubject<boolean>;
+
+  _indeterminate: boolean;
+  indeterminate$: BehaviorSubject<boolean>;
 
   loading$: BehaviorSubject<boolean>;
 
@@ -42,7 +47,7 @@ export interface TableHandlerInterface {
   onResetFilter();
   onSort(index: number);
   onResetSort();
-  onRowSelect(i: number);
+  onRowSelect(id: number, index: number, $event: MouseEvent);
   onCheckAll();
   onContainerResize(newWidth: number);
   onVirtualScroll(event);
@@ -51,5 +56,7 @@ export interface TableHandlerInterface {
   initApi(url: string): void;
   initTable(params: any): void;
   reloadTable(request: FetchViewContextDataRequest): Observable<any>;
+  setPageSize(rows: number);
+  loadDataSubscription();
 
 }
