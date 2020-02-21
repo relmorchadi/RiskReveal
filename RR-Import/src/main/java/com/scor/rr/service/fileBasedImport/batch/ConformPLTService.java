@@ -3,6 +3,7 @@ package com.scor.rr.service.fileBasedImport.batch;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.PLTLossData;
 import com.scor.rr.domain.enums.*;
@@ -16,6 +17,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
@@ -64,6 +66,90 @@ public class ConformPLTService {
     private Gson gson = new Gson();
 
     private TransformationPackageNonRMS transformationPackage;
+    @Value("${ihub.treaty.out.path}") // todo change it not ihub
+    private String filePath;
+    @Value("#{jobParameters['fileExtension']}")
+    private String fileExtension;
+    @Value("#{jobParameters['importSequence']}")
+    private Long importSequence;
+    @Value("#{jobParameters['contractId']}")
+    private String contractId;
+    @Value("#{jobParameters['projectId']}")
+    private Long projectId;
+    @Value("#{jobParameters['uwYear']}")
+    private Integer uwYear;
+    @Value("#{jobParameters['clientId']}")
+    private Long clientId;
+    @Value("#{jobParameters['reinsuranceType']}")
+    private String reinsuranceType;
+    @Value("#{jobParameters['prefix']}")
+    private String prefix;
+    @Value("#{jobParameters['clientName']}")
+    private String clientName;
+    @Value("#{jobParameters['division']}")
+    private String division;
+    @Value("#{jobParameters['sourceVendor']}")
+    private String sourceVendor;
+    @Value("#{jobParameters['modelSystemVersion']}")
+    private String modelSystemVersion;
+    @Value("#{jobParameters['periodBasis']}")
+    private String periodBasis;
+
+    public static String makeTTFileName(
+            String reinsuranceType,
+            String prefix,
+            String clientName,
+            String contractId,
+            String division,
+            String uwYear,
+            XLTAssetType XLTAssetType,
+            Date date,
+            String sourceVendor,
+            String modelSystemVersion,
+            String regionPeril,
+            String fp,
+            String currency,
+            Long projectId,
+            String periodBasis,
+            XLTOrigin origin,
+            XLTSubType subType,
+            XLTOT currencySource,
+            Long targetRapId,
+            Integer simulationPeriod,
+            PLTPublishStatus pltPublishStatus,
+            Integer threadNum, // 0 for pure PLT
+            Long uniqueId,
+            Long importSequence,
+            String fileExtension) {
+        return PathUtils.makeTTFileName(reinsuranceType,
+                prefix,
+                clientName,
+                contractId,
+                division,
+                uwYear,
+                XLTAssetType,
+                date,
+                sourceVendor,
+                modelSystemVersion,
+                regionPeril,
+                fp,
+                currency != null ? currency : null,
+                projectId.toString(),
+                periodBasis,
+                origin,
+                subType,
+                currencySource,
+                targetRapId,
+                simulationPeriod,
+                pltPublishStatus,
+                threadNum, // 0 for pure PLT
+                uniqueId,
+                importSequence,
+                null,
+                null,
+                null,
+                fileExtension);
+    }
 
     public RepeatStatus conformPLT() throws Exception {
         log.debug("Start CONFORM_PLT");
@@ -112,6 +198,9 @@ public class ConformPLTService {
         conformedPLT.setCurrencyCode(bundle.getRrAnalysis().getTargetCurrency());
         conformedPLT.setTargetRAPId(originalPLT.getTargetRAPId());
         conformedPLT.setRegionPerilId(originalPLT.getRegionPerilId());
+        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+            conformedPLT.setCreatedBy(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+        }
 //        conformedPLT.setFinancialPerspective(originalPLT.getFinancialPerspective());
 //        conformedPLT.setAdjustmentStructure(null);
 //        conformedPLT.setCatAnalysisDefinition(null);
@@ -140,14 +229,14 @@ public class ConformPLTService {
 
         // TODO b) apply proportion and unit multiplier
         // TODO c) calculate EPC, EPS for conformed PLT
-        double proportion = bundle.getSourceResult().getProportion() == null ? 1: bundle.getSourceResult().getProportion().doubleValue() / 100;
-        double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1: bundle.getSourceResult().getUnitMultiplier().doubleValue();
+        double proportion = bundle.getSourceResult().getProportion() == null ? 1 : bundle.getSourceResult().getProportion().doubleValue() / 100;
+        double multiplier = bundle.getSourceResult().getUnitMultiplier() == null ? 1 : bundle.getSourceResult().getUnitMultiplier().doubleValue();
         double exchangeRate = bundle.getRrAnalysis().getExchangeRate();
         log.info("Conforming EP curves and sum stats for conformedPLT {}, proportion {}, multiplier {}", conformedPLT.getPltHeaderId(), proportion, multiplier);
 
         // only one - one : orig - conf SummaryStatisticHeaderEntity
         LossDataHeaderEntity lossDataHeaderEntity = lossDataHeaderEntityRepository.findByModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
-        SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeaderEntity.getLossDataHeaderId(),"PLT").get(0);
+        SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeaderEntity.getLossDataHeaderId(), "PLT").get(0);
         SummaryStatisticHeaderEntity confSummaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity();
         confSummaryStatisticHeaderEntity.setCov(origSummaryStatisticHeaderEntity.getCov());
         confSummaryStatisticHeaderEntity.setPurePremium(origSummaryStatisticHeaderEntity.getPurePremium() * proportion * multiplier * exchangeRate);
@@ -349,7 +438,6 @@ public class ConformPLTService {
         this.transformationPackage = transformationPackage;
     }
 
-
     public BinFile writePLTEPCurves(Map<StatisticMetric, List<AnalysisEpCurves>> metricToEPCurve, String filename) {
         File file = makeFullFile(getPrefixDirectory(), filename);
         return writePLTEPCurves(metricToEPCurve, file);
@@ -362,7 +450,7 @@ public class ConformPLTService {
             Files.createDirectories(fullPath);
         } catch (IOException e) {
             log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
+            throw new RuntimeException("error creating paths " + fullPath, e);
         }
         final File parent = fullPath.toFile();
 
@@ -454,10 +542,10 @@ public class ConformPLTService {
         }
     }
 
-    protected boolean closeDirectBuffer(final ByteBuffer buffer){
-        if(!buffer.isDirect())
+    protected boolean closeDirectBuffer(final ByteBuffer buffer) {
+        if (!buffer.isDirect())
             return false;
-        final DirectBuffer dbb = (DirectBuffer)buffer;
+        final DirectBuffer dbb = (DirectBuffer) buffer;
         return AccessController.doPrivileged(
                 new PrivilegedAction<Object>() {
                     public Object run() {
@@ -479,12 +567,12 @@ public class ConformPLTService {
     }
 
     public BinFile writePLTSummaryStatistics(SummaryStatisticHeaderEntity summaryStatistics, File file) { // PLTSummaryStatistic
-        FileChannel out=null;
-        MappedByteBuffer buffer=null;
+        FileChannel out = null;
+        MappedByteBuffer buffer = null;
         try {
             log.info("Summary statistic file: {}", file);
             out = new RandomAccessFile(file, "rw").getChannel();
-            int size=24;
+            int size = 24;
             buffer = out.map(FileChannel.MapMode.READ_WRITE, 0, size);
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             buffer.putDouble(summaryStatistics.getPurePremium());
@@ -508,7 +596,7 @@ public class ConformPLTService {
             Files.createDirectories(fullPath);
         } catch (IOException e) {
             log.error("Exception: ", e);
-            throw new RuntimeException("error creating paths "+fullPath, e);
+            throw new RuntimeException("error creating paths " + fullPath, e);
         }
         final File parent = fullPath.toFile();
 
@@ -516,51 +604,9 @@ public class ConformPLTService {
         return file;
     }
 
-    @Value("${ihub.treaty.out.path}") // todo change it not ihub
-    private String filePath;
-
     public Path getIhubPath() {
         return Paths.get(filePath);
     }
-
-    @Value("#{jobParameters['fileExtension']}")
-    private String fileExtension;
-
-    @Value("#{jobParameters['importSequence']}")
-    private Long importSequence;
-
-    @Value("#{jobParameters['contractId']}")
-    private String contractId;
-
-    @Value("#{jobParameters['projectId']}")
-    private Long projectId;
-
-    @Value("#{jobParameters['uwYear']}")
-    private Integer uwYear;
-
-    @Value("#{jobParameters['clientId']}")
-    private Long clientId;
-
-    @Value("#{jobParameters['reinsuranceType']}")
-    private String reinsuranceType;
-
-    @Value("#{jobParameters['prefix']}")
-    private String prefix;
-
-    @Value("#{jobParameters['clientName']}")
-    private String clientName;
-
-    @Value("#{jobParameters['division']}")
-    private String division;
-
-    @Value("#{jobParameters['sourceVendor']}")
-    private String sourceVendor;
-
-    @Value("#{jobParameters['modelSystemVersion']}")
-    private String modelSystemVersion;
-
-    @Value("#{jobParameters['periodBasis']}")
-    private String periodBasis;
 
     public String getFileExtension() {
         return fileExtension;
@@ -604,62 +650,6 @@ public class ConformPLTService {
                 importSequence,
                 fileExtension
         );
-    }
-
-    public static String makeTTFileName(
-            String reinsuranceType,
-            String prefix,
-            String clientName,
-            String contractId,
-            String division,
-            String uwYear,
-            XLTAssetType XLTAssetType,
-            Date date,
-            String sourceVendor,
-            String modelSystemVersion,
-            String regionPeril,
-            String fp,
-            String currency,
-            Long projectId,
-            String periodBasis,
-            XLTOrigin origin,
-            XLTSubType subType,
-            XLTOT currencySource,
-            Long targetRapId,
-            Integer simulationPeriod,
-            PLTPublishStatus pltPublishStatus,
-            Integer threadNum, // 0 for pure PLT
-            Long uniqueId,
-            Long importSequence,
-            String fileExtension) {
-        return PathUtils.makeTTFileName(reinsuranceType,
-                prefix,
-                clientName,
-                contractId,
-                division,
-                uwYear,
-                XLTAssetType,
-                date,
-                sourceVendor,
-                modelSystemVersion,
-                regionPeril,
-                fp,
-                currency != null ? currency : null,
-                projectId.toString(),
-                periodBasis,
-                origin,
-                subType,
-                currencySource,
-                targetRapId,
-                simulationPeriod,
-                pltPublishStatus,
-                threadNum, // 0 for pure PLT
-                uniqueId,
-                importSequence,
-                null,
-                null,
-                null,
-                fileExtension);
     }
 
     protected synchronized String makePLTEPCurveFilename(
