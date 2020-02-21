@@ -23,8 +23,9 @@
 
     <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
       <ng-container *ngFor="let dashboard of dashboards">
-        <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
+        <nz-tab (nzClick)="selectTab(dashboard?.id)" *ngIf="dashboard?.visible"
                 [nzTitle]="titleTemplate">
+
           <ng-template #titleTemplate>
             <div class="tabs-header-wrapper">
               {{ dashboard?.name }}
@@ -32,16 +33,18 @@
                  class="ant-tabs-close-x"></i>
             </div>
           </ng-template>
-          <div style="height: calc(100vh - 150px); width:100%">
-            <gridster  [options]="options" style="background-color: transparent">
+
+          <ng-template nz-tab>
+            <div style="height: calc(100vh - 150px); width:100%">
+              <gridster  [options]="options"  style="background-color: transparent">
                 <gridster-item *ngFor="let item of dashboard.widgets" [item]="item?.position">
-<!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
-                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                                          (delete)="deleteItem(dashboard.id, $event)"
-                                          (changeName)="changeName(dashboard.id, $event)"
-                                          (duplicate)="duplicate(dashboard.id, $event)"
-                                          class="no-drag">
-                  </renewal-contract-scope>-->
+                  <!--                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent' && item.componentName !== 'facChartWidgetComponent' && item.componentName !== 'facSubsidiaryChartComponent'"
+                                      [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                                            (delete)="deleteItem(dashboard.id, $event)"
+                                                            (changeName)="changeName(dashboard.id, $event)"
+                                                            (duplicate)="duplicate(dashboard.id, $event)"
+                                                            class="no-drag">
+                                    </renewal-contract-scope>-->
                   <app-fac-widget *ngIf="item?.widgetId === 1" [dashboard]="dashboard" [itemWidget]="item"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
@@ -73,8 +76,10 @@
                                             (duplicate)="duplicateWidgetAction($event)" class="no-drag">
                   </app-fac-subsidiary-chart>
                 </gridster-item>
-            </gridster>
-          </div>
+              </gridster>
+            </div>
+          </ng-template>
+
         </nz-tab>
       </ng-container>
     </nz-tabset>
