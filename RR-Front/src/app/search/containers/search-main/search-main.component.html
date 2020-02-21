@@ -100,12 +100,12 @@
                    [totalRecords]="paginationOption?.total"
                    #dt *ngIf="searchMode === 'Treaty'"
                    [listOfData]="contracts"
-                   [virtualScroll]="paginationOption.total > 100"
+                   [virtualScroll]="true"
                    (selectOne)="openWorkspaceInSlider($event)"
-                   [tableWidth]="'1000px'"
+                   [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
                    [tableHeight]="'calc(100vh - 212px)'"
                    (loadMore)="loadMore($event)"
-                   (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
                    (sortDataChange)="sortChange($event)"
                    [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
@@ -118,12 +118,12 @@
                 [totalRecords]="paginationOption?.total"
                 #dtFac *ngIf="searchMode === 'Fac'"
                 [listOfData]="contracts"
-                [virtualScroll]="paginationOption.total > 100"
+                [virtualScroll]="true"
                 (selectOne)="openWorkspaceInSlider($event)"
-                [tableWidth]="'1000px'"
+                [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
                 [tableHeight]="'calc(100vh - 212px)'"
                 (loadMore)="loadMore($event)"
-                (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
                 (sortDataChange)="sortChange($event)"
                 [sortData]="sortData"
                 (dbClickItem)="openWorkspace($event?.workspaceName, $event?.uwYear)"
@@ -304,7 +304,7 @@
 <p-dialog
   [visible]="saveSearchPopup"
   [closable]="false"
-  styleClass="m-dialog-modal"
+  styleClass="m-dialog-modal-sm-f"
   appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
@@ -316,7 +316,7 @@
       <i style="cursor: pointer" (click)="closeSaveSearchPup()" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div class="content" style="display: flex;flex-direction: column; width: 400px;height: 300px;">
+  <div class="content" style="display: flex;flex-direction: column; width: 400px;">
     <div class="ui-g">
       <div class="ui-g-5">
         <label style="margin-top: 15px;"> Search Label: </label>
