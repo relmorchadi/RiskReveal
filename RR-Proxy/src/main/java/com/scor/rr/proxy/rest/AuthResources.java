@@ -44,15 +44,16 @@ public class AuthResources {
                 UserDto userDto = new UserDto();
                 log.info("#11 value of userId is ===> " + userId);
 
-                Optional<UserRrEntity> userOpt=userService.getUserByUserId(userId);
-                if(userOpt.isPresent()){
+                Optional<UserRrEntity> userOpt = userService.getUserByUserId(userId);
+                if (userOpt.isPresent()) {
                     UserRrEntity user = userOpt.get();
                     userDto.setFullName(user.getFirstName() + " " + user.getLastName());
                     userDto.setCode(user.getUserCode());
+                    userDto.setUserId(user.getUserId());
                     userDto.setRole(user.getRole());
                     userDto.setJwtToken(jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication().getName().split("@")[0]));
                     return new ResponseEntity<>(userDto, HttpStatus.OK);
-                }else {
+                } else {
                     return new ResponseEntity(HttpStatus.UNAUTHORIZED);
                 }
             } catch (Exception ex) {
