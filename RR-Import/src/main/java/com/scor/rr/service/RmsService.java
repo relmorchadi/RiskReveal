@@ -1101,6 +1101,11 @@ public class RmsService {
     }
 
     private String crawlDownToSystemRegionPeril(RegionPerilNode node) {
+
+        // TODO : return when linking is implemented
+//        if(node.getRegionPerilTIV(false)>0.0d) {
+//            return node.getRegionPeril().getRegionPerilCode();
+//        }
         if (node.getRegionPerilAAL(false) > 0.0d) {
             return node.getRegionPeril().getRegionPerilCode();
         } else {
@@ -1110,7 +1115,7 @@ public class RmsService {
                     candidates.add(child);
                 }
             }
-            if (candidates.size() < 1) {
+            if (candidates.size() > 1) {
                 return node.getRegionPeril().getRegionPerilCode();
             } else {
                 for (RegionPerilNode c : candidates) {
@@ -1175,6 +1180,35 @@ public class RmsService {
                 return 0d;
             }
         }
+
+//        public Double getRegionPerilTIV(boolean withChildren)
+//        {
+//
+//            if(associatedPortfolioRegions!=null)
+//            {
+//                Double sum=0d;
+//                // FIXME which currency AAL is returned ?
+//                for(PortfolioAssociation pa:associatedPortfolioRegions)
+//                {
+//                    if(pa.portfolioRegion!=null&&pa.portfolioRegion.getTotalTIVinUSD()!=null)
+//                    {
+//                        sum+=pa.portfolioRegion.getTotalTIV();
+//                    }
+//                }
+//                if(withChildren&&children!=null&&!children.isEmpty())
+//                {
+//                    for(RegionPerilNode rpn:children)
+//                    {
+//                        sum+=rpn.getRegionPerilTIV(withChildren);
+//                    }
+//                }
+//                return sum;
+//            }
+//            else
+//            {
+//                return 0d;
+//            }
+//        }
 
 
         public RegionPerilNode getParent() {
