@@ -85,10 +85,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        /**
         http.csrf().disable().cors().and().authorizeRequests()
                 .antMatchers("/api/**").authenticated().and().httpBasic()
                 .authenticationEntryPoint(restSpenegoEntryPoint()).and()
+                .addFilterBefore(spnegoAuthenticationProcessingFilter(), BasicAuthenticationFilter.class)
+                .addFilterAfter(redirectionTokenFilter(), ExceptionTranslationFilter.class)
+                .addFilterAfter(new OncePerRequestFilter() {
+                    @Override
+                    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+                        Authentication authentication = Optional.ofNullable(getContext().getAuthentication()).orElseGet(() -> new UsernamePasswordAuthenticationToken("", "", null));
+                        Boolean isAppUser = userRepository.findByUserCode(authentication.getName().split("@")[0]).isPresent();
+                        getContext().setAuthentication(isAppUser ? authentication : null);
+                        filterChain.doFilter(httpServletRequest, httpServletResponse);
+                    }
+                }, UsernamePasswordAuthenticationFilter.class);
+         */
+
+        http.csrf().disable().cors().and()
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+//                .antMatchers("/api/**").authenticated().and().httpBasic()
+//                .authenticationEntryPoint(restSpenegoEntryPoint()).and()
                 .addFilterBefore(spnegoAuthenticationProcessingFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(redirectionTokenFilter(), ExceptionTranslationFilter.class)
                 .addFilterAfter(new OncePerRequestFilter() {
