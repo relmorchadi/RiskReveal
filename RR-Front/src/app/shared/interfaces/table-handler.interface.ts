@@ -51,6 +51,7 @@ export interface TableHandlerInterface {
   onCheckAll();
   onContainerResize(newWidth: number);
   onVirtualScroll(event);
+  onExport();
 
   init(config: any): void;
   initApi(url: string): void;

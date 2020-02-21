@@ -499,4 +499,8 @@ export class TableHandlerImp implements TableHandlerInterface {
         )
   }
 
+  onExport() {
+    console.log("Export")
+  }
+
 }
