@@ -152,13 +152,13 @@
                   </div>
                   <nz-tabset class="a-tab-minitab">
                     <nz-tab nzTitle="EDM & RDM">
-                      <div class="search-bar-result-list">
-                        <app-datasource-list [data]="listEdmRdm?.data"
+<!--                      <div class="search-bar-result-list">-->
+                        <datasource-list [data]="listEdmRdm?.data"
                                              [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
                                              (lazyLoad)="lazyLoadDataSources($event)"
                                              (select)="toggleItems($event.item, $event.$event, $event.link)">
 
-                        </app-datasource-list>
+                        </datasource-list>
 <!--                        <p-virtualScroller [value]="listEdmRdm?.data | rmsDatasource" scrollHeight="305px"-->
 <!--                                           [itemSize]="30" [lazy]="true" (onLazyLoad)="lazyLoadDataSources($event)"-->
 <!--                                           [rows]="100" [totalRecords]="state?.listEdmRdm?.totalElements">-->
@@ -182,7 +182,7 @@
 <!--                            <div *ngIf="state?.listEdmRdm?.totalElements && !state?.listEdmRdm?.last" class="loading-text"></div>-->
 <!--                          </ng-template>-->
 <!--                        </p-virtualScroller>-->
-                      </div>
+<!--                      </div>-->
                       <div class="search-bar-result-button">
                         <button (click)="scanDataSources()" class="a-buttons-contained">ADD</button>
                       </div>
