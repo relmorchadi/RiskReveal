@@ -43,7 +43,7 @@
                     class="search-opt-btn" nz-button>
               Saved Search &nbsp;
               <i
-                [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
+                      [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
             </button>
             <button (click)="openSavedSearch()" class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
           </div>
@@ -96,11 +96,11 @@
 
         </div>
         <app-table [tableColumn]="columns" [sortable]="false"
-                   [rows]="100"
+                   [rows]="100" [virtualRowHeight]="35.56"
                    [totalRecords]="paginationOption?.total"
                    #dt *ngIf="searchMode === 'Treaty'"
                    [listOfData]="contracts"
-                   [virtualScroll]="true"
+                   [virtualScroll]="paginationOption.total > 100"
                    (selectOne)="openWorkspaceInSlider($event)"
                    [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
                    [tableHeight]="'calc(100vh - 212px)'"
@@ -114,21 +114,21 @@
         </app-table>
 
         <app-table [tableColumn]="columnsFac" [sortable]="false"
-                [rows]="100"
-                [totalRecords]="paginationOption?.total"
-                #dtFac *ngIf="searchMode === 'Fac'"
-                [listOfData]="contracts"
-                [virtualScroll]="true"
-                (selectOne)="openWorkspaceInSlider($event)"
-                [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
-                [tableHeight]="'calc(100vh - 212px)'"
-                (loadMore)="loadMore($event)"
-                (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
-                (sortDataChange)="sortChange($event)"
-                [sortData]="sortData"
-                (dbClickItem)="openWorkspace($event?.workspaceName, $event?.uwYear)"
-                [activateContextMenu]="true"
-                [loading]="loading">
+                   [rows]="100" [virtualRowHeight]="35.56"
+                   [totalRecords]="paginationOption?.total"
+                   #dtFac *ngIf="searchMode === 'Fac'"
+                   [listOfData]="contracts"
+                   [virtualScroll]="true"
+                   (selectOne)="openWorkspaceInSlider($event)"
+                   [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
+                   [tableHeight]="'calc(100vh - 212px)'"
+                   (loadMore)="loadMore($event)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="sortData"
+                   (dbClickItem)="openWorkspace($event?.workspaceName, $event?.uwYear)"
+                   [activateContextMenu]="true"
+                   [loading]="loading">
         </app-table>
       </div>
     </div>
@@ -242,27 +242,27 @@
            (cdkDropListDropped)="dropColumn($event)">
         <ng-container *ngIf="searchMode === 'Treaty'">
           <ng-container *ngFor="let col of columnsCache;let i=index">
-          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
-            <div class="m-box-overlay">
-              <div class="left">
-                <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div>
-                <span class="subtitle-2">
+            <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+              <div class="m-box-overlay">
+                <div class="left">
+                  <div class="burger" cdkDragHandle>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                  </div>
+                  <span class="subtitle-2">
               {{col.header}}
               </span>
+                </div>
               </div>
             </div>
-          </div>
-        </ng-container>
+          </ng-container>
         </ng-container>
         <ng-container *ngIf="searchMode === 'Fac'">
           <ng-container *ngFor="let col of columnsFacCache;let i=index">
@@ -302,13 +302,13 @@
 </p-dialog>
 
 <p-dialog
-  [visible]="saveSearchPopup"
-  [closable]="false"
-  styleClass="m-dialog-modal-sm-f"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
+        [visible]="saveSearchPopup"
+        [closable]="false"
+        styleClass="m-dialog-modal-sm-f"
+        appendTo="body"
+        [modal]="true"
+        [autoZIndex]="false"
+        [responsive]="true"
 >
   <p-header>
     <div class="header">

@@ -114,6 +114,9 @@
 <!--virtual scroll-->
 
 <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
+         tRows [tableClass]="'table-ngPrime'"
+         [class]="'table-ngPrime'"
+         (heightChange)="rowsChange($event)"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight"
          [rows]="rows" [loading]="loading"
@@ -180,6 +183,7 @@
     <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData" *ngIf="!secondaryLoader"
         [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
+        <ng-container *ngIf="col.visible">
           <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
             <div style="display:flex">
               <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
@@ -210,6 +214,7 @@
               <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
             </div>
           </td>
+        </ng-container>
       </ng-container>
     </tr>
   </ng-template>
