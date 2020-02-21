@@ -8,13 +8,21 @@ export interface TableInterface {
   data: any[];
   columns: Column[];
 
-  selectedIds: number [] | string [];
+  selectedIds: any;
+  selectedItem: any;
+  selectAll: boolean;
+  indeterminate: boolean;
+  sortSelectedAction: string;
+
+  totalRecords: number;
+  totalColumnWidth: number;
+
 
   onColumnResize(event);
   onManageColumns(oldColumns: Column[], newColumns: Column[]);
   onFilter(column: Column, filter: string);
   onSort(column: Column, direction);
-  onRowSelect(i: number);
+  onRowSelect(id: number, index: number, $event: MouseEvent);
   onVirtualScroll(event);
 
 }
