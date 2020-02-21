@@ -38,6 +38,7 @@ export class TableComponent implements OnInit {
   @Output('updateFavStatus') updateStatus: any = new EventEmitter<any>();
   @Output('sortDataChange') sortDataChange: any = new EventEmitter<any>();
   @Output('resizeChange') resizeTable: any = new EventEmitter<any>();
+  @Output('heightChange') heightChange: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -92,6 +93,7 @@ export class TableComponent implements OnInit {
   _activateContextMenu: boolean;
 
   filterQueryChanged: Subject<any> = new Subject<any>();
+  dashRows;
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -247,6 +249,11 @@ export class TableComponent implements OnInit {
     this.isIndeterminate();
   }
 
+  rowsChange(rows) {
+    this.dashRows = rows;
+    this.heightChange.emit(rows);
+  }
+
   private selectSection(from, to) {
     this.listOfData.forEach(dt => dt.selected = false);
     if (from === to) {
@@ -316,7 +323,11 @@ export class TableComponent implements OnInit {
 
   filter(key: string, event, colId) {
     const value = event.target.value;
-    console.log(value);
+    if (this.virtualScroll) {
+      this.event.first = 0;
+      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+      body.scrollTop = 0;
+    }
     if (value) {
       this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
     } else {

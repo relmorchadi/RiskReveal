@@ -132,7 +132,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   rowsChange(rows) {
-    console.log(rows);
+    console.log('search rows', rows);
+    this.rows = rows;
   }
 
   protected detectChanges() {

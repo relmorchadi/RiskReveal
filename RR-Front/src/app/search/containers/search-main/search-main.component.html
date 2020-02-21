@@ -96,7 +96,7 @@
 
         </div>
         <app-table [tableColumn]="columns" [sortable]="false"
-                   [rows]="100" [virtualRowHeight]="35.36"
+                   [rows]="100" [virtualRowHeight]="35.56"
                    [totalRecords]="paginationOption?.total"
                    #dt *ngIf="searchMode === 'Treaty'"
                    [listOfData]="contracts"
@@ -114,7 +114,7 @@
         </app-table>
 
         <app-table [tableColumn]="columnsFac" [sortable]="false"
-                [rows]="100" [virtualRowHeight]="35.36"
+                [rows]="100" [virtualRowHeight]="35.56"
                 [totalRecords]="paginationOption?.total"
                 #dtFac *ngIf="searchMode === 'Fac'"
                 [listOfData]="contracts"

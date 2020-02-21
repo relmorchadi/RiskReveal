@@ -114,11 +114,14 @@
 <!--virtual scroll-->
 
 <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
+         tRows [tableClass]="'table-ngPrime'"
+         [class]="'table-ngPrime'"
+         (heightChange)="rowsChange($event)"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight"
          [rows]="rows" [loading]="loading"
          [totalRecords]="totalRecords"
-         [virtualScroll]="true" [lazyLoadOnInit]="fromSearch"
+         [virtualScroll]="true"
          [virtualRowHeight]="virtualRowHeight"
          (onLazyLoad)="loadDataOnScroll($event)"
          [lazy]="true" [showLoader]="false"

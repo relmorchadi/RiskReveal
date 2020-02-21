@@ -8,21 +8,21 @@
     class="tabs-standard-top">
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="true"
-                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
+        <app-table [sortable]="true" [virtualScroll]="true" [rows]="25"
+                   [totalRecords]="dataCounter" [loading]="loading"
                    [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
                    [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
                    (loadMore)="loadMore($event)" (dbClickItem)="openFacItem($event)"
                    (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
-                   (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
+                   (sortDataChange)="sortChange($event)" [virtualRowHeight]="30" (heightChange)="changeHeight($event)"
                    [sortData]="globalSort">
         </app-table>
       </div>
     </nz-tab>
     <nz-tab>
       <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="true"
-                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
+        <app-table [sortable]="true" [virtualScroll]="true" [rows]="25"
+                   [totalRecords]="dataCounter" [loading]="loading"
                    [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
                    [listOfData]="filterAssign()" [fromSearch]="false" [filterModeFront]="false"
                    (dbClickItem)="openFacItem($event)" (loadMore)="loadMore($event)"

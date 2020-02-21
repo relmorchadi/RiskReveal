@@ -272,6 +272,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   onVirtualScroll(event) {
 
     if(event.first != this.config.offset || this.config.pageSize != event.rows) {
+      console.log(event.first, this.totalRecords, this.config.pageSize, event.rows)
       if (event.first === this.totalRecords)
         this.loadChunk(event.first, this.config.pageSize);
       else
