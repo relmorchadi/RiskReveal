@@ -325,7 +325,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds, List<Long> rdmIds, List<Long> divisionsIds) {
         Map<Long, AnalysisPortfolioDto> analysisPortfolioByDivision = new HashMap<>();
         divisionsIds.forEach(divisionNumber -> {
-            String keyword = wsId + "_0" + divisionNumber;
+            String keyword = wsId + "_" + String.format("%02d", divisionNumber);
             AnalysisPortfolioDto data = new AnalysisPortfolioDto();
             edmIds.forEach(edmId -> {
                 data.getRlPortfolios().addAll(findPortfolios(edmId, keyword));
