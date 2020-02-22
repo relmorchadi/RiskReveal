@@ -365,4 +365,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 .orElseThrow(() -> new RuntimeException("No available DataSource For given params : " + instanceId + "/" + projectId + "/" + rmsId));
 
     }
+
+    /*private List<String> getPortfolioCurrencies(Long rlPortfolioId){
+
+    }*/
+
+    @Override
+    public void clearProjectAndLoadDefaultDataSources(Long projectId) {
+        rlModelDataSourceRepository.clearProjectDataSources(projectId);
+    }
 }
