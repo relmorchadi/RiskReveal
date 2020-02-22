@@ -253,6 +253,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             const {withDetailScan, allAnalysis, allPortfolios} = p.payload;
             if (withDetailScan && _.isEmpty(allAnalysis) && _.isEmpty(allPortfolios))
                 alert('No auto attach suggestions available on this Workspace');
+            if(this.state)
+                this._refreshCurrentDataSourceContent(this.state.selectedEDMOrRDM);
         });
 
         this.actions$
@@ -288,12 +290,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                 this.unsubscribeOnDestroy,
                 ofActionSuccessful(fromWs.DeleteFromImportBasketAction)
             ).subscribe(({payload}) => {
-            console.log('Delete from import successful', payload);
-            if (payload.type == 'ANALYSIS') {
-                this.getRiskLinkAnalysis();
-            } else if (payload.type == 'PORTFOLIO') {
-                this.getRiskLinkPortfolio();
-            }
+            this._refreshCurrentDataSourceContent(payload.type);
         });
 
         this._autoSelectFirstDataSource();
@@ -958,4 +955,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
     }
 
+    private _refreshCurrentDataSourceContent(type) {
+        if (type == 'ANALYSIS') {
+            this.getRiskLinkAnalysis();
+        } else if (type == 'PORTFOLIO') {
+            this.getRiskLinkPortfolio();
+        }
+    }
 }
