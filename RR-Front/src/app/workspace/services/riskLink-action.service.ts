@@ -260,7 +260,7 @@ export class RiskLinkStateService {
                     const {portfolioIndex, targetPortfolio} = this.findPortfolio(draft.content[wsIdentifier].riskLink, rlPortfolioId);
                     draft.content[wsIdentifier].riskLink.portfolios.data[portfolioIndex].selected = !targetPortfolio.selected;
                     const edmId = draft.content[wsIdentifier].riskLink.selection.currentDataSource;
-                    if (draft.content[wsIdentifier].riskLink.portfolios.data[portfolioIndex].selected) {
+                    if (targetPortfolio.selected) {
                         draft.content[wsIdentifier].riskLink.selection.portfolios[edmId] =
                             _.merge(draft.content[wsIdentifier].riskLink.selection.portfolios[edmId], {[rlPortfolioId]: targetPortfolio});
                     } else {
@@ -615,19 +615,18 @@ export class RiskLinkStateService {
     }
 
     loadDivisionSelection(ctx: StateContext<WorkspaceModel>) {
-        const state = ctx.getState();
-        const {wsIdentifier} = state.currentTab;
         ctx.patchState(produce(ctx.getState(), draft => {
-            const currentSelection = _.get(state.content[wsIdentifier].riskLink.selection, 'currentDataSource', null);
-            const currentDivision = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
-            if (currentSelection !== null) {
-                if (state.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
-                    draft.content[wsIdentifier].riskLink.selection.analysis = this._facDataFactor(state.content[wsIdentifier].riskLink.selection.analysis,
-                        state.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentSelection, 'RDM'
+            const {wsIdentifier} = draft.currentTab;
+            const currentDataSource = _.get(draft.content[wsIdentifier].riskLink.selection, 'currentDataSource', null);
+            const currentDivision = draft.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
+            if (currentDataSource !== null) {
+                if (draft.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
+                    draft.content[wsIdentifier].riskLink.selection.analysis[currentDataSource] = this._facDataFactor(draft.content[wsIdentifier].riskLink.selection.analysis,
+                        draft.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentDataSource, 'RDM'
                     );
                 } else {
-                    draft.content[wsIdentifier].riskLink.selection.portfolios = this._facDataFactor(state.content[wsIdentifier].riskLink.selection.portfolios,
-                        state.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentSelection, 'EDM'
+                    draft.content[wsIdentifier].riskLink.selection.portfolios[currentDataSource] = this._facDataFactor(draft.content[wsIdentifier].riskLink.selection.portfolios,
+                        draft.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentDataSource, 'EDM'
                     );
                 }
             }
@@ -1191,21 +1190,24 @@ export class RiskLinkStateService {
             );
     }
 
-    private _facDataFactor(data, selection, id, scope) {
-        if (_.includes(_.keys(selection), `${id}`)) {
+    private _facDataFactor(data, selection, dataSourceId, scope) {
+        let result= null;
+        if (_.includes(_.keys(selection), `${dataSourceId}`)) {
             if (scope === 'RDM') {
-                return _.map(data, item => {
-                    return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlAnalysisId}`)}
+                result = _.map(data, item => {
+                    return {...item, selected: _.includes(_.keys(selection[dataSourceId]), `${item.rlAnalysisId}`)}
                 });
             } else {
-                return _.map(data, item => {
-                    return {...item, selected: _.includes(_.keys(selection[id]), `${item.rlPortfolioId}`)}
+                result = _.map(data, item => {
+                    return {...item, selected: _.includes(_.keys(selection[dataSourceId]), `${item.rlPortfolioId}`)}
                 });
             }
+        }else {
+            result = _.map(data, item => {
+                return {...item, selected: false}
+            });
         }
-        return _.map(data, item => {
-            return {...item, selected: false}
-        });
+        return _.merge({},...result);
     }
 
     private _update(source, list) {
