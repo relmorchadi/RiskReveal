@@ -46,6 +46,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   @ViewChild('searchInput') searchInput: ElementRef;
 
   @Select(DashboardState.getSelectedDashboard) selectedDashboard$;
+  @Select(SearchNavBarState.getMapTableNameToBadgeKey) mapTableName$;
 
   contractFilterFormGroup: FormGroup;
   subscriptions: Subscription;
@@ -104,8 +105,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
       this.detectChanges();
     });
 
-    this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(first(v => v)).subscribe( mapTableNameToBadgeKey => {
-      this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
+    this.mapTableName$.pipe().subscribe(value => {
+      this.mapTableNameToBadgeKey = value;
       this.detectChanges();
     });
 

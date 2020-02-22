@@ -3,108 +3,100 @@
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
 <ng-container *ngIf="widgetId !== 1">
-  <nz-tabset
-    [(nzSelectedIndex)]="tabIndex"
-    class="tabs-standard-top">
-    <nz-tab>
-      <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="virtualScroll"
-                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
-                   [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
-                   [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
-                   (dbClickItem)="openFacItem($event)"
-                   (resizeChange)="resizeTable($event)"
-                   (updateFavStatus)="valueFavChange($event)"
-                   (filterData)="filterData($event)"
-                   (sortDataChange)="sortChange($event)"
-                   [sortData]="globalSort">
-        </app-table>
-      </div>
-    </nz-tab>
-    <nz-tab>
-      <div style="height: 100%" class="renewal-contract-table">
-        <app-table [sortable]="true" [virtualScroll]="virtualScroll" [secondaryLoader]="secondaryLoad"
-                   [rows]="50" [totalRecords]="dataCounter" [loading]="loading"
-                   [tableColumn]="dashCols" [sortList]="sortList" [filterModeFront]="false"
-                   [listOfData]="filterAssign()"
-                   [fromSearch]="false"
-                   (loadMore)="loadMore($event)"
-                   (dbClickItem)="openFacItem($event)"
-                   (resizeChange)="resizeTable($event)"
-                   (updateFavStatus)="valueFavChange($event)"
-                   (filterData)="filterData($event)"
-                   (sortDataChange)="sortChange($event)"
-                   [sortData]="globalSort">
-        </app-table>
-      </div>
-    </nz-tab>
-  </nz-tabset>
+    <nz-tabset
+            [(nzSelectedIndex)]="tabIndex"
+            class="tabs-standard-top">
+        <nz-tab>
+            <div style="height: 100%" class="renewal-contract-table">
+                <app-table [sortable]="true" [virtualScroll]="true" [rows]="25"
+                           [totalRecords]="dataCounter" [loading]="loading"
+                           [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
+                           [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
+                           (loadMore)="loadMore($event)" (dbClickItem)="openFacItem($event)"
+                           (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
+                           (sortDataChange)="sortChange($event)" [virtualRowHeight]="30" (heightChange)="changeHeight($event)"
+                           [sortData]="globalSort">
+                </app-table>
+            </div>
+        </nz-tab>
+        <nz-tab>
+            <div style="height: 100%" class="renewal-contract-table">
+                <app-table [sortable]="true" [virtualScroll]="true" [rows]="25"
+                           [totalRecords]="dataCounter" [loading]="loading"
+                           [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
+                           [listOfData]="filterAssign()" [fromSearch]="false" [filterModeFront]="false"
+                           (dbClickItem)="openFacItem($event)" (loadMore)="loadMore($event)"
+                           (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
+                           (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
+                           [sortData]="globalSort">
+                </app-table>
+            </div>
+        </nz-tab>
+    </nz-tabset>
 </ng-container>
 
 <ng-container *ngIf="widgetId === 1">
-  <div class="renewal-contract-table">
-<!--    [ngStyle]="{'width': ColsTotalWidth + 'px'}"-->
-    <app-table [sortable]="true" [virtualScroll]="virtualScroll"
-               [rows]="50" [totalRecords]="dataCounter" [secondaryLoader]="secondaryLoad"
-               [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
-               [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
-               (loadMore)="loadMore($event)"
-               (sortDataChange)="sortChange($event)"
-               (resizeChange)="resizeTable($event)"
-               (dbClickItem)="openFacItem($event)"
-               (updateFavStatus)="valueFavChange($event)"
-               [sortData]="globalSort" (filterData)="filterData($event)"
-               >
-    </app-table>
-  </div>
+    <div class="renewal-contract-table">
+        <!--    [ngStyle]="{'width': ColsTotalWidth + 'px'}"-->
+        <app-table [sortable]="true" [virtualScroll]="virtualScroll"
+                   [rows]="50" [totalRecords]="dataCounter" [secondaryLoader]="secondaryLoad"
+                   [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
+                   [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
+                   (loadMore)="loadMore($event)" (sortDataChange)="sortChange($event)"
+                   (resizeChange)="resizeTable($event)" (dbClickItem)="openFacItem($event)"
+                   (updateFavStatus)="valueFavChange($event)" [virtualRowHeight]="30"
+                   [sortData]="globalSort" (filterData)="filterData($event)"
+        >
+        </app-table>
+    </div>
 </ng-container>
 
 
 <ng-template #title>
-  <div style="display: flex">
-    <div class="title-wrapper">
-      <span *ngIf="!editName" (click)="activeEdit()" class="title-wrapper-name">{{itemName}}</span>
-      <div *ngIf="editName" class="edit-dashboard-section">
-        <input class="hover-input" placeholder="" (keydown)="validateName($event)" [(ngModel)]="itemName" #inputName>
-      </div>
-      <nz-dropdown [nzTrigger]="'click'">
-        <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
-        <ul nz-menu nzSelectable>
-          <li (click)="duplicateItem()" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
-          <li (click)="deleteItem()" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
-        </ul>
-      </nz-dropdown>
+    <div style="display: flex">
+        <div class="title-wrapper">
+            <span *ngIf="!editName" (click)="activeEdit()" class="title-wrapper-name">{{itemName}}</span>
+            <div *ngIf="editName" class="edit-dashboard-section">
+                <input class="hover-input" placeholder="" (keydown)="validateName($event)" [(ngModel)]="itemName" #inputName>
+            </div>
+            <nz-dropdown [nzTrigger]="'click'">
+                <i nz-dropdown style="cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
+                <ul nz-menu nzSelectable>
+                    <li (click)="duplicateItem()" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+                    <li (click)="deleteItem()" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
+                </ul>
+            </nz-dropdown>
 
-      <div style="position: absolute;top: 10px; right: 25px" >
-        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-          <a style="max-height: 28px;display: flex;" nz-dropdown>
-            <i class="icon-settings_24px"></i>
-          </a>
-          <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
-            <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item *ngIf="widgetId === 1" (click)="openPopUpAction('newCar')">Manage Columns</li>
-            <li nz-menu-item *ngIf="widgetId === 2" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
-            <li nz-menu-item *ngIf="widgetId === 3" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Unselect All</li>
-          </ul>
-        </nz-dropdown>
-      </div>
-    </div>
-    <div style="display: flex; align-items: center" *ngIf="widgetId !== 1">
+            <div style="position: absolute;top: 10px; right: 25px" >
+                <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                    <a style="max-height: 28px;display: flex;" nz-dropdown>
+                        <i class="icon-settings_24px"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                        <li nz-menu-item>Reset Sort</li>
+                        <li nz-menu-item>Reset Filters</li>
+                        <li nz-menu-item>Reset Sort/Filters</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item *ngIf="widgetId === 1" (click)="openPopUpAction('newCar')">Manage Columns</li>
+                        <li nz-menu-item *ngIf="widgetId === 2" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
+                        <li nz-menu-item *ngIf="widgetId === 3" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item>Unselect All</li>
+                    </ul>
+                </nz-dropdown>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center" *ngIf="widgetId !== 1">
       <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}"
             nz-tooltip [nzTitle]="'ALL'"
             class="tab-index">
         <i class="icon-all_inclusive_24px"></i>
       </span>
-      <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}"
-            nz-tooltip [nzTitle]="'My Assigned'"
-            class="tab-index">
+            <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}"
+                  nz-tooltip [nzTitle]="'My Assigned'"
+                  class="tab-index">
         <i class="icon-user"></i>
       </span>
+        </div>
     </div>
-  </div>
 </ng-template>
