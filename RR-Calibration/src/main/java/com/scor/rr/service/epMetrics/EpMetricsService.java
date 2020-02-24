@@ -1,6 +1,8 @@
 package com.scor.rr.service.epMetrics;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.UserRPEntity;
+import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.SaveOrDeleteListOfRPsRequest;
 import com.scor.rr.domain.dto.ValidateEpMetricResponse;
 import com.scor.rr.domain.enums.CurveType;
@@ -9,6 +11,7 @@ import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.repository.UserRPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -49,9 +52,10 @@ public class EpMetricsService {
         } else return new ValidateEpMetricResponse(null, null, null);
     }
 
-    public ResponseEntity<?> getEpMetrics(Integer userId, String workspaceContextCode, Integer uwYear, CurveType curveType, String screen) {
+    public ResponseEntity<?> getEpMetrics(String workspaceContextCode, Integer uwYear, CurveType curveType, String screen) {
         try {
-            return ResponseEntity.ok(this.defaultReturnPeriodRepository.findEpMetricsByWorkspaceAndUserAndCurveType(userId, workspaceContextCode, uwYear, curveType.getCurveType(), screen));
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            return ResponseEntity.ok(this.defaultReturnPeriodRepository.findEpMetricsByWorkspaceAndUserAndCurveType(user.getUserId(), workspaceContextCode, uwYear, curveType.getCurveType(), screen));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -75,12 +79,13 @@ public class EpMetricsService {
 
     public ResponseEntity<?> saveListOfRPs(SaveOrDeleteListOfRPsRequest request) {
         try {
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             return ResponseEntity.ok(
                     this.userRPRepository.saveAll(
                             request.getRps()
                                     .stream()
                                     .map(rp ->  {
-                                        UserRPEntity userRP= new UserRPEntity(rp, request.getUserId(), request.getScreen());
+                                        UserRPEntity userRP= new UserRPEntity(rp, user.getUserId(), request.getScreen());
                                         Optional<UserRPEntity> deletedUserRPOpt= this.userRPRepository.findByUserIdAndRpAndScreen(userRP.getUserId(), userRP.getRp(), userRP.getScreen());
                                         if(deletedUserRPOpt.isPresent()) {
                                             UserRPEntity deletedUserRP = deletedUserRPOpt.get();
@@ -102,7 +107,7 @@ public class EpMetricsService {
 
     public ResponseEntity<?> deleteRP(SaveOrDeleteListOfRPsRequest request) {
         try {
-
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             List<Integer> defaultRPs = defaultReturnPeriodRepository.findByIsTableRPOrderByReturnPeriodAsc();
 
             List<Integer> toBeDeleted= new ArrayList<>();
@@ -118,13 +123,13 @@ public class EpMetricsService {
             });
 
             toBeDeleted.forEach( rp -> {
-                userRPRepository.deleteByUserIdAndRpAndScreen(request.getUserId(), rp, request.getScreen());
+                userRPRepository.deleteByUserIdAndRpAndScreen(user.getUserId(), rp, request.getScreen());
             });
 
             toBeSaved.forEach( rp -> {
 
                 UserRPEntity userRPEntity;
-                Optional<UserRPEntity> userRPOpt = userRPRepository.findByUserIdAndRpAndScreen(request.getUserId(), rp, request.getScreen());
+                Optional<UserRPEntity> userRPOpt = userRPRepository.findByUserIdAndRpAndScreen(user.getUserId(), rp, request.getScreen());
 
                 if(userRPOpt.isPresent()) {
                     userRPEntity = userRPOpt.get();
@@ -134,7 +139,7 @@ public class EpMetricsService {
                 } else {
                     userRPEntity = new UserRPEntity();
 
-                    userRPEntity.setUserId(request.getUserId());
+                    userRPEntity.setUserId(user.getUserId());
                     userRPEntity.setRp(rp);
                     userRPEntity.setScreen(request.getScreen());
                     userRPEntity.setIsDeleted(true);
@@ -155,9 +160,10 @@ public class EpMetricsService {
         return defaultRPs.contains(rp);
     }
 
-    public ResponseEntity<?> getSinglePLTEpMetrics(Integer userId, Long pltHeaderId, CurveType curveType, String screen) {
+    public ResponseEntity<?> getSinglePLTEpMetrics(Long pltHeaderId, CurveType curveType, String screen) {
         try {
-            return ResponseEntity.ok(this.defaultReturnPeriodRepository.findSinglePLTEpMetricsUserAndCurveType(userId, pltHeaderId, curveType.getCurveType(), screen));
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            return ResponseEntity.ok(this.defaultReturnPeriodRepository.findSinglePLTEpMetricsUserAndCurveType(user.getUserId(), pltHeaderId, curveType.getCurveType(), screen));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }

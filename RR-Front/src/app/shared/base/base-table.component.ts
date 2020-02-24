@@ -55,7 +55,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     };
 
     this.selectedIds= {};
-    this.rows= 10;
+    this.rows= 7;
   }
 
   ngOnInit() {
