@@ -54,6 +54,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   availableColumns: any[];
   visibleColumns: any[];
 
+  selectedProject: any;
+
   constructor(
     private nzDropdownService: NzDropdownService,
     private zone: NgZone,
@@ -134,6 +136,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.select(WorkspaceState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
   }
 
+  getSelectedProject() {
+    return this.select(WorkspaceState.getSelectedProject);
+  }
+
   openedPlt: any;
 
   ngOnInit() {
@@ -163,6 +169,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
+
+    this.observeRouteParamsWithSelector(() => this.getSelectedProject()).subscribe( project => {
+      this.selectedProject = project;
+      this.detectChanges();
+    })
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
