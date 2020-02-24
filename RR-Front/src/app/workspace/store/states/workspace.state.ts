@@ -361,6 +361,7 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.summary;
   }
+
   @Selector()
   static getRiskLinkSummarySelectionSize(state: WorkspaceModel){
     const wsIdentifier = state.currentTab.wsIdentifier;
@@ -1166,24 +1167,36 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.SaveDefaultDataSourcesAction)
-  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveDefaultDataSourcesAction){
     return this.riskLinkFacade.saveDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadDefaultDataSourcesAction)
-  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultDataSourcesAction){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryOrDefaultDataSourcesAction)
-  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryOrDefaultDataSourcesAction){
     return this.riskLinkFacade.loadSummaryOrDefaultDataSources(ctx, payload);
+  }
+  @Action(fromWS.ResetToDefaultSelectionAction)
+  resetToDefaultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ResetToDefaultSelectionAction){
+    return this.riskLinkFacade.resetToDefaultSelection(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryAction)
-  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryAction){
     return this.riskLinkFacade.loadSummary(ctx, payload);
   }
+
+
+  @Action(fromWS.ClearSelectionAction)
+  clearSelection(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.clearSelection(ctx);
+  }
+
+
 
 
 

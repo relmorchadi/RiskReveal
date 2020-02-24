@@ -31,11 +31,7 @@ public interface RLModelDataSourceRepository extends JpaRepository<RLModelDataSo
      * @param rlDataSourceId
      * @return -1 => Operation failed / 1 => Deleted Successfully
      */
-//    @Query(value = "EXEC dbonew.usp_RiskLinkDeleteDataSource @RlModelDataSourceId=:rlDataSourceId", nativeQuery = true)
-//    Integer deleteRLModelDataSourceById(@Param("rlDataSourceId") Long rlDataSourceId);
     @Procedure(procedureName = "dbonew.usp_RiskLinkDeleteDataSource", outputParameterName = "Status")
     Integer deleteRLModelDataSourceById(@Param("RlModelDataSourceId") Long rlDataSourceId);
 
-    @Procedure(procedureName = "dbonew.usp_ClearProjectDataSources")
-    void clearProjectDataSources(@Param("ProjectId") Long projectId);
 }
