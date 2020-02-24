@@ -34,4 +34,5 @@ export class GeneralConfig {
     returnPeriod: any;
     display: any;
   };
+  users: any;
 }

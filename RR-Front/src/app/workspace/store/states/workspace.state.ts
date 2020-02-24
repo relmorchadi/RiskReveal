@@ -64,6 +64,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getWorkspaceStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
+  }
+
+  @Selector()
   static getProjects(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].projects;
@@ -520,7 +526,6 @@ export class WorkspaceState {
 
   @Action(fromWS.AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
-    console.log('add new project', payload);
     return this.wsService.addNewProject(ctx, payload);
   }
 

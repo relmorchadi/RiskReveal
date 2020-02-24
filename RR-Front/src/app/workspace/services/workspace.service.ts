@@ -278,13 +278,15 @@ export class WorkspaceService {
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
-    const {wsId, uwYear, project} = payload;
+    const {id, wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
+
     return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
       .pipe(map(prj => {
+          console.log(prj);
         ctx.patchState(produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
-          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true}) : null
+          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true, projectType: 'TREATY'}) : null
         }));
         return ctx.dispatch(new fromWS.AddNewProjectSuccess(prj));
       }), catchError(err => {
@@ -309,7 +311,7 @@ export class WorkspaceService {
       map( (prj: any) => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
           return item.projectId === projectId ? {...prj, projectType: prj.carRequestId === null ? 'TREATY' : 'FAC'
-            , selected: item.selected, projectName, projectDescription, dueDate} : {...item};
+            , selected: item.selected, projectName, projectDescription, dueDate, assignedTo} : {...item};
         }) : null;
       }))
     ), catchError(err => {
@@ -320,6 +322,7 @@ export class WorkspaceService {
 
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear} = payload;
+    const state = ctx.getState();
     const wsIdentifier = `${wsId}-${uwYear}`;
     return this.projectApi.deleteProject(projectId.projectId)
       .pipe(catchError(err => {
@@ -328,7 +331,11 @@ export class WorkspaceService {
       }))
       .subscribe((p) => {
         ctx.patchState(produce(ctx.getState(), draft => {
+          const selectedPrj = _.find(state.content[wsIdentifier].projects, item => item.projectId === projectId.projectId);
           draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId.projectId)
+          if (selectedPrj.selected) {
+            draft.content[wsIdentifier].projects[0].selected = true;
+          }
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });
