@@ -186,19 +186,16 @@ public class UserDashboardWidgetService {
                 request.getUserDashboardWidgetId(),
                 userCode,
                 request.getPageNumber(),
-                request.getPageSize(),
-                request.getSelectionList(),
-                request.isSortSelectedFirst(),
-                request.getSortSelectedAction()));
+                request.getPageSize()));
         return  response;
     }
 
 
     public int getTotalCount(DashboardRequest request) {
 
-        long userCode = 0;
+        String  userCode = "";
         if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
-            userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+            userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserCode());
         }
 
         StoredProcedureQuery query = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
