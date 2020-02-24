@@ -23,4 +23,8 @@ export class GlobalConfigApi {
     return this.http.delete(`${this.URL}`, {params: {userPreferenceId}});
   }
 
+  getAllUsers() {
+    return this.http.get(`${backendUrl() + 'user/all'}`);
+  }
+
 }

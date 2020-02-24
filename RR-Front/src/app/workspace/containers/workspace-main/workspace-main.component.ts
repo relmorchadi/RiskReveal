@@ -1,7 +1,7 @@
  import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as fromWs from '../../store/actions';
 import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions';
@@ -26,6 +26,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   loading: boolean;
   data: { [p: string]: any };
   currentWsIdentifier: string;
+  wsStatus: string;
+  selectedPrj: any = {};
+
+  @Select(WorkspaceState.getWorkspaceStatus) status$;
+  @Select(WorkspaceState.getSelectedProject) selectedPrj$;
 
   constructor(
     private _helper: HelperService,
@@ -63,6 +68,16 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
         this.data = content;
         this.detectChanges();
       });
+
+    this.status$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.wsStatus = value;
+      this.detectChanges();
+    });
+
+    this.selectedPrj$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.selectedPrj = value;
+      this.detectChanges();
+    })
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -143,7 +158,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   filterSelected() {
-    return _.filter(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => item.selected)[0];
+    return _.find(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => item.selected);
   }
 
   filterSelectedDivision() {

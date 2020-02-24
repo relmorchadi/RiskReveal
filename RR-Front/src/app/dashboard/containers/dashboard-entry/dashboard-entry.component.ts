@@ -161,7 +161,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   loadDashboardAction() {
-    this.dashboardAPI.getDashboards(1).subscribe(data => {
+    this.dashboardAPI.getDashboards().subscribe(data => {
       let dashboards = [];
       _.forEach(data, item => {
         dashboards = [...dashboards, this._formatData(item)]
@@ -359,7 +359,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
               _.forEach(widget.columns, element => {
                 if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
                   tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
-                  event = [...event, {element, visible: false}];
+                  event = [...event, {...element, visible: false}];
                 }
               });
               return {...widget, columns: [...event]}

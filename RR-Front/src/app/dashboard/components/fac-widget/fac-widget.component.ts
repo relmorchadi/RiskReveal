@@ -253,8 +253,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   changeHeight($event) {
-    this.rows = $event;
-    console.log('rows', this.rows);
+    //this.rows = $event;
+    //console.log('rows', this.rows);
   }
 
   getNumberOfRows() {
