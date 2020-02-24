@@ -29,6 +29,10 @@ public interface ViewContextColumnsRepository  extends JpaRepository<ViewContext
     void updateColumnFilterCriteria(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ViewContextColumnId") Long viewContextColumnId, @Param("FilterCriteria") String filterCriteria);
 
     @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextFilterByProjectId")
+    void filterByProjectId(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ProjectId") String projectId);
+
+    @Transactional
     @Procedure(procedureName = "dbonew.usp_ViewContextResetFilterCriteria")
     void resetColumnFilterCriteria(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId);
 
