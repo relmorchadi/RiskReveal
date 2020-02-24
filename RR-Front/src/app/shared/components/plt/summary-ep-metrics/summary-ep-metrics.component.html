@@ -135,6 +135,8 @@
         <app-ep-chart
                 [chartOption]="chartOption"
                 [updateOption]="updateOption"
+                (actionDispatcher)="handleChartActions($event)"
+
         ></app-ep-chart>
         </nz-tab>
     </nz-tabset>

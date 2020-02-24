@@ -15,6 +15,8 @@ export class GlobalManageColumnsComponent implements OnInit, AfterViewInit {
   @Input('availableList') availableList;
   _availableList;
 
+  windowRef= window;
+
   @Output() actionDispatcher: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
@@ -62,33 +64,33 @@ export class GlobalManageColumnsComponent implements OnInit, AfterViewInit {
     source[previousIndex]= { ...source[previousIndex], isVisible: !(sourceId === 'visible')};
   }
 
+  toggleAllVisibilityAndOrder(columns, visibility) {
+    _.forEach(columns, (col, i) => {
+      columns[i] = ({...col, columnOrder: _.toNumber(i), isVisible: visibility});
+    })
+  }
+
   ngAfterViewInit(): void {
     this._visibleList = [...this.visibleList];
     this._availableList = [...this.availableList];
-  }
-
-  moveLeft(i: string) {
-    this._availableList= _.concat({...this._visibleList[i], isVisible: false}, this._availableList);
-    this.reOrderColumns(this._availableList);
-
-    this._visibleList = _.filter(this._visibleList, (el, index) => i != index);
-    this.reOrderColumns(this._visibleList);
-    console.log(this._visibleList);
-    console.log(this._availableList);
-  }
-
-  moveRight(i: string) {
-    this._visibleList= _.concat({...this._availableList[i], isVisible: true}, this._visibleList);
-    this.reOrderColumns(this._visibleList);
-
-    this._availableList = _.filter(this._availableList, (el, index) => i != index);
-    this.reOrderColumns(this._availableList);
   }
 
   close() {
     this.actionDispatcher.emit({
       type: "Close"
     })
+  }
+
+  moveAllRight() {
+    this._visibleList = [...this._availableList, ...this._visibleList];
+    this.toggleAllVisibilityAndOrder(this._visibleList, true);
+    this._availableList = [];
+  }
+
+  moveAllLeft() {
+    this._availableList = [...this._visibleList, ...this._availableList];
+    this.toggleAllVisibilityAndOrder(this._availableList, false);
+    this._visibleList = [];
   }
 
 }
