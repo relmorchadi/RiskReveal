@@ -27,19 +27,21 @@
   </div>
   <div class="PLTs-content">
     <div
+            tRows [virtualRowHeight]="46" [tableClass]="'plt-list'" (heightChange)="rowsChange($event)"
             #tableContainer class="parent"
             [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
             (resized)="onContainerResize($event)"
     >
-      <div *ngIf="columns.length > 1" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
         <p-table
-                [class]="'plt-list'"
+                tRows [tableClass]="'plt-list'" (heightChange)="rowsChange($event)"
+                [styleClass]=" data.length > 0 ? 'plt-list': 'plt-list activate-header-scroll'"
                 dataKey="pltId" [value]="data" [columns]="columns"
                 [loading]="loading$ | async"
                 [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
                 [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
                 [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
-                [virtualRowHeight]="45.556" [lazy]="true" [virtualScroll]="true" [rows]="7" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
+                [virtualRowHeight]="46" [lazy]="true" [virtualScroll]="true" [rows]="rows" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
         >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -79,7 +81,7 @@
             <tr
                     [ngClass]="{'active_plt_item': selectedIds[row.pltId]}"
                     [pContextMenuRow]="row"
-                    style="height:45.556px">
+                    style="height: 46px">
               <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
@@ -101,7 +103,7 @@
           </ng-template>
         </p-table>
       </div>
-      <div *ngIf="!(columns.length > 1)" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="!(columns.length > 0)" [style.width]="totalColumnWidth + 'px'">
         <p-progressSpinner></p-progressSpinner>
       </div>
     </div>

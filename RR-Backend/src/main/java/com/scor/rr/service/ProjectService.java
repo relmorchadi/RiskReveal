@@ -64,7 +64,7 @@ public class ProjectService {
     private MarketChannelRepository marketChannelRepository;
 
     //FIXME: need to group into one function later
-    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, ProjectEntity p) {
+    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, String clientName, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() -> {
@@ -74,7 +74,7 @@ public class ProjectService {
                                             uwy,
                                             "FAC",
                                             facNum, //FIXME: workspace name and client name - check with Shaun
-                                            facNum));
+                                            clientName));
                             return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId()));
                         }
                 );
