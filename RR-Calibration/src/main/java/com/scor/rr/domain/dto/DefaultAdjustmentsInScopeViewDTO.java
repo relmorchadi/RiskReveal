@@ -21,6 +21,8 @@ public class DefaultAdjustmentsInScopeViewDTO {
 
     private String adjustmentType;
 
+    private String adjustmentTypeShortName;
+
     private Boolean capped;
 
     private Object factors;

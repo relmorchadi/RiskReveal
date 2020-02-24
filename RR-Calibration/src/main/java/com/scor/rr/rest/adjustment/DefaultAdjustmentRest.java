@@ -1,13 +1,9 @@
 package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.DefaultAdjustmentNode;
-import com.scor.rr.domain.DefaultAdjustmentsInScopeView;
-import com.scor.rr.domain.dto.DefaultAdjustmentsInScopeViewDTO;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.DefaultAdjustmentsInScopeRepository;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

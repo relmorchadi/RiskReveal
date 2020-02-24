@@ -1,1 +1,8 @@
-<div class="ep-chart" echarts [options]="chartOption" [merge]="updateOption"></div>
+<div class="ep-chart"
+     style="height: calc(100% - 33px);"
+     echarts
+     [options]="chartOption"
+     [autoResize]="true"
+     [merge]="updateOption"
+     (chartInit)="init(e)"
+     (chartLegendSelectChanged)="onLegendSelectionChange($event)"></div>

@@ -102,7 +102,7 @@ export class CalibrationNewService {
     return _.replace(curveType, /(-)/g, '');
   }
 
-  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, userId, curveType, resetMetrics}: any) {
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, curveType, resetMetrics}: any) {
 
     const {
       currentTab: {
@@ -110,7 +110,7 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType), 'Calibration').pipe(
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, this.formatCurveType(curveType), 'Calibration').pipe(
         tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -183,19 +183,19 @@ export class CalibrationNewService {
     }));
   }
 
-  saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
-    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId, 'Calibration')
+  saveRPs(ctx: StateContext<WorkspaceModel>, {rps, wsId, uwYear, curveType}: any) {
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, 'Calibration')
       .pipe(
-        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, curveType, resetMetrics: true})))
       )
   }
 
-  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, userId, wsId, uwYear, curveType}) {
+  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, wsId, uwYear, curveType}) {
     return forkJoin(
-        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId, 'Calibration'),
-        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration')
+        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, 'Calibration'),
+        this.calibrationAPI.deleteListOfRPsByUserId(deletedRPs, 'Calibration')
     ).pipe(
-        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, curveType, resetMetrics: true})))
     )
   }
 
