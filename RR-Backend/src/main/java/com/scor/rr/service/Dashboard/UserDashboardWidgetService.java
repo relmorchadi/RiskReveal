@@ -1,6 +1,7 @@
 package com.scor.rr.service.Dashboard;
 
 import com.google.gson.Gson;
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.Response.DashboardChartResponse;
 import com.scor.rr.domain.Response.DashboardDataResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
@@ -17,6 +18,7 @@ import com.scor.rr.repository.Dashboard.UserDashboardWidgetColumnsRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetRepository;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import springfox.documentation.spring.web.json.Json;
 
@@ -75,7 +77,7 @@ public class UserDashboardWidgetService {
 
     }
 
-    public UserWidgetResponse createDashboardWidget(long referenceId, long dashboardId, long userId) throws RRException {
+    public UserWidgetResponse createDashboardWidget(long referenceId, long dashboardId) throws RRException {
 
         DashboardWidget dashboardWidget = dashboardWidgetRepository.findByWidgetId(referenceId);
         if (dashboardWidget == null) throw new DashboardWidgetNotFoundException(referenceId, "");
@@ -84,7 +86,9 @@ public class UserDashboardWidgetService {
 
         UserDashboardWidget widget = new UserDashboardWidget();
         widget.setUserDashboardId(dashboardId);
-        widget.setUserID(userId);
+        if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
+            widget.setUserID(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+        }
         widget.setWidgetId(referenceId);
         widget.setUserAssignedName(dashboardWidget.getWidgetName());
         widget.setRowSpan(dashboardWidget.getRowSpan());
@@ -94,7 +98,7 @@ public class UserDashboardWidgetService {
 
         widget = userDashboardWidgetRepository.saveAndFlush(widget);
 
-        userDashboardWidgetColumnsService.createWidgetColumns(listCols, userId, widget.getUserDashboardWidgetId());
+        userDashboardWidgetColumnsService.createWidgetColumns(listCols, widget.getUserDashboardWidgetId());
 
         List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId());
 
@@ -173,10 +177,14 @@ public class UserDashboardWidgetService {
         DashboardDataResponse response = new DashboardDataResponse();
         response.setRefCount(getTotalCount(request));
 
+        String  userCode = "";
+        if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
+            userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserCode());
+        }
         response.setContent(userDashboardRepository.getDataForWidget(request.getCarStatus(),
                 request.getEntity(),
                 request.getUserDashboardWidgetId(),
-                request.getUserCode(),
+                userCode,
                 request.getPageNumber(),
                 request.getPageSize(),
                 request.getSelectionList(),
@@ -185,17 +193,13 @@ public class UserDashboardWidgetService {
         return  response;
     }
 
-   public void postConst() {
-
-        fetchDataSource = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
-                .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("UserCode", String.class, ParameterMode.IN)
-                .registerStoredProcedureParameter("FilteredRecCount", Integer.class, ParameterMode.OUT);
-    }
 
     public int getTotalCount(DashboardRequest request) {
+
+        long userCode = 0;
+        if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
+            userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+        }
 
         StoredProcedureQuery query = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
                 .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
@@ -207,7 +211,7 @@ public class UserDashboardWidgetService {
                 query.setParameter("CarStatus", request.getCarStatus())
                 .setParameter("Entity", request.getEntity())
                 .setParameter("UserDashboardWidgetId", request.getUserDashboardWidgetId())
-                .setParameter("UserCode", request.getUserCode()).execute();
+                .setParameter("UserCode", userCode).execute();
 
         try {
             query.execute();

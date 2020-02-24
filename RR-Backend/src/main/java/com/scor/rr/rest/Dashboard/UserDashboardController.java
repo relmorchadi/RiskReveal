@@ -19,8 +19,8 @@ public class UserDashboardController {
     private UserDashboardService userDashboardService;
 
     @GetMapping("getDashboards")
-    public List<UserDashboardResponse> getDashboards(@RequestParam long userId) throws RRException {
-        return userDashboardService.getDashboardForUser(userId);
+    public List<UserDashboardResponse> getDashboards()throws RRException {
+        return userDashboardService.getDashboardForUser();
     }
 
     @PostMapping("create")
