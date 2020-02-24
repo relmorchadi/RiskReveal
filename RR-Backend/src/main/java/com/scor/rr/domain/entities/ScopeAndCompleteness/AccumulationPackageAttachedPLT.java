@@ -1,33 +1,31 @@
-package com.scor.rr.domain.entities.AccumulationPackage;
+package com.scor.rr.domain.entities.ScopeAndCompleteness;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name = "AccumulationPackageAttachedPLT")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class AccumulationPackageAttachedPLT {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AccumulationPackageAttachedPLTid")
-    private Long accumulationPackageAttachedPLTId;
+    @Column(name = "AccumulationPackageAttachedPLTid", nullable = false)
+    private long accumulationPackageAttachedPLTid;
 
     @Column(name = "Entity")
-    private Integer entity;
+    private int entity;
 
     @Column(name = "AccumulationPackageId")
-    private Long accumulationPackageId;
+    private long accumulationPackageId;
 
     @Column(name = "PLTHeaderId")
-    private Long pltHeaderId;
+    private long pLTHeaderId;
 
     @Column(name = "ContractSectionId")
     private String contractSectionId;
 
+    public AccumulationPackageAttachedPLT() {
+    }
 }

@@ -30,8 +30,13 @@ public enum ExceptionCodename {
     PLT_FILE_WRITE_ERROR("Error while writing to file"),
 
 
+    /*  This section is for the expected Scope */
+    EXPECTED_SCOPE_FILE_NOT_FOUND_EXCEPTION("Expected scope file not found"),
+    EXPECTED_SCOPE_FILE_EXTENSION_NOT_SUPPORTED_EXCEPTION("Expected scope file extension not supported"),
+    EXPECTED_SCOPE_FILE_CORRUPTED_EXCEPTION("Expected scope file is corrupted"),
 
-    /* this section is for DashboardExceptions*/
+
+    /* This section is for DashboardExceptions*/
 
     USER_NOT_FOUND_EXCEPTION("User not found"),
     COLUMN_NOT_FOUND("Column not found"),
