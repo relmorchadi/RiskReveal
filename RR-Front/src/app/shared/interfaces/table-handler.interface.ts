@@ -7,6 +7,11 @@ export interface TableHandlerInterface {
   _data: any[];
   data$: BehaviorSubject<any[]>;
 
+  _rows: number;
+  rows$: BehaviorSubject<number>;
+
+  maxRows: number;
+
   _selectedIds: any[];
   selectedIds$: BehaviorSubject<any[]>;
 
@@ -53,9 +58,11 @@ export interface TableHandlerInterface {
   onVirtualScroll(event);
   onExport();
 
+  filterByProjectId(projectId: number);
+
   init(config: any): void;
   initApi(url: string): void;
-  initTable(params: any): void;
+  initTable(params: any, selectedProject: number): void;
   reloadTable(request: FetchViewContextDataRequest): Observable<any>;
   setPageSize(rows: number);
   loadDataSubscription();

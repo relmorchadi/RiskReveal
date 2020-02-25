@@ -17,39 +17,43 @@ export class TableServiceImp implements TableServiceInterface {
     this._url = url;
   }
 
-  getColumns() {
+  public getColumns() {
     return this._http.get(`${this._url}columns`);
   }
 
-  getData(params): Observable<any> {
+  public getData(params): Observable<any> {
     return this._http.get(`${this._url}`, { params });
   }
 
-  getIDs(params): Observable<any> {
+  public getIDs(params): Observable<any> {
     return this._http.get(`${this._url}ids`, { params });
   }
 
-  updateColumnWidth(body): Observable<any> {
+  public updateColumnWidth(body): Observable<any> {
     return this._http.post(`${this._url}columns/width`, body);
   }
 
-  updateColumnFilter(body): Observable<any> {
+  public updateColumnFilter(body): Observable<any> {
     return this._http.post(`${this._url}columns/filter`, body);
   }
 
-  updateColumnSort(body): Observable<any> {
+  public filterByProject(body): Observable<any> {
+    return this._http.post(`${this._url}columns/filter/project`, body);
+  }
+
+  public updateColumnSort(body): Observable<any> {
     return this._http.post(`${this._url}columns/sort`, body);
   }
 
-  updateColumnsOrderAndVisibility(body): Observable<any> {
+  public updateColumnsOrderAndVisibility(body): Observable<any> {
     return this._http.post(`${this._url}columns/orderandvisibility`, body);
   }
 
-  resetColumnFilter(body): Observable<any> {
+  public resetColumnFilter(body): Observable<any> {
     return this._http.post(`${this._url}columns/filter/reset`, body);
   }
 
-  resetColumnSort(body): Observable<any> {
+  public resetColumnSort(body): Observable<any> {
     return this._http.post(`${this._url}columns/sort/reset`, body);
   }
 
