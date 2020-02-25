@@ -58,7 +58,7 @@
                 </div>
                 <ul nz-menu>
                     <li
-                            *ngFor="let financialUnit of headerConfig?.financialUnits" nz-menu-item (click)="financialUnitChange(financialUnit)">
+                            *ngFor="let financialUnit of headerConfig?.financialUnits" nz-menu-item (click)="changeFinancialUnit(financialUnit)">
                         {{financialUnit.header}}
                     </li>
                 </ul>
@@ -85,7 +85,7 @@
             </nz-dropdown>
         </div>
         <div  *ngIf="headerConfig.divisions.length > 0 " class="view-details">
-            <i class="icon-info_24px" (click)="openDivisionDetails()"></i>
+            <i class="icon-info_24px info-icon" (click)="openDivisionDetails()"></i>
         </div>
         <div *ngIf="headerConfig.portfolios.length > 0" class="body-wrap-dropDowns">
             <nz-dropdown  [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
@@ -101,14 +101,22 @@
                     </div>
                 </div>
                 <ul nz-menu>
-                    <li *ngFor="let portfolio of headerConfig?.portfolios" nz-menu-item (click)="changePortfolio(portfolio)">
+                    <li *ngFor="let portfolio of headerConfig?.portfolios"  nz-menu-item (click)="changePortfolio(portfolio)">
                         {{portfolio.header}}
                     </li>
                 </ul>
             </nz-dropdown>
         </div>
         <div  *ngIf="headerConfig.portfolios.length > 0" class="view-details">
-            <i class="icon-info_24px" (click)="openPortfolioDetails()"></i>
+            <i class="icon-info_24px info-icon"  (click)="openPortfolioDetails()"></i>
         </div>
+        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" class="top-right-menu-dropdown">
+            <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-settings_24px" style="font-size: 25px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+                <li nz-menu-item (click)="exportExposuresTable()">Export</li>
+            </ul>
+        </nz-dropdown>
     </div>
 </div>

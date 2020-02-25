@@ -23,5 +23,24 @@ export class ExposuresHeaderService {
         return this._api.loadHeaderConfig();
     }
 
+    changeCurrency(currency: any) {
+        return this._api.changeCurrency(currency);
+    }
+
+    changeFinancialUnit(financialUnit: any) {
+        return this._api.changeFinancialUnit(financialUnit);
+    }
+
+    changeDivision(division: any) {
+        return this._api.changeDivision(division);
+    }
+
+    changePortfolio(portfolio: any) {
+        return this._api.changePortfolio(portfolio);
+    }
+
+    changeView(view: any) {
+        return this._api.changeView(view);
+    }
 
 }

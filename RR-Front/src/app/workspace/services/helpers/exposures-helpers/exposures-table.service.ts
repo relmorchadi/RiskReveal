@@ -24,7 +24,7 @@ export class ExposuresTableService  {
 
 
     public sortTableColumn(sortConfig) {
-         this._api.sortTableColumn(sortConfig);
+         return this._api.sortTableColumn(sortConfig);
     }
 
     initTable() {
@@ -37,4 +37,11 @@ export class ExposuresTableService  {
         })
     }
 
+    changeProject(project: any) {
+        return this._api.changeProject(project);
+    }
+
+    exportTable() {
+        this._api.exportTable()
+    }
 }

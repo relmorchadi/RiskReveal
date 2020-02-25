@@ -13,7 +13,6 @@ export class ExposuresRightMenuService {
 
 
     rightMenuConfig$: BehaviorSubject<ExposuresRightMenuConfig>;
-    private rightMenuConfig: any[];
 
 
     constructor(private _api: ExposuresApi) {
@@ -38,10 +37,6 @@ export class ExposuresRightMenuService {
             content: null,
             visibility: false
         })
-    }
-
-    public sortTableColumn(sortConfig) {
-        this._api.sortTableColumn(sortConfig);
     }
 
 

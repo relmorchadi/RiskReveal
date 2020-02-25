@@ -3,6 +3,7 @@
              [frozenValue]="tableConfig.frozenValues" [value]="tableConfig.values"
              [scrollable]="true"
              syncScroll
+             [customSort]="true"
              (sortFunction)="onSort($event)"
              scrollHeight="calc( 100vh - 435px )" frozenWidth="500px">
         <ng-template pTemplate="colgroup" let-columns>
@@ -16,6 +17,10 @@
                     <th [colSpan]="col.field == 'metric' ? 2 : 1"
                         [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
+                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
+                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
+                                       'icon-direction':sortConfig[col.field] == 0}">
+                        </i>
                     </th>
                 </ng-container>
             </tr>
@@ -25,6 +30,10 @@
                 <ng-container *ngFor="let col of columns">
                     <th [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
+                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
+                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
+                                       'icon-direction':sortConfig[col.field] == 0}">
+                        </i>
                     </th>
                 </ng-container>
             </tr>

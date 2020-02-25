@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BaseContainer} from '../../../shared/base';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {Router} from '@angular/router';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from "../../../core/store/actions/header.action";
@@ -12,33 +12,52 @@ import {ExposuresRightMenuConfig} from "../../model/exposures-right-menu-config.
 import {ExposuresRightMenuService} from "../../services/helpers/exposures-helpers/exposures-right-menu.service";
 import {ExposuresHeaderConfig} from "../../model/exposures-header-config.model";
 import {ExposuresHeaderService} from "../../services/helpers/exposures-helpers/exposures-header.service";
+import {WorkspaceState} from "../../store/states";
+import * as _ from "lodash";
+import {first} from "rxjs/operators";
 
 @Component({
     selector: 'app-workspace-exposures',
     templateUrl: './workspace-exposures.component.html',
     styleUrls: ['./workspace-exposures.component.scss'],
-    providers: [ExposuresTableService, ExposuresRightMenuService,ExposuresHeaderService]
+    providers: [ExposuresTableService, ExposuresRightMenuService, ExposuresHeaderService]
 })
 export class WorkspaceExposuresComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+    @Select(WorkspaceState.getSelectedProject) selectedProject$;
     wsIdentifier;
     workspaceInfo: any;
     tableConfig$: Observable<ExposuresMainTableConfig>;
     rightMenuConfig$: Observable<ExposuresRightMenuConfig>;
     headerConfig$: Observable<ExposuresHeaderConfig>;
+    sortConfig:any;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
                 private exposuresRightMenuService: ExposuresRightMenuService,
-                private exposuresHeaderService:ExposuresHeaderService) {
+                private exposuresHeaderService: ExposuresHeaderService) {
         super(_baseRouter, _baseCdr, _baseStore);
         this.tableConfig$ = new BehaviorSubject<ExposuresMainTableConfig>(new ExposuresMainTableConfig());
         this.rightMenuConfig$ = new BehaviorSubject<ExposuresRightMenuConfig>(new ExposuresRightMenuConfig());
         this.headerConfig$ = new BehaviorSubject<ExposuresHeaderConfig>(new ExposuresHeaderConfig());
+        this.sortConfig = {};
     }
 
     ngOnInit() {
         this.tableConfig$ = this.exposuresTableService.loadTableConfig();
         this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig();
+        this.selectedProject$.pipe(first()).subscribe(project => {
+            if (project) {
+               let {tableConfig, headerConfig} = this.exposuresTableService.changeProject(project);
+               this.tableConfig$ = tableConfig;
+               this.headerConfig$ = headerConfig;
+            }
+        });
+        this.tableConfig$.pipe(first()).subscribe(tableConfig => {
+            _.forEach([...tableConfig.frozenColumns, ...tableConfig.columns], column => {
+                this.sortConfig[column.field] = 0;
+            })
+        })
     }
 
     patchState({wsIdentifier, data}: any): void {
@@ -62,23 +81,25 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         super.detectChanges();
     }
 
+    sortTableColumn() {
+
+    }
 
     mainTableActionDispatcher($event: any) {
-        this.exposuresTableService.sortTableColumn($event);
+        switch ($event.type) {
+            case 'sortTableColumn': {
+                this.sortConfig[$event.payload.field] = $event.payload.order;
+                break;
+            }
+        }
     }
 
-    onRightMenuCall(type: any) {
-        this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig(type)
-    }
 
-    onRightMenuClose() {
-        this.rightMenuConfig$ = this.exposuresRightMenuService.destructRightMenuConfig();
-    }
 
     rightMenuActionDispatcher($event: any) {
         switch ($event.type) {
             case 'closeRightMenu' : {
-                this.onRightMenuClose();
+                this.rightMenuConfig$ = this.exposuresRightMenuService.destructRightMenuConfig();
                 break;
             }
         }
@@ -86,12 +107,36 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
 
     headerActionDispatcher($event: any) {
         switch ($event.type) {
+            case 'changeCurrency' : {
+                this.tableConfig$ = this.exposuresHeaderService.changeCurrency($event.payload);
+                break;
+            }
+            case 'changeFinancialUnit' : {
+                this.tableConfig$ = this.exposuresHeaderService.changeFinancialUnit($event.payload);
+                break;
+            }
+            case 'changeDivision' : {
+                this.tableConfig$ = this.exposuresHeaderService.changeDivision($event.payload);
+                break;
+            }
+            case 'changePortfolio' : {
+                this.tableConfig$ = this.exposuresHeaderService.changePortfolio($event.payload);
+                break;
+            }
+            case 'changeView' : {
+                this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
+                break;
+            }
             case 'openPortfolioDetails': {
-                this.onRightMenuCall('portfolio');
+                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('portfolio');
                 break;
             }
             case 'openDivisionDetails' : {
-                this.onRightMenuCall('division');
+                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division');
+                break;
+            }
+            case 'exportExposuresTable' : {
+                this.exposuresTableService.exportTable();
                 break;
             }
         }

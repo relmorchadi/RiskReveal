@@ -31,32 +31,34 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
 
     changeCurrency(currency: any) {
-        
+        this.actionDispatcher.emit({type:'changeCurrency',payload:currency});
     }
 
-    financialUnitChange(financialUnit: any) {
-        
+    changeFinancialUnit(financialUnit: any) {
+        this.actionDispatcher.emit({type:'changeFinancialUnit',payload:financialUnit});
     }
 
     changeDivision(division: any) {
-        
+        this.actionDispatcher.emit({type:'changeDivision',payload:division});
     }
 
     changePortfolio(portfolio: any) {
-        
+        this.actionDispatcher.emit({type:'changePortfolio',payload:portfolio});
     }
 
     changeView(view: any) {
-
+        this.actionDispatcher.emit({type:'changeView',payload:view});
     }
 
     openPortfolioDetails() {
-        this.actionDispatcher.emit({type:'openPortfolioDetails'});
+        this.actionDispatcher.emit({type:'openPortfolioDetails',payload:null});
     }
 
     openDivisionDetails() {
-        this.actionDispatcher.emit({type:'openDivisionDetails'});
+        this.actionDispatcher.emit({type:'openDivisionDetails',payload:null});
     }
 
-
+    exportExposuresTable() {
+        this.actionDispatcher.emit({type:'exportExposuresTable',payload:null})
+    }
 }
