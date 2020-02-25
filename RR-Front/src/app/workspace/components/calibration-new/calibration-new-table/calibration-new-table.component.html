@@ -188,8 +188,8 @@
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
           <span>{{adjustment?.basisShortName}}</span>
-          <div class="text-ellipsis" *ngIf="adjustment?.adjustmentType != 'Linear'">{{adjustment?.adjustmentType}}</div>
-          <input *ngIf="adjustment?.adjustmentType == 'Linear'" class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
+          <div class="text-ellipsis" *ngIf="adjustment?.adjustmentTypeShortName">{{adjustment?.adjustmentTypeShortName}}</div>
+          <input *ngIf="!adjustment?.adjustmentTypeShortName" class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
         </div>
       </div>
     </div>

@@ -7,6 +7,5 @@ import java.util.List;
 @Data
 public class SaveOrDeleteListOfRPsRequest {
     List<Integer> rps;
-    Long userId;
     String screen;
 }

@@ -373,6 +373,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public void clearProjectAndLoadDefaultDataSources(Long projectId) {
-        rlModelDataSourceRepository.clearProjectDataSources(projectId);
+        rlModelDataSourceRepository.findByProjectId(projectId)
+                .stream()
+                .forEach(ds -> {
+                    rlModelDataSourceRepository.deleteRLModelDataSourceById(ds.getRlModelDataSourceId());
+                });
     }
 }

@@ -22,9 +22,6 @@ public class FacContractCurrency {
     @Column(name = "WorkspaceUwYear")
     private Integer workspaceUwYear;
 
-    @Column(name = "CARequestId", length = 30)
-    private String caRequestId;
-
     @Column(name = "Currency", length = 4)
     private String currency;
 

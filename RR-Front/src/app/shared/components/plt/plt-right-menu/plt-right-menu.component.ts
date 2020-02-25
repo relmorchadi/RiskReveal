@@ -504,7 +504,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
       this.epMetrics[pltHeaderId][curve]= {};
       this.rps[pltHeaderId]= this.rps[pltHeaderId] || [];
       if(!this.epMetricsSubscriptions[pltHeaderId]) this.epMetricsSubscriptions[pltHeaderId]= {};
-      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager')
+      this.epMetricsSubscriptions[pltHeaderId][curve] = this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, _.replace(curve, '-',''), 'PLT Manager')
           .pipe(
               this.unsubscribeOnDestroy,
           )
@@ -617,6 +617,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
         this.deleteRP(action.payload);
         break;
 
+      case "On Legend Selection Change":
+        this.handleLegendSelectionChange(action.payload);
+        break;
+
       default:
         console.log(action);
         break;
@@ -654,10 +658,10 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
                 this.detectChanges();
               }),
               filter((validation: any) => validation.isValid),
-              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp], 1, 'PLT Manager')
+              mergeMap(() => this.calibrationAPI.saveListOfRPsByUserId([rp],  'PLT Manager')
                   .pipe(
                       mergeMap(() => forkJoin(
-                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId, 1, _.replace(curve, '-',''), 'PLT Manager'))
+                          ..._.map(this.summaryEpMetricsConfig.selectedCurveType, curve => this.calibrationAPI.loadSinglePltEpMetrics(this.inputs.pltHeaderId,  _.replace(curve, '-',''), 'PLT Manager'))
                       ))
                   )),
               this.unsubscribeOnDestroy
@@ -697,7 +701,7 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   deleteRP(rp) {
-    this.calibrationAPI.deleteListOfRPsByUserId(1, [rp], 'PLT Manager')
+    this.calibrationAPI.deleteListOfRPsByUserId([rp], 'PLT Manager')
         .pipe(take(1))
         .subscribe(() => {
           _.forEach(this.rps, (e,k) => {
@@ -738,9 +742,6 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
   }
 
   hideMetric({curveTypes, difference}) {
-
-    console.log("HIDE METRIC");
-    console.log({curveTypes, difference});
 
     this.epMetricsTableConfig= {
       columns: _.filter(this.epMetricsTableConfig.columns, col => !_.find(difference, column => column == col.header))
@@ -824,6 +825,21 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
     this.loadEpChartData(this.selectedPLT.pltId);
   }
 
+
+  handleLegendSelectionChange(selected) {
+    const filteredCurves =  _.filter(['OEP', 'OEP-TVAR', 'AEP', 'AEP-TVAR'], e => selected[e]);
+    if(!filteredCurves.length) {
+      this.summaryEpMetricsConfig = {
+        ...this.summaryEpMetricsConfig,
+        selectedCurveType: this.summaryEpMetricsConfig.selectedCurveType[0]
+      }
+    } else {
+      this.summaryEpMetricsConfig = {
+        ...this.summaryEpMetricsConfig,
+        selectedCurveType: filteredCurves
+      }
+    }
+  }
 
 
 }

@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {catchError, debounceTime, exhaustMap, map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 import * as tableStore from "../components/plt/plt-main-table/store";
+import {ExcelService} from "../services/excel.service";
 
 @Injectable()
 export class TableHandlerImp implements TableHandlerInterface {
@@ -55,13 +56,13 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   config = {
     pageNumber: 1,
-    pageSize: 8,
+    pageSize: 7,
     entity: 1
   };
 
   protected containerWidth: number;
 
-  constructor() {
+  constructor(private excel: ExcelService) {
     this.columns$ = new BehaviorSubject([]);
     this.visibleColumns$ = new BehaviorSubject([]);
     this.availableColumns$ = new BehaviorSubject([]);
@@ -500,7 +501,32 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onExport() {
-    console.log("Export")
+    this._api.getData({
+        ...this.params,
+      pageNumber: 1,
+      pageSize: this.totalRecords,
+      entity: 1,
+      selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
+      sortSelectedFirst: this._sortSelectedFirst,
+      sortSelectedAction: this._sortSelectedAction
+    }).subscribe(({plts, totalCount}) => {
+      let filters = [];
+
+      _.forEach(_.filter(this._visibleColumns, column => column.filterCriteria), (col: Column) => {
+        filters.push({
+          column: col.displayName,
+          value: col.filterCriteria
+        })
+      });
+
+      this.excel.exportAsExcelFile(
+          [
+              { sheetData: plts, sheetName: "Data"},
+              { sheetData: filters, sheetName: "Filters"}
+              ],
+          `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
+      )
+    })
   }
 
 }

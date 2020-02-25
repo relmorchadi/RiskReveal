@@ -677,7 +677,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.dispatch(new fromWorkspaceStore.SaveOrDeleteRPs({
       deletedRPs: this.returnPeriodConfig.deletedRPs,
       newlyAddedRPs: this.returnPeriodConfig.newlyAdded,
-      userId: 1,
       wsId: this.wsId,
       uwYear: this.uwYear,
       curveType: this.tableConfig.selectedCurveType
@@ -792,7 +791,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     });
 
     this.excel.exportAsExcelFile(
-        exportedList,
+        [{sheetData: exportedList, sheetName: "Main"}],
         'EP Metrics-Calibration'
     )
   }
