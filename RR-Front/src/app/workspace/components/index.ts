@@ -22,7 +22,7 @@ import {NonLinearAdjustmentTableComponent} from "./calibration-new/non-linear-ad
 import {ExposuresMainTableComponent} from "./exposures/exposures-main-table/exposures-main-table.component";
 import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-header.component";
 import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
-import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
+import {ExposuresRightMenuComponent} from "./exposures/exposures-right-menu/exposures-right-menu.component";
 
 export const COMPONENTS = [
     LeftMenuComponent,
@@ -49,7 +49,7 @@ export const COMPONENTS = [
     ExposuresMainTableComponent,
     ExposuresHeaderComponent,
     ExposuresLeftMenuComponent,
-    DatasourceListComponent
+    ExposuresRightMenuComponent,
 ];
 
 export * from './workspace-router/workspace-router.component';

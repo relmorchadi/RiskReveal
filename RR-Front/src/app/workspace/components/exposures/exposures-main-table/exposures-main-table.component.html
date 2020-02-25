@@ -1,6 +1,6 @@
 <div class="table-wrapper">
-    <p-table [columns]="columns" [frozenColumns]="frozenColumns"
-             [frozenValue]="frozenValues" [value]="values"
+    <p-table [columns]="tableConfig.columns" [frozenColumns]="tableConfig.frozenColumns"
+             [frozenValue]="tableConfig.frozenValues" [value]="tableConfig.values"
              [scrollable]="true"
              syncScroll
              (sortFunction)="onSort($event)"
@@ -46,10 +46,10 @@
                 [ngClass]="{'row-hover':rowData.hover}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container *ngIf="col.field == 'metric'">
-                        <td [ngClass]="{'grouped-metric-first' : rowIndex < values.length - 1 &&
-                                         rowData['metric'] == values[rowIndex + 1]['metric'],
+                        <td [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.values.length - 1 &&
+                                         rowData['metric'] == tableConfig.values[rowIndex + 1]['metric'],
                                         'grouped-metric-next':rowIndex > 0 &&
-                                         rowData['metric'] == values[rowIndex - 1]['metric']}">
+                                         rowData['metric'] == tableConfig.values[rowIndex - 1]['metric']}">
                             {{rowData[col.field]}}
                         </td>
                         <td>
