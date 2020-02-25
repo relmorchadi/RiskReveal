@@ -195,6 +195,11 @@ public class PltBrowserService {
         this.viewContextColumnsRepository.updateColumnFilterCriteria(user.getUserCode(), request.getViewContextId(), request.getViewContextColumnId(), request.getFilterCriteria());
     }
 
+    public void filterByProjectId(UpdateColumnFilterCriteriaRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.filterByProjectId(user.getUserCode(), 2L, request.getProjectId().toString());
+    }
+
     public void resetColumnFilterCriteria(ResetColumnFilterCriteriaRequest request) {
         UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         this.viewContextColumnsRepository.resetColumnFilterCriteria(user.getUserCode(), request.getViewContextId());
