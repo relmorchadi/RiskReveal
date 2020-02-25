@@ -61,7 +61,7 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   config = {
     pageNumber: 1,
-    pageSize: 10 ,
+    pageSize: 10000,
     entity: 1
   };
 
@@ -75,9 +75,9 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.data$ = new BehaviorSubject([]);
     this.loading$ = new BehaviorSubject(false);
     this.totalRecords$ = new BehaviorSubject(0);
-    this._rows = 10;
-    this.maxRows = 20;
-    this.rows$ = new BehaviorSubject(10);
+    this._rows = 3;
+    this.maxRows = 10000;
+    this.rows$ = new BehaviorSubject(3);
     this.totalColumnWidth$ = new BehaviorSubject(1);
 
     this.selectedIds$ = new BehaviorSubject({});
@@ -112,11 +112,6 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   public loadColumns() {
     return this._api.getColumns();
-  }
-
-  public setPageSize(rows) {
-    this.config.pageSize = rows;
-    this.loadChunk(this.config.pageNumber * rows, rows);
   }
 
   private loadSelectedIds () {
@@ -203,6 +198,9 @@ export class TableHandlerImp implements TableHandlerInterface {
 
       const newSelection = { ...this._selectedIds, ...newIds };
       this.updateSelectedIDs(newSelection);
+      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
     })
 
     // this.loadColsSubscription();
@@ -286,14 +284,56 @@ export class TableHandlerImp implements TableHandlerInterface {
         newIds[e.pltId] = this._selectedIds[e.pltId] || false;
       });
 
-      const newSelection = { ...this._selectedIds, ...newIds };
+      const newSelection = newIds;
+
       this.updateSelectedIDs(newSelection);
+      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
     })
 
   }
 
   onResetFilter() {
-    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])))
+    const filter$ = this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])).pipe(share());
+
+
+    filter$.pipe(
+        switchMap( () => forkJoin(
+            this.loadColumns(),
+            this.loadData({
+              ...this.params,
+              ...this.config,
+              pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
+              selectionList: _.join(this._selectedIds, ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            }),
+            this.loadSelectedIds()
+        )),
+    ).subscribe(
+        ([columns, data, ids]: any) => {
+          const {totalCount, plts} = data;
+          this.updateTotalRecords(totalCount);
+          this.updateColumns(columns);
+          let newIds = {};
+
+          _.forEach(ids, e => {
+            newIds[e.pltId] = this._selectedIds[e.pltId] || false;
+          });
+
+          const newSelection = { ...this._selectedIds, ...newIds };
+          this.updateSelectedIDs(newSelection);
+          const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+          this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+          this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+          this.updateData(plts);
+        },
+        (error) => {
+          console.error(error);
+        }
+    );
+
   }
 
   onSort(index: number){
@@ -311,8 +351,8 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
-  onRowSelect(id: number, index: number, $event: MouseEvent) {
-    console.log(this._selectedIds)
+  onRowSelect(id: number, index: number, $event: MouseEvent, byCheckBox) {
+    console.log(this._selectedIds);
     const isSelected = _.findIndex(this._selectedIds, (v, k) => k == id) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.selectionConfig.lastClick = 'withKey';
@@ -321,7 +361,7 @@ export class TableHandlerImp implements TableHandlerInterface {
       this.selectionConfig.lastSelectedId = index;
       let newIds = {};
       _.forEach(this._selectedIds, (v,k: number) => {
-        newIds[k] = k == id;
+        newIds[k] = k == id ? (byCheckBox ? !v : true) : (byCheckBox ? v : false);
       });
       this.updateSelectedIDs(newIds);
       const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
@@ -329,6 +369,7 @@ export class TableHandlerImp implements TableHandlerInterface {
       this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
       this.selectionConfig.lastClick = null;
     }
+    console.log(this._selectedIds);
   }
 
   onContainerResize(newWidth) {
@@ -337,10 +378,10 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onCheckAll() {
-    const newIds = {};
+    let newIds = {};
 
     _.forEach(this._selectedIds, (v,k) => {
-      newIds[k] = this._selectAll ? false : !this._indeterminate;
+      newIds[k] = !this._indeterminate && !this._selectAll;
     });
 
     this.updateSelectedIDs(newIds);
@@ -349,7 +390,13 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
   }
 
+  public setPageSize(rows) {
+    // this.config.pageSize = rows;
+    // this.loadChunk(this.config.pageNumber * rows, rows);
+  }
+
   onVirtualScroll(event) {
+    console.log(event);
     const {
       pageNumber,
       pageSize
@@ -358,9 +405,9 @@ export class TableHandlerImp implements TableHandlerInterface {
     if(event.first != (pageNumber * pageSize) || this.config.pageSize != event.rows) {
       this.config.pageSize= event.rows;
       if (event.first === this.totalRecords)
-        this.loadChunk(event.first, this.config.pageSize / 2);
+        this.loadChunk(event.first, 3);
       else
-        this.loadChunk(event.first, this.config.pageSize / 2);
+        this.loadChunk(event.first, Math.floor(this.config.pageSize));
     }
 
   }
@@ -464,7 +511,7 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   private handlePLTClickWithKey(id: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
-      const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
+      const newIds = { ...this._selectedIds, [id] : true};
       this.updateSelectedIDs(newIds);
       const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
       this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
@@ -476,16 +523,15 @@ export class TableHandlerImp implements TableHandlerInterface {
     if ($event.shiftKey) {
       if (!this.selectionConfig.lastSelectedId) this.selectionConfig.lastSelectedId = 0;
       if (this.selectionConfig.lastSelectedId  >= 0) {
+
         const max = _.max([i, this.selectionConfig.lastSelectedId]);
         const min = _.min([i, this.selectionConfig.lastSelectedId]);
 
-        //Filter concerned range of data
-        const data = _.filter(this._data, (plt, i) => i <= max && i >= min);
+
         const newIds = {};
 
-        //Select all filtered PLTs
-        _.forEach(data, plt => {
-          newIds[plt.pltId] = true;
+        _.forEach(this._data, (plt, i) => {
+          newIds[plt.pltId] =  i <= max && i >= min;
         });
 
         this.updateSelectedIDs(newIds);
@@ -528,9 +574,9 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateTotalRecords(t) {
-    if(t < this.maxRows && t) {
-      this.updateRows(Math.floor(t / 2));
-    }
+    // if(t < this.maxRows && t) {
+    //   this.updateRows(t);
+    // }
     this.totalRecords= t;
     this.totalRecords$.next(t);
   }
@@ -540,6 +586,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateSelectedIDs(s) {
+    console.log(s);
     this._selectedIds = s;
     this.selectedIds$.next(s);
   }
