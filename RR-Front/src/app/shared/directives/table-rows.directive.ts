@@ -14,7 +14,7 @@ import {
 @Directive({
   selector: '[tRows]'
 })
-export class TableRowsDirective implements AfterViewChecked{
+export class TableRowsDirective implements AfterViewChecked {
 
   @Input() tableClass: string;
   @Input() virtualRowHeight: number;
@@ -32,7 +32,7 @@ export class TableRowsDirective implements AfterViewChecked{
     const node = document.querySelector('.' + this.tableClass + ' .ui-table-scrollable-body');
     if(node) {
       const element: any = new ElementRef(node);
-      const rows = Math.floor((element.nativeElement.offsetHeight - 8) / this.virtualRowHeight);
+      const rows = Math.floor((element.nativeElement.offsetHeight) / this.virtualRowHeight);
       this.heightChange.emit(rows);
     }
   }

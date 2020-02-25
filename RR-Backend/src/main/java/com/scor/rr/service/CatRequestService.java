@@ -26,6 +26,9 @@ public class CatRequestService {
     private ProjectService projectService;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private UserRrRepository userRrRepository;
 
     @Autowired
@@ -43,18 +46,29 @@ public class CatRequestService {
     @Autowired
     private ProjectConfigurationForeWriterDivisionRepository projectConfigurationForeWriterDivisionRepository;
 
+    @Autowired
+    private RefInsuredsRepository refInsuredsRepository;
+
     private static final long CAR_ID_OFFSET = 100000;
 
     public String createRequest(CatRequestData data){
         log.debug("{}", data);
         final Date date = new Date();
 
+        Optional<RefInsureds> client = refInsuredsRepository.findById(data.insurNumber.toString());
+        String clientName;
+        if(client.isPresent()) {
+            clientName = client.get().getInsuredName();
+        } else {
+            clientName = data.insurNumber.toString();
+        }
+
         ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setEntity(1);
         projectEntity.setCreationDate(date);
         projectEntity.setCreatedBy(data.userFN + " " + data.userLN);
         projectEntity.setProjectName(data.uwAnalysisName); //FIXME: check with SHAUN
-        projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, projectEntity);
+        projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, clientName, projectEntity);
 
         List<ProjectConfigurationForeWriterContract> projectConfigurationForeWriterContracts = projectConfigurationForeWriterContractRepository.findByContractIdAndUwYear(data.facNumber, data.uwYear);
         for (ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract : projectConfigurationForeWriterContracts) {
@@ -82,6 +96,10 @@ public class CatRequestService {
                 null,
                 null));
 
+        //FIXME: change CAR naming logic
+        projectEntity.setProjectName("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
+        projectRepository.save(projectEntity);
+
         //FIXME: must define a Counter table to controll CAR ID
         projectConfigurationForeWriter.setCaRequestId("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
         UserRrEntity userRrEntity = userRrRepository.findByWindowsUser(data.userID);
@@ -90,8 +108,9 @@ public class CatRequestService {
             projectConfigurationForeWriter.setCarStatus(CARStatus.ASGN);
         }
         projectConfigurationForeWriterRepository.save(projectConfigurationForeWriter);
+        /*Insured or client ?*/
+        //ClientEntity clientEntity = clientRepository.findByClientnumber(data.insurNumber.toString());
 
-        ClientEntity clientEntity = clientRepository.findByClientnumber(data.insurNumber.toString());
         SubsidiaryEntity subsidiaryEntity = subsidiaryRepository.findByCode(data.subsidiary.toString());
         ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository.save(new ProjectConfigurationForeWriterContract(1,
                 projectConfigurationForeWriter.getProjectConfigurationForeWriterId(),
@@ -102,7 +121,7 @@ public class CatRequestService {
                 data.endorsementNumber,
                 data.facNumber, //FIXME: Contract name ?
                 data.businessType.toString(), //FIXME: FK or name ? if name need a ref data for look up
-                clientEntity != null ? clientEntity.getClientshortname() : data.insurNumber.toString(),
+                clientName,
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
                 data.lob,
                 data.sector
