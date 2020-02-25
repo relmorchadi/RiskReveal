@@ -42,10 +42,17 @@
       }
 
       .icon-assignment_24px {
-        color: #fff;
         background-color: #fdc228;
+      }
+
+      .icon-assignment_24px, .icon-copy {
+        color: #fff;
         padding: 2px 3px 2px 2px;
         margin-right: 7px;
+      }
+
+      .icon-copy {
+        background-color: #14617A;
       }
 
       .icon-sitemap {

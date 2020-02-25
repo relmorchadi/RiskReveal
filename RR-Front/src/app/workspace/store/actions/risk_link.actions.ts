@@ -246,6 +246,14 @@ export class PatchPortfolioResultAction{
   constructor(public payload: any) {}
 }
 
+export class DeleteFromImportBasketAction{
+  static readonly type = '[Risk Link] Delete from Import Basket';
+  constructor(public payload: any) {}
+}
+export class SaveImportConfigurationAction{
+  static readonly type = '[Risk Link] Save Import Configuration';
+  constructor(public payload: any) {}
+}
 
 export class OverrideAnalysisRegionPeril{
   static readonly type= '[Risk Link] Override Analysis Region Peril';
@@ -298,6 +306,11 @@ export class LoadSummaryOrDefaultDataSourcesAction {
   constructor(public payload: any) {}
 }
 
+export class ResetToDefaultSelectionAction {
+  static readonly type= '[Risk Link] Reset to default selection action';
+  constructor(public payload: any) {}
+}
+
 export class LoadDefaultDataSourcesAction {
   static readonly type= '[Risk Link] Load default data sources action';
   constructor(public payload: any) {}
@@ -327,3 +340,9 @@ export class SaveDefaultDataSourcesErrorAction {
   static readonly type= '[Risk Link] Save default data sources error action';
   constructor(public payload: any) {}
 }
+
+export class ClearSelectionAction {
+  static readonly type= '[Risk Link] Clear selection action';
+  constructor() {}
+}
+

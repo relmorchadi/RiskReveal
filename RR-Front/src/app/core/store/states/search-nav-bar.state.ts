@@ -33,6 +33,8 @@ import produce from 'immer';
 import {BadgesService} from '../../service/badges.service';
 import {Navigate} from "@ngxs/router-plugin";
 import {ShortCut} from "../../model/shortcut.model";
+import {DashboardState} from "./dashboard.state";
+import {DashboardModel} from "../../model/dashboard.model";
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -44,7 +46,7 @@ const initiaState: SearchNavBar = {
   actualGlobalKeyword: '',
   keywordBackup: '',
   searchValue: '',
-  searchTarget: 'treaty',
+  searchTarget: 'Fac',
   badges: [],
   data: {},
   loading: false,
@@ -74,10 +76,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
-    ctx.dispatch(new LoadShortCuts());
-    ctx.dispatch(new LoadRecentSearch());
-    ctx.dispatch(new LoadSavedSearch());
-    ctx.dispatch(new LoadMostUsedSavedSearch());
   }
 
   /**
@@ -148,11 +146,12 @@ export class SearchNavBarState implements NgxsOnInit {
     return this._searchService.loadShort()
       .pipe(
         tap( (shortCuts: any[]) => {
-          this._badgesService.initShortCuts(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)));
           ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT",  "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["PLT", "PROJECT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable)));
-             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable)))
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY'));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY')));
+             draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
           }));
         })
       )
@@ -167,21 +166,31 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
-  searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
+  searchContracts(ctx: StateContext<SearchNavBar>, {payload}: SearchContractsCountAction) {
+    const {keyword, searchMode} = payload;
     let expression: any = keyword;
-    const checkShortCut: any[] = this.checkShortCut(ctx.getState().shortcuts, expression) || [];
+    const state = ctx.getState();
+
+    const facShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'FAC');
+    const treatyShortcuts = _.filter(state.shortcuts, (stc: any) => stc.type === 'TTY');
+    const searchShortCut = searchMode === 'Treaty' ? treatyShortcuts : facShortcuts;
+    const checkShortCut: any[] = this.checkShortCut(searchShortCut, expression) || [];
+
     if (checkShortCut.length > 0) {
       expression = checkShortCut[1];
     }
+
     ctx.patchState({
       data: [],
       emptyResult: false,
       loading: true
     });
 
+    const api = (expr, mapping) => (searchMode === 'Treaty' ? this.searchLoader(expr, mapping) : this.searchLoaderFac(expr, mapping));
+
     return (!checkShortCut[0] ? forkJoin(
-      ...ctx.getState().shortcuts.map(shortCut => this.searchLoader(expression, shortCut.mappingTable))
-    ) : this.searchLoader(expression, checkShortCut[0]))
+      ...(searchMode == 'Treaty' ? treatyShortcuts : facShortcuts).map(shortCut => api(expression, shortCut.mappingTable))
+    ) : api(expression, checkShortCut[0]))
       .pipe(
         switchMap(payload => {
           let data= {};
@@ -230,7 +239,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(SelectBadgeAction)
-  addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword}: SelectBadgeAction) {
+  addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword, searchMode}: SelectBadgeAction) {
     if (badge !== null) {
       ctx.patchState({
         badges: [...ctx.getState().badges, badge],
@@ -239,7 +248,7 @@ export class SearchNavBarState implements NgxsOnInit {
         keywordBackup: keyword
       });
       if (keyword && keyword.length && ctx.getState().visibleSearch)
-        ctx.dispatch(new SearchContractsCountAction(keyword));
+        ctx.dispatch(new SearchContractsCountAction({keyword, searchMode}));
     }
   }
 
@@ -476,12 +485,16 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   private checkShortCut(shortCuts: ShortCut[], keyword: string) {
-    const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, shortCut.shortCutLabel));
-    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length + 1) : keyword ] : null;
+    const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, _.camelCase(shortCut.shortCutLabel)));
+    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length) : keyword ] : null;
   }
 
-  private searchLoader(keyword, table) {
+  private searchLoader(keyword, table = '') {
     return this._searchService.searchByTable( this._badgesService.clearString(this._badgesService.parseAsterisk(keyword)) || '', '5', table || '');
+  }
+
+  private searchLoaderFac(keyword, table = '') {
+    return this._searchService.searchByTableFac( this._badgesService.clearString(this._badgesService.parseAsterisk(keyword)) || '', '5', table || '');
   }
 
 }

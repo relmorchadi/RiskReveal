@@ -3,8 +3,11 @@ package com.scor.rr.repository;
 import com.scor.rr.domain.entities.PLTManagerView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, Integer> {
@@ -26,4 +29,43 @@ public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, 
 
     @Query("FROM PLTManagerView WHERE workspaceContextCode = :workspaceContextCode AND uwYear = :uwYear AND deletedOn is null AND deletedDue is null AND deletedBy is null")
     Set<PLTManagerView> findPLTs(@Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear);
+
+
+    @Query(value = "EXEC dbonew.usp_PLTManagerGetThreadEndPLTs " +
+            "@WorkspaceContextCode= :WorkspaceContextCode, " +
+            "@WorkspaceUwYear= :WorkspaceUwYear, " +
+            "@Entity =:Entity, " +
+            "@UserCode =:UserCode, " +
+            "@PageNumber =:PageNumber, " +
+            "@PageSize =:PageSize, " +
+            "@SelectionList =:SelectionList, " +
+            "@SortSelectedFirst =:SortSelectedFirst, " +
+            "@SortSelectedAction =:SortSelectedAction", nativeQuery = true)
+    List<Map<String, Object>> getPLTManagerData(
+            @Param("WorkspaceContextCode") String WorkspaceContextCode,
+            @Param("WorkspaceUwYear") Integer WorkspaceUwYear,
+            @Param("Entity") Integer Entity,
+            @Param("UserCode") String UserCode,
+            @Param("PageNumber") Integer PageNumber,
+            @Param("PageSize") Integer PageSize,
+            @Param("SelectionList") String SelectionList,
+            @Param("SortSelectedFirst") Boolean SortSelectedFirst,
+            @Param("SortSelectedAction") String SortSelectedAction
+            );
+
+
+    @Query(value = "EXEC dbonew.usp_GetColumnsByUserCodeAndViewContext @UserCode =:UserCode, @ViewContext =:ViewContext", nativeQuery = true)
+    List<Map<String, Object>> getColumns(@Param("UserCode") String userCode, @Param("ViewContext") Long viewContext);
+
+    @Query(value = "EXEC dbonew.usp_PLTManagerGetThreadEndPLTsIDs " +
+            "@WorkspaceContextCode= :WorkspaceContextCode, " +
+            "@WorkspaceUwYear= :WorkspaceUwYear, " +
+            "@Entity =:Entity, " +
+            "@UserCode =:UserCode", nativeQuery = true)
+    List<Map<String, Object>> getIDs(
+            @Param("WorkspaceContextCode") String WorkspaceContextCode,
+            @Param("WorkspaceUwYear") Integer WorkspaceUwYear,
+            @Param("Entity") Integer Entity,
+            @Param("UserCode") String UserCode
+    );
 }

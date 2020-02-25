@@ -4,24 +4,24 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  Input,
+  Input, OnChanges,
   OnInit,
-  Output
+  Output, SimpleChanges
 } from '@angular/core';
 import {Message} from "../../../../shared/message";
 import * as fromWorkspaceStore from "../../../store";
 import {Observable} from "rxjs";
 import {Store} from "@ngxs/store";
-import {ActivatedRoute} from "@angular/router";
 import * as _ from 'lodash';
-import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
+import {AngularResizeElementDirection} from "angular-resize-element";
 @Component({
   selector: 'app-calibration-new-table',
   templateUrl: './calibration-new-table.component.html',
   styleUrls: ['./calibration-new-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked {
+export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked, OnChanges {
+  public readonly AngularResizeElementDirection = AngularResizeElementDirection;
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
@@ -87,6 +87,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
   ngAfterViewInit() {
   }
+
   ngAfterViewChecked(): void {
 
   }
@@ -296,9 +297,11 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     })
   }
 
-  onColumnResize({delta, element}) {
-    const isFrozen = element.attributes[6].value;
-    const index = element.attributes[7].value;
+  onColumnResize(event) {
+    console.log(event);
+    const {delta, element} = event;
+    const isFrozen = element.attributes['aria-details'].value;
+    const index = element.attributes['aria-colindex'].value;
     if(!this.tableConfig.isExpanded && isFrozen) {
       this.actionDispatcher.emit({
         type: "Resize frozen Column",
@@ -345,9 +348,12 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onTableSeparatorResize(event) {
-    Math.abs(event.edges.right) > 20 && this.actionDispatcher.emit({
+    const {currentWidthValue, originalWidthValue} = event;
+    const delta = currentWidthValue - originalWidthValue;
+    console.log(event, delta);
+    this.actionDispatcher.emit({
       type: "Resize Table Separator",
-      payload: event.edges.right
+      payload: delta
     });
     }
 
@@ -390,6 +396,10 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
         payload: _.omit(this.tableConfig.sortData, `${field}`)
       });
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+
   }
 
 }

@@ -12,18 +12,18 @@ import java.util.Date;
 public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSummaryItem> {
     private GlobalViewSummary globalViewSummary;
 
-    public RLExposureSummaryItemRowMapper(GlobalViewSummary globalViewSummaryId)
-    {
+    public RLExposureSummaryItemRowMapper(GlobalViewSummary globalViewSummaryId) {
         this.globalViewSummary = globalViewSummaryId;
     }
 
     @Override
-    public RLExposureSummaryItem mapRow(ResultSet rs, int line) throws SQLException
-    {
+    public RLExposureSummaryItem mapRow(ResultSet rs, int line) throws SQLException {
         // FIXME : is the "Analysis Region" is to be used at all or is it a specification artifact no longer used ?
-        RLExposureSummaryItem tmp=new RLExposureSummaryItem();
+        RLExposureSummaryItem tmp = new RLExposureSummaryItem();
         //
         tmp.setGlobalViewSummary(globalViewSummary);
+        tmp.setEdmId(globalViewSummary.getEdmId());
+        tmp.setEntity(1L);
         tmp.setPortfolioId(rs.getLong("port_id"));
         tmp.setPortfolioType(rs.getString("port_type"));
         tmp.setExposureSummaryName(rs.getString("SummaryName"));
@@ -50,8 +50,8 @@ public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSumma
         tmp.setExposureCurrencyUSDRate(rs.getDouble("Expo_Ccy_Roe_USD"));
         tmp.setConformedCurrency(rs.getString("Conformed_Ccy"));
         tmp.setConformedCurrencyUSDRate(rs.getDouble("Conformed_Ccy_ROE_USD"));
-        java.sql.Date roe=rs.getDate("RoE_AsAtDate");
-        if(roe!=null) {
+        java.sql.Date roe = rs.getDate("RoE_AsAtDate");
+        if (roe != null) {
             tmp.setRateDate(new Date(roe.getTime()));
         }
         //

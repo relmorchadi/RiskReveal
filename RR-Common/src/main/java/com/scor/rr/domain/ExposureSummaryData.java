@@ -18,10 +18,13 @@ public class ExposureSummaryData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ExposureSummaryDataId")
     private Long exposureSummaryDataId;
-
+    @Column(name = "Entity")
+    private Integer entity;
     // TODO: Review with viet
-    @Column(name = "PortfolioId")
-    private Long portfolioId;
+    @Column(name = "SourcePortfolioId")
+    private Long sourcePortfolioId;
+    @Column(name = "ModelPortfolioId")
+    private Long modelPortfolioId;
     @Column(name = "PortfolioType")
     private String portfolioType;
     @Column(name = "CountryCode")

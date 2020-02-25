@@ -65,9 +65,13 @@
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
-                  <td style="width: 100px;">{{rowData}}</td>
+                  <td style="width: 100px;">
+                    <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-left"
+                       style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
+                    {{rowData}}
+                  </td>
                   <td style="width: 160px;" *ngFor="let col of epMetricsTableConfig.columns">
-                    {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}
+                    {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}
                   </td>
                 </tr>
               </ng-template>
@@ -98,19 +102,19 @@
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit}}</div>
+                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <!--              <ng-template pTemplate="footer" let-columns>
@@ -131,6 +135,8 @@
         <app-ep-chart
                 [chartOption]="chartOption"
                 [updateOption]="updateOption"
+                (actionDispatcher)="handleChartActions($event)"
+
         ></app-ep-chart>
         </nz-tab>
     </nz-tabset>

@@ -1,14 +1,12 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "PLTPricingSection")
 public class PltPricingSectionEntity {
-    private String id;
     private Timestamp lastSynchronized;
     private String pltPricingSectionId;
     private String pltPricingId;
@@ -18,17 +16,8 @@ public class PltPricingSectionEntity {
     private Integer omegaSectionNo;
     private Timestamp lastUpdateRiskReveal;
 
+
     @Id
-    @Column(name = "PLTPricingSectionId", nullable = false, length = 255)
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Basic
     @Column(name = "lastSynchronized", nullable = true)
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
@@ -113,8 +102,7 @@ public class PltPricingSectionEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PltPricingSectionEntity that = (PltPricingSectionEntity) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(lastSynchronized, that.lastSynchronized) &&
+        return Objects.equals(lastSynchronized, that.lastSynchronized) &&
                 Objects.equals(pltPricingSectionId, that.pltPricingSectionId) &&
                 Objects.equals(pltPricingId, that.pltPricingId) &&
                 Objects.equals(currency, that.currency) &&
@@ -126,6 +114,6 @@ public class PltPricingSectionEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lastSynchronized, pltPricingSectionId, pltPricingId, currency, name, omegaTreatyNo, omegaSectionNo, lastUpdateRiskReveal);
+        return Objects.hash(lastSynchronized, pltPricingSectionId, pltPricingId, currency, name, omegaTreatyNo, omegaSectionNo, lastUpdateRiskReveal);
     }
 }

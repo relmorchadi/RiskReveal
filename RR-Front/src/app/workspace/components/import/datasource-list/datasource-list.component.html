@@ -1,0 +1,25 @@
+<div class="search-bar-result-list">
+    <p-virtualScroller [value]="data | rmsDatasource" scrollHeight="305px"
+                       [itemSize]="30" [lazy]="true" (onLazyLoad)="lazyLoadDataSources($event)"
+                       [rows]="100" [totalRecords]="params?.totalElements">
+        <ng-template let-item pTemplate="item">
+            <div class="poover-menu-item"
+                 (click)="$event.stopPropagation(); toggleItems(item, $event, 'link')"
+                 [ngClass]="{'poover-menu-item-active': item?.selected}">
+
+                <span *ngIf="!item.selected; else selected" class="no-check"></span>
+                <ng-template #selected>
+                                <span class="check">
+                                  <i style="margin-right: 5px" class="icon-check"></i>
+                                </span>
+                </ng-template>
+                <span class="logo" *ngIf="item?.type === 'RDM'" style="background: #03DAC4">R</span>
+                <span class="logo" *ngIf="item?.type === 'EDM'" style="background: #0700CF">E</span>
+                <span>{{item?.name}}</span>
+            </div>
+        </ng-template>
+        <ng-template let-car pTemplate="loadingItem">
+            <div *ngIf="params?.totalElements && !params?.last" class="loading-text"></div>
+        </ng-template>
+    </p-virtualScroller>
+</div>

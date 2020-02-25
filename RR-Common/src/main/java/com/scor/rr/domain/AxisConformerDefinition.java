@@ -16,13 +16,16 @@ import javax.persistence.Entity;
 public class AxisConformerDefinition {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long axisConformerDefinitionId;
     @Column(name = "SourceAxis")
+    @Enumerated(EnumType.STRING)
     private AxisName sourceAxis;
     @Column(name = "TargetAxis")
+    @Enumerated(EnumType.STRING)
     private AxisName targetAxis;
     @Column(name = "AxisConformerMode")
+    @Enumerated(EnumType.STRING)
     private AxisConformerMode axisConformerMode;
     @Column(name = "AxisConformerAlias")
     private String axisConformerAlias;

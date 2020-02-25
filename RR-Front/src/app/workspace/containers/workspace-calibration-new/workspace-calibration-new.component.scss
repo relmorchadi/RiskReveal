@@ -42,12 +42,6 @@
   font-size: 12px;
 }
 
-:host ::ng-deep {
-  td {
-    user-select: none;
-  }
-}
-
 .table-design {
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
@@ -149,6 +143,12 @@
         th {
           border-bottom: 0px solid rgba(0, 0, 0, 0.15);
         }
+      }
+
+      .ui-column-resizer {
+        width: 2.6px !important;
+        border: none !important;
+        background-color: #d8cdcd;
       }
     }
 

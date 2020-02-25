@@ -274,7 +274,7 @@ public class RegionPerilExtractor {
 
                 log.info("Finish import progress STEP 1 : LOAD_REGION_PERIL for analysis: {}", sourceResultId);
 
-                mapAnalysisRRAnalysisIds.put(sourceResultId, fpRRAnalysis);
+                mapAnalysisRRAnalysisIds.put(sourceResultId, new HashMap<>(fpRRAnalysis));
             }
 
             transformationPackage.setMapAnalysisRRAnalysisIds(mapAnalysisRRAnalysisIds);
@@ -320,7 +320,8 @@ public class RegionPerilExtractor {
                         rlPortfolioSelection.getRlPortfolio().getName(),
                         rlPortfolioSelection.getRlPortfolio().getType(),
                         "ALL",
-                        rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() : rlPortfolioSelection.getRlPortfolio().getAgCurrency(),
+                        rlPortfolioSelection.getTargetCurrency() != null ? rlPortfolioSelection.getTargetCurrency() :
+                                rlPortfolioSelection.getRlPortfolio().getAgCurrency() != null ? rlPortfolioSelection.getRlPortfolio().getAgCurrency() : "USD",
                         1,
                         1.0d,
                         rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,

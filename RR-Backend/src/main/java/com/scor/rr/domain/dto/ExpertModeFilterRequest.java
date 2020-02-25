@@ -1,5 +1,6 @@
 package com.scor.rr.domain.dto;
 
+import com.scor.rr.domain.enums.SearchType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,5 @@ public class ExpertModeFilterRequest {
     Integer offset;
     Integer size;
     Boolean fromSavedSearch;
+    SearchType type;
 }

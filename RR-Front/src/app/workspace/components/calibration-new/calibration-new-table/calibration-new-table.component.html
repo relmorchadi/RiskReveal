@@ -12,6 +12,8 @@
   [columnResizeMode]="'expand'"
   (onColResize)="onColumnResize($event)"
   syncScroll
+  [class]="'calibration-table'"
+  [classIdentifier]="'calibration-table'"
   #dt
 >
 
@@ -186,8 +188,8 @@
       <div style="display: flex;height: max-content">
         <div class="adjustDiv" style="background: #f3f3f3;">
           <span>{{adjustment?.basisShortName}}</span>
-          <div class="text-ellipsis" *ngIf="adjustment?.adjustmentType != 'Linear'">{{adjustment?.adjustmentType}}</div>
-          <input *ngIf="adjustment?.adjustmentType == 'Linear'" class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
+          <div class="text-ellipsis" *ngIf="adjustment?.adjustmentTypeShortName">{{adjustment?.adjustmentTypeShortName}}</div>
+          <input *ngIf="!adjustment?.adjustmentTypeShortName" class="templateInput" disabled style=" background: #f3f3f3;" [value]="adjustment?.factors | getFactor: adjustment?.adjustmentType">
         </div>
       </div>
     </div>
@@ -224,7 +226,7 @@
 
   <!--Resizable Header-->
   <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-index="index" let-isLastColumn="isLastColumn">
-      <th [id]="col?.field" [attr.isFrozen]="col?.isFrozen" [attr.index]="index" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
+      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
 
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
@@ -251,12 +253,7 @@
 
   <!--HEADER-->
   <ng-template #leftHeader>
-    <div mwlResizable
-            [enableGhostResize]="false"
-            [resizeEdges]="{bottom: false, right: true, top: false, left: false}"
-            (resizeEnd)="onTableSeparatorResize($event, dt)"
-
-            class="flex-vertical-layout spread-layout">
+    <div class=" flex-vertical-layout spread-layout" style="position: relative;" #resizeContainer>
       <div class="title-as-tab flex-horizontal-sb-layout" style="height: 58px;">
         <span class="title">PLTs</span>
         <div class="icon-wrapper">
@@ -282,6 +279,10 @@
           <i class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
         </div>
       </div>
+      <div class="resize resize__right"
+           (resizeEnd)="onTableSeparatorResize($event)"
+           [targetElement]="resizeContainer"
+           [direction]="AngularResizeElementDirection.RIGHT"></div>
     </div>
   </ng-template>
 

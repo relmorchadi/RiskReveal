@@ -38,6 +38,11 @@
       </div>
       <p-table [columns]="scrollableColsResults" [frozenColumns]="frozenColsResults"
                [value]="data.analysis" [scrollHeight]="'175px'"
+               [(contextMenuSelection)]="contextSelectedItem"
+               [contextMenu]="cmR"
+               syncScroll
+               [class]="'analysis-result-table'"
+               [classIdentifier]="'analysis-result-table'"
                [resizableColumns]="true" columnResizeMode="expand"
                #rt [scrollable]="true" frozenWidth="445px">
         <ng-template pTemplate="colgroup" let-columns>
@@ -90,7 +95,7 @@
               <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                   [ngClass]="{'selected-item': rowData?.selected}">
                 <div class="" *ngIf="col.type === 'selection'">
-                  <label nz-checkbox (ngModelChange)="updateRowData(col.field, $event, i)"
+                  <label nz-checkbox (ngModelChange)="updateRowData(col.field, $event, rowData?.rlAnalysisId)"
                          [ngModel]="rowData.selected"></label>
                 </div>
                 <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
@@ -127,7 +132,7 @@
                      [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'number'">
                   <input *ngIf="col.field=='unitMultiplier'; else formattedNumber" type="number" class="col-edit-input"
-                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event, i)">
+                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event, rowData?.rlAnalysisId)">
                   <ng-template #formattedNumber>
                     <span>{{rowData[col.field] | number: '1.2-2'}}</span>
                   </ng-template>
@@ -136,7 +141,7 @@
                      [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'percentage'">
                   <input *ngIf="col.field=='proportion'; else formattedNumber" type="number" class="col-edit-input"
-                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,i)">
+                         [(ngModel)]="rowData[col.field]" (ngModelChange)="updateRowData(col.field, $event,rowData?.rlAnalysisId)">
                   <ng-template #formattedNumber>
                     <span>{{rowData[col.field] | number: '1.2-2'}} % </span>
                   </ng-template>
@@ -155,7 +160,7 @@
                 </div>
                 <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
                      class="highlight-temp text-data">
-                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length}}</span>
+                  <span nz-tooltip [nzTitle]="DivisionInfo">{{rowData[col.field]?.length > 1 ? 'M*' : (rowData[col.field]?.length == 1 ? rowData[col.field][0] : '0' ) }}</span>
                   <ng-template #DivisionInfo>
                     <div class="popover-menu">
                       <ul style="margin-bottom: 0">
@@ -200,7 +205,7 @@
                     <ng-template pTemplate="input">
                       <nz-select
                         style="width: 100%"
-                        (ngModelChange)="updateRowData(col.field, $event, i)"
+                        (ngModelChange)="updateRowData(col.field, $event, rowData?.rlAnalysisId)"
                         [ngModel]="rowData.targetCurrency"
                         nzShowSearch
                         class="a-dropdown-small input-wrapper"
@@ -241,7 +246,11 @@
         </ng-template>
       </p-table>
     </div>
+    <div *ngIf="!isCollapsed" class="button-container">
+      <button (click)="saveAnalysisSelection()" class="a-buttons-contained-mini">SAVE</button>
+    </div>
   </div>
+  <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
 </div>
 
 <override-region-peril-dialog *ngIf="showOverrideRpDialog" [visible]="showOverrideRpDialog" [data]="data.analysis"
@@ -252,7 +261,7 @@
 
 
 <financial-persp-selection-dialog *ngIf="showSelectFinancialPerspDialog" [visible]="showSelectFinancialPerspDialog"
-                                  [data]="data" (close)="showSelectFinancialPerspDialog=false"
+                                  [data]="data" [context]="context" (close)="showSelectFinancialPerspDialog=false"
                                   (loadEpCurves)="loadSourceEpCurveHeaders($event)"
                                   (override)="overrideFinancialPersp($event)"
 ></financial-persp-selection-dialog>

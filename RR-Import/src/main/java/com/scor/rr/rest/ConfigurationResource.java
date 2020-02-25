@@ -26,16 +26,16 @@ public class ConfigurationResource {
     private ConfigurationService configurationService;
 
     @PostMapping("basic-scan")
-    public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> basicScan(@RequestBody List<DataSource> dataSources, @RequestParam Long projectId) {
         return ResponseEntity.ok(
-                rmsService.basicScan(dataSources, projectId, instanceId, instanceName)
+                rmsService.basicScan(dataSources, projectId)
         );
     }
 
     @PostMapping("single-basic-scan")
-    public ResponseEntity<?> singleBasicScan(@RequestBody DataSource dataSources, @RequestParam Long projectId, @RequestParam String instanceId, @RequestParam String instanceName) {
+    public ResponseEntity<?> singleBasicScan(@RequestBody DataSource dataSources, @RequestParam Long projectId) {
         return ResponseEntity.ok(
-                rmsService.singleBasicScan(dataSources, projectId, instanceId, instanceName)
+                rmsService.singleBasicScan(dataSources, projectId)
         );
     }
 
@@ -86,18 +86,18 @@ public class ConfigurationResource {
 
     @GetMapping(value = "filter-riskLink-analysis")
     public ResponseEntity<?> filterRiskLinkAnalysis(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long rdmId, @PageableDefault(size = 20) Pageable pageable, RLAnalysisDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
-        if(withPagination)
-            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter,pageable));
+        if (withPagination)
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId, projectId, userId, rdmId, filter, pageable));
         else
-            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId,projectId,userId,rdmId,filter));
+            return ResponseEntity.ok(configurationService.filterRLAnalysisByRLModelDataSourceId(instanceId, projectId, userId, rdmId, filter));
     }
 
     @GetMapping(value = "filter-riskLink-portfolio")
     public ResponseEntity<?> filterRiskLinkPortfolio(@RequestParam String instanceId, @RequestParam Long projectId, @RequestParam Long userId, @RequestParam Long edmId, @PageableDefault(size = 20) Pageable pageable, RLPortfolioDto filter, @RequestParam(defaultValue = "false") Boolean withPagination) {
-        if(withPagination)
-            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter,pageable));
+        if (withPagination)
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId, projectId, userId, edmId, filter, pageable));
         else
-            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId,projectId,userId,edmId,filter));
+            return ResponseEntity.ok(configurationService.filterRLPortfolioByRLModelDataSourceId(instanceId, projectId, userId, edmId, filter));
     }
 
     @GetMapping(value = "get-source-ep-headers")
@@ -163,7 +163,7 @@ public class ConfigurationResource {
     @GetMapping(value = "get-default-data-sources")
     public ResponseEntity<?> getDefaultDataSources(@RequestParam Long projectId, @RequestParam Long userId, @RequestParam String instanceId) {
         try {
-            return new ResponseEntity<>(configurationService.getDefaultDataSources(projectId, userId, instanceId), HttpStatus.OK);
+            return new ResponseEntity<>(configurationService.getDefaultDataSources(userId), HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("An error has occurred", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,26 +207,36 @@ public class ConfigurationResource {
     }
 
     @GetMapping(value = "get-global-data-sources")
-    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam String instanceId, @RequestParam Long userId) {
+    public ResponseEntity<?> getGlobalDataSources(@RequestParam Long projectId, @RequestParam Long userId) {
         try {
             if (configurationService.checkIfProjectHasScannedDataSources(projectId))
                 return new ResponseEntity<>(new GlobalDataSourceDto(true, configurationService.getDataSourcesWithSelectedAnalysis(projectId)), HttpStatus.OK);
             else
-                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(projectId, userId, instanceId)), HttpStatus.OK);
+                return new ResponseEntity<>(new GlobalDataSourceDto(false, configurationService.getDefaultDataSources(userId)), HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("AutoAttach")
-    public ResponseEntity<?> autoAttachWs(@RequestParam String wsId, @RequestParam List<Long> rdmIds,@RequestParam List<Long> edmIds, @RequestParam List<Long> divisionsIds){
+    public ResponseEntity<?> autoAttachWs(@RequestParam String wsId, @RequestParam List<Long> rdmIds, @RequestParam List<Long> edmIds, @RequestParam List<Long> divisionsIds) {
         return ResponseEntity.ok(configurationService.getAutoAttach(wsId, edmIds, rdmIds, divisionsIds));
     }
 
     @DeleteMapping("data-source")
-    public ResponseEntity<?> deleteDataSources(@RequestParam Long rlModelDataSourceId){
+    public ResponseEntity<?> deleteDataSources(@RequestParam Long rlModelDataSourceId) {
         configurationService.deleteRlDataSource(rlModelDataSourceId);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "delete-datasources-by-project-id")
+    public ResponseEntity<?> clear(@RequestParam Long projectId) {
+        try {
+            configurationService.clearProjectAndLoadDefaultDataSources(projectId);
+            return new ResponseEntity<>("Operation succeeded", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

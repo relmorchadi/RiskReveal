@@ -2,8 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import {EntryComponent} from './entry.component';
 import {MainComponent} from '../core/containers/main/main.component';
+import {AuthGuard} from "./guards/auth.gards";
+import { JwtModule } from "@auth0/angular-jwt";
+import { HttpClientModule } from "@angular/common/http";
+import {UnauthorizedComponent} from "../core/containers";
 
 const routes: Routes = [
+  {path: 'unauthorized', data: {title: 'Error- 401'}, component: UnauthorizedComponent},
   {path: '', component: MainComponent, children: [
     {data: {title: 'RR- Workspace'}, path: 'workspace', loadChildren: '../workspace/workspace.module#WorkspaceModule'},
     {data: {title: 'RR- Dashboard'}, path: 'dashboard', loadChildren: '../dashboard/dashboard.module#DashboardModule'},
@@ -16,9 +21,19 @@ const routes: Routes = [
   ]}
 ];
 
+export function tokenGetter() {
+  return localStorage.getItem("token");
+}
+
 @NgModule({
   declarations: [EntryComponent],
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+      }
+    })],
   exports: [RouterModule, EntryComponent]
 })
 export class GatewayModule { }

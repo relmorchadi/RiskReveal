@@ -20,22 +20,18 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/refs`, {params});
     }
 
-    scanDatasources(dataSources: any[], projectId, instanceId, instanceName) {
+    scanDatasources(dataSources: any[], projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/basic-scan`, dataSources, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }
 
-    rescanDataSource(dataSource: any, projectId, instanceId, instanceName) {
+    rescanDataSource(dataSource: any, projectId) {
         return this.http.post(`${this.IMPORT_URL}import/config/single-basic-scan`, dataSource, {
             params: {
-                projectId,
-                instanceId,
-                instanceName
+                projectId
             }
         });
     }
@@ -132,12 +128,30 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
     }
 
-    getSummaryOrDefaultDataSources(instanceId, projectId, userId) {
+    getSummaryOrDefaultDataSources(instanceId, projectId, userId=1): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-global-data-sources`, {
             params: {
                 instanceId,
                 projectId,
                 userId
+            }
+        })
+    }
+
+    getDefaultDataSources(instanceId, projectId: any, userId=1): Observable<any> {
+        return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`,{
+            params: {
+                instanceId,
+                projectId,
+                userId
+            }
+        })
+    }
+
+    deleteDataSourcesByProjectId(projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-datasources-by-project-id`,{
+            params: {
+                projectId
             }
         })
     }
@@ -173,4 +187,14 @@ export class RiskApi {
             }
         });
     }
+
+    savePortfoliosConfig(portfolioConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-portfolio-import-selection`, portfolioConfig);
+    }
+
+    saveAnalysisConfig(analysisConfig) {
+        return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
+
+    }
+
 }

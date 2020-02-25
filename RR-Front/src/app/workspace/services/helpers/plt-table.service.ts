@@ -78,9 +78,9 @@ export class PltTableService {
         fields: 'pltStatus',
         header: 'PLT Status',
         sorted: true,
-        filtred: true,
+        filtred: false,
         resizable: false,
-        width: '170',
+        width: '40',
         unit: 'px',
         icon: null,
         type: 'field',
@@ -93,7 +93,7 @@ export class PltTableService {
         sorted: true,
         filtred: false,
         resizable: false,
-        width: '55',
+        width: '70',
         unit: 'px',
         type: 'indicator',
         active: true
@@ -523,6 +523,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -537,6 +538,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -551,6 +553,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -563,6 +566,7 @@ export class PltTableService {
         resizable: true,
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -577,6 +581,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -591,6 +596,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -605,6 +611,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -619,6 +626,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -633,6 +641,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -647,6 +656,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -661,6 +671,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -675,6 +686,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -689,6 +701,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -703,6 +716,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -717,6 +731,7 @@ export class PltTableService {
         unit: 'px',
         icon: null,
         type: 'field',
+        isNumeric: true,
         active: true
       },
       {
@@ -809,7 +824,7 @@ export class PltTableService {
         icon: null,
         type: 'field',
         active: true
-      },
+      }
     ]
   }
 

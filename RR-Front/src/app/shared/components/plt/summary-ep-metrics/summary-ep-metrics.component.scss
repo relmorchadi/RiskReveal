@@ -37,7 +37,7 @@
   ::ng-deep {
     p-table {
       display: block;
-      height: calc(100% - 100px);
+      height: calc(100% - 125px);
       margin-bottom: 1.7em;
 
       .ui-table {
@@ -75,6 +75,12 @@
       }
       td:nth-child(1) {
         text-align: center;
+      }
+
+      td:hover {
+        .icon-trash-alt {
+          visibility: visible !important;
+        }
       }
     }
   }

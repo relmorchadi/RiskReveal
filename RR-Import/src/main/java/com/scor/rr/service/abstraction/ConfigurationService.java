@@ -30,7 +30,7 @@ public interface ConfigurationService {
 
     void saveDefaultDataSources(DataSourcesDto dataSourcesDto);
 
-    List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId);
+    List<RLDataSourcesDto> getDefaultDataSources(Long userId);
 
     ProjectImportRunEntity checkIfProjectHasBeenImportedBefore(Long projectId);
 
@@ -55,4 +55,6 @@ public interface ConfigurationService {
     Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds,List<Long> rdmIds, List<Long> divisionsIds);
 
     void deleteRlDataSource(Long rlDataSourceId);
+
+    void clearProjectAndLoadDefaultDataSources(Long projectId);
 }

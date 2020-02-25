@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.riskLink.*;
@@ -15,11 +16,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.*;
 
 import static java.util.Optional.ofNullable;
@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.toList;
  * @author Ayman IKAR
  * @created 19/12/2019
  */
+
 @Service
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -166,24 +167,28 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     @Override
     @Transactional(transactionManager = "rrTransactionManager")
     public void saveDefaultDataSources(DataSourcesDto dataSourcesDto) {
-        rlSavedDataSourceRepository.deleteByUserIdAndInstanceId(dataSourcesDto.getUserId(), dataSourcesDto.getInstanceId());
+        Long userId = SecurityContextHolder.getContext().getAuthentication() != null ?
+                ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId() :
+                dataSourcesDto.getUserId();
+        rlSavedDataSourceRepository.deleteByUserId(userId);
 
         if (dataSourcesDto.getDataSources() != null && !dataSourcesDto.getDataSources().isEmpty()) {
             dataSourcesDto.getDataSources().forEach(dataSource -> {
                 RLSavedDataSource rlSavedDataSource = modelMapper.map(dataSource, RLSavedDataSource.class);
-
-                rlSavedDataSource.setInstanceId(dataSourcesDto.getInstanceId());
                 rlSavedDataSource.setProjectId(dataSourcesDto.getProjectId());
-                rlSavedDataSource.setUserId(dataSourcesDto.getUserId());
-
+                rlSavedDataSource.setUserId(userId);
                 rlSavedDataSourceRepository.save(rlSavedDataSource);
             });
         }
     }
 
     @Override
-    public List<RLDataSourcesDto> getDefaultDataSources(Long projectId, Long userId, String instanceId) {
-        return rlSavedDataSourceRepository.findByInstanceIdAndUserId(instanceId, userId).stream()
+    public List<RLDataSourcesDto> getDefaultDataSources(Long userId) {
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null)
+            userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
+
+        return rlSavedDataSourceRepository.findByUserId(userId).stream()
                 .map(RLDataSourcesDto::new).collect(toList());
     }
 
@@ -321,7 +326,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds, List<Long> rdmIds, List<Long> divisionsIds) {
         Map<Long, AnalysisPortfolioDto> analysisPortfolioByDivision = new HashMap<>();
         divisionsIds.forEach(divisionNumber -> {
-            String keyword = wsId + "_0" + divisionNumber;
+            String keyword = wsId + "_" + String.format("%02d", divisionNumber);
             AnalysisPortfolioDto data = new AnalysisPortfolioDto();
             edmIds.forEach(edmId -> {
                 data.getRlPortfolios().addAll(findPortfolios(edmId, keyword));
@@ -336,8 +341,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     @Override
     public void deleteRlDataSource(Long rlDataSourceId) {
-        Integer status= rlModelDataSourceRepository.deleteRLModelDataSourceById(rlDataSourceId);
-        if(status == -1)
+        Integer status = rlModelDataSourceRepository.deleteRLModelDataSourceById(rlDataSourceId);
+        if (status == -1)
             throw new RuntimeException("Failed delete for RL DataSource with ID : " + rlDataSourceId);
     }
 
@@ -357,8 +362,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     private Long getModelDsId(String instanceId, Long projectId, Long userId, Long rmsId) {
         return ofNullable(rlModelDataSourceRepository.findByInstanceIdAndProjectIdAndRlId(instanceId, projectId, rmsId))
-                .map(ds -> ds.getRlModelDataSourceId())
+                .map(RLModelDataSource::getRlModelDataSourceId)
                 .orElseThrow(() -> new RuntimeException("No available DataSource For given params : " + instanceId + "/" + projectId + "/" + rmsId));
 
+    }
+
+    /*private List<String> getPortfolioCurrencies(Long rlPortfolioId){
+
+    }*/
+
+    @Override
+    public void clearProjectAndLoadDefaultDataSources(Long projectId) {
+        rlModelDataSourceRepository.findByProjectId(projectId)
+                .stream()
+                .forEach(ds -> {
+                    rlModelDataSourceRepository.deleteRLModelDataSourceById(ds.getRlModelDataSourceId());
+                });
     }
 }

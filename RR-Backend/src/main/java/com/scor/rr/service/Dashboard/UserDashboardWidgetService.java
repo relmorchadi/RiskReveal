@@ -1,7 +1,13 @@
 package com.scor.rr.service.Dashboard;
 
+import com.google.gson.Gson;
+import com.scor.rr.domain.Response.DashboardChartResponse;
+import com.scor.rr.domain.Response.DashboardDataResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
+import com.scor.rr.domain.dto.DashboardChartData;
+import com.scor.rr.domain.dto.DashboardRequest;
 import com.scor.rr.domain.entities.Dashboard.*;
+import com.scor.rr.domain.entities.DashboardView;
 import com.scor.rr.exceptions.Dashboard.DashboardWidgetNotFoundException;
 import com.scor.rr.exceptions.Dashboard.UserDashboardNotFoundException;
 import com.scor.rr.exceptions.RRException;
@@ -9,11 +15,22 @@ import com.scor.rr.repository.Dashboard.DashboardWidgetRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetColumnsRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetRepository;
+import org.hibernate.procedure.ProcedureOutputs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 
+import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
+import javax.transaction.Transactional;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserDashboardWidgetService {
@@ -29,19 +46,24 @@ public class UserDashboardWidgetService {
     @Autowired
     private DashboardWidgetRepository dashboardWidgetRepository;
     @Autowired
-    private DashboardWidgetColumnsService  dashboardWidgetColumnsService;
+    private DashboardWidgetColumnsService dashboardWidgetColumnsService;
 
-    public List<UserWidgetResponse> getDashboardWidget(long dashboardId) throws RRException{
+    private StoredProcedureQuery fetchDataSource;
+
+    @Autowired
+    private EntityManager em;
+
+    public List<UserWidgetResponse> getDashboardWidget(long dashboardId) throws RRException {
 
         UserDashboard dashboard = userDashboardRepository.findByUserDashboardId(dashboardId);
-        if(dashboard == null) throw new UserDashboardNotFoundException(dashboardId);
+        if (dashboard == null) throw new UserDashboardNotFoundException(dashboardId);
 
         List<UserWidgetResponse> listResponse = new ArrayList<>();
 
         List<UserDashboardWidget> dashboardWidgets = userDashboardWidgetRepository.findByUserDashboardId(dashboardId);
-        if(!dashboardWidgets.isEmpty()){
+        if (!dashboardWidgets.isEmpty()) {
 
-            for(UserDashboardWidget widget : dashboardWidgets){
+            for (UserDashboardWidget widget : dashboardWidgets) {
                 UserWidgetResponse response = new UserWidgetResponse();
                 response.setUserDashboardWidget(widget);
                 response.setColumns(userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId()));
@@ -56,7 +78,7 @@ public class UserDashboardWidgetService {
     public UserWidgetResponse createDashboardWidget(long referenceId, long dashboardId, long userId) throws RRException {
 
         DashboardWidget dashboardWidget = dashboardWidgetRepository.findByWidgetId(referenceId);
-        if(dashboardWidget == null) throw new DashboardWidgetNotFoundException(referenceId,"");
+        if (dashboardWidget == null) throw new DashboardWidgetNotFoundException(referenceId, "");
 
         List<DashboardWidgetColumns> listCols = dashboardWidgetColumnsService.getDashboardWidgetColumns(referenceId);
 
@@ -72,18 +94,18 @@ public class UserDashboardWidgetService {
 
         widget = userDashboardWidgetRepository.saveAndFlush(widget);
 
-        userDashboardWidgetColumnsService.createWidgetColumns(listCols,userId,widget.getUserDashboardWidgetId());
+        userDashboardWidgetColumnsService.createWidgetColumns(listCols, userId, widget.getUserDashboardWidgetId());
 
         List<UserDashboardWidgetColumns> listUserCols = userDashboardWidgetColumnsService.getWidgetColumns(widget.getUserDashboardWidgetId());
 
 
-        return new UserWidgetResponse(widget,listUserCols);
+        return new UserWidgetResponse(widget, listUserCols);
     }
 
     public UserWidgetResponse duplicateWidget(long widgetId) throws RRException {
 
         UserDashboardWidget dashboardWidget = userDashboardWidgetRepository.findByUserDashboardWidgetId(widgetId);
-        if(dashboardWidget == null) throw new DashboardWidgetNotFoundException(widgetId,"User");
+        if (dashboardWidget == null) throw new DashboardWidgetNotFoundException(widgetId, "User");
 
         UserDashboardWidget duplicate = new UserDashboardWidget();
         duplicate.setUserDashboardId(dashboardWidget.getUserDashboardId());
@@ -98,9 +120,9 @@ public class UserDashboardWidgetService {
         duplicate = userDashboardWidgetRepository.saveAndFlush(duplicate);
 
 
-        List<UserDashboardWidgetColumns> columns = userDashboardWidgetColumnsService.duplicateColumns(userDashboardWidgetColumnsRepository.findByUserDashboardWidgetId(widgetId),duplicate.getUserDashboardWidgetId());
+        List<UserDashboardWidgetColumns> columns = userDashboardWidgetColumnsService.duplicateColumns(userDashboardWidgetColumnsRepository.findByUserDashboardWidgetId(widgetId), duplicate.getUserDashboardWidgetId());
 
-        return new UserWidgetResponse(duplicate,columns);
+        return new UserWidgetResponse(duplicate, columns);
 
     }
 
@@ -110,13 +132,13 @@ public class UserDashboardWidgetService {
 
     }
 
-    public void deleteDashboardWidget(long id) throws RRException{
+    public void deleteDashboardWidget(long id) throws RRException {
         UserDashboardWidget userDashboardWidget = userDashboardWidgetRepository.findByUserDashboardWidgetId(id);
-        if(userDashboardWidget == null) throw new DashboardWidgetNotFoundException(id,"User");
+        if (userDashboardWidget == null) throw new DashboardWidgetNotFoundException(id, "User");
 
         List<UserDashboardWidgetColumns> columns = userDashboardWidgetColumnsService.getWidgetColumns(id);
-        if(columns != null && !columns.isEmpty()){
-            for(UserDashboardWidgetColumns col : columns){
+        if (columns != null && !columns.isEmpty()) {
+            for (UserDashboardWidgetColumns col : columns) {
                 userDashboardWidgetColumnsService.deleteWidgetColumns(col.getUserDashboardWidgetColumnId());
             }
         }
@@ -127,13 +149,119 @@ public class UserDashboardWidgetService {
 
     public void deleteByRef(long dashboardID, long referenceID) throws RRException {
         UserDashboard userDashboard = userDashboardRepository.findByUserDashboardId(dashboardID);
-        if(userDashboard == null) throw new UserDashboardNotFoundException(dashboardID);
+        if (userDashboard == null) throw new UserDashboardNotFoundException(dashboardID);
 
-        List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardIdAndWidgetId(dashboardID,referenceID);
-        if(!widgets.isEmpty()){
-            for(UserDashboardWidget widget: widgets){
+        List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardIdAndWidgetId(dashboardID, referenceID);
+        if (!widgets.isEmpty()) {
+            for (UserDashboardWidget widget : widgets) {
                 deleteDashboardWidget(widget.getUserDashboardWidgetId());
             }
         }
     }
-}
+
+    public DashboardDataResponse getDataForWidget(DashboardRequest request){
+
+        if(request.getCarStatus().equals("Archived")){
+            //might need to add one more
+            request.setCarStatus("Completed','Superseded','Cancelled','Priced");
+        }
+
+        if(request.getCarStatus().equals("Chart")){
+            request.setCarStatus("Completed','Superseded','Cancelled','Priced','In Progress','NEW");
+        }
+
+        DashboardDataResponse response = new DashboardDataResponse();
+        response.setRefCount(getTotalCount(request));
+
+        response.setContent(userDashboardRepository.getDataForWidget(request.getCarStatus(),
+                request.getEntity(),
+                request.getUserDashboardWidgetId(),
+                request.getUserCode(),
+                request.getPageNumber(),
+                request.getPageSize(),
+                request.getSelectionList(),
+                request.isSortSelectedFirst(),
+                request.getSortSelectedAction()));
+        return  response;
+    }
+
+   public void postConst() {
+
+        fetchDataSource = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
+                .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserCode", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("FilteredRecCount", Integer.class, ParameterMode.OUT);
+    }
+
+    public int getTotalCount(DashboardRequest request) {
+
+        StoredProcedureQuery query = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
+                .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("UserCode", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("FilteredRecCount", Integer.class, ParameterMode.OUT);
+
+                query.setParameter("CarStatus", request.getCarStatus())
+                .setParameter("Entity", request.getEntity())
+                .setParameter("UserDashboardWidgetId", request.getUserDashboardWidgetId())
+                .setParameter("UserCode", request.getUserCode()).execute();
+
+        try {
+            query.execute();
+            return (Integer) query.getOutputParameterValue("FilteredRecCount");
+
+        } finally {
+            query.unwrap(ProcedureOutputs.class).release();
+        }
+
+
+    }}
+
+//    public List<DashboardChartResponse>  getChartData(Date from, Date to){
+//        List<Map<String,Object>>data = userDashboardWidgetRepository.getDataForChart(from,to);
+//        List<DashboardChartResponse> response = new ArrayList<>();
+//        String assignedName = " ";
+//        int counter = 0 ;
+//        if(data != null){
+//            DashboardChartResponse res = new DashboardChartResponse();
+//            for(Map<String,Object> line : data){
+//            for (Map.Entry<String, Object> entry : line.entrySet()) {
+//
+//                if(!assignedName.equals(line.getAssignedAnalyst()) && counter != 0){
+//                    response.add(res);
+//                    res = new DashboardChartResponse();
+//                }
+//                    assignedName = line.getAssignedAnalyst();
+//                    res.setAssignedAnalyst(line.getAssignedAnalyst());
+//                    switch (line.getCarStatus()){
+//                        case "NEW" : res.setNewCars(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Cancelled" : res.setCancelled(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Priced" : res.setPriced(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Superseded" : res.setSuperseded(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "InProgress" : res.setInProgress(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        case "Completed" : res.setCompleted(line.getNumberCarsPerAnalyst());
+//                            break;
+//                        default: break;
+//                    }
+//                    counter ++;
+//
+//                    if(counter == data.size()){
+//                        response.add(res);
+//                    }
+//
+//
+//
+//
+//            }
+//        }
+//        return response;
+//    }
+//}

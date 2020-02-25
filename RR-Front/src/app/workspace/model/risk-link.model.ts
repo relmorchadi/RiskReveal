@@ -114,7 +114,7 @@ export class RiskLink {
         this.financialValidator = {
             rmsInstance: {
                 data: refData.rmsInstances,
-                selected: refData.rmsInstances[0]
+                selected: _.last(refData.rmsInstances)
             },
             financialPerspectiveELT: {
                 data: refData.financialPerspectives,
@@ -131,6 +131,8 @@ export class RiskLink {
         };
         this.facSelection = refData.division === null ? {} : Object.assign({}, ...refData.division.map(item => ({
                 [item.divisionNumber]: {
+                    edms: {},
+                    rdms: {},
                     analysis: {},
                     portfolios: {}
                 }
@@ -140,6 +142,43 @@ export class RiskLink {
 
     setType(type) {
         this.type = type;
+    }
+
+    clearSelection(){
+        this.selection = {
+            edms: {},
+            rdms: {},
+            analysis: {},
+            portfolios: {},
+            currentDataSource: null
+        };
+        this.facSelection = this.financialValidator.division.data === null ? {} : Object.assign({}, ...this.financialValidator.division.data.map(item => ({
+                [item.divisionNumber]: {
+                    edms: {},
+                    rdms: {},
+                    analysis: {},
+                    portfolios: {}
+                }
+            }
+        )));
+        this.analysis = {
+            data: [],
+            page: 0,
+            size: 20,
+            total: null,
+            last: null,
+            filter: new RLAnalysisFilter(),
+            loading: false
+        };
+        this.portfolios = {
+            data: [],
+            page: 0,
+            size: 20,
+            total: null,
+            last: null,
+            filter: new RlPortfolioFilter(),
+            loading: false
+        };
     }
 
 }

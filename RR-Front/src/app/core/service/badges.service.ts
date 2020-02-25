@@ -7,26 +7,32 @@ import {ShortCut} from "../model/shortcut.model";
 })
 export class BadgesService {
 
-  readonly regularExpession = /(\w*:){1}(((\w|\"|\*)*\s)*)/g;
+  readonly regularExpession = /(\w*:){1}(((\w|\"|\*|\-)*\s)*)/g;
 
-   shortcuts = {}
+  shortcuts = {};
+  mappingShortCuts = {};
 
   constructor() {
 
   }
 
-  public initShortCuts(shortCuts: ShortCut[]) {
+  public initShortCuts(shortCuts: ShortCut[], searchMode) {
     let newShortCuts = {};
+    let newMappingShortCuts = {};
 
-    _.forEach(shortCuts, shortCut => {
-      newShortCuts[_.trim(shortCut.shortCutAttribute, ':')] = shortCut.shortCutLabel;
+    _.forEach(_.filter(shortCuts, item => searchMode === 'Treaty' ? item.type === 'TTY' : item.type === 'FAC'), shortCut => {
+      newShortCuts[_.trim(shortCut.shortCutAttribute, ':')] = _.camelCase(shortCut.shortCutLabel);
     });
 
+    _.forEach(_.filter(shortCuts, item => searchMode === 'Treaty' ? item.type === 'TTY' : item.type === 'FAC'), shortCut => {
+      newMappingShortCuts[_.camelCase(shortCut.shortCutLabel)] = shortCut.mappingTable;
+    });
+
+    this.mappingShortCuts = newMappingShortCuts;
     this.shortcuts = newShortCuts;
   }
 
   public generateBadges(expression, shortcuts = this.shortcuts): { newExpr: string, badges: any[]} {
-     console.log(expression);
     if (!`${expression} `.match(this.regularExpession))
       return {
         newExpr: expression,
@@ -57,28 +63,31 @@ export class BadgesService {
     }
   }
 
-  public transformKeyword(expr: any) {
+  public transformKeyword(expr: any, searchMode) {
     return expr.replace(/(\w*:){1}/g, (match, shortcut, keyword) => {
       let shortCutExist = this.shortcuts[_.toLower(_.trim(shortcut, ':'))];
-      console.log(shortCutExist ? shortCutExist + ":" : shortcut)
       return shortCutExist ? shortCutExist + ":" : shortcut;
     });
+  }
+
+  public transformToMapping(expr) {
+    return this.mappingShortCuts[expr];
   }
 
   public initMappers(shortCuts: ShortCut[]) {
     let mapTableNameToBadgeKey= {};
     shortCuts.forEach( shortCut => {
       mapTableNameToBadgeKey[shortCut.mappingTable] = shortCut.shortCutLabel;
-    })
+    });
     return mapTableNameToBadgeKey;
   }
 
   public initShortCutsFromKeysMapper(shortCuts: ShortCut[]) {
-     let newMapper= {};
+    let newMapper= {};
 
-     _.forEach(shortCuts, shortCut => {
-       newMapper[_.trim(shortCut.shortCutAttribute, ':')] = _.startCase(shortCut.shortCutLabel);
-     })
+    _.forEach(shortCuts, shortCut => {
+      newMapper[_.trim(shortCut.shortCutAttribute, ':')] = _.startCase(shortCut.shortCutLabel);
+    });
 
     return newMapper;
   }

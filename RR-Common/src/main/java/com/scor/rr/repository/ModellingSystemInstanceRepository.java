@@ -3,6 +3,7 @@ package com.scor.rr.repository;
 import com.scor.rr.domain.ModellingSystemInstanceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,4 +13,5 @@ public interface ModellingSystemInstanceRepository extends JpaRepository<Modelli
             " where msi.active=true")
     List<ModellingSystemInstanceEntity> findActiveInstances();
 
+    ModellingSystemInstanceEntity findByName(String sourceModellingSystemInstance);
 }

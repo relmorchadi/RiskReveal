@@ -2,6 +2,8 @@ package com.scor.rr.service.batch.writer;
 
 import com.scor.rr.domain.ProjectConfigurationForeWriterFiles;
 import com.scor.rr.domain.enums.XLTSubType;
+import com.scor.rr.repository.ProjectConfigurationForeWriterFilesRepository;
+import com.scor.rr.repository.ProjectConfigurationForeWriterRepository;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,12 @@ public class AccLocFilesHandler extends AbstractWriter {
     @Autowired
     private TransformationPackage transformationPackage;
 
+    @Autowired
+    private ProjectConfigurationForeWriterFilesRepository projectConfigurationForeWriterFilesRepository;
+
+    @Autowired
+    private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
+
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
 
@@ -36,6 +44,9 @@ public class AccLocFilesHandler extends AbstractWriter {
 
     @Value("#{jobParameters['jobType']}")
     private String jobType;
+
+    @Value("#{stepExecution.jobExecution.jobId}")
+    private Long jobId;
 
     @Value("${ihub.treaty.out.path}")
     private String iHub;
@@ -50,28 +61,35 @@ public class AccLocFilesHandler extends AbstractWriter {
             String targetLocFileName = this.makeFacFilename("A", new Date(), XLTSubType.LOC, "", ".txt", division);
 
             // TODO: Review this later
-            String sourceAccFileName = carId + "_" + this.division;
-            String sourceLocFileName = carId + "_" + this.division;
+            String sourceAccFileName = carId + "_" + this.division + "_" + jobId;
+            String sourceLocFileName = carId + "_" + this.division + "_" + jobId;
 
             final Path iHubPath = Paths.get(iHub);
 
             final Path sourcePath = iHubPath.resolve("tmp");
             final Path targetPath = iHubPath.resolve(PathUtils.getPrefixDirectoryFac(clientName, Long.valueOf(clientId), contractId, Integer.valueOf(uwYear), division, carId, importSequence));
 
+            ProjectConfigurationForeWriterFiles accLocFile = new ProjectConfigurationForeWriterFiles();
+            accLocFile.setProjectConfigurationForeWriterId(
+                    projectConfigurationForeWriterRepository.findByProjectId(
+                            transformationPackage.getModelPortfolios().get(0).getProjectId()
+                    ).getProjectConfigurationForeWriterId()
+            );
+            accLocFile.setEntity(1);
+
             try {
-                this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath);
-                this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath);
+                accLocFile.setAccFileName(targetPath + "/" + this.doCopy(sourceAccFileName, targetAccFileName, "", ".acc", sourcePath, targetPath) + ".txt");
+                accLocFile.setLocFileName(targetPath + "/" + this.doCopy(sourceLocFileName, targetLocFileName, "", ".loc", sourcePath, targetPath) + ".txt");
+                projectConfigurationForeWriterFilesRepository.save(accLocFile);
             } catch (IOException ex) {
                 log.error("reading/writing error has occurred while copying forewriter files to the iHub");
                 ex.printStackTrace();
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             } catch (Exception ex) {
                 log.error("unknown error has occurred while copying forewriter files to the iHub");
                 ex.printStackTrace();
-                return RepeatStatus.CONTINUABLE;
+                return RepeatStatus.FINISHED;
             }
-
-            ProjectConfigurationForeWriterFiles accLocFile = new ProjectConfigurationForeWriterFiles();
         }
         return RepeatStatus.FINISHED;
     }

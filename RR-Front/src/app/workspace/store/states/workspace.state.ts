@@ -1,7 +1,6 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import {PatchCalibrationStateAction, SaveRPs} from '../actions';
 import * as fromInuring from '../actions/inuring.actions';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
@@ -361,6 +360,25 @@ export class WorkspaceState {
   static getRiskLinkSummary(state: WorkspaceModel){
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.summary;
+  }
+
+  @Selector()
+  static getRiskLinkSummarySelectionSize(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    const {analysis, portfolios}=state.content[wsIdentifier].riskLink.summary;
+    return _.size(_.values(analysis))  + _.size(_.values(portfolios));
+  }
+
+  @Selector()
+  static getRiskLinkAnalysisSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary.analysis;
+  }
+
+  @Selector()
+  static getRiskLinkPortfolioSummary(state: WorkspaceModel){
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.summary.portfolios;
   }
 
   @Selector()
@@ -876,8 +894,8 @@ export class WorkspaceState {
     this.calibrationService.saveAdjustmentApplication(ctx, payload);
   }
 
-  @Action(PatchCalibrationStateAction)
-  patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
+  @Action(fromWS.PatchCalibrationStateAction)
+  patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: fromWS.PatchCalibrationStateAction) {
     this.calibrationService.patchSearchState(ctx, payload);
   }
 
@@ -1096,6 +1114,14 @@ export class WorkspaceState {
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+  @Action(fromWS.DeleteFromImportBasketAction)
+  deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.deleteFromImportBasket(ctx, payload);
+  }
+  @Action(fromWS.SaveImportConfigurationAction)
+  saveImportConfiguration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
+    return this.riskLinkFacade.saveImportConfiguration(ctx, payload);
+  }
 
   @Action(fromWS.OverrideAnalysisRegionPeril)
   overrideAnalysisRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideAnalysisRegionPeril){
@@ -1141,24 +1167,36 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.SaveDefaultDataSourcesAction)
-  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveDefaultDataSourcesAction){
     return this.riskLinkFacade.saveDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadDefaultDataSourcesAction)
-  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultDataSourcesAction){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryOrDefaultDataSourcesAction)
-  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryOrDefaultDataSourcesAction){
     return this.riskLinkFacade.loadSummaryOrDefaultDataSources(ctx, payload);
+  }
+  @Action(fromWS.ResetToDefaultSelectionAction)
+  resetToDefaultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ResetToDefaultSelectionAction){
+    return this.riskLinkFacade.resetToDefaultSelection(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryAction)
-  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryAction){
     return this.riskLinkFacade.loadSummary(ctx, payload);
   }
+
+
+  @Action(fromWS.ClearSelectionAction)
+  clearSelection(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.clearSelection(ctx);
+  }
+
+
 
 
 

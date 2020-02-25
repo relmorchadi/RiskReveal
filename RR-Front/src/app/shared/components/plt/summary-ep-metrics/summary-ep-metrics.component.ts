@@ -101,4 +101,15 @@ export class SummaryEpMetricsComponent implements OnInit {
     })
   }
 
+  removeReturnPeriod(rp) {
+    this.actionDispatcher.emit({
+      type: "Delete RP",
+      payload: rp
+    })
+  }
+
+  handleChartActions(action: Message) {
+    this.actionDispatcher.emit(action);
+  }
+
 }

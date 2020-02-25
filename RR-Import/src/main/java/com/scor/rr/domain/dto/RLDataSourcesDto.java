@@ -22,6 +22,7 @@ public class RLDataSourcesDto {
     private Long projectId;
     private Long userId;
     private String instanceId;
+    private String instanceName;
     private List<Long> rlModelIdList;
 
     public RLDataSourcesDto(RLImportedDataSourcesAndAnalysis rlImportedDataSourcesAndAnalysis) {
@@ -34,6 +35,7 @@ public class RLDataSourcesDto {
         this.rlModelIdList = new ArrayList<>();
         this.addToRlModelIdList(rlImportedDataSourcesAndAnalysis.getRlModelId());
         this.instanceId= rlImportedDataSourcesAndAnalysis.getInstanceId();
+        this.instanceName= rlImportedDataSourcesAndAnalysis.getInstanceName();
     }
 
     public RLDataSourcesDto(RLSavedDataSource rlSavedDataSource) {
@@ -43,6 +45,7 @@ public class RLDataSourcesDto {
         this.setProjectId(rlSavedDataSource.getProjectId());
         this.setUserId(rlSavedDataSource.getUserId());
         this.setInstanceId(rlSavedDataSource.getInstanceId());
+        this.setInstanceName(rlSavedDataSource.getInstanceName());
         this.rlModelIdList = new ArrayList<>();
     }
 

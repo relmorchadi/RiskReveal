@@ -1,0 +1,266 @@
+:host {
+  ::ng-deep {
+
+    .table-container-loading {
+      min-height: calc(100vh - 333px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
+      margin-top: -362px;
+      margin-left: -473px;
+    }
+
+    .activate-header-scroll {
+      .ui-table-scrollable-header {
+        overflow: auto !important;
+      }
+    }
+
+    .icon-check {
+      background-color: #0700e4;
+      color: #fff;
+      border-radius: 25px;
+      font-size: 16px;
+      margin: 5px;
+    }
+
+    .active_plt_item {
+      background-color: #fcf9d6;
+    }
+
+    .ui-table-thead  {
+
+      .filter-head {
+        text-align: center !important;
+      }
+
+      .ui-column-resizer {
+        width: 1.6px !important;
+        border: none !important;
+        background-color: #d8cdcd;
+      }
+
+
+
+      .checkBoxHead div {
+        margin-left: 9px;
+        display: flex;
+        align-items: center;
+
+
+        .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+          border-color: #0700cf;
+          height: 2px;
+          display: flex;
+
+        }
+
+        .ant-checkbox-indeterminate .ant-checkbox-inner {
+          background-color: #0700cf;
+          border-color: #0700cf;
+        }
+      }
+
+      tr:nth-child(2n) {
+        border-bottom: 1px solid rgba(0,0,0,0.15);
+
+        .icon-header {
+          padding: 6px 0 0 2px !important;
+        }
+
+        th {
+          padding: 0 2px !important;
+          height: 30px;
+        }
+      }
+
+      tr:nth-child(2n + 1) {
+
+        th {
+          padding: 2px 2px 0 2px !important;
+          height:25px;
+        }
+      }
+
+      th {
+        font-size: 10px;
+        vertical-align: top;
+        color: rgba(0, 0, 0, 0.38) !important;
+        background-color: #fff !important;
+        outline-color: #fff;
+        font-family: Rubik;
+        border: none !important;
+        position: relative;
+
+        .ui-sortable-column-icon {
+          color: #848484 !important;
+        }
+
+        .icon-sort-amount-down {
+          font-size: 28px;
+          margin-left: 2px;
+          cursor: pointer;
+        }
+      }
+    }
+
+    .ui-table-tbody {
+      tr {
+        background-color: #fff !important;
+      }
+
+      tr.active_plt_item {
+        background-color: #fcf9d6 !important;
+      }
+
+      tr.opened_plt_item {
+        background-color: #E9E9E9 !important;
+      }
+
+      tr:hover {
+        background-color: #F7F8FD !important;
+      }
+
+
+      td {
+        cursor: pointer;
+        font-size: 14px;
+        border: none !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        user-select: none;
+
+        .peril-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px !important;
+          height: 30px !important;
+          margin: auto;
+          border-radius: 100%;
+          color: #fff !important;
+        }
+
+        .text-ellipsis {
+          width: 100%;
+          height: 30px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+        .td-wrapper-tags {
+          padding: 4px 0px 0px 5px !important;
+          position: relative;
+          top: -4px;
+          .tag-el {
+            border-radius: 29px;
+            font-size: 14px;
+            margin-left: -7px;
+            padding: 0px 7px 0px 7px;
+            border: 2px solid white;
+          }
+          .tag-ellipsis {
+            background-color: #0CB79B;
+            border-radius: 25px;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            border: 2px solid white;
+            margin-left: -7px;
+          }
+        }
+      }
+
+
+      .ui-contextmenu-selected {
+        color: inherit !important;
+      }
+
+      tr.active_contract_item {
+        background-color: #FCF9D6 !important;
+      }
+
+      tr.selected_contract_item {
+        background-color: #E9E9E9 !important;
+      }
+    }
+
+    .td-wrapper-tags {
+      padding: 4px 0px 0px 5px;
+
+      .tag-el {
+        border-radius: 29px;
+        font-size: 14px;
+        margin-left: -7px;
+        padding: 0px 7px 0px 7px;
+        border: 2px solid white;
+      }
+
+      .tag-ellipsis {
+        background-color: #0CB79B;
+        border-radius: 25px;
+        color: white;
+        font-size: 14px;
+        text-align: center;
+        border: 2px solid white;
+        margin-left: -7px;
+      }
+    }
+
+  }
+  .checkbox-off{
+    padding-left: 9px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+  .burger-menu-visible{
+    display: block;
+    width: 0px;
+
+  }
+  .burger-menu{
+    display: none;
+    width: 0px;
+  }
+  .checkbox-off:hover{
+    .burger-menu{
+      display: block;
+    }
+  }
+}
+
+.iconYellow {
+  color: #fde729;
+  font-size: 17px;
+}
+
+.iconYellow2 {
+  color: #d8880f;
+  font-size: 17px;
+}
+
+.iconGreen {
+  color: #00B396;
+  font-size: 17px;
+}
+
+.iconBlue {
+  color: #21aae6;
+  font-size: 17px;
+}
+
+.iconRed {
+  color: #b8200c;
+  font-size: 17px;
+}
+
+.iconRed2 {
+  color: #ff2126;
+  font-size: 17px;
+}

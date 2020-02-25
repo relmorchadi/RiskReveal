@@ -1,5 +1,8 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
+import com.scor.rr.domain.UserRrEntity;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.entities.Tag;
@@ -8,15 +11,25 @@ import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewHelperResponse;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
+import com.scor.rr.domain.entities.ViewContextColumns;
 import com.scor.rr.repository.*;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.procedure.ProcedureOutputs;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
+import javax.persistence.StoredProcedureQuery;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Component
+@Slf4j
 public class PltBrowserService {
 
     @Autowired
@@ -34,6 +47,10 @@ public class PltBrowserService {
     TagRepository tagRepository;
     @Autowired
     PLTHeaderTagRepository pltHeaderTagRepository;
+    @Autowired
+    ViewContextColumnsRepository viewContextColumnsRepository;
+    @Autowired
+    EntityManager entityManager;
 
     PLTManagerViewHelperResponse appendTagsToPLTs(Set<PLTManagerView> plts, WorkspaceEntity ws) {
         HashMap<Long, Tag> pltHeaderTagCount = new HashMap<>();
@@ -64,16 +81,142 @@ public class PltBrowserService {
     }
 
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
-        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWsId(), request.getUwYear()).orElse(null);
-        Set<PLTManagerView> plts = pltManagerViewRepository.findPLTs(request.getWsId(), request.getUwYear());
-        Set<PLTManagerView> deletedPlts = pltManagerViewRepository.findDeletedPLTs(request.getWsId(), request.getUwYear());
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            PLTManagerViewResponse response= new PLTManagerViewResponse();
 
-        PLTManagerViewHelperResponse pltManagerViewHelperResponse = appendTagsToPLTs(plts, ws);
+            response.setPlts(this.pltManagerViewRepository.getPLTManagerData(
+                    request.getWorkspaceContextCode(),
+                    request.getWorkspaceUwYear(),
+                    request.getEntity(),
+                    user.getUserCode(),
+                    request.getPageNumber(),
+                    request.getPageSize(),
+                    request.getSelectionList(),
+                    request.getSortSelectedFirst(),
+                    request.getSortSelectedAction()
+            ));
 
-        return new PLTManagerViewResponse(pltManagerViewHelperResponse.getPlts(), deletedPlts, pltManagerViewHelperResponse.getTags());
+            response.setTotalCount(this.useGetPLTManagerDataCountProc(request));
+
+
+            return response;
+
     }
 
-    public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
+    public List<Map<String, Object>> getColumns() {
+        try {
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            return this.pltManagerViewRepository.getColumns(user.getUserCode(), 2L);
+        } catch (Exception ex) {
+            log.error("Couldn't Get PLT Manager Columns with message: {}", ex.getMessage());
+        }
+        return null;
+    }
+
+    public void updateColumnWidth(UpdateColumnWidthRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        Optional<ViewContextColumns> opt = this.viewContextColumnsRepository.findById(request.getViewContextColumnId());
+        Integer newWidth;
+        if(opt.isPresent()) {
+            ViewContextColumns column = opt.get();
+
+            if(column.getMaxWidth() < request.getWidth()) {
+                newWidth = column.getMaxWidth();
+            } else if(column.getMinWidth() > request.getWidth()) {
+                newWidth = column.getMinWidth();
+            } else {
+                newWidth = request.getWidth();
+            }
+
+            this.viewContextColumnsRepository.updateColumnWidth(user.getUserCode(), request.getViewContextColumnId(), newWidth);
+        }
+    }
+
+    Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("dbonew.usp_PLTManagerGetThreadEndPLTsCount")
+                .registerStoredProcedureParameter(
+                        "WorkspaceContextCode",
+                        String.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "WorkspaceUwYear",
+                        Integer.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "Entity",
+                        Integer.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "UserCode",
+                        String.class,
+                        ParameterMode.IN
+                )
+                .registerStoredProcedureParameter(
+                        "TotalRecCount",
+                        Integer.class,
+                        ParameterMode.OUT
+                )
+                .registerStoredProcedureParameter(
+                        "FilteredRecCount",
+                        Integer.class,
+                        ParameterMode.OUT
+                )
+                .setParameter("WorkspaceContextCode", request.getWorkspaceContextCode())
+                .setParameter("WorkspaceUwYear", request.getWorkspaceUwYear())
+                .setParameter("Entity", request.getEntity())
+                .setParameter("UserCode", user.getUserCode());
+
+        try {
+            query.execute();
+            return (Integer) query.getOutputParameterValue("FilteredRecCount");
+
+        } finally {
+            query.unwrap(ProcedureOutputs.class).release();
+        }
+    }
+
+    public void updateColumnSort(UpdateColumnSortRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.updateColumnSort(user.getUserCode(), request.getViewContextId(), request.getViewContextColumnId());
+    }
+
+    public void resetColumnSort(ResetColumnSortRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.resetColumnSort(user.getUserCode(), request.getViewContextId());
+    }
+
+    public void updateColumnFilterCriteria(UpdateColumnFilterCriteriaRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.updateColumnFilterCriteria(user.getUserCode(), request.getViewContextId(), request.getViewContextColumnId(), request.getFilterCriteria());
+    }
+
+    public void resetColumnFilterCriteria(ResetColumnFilterCriteriaRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.resetColumnFilterCriteria(user.getUserCode(), request.getViewContextId());
+    }
+
+    public void updateColumnOrderAndVisibility(UpdateColumnOrderAndVisibilityRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.viewContextColumnsRepository.updateColumnOrderAndVisibility(user.getUserCode(), request.getViewContextId(), request.getColumnsList());
+    }
+
+    public List<Map<String, Object>> getIDs(PLTManagerIDsRequest request) {
+        try {
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            return this.pltManagerViewRepository.getIDs(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), 1, user.getUserCode());
+        } catch (Exception e) {
+            log.error("Couldn't Get PLT Manager IDs with message: {}", e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
+    /*public Boolean deletePLTheader(PLTHeaderDeleteRequest request) {
         request.getPltHeaderIds().forEach( pltHeaderId -> {
             Optional<PltHeaderEntity> pltHeaderOpt = pltHeaderRepository.findById(pltHeaderId);
             PltHeaderEntity pltHeaderEntity;
@@ -115,5 +258,5 @@ public class PltBrowserService {
             }
         });
         return true;
-    }
+    }*/
 }

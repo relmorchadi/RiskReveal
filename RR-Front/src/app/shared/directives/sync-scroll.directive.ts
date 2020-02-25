@@ -1,20 +1,51 @@
-import {AfterViewInit, Directive, ElementRef, OnChanges, OnDestroy} from '@angular/core';
-
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  HostListener,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges
+} from '@angular/core';
+import * as _ from 'lodash';
 @Directive({
   selector: '[syncScroll]'
 })
-export class SyncScrollDirective implements AfterViewInit, OnDestroy {
+export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
 
-  frozen: ElementRef;
-  unfrozen: ElementRef;
+  @Input() classIdentifier;
 
-  constructor(private el: ElementRef) {}
+  listener: any[];
+
+  constructor(private el: ElementRef) {
+    this.listener= [];
+  }
+
+  ngAfterViewChecked(): void {
+
+    const nodes = this.el.nativeElement.querySelectorAll( `${this.classIdentifier ? '.'+this.classIdentifier : ''} .ui-table-scrollable-body`);
+
+    if( nodes.length == 2 ) {
+
+      _.forEach(this.listener, node => {
+        node.removeEventListener('scroll', () => {});
+      });
+
+      const node1 = nodes[0];
+      const node2 = nodes[1];
+
+      this.listener.push(node1);
+      this.listener.push(node2);
+
+      this.syncScroll(node1, node2);
+      this.syncScroll(node2, node1);
+    }
+
+  }
 
   ngAfterViewInit(): void {
-    this.frozen = this.el.nativeElement.querySelector('.ui-table-frozen-view .ui-table-scrollable-body');
-    this.unfrozen = this.el.nativeElement.querySelector('.ui-table-unfrozen-view .ui-table-scrollable-body');
-
-    this.syncScroll(this.frozen, this.unfrozen);
   }
 
   syncScroll(source, target) {
@@ -25,8 +56,12 @@ export class SyncScrollDirective implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // this.frozen.nativeElement.removeEventListener('scroll');
-    // this.unfrozen.nativeElement.removeEventListener('scroll');
+    _.forEach(this.listener, node => {
+      node.removeEventListener('scroll', () => {});
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
   }
 
 }

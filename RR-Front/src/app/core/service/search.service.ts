@@ -36,7 +36,11 @@ export class SearchService {
   }
 
   searchByTable(keyword = '', size = '5', table = 'country') {
-    return this._http.get(`${this.api}searchcount`, {params: {keyword, size, table}});
+    return this._http.get(`${this.api}searchcount/treaty`, {params: {keyword, size, table}});
+  }
+
+  searchByTableFac(keyword = '', size = '5', table = 'client') {
+    return this._http.get(`${this.api}searchcount/fac`, {params: {keyword, size, table}});
   }
 
   searchGlobal(filter, offset = '0', size = '100') {

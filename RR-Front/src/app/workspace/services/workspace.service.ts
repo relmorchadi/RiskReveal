@@ -303,13 +303,13 @@ export class WorkspaceService {
 
   updateProject(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {assignedTo, projectId, projectName, projectDescription} = payload.data;
+    const {assignedTo, projectId, projectName, projectDescription, dueDate} = payload.data;
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription).pipe(
+    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription, dueDate).pipe(
       map( (prj: any) => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
           return item.projectId === projectId ? {...prj, projectType: prj.carRequestId === null ? 'TREATY' : 'FAC'
-            , selected: item.selected} : {...item};
+            , selected: item.selected, projectName, projectDescription, dueDate} : {...item};
         }) : null;
       }))
     ), catchError(err => {

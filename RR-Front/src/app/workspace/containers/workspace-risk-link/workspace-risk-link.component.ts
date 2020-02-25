@@ -1,8 +1,16 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofAction, ofActionCompleted, ofActionDispatched, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {
+    Actions,
+    ofActionCompleted,
+    ofActionDispatched,
+    ofActionErrored,
+    ofActionSuccessful,
+    Select,
+    Store
+} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
@@ -17,7 +25,6 @@ import {forkJoin} from 'rxjs';
 import {TableSortAndFilterPipe} from '../../../shared/pipes/table-sort-and-filter.pipe';
 import {NotificationService} from '../../../shared/services';
 import {debounceTime, take} from 'rxjs/operators';
-import {SetCurrentTab} from '../../store/actions';
 import {FormControl} from "@angular/forms";
 import {Debounce} from "../../../shared/decorators";
 
@@ -117,6 +124,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     @Select(WorkspaceState.getRiskLinkSummary)
     summary$;
+    @Select(WorkspaceState.getRiskLinkSummarySelectionSize)
+    summarySelectionSize$;
+
+    @Select(WorkspaceState.getRiskLinkAnalysisSummary)
+    analysisSummary$;
+
+    @Select(WorkspaceState.getRiskLinkPortfolioSummary)
+    portfolioSummary$;
 
     filterAnalysis = {
         rlId: '',
@@ -148,6 +163,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     datasourceKeywordFc: FormControl;
 
+    readonly analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
+    readonly portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
 
     constructor(
         private _helper: HelperService,
@@ -185,7 +202,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             this.portfolios = _.merge({}, value);
             this.detectChanges();
         });
-        this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.selectedProject$.pipe(this.unsubscribeOnDestroy, debounceTime(500)).subscribe(value => {
             this.selectedProject = value;
             this.tabStatus = _.get(value, 'projectType', null);
             this.importInit();
@@ -195,14 +212,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
             this.importInit();
-            this.detectChanges();
-        });
-        this.actions$
-            .pipe(
-                this.unsubscribeOnDestroy,
-                ofActionDispatched(SetCurrentTab)
-            ).subscribe(({payload}) => {
-            if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
             this.detectChanges();
         });
 
@@ -243,15 +252,52 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             const {withDetailScan, allAnalysis, allPortfolios} = p.payload;
             if (withDetailScan && _.isEmpty(allAnalysis) && _.isEmpty(allPortfolios))
                 alert('No auto attach suggestions available on this Workspace');
+            if (this.state)
+                this._refreshCurrentDataSourceContent(this.state.selectedEDMOrRDM);
         });
+
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionCompleted(fromWs.SaveImportConfigurationAction)
+            ).subscribe(() => {
+            this.notification.createNotification('Information',
+                'Import configuration saved',
+                'info', 'bottomRight', 4000);
+        });
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionSuccessful(fromWs.TriggerImportAction)
+            ).subscribe(() => {
+            this.notification.createNotification('Information',
+                'Import Job submitted !',
+                'info', 'bottomRight', 4000);
+        });
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionErrored(fromWs.TriggerImportAction)
+            ).subscribe(() => {
+            this.notification.createNotification('Error',
+                'Error while submitting the import job!',
+                'error', 'bottomRight', 4000);
+        });
+
+        this.actions$
+            .pipe(
+                this.unsubscribeOnDestroy,
+                ofActionSuccessful(fromWs.DeleteFromImportBasketAction)
+            ).subscribe(({payload}) => {
+            this._refreshCurrentDataSourceContent(payload.type);
+        });
+
+        this._autoSelectFirstDataSource();
 
         this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
         this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
         this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
         this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
-
-        this._autoSelectFirstDataSource();
-
         this.datasourceKeywordFc.valueChanges
             .pipe(this.unsubscribeOnDestroy)
             .pipe(debounceTime(500))
@@ -274,10 +320,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.actions$
             .pipe(
                 this.unsubscribeOnDestroy,
-                ofActionSuccessful(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
+                ofActionCompleted(fromWs.LoadSummaryOrDefaultDataSourcesAction, fromWs.BasicScanEDMAndRDMAction),
                 debounceTime(500)
             ).subscribe(p => {
-            console.log('After success : LoadSummaryOrDefaultDataSourcesAction');
             const {edms, rdms, currentDataSource} = this.state.selection;
             const dataSources = [..._.values(edms), ..._.values(rdms)];
             if (!_.isEmpty(dataSources) && !currentDataSource) {
@@ -286,15 +331,21 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         });
     }
 
+    @Debounce(500)
     loadSummaryOrDefaultDataSources() {
-        setTimeout(() => {
-            if (this.selectedProject)
-                this.dispatch(new fromWs.LoadSummaryOrDefaultDataSourcesAction({
-                    projectId: this.selectedProject.projectId,
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    userId: 1
-                }));
-        }, 500);
+        if (this.selectedProject)
+            this.dispatch(new fromWs.LoadSummaryOrDefaultDataSourcesAction({
+                projectId: this.selectedProject.projectId,
+                instanceId: this.state.financialValidator.rmsInstance.selected.instanceId
+            }));
+    }
+
+    resetDefaultSelection(){
+        if (this.selectedProject)
+            this.dispatch(new fromWs.ResetToDefaultSelectionAction({
+                projectId: this.selectedProject.projectId,
+                instanceId: this.state.financialValidator.rmsInstance.selected.instanceId
+            }));
     }
 
     saveDefaultSelection() {
@@ -339,7 +390,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     setFilterDivision() {
-        console.log('Set Filter division');
         if (!this.state.financialValidator.division.selected) {
             console.error('No selected Division');
             return;
@@ -459,9 +509,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(p => {
                 const projectId = p.projectId;
                 const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
+                const {instanceId, instanceName} = this.state.financialValidator.rmsInstance.selected;
                 this.dispatch(new fromWs.DatasourceScanAction({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                    selectedDS,
+                    selectedDS: _.map(selectedDS, item => ({...item, instanceId, instanceName})),
                     projectId
                 }));
             });
@@ -474,7 +524,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             .subscribe(p => {
                 const projectId = p.projectId;
                 this.dispatch(new fromWs.ReScanDataSource({
-                    instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     datasource,
                     projectId
                 }));
@@ -638,23 +687,25 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.getRiskLinkPortfolio(page, rows);
     }
 
+    @Debounce()
     private getRiskLinkAnalysis(page = this.state.analysis.page, size = this.state.analysis.size) {
         return this.dispatch(new fromWs.GetRiskLinkAnalysisAction({
             rdmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
             projectId: this.selectedProject.projectId,
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            instanceId: this.state.selection.rdms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterAnalysis),
             userId: 1
         }));
     }
 
+    @Debounce()
     private getRiskLinkPortfolio(page = this.portfolios.page, size = this.portfolios.size) {
         return this.dispatch(new fromWs.GetRiskLinkPortfolioAction({
             edmId: this.state.selection.currentDataSource,
             paginationParams: {page, size},
             projectId: this.selectedProject.projectId,
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            instanceId: this.state.selection.edms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterPortfolio),
             userId: 1
         }));
@@ -781,7 +832,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     autoAttach() {
-        console.log('Auto attach');
         const divisionsIds = _.map(this.state.financialValidator.division.data, d => d.divisionNumber);
         const edmIds = _.map(_.values(this.state.selection.edms), item => item.rlDataSourceId);
         const rdmIds = _.map(_.values(this.state.selection.rdms), item => item.rlDataSourceId);
@@ -805,9 +855,32 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }))
     }
 
+    saveConfiguration(type: string) {
+        const projectId = this.selectedProject.projectId;
+        if (type == 'ANALYSIS') {
+            this.analysisSummary$
+                .pipe(this.unsubscribeOnDestroy)
+                .subscribe(analysisConfig => {
+                    this.dispatch(new fromWs.SaveImportConfigurationAction({
+                        type,
+                        analysisConfig: this.transformAnalysisResultForImport(analysisConfig, projectId, this.analysisConfigFields)
+                    }))
+                });
+        } else if (type == 'PORTFOLIO') {
+            this.portfolioSummary$
+                .pipe(this.unsubscribeOnDestroy)
+                .subscribe(portfolioConfig => {
+                    this.dispatch(new fromWs.SaveImportConfigurationAction({
+                        type,
+                        portfolioConfig: this.transformPortfolioResultForImport(portfolioConfig, projectId, this.portfolioConfigFields)
+                    }))
+                });
+        } else {
+            console.error('Unknown configuration type :', type);
+        }
+    }
+
     triggerImport() {
-        const analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
-        const portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
         forkJoin(
             [
                 this.selectedProject$,
@@ -826,8 +899,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                     projectId,
                     userId: 1,
-                    analysisConfig: this.transformAnalysisResultForImport(summary.analysis, projectId, analysisConfigFields),
-                    portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, portfolioConfigFields)
+                    analysisConfig: this.transformAnalysisResultForImport(summary.analysis, projectId, this.analysisConfigFields),
+                    portfolioConfig: this.transformPortfolioResultForImport(summary.portfolios, projectId, this.portfolioConfigFields)
                 }));
             });
     }
@@ -889,4 +962,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         return _.keys(this.state.selection.portfolios[this.state.selection.currentDataSource]);
     }
 
+    private _refreshCurrentDataSourceContent(type) {
+        if (type == 'ANALYSIS') {
+            this.getRiskLinkAnalysis();
+        } else if (type == 'PORTFOLIO') {
+            this.getRiskLinkPortfolio();
+        }
+    }
 }

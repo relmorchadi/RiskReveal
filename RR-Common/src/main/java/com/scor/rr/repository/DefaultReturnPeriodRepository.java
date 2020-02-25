@@ -17,11 +17,11 @@ public interface DefaultReturnPeriodRepository extends JpaRepository<DefaultRetu
 
     @Transactional
     @Query(value = "exec dbonew.usp_FindSinglePLTEpMetricsByPLTHeaderIdAndUserAndCurveType @userId=:userId, @PLTHeaderId=:pltHeaderId, @curveType=:curveType, @screen=:screen", nativeQuery = true)
-    List<Map<String, Object>> findSinglePLTEpMetricsUserAndCurveType(@Param("userId") Integer userId, @Param("pltHeaderId") Long pltHeaderId, @Param("curveType") String type, @Param("screen") String screen);
+    List<Map<String, Object>> findSinglePLTEpMetricsUserAndCurveType(@Param("userId") Long userId, @Param("pltHeaderId") Long pltHeaderId, @Param("curveType") String type, @Param("screen") String screen);
 
     @Transactional
     @Query(value = "exec dbonew.usp_FindEpMetricsByWorkspaceAndUserAndCurveType @userId=:userId, @workspaceContextCode=:workspaceContextCode, @uwYear=:uwYear, @type=:curveType, @screen=:screen", nativeQuery = true)
-    List<Map<String, Object>> findEpMetricsByWorkspaceAndUserAndCurveType(@Param("userId") Integer userId, @Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear, @Param("curveType") String type, @Param("screen") String screen);
+    List<Map<String, Object>> findEpMetricsByWorkspaceAndUserAndCurveType(@Param("userId") Long userId, @Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear, @Param("curveType") String type, @Param("screen") String screen);
 
 
     @Transactional

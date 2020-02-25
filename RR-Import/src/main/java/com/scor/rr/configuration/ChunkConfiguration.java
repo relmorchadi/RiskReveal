@@ -31,20 +31,29 @@ public class ChunkConfiguration {
 
     @Bean("locResource")
     @StepScope
-    public Resource locResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + ".loc");
+    public Resource locResource(@Value("${ihub.treaty.out.path}") String iHubPath,
+                                @Value("#{jobParameters['carId']}") String carId,
+                                @Value("#{jobParameters['division']}") String division,
+                                @Value("#{stepExecution.jobExecution.jobId}") Long jobId) {
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + "_" + jobId + ".loc");
     }
 
     @Bean("locFWResource")
     @StepScope
-    public Resource locFWResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + "_FW.loc");
+    public Resource locFWResource(@Value("${ihub.treaty.out.path}") String iHubPath,
+                                  @Value("#{jobParameters['carId']}") String carId,
+                                  @Value("#{jobParameters['division']}") String division,
+                                  @Value("#{stepExecution.jobExecution.jobId}") Long jobId) {
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + "_" + jobId + "_FW.loc");
     }
 
     @Bean("accResource")
     @StepScope
-    public Resource accResource(@Value("${ihub.treaty.out.path}") String iHubPath, @Value("#{jobParameters['carId']}") String carId, @Value("#{jobParameters['division']}") String division) {
-        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + ".acc");
+    public Resource accResource(@Value("${ihub.treaty.out.path}") String iHubPath,
+                                @Value("#{jobParameters['carId']}") String carId,
+                                @Value("#{jobParameters['division']}") String division,
+                                @Value("#{stepExecution.jobExecution.jobId}") Long jobId) {
+        return new FileSystemResource(iHubPath + "/tmp/" + carId + "_" + division + "_" + jobId + ".acc");
     }
 
     /**

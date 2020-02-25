@@ -19,7 +19,7 @@
                 No Result Found
               </ng-container>
               <ng-template #paginationHighlight>
-                <div *ngIf="dt.selectedRows && dt.selectedRows.length; else noSelects">
+                <div *ngIf="dt?.selectedRows && dt?.selectedRows?.length; else noSelects">
                   {{dt?.selectedRows?.length}} of {{paginationOption?.total}} selected
                 </div>
                 <ng-template #noSelects>
@@ -43,7 +43,7 @@
                     class="search-opt-btn" nz-button>
               Saved Search &nbsp;
               <i
-                [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
+                      [ngClass]="{'icon-keyboard_arrow_up_24px':savedSearchVisibility,'icon-keyboard_arrow_down_24px':!savedSearchVisibility}"></i>
             </button>
             <button (click)="openSavedSearch()" class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
           </div>
@@ -89,26 +89,44 @@
             <span (click)="clearChips()" *ngIf="searchContent?.length > 0">Clear All</span>
           </div>
           <div style="align-items: center; display: flex;">
-            <i (click)="manageColumns = true" class="icon-settings_24px" nz-tooltip="Manage columns"
+            <i (click)="openPopUp()" class="icon-settings_24px" nz-tooltip="Manage columns"
                style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
           </div>
 
 
         </div>
         <app-table [tableColumn]="columns" [sortable]="false"
-                   [rows]="100"
+                   [rows]="100" [virtualRowHeight]="35.56"
                    [totalRecords]="paginationOption?.total"
-                   #dt
+                   #dt *ngIf="searchMode === 'Treaty'"
                    [listOfData]="contracts"
-                   [virtualScroll]="true"
+                   [virtualScroll]="paginationOption.total > 100"
                    (selectOne)="openWorkspaceInSlider($event)"
-                   [tableWidth]="'1000px'"
-                   [tableHeight]="'calc(100vh - 210px)'"
+                   [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
+                   [tableHeight]="'calc(100vh - 212px)'"
                    (loadMore)="loadMore($event)"
-                   (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
                    (sortDataChange)="sortChange($event)"
                    [sortData]="sortData"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
+                   [activateContextMenu]="true"
+                   [loading]="loading">
+        </app-table>
+
+        <app-table [tableColumn]="columnsFac" [sortable]="false"
+                   [rows]="100" [virtualRowHeight]="35.56"
+                   [totalRecords]="paginationOption?.total"
+                   #dtFac *ngIf="searchMode === 'Fac'"
+                   [listOfData]="contracts"
+                   [virtualScroll]="true"
+                   (selectOne)="openWorkspaceInSlider($event)"
+                   [tableWidth]="'1000px'" [secondaryLoader]="secondaryLoading"
+                   [tableHeight]="'calc(100vh - 212px)'"
+                   (loadMore)="loadMore($event)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress, $event)"
+                   (sortDataChange)="sortChange($event)"
+                   [sortData]="sortData"
+                   (dbClickItem)="openWorkspace($event?.workspaceName, $event?.uwYear)"
                    [activateContextMenu]="true"
                    [loading]="loading">
         </app-table>
@@ -124,14 +142,15 @@
 
   </div>
 </nz-layout>
+
 <p-dialog
-  [visible]="manageColumns"
-  [closable]="false"
-  styleClass="m-dialog-modal"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
+        [visible]="manageColumns"
+        [closable]="false"
+        styleClass="m-dialog-modal"
+        appendTo="body"
+        [modal]="true"
+        [autoZIndex]="false"
+        [responsive]="true"
 >
   <p-header>
     <div class="header">
@@ -142,35 +161,60 @@
   <div class="content">
     <div style="display: flex;flex-direction: column;">
       <h6>Available columns:</h6>
-      <div
-        cdkDropList
-        [id]="'availableListOfColumns'"
-        #availbleListOfAdjColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
-        [cdkDropListData]="extraColumnsCache"
-        class="m-box-d"
-        (cdkDropListDropped)="dropColumn($event)">
-        <ng-container *ngFor="let col of extraColumnsCache;let i=index">
-          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-            <div class="m-box-overlay">
-              <div class="left">
-                <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div>
-                <span class="subtitle-2">
+      <div cdkDropList
+           [id]="'availableListOfColumns'"
+           #availbleListOfAdjColumns="cdkDropList"
+           [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
+           [cdkDropListData]="searchMode === 'Treaty' ? extraColumnsCache : extraColumnsCacheFac"
+           class="m-box-d"
+           (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngIf="searchMode === 'Treaty'">
+          <ng-container *ngFor="let col of extraColumnsCache;let i=index">
+            <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+              <div class="m-box-overlay">
+                <div class="left">
+                  <div class="burger" cdkDragHandle>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                  </div>
+                  <span class="subtitle-2">
               {{col.header}}
               </span>
+                </div>
               </div>
             </div>
-          </div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="searchMode === 'Fac'">
+          <ng-container *ngFor="let col of extraColumnsCacheFac;let i=index">
+            <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+              <div class="m-box-overlay">
+                <div class="left">
+                  <div class="burger" cdkDragHandle>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                  </div>
+                  <span class="subtitle-2">
+              {{col.header}}
+              </span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
@@ -189,35 +233,60 @@
     </div>
     <div style="display: flex;flex-direction: column;">
       <h6>Show these columns in order:</h6>
-      <div
-        cdkDropList
-        [id]="'usedListOfColumns'"
-        #usedListOfAdjColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
-        [cdkDropListData]="columnsCache"
-        class="m-box-d"
-        (cdkDropListDropped)="dropColumn($event)">
-        <ng-container *ngFor="let col of columnsCache;let i=index">
-          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
-            <div class="m-box-overlay">
-              <div class="left">
-                <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div>
-                <span class="subtitle-2">
+      <div cdkDropList
+           [id]="'usedListOfColumns'"
+           #usedListOfAdjColumns="cdkDropList"
+           [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
+           [cdkDropListData]="searchMode === 'Treaty' ? columnsCache : columnsFacCache"
+           class="m-box-d"
+           (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngIf="searchMode === 'Treaty'">
+          <ng-container *ngFor="let col of columnsCache;let i=index">
+            <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+              <div class="m-box-overlay">
+                <div class="left">
+                  <div class="burger" cdkDragHandle>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                  </div>
+                  <span class="subtitle-2">
               {{col.header}}
               </span>
+                </div>
               </div>
             </div>
-          </div>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngIf="searchMode === 'Fac'">
+          <ng-container *ngFor="let col of columnsFacCache;let i=index">
+            <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+              <div class="m-box-overlay">
+                <div class="left">
+                  <div class="burger" cdkDragHandle>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                  </div>
+                  <span class="subtitle-2">
+              {{col.header}}
+              </span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
         </ng-container>
       </div>
     </div>
@@ -231,14 +300,15 @@
     </div>
   </p-footer>
 </p-dialog>
+
 <p-dialog
-  [visible]="saveSearchPopup"
-  [closable]="false"
-  styleClass="m-dialog-modal"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
+        [visible]="saveSearchPopup"
+        [closable]="false"
+        styleClass="m-dialog-modal-sm-f"
+        appendTo="body"
+        [modal]="true"
+        [autoZIndex]="false"
+        [responsive]="true"
 >
   <p-header>
     <div class="header">
@@ -246,7 +316,7 @@
       <i style="cursor: pointer" (click)="closeSaveSearchPup()" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div class="content" style="display: flex;flex-direction: column; width: 400px;height: 300px;">
+  <div class="content" style="display: flex;flex-direction: column; width: 400px;">
     <div class="ui-g">
       <div class="ui-g-5">
         <label style="margin-top: 15px;"> Search Label: </label>

@@ -1,10 +1,12 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 import {Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import * as fromWS from '../../../store/actions/workspace.actions'
+import {EventListener} from "@angular/core/src/debug/debug_node";
+import {WsApi} from "../../../services/api/workspace.api";
 
 @Component({
   selector: 'app-create-project-popup',
@@ -22,16 +24,19 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   @Input('edit') editOption: any;
   @Input('editForm') projectForm: any;
 
-  editValue = 'Nathalie Dulac';
   newProjectForm: FormGroup;
+  users: any[];
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private wsApi: WsApi) {
     this.unSubscribe$ = new Subject<void>();
-    console.log('test');
   }
 
   ngOnInit() {
     this.initNewProjectForm();
+
+    this.wsApi.getAllUsers().subscribe((u:any) => {
+      this.users = u;
+    })
   }
 
   ngOnDestroy(): void {
@@ -57,14 +62,14 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   updateProject() {
-    console.log(this.projectForm);
     this.store.dispatch(new fromWS.EditProject({
       data: {
         projectName: this.projectForm.projectName || '',
-        assignedTo: 1,
+        assignedTo: this.projectForm.assignedTo,
         projectId: this.projectForm.projectId || '',
-        projectDescription: this.projectForm.projectDescription || ''
-      },
+        projectDescription: this.projectForm.projectDescription || '',
+        dueDate: new Date(this.projectForm.dueDate) || new Date()
+      }
     }))
   }
 
@@ -79,6 +84,10 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   patchNewProject() {
     this.newProject && this.newProjectForm.patchValue(this.newProject);
+  }
+
+  @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {
+    this.editOption ? this.updateProject() : this.createUpdateProject();
   }
 
   initNewProjectForm() {

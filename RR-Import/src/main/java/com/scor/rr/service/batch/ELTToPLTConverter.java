@@ -3,6 +3,7 @@ package com.scor.rr.service.batch;
 
 import com.codahale.metrics.Timer;
 import com.scor.rr.configuration.file.BinFile;
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.enums.*;
@@ -24,6 +25,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -145,7 +147,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 }
                 continue;
             }
-            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(modelAnalysisEntity.getRrAnalysisId())
+            List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(bundle.getModelAnalysis().getRrAnalysisId())
                     .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
                     .map(Optional::get)
@@ -306,6 +308,9 @@ public class ELTToPLTConverter extends AbstractWriter {
             scorPltHeaderEntity.setTargetRAPId(targetRapEntity.getTargetRAPId());
             scorPltHeaderEntity.setRegionPerilId(bundle.getRegionPeril().getRegionPerilId());
             scorPltHeaderEntity.setModelAnalysisId(modelAnalysisEntity.getRrAnalysisId());
+            if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+                scorPltHeaderEntity.setCreatedBy(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+            }
             scorPltHeaderEntity.setCloningSourceId(null);
             scorPltHeaderEntity.setDefaultPltName("Pure-" + targetRapEntities.indexOf(targetRapEntity)); // FIXME: 16/07/2016
             scorPltHeaderEntity.setCreatedDate(new Date());
