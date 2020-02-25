@@ -97,7 +97,7 @@ nz-alert {
 
   .items-popover-wrapper {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     width: 100%;
 
     .item-checkbox {
@@ -140,9 +140,10 @@ nz-alert {
   }
 
   .items-popover-info {
-    display: flex;
-    align-items: center;
     padding-top: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

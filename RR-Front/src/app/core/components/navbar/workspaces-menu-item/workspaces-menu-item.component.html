@@ -38,13 +38,13 @@
                       </div>
                       <div (click)="toggleWorkspace('recent', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.workspaceContextCode}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
                       <div class="items-popover-info" *ngIf="col.type === 'text'"
                            (click)="toggleWorkspace('recent', rowData, rowData?.selected)">
-                        {{rowData?.workspaceContextCode}}
+                        {{rowData?.clientName}}
                       </div>
                     </div>
                   </td>
@@ -96,13 +96,13 @@
                     </div>
                     <div (click)="toggleWorkspace('favorite', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                          class="item-popover-context">
-                      <span class="item-popover-context-header">{{rowData?.clientName}}</span>
+                      <span class="item-popover-context-header">{{rowData?.workspaceContextCode}}</span>
                       <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                         - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                     </div>
                     <div class="items-popover-info" *ngIf="col.type === 'text'"
                          (click)="toggleWorkspace('favorite', rowData, rowData?.selected)">
-                      {{rowData?.workspaceContextCode}}
+                      {{rowData?.clientName}}
                     </div>
                   </div>
                 </td>
@@ -154,13 +154,13 @@
                       </div>
                       <div (click)="toggleWorkspace('assigned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.workspaceContextCode}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
                       <div class="items-popover-info" *ngIf="col.type === 'text'"
                            (click)="toggleWorkspace('assigned', rowData, rowData?.selected)">
-                        {{rowData?.workspaceContextCode}}
+                        {{rowData?.clientName}}
                       </div>
                     </div>
                   </td>
@@ -213,14 +213,14 @@
                       </div>
                       <div (click)="toggleWorkspace('pinned', rowData, rowData?.selected)" *ngIf="col.type === 'multi'"
                            class="item-popover-context">
-                        <span class="item-popover-context-header">{{rowData?.clientName}}</span>
+                        <span class="item-popover-context-header">{{rowData?.workspaceContextCode}}</span>
                         <span class="item-popover-context-footer text-wrap-ellipsis">{{rowData?.workspaceUwYear}}
                           - {{rowData?.workspaceName}} {{rowData?.programName}} </span>
                       </div>
                     </div>
                     <div class="items-popover-info" *ngIf="col.type === 'text'"
                          (click)="toggleWorkspace('pinned', rowData, rowData?.selected)">
-                      {{rowData?.workspaceContextCode}}
+                      {{rowData?.clientName}}
                     </div>
                   </td>
                 </tr>
