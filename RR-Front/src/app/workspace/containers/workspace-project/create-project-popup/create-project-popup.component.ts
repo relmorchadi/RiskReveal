@@ -106,7 +106,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   }
 
   checkValid() {
-    return !_.isEmpty(_.trim(this.projectForm.projectName)) && _.isEmpty(_.trim( this.projectForm.assignedTo));
+    return !_.isEmpty(_.trim(this.projectForm.projectName))
   }
 
   cancelCreateProject() {
@@ -115,8 +115,9 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   }
 
   patchNewProject() {
-    this.newProject && this.newProjectForm.patchValue(this.newProject);
     this.editCreateBLock = false;
+    this.newProject && this.newProjectForm.patchValue(this.newProject);
+    this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
   }
 
   @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {

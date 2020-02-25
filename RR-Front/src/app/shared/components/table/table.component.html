@@ -26,8 +26,10 @@
     <tr>
       <ng-container *ngFor="let col of columns">
         <th *ngIf="col.visible" pResizableColumn>
-          <span *ngIf="col?.display" style="display:flex ;justify-content: space-between ; white-space:nowrap ;text-overflow: ellipsis ">
-            {{col?.header}}
+          <div *ngIf="col?.display" style="display:flex ;justify-content: space-between;">
+            <span [title]="col?.header" class="text-wrap-ellipsis">
+                {{col?.header}}
+            </span>
             <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
                  (click)="sortChange(col?.field, sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
@@ -36,7 +38,7 @@
               <i *ngSwitchDefault class="icon-direction" style="font-size: 1.4em;"
                  (click)="sortChange(col?.field,sortData[col.field], col.columnId)"></i>
             </ng-container>
-          </span>
+          </div>
           <!--        (input)="filterCol($event.target.value, col?.filterParam)"-->
           <div class="search-bar-table" *ngIf="col?.filtered">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -145,8 +147,10 @@
     <tr>
       <ng-container *ngFor="let col of columns" >
         <th *ngIf="col.visible" [pResizableColumnDisabled]="col.field=='checkbox'" pResizableColumn>
-            <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex;justify-content: space-between">
-              {{col?.header}}
+            <div [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex;justify-content: space-between">
+              <span [title]="col?.header" class="text-wrap-ellipsis">
+                {{col?.header}}
+              </span>
               <ng-container *ngIf="col.type === 'checkbox'">
                 <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
                        [nzIndeterminate]="indeterminate"></label>
@@ -160,7 +164,7 @@
                 <i *ngSwitchDefault class="icon-direction"
                    (click)="sortChange(col?.field,sortData[col.field], col.columnId)" style="font-size: 1.4em;"></i>
               </ng-container>
-            </span>
+            </div>
           <div class="search-bar-table" *ngIf="col?.filtered">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
             <input *ngIf="fromSearch" pInputText type="text" (input)="filterCol($event.target.value, col?.queryParam, col?.field)"
@@ -218,13 +222,13 @@
       </ng-container>
     </tr>
   </ng-template>
-  <ng-template pTemplate="loadingbody" let-columns="columns">
+<!--  <ng-template pTemplate="loadingbody" let-columns="columns">
     <tr style="height:34px">
       <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
         <div class="loading-text"></div>
       </td>
     </tr>
-  </ng-template>
+  </ng-template>-->
   <ng-template pTemplate="emptymessage" let-columns>
     <tr>
       <td [attr.colspan]="columns.length">
