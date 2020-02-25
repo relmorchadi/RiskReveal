@@ -26,6 +26,9 @@ public class CatRequestService {
     private ProjectService projectService;
 
     @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
     private UserRrRepository userRrRepository;
 
     @Autowired
@@ -92,6 +95,10 @@ public class CatRequestService {
                 1, //FIXME: check with SHAUN: data.userFN + " " + data.userLN
                 null,
                 null));
+
+        //FIXME: change CAR naming logic
+        projectEntity.setProjectName("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
+        projectRepository.save(projectEntity);
 
         //FIXME: must define a Counter table to controll CAR ID
         projectConfigurationForeWriter.setCaRequestId("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
