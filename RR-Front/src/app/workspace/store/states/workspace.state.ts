@@ -1042,11 +1042,6 @@ export class WorkspaceState {
     return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
-  @Action(fromWS.LoadDivisionSelection)
-  loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
-    this.riskLinkFacade.loadDivisionSelection(ctx);
-  }
-
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
     return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);

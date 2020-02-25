@@ -68,18 +68,12 @@ export class RiskLinkStateService {
         });
         if (payload.key === 'division') {
             const oldValue = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
-            const data = [...state.content[wsIdentifier].riskLink.analysis.data, ...state.content[wsIdentifier].riskLink.portfolios.data];
-            if (data.length > 0) {
-                ctx.dispatch(new fromWs.SaveDivisionSelection(oldValue));
-            }
+            ctx.dispatch(new fromWs.SaveDivisionSelection(oldValue));
         }
         ctx.patchState(
             produce(ctx.getState(), draft => {
                 draft.content[wsIdentifier].riskLink.financialValidator = newValue;
             }));
-        /*    if (payload.key === 'division') {
-              ctx.dispatch(new UpdateAnalysisAndPortfolioData(payload.value));
-            }*/
     }
 
     patchAddToBasketState(ctx: StateContext<WorkspaceModel>) {
@@ -348,17 +342,18 @@ export class RiskLinkStateService {
         const state = ctx.getState();
         const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
         const selectedDivision = state.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
+
         ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].riskLink.facSelection[payload] = {
-                analysis: draft.content[wsIdentifier].riskLink.selection.analysis,
-                portfolios: draft.content[wsIdentifier].riskLink.selection.portfolios,
+                analysis: _.merge({},draft.content[wsIdentifier].riskLink.selection.analysis),
+                portfolios: _.merge({},draft.content[wsIdentifier].riskLink.selection.portfolios),
             };
             draft.content[wsIdentifier].riskLink.selection = {
                 ...draft.content[wsIdentifier].riskLink.selection,
-                ...draft.content[wsIdentifier].riskLink.facSelection[selectedDivision]
+                analysis: _.merge({}, draft.content[wsIdentifier].riskLink.facSelection[selectedDivision].analysis),
+                portfolios: _.merge({}, draft.content[wsIdentifier].riskLink.facSelection[selectedDivision].portfolios)
             }
         }));
-        ctx.dispatch(new fromWs.LoadDivisionSelection());
     }
 
     saveEditAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
@@ -637,24 +632,7 @@ export class RiskLinkStateService {
 
     }
 
-    loadDivisionSelection(ctx: StateContext<WorkspaceModel>) {
-        ctx.patchState(produce(ctx.getState(), draft => {
-            const {wsIdentifier} = draft.currentTab;
-            const currentDataSource = _.get(draft.content[wsIdentifier].riskLink.selection, 'currentDataSource', null);
-            const currentDivision = draft.content[wsIdentifier].riskLink.financialValidator.division.selected.divisionNumber;
-            if (currentDataSource !== null) {
-                if (draft.content[wsIdentifier].riskLink.selectedEDMOrRDM === 'RDM') {
-                    draft.content[wsIdentifier].riskLink.selection.analysis[currentDataSource] = this._facDataFactor(draft.content[wsIdentifier].riskLink.selection.analysis,
-                        draft.content[wsIdentifier].riskLink.facSelection[currentDivision].analysis, currentDataSource, 'RDM'
-                    );
-                } else {
-                    draft.content[wsIdentifier].riskLink.selection.portfolios[currentDataSource] = this._facDataFactor(draft.content[wsIdentifier].riskLink.selection.portfolios,
-                        draft.content[wsIdentifier].riskLink.facSelection[currentDivision].portfolios, currentDataSource, 'EDM'
-                    );
-                }
-            }
-        }))
-    }
+
 
     getRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
         const {rdmId, projectId, instanceId, paginationParams, userId, filter} = payload;
@@ -1217,6 +1195,7 @@ export class RiskLinkStateService {
 
     private _facDataFactor(data, selection, dataSourceId, scope) {
         let result = null;
+        console.log('factor Data', JSON.parse(JSON.stringify({data, selection, dataSourceId, scope})));
         if (_.includes(_.keys(selection), `${dataSourceId}`)) {
             if (scope === 'RDM') {
                 result = _.map(data, item => {
