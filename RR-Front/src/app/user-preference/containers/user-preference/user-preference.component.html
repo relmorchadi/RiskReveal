@@ -346,8 +346,8 @@
                     class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of rmsInstance" [nzLabel]="item"
-                               [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of rmsInstance" [nzLabel]="item.instanceName"
+                               [nzValue]="item.instanceId"></nz-option>
                   </nz-select>
                 </div>
               </div>
