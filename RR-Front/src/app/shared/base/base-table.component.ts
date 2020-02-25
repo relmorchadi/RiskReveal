@@ -129,7 +129,12 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   onRowSelect(id: number, index: number, $event: MouseEvent) {
-    this._handler.onRowSelect(id, index, $event);
+    this._handler.onRowSelect(id, index, $event, false);
+  }
+
+  onCheckBox(id: number, index: number, $event: MouseEvent) {
+    console.log("checkbox")
+    this._handler.onRowSelect(id, index, $event, true);
   }
 
   onCheckAll() {
@@ -149,11 +154,11 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   rowsChange(rows) {
-    // if(rows != this.rows && rows) {
-    //   console.log("Resized : ", rows);
-    //   this._handler.setPageSize(rows);
-    //   this.rows = rows;
-    // }
+    if(rows != this.rows && rows) {
+      console.log("Resized : ", rows);
+      this._handler.setPageSize(rows);
+      this.rows = rows;
+    }
   }
 
   protected detectChanges() {

@@ -52,7 +52,7 @@ export interface TableHandlerInterface {
   onResetFilter();
   onSort(index: number);
   onResetSort();
-  onRowSelect(id: number, index: number, $event: MouseEvent);
+  onRowSelect(id: number, index: number, $event: MouseEvent, byCheckBox);
   onCheckAll();
   onContainerResize(newWidth: number);
   onVirtualScroll(event);
