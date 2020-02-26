@@ -27,21 +27,18 @@
   </div>
   <div class="PLTs-content">
     <div
-            tRows [virtualRowHeight]="46" [tableClass]="'plt-list'" (heightChange)="rowsChange($event)"
             #tableContainer class="parent"
             [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
             (resized)="onContainerResize($event)"
     >
       <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
         <p-table
-                tRows [tableClass]="'plt-list'" (heightChange)="rowsChange($event)"
-                [styleClass]=" data.length > 0 ? 'plt-list': 'plt-list activate-header-scroll'"
+                [styleClass]=" data.length > 0 ? '': 'activate-header-scroll'"
                 dataKey="pltId" [value]="data" [columns]="columns"
                 [loading]="loading$ | async"
                 [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
                 [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
                 [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
-                [virtualRowHeight]="46" [lazy]="true" [virtualScroll]="true" [rows]="rows" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
         >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -86,7 +83,7 @@
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
                          [nzChecked]="selectedIds[row.pltId]"
-                         (nzCheckedChange)="onRowSelect(row.pltId, i, $event)"></label>
+                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
                 </div>
               </td>
               <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">
