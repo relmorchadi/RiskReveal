@@ -1183,7 +1183,7 @@ export class RiskLinkStateService {
         const {projectId, instanceId, userId, analysisConfig, portfolioConfig} = payload;
         return this.riskApi.triggerImport(instanceId, projectId, userId, analysisConfig, portfolioConfig)
             .pipe(mergeMap(res => {
-                    alert('Import done successfully');
+                    alert('Import Job successfully submited to Job Manager');
                     return of(res);
                 }),
                 catchError(err => {
