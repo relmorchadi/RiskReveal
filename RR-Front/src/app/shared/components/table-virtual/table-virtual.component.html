@@ -1,0 +1,45 @@
+<ngx-datatable style="height: 100%"
+               [rows]="rows"
+               [columns]="columns" [loadingIndicator]="true"
+               [rowHeight]="rowHeight"
+               [headerHeight]="headerHeight"
+               [footerHeight]="0"
+               [scrollbarH]="true"
+               [scrollbarV]="true">
+  <ng-container *ngFor="let col of columns">
+    <ng-container *ngIf="col.visible">
+      <ngx-datatable-column [name]="col.name" [width]="col.width">
+        <ng-template let-value="value" ngx-datatable-header-template>
+          {{value}}
+          <div class="search-bar-table" *ngIf="col?.filtered">
+            <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+            <input *ngIf="!fromSearch" pInputText type="text" [ngModel]="col?.filterCriteria">
+          </div>
+        </ng-template>
+        <ng-template let-value="value" let-rowData="row" let-i="index" ngx-datatable-cell-template>
+          <div *ngIf="col?.type ==='checkbox'">
+            <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
+          </div>
+          <div *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'"
+               (dblclick)="doubleClickRow(rowData)"
+               (click)="selectRow(rowData, i)">
+            <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
+              <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+              <span [title]="value" class="text-wrapper">{{value}}</span>
+            </div>
+            <div class="fav-status-info" *ngIf="col?.type === 'favStatus'">
+              <i *ngIf="!value" class="icon-star_outline_24px"></i>
+              <i *ngIf="value" class="icon-star_24px"></i>
+            </div>
+          </div>
+          <div *ngIf="col?.type === 'icon'">
+            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+          </div>
+          <div *ngIf="col?.type === 'multi-icons'">
+            <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
+    </ng-container>
+  </ng-container>
+</ngx-datatable>
