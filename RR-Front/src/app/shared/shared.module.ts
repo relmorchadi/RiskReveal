@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DecimalPipe} from '@angular/common';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
@@ -43,7 +43,7 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     NgxEchartsModule,
     AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe],
   exports: [
     CommonModule,
     NgZorroAntdModule,

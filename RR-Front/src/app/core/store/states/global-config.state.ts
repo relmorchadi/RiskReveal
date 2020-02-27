@@ -90,6 +90,11 @@ export class GeneralConfigState implements NgxsOnInit {
     return state.users;
   }
 
+  @Selector()
+  static getNumberFormatConfig(state: GeneralConfig) {
+    return state.general.numberFormat;
+  }
+
   /**
    * Commands
    */
@@ -297,7 +302,7 @@ export class GeneralConfigState implements NgxsOnInit {
               };
               draft.contractOfInterest = {
                 country:  data.countryCode !== null && data.countryCode !== '' ? data.countryCode.trim().split(' ') : [],
-                uwUnit: data.uwUnitId !== null && data.uwUnitId !== '' ? data.uwUnitId.trim().split(' ') : [],
+                uwUnit: data.uwUnitId !== null && data.uwUnitId !== 0 ? data.uwUnitId.trim().split(' ') : [],
               };
               draft.epCurves = {
                 returnPeriod: null,
