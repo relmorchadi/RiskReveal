@@ -1,7 +1,7 @@
 package com.scor.rr.rest;
 
 
-import com.scor.rr.domain.UserPreference;
+import com.scor.rr.domain.entities.userPreferences.UserPreference;
 import com.scor.rr.service.UserPreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
