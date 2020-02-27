@@ -20,9 +20,10 @@ import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
+import { RRDatePipe } from './pipes/rr-date.pipe';
 
 @NgModule({
-  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
+  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe, RRDatePipe],
   imports: [
     CommonModule,
     NgZorroAntdModule,
