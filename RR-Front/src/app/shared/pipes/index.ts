@@ -18,6 +18,7 @@ import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 import {FinancialUnitPipe} from "../../workspace/pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "./exchange-rate.pipe";
+import {RrNumberPipe} from "./rr-number.pipe";
 
 export const PIPES = [
   CalibratePipe,
@@ -39,7 +40,8 @@ export const PIPES = [
   FalselyFilterPipe,
   StartCasePipe,
   FinancialUnitPipe,
-  ExchangeRatePipe
+  ExchangeRatePipe,
+  RrNumberPipe
 ];
 
 export * from './trim-secondary-format.pipe';
