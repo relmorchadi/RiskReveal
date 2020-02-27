@@ -2,6 +2,7 @@ package com.scor.rr.rest;
 
 
 import com.scor.rr.domain.entities.userPreferences.UserPreference;
+import com.scor.rr.domain.entities.userPreferences.UserPreferenceView;
 import com.scor.rr.service.UserPreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class UserPreferenceResource {
     UserPreferenceService userPreferenceService;
 
     @GetMapping
-    public ResponseEntity<UserPreference> getUserPreferences(@RequestParam Long userId){
-        return ResponseEntity.of(ofNullable(userPreferenceService.getUserPreferencesByUser(userId)));
+    public ResponseEntity<UserPreferenceView> getUserPreferences(){
+        return ResponseEntity.of(ofNullable(userPreferenceService.getUserPreferencesByUser()));
     }
 
 
