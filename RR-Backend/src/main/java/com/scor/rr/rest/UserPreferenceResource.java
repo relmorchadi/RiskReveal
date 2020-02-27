@@ -24,7 +24,7 @@ public class UserPreferenceResource {
 
     @PostMapping
     public ResponseEntity<UserPreference> addUserPreferences(@RequestBody UserPreference userPreference){
-        return ResponseEntity.of( ofNullable(userPreferenceService.addUserPreferences(userPreference)) );
+        return ResponseEntity.of( ofNullable(userPreferenceService.saveOrUpdateUserPreferences(userPreference)) );
     }
 
 

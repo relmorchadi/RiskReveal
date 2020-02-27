@@ -3,6 +3,7 @@ package com.scor.rr.service;
 
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.UserRrEntity;
+import com.scor.rr.domain.dto.UserPreferencesDTO;
 import com.scor.rr.domain.entities.userPreferences.UserPreference;
 import com.scor.rr.domain.entities.userPreferences.UserPreferenceView;
 import com.scor.rr.repository.userPreferences.UserPreferenceRepository;
@@ -11,6 +12,8 @@ import org.apache.cxf.security.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class UserPreferenceService {
@@ -29,7 +32,13 @@ public class UserPreferenceService {
 
     }
 
-    public UserPreference addUserPreferences(UserPreference userPreference) {
+    public UserPreference saveOrUpdateUserPreferences(UserPreference userPreference) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        userPreference.setUserId(user.getUserId());
+
+        userPreferenceRepository.findByUserId(user.getUserId()).
+                ifPresent( userPreference1 -> userPreference.setUserPreferenceId(userPreference1.getUserPreferenceId()));
+
         return userPreferenceRepository.save(userPreference);
     }
 
