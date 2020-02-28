@@ -69,6 +69,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
       params,
       selectedProject
     } = changes;
+    console.log("Changes", changes);
     this.initTable(params, selectedProject);
     this.selectedProjectFilter(selectedProject);
   }
@@ -92,7 +93,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   initTable(params, selectedProject) {
-    if(this.params && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
+    if(this.params && !this.tableInitialized && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
       this.tableInitialized = true;
       this._handler.initTable(this.params, selectedProject.currentValue);
     }

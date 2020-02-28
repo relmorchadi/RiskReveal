@@ -122,8 +122,4 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
         console.log(action);
     }
   }
-
-  log(t) {
-    console.log(t.rows);
-  }
 }
