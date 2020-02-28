@@ -142,36 +142,39 @@ export class WorkspaceService {
 
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      return this.wsApi.searchWorkspace(wsId, uwYear, type).pipe(
-          tap ((data: any) => {
-            const {projects} = data;
-            ctx.patchState(produce(ctx.getState(), draft =>  {
-              const selectedItem = _.find(state.content[wsIdentifier].projects, item => item.selected);
-              if (carSelected !== null) {
-                draft.content[wsIdentifier].projects = _.map(projects.reverse(), prj => {
-                  prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-                  prj.selected = prj.projectId === carSelected;
-                  return prj;
-                });
-              } else {
-                draft.content[wsIdentifier].projects = _.map(projects.reverse(), (prj, index: number) => {
-                  prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-                  if (_.isNaN(selectedItem)) {
-                    prj.selected = index === 0;
+      console.log(route);
+      if (route === 'projects') {
+        return this.wsApi.searchWorkspace(wsId, uwYear, type).pipe(
+            tap ((data: any) => {
+              const {projects} = data;
+              ctx.patchState(produce(ctx.getState(), draft =>  {
+                const selectedItem = _.find(state.content[wsIdentifier].projects, item => item.selected);
+                if (carSelected !== null) {
+                  draft.content[wsIdentifier].projects = _.map(projects.reverse(), prj => {
+                    prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+                    prj.selected = prj.projectId === carSelected;
                     return prj;
-                  } else {
-                    prj.selected = prj.projectId === selectedItem.projectId;
-                    return prj;
-                  }
-                });
-              }
-            }));
-            ctx.dispatch(new fromWS.SetCurrentTab({
-              index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-              wsIdentifier
-            }));
-          })
-      )
+                  });
+                } else {
+                  draft.content[wsIdentifier].projects = _.map(projects.reverse(), (prj, index: number) => {
+                    prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+                    if (_.isNaN(selectedItem)) {
+                      prj.selected = index === 0;
+                      return prj;
+                    } else {
+                      prj.selected = prj.projectId === selectedItem.projectId;
+                      return prj;
+                    }
+                  });
+                }
+              }));
+              ctx.dispatch(new fromWS.SetCurrentTab({
+                index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
+                wsIdentifier
+              }));
+            })
+        )
+      }
     } else {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
@@ -299,7 +302,7 @@ export class WorkspaceService {
     const {id, wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
 
-    return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
+    return this.projectApi.createProject({...project}, wsId, uwYear)
       .pipe(map(prj => {
           console.log(prj);
         ctx.patchState(produce(ctx.getState(), draft => {
