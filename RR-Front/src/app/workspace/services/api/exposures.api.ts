@@ -5,29 +5,31 @@ import {of} from "rxjs";
 import {ExposuresMainTableConfig} from "../../model/exposures-main-table-config.model";
 import {ExposuresHeaderConfig} from "../../model/exposures-header-config.model";
 import {FAKEDATA, HEADERCONFIG} from "../../containers/workspace-exposures/fakeExposuresData";
+import {map} from "rxjs/operators";
 
 @Injectable({
     providedIn: 'root'
 })
 export class ExposuresApi {
 
-    private readonly URL = environment.API_URI + 'exposures/';
+    private readonly URL = environment.IMPORT_URI + 'exposure-manager/';
 
     private readonly fakeTableConfig :ExposuresMainTableConfig;
     private readonly portfolioDetails:any;
     private readonly divisionDetails:any;
-    private readonly fakeHeaderConfig : ExposuresHeaderConfig;
-
 
     constructor(private _http: HttpClient) {
         this.fakeTableConfig = FAKEDATA;
         this.portfolioDetails = 'Portfolio Details';
         this.divisionDetails = 'Division Details';
-        this.fakeHeaderConfig = HEADERCONFIG;
     }
 
     loadTableConfig(){
         return of<ExposuresMainTableConfig>(this.fakeTableConfig)
+    }
+
+    loadTableColumnsConfig(){
+        return of<any>(this.fakeTableConfig.columns);
     }
 
     loadRightMenuContent(type: any) {
@@ -42,8 +44,10 @@ export class ExposuresApi {
         }
     }
 
-    loadHeaderConfig() {
-        return of<ExposuresHeaderConfig>(this.fakeHeaderConfig);
+    loadHeaderConfig(projectId) {
+        console.log('reached API ==> ',projectId);
+        return this._http.get(this.URL+'references?projectId=' + projectId)
+
     }
 
     sortTableColumn(sortConfig) {
@@ -73,12 +77,6 @@ export class ExposuresApi {
     changeView(view: any) {
         console.log('reached API ==> ',view);
         return of<ExposuresMainTableConfig>(this.fakeTableConfig);
-    }
-
-    changeProject(project: any) {
-        console.log('reached API ==>', project);
-        return {tableConfig: of<ExposuresMainTableConfig>(this.fakeTableConfig),
-                headerConfig:  of<ExposuresHeaderConfig>(this.fakeHeaderConfig)};
     }
 
     exportTable() {

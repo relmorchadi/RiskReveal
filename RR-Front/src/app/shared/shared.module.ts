@@ -60,6 +60,7 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     AngularResizedEventModule,
     NgxEchartsModule,
     AngularResizeElementModule,
+    ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
       ...DIRECTIVES

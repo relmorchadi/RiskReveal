@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, forkJoin } from "rxjs";
-
 import {ExposuresMainTableConfig} from "../../../model/exposures-main-table-config.model";
 import {ExposuresApi} from "../../api/exposures.api";
+import {map} from "rxjs/operators";
 
 @Injectable()
 export class ExposuresTableService  {
@@ -17,11 +17,9 @@ export class ExposuresTableService  {
         this.tableConfig$ = new BehaviorSubject<ExposuresMainTableConfig>(new ExposuresMainTableConfig())
     }
 
-
     public loadTableConfig() {
         return this._api.loadTableConfig();
     }
-
 
     public sortTableColumn(sortConfig) {
          return this._api.sortTableColumn(sortConfig);
@@ -37,11 +35,17 @@ export class ExposuresTableService  {
         })
     }
 
-    changeProject(project: any) {
-        return this._api.changeProject(project);
-    }
-
     exportTable() {
         this._api.exportTable()
+    }
+
+    filterRowRegionPeril(rowData: any) {
+        return this._api.loadTableColumnsConfig().pipe(map((columns: any) =>
+            (columns.filter(row => rowData[row.field] != undefined))
+        ));
+    }
+
+    loadTableColumnsConfig() {
+        return this._api.loadTableColumnsConfig();
     }
 }

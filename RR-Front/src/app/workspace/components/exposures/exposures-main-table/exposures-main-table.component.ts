@@ -3,30 +3,41 @@
  * Author : Reda El Morchadi
  */
 
-import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output
+} from "@angular/core";
 import {Store} from "@ngxs/store";
-import * as _ from 'lodash';
 import {ExposuresMainTableConfig} from "../../../model/exposures-main-table-config.model";
 
 @Component({
     selector: 'exposures-main-table',
     templateUrl: './exposures-main-table.component.html',
-    styleUrls: ['./exposures-main-table.component.scss']
+    styleUrls: ['./exposures-main-table.component.scss'],
+    changeDetection:ChangeDetectionStrategy.OnPush
 })
 
 export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
     @Input('tableConfig') tableConfig: ExposuresMainTableConfig;
+    @Input('tableColumnsConfig') tableColumnsConfig: any;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
     @Input('sortConfig') sortConfig: any;
+    private selectedRowRegionPeril: any;
+    private hoveredRow: any;
 
-
-
-    constructor(private store: Store) {
-
+    constructor(private store: Store, changeDetectorRef: ChangeDetectorRef) {
+        this.selectedRowRegionPeril = null;
+        this.hoveredRow = null;
     }
-
 
     ngOnInit(): void {
 
@@ -38,15 +49,6 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
 
     ngOnDestroy(): void {
 
-    }
-
-
-    onMouseEnter(rowData) {
-        rowData.hover = true;
-    }
-
-    onMouseLeave(rowData) {
-        rowData.hover = false;
     }
 
     onSort($event: any) {
@@ -69,7 +71,7 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
                 result = value1.localeCompare(value2);
             else
                 result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-            return (this.incrementSort(order)* result);
+            return (this.incrementSort(order) * result);
         });
     }
 
@@ -81,6 +83,16 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
                 return -1;
             case -1 :
                 return 0;
+        }
+    }
+
+    filterRowRegionPeril(rowData, rowIndex) {
+        if (this.selectedRowRegionPeril != rowIndex) {
+            this.actionDispatcher.emit({type: 'filterRowRegionPeril', payload: rowData});
+            this.selectedRowRegionPeril = rowIndex;
+        } else {
+           this.actionDispatcher.emit({type:'removeFilter', payload:null});
+           this.selectedRowRegionPeril = null;
         }
     }
 }

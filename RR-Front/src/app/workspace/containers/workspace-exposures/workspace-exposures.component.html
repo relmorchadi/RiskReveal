@@ -12,6 +12,7 @@
     <div class="exposures-table-container">
       <div class="exposures-header">
         <exposures-header (actionDispatcher)="headerActionDispatcher($event)"
+                          [selectedHeaderConfig]="selectedHeaderConfig"
                           [headerConfig]="headerConfig$ | async">
 
         </exposures-header>
@@ -20,6 +21,7 @@
       <div class="exposures-main-table">
         <exposures-main-table (actionDispatcher)="mainTableActionDispatcher($event)"
                               [sortConfig]="sortConfig"
+                              [tableColumnsConfig]="tableColumnsConfig$ | async"
                               [tableConfig]="tableConfig$ | async">
         </exposures-main-table>
       </div>

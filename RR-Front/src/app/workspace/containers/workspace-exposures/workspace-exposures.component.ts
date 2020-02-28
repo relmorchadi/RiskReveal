@@ -4,8 +4,7 @@ import {Select, Store} from '@ngxs/store';
 import {Router} from '@angular/router';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from "../../../core/store/actions/header.action";
-import * as fromWs from "../../store/actions";
-import {BehaviorSubject, Observable} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {ExposuresMainTableConfig} from "../../model/exposures-main-table-config.model";
 import {ExposuresTableService} from "../../services/helpers/exposures-helpers/exposures-table.service";
 import {ExposuresRightMenuConfig} from "../../model/exposures-right-menu-config.model";
@@ -14,7 +13,7 @@ import {ExposuresHeaderConfig} from "../../model/exposures-header-config.model";
 import {ExposuresHeaderService} from "../../services/helpers/exposures-helpers/exposures-header.service";
 import {WorkspaceState} from "../../store/states";
 import * as _ from "lodash";
-import {first} from "rxjs/operators";
+import {first, map} from "rxjs/operators";
 
 @Component({
     selector: 'app-workspace-exposures',
@@ -28,9 +27,11 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     wsIdentifier;
     workspaceInfo: any;
     tableConfig$: Observable<ExposuresMainTableConfig>;
+    tableColumnsConfig$:Observable<any>;
     rightMenuConfig$: Observable<ExposuresRightMenuConfig>;
     headerConfig$: Observable<ExposuresHeaderConfig>;
     sortConfig:any;
+    selectedHeaderConfig:any;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
@@ -39,18 +40,18 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         super(_baseRouter, _baseCdr, _baseStore);
         this.tableConfig$ = new BehaviorSubject<ExposuresMainTableConfig>(new ExposuresMainTableConfig());
         this.rightMenuConfig$ = new BehaviorSubject<ExposuresRightMenuConfig>(new ExposuresRightMenuConfig());
-        this.headerConfig$ = new BehaviorSubject<ExposuresHeaderConfig>(new ExposuresHeaderConfig());
+        this.headerConfig$ = of<ExposuresHeaderConfig>( {exposureViews:[], financialPerspectives:[], currencies:[], divisions:[], portfolios:[], summariesDefinitions:[]});
         this.sortConfig = {};
+        this.initSelectedHeaderConfig();
     }
 
     ngOnInit() {
+        this.tableColumnsConfig$ = this.exposuresTableService.loadTableColumnsConfig();
         this.tableConfig$ = this.exposuresTableService.loadTableConfig();
-        this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig();
-        this.selectedProject$.pipe(first()).subscribe(project => {
+        this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(project => {
             if (project) {
-               let {tableConfig, headerConfig} = this.exposuresTableService.changeProject(project);
-               this.tableConfig$ = tableConfig;
-               this.headerConfig$ = headerConfig;
+                this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig(project.projectId);
+                this.initSelectedHeaderConfig();
             }
         });
         this.tableConfig$.pipe(first()).subscribe(tableConfig => {
@@ -81,6 +82,15 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         super.detectChanges();
     }
 
+    initSelectedHeaderConfig() {
+        this.selectedHeaderConfig = {
+            division:null,
+            portfolio:null,
+            currency:null,
+            exposureView:null,
+            financialPerspective:null
+        }
+    }
     sortTableColumn() {
 
     }
@@ -91,10 +101,16 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.sortConfig[$event.payload.field] = $event.payload.order;
                 break;
             }
+            case 'filterRowRegionPeril': {
+                this.tableColumnsConfig$ = this.exposuresTableService.filterRowRegionPeril($event.payload);
+                break;
+            }
+            case 'removeFilter': {
+                this.tableColumnsConfig$ = this.exposuresTableService.loadTableColumnsConfig();
+                break;
+            }
         }
     }
-
-
 
     rightMenuActionDispatcher($event: any) {
         switch ($event.type) {
@@ -108,22 +124,27 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     headerActionDispatcher($event: any) {
         switch ($event.type) {
             case 'changeCurrency' : {
+                this.selectedHeaderConfig.currency = $event.payload;
                 this.tableConfig$ = this.exposuresHeaderService.changeCurrency($event.payload);
                 break;
             }
             case 'changeFinancialUnit' : {
+                this.selectedHeaderConfig.financialPerspective = $event.payload;
                 this.tableConfig$ = this.exposuresHeaderService.changeFinancialUnit($event.payload);
                 break;
             }
             case 'changeDivision' : {
+                this.selectedHeaderConfig.division = $event.payload;
                 this.tableConfig$ = this.exposuresHeaderService.changeDivision($event.payload);
                 break;
             }
             case 'changePortfolio' : {
+                this.selectedHeaderConfig.portfolio = $event.payload;
                 this.tableConfig$ = this.exposuresHeaderService.changePortfolio($event.payload);
                 break;
             }
             case 'changeView' : {
+                this.selectedHeaderConfig.exposureView = $event.payload.header;
                 this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
                 break;
             }
@@ -140,6 +161,6 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
         }
-
     }
+
 }
