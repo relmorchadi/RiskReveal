@@ -23,6 +23,17 @@ export class WorkspaceService {
               private store: Store) {
   }
 
+  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
+    return this.wsApi.getOpenedTabs(1).pipe(
+        tap(data => {
+          _.forEach(data, (item: any) => {
+            ctx.dispatch(new fromWS.LoadWS(
+                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', type: 'TTY'}))
+          })
+        })
+    );
+  }
+
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {wsId, uwYear, route, type, carSelected} = payload;
     ctx.patchState({loading: true});
@@ -173,13 +184,8 @@ export class WorkspaceService {
           })
       )
     } else {
-      return ctx.dispatch(new fromWS.LoadWS({
-        wsId,
-        uwYear,
-        route,
-        type,
-        carSelected
-      }));
+      //this.wsApi.openTab();
+      return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear, route, type, carSelected}));
     }
   }
 
