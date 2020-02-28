@@ -7,17 +7,23 @@ import {Router} from "@angular/router";
 @Injectable({
   providedIn: 'root'
 })
-export class UserPreferenceService extends BaseContainer {
+export class UserPreferenceService {
 
   @Select(GeneralConfigState.getDateConfig) dateConfig$;
-  dateConfig;
+  dateConfig = {
+    shortDate: '',
+    shortTime: '',
+    longDate: '',
+    longTime: ''
+  };
 
-  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
-    super(_baseRouter, _baseCdr, _baseStore);
-
+  constructor() {
     this.dateConfig$.pipe().subscribe(value => {
       this.dateConfig = value;
-      this.detectChanges();
     })
+  }
+
+  getDateConfig() {
+    return this.dateConfig;
   }
 }

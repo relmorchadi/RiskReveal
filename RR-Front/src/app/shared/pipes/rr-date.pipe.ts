@@ -12,17 +12,19 @@ export class RRDatePipe implements PipeTransform {
   longTime: any;
 
   constructor(private userPref: UserPreferenceService) {
-    this.shortDate = this.userPref.dateConfig.shortDate;
-    this.longDate = this.userPref.dateConfig.longDate;
-    this.shortTime = this.userPref.dateConfig.shortTime;
-    this.longTime = this.userPref.dateConfig.longTime;
+
+    const dateConfig = this.userPref.getDateConfig();
+    this.shortDate = dateConfig.shortDate;
+    this.longDate = dateConfig.longDate;
+    this.shortTime = dateConfig.shortTime;
+    this.longTime = dateConfig.longTime;
   }
 
   transform(value: any, dateFormat: any, timeOrDate): any {
     if (dateFormat === 'shortFormat') {
-      return moment(value, timeOrDate === 'time' ? this.shortTime : this.shortDate);
+      return moment(value, 'DD/MM/YYYY').format(timeOrDate === 'time' ? this.shortTime : this.shortDate);
     } else {
-      return moment(value, timeOrDate === 'time' ? this.longTime : this.longDate);
+      return moment(value, 'DD/MM/YYYY').format(timeOrDate === 'time' ? this.longTime : this.longDate);
     }
   }
 
