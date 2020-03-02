@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
-import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
@@ -70,22 +70,13 @@ export class WorkspaceService {
         leftNavbarCollapsed: false,
         plts: {},
         pltManager: {
-          data: {},
-          deleted: {},
-          filters: {
-            systemTag: [], userTag: []
-          },
-          openedPlt: {},
-          userTags: {},
-          userTagManager: {
-            usedInWs: {},
-            suggested: {},
-            allTags: {}
-          },
+          columns: [],
+          data: {totalCount: 0, plts: []},
+          selectedIds: {},
+          initialized: false,
           pltDetails: {
             summary: {}
           },
-          cloneConfig: {},
           loading: false
         },
         contract: {
@@ -151,38 +142,22 @@ export class WorkspaceService {
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
+    console.log('OPEN')
+
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      return this.wsApi.searchWorkspace(wsId, uwYear, type).pipe(
-          tap ((data: any) => {
-            const {projects} = data;
-            ctx.patchState(produce(ctx.getState(), draft =>  {
-              const selectedItem = _.find(state.content[wsIdentifier].projects, item => item.selected);
-              if (carSelected !== null) {
-                draft.content[wsIdentifier].projects = _.map(projects.reverse(), prj => {
-                  prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-                  prj.selected = prj.projectId === carSelected;
-                  return prj;
-                });
-              } else {
-                draft.content[wsIdentifier].projects = _.map(projects.reverse(), (prj, index: number) => {
-                  prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-                  if (_.isNaN(selectedItem)) {
-                    prj.selected = index === 0;
-                    return prj;
-                  } else {
-                    prj.selected = prj.projectId === selectedItem.projectId;
-                    return prj;
-                  }
-                });
-              }
-            }));
-            ctx.dispatch(new fromWS.SetCurrentTab({
-              index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-              wsIdentifier
-            }));
-          })
-      )
+      if (carSelected !== null) {
+        ctx.patchState(produce(ctx.getState(), draft =>  {
+          draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
+            prj.selected = prj.projectId === carSelected;
+            return prj;
+          });
+        }));
+      }
+      return ctx.dispatch(new fromWS.SetCurrentTab({
+        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
+        wsIdentifier
+      }));
     } else {
       //this.wsApi.openTab();
       return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear, route, type, carSelected}));

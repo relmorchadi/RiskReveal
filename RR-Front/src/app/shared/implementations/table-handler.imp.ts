@@ -1,16 +1,32 @@
-import { Injectable } from '@angular/core';
-import {Observable, BehaviorSubject, forkJoin, of} from 'rxjs';
+import {Injectable, OnDestroy} from '@angular/core';
+import {Observable, BehaviorSubject, forkJoin, of, iif, Subject} from 'rxjs';
 import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError, debounceTime, exhaustMap, map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  exhaustMap,
+  map,
+  mergeMap,
+  share,
+  switchMap,
+  take,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 import * as tableStore from "../components/plt/plt-main-table/store";
 import {ExcelService} from "../services/excel.service";
+import {Store} from "@ngxs/store";
+import {WorkspaceState} from "../../workspace/store/states";
+import {SaveGlobalTableColumns, SaveGlobalTableData, SaveGlobalTableSelection} from "../../workspace/store/actions";
 
 @Injectable()
-export class TableHandlerImp implements TableHandlerInterface {
+export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
+
+  unsubscribe$: Subject<void>;
 
   offset: number= 10;
   private _api: TableServiceInterface;
@@ -67,7 +83,9 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   protected containerWidth: number;
 
-  constructor(private excel: ExcelService) {
+  constructor(private excel: ExcelService, private store: Store) {
+    this.unsubscribe$ =  new Subject<void>();
+
     this.columns$ = new BehaviorSubject([]);
     this.visibleColumns$ = new BehaviorSubject([]);
     this.availableColumns$ = new BehaviorSubject([]);
@@ -154,58 +172,143 @@ export class TableHandlerImp implements TableHandlerInterface {
     })
   }
 
+  private getInitializedFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.isGlobalTableInitialized(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private getDataFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableData(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveData = data => {
+    const {totalCount, plts} = data;
+    this.updateTotalRecords(totalCount);
+    this.updateData(plts,);
+    this.updateLoading(false);
+
+    //save to store
+    this.saveData(this.params, data);
+  };
+
+  private getColumnsFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableColumns(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveColumns = (columns) => {
+    this.updateColumns(columns);
+    this.updateTotalColumnWidth(columns);
+
+    //save to store
+    this.saveColumns(this.params, columns);
+
+  }
+
+  private getSelectionFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableSelection(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveSelection = (ids) => {
+    let newIds = {};
+
+    _.forEach(ids, e => {
+      newIds[e.pltId] = this._selectedIds[e.pltId] || false;
+    });
+
+    const newSelection = { ...this._selectedIds, ...newIds };
+    this.updateSelectedIDs(newSelection);
+    const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+    this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+    this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+
+    //save to store
+    this.saveSelection(this.params, this._selectedIds);
+  };
+
+  private saveData({workspaceContextCode, workspaceUwYear}, data) {
+    this.store.dispatch(new SaveGlobalTableData({
+      data,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
+  private saveColumns({workspaceContextCode, workspaceUwYear}, columns) {
+    this.store.dispatch(new SaveGlobalTableColumns({
+      columns,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
+  private saveSelection({workspaceContextCode, workspaceUwYear}, selectedIds) {
+    this.store.dispatch(new SaveGlobalTableSelection({
+      selectedIds,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
   initTable(params, selectedProject) {
-    this.updateLoading(true);
     this.params = params;
 
     const init$ = this._api.filterByProject({
       projectId: selectedProject.projectId
     }).pipe(
+        take(1),
         share()
     );
 
-    init$.pipe(
-        switchMap( () => this.loadColumns())
-    ).subscribe((columns) => {
-      this.updateColumns(columns);
-      this.updateTotalColumnWidth(columns);
+    const initialized$ = this.getInitializedFromStore(this.params)
+        .pipe(
+            take(1),
+            share()
+        );
+
+
+    this.updateLoading(true);
+
+    initialized$
+        .pipe(
+            mergeMap(
+                isInitialized =>
+                    iif(() => isInitialized,
+                        forkJoin(
+                            this.getDataFromStore(this.params).pipe(take(1)),
+                            this.getSelectionFromStore(this.params).pipe(take(1))
+                        ),
+                        init$.pipe(
+                            switchMap( () => forkJoin(
+                                this.loadData({
+                                  ...this.params,
+                                  ...this.config,
+                                  pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
+                                  selectionList: _.join(this._selectedIds, ','),
+                                  sortSelectedFirst: this._sortSelectedFirst,
+                                  sortSelectedAction: this._sortSelectedAction
+                                }),
+                                this.loadSelectedIds()
+                            ))
+                        )
+                    )
+            )
+        ).subscribe(([data, ids]) => {
+          this.resolveData(data);
+          this.resolveSelection(ids);
+          this.updateLoading(false);
     });
 
-    init$.pipe(
-        switchMap( () => this.loadData({
-          ...this.params,
-          ...this.config,
-          pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
-          selectionList: _.join(this._selectedIds, ','),
-          sortSelectedFirst: this._sortSelectedFirst,
-          sortSelectedAction: this._sortSelectedAction
-        }))
-    ).subscribe(data => {
-      const {totalCount, plts} = data;
-      this.updateTotalRecords(totalCount);
-      this.updateData(plts);
+    initialized$
+        .pipe(
+            mergeMap(
+                isInitialized =>
+                    iif(() => isInitialized,
+                        this.getColumnsFromStore(this.params).pipe(take(1)),
+                        init$.pipe(
+                            switchMap( () => this.loadColumns())
+                        )
+                    )
+            )
+        ).subscribe((data) => {
+      this.resolveColumns(data);
       this.updateLoading(false);
     });
-
-    init$.pipe(
-        switchMap( () => this.loadSelectedIds())
-    ).subscribe((ids) => {
-      let newIds = {};
-
-      _.forEach(ids, e => {
-        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-      });
-
-      const newSelection = { ...this._selectedIds, ...newIds };
-      this.updateSelectedIDs(newSelection);
-      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
-      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
-    })
-
-    // this.loadColsSubscription();
-    // this.loadDataSubscription();
-    // this.loadSelectionIdsSubscription();
   }
 
   reloadTable(request: FetchViewContextDataRequest) {
@@ -218,7 +321,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   onColumnResize({element: { id: index }, delta }) {
 
     //call API
-    //Mocking API behavior
 
     const col = this._visibleColumns[index];
 
@@ -251,7 +353,10 @@ export class TableHandlerImp implements TableHandlerInterface {
     const filter$ = this._api.updateColumnFilter({
       ..._.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId']),
       filterCriteria
-    }).pipe(share());
+    }).pipe(
+        take(1),
+        share()
+    );
 
 
     filter$.pipe(
@@ -265,10 +370,8 @@ export class TableHandlerImp implements TableHandlerInterface {
         })),
     ).subscribe(
             ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
-              this.updateColumns(columns);
-              this.updateData(plts);
+              this.resolveColumns(columns);
+              this.resolveData(data);
             },
             (error) => {
               console.error(error);
@@ -278,24 +381,13 @@ export class TableHandlerImp implements TableHandlerInterface {
     filter$.pipe(
         switchMap( () => this.loadSelectedIds())
     ).subscribe((ids) => {
-      let newIds = {};
-
-      _.forEach(ids, e => {
-        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-      });
-
-      const newSelection = newIds;
-
-      this.updateSelectedIDs(newSelection);
-      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
-      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      this.resolveSelection(ids);
     })
 
   }
 
   onResetFilter() {
-    const filter$ = this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])).pipe(share());
+    const filter$ = this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])).pipe(take(1),share());
 
 
     filter$.pipe(
@@ -313,21 +405,9 @@ export class TableHandlerImp implements TableHandlerInterface {
         )),
     ).subscribe(
         ([columns, data, ids]: any) => {
-          const {totalCount, plts} = data;
-          this.updateTotalRecords(totalCount);
-          this.updateColumns(columns);
-          let newIds = {};
-
-          _.forEach(ids, e => {
-            newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-          });
-
-          const newSelection = { ...this._selectedIds, ...newIds };
-          this.updateSelectedIDs(newSelection);
-          const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-          this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
-          this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
-          this.updateData(plts);
+          this.resolveColumns(columns);
+          this.resolveData(data);
+          this.resolveSelection(ids);
         },
         (error) => {
           console.error(error);
@@ -352,7 +432,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onRowSelect(id: number, index: number, $event: MouseEvent, byCheckBox) {
-    console.log(this._selectedIds);
     const isSelected = _.findIndex(this._selectedIds, (v, k) => k == id) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.selectionConfig.lastClick = 'withKey';
@@ -369,7 +448,7 @@ export class TableHandlerImp implements TableHandlerInterface {
       this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
       this.selectionConfig.lastClick = null;
     }
-    console.log(this._selectedIds);
+    this.saveSelection(this.params, this._selectedIds);
   }
 
   onContainerResize(newWidth) {
@@ -388,6 +467,7 @@ export class TableHandlerImp implements TableHandlerInterface {
     const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
     this.updateSelectAll(this.totalRecords == numberOfSelectedRows);
     this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+    this.saveSelection(this.params, this._selectedIds);
   }
 
   public setPageSize(rows) {
@@ -396,7 +476,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onVirtualScroll(event) {
-    console.log(event);
     const {
       pageNumber,
       pageSize
@@ -586,7 +665,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateSelectedIDs(s) {
-    console.log(s);
     this._selectedIds = s;
     this.selectedIds$.next(s);
   }
@@ -626,6 +704,7 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.loading$.next(true);
     api()
         .pipe(
+            take(1),
             switchMap( () => this.reloadTable({
               ...this.params,
               ...this.config,
@@ -637,10 +716,8 @@ export class TableHandlerImp implements TableHandlerInterface {
         )
         .subscribe(
             ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
-              this.updateColumns(columns);
-              this.updateData(plts);
+              this.resolveColumns(columns);
+              this.resolveData(data);
               this.loading$.next(false);
             },
             (error) => {
@@ -652,6 +729,7 @@ export class TableHandlerImp implements TableHandlerInterface {
   private onApiSuccessLoadData = (api) => {
     api()
         .pipe(
+            takeUntil(this.unsubscribe$),
             switchMap( () => this.loadData({
               ...this.params,
               ...this.config,
@@ -676,16 +754,22 @@ export class TableHandlerImp implements TableHandlerInterface {
   private onApiSuccessLoadColumns = (api) => {
     api()
         .pipe(
+            take(1),
             switchMap( () => this.loadColumns())
         )
         .subscribe(
             (columns) => {
-              this.updateColumns(columns);
+              this.resolveColumns(columns);
             },
             (error) => {
               console.error(error);
             }
         )
   };
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
 }
