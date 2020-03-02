@@ -203,5 +203,20 @@ export class loadSummaryDetailSuccess {
   constructor(public payload?: any) {}
 }
 
+export class SaveGlobalTableData {
+  static readonly type = '[PLT Manager] Save Global Table Data';
+  constructor(public payload?: any) {}
+}
+
+export class SaveGlobalTableColumns {
+  static readonly type = '[PLT Manager] Save Global Table Columns';
+  constructor(public payload?: any) {}
+}
+
+export class SaveGlobalTableSelection {
+  static readonly type = '[PLT Manager] Save Global Table Selection';
+  constructor(public payload?: any) {}
+}
+
 
 

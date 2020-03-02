@@ -327,7 +327,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   async openSingleWorkspace(ws) {
-    console.log('redirection', ws);
     this.router.navigate([`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`]);
     this.visible = false;
   }
