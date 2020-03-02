@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import * as fromWS from '../store/actions';
-import {catchError, map, mergeMap, switchMap} from 'rxjs/operators';
+import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
