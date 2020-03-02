@@ -7,29 +7,29 @@ import java.util.List;
 @Data
 public class ForeWriterExpectedScope {
 
-    private String acctNum;
-    private int year;
-    private int endorNum;
-    private int order;
-    private String analysisName;
-    private int division;
+    private String fACNumber;
+    private int uWYear;
+    private int endorsementNumber;
+    private int uWOrder;
+    private String sourceAnalysisName;
+    private int divisionNumber;
     private String country;
     private String state;
-    List<String> perils;
-    private double tiv;
-    private String currency;
+    private String perils;
+    private double tIV;
+    private String tIVCurrency;
 
-    public ForeWriterExpectedScope(String acctNum, int year, int endorNum, int order, String analysisName, int division, String country, String state, List<String> perils, double tiv, String currency) {
-        this.acctNum = acctNum;
-        this.year = year;
-        this.endorNum = endorNum;
-        this.order = order;
-        this.analysisName = analysisName;
-        this.division = division;
+    public ForeWriterExpectedScope(String acctNum, int year, int endorNum, int order, String analysisName, int division, String country, String state, String perils, double tiv, String currency) {
+        this.fACNumber = acctNum;
+        this.uWYear = year;
+        this.endorsementNumber = endorNum;
+        this.uWOrder = order;
+        this.sourceAnalysisName = analysisName;
+        this.divisionNumber = division;
         this.country = country;
         this.state = state;
         this.perils = perils;
-        this.tiv = tiv;
-        this.currency = currency;
+        this.tIV = tiv;
+        this.tIVCurrency = currency;
     }
 }

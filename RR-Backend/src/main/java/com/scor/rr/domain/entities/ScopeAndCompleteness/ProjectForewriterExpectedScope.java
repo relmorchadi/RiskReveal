@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @Entity
-@Table(name="ZZ_ProjectForewriterExpectedScope")
+@Table(name="ProjectForewriterExpectedScope")
 public class ProjectForewriterExpectedScope {
 
     @Id
@@ -19,7 +19,7 @@ public class ProjectForewriterExpectedScope {
     private int entity;
 
     @Column(name = "ProjectId")
-    private String projectId;
+    private Long projectId;
 
     @Column(name = "FACNumber")
     private String fACNumber;
@@ -50,6 +50,9 @@ public class ProjectForewriterExpectedScope {
 
     @Column(name = "TIVCurrency")
     private String tIVCurrency;
+
+    @Column(name = "Perils")
+    private String perils;
 
     public ProjectForewriterExpectedScope() {
     }
