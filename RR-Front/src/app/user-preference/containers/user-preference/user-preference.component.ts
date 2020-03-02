@@ -7,11 +7,8 @@ import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
 import {
   LoadConfiguration,
-  PatchDateFormatAction,
-  PatchImportDataAction,
   PatchNumberFormatAction,
   PatchSearchStateAction, PatchTimeZoneAction,
-  PatchWidgetDataAction,
   PostNewConfigAction,
   PostNewConfigFailAction,
   PostNewConfigSuccessAction
@@ -24,6 +21,7 @@ import * as fromWorkspaceStore from "../../../workspace/store";
 import {NotificationService} from "../../../shared/services";
 import {mergeMap} from "rxjs/operators";
 import {RiskApi} from "../../../workspace/services/api/risk.api";
+import {GenericBrowserDomAdapter} from "@angular/platform-browser/src/browser/generic_browser_adapter";
 
 @Component({
   selector: 'app-user-preference',
@@ -43,19 +41,47 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     'Workspace Context'
   ];
 
+  shortDate: any;
+  shortTime: any;
+  longDate: any;
+  longTime: any;
+  timeZone: any;
+
+  numberOfDecimals: any;
+  decimalSeparator: any;
+  decimalThousandSeparator: any;
+  negativeFormat: any;
+
+  importPage: any;
   financialPerspectiveELT: any;
+  selectedFinancialPerspectiveELT = [];
   financialPerspectiveEPM: any;
+  selectedFinancialPerspectiveEPM: any;
   targetCurrency: any;
+  selectedTargetCurrency: any;
   targetAnalysisCurrency: any;
+  selectedTargetAnalysisCurrency: any;
   rmsInstance: any;
+  selectedRMSInstance: any;
 
   countries: any;
+  selectedCountries = [];
   uwUnits: any;
+  selectedUwUnits = [];
+
+  epCurves: any = [];
 
   numberCollapse = false;
 
   @Select(GeneralConfigState)
   state$: Observable<GeneralConfig>;
+  @Select(GeneralConfigState.getDateConfig)
+  dateConfig$;
+  @Select(GeneralConfigState.getNumberFormatConfig)
+  numberConfig$;
+  @Select(GeneralConfigState.getImportConfig)
+  importConfig$;
+
   state: GeneralConfig = null;
 
   constructor(public location: Location,
@@ -71,15 +97,44 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
 
   ngOnInit() {
     this.dispatch(new LoadConfiguration());
+
     this.riskApi.loadImportRefData().subscribe(
       (refData: any) => {
         this.rmsInstance = refData.rmsInstances;
         this.targetAnalysisCurrency = refData.currencies;
         this.targetCurrency = refData.currencies;
         this.financialPerspectiveEPM = _.map(refData.financialPerspectives, item => item.desc);
-        this.financialPerspectiveELT = _.map(refData.financialPerspectives, item => { return {label: item.desc, value: item.code}})
+        this.financialPerspectiveELT = _.map(refData.financialPerspectives, item => { return {label: item.desc, value: item.code}});
+        this.detectChanges();
       }
     );
+
+    this.dateConfig$.pipe().subscribe(value => {
+      this.shortDate = value.shortDate;
+      this.longDate = value.longDate;
+      this.shortTime = value.shortTime;
+      this.longTime = value.longTime;
+      this.timeZone = value.timeZone;
+      this.detectChanges();
+    });
+
+    this.numberConfig$.pipe().subscribe(value => {
+      this.numberOfDecimals = value.numberOfDecimals;
+      this.decimalSeparator = value.decimalSeparator;
+      this.decimalThousandSeparator = value.decimalThousandSeparator;
+      this.negativeFormat = value.negativeFormat;
+      this.detectChanges();
+    });
+
+    this.importConfig$.pipe().subscribe(value => {
+      this.selectedTargetCurrency = value.targetCurrency;
+      this.selectedTargetAnalysisCurrency = value.targetAnalysisCurrency;
+      this.importPage = value.importPage;
+      this.selectedFinancialPerspectiveEPM = value.financialPerspectiveEPM;
+      this.selectedFinancialPerspectiveELT = value.financialPerspectiveELT;
+      this.selectedRMSInstance = value.rmsInstance;
+      this.detectChanges();
+    });
 
     this.store$.select(SearchNavBarState.getSearchTarget).subscribe(
       value => this.searchTarget = value
@@ -140,24 +195,46 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     return s.join(dec);
   }
 
-  changePerspective(event, target) {
-    this.dispatch(new PatchDateFormatAction({target, value: event}))
-  }
-
-  changeImportData(event, target) {
-    this.dispatch(new PatchImportDataAction({target, value: event}))
-  }
-
   changeNumberFormat(event, target) {
     this.dispatch(new PatchNumberFormatAction({target, value: event}));
   }
 
-  widgetConfigChange(event, target) {
-    this.dispatch(new PatchWidgetDataAction({target, value: event}));
+  changeLog($event) {
+    console.log($event);
   }
 
   saveChanges() {
-    this.dispatch(new PostNewConfigAction(this.state));
+    let financialPerspective = '';
+    let country = '';
+    _.forEach(this.selectedFinancialPerspectiveELT, item => financialPerspective = financialPerspective + item + ' ');
+    _.forEach(this.selectedCountries, item => country = country + item.countryCode + ' ');
+    //_.forEach(state.contractOfInterest.uwUnit, item => uwUnit = uwUnit + item.id + ' ');
+
+    console.log(this.shortDate, this.shortDate);
+    const configData = {
+      decimalSeparator: this.decimalSeparator,
+      decimalThousandSeparator: this.decimalThousandSeparator,
+      defaultRmsInstance: this.selectedRMSInstance,
+      display: null,
+      financialPerspectiveELT: financialPerspective,
+      financialPerspectiveEPM: this.selectedFinancialPerspectiveEPM,
+      importPage: this.importPage,
+      longDate: this.longDate,
+      longTime: this.longTime,
+      negativeFormat: this.negativeFormat,
+      numberHistory: 5,
+      numberOfDecimals: this.numberOfDecimals,
+      returnPeriod: 0,
+      shortDate: this.shortDate,
+      shortTime: this.shortTime,
+      targetAnalysisCurrency: this.selectedTargetAnalysisCurrency,
+      targetCurrency: this.selectedTargetCurrency,
+      timeZone: this.timeZone,
+      countryCode: country,
+    };
+
+
+    this.dispatch(new PostNewConfigAction(configData));
   }
 
   changeSearch(event) {

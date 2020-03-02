@@ -3,23 +3,8 @@ export class PatchNumberFormatAction {
   constructor(public payload?: any) {}
 }
 
-export class PatchDateFormatAction {
-  static readonly type = '[Global Configuration] Patch Date Format';
-  constructor(public payload?: any) {}
-}
-
 export class PatchTimeZoneAction {
   static readonly type = '[Global Configuration] Patch Time Zone';
-  constructor(public payload?: any) {}
-}
-
-export class PatchImportDataAction {
-  static readonly type = '[Global Configuration] Import Data Action';
-  constructor(public payload?: any) {}
-}
-
-export class PatchWidgetDataAction {
-  static readonly type = '[Global Configuration] Widget Data Action';
   constructor(public payload?: any) {}
 }
 

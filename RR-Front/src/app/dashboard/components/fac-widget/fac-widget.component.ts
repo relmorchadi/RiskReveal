@@ -233,6 +233,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   loadFacData(pageNumber) {
     this.loading = true;
     const carStatus = this.carStatus[this.widgetId];
+    console.log('initData 1');
     this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
         .subscribe(() => {}, ()=> {}, () => {
           this.loading = false;
@@ -245,6 +246,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     const pageNumber =  (event.first / (event.rows / 2)) + 1;
     this.loading = true;
     if (event.rows === 50) {
+      console.log('initData 2');
       this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
           .subscribe(() => {}, ()=> {}, () => {
             this.loading = false;

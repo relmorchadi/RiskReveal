@@ -79,28 +79,6 @@ export class FacSubsidiaryChartComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
-    visualMap: {
-      type: 'continuous',
-      dimension: 1,
-      text: ['High', 'Low'],
-      itemHeight: 200,
-      calculable: true,
-      min: 0,
-      max: 10,
-      top: 60,
-      left: 10,
-      inRange: {
-        colorLightness: [0.4, 0.8]
-      },
-      outOfRange: {
-        color: '#bbb'
-      },
-      controller: {
-        inRange: {
-          color: '#2f4554'
-        }
-      }
-    },
     series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
   };

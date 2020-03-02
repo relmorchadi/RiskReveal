@@ -7,6 +7,7 @@ import produce from "immer";
 import {of} from "rxjs";
 import {DashboardModel} from "../../model/dashboard.model";
 import {GetAllUsers, LoadMostUsedSavedSearch, LoadRecentSearch, LoadSavedSearch, LoadShortCuts} from "../actions";
+import {LoadConfiguration} from "../actions";
 
 const initiateState: AuthModel = {
   fullName: '',
@@ -51,10 +52,11 @@ export class AuthState implements NgxsOnInit {
                 }));
                 window.localStorage.setItem('token', data.jwtToken);
                 this.store.dispatch([new LoadShortCuts(),
-                        new LoadRecentSearch(),
-                        new LoadSavedSearch(),
-                        new LoadMostUsedSavedSearch(),
-                        new GetAllUsers()]);
+                    new LoadRecentSearch(),
+                    new LoadSavedSearch(),
+                    new LoadMostUsedSavedSearch(),
+                    new GetAllUsers(),
+                    new LoadConfiguration()]);
             }),
             catchError(err => {
                 console.log(err);
