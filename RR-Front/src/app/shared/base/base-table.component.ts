@@ -18,9 +18,12 @@ import {backendUrl} from "../api";
 import * as _ from 'lodash';
 import {Observable} from "rxjs";
 import {Message} from "../message";
+import {Router} from "@angular/router";
+import {Store} from "@ngxs/store";
+import {BaseContainer} from "./base.container";
 
 
-export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
+export class BaseTable extends BaseContainer implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
   @Input() params: any;
   @Input() selectedProject: any;
@@ -49,7 +52,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   tableInitialized: boolean;
 
-  constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
+  constructor(private injector: Injector, _baseRouter: Router,  _baseCdr: ChangeDetectorRef,  _baseStore: Store) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this._injectors = {
       'plt-manager': ({
         api: this.injector.get<TableServiceImp>(TableServiceImp),
@@ -61,7 +65,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   ngOnInit() {
-
+    super.ngOnInit();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -69,6 +73,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
       params,
       selectedProject
     } = changes;
+    console.log("Changes", changes);
     this.initTable(params, selectedProject);
     this.selectedProjectFilter(selectedProject);
   }
@@ -92,7 +97,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   initTable(params, selectedProject) {
-    if(this.params && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
+    if(this.params && !this.tableInitialized && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
       this.tableInitialized = true;
       this._handler.initTable(this.params, selectedProject.currentValue);
     }
@@ -159,10 +164,6 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
       this._handler.setPageSize(rows);
       this.rows = rows;
     }
-  }
-
-  protected detectChanges() {
-    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
   }
 
 }

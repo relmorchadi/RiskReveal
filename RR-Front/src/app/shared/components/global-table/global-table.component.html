@@ -47,7 +47,7 @@
             </colgroup>
           </ng-template>
           <ng-template pTemplate="header" let-cols>
-            <tr (click)="log(dt)">
+            <tr>
               <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
                 <label nz-checkbox
                        [nzChecked]="selectAll"
@@ -175,8 +175,12 @@
 </ng-template>
 
 <ng-template #number let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;text-align: right">
-        {{ data | number : '1.0-3'}}
+    <span
+            style="display: block;font-size: 12px;font-weight: 400;text-align: right"
+            appRrNumber
+            [number]="data"
+            [config]="config"
+    >
     </span>
 </ng-template>
 

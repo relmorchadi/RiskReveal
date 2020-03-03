@@ -600,4 +600,40 @@ export class PltStateService {
       draft.content[wsIdentifier].pltManager.pltDetails.summary = summaryDetail;
     }))
   }
+
+  saveGlobalTableData(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {
+      wsIdentifier,
+      data
+    } = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].pltManager.data = data;
+      draft.content[wsIdentifier].pltManager.initialized = true;
+    }));
+  }
+
+  saveGlobalTableColumns(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {
+      wsIdentifier,
+      columns
+    } = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].pltManager.columns = columns;
+      draft.content[wsIdentifier].pltManager.initialized = true;
+    }));
+  }
+
+  saveGlobalTableSelection(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {
+      wsIdentifier,
+      selectedIds
+    } = payload;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].pltManager.selectedIds = selectedIds;
+      draft.content[wsIdentifier].pltManager.initialized = true;
+    }));
+  }
 }

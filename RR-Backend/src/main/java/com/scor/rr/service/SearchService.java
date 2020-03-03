@@ -293,8 +293,9 @@ public class SearchService {
         detailsDTO.setYear(Integer.parseInt(uwy));
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), user.getUserId()));
 
         return detailsDTO;
     }
@@ -309,7 +310,9 @@ public class SearchService {
             projectCardView.setDivisions(carDivisionsRepository.findAllDivisions(projectCardView.getCarRequestId()));
             return projectCardView;
         }).collect(Collectors.toList()));
-        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), user.getUserId()));
 
         detailsDTO.setCurrency(currency);
         detailsDTO.setYears(Arrays.asList(Integer.valueOf(uwy)));
