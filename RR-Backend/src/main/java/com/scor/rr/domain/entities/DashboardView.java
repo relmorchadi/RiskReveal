@@ -45,6 +45,8 @@ public class DashboardView {
 
     private String facSource;
 
+    private String userCode;
+
     @Column(length = 25)
     private String Lob;
 
