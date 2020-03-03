@@ -94,6 +94,14 @@ public class UserDashboardWidgetColumnsService {
         userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnWidth(columnId,columnWidth);
     }
 
+    public void resetFilterForWidget(long widgetId){
+        userDashboardWidgetColumnsRepository.resetFilter(widgetId);
+    }
+
+    public void resetSortForWidget(long widgetId){
+        userDashboardWidgetColumnsRepository.resetSort(widgetId);
+    }
+
     public void updateColumnFilter(long columnId, String filter) throws RRException {
 //        UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(columnId);
 //        if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(columnId);

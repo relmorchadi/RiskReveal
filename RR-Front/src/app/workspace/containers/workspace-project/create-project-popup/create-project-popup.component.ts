@@ -18,7 +18,7 @@ import {EventListener} from "@angular/core/src/debug/debug_node";
 import {WsApi} from "../../../services/api/workspace.api";
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
-import {GeneralConfigState} from "../../../../core/store/states";
+import {AuthState, GeneralConfigState} from "../../../../core/store/states";
 
 @Component({
   selector: 'app-create-project-popup',
@@ -37,7 +37,9 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   @Input('editForm') projectForm: any;
 
   @Select(GeneralConfigState.getAllUsers) users$;
+  @Select(AuthState.getUser) user$;
 
+  currentUser: any;
   newProjectForm: FormGroup;
   editCreateBLock = false;
   users: any[];
@@ -54,6 +56,12 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
       this.users = value;
       this.detectChanges();
     });
+
+    this.user$.pipe().subscribe(value => {
+      this.currentUser = value;
+      this.initNewProjectForm();
+      this.detectChanges();
+    })
   }
 
   ngOnDestroy(): void {
@@ -117,7 +125,10 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   patchNewProject() {
     this.editCreateBLock = false;
     this.newProject && this.newProjectForm.patchValue(this.newProject);
-    this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
+    console.log(this.currentUser, this.projectForm, this.newProject);
+    if (this.editOption) {
+      this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
+    }
   }
 
   @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {
@@ -136,7 +147,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
       assignedTo: new FormControl(null),
       cloneSourceProjectId: new FormControl(null),
       clonedFlag: new FormControl(false),
-      createdBy: new FormControl("Nathalie Dulac", Validators.required),
+      createdBy: new FormControl(this.currentUser, Validators.required),
       creationDate: new FormControl(new Date()),
       deleted: new FormControl(false),
       deletedBy: new FormControl(null),
@@ -144,11 +155,16 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
       deletedOn: new FormControl(null),
       dueDate: new FormControl(new Date(), Validators.required),
       entity: new FormControl(0),
+      linkFlag: new FormControl(false),
       linkedSourceProjectId: new FormControl(null),
+      masterFlag: new FormControl(false),
+      mgaFlag: new FormControl(false),
+      postInuredFlag: new FormControl(false),
       projectDescription: new FormControl(null),
       projectId: new FormControl(null),
       projectImportRunId: new FormControl(null),
       projectName: new FormControl(null, [Validators.required, Validators.pattern('^(?!\\s*$).+')]),
+      publishFlag: new FormControl(null),
       receptionDate: new FormControl(new Date(), Validators.required),
       rmsModelDataSourceId: new FormControl(null),
       workspaceId: new FormControl(null)

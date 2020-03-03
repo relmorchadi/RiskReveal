@@ -1,21 +1,19 @@
-package com.scor.rr.domain;
-
+package com.scor.rr.domain.entities.userPreferences;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity(name = "UserPreference")
+@Entity(name = "vw_UserPreference")
 @Data
 @NoArgsConstructor
-public class UserPreference {
+public class UserPreferenceView {
+
+
+    private Long userPreferenceId;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "UserPreferenceId")
-    private Long userPreferenceId;
-    @Column(unique = true)
     private Long userId;
     private String shortDate;
     private String longDate;

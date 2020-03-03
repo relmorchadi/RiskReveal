@@ -186,7 +186,8 @@ public class UserDashboardWidgetService {
                 request.getUserDashboardWidgetId(),
                 userCode,
                 request.getPageNumber(),
-                request.getPageSize()));
+                request.getPageSize(),
+                request.isFilterByAnalyst()));
         return  response;
     }
 
@@ -203,11 +204,13 @@ public class UserDashboardWidgetService {
                 .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("UserCode", String.class, ParameterMode.IN)
+                .registerStoredProcedureParameter("FilterByAnalyst", Boolean.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("FilteredRecCount", Integer.class, ParameterMode.OUT);
 
                 query.setParameter("CarStatus", request.getCarStatus())
                 .setParameter("Entity", request.getEntity())
                 .setParameter("UserDashboardWidgetId", request.getUserDashboardWidgetId())
+                .setParameter("FilterByAnalyst", request.isFilterByAnalyst())
                 .setParameter("UserCode", userCode).execute();
 
         try {
