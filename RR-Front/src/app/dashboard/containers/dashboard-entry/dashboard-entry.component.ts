@@ -34,8 +34,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   manageInProgressPopUp = false;
   manageArchivedPopUp = false;
 
-  tabs = [1, 2, 3];
   idSelected: number;
+  tabIndex = 0;
   idTab = 0;
   rightSliderCollapsed = false;
   initDash = true;
@@ -47,14 +47,11 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   @Select(DashboardState.getFacData) facData$;
   @Select(DashboardState.getRefData) refWidget$;
+  @Select(DashboardState.getSelectedTab) tabIndex$;
 
   dashboards: any;
   refWidget: any;
   editedWidget: any;
-
-  newFacCars: any;
-  inProgressFacCars: any;
-  archivedFacCars: any;
 
   searchInput: ElementRef;
   @ViewChild('searchInput') set assetInput(elRef: ElementRef) {
@@ -76,6 +73,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
     this.refWidget$.pipe().subscribe( value => {
       this.refWidget = value;
+      this.detectChanges();
+    });
+
+    this.tabIndex$.pipe().subscribe(value => {
+      if (this.initDash && value !== 0) {
+        this.tabIndex = value;
+      }
       this.detectChanges();
     });
 
@@ -171,8 +175,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       });
       this.dashboards = dashboards;
       if (this.initDash && this.dashboards !== null) {
-        this.idSelected = _.get(_.filter(this.dashboards, item => item.visible)[0], 'id', this.dashboards[0].id);
-        this.dashboardChange(this.idSelected);
+        if (this.tabIndex === 0) {
+          this.idSelected = _.get(_.filter(this.dashboards, item => item.visible)[0], 'id', this.dashboards[0].id);
+          this.dashboardChange(this.idSelected);
+        } else {
+          this.dashboardChange(this.tabIndex);
+        }
         this.initDash = false;
       }
     });
@@ -207,7 +215,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       return item.id === dashboardId ? _.merge({}, item, frontData) : item;
     });
     this.selectedDashboard = _.find(this.dashboards, item => item.id === dashboardId);
-    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: dashboardId}));
     this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
         catchError(err => {
           return of();
@@ -410,8 +418,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       dashBoardSequence: tab.dashBoardSequence,
       dashboardName: tab.dashboardName,
       searchMode: tab.searchMode,
+      userId: tab.userId,
       userDashboardId: tab.id,
-      userId: 1,
       visible: tab.visible
     };
     this.updateDashboardAction({dashboardId: tab.id,
@@ -505,13 +513,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   selectTab(id: any) {
     this.idSelected = id;
     this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
-    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: id}));
   }
 
   dashboardChange(id: any) {
     this.idSelected = id;
     this.selectedDashboard = _.find(this.dashboards, ds => ds.id === id);
-    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard)}));
+    this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: id}));
     if (_.get(this.selectedDashboard, 'visible', false)) {
       let idSel = 0;
       this.dashboards.forEach(

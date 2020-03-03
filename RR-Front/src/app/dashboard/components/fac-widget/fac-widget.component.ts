@@ -44,9 +44,10 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   @Input()
   loading = false;
 
-  @Select(DashboardState.getFacData)facData$;
-  @Select(DashboardState.getDataCounter)dataCounter$;
-  @Select(DashboardState.getVirtualScroll)virtualScroll$;
+  @Select(DashboardState.getFacData) facData$;
+  @Select(DashboardState.getDataCounter) dataCounter$;
+  @Select(DashboardState.getAssignedData) assignedData$;
+  @Select(DashboardState.getAssignedDataCounter) assignedDataCounter$;
 
   inputName: ElementRef;
   @ViewChild('inputName') set assetInput(elRef: ElementRef) {
@@ -68,6 +69,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
   data: any = [];
   dataCounter = 10;
+  dataAssigned: any = [];
+  dataCounterAssigned = 10;
   rows: any;
   secondaryLoad = false;
 
@@ -92,6 +95,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.ColsTotalWidth = this.ColsTotalWidth + item.widthNumber + 5;
     });
     this.loadFacData(1);
+    this.loadAssignedFacData(1);
     this.sortFirstUpdate();
 
     this.facData$.pipe().subscribe(value => {
@@ -104,8 +108,13 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
-    this.virtualScroll$.pipe().subscribe(value => {
-      this.virtualScroll =  _.get(value, `${this.identifier}`, false);
+    this.assignedData$.pipe().subscribe(value => {
+      this.dataAssigned =  _.get(value, `${this.identifier}`, []);
+      this.detectChanges();
+    });
+
+    this.assignedDataCounter$.pipe().subscribe(value => {
+      this.dataCounterAssigned =  _.get(value, `${this.identifier}`, 10);
       this.detectChanges();
     });
   }
@@ -178,7 +187,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     this.secondaryLoad = true;
     this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
         .subscribe(() => {}, () => {}, () => {
-          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+          this.dispatch([new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+              new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})]).subscribe(
               () => {}, () => {}, () => {
                 this.secondaryLoad = false;
                 this.detectChanges();
@@ -233,8 +243,17 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   loadFacData(pageNumber) {
     this.loading = true;
     const carStatus = this.carStatus[this.widgetId];
-    console.log('initData 1');
     this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+        .subscribe(() => {}, ()=> {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        })
+  }
+
+  loadAssignedFacData(pageNumber) {
+    this.loading = true;
+    const carStatus = this.carStatus[this.widgetId];
+    this.dispatch(new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
         .subscribe(() => {}, ()=> {}, () => {
           this.loading = false;
           this.detectChanges();
@@ -246,8 +265,20 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     const pageNumber =  (event.first / (event.rows / 2)) + 1;
     this.loading = true;
     if (event.rows === 50) {
-      console.log('initData 2');
       this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+          .subscribe(() => {}, ()=> {}, () => {
+            this.loading = false;
+            this.detectChanges();
+          });
+    }
+  }
+
+  loadAssignedMore(event) {
+    const carStatus = this.carStatus[this.widgetId];
+    const pageNumber =  (event.first / (event.rows / 2)) + 1;
+    this.loading = true;
+    if (event.rows === 50) {
+      this.dispatch(new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
           .subscribe(() => {}, ()=> {}, () => {
             this.loading = false;
             this.detectChanges();
@@ -260,9 +291,20 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     //console.log('rows', this.rows);
   }
 
-  getNumberOfRows() {
-    console.log(Math.floor(this.dataCounter / 2));
-    return 25 > this.dataCounter ? Math.floor(this.dataCounter / 2) : 25;
+  resetFilters() {
+    this.loading = true;
+    this.dashboardAPI.resetFilters(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.loading = false;
+      this.detectChanges();
+    })
+  }
+
+  resetSort() {
+    this.loading = true;
+    this.dashboardAPI.resetSort(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.loading = false;
+      this.detectChanges();
+    });
   }
 
   private _formatDate(data) {
