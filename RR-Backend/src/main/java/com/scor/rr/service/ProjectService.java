@@ -1,7 +1,9 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.MarketChannelEntity;
 import com.scor.rr.domain.ProjectEntity;
+import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
@@ -11,6 +13,7 @@ import com.scor.rr.repository.Project.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -93,7 +96,9 @@ public class ProjectService {
     }
 
     private ProjectEntity prePersistProject(ProjectEntity p, Long wsId) {
+        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
+        p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
         return p;
     }
 

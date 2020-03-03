@@ -128,7 +128,6 @@ export class FacChartWidgetComponent implements OnInit {
       series: [],
       color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
     };
-    console.log('loader', this.chartOption);
     this.newDashboard = this.dashboard;
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',

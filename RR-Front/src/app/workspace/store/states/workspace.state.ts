@@ -156,6 +156,22 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  static getGlobalTableData(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
+  }
+
+  static getGlobalTableColumns(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.columns);
+  }
+
+  static getGlobalTableSelection(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.selectedIds);
+  }
+
+  static isGlobalTableInitialized(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.initialized);
+  }
+
   @Selector()
   static getCloneConfig(state: WorkspaceModel) {
     return state.content[state.currentTab.wsIdentifier].pltManager['cloneConfig'];
@@ -464,6 +480,11 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromWS.InitWorkspace)
+  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
+    return this.wsService.initWs(ctx, payload);
+  }
+
   @Action(fromWS.LoadWS)
   loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWS) {
     return this.wsService.loadWs(ctx, payload);
@@ -576,6 +597,20 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromPlt.SaveGlobalTableData)
+  saveGlobalTableData(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableData) {
+    this.pltStateService.saveGlobalTableData(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableColumns)
+  saveGlobalTableColumns(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableColumns) {
+    this.pltStateService.saveGlobalTableColumns(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableSelection)
+  saveGlobalTableSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableSelection) {
+    this.pltStateService.saveGlobalTableSelection(ctx, payload);
+  }
 
   @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
