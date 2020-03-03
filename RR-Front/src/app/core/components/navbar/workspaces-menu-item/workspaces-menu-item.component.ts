@@ -17,6 +17,7 @@ import {WorkspaceState} from "../../../../workspace/store/states";
 import {debounceTime, take, takeUntil} from "rxjs/operators";
 import {Navigate} from "@ngxs/router-plugin";
 import {Subject, Subscription} from "rxjs";
+import * as fromWS from "../../../../workspace/store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -111,6 +112,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   ngOnInit() {
+    this.dispatch(new fromWS.InitWorkspace({}));
     this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.countWs = _.merge({}, value);
       this.detectChanges();

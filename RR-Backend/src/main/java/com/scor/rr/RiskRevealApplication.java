@@ -26,7 +26,6 @@ public class RiskRevealApplication extends SpringBootServletInitializer implemen
 
 	public static void main(String[] args) {
 		SpringApplication.run(RiskRevealApplication.class, args);
-
 	}
 
 	@Override
