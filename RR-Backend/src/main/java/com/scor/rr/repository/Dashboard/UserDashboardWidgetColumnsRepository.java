@@ -25,12 +25,12 @@ public interface UserDashboardWidgetColumnsRepository extends JpaRepository<User
 
     @Transactional
     @Modifying
-    @Query(value = "exec dbonew.usp_Reset_Sort @widgetId=:widgetId,", nativeQuery = true)
+    @Query(value = "exec dbonew.usp_Reset_Sort @widgetId=:widgetId", nativeQuery = true)
     void resetSort(@Param("widgetId") long widgetId);
 
     @Transactional
     @Modifying
-    @Query(value = "exec dbonew.usp_Reset_Filter @widgetId=:widgetId,", nativeQuery = true)
+    @Query(value = "exec dbonew.usp_Reset_Filter @widgetId=:widgetId", nativeQuery = true)
     void resetFilter(@Param("widgetId") long widgetId);
 
     @Transactional
