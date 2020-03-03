@@ -627,8 +627,14 @@ public class ELTToPLTConverter extends AbstractWriter {
                         writeBufferToOutputStream(outputStream, pltLossDataList);
                     } catch (IOException e) {
                         log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
+                    } finally {
+                        pltLossDataList.clear();
+                        try {
+                            outputStream.close();
+                        } catch (IOException exp) {
+                            exp.printStackTrace();
+                        }
                     }
-                    pltLossDataList.clear();
                 }
             }
             log.info("Slave {}.{}: finished}", this.masterId, this.id);
