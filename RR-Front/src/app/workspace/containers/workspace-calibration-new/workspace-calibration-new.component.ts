@@ -61,12 +61,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     columns: any[],
     columnsLength: number
   };
+
+  visibleFrozenColumns: any[];
+  availableFrozenColumns: any[];
   exchangeRates: any;
 
   //POP-UPs
   selectedAdjustment: any;
   selectedStatusFilter: any;
   isAdjustmentPopUpVisible: boolean;
+  isFrozenManageColumnsVisible: boolean;
 
   isRPPopUpVisible: boolean;
   returnPeriodConfig: {
@@ -133,6 +137,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     };
 
     this.isAdjustmentPopUpVisible= false;
+    this.isFrozenManageColumnsVisible= false;
     this.isRPPopUpVisible= false;
     this.returnPeriodConfig= {
       newlyAdded: [],
@@ -334,6 +339,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.calibrationTableService.columnsConfig$.subscribe(config => {
       this.columnsConfig= config;
       this.calibrationTableService.updateColumnsConfigCache(config);
+
+      this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
+      this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');
       this.detectChanges();
     })
   }
@@ -390,7 +398,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleTableActions(action: Message) {
+    console.log(action);
     switch (action.type) {
+
+      case "Open Column Manager":
+        this.isFrozenManageColumnsVisible= true;
+        break;
+
+      case "Close Column Manager":
+        this.isFrozenManageColumnsVisible= false;
+        this.detectChanges();
+        break;
 
       case 'View Change':
         this.onViewChange(action.payload);
@@ -833,6 +851,23 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         });
 
 
+  }
+
+  handleManageColumnsActions(action) {
+    switch (action.type) {
+
+      case "Manage Frozen Columns":
+        this.calibrationTableService.onManageFrozenColumns(action.payload);
+        this.isFrozenManageColumnsVisible = false;
+        break;
+
+      case "Close":
+        this.isFrozenManageColumnsVisible= false;
+        break;
+
+      default:
+        console.log(action);
+    }
   }
 
 }

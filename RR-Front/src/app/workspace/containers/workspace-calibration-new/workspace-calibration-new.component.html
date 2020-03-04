@@ -23,6 +23,13 @@
   </div>
 </div>
 
+<calib-col-manager
+                *ngIf="isFrozenManageColumnsVisible"
+               [visibleList]="visibleFrozenColumns"
+               [availableList]="availableFrozenColumns"
+               (actionDispatcher)="handleManageColumnsActions($event)">
+</calib-col-manager>
+
 <app-adjustment-pop-up-new
   *ngIf="isAdjustmentPopUpVisible"
   [adjustment]="selectedAdjustment"

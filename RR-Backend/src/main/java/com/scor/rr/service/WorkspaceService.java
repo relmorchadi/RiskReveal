@@ -72,7 +72,8 @@ public class WorkspaceService {
     }
 
     public List<WorkspaceEntity> getAssignedWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
-        return this.assignedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size)).stream()
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return this.assignedWorkspaceViewRepository.findAllByUserId("%" + kw + "%", user.getUserId(), new OffsetPageRequest(offset, size)).stream()
                 .map(assignedWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(assignedWorkspaceView.getId())
@@ -103,7 +104,7 @@ public class WorkspaceService {
         return new WorkspaceCount(
                 this.favoriteWorkspaceViewRepository.getFavoriteWSCount(user.getUserId()),
                 this.recentWorkspaceViewRepository.getRecentWSCount(user.getUserId()),
-                this.assignedWorkspaceViewRepository.getAssignedWSCount(userId),
+                this.assignedWorkspaceViewRepository.getAssignedWSCount(user.getUserId()),
                 this.pinnedWorkspaceViewRepository.getPinnedWSCount(userId)
         );
     }

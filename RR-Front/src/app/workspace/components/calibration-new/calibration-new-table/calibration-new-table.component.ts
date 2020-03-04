@@ -20,7 +20,7 @@ import {AngularResizeElementDirection} from "angular-resize-element";
   styleUrls: ['./calibration-new-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked, OnChanges {
+export class CalibrationNewTableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   public readonly AngularResizeElementDirection = AngularResizeElementDirection;
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
@@ -298,7 +298,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onColumnResize(event) {
-    console.log(event);
     const {delta, element} = event;
     const isFrozen = element.attributes['aria-details'].value;
     const index = element.attributes['aria-colindex'].value;
@@ -372,7 +371,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onDeltaChange(newValue) {
-    console.log(this.tableConfig.isDeltaByAmount);
     this.actionDispatcher.emit({
       type: "Delta Change",
       payload: newValue
@@ -398,8 +396,10 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-
+  openColumnManager() {
+    this.actionDispatcher.emit({
+      type: "Open Column Manager"
+    })
   }
 
 }

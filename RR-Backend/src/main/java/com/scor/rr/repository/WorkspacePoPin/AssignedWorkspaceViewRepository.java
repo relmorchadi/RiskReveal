@@ -15,10 +15,10 @@ public interface AssignedWorkspaceViewRepository extends JpaRepository<AssignedW
     @Query("from AssignedWorkspaceView aws where" +
             " (aws.cedantName like :kw or aws.workspaceContextCode like :kw or aws.workspaceName like :kw or aws.workspaceUwYear like :kw ) " +
             " and aws.userId = :userId order by aws.createDate desc")
-    List<AssignedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
+    List<AssignedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Long userId, Pageable page);
 
     @Transactional
     @Procedure(procedureName = "dbonew.usp_Count_Assigned_Workspace", outputParameterName = "count")
-    Integer getAssignedWSCount(@Param("userId") Integer userId);
+    Integer getAssignedWSCount(@Param("userId") Long userId);
 
 }
