@@ -299,7 +299,7 @@ public class ImportLossDataJob {
 
     @Bean
     public Step extractLocStep() {
-        return this.stepBuilderFactory.get("extractAcc")
+        return this.stepBuilderFactory.get("extractLoc")
                 .<RLLocRow, RLLocRow>chunk(1000)
                 .reader(locReader)
                 .processor(locProcessor)
@@ -309,7 +309,7 @@ public class ImportLossDataJob {
 
     @Bean
     public Step extractLocFWStep() {
-        return this.stepBuilderFactory.get("extractAcc")
+        return this.stepBuilderFactory.get("extractLocFW")
                 .<RLLocRow, RLLocRow>chunk(50000)
                 .reader(locReader)
                 .processor(locProcessor)
