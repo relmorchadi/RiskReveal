@@ -1,19 +1,14 @@
 package com.scor.rr.service;
 
-
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.UserRrEntity;
-import com.scor.rr.domain.dto.UserPreferencesDTO;
 import com.scor.rr.domain.entities.userPreferences.UserPreference;
 import com.scor.rr.domain.entities.userPreferences.UserPreferenceView;
 import com.scor.rr.repository.userPreferences.UserPreferenceRepository;
 import com.scor.rr.repository.userPreferences.UserPreferenceViewRepository;
-import org.apache.cxf.security.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class UserPreferenceService {
