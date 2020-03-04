@@ -24,14 +24,15 @@ export class WorkspaceService {
   }
 
   initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
-    return this.wsApi.getOpenedTabs(1).pipe(
-        tap(data => {
-          _.forEach(data, (item: any) => {
-            ctx.dispatch(new fromWS.LoadWS(
-                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', type: 'TTY'}))
-          })
-        })
-    );
+    return of();
+    // return this.wsApi.getOpenedTabs(1).pipe(
+    //     tap(data => {
+    //       _.forEach(data, (item: any) => {
+    //         ctx.dispatch(new fromWS.LoadWS(
+    //             {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', type: 'TTY'}))
+    //       })
+    //     })
+    // );
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {

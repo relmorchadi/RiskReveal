@@ -1021,17 +1021,19 @@ export class RiskLinkStateService {
         switch (_.upperCase(type)) {
             case 'PORTFOLIO':
                 return this.riskApi.deletePortfolioSummary(ids, projectId)
-                    .pipe(catchError((err) => {
+                    .pipe(catchError((err:any) => {
                         if (err.status != 200)
                             return of(err);
-                        return this.deletePortfolioFromSelection(ctx, ids);
+                        this.deletePortfolioFromSelection(ctx, ids);
+                        return of(ids);
                     }));
             case 'ANALYSIS':
                 return this.riskApi.deleteAnalysisSummary(ids, projectId)
                     .pipe(catchError((err) => {
                         if (err.status != 200)
                             return of(err);
-                        return this.deleteAnalysisFromSelection(ctx, ids);
+                        this.deleteAnalysisFromSelection(ctx, ids);
+                        return of(ids);
                     }));
         }
     }
