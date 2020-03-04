@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.toList;
  * @author Ayman IKAR
  * @created 19/12/2019
  */
+
 @Service
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {

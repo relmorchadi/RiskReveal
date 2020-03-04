@@ -1,3 +1,9 @@
+
+/*
+ * Date : 20/2/2020.
+ * Author : Reda El Morchadi
+ */
+
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.model";
 
@@ -9,7 +15,7 @@ import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.mode
 export class ExposuresHeaderComponent implements OnInit, OnDestroy {
     
     @Input("headerConfig") headerConfig: ExposuresHeaderConfig;
-    @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
+    @Output("actionDispatcher") actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(){
 
@@ -17,13 +23,14 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
 
     ngOnInit(): void {
+
     }
 
     ngOnDestroy(): void {
     }
 
 
-    changeCurrencie(currency: any) {
+    changeCurrency(currency: any) {
         
     }
 
@@ -39,7 +46,17 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
         
     }
 
-    onViewChange(view: string) {
-        
+    changeView(view: any) {
+
     }
+
+    openPortfolioDetails() {
+        this.actionDispatcher.emit({type:'openPortfolioDetails'});
+    }
+
+    openDivisionDetails() {
+        this.actionDispatcher.emit({type:'openDivisionDetails'});
+    }
+
+
 }
