@@ -93,6 +93,11 @@ export class FacChartWidgetComponent implements OnInit {
         align: 'left',
         left: 10
       },
+      dataZoom: [
+        {
+          type: 'inside'
+        }
+      ],
       tooltip: {},
       toolbox: {
         feature: {
@@ -107,7 +112,12 @@ export class FacChartWidgetComponent implements OnInit {
       },
       xAxis: {
         type: 'category',
-        data: []
+        data: [],
+        ticks: {
+          stepSize: 1,
+          min: 0,
+          autoSkip: false
+        }
       },
       yAxis: {
         type: 'value'

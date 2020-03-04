@@ -40,7 +40,7 @@ public class RegionPerilService {
         if(!admin1Code.equals(""))
             return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode, admin1Code, perilCode).orElse(null);
         else
-            return regionPerilMappingRepository.findByCountryCodeAndPerilCode(countryCode, perilCode).orElse(null);
+            return regionPerilMappingRepository.findByCountryCodeAndAdmin1CodeAndPerilCode(countryCode,null, perilCode).orElse(null);
     }
 
     public RegionPerilEntity findRegionPerilByRegionPerilID(Long regionPerilID)

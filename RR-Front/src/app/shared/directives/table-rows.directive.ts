@@ -1,12 +1,24 @@
-import {AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  Directive,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnChanges,
+  OnInit,
+  Output, SimpleChanges
+} from '@angular/core';
 
 @Directive({
   selector: '[tRows]'
 })
-export class TableRowsDirective {
+export class TableRowsDirective implements AfterViewChecked {
 
   @Input() tableClass: string;
   @Input() virtualRowHeight: number;
+  @Input() loading: number;
   @Output() heightChange: EventEmitter<number> = new EventEmitter();
 
   constructor(private el: ElementRef) { }
@@ -20,9 +32,17 @@ export class TableRowsDirective {
     const node = document.querySelector('.' + this.tableClass + ' .ui-table-scrollable-body');
     if(node) {
       const element: any = new ElementRef(node);
-      const rows = Math.ceil((element.nativeElement.offsetHeight - 8) / this.virtualRowHeight);
+      const rows = Math.floor((element.nativeElement.offsetHeight) / this.virtualRowHeight);
       this.heightChange.emit(rows);
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.onHeightChanges();
+  }
+
+  ngAfterViewChecked(): void {
+    this.onHeightChanges();
   }
 
 }

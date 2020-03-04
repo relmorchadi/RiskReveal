@@ -58,6 +58,12 @@ public class PltBrowserResource {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("columns/filter/project")
+    public ResponseEntity<?> filterByProjectId(@RequestBody UpdateColumnFilterCriteriaRequest request) {
+        this.pltBrowserService.filterByProjectId(request);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("columns/filter/reset")
     public ResponseEntity<?> resetColumnFilterCriteria(@RequestBody ResetColumnFilterCriteriaRequest request) {
         this.pltBrowserService.resetColumnFilterCriteria(request);

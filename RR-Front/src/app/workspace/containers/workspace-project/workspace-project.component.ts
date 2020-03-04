@@ -8,7 +8,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {UpdateWsRouting} from '../../store/actions';
-import {MessageService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {BaseContainer} from '../../../shared/base';
 import {Navigate} from '@ngxs/router-plugin';
 import {debounceTime} from 'rxjs/operators';
@@ -64,6 +64,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               private messageService: MessageService,
               private changeDetector: ChangeDetectorRef,
               private notificationService: NotificationService,
+              private confirmationService: ConfirmationService,
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -119,9 +120,14 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   delete(projectId) {
-    this.dispatch(new fromWs.DeleteProject({
-      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,
-    }));
+    this.confirmationService.confirm({
+      message: 'Are you sure you want To delete this project?',
+      accept: () => {
+        this.dispatch(new fromWs.DeleteProject({
+          wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,
+        }));
+      }
+    });
   }
 
   deleteFacProject(item) {
@@ -131,8 +137,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   edit(project$) {
     this.editOption = true;
     this.newProject = true;
-    this.projectForm = {...project$.project, dueDate: new Date(project$.project.dueDate),
-      receptionDate: new Date(project$.project.receptionDate)};
+    this.projectForm = {...project$.project, dueDate: new Date(project$.project.dueDate), receptionDate: new Date(project$.project.receptionDate)};
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {

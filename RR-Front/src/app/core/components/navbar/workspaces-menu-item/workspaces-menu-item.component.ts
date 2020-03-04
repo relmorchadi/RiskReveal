@@ -93,8 +93,8 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
 
   workspaceCols = [
     {width: '15px', type: 'select'},
-    {width: '160px', type: 'multi'},
-    {width: '35px', type: 'text'}
+    {width: '150px', type: 'multi'},
+    {width: '45px', type: 'text'}
   ];
 
   constructor(private _helperService: HelperService,
@@ -329,7 +329,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   async openSingleWorkspace(ws) {
-    console.log('redirection', ws);
     this.router.navigate([`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`]);
     this.visible = false;
   }

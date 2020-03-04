@@ -17,6 +17,10 @@
 
           <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
 
+          <li nz-menu-divider></li>
+
+          <li nz-menu-item (click)="onExport()">Export</li>
+
         </ul>
       </nz-dropdown>
     </div>
@@ -27,17 +31,14 @@
             [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
             (resized)="onContainerResize($event)"
     >
-      <div *ngIf="columns.length > 1" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
         <p-table
-                tRows [tableClass]="'plt-list'"
-                [class]="'plt-list'"
-                (heightChange)="rowsChange($event)"
+                [styleClass]=" data.length > 0 ? '': 'activate-header-scroll'"
                 dataKey="pltId" [value]="data" [columns]="columns"
                 [loading]="loading$ | async"
                 [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
                 [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
                 [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
-                [virtualRowHeight]="45.556" [lazy]="true" [virtualScroll]="true" [rows]="rows" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
         >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -50,6 +51,7 @@
               <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
                 <label nz-checkbox
                        [nzChecked]="selectAll"
+                       [nzIndeterminate]="indeterminate"
                        (nzCheckedChange)="onCheckAll()"
                 ></label>
                 <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: -1, sortType: sortSelectedAction}"></ng-container>
@@ -73,15 +75,18 @@
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-row let-i="rowIndex" let-cols="columns">
-            <tr [pContextMenuRow]="row" style="height:45.556px">
+            <tr
+                    [ngClass]="{'active_plt_item': selectedIds[row.pltId]}"
+                    [pContextMenuRow]="row"
+                    style="height: 46px">
               <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
                          [nzChecked]="selectedIds[row.pltId]"
-                         (nzCheckedChange)="onRowSelect(row.pltId)"></label>
+                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
                 </div>
               </td>
-              <td *ngFor="let col of cols">
+              <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">
                 <ng-container [ngSwitch]="col?.dataDisplayType">
                   <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="indicator" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
                   <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="status" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
@@ -95,7 +100,7 @@
           </ng-template>
         </p-table>
       </div>
-      <div *ngIf="!(columns.length > 1)" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="!(columns.length > 0)" [style.width]="totalColumnWidth + 'px'">
         <p-progressSpinner></p-progressSpinner>
       </div>
     </div>
@@ -170,8 +175,12 @@
 </ng-template>
 
 <ng-template #number let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;text-align: right">
-        {{ data | number : '1.0-3'}}
+    <span
+            style="display: block;font-size: 12px;font-weight: 400;text-align: right"
+            appRrNumber
+            [number]="data"
+            [config]="config"
+    >
     </span>
 </ng-template>
 

@@ -487,7 +487,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   private checkShortCut(shortCuts: ShortCut[], keyword: string) {
     const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, _.camelCase(shortCut.shortCutLabel)));
-    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length) : keyword ] : null;
+    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(_.camelCase(foundShortCut.shortCutLabel).length + 1) : keyword ] : null;
   }
 
   private searchLoader(keyword, table = '') {

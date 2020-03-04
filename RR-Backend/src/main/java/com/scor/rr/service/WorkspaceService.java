@@ -1,5 +1,7 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
+import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
@@ -12,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -49,7 +52,8 @@ public class WorkspaceService {
     UserWorkspaceTabsRepository workspaceTabsRepository;
 
     public List<WorkspaceEntity> getFavoriteWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
-        return this.favoriteWorkspaceViewRepository.findAllByUserId("%" + kw + "%", userId, new OffsetPageRequest(offset, size))
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return this.favoriteWorkspaceViewRepository.findAllByUserId("%" + kw + "%", user.getUserId(), new OffsetPageRequest(offset, size))
                 .stream()
                 .map(favoriteWorkspaceView -> WorkspaceEntity
                         .builder()
@@ -64,7 +68,8 @@ public class WorkspaceService {
     }
 
     public List<WorkspaceEntity> getRecentWorkspaces(String kw, Integer userId, Integer offset, Integer size) {
-        return this.recentWorkspaceViewRepository.findAllByUserId("%"+kw+"%", userId, new OffsetPageRequest(offset, size)).stream()
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return this.recentWorkspaceViewRepository.findAllByUserId("%"+kw+"%", user.getUserId(), new OffsetPageRequest(offset, size)).stream()
                 .map(recentWorkspaceView -> WorkspaceEntity
                         .builder()
                         .workspaceId(recentWorkspaceView.getId())
@@ -105,16 +110,18 @@ public class WorkspaceService {
     }
 
     public WorkspaceCount getWSCount(Integer userId) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         return new WorkspaceCount(
-                this.favoriteWorkspaceViewRepository.getFavoriteWSCount(userId),
-                this.recentWorkspaceViewRepository.getRecentWSCount(userId),
+                this.favoriteWorkspaceViewRepository.getFavoriteWSCount(user.getUserId()),
+                this.recentWorkspaceViewRepository.getRecentWSCount(user.getUserId()),
                 this.assignedWorkspaceViewRepository.getAssignedWSCount(userId),
                 this.pinnedWorkspaceViewRepository.getPinnedWSCount(userId)
         );
     }
 
     public ResponseEntity<String> toggleFavoriteWorkspace(WorkspaceToggleRequest request) {
-        this.favoriteWorkspaceRepository.toggleFavoriteWorkspace(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserId());
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        this.favoriteWorkspaceRepository.toggleFavoriteWorkspace(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), user.getUserId());
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 

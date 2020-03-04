@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.dto.TargetBuild.FacWorkspaceDTO;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -240,7 +242,8 @@ public class SearchService {
                 .map(workspace -> projectCardViewRepository.findAllByWorkspaceId(workspace.getWorkspaceId()))
                 .orElse(new ArrayList<>());
         if (!CollectionUtils.isEmpty(contracts)) {
-            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), user.getUserId());
             return buildTtyWS(
                     contracts,
                     years,
@@ -260,7 +263,9 @@ public class SearchService {
                 .orElse(new ArrayList<>());
         if (wsOpt.isPresent()) {
             Optional<FacContractCurrency> currency = this.facContractCurrencyRepository.findById(wsOpt.get().getWorkspaceId());
-            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), 1);
+            UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+            this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), user.getUserId());
             return buildFacWS(
                     wsOpt.get(),
                     projects,
@@ -288,8 +293,9 @@ public class SearchService {
         detailsDTO.setYear(Integer.parseInt(uwy));
         detailsDTO.setYears(years);
         detailsDTO.setIsPinned(true);
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), user.getUserId()));
 
         return detailsDTO;
     }
@@ -304,7 +310,9 @@ public class SearchService {
             projectCardView.setDivisions(carDivisionsRepository.findAllDivisions(projectCardView.getCarRequestId()));
             return projectCardView;
         }).collect(Collectors.toList()));
-        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), 1L));
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        detailsDTO.getCount(this.workspaceEntityRepository.getWorkspaceHeaderStatistics(workspaceId, Integer.parseInt(uwy), user.getUserId()));
 
         detailsDTO.setCurrency(currency);
         detailsDTO.setYears(Arrays.asList(Integer.valueOf(uwy)));

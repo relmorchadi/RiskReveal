@@ -1,5 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Injector, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {BaseTable} from "../../base/base-table.component";
+import {Router} from "@angular/router";
+import {Store} from "@ngxs/store";
 
 @Component({
   selector: 'd-table',
@@ -20,8 +22,8 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     }
     ];
 
-  constructor(_injector: Injector, cdRef: ChangeDetectorRef) {
-    super(_injector, cdRef);
+  constructor(_injector: Injector, _baseRouter: Router, _baseCdr: ChangeDetectorRef,  _baseStore: Store) {
+    super(_injector, _baseRouter, _baseCdr, _baseStore);
     this.injectDependencies('plt-manager');
     this.data = [];
     this.columns= [];
@@ -77,6 +79,16 @@ export class GlobalTableComponent extends BaseTable implements OnInit, AfterView
     this._handler.selectAll$.subscribe( s => {
       this.selectAll = s;
       this.detectChanges()
+    });
+
+    this._handler.indeterminate$.subscribe(i => {
+      this.indeterminate = i;
+      this.detectChanges();
+    });
+
+    this._handler.rows$.subscribe(r => {
+      this.rows = r;
+      this.detectChanges();
     })
 
   }

@@ -26,12 +26,12 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}plts?wsId=${wsId}&uwYear=${uwYear}`);
   }
 
-  loadEpMetrics(workspaceContextCode, uwYear, userId, curveType, screen) {
-    return this.http.get(`${this.URL}epMetrics`, { params: {workspaceContextCode, uwYear, userId, curveType, screen}});
+  loadEpMetrics(workspaceContextCode, uwYear, curveType, screen) {
+    return this.http.get(`${this.URL}epMetrics`, { params: {workspaceContextCode, uwYear, curveType, screen}});
   }
 
-  loadSinglePltEpMetrics(pltHeaderId, userId, curveType, screen) {
-    return this.http.get(`${this.URL}epMetrics/singlePLT`, { params: {pltHeaderId, userId, curveType, screen}});
+  loadSinglePltEpMetrics(pltHeaderId, curveType, screen) {
+    return this.http.get(`${this.URL}epMetrics/singlePLT`, { params: {pltHeaderId, curveType, screen}});
   }
 
   loadSinglePLTSummaryStats(pltHeaderId) {
@@ -66,12 +66,12 @@ export class CalibrationAPI {
     return this.http.get(`${this.URL}epMetrics/rp/validate`, { params: { rp }});
   }
 
-  saveListOfRPsByUserId(rps: number[], userId: number, screen) {
-    return this.http.post(`${this.URL}epMetrics/rp/save`, {rps, userId, screen});
+  saveListOfRPsByUserId(rps: number[], screen) {
+    return this.http.post(`${this.URL}epMetrics/rp/save`, {rps, screen});
   }
 
-  deleteListOfRPsByUserId(userId, rps, screen) {
-    return this.http.post(`${this.URL}epMetrics/rp/delete`, { userId, rps, screen });
+  deleteListOfRPsByUserId( rps, screen ) {
+    return this.http.post(`${this.URL}epMetrics/rp/delete`, { rps, screen });
   }
 
   getExchangeRates(effectiveDate, currencies) {

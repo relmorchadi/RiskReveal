@@ -6,7 +6,8 @@ import {catchError, mergeMap, tap} from "rxjs/operators";
 import produce from "immer";
 import {of} from "rxjs";
 import {DashboardModel} from "../../model/dashboard.model";
-import {LoadMostUsedSavedSearch, LoadRecentSearch, LoadSavedSearch, LoadShortCuts} from "../actions";
+import {GetAllUsers, LoadMostUsedSavedSearch, LoadRecentSearch, LoadSavedSearch, LoadShortCuts} from "../actions";
+import {LoadConfiguration} from "../actions";
 
 const initiateState: AuthModel = {
   fullName: '',
@@ -50,8 +51,12 @@ export class AuthState implements NgxsOnInit {
                     draft.jwtToken = data.jwtToken;
                 }));
                 window.localStorage.setItem('token', data.jwtToken);
-                this.store.dispatch(
-                    [new LoadShortCuts(), new LoadRecentSearch(), new LoadSavedSearch(), new LoadMostUsedSavedSearch()]);
+                this.store.dispatch([new LoadShortCuts(),
+                    new LoadRecentSearch(),
+                    new LoadSavedSearch(),
+                    new LoadMostUsedSavedSearch(),
+                    new GetAllUsers(),
+                    new LoadConfiguration()]);
             }),
             catchError(err => {
                 console.log(err);

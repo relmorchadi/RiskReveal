@@ -128,12 +128,30 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
     }
 
-    getSummaryOrDefaultDataSources(instanceId, projectId, userId) {
+    getSummaryOrDefaultDataSources(instanceId, projectId, userId='1'): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-global-data-sources`, {
             params: {
                 instanceId,
                 projectId,
                 userId
+            }
+        })
+    }
+
+    getDefaultDataSources(instanceId, projectId: any, userId='1'): Observable<any> {
+        return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`,{
+            params: {
+                instanceId,
+                projectId,
+                userId
+            }
+        })
+    }
+
+    deleteDataSourcesByProjectId(projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-datasources-by-project-id`,{
+            params: {
+                projectId
             }
         })
     }
@@ -178,4 +196,5 @@ export class RiskApi {
         return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
 
     }
+
 }

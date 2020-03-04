@@ -216,11 +216,6 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
-export class LoadDivisionSelection {
-  static readonly type = '[Risk Link] Load Division Selection';
-  constructor(public payload?: any) {}
-}
-
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';
   constructor(public payload?) {}
@@ -306,6 +301,11 @@ export class LoadSummaryOrDefaultDataSourcesAction {
   constructor(public payload: any) {}
 }
 
+export class ResetToDefaultSelectionAction {
+  static readonly type= '[Risk Link] Reset to default selection action';
+  constructor(public payload: any) {}
+}
+
 export class LoadDefaultDataSourcesAction {
   static readonly type= '[Risk Link] Load default data sources action';
   constructor(public payload: any) {}
@@ -335,3 +335,9 @@ export class SaveDefaultDataSourcesErrorAction {
   static readonly type= '[Risk Link] Save default data sources error action';
   constructor(public payload: any) {}
 }
+
+export class ClearSelectionAction {
+  static readonly type= '[Risk Link] Clear selection action';
+  constructor() {}
+}
+

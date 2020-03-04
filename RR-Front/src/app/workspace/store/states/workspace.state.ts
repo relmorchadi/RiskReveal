@@ -64,6 +64,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getWorkspaceStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
+  }
+
+  @Selector()
   static getProjects(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].projects;
@@ -149,6 +155,22 @@ export class WorkspaceState {
    * Plt Selectors
    *
    ***********************************/
+
+  static getGlobalTableData(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
+  }
+
+  static getGlobalTableColumns(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.columns);
+  }
+
+  static getGlobalTableSelection(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.selectedIds);
+  }
+
+  static isGlobalTableInitialized(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.initialized);
+  }
 
   @Selector()
   static getCloneConfig(state: WorkspaceModel) {
@@ -361,6 +383,7 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.summary;
   }
+
   @Selector()
   static getRiskLinkSummarySelectionSize(state: WorkspaceModel){
     const wsIdentifier = state.currentTab.wsIdentifier;
@@ -524,7 +547,6 @@ export class WorkspaceState {
 
   @Action(fromWS.AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
-    console.log('add new project', payload);
     return this.wsService.addNewProject(ctx, payload);
   }
 
@@ -575,6 +597,20 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromPlt.SaveGlobalTableData)
+  saveGlobalTableData(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableData) {
+    this.pltStateService.saveGlobalTableData(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableColumns)
+  saveGlobalTableColumns(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableColumns) {
+    this.pltStateService.saveGlobalTableColumns(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableSelection)
+  saveGlobalTableSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableSelection) {
+    this.pltStateService.saveGlobalTableSelection(ctx, payload);
+  }
 
   @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
@@ -1046,11 +1082,6 @@ export class WorkspaceState {
     return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
   }
 
-  @Action(fromWS.LoadDivisionSelection)
-  loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
-    this.riskLinkFacade.loadDivisionSelection(ctx);
-  }
-
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {
     return this.riskLinkFacade.toggleRiskLinkEDMAndRDMSelected(ctx, payload);
@@ -1171,24 +1202,36 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.SaveDefaultDataSourcesAction)
-  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  saveDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveDefaultDataSourcesAction){
     return this.riskLinkFacade.saveDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadDefaultDataSourcesAction)
-  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDefaultDataSourcesAction){
     return this.riskLinkFacade.loadDefaultDataSources(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryOrDefaultDataSourcesAction)
-  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  loadSummaryOrDefaultDataSources(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryOrDefaultDataSourcesAction){
     return this.riskLinkFacade.loadSummaryOrDefaultDataSources(ctx, payload);
+  }
+  @Action(fromWS.ResetToDefaultSelectionAction)
+  resetToDefaultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ResetToDefaultSelectionAction){
+    return this.riskLinkFacade.resetToDefaultSelection(ctx, payload);
   }
 
   @Action(fromWS.LoadSummaryAction)
-  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideOccurrenceBasis){
+  LoadSummary(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadSummaryAction){
     return this.riskLinkFacade.loadSummary(ctx, payload);
   }
+
+
+  @Action(fromWS.ClearSelectionAction)
+  clearSelection(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.clearSelection(ctx);
+  }
+
+
 
 
 

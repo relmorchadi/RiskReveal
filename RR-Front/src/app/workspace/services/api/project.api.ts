@@ -16,8 +16,8 @@ export class ProjectApi {
     return this.http.post(`${this.api}`, data, {params: {wsId, uwy}});
   }
 
-  updateProject(assignedTo, projectId, projectName, projectDescription) {
-    return this.http.put(`${this.api}`, null,{params: {assignedTo, projectId, projectName, projectDescription}})
+  updateProject(assignedTo, projectId, projectName, projectDescription, dueDate) {
+    return this.http.put(`${this.api}`, {assignedTo, projectId, projectName, projectDescription, dueDate })
   }
 
   deleteProject(id) {

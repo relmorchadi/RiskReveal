@@ -18,11 +18,15 @@ import {backendUrl} from "../api";
 import * as _ from 'lodash';
 import {Observable} from "rxjs";
 import {Message} from "../message";
+import {Router} from "@angular/router";
+import {Store} from "@ngxs/store";
+import {BaseContainer} from "./base.container";
 
 
-export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
+export class BaseTable extends BaseContainer implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
   @Input() params: any;
+  @Input() selectedProject: any;
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter();
 
   @ViewChild('tableContainer') container;
@@ -37,6 +41,7 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   selectedIds: any;
   selectedItem: any;
   selectAll: boolean;
+  indeterminate: boolean;
   sortSelectedAction: string;
 
   totalRecords: number;
@@ -45,7 +50,10 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   _injectors: any;
   _handler: TableHandlerInterface;
 
-  constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
+  tableInitialized: boolean;
+
+  constructor(private injector: Injector, _baseRouter: Router,  _baseCdr: ChangeDetectorRef,  _baseStore: Store) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this._injectors = {
       'plt-manager': ({
         api: this.injector.get<TableServiceImp>(TableServiceImp),
@@ -54,20 +62,20 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     };
 
     this.selectedIds= {};
-    this.rows=6;
   }
 
   ngOnInit() {
-
+    super.ngOnInit();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     const {
-      params
+      params,
+      selectedProject
     } = changes;
-    if(!params.previousValue && params.currentValue) {
-      this.initTable();
-    }
+    console.log("Changes", changes);
+    this.initTable(params, selectedProject);
+    this.selectedProjectFilter(selectedProject);
   }
 
   ngAfterViewInit(): void {
@@ -79,9 +87,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     const {
       api,
       handler
-    } = this._injectors[key]
+    } = this._injectors[key];
 
-    //this._api = api;
     this._handler = handler;
     this._handler.init({
       _api: api
@@ -89,8 +96,19 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  protected initTable() {
-    this._handler.initTable(this.params);
+  initTable(params, selectedProject) {
+    if(this.params && !this.tableInitialized && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
+      this.tableInitialized = true;
+      this._handler.initTable(this.params, selectedProject.currentValue);
+    }
+  }
+
+  selectedProjectFilter(selectedProject) {
+    if(this.tableInitialized && selectedProject && selectedProject.previousValue && selectedProject.previousValue != selectedProject.currentValue) {
+      console.log("selected project");
+      console.log(selectedProject);
+      this._handler.filterByProjectId(selectedProject.currentValue.projectId);
+    }
   }
 
   onColumnResize(event) {
@@ -115,8 +133,13 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.onResetSort();
   }
 
-  onRowSelect(i: number) {
-    this._handler.onRowSelect(i);
+  onRowSelect(id: number, index: number, $event: MouseEvent) {
+    this._handler.onRowSelect(id, index, $event, false);
+  }
+
+  onCheckBox(id: number, index: number, $event: MouseEvent) {
+    console.log("checkbox")
+    this._handler.onRowSelect(id, index, $event, true);
   }
 
   onCheckAll() {
@@ -131,13 +154,16 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.onVirtualScroll(event);
   }
 
-  rowsChange(rows) {
-    console.log('search rows', rows);
-    this.rows = rows;
+  onExport() {
+    this._handler.onExport();
   }
 
-  protected detectChanges() {
-    if (!this.cdRef['destroyed']) this.cdRef.detectChanges();
+  rowsChange(rows) {
+    if(rows != this.rows && rows) {
+      console.log("Resized : ", rows);
+      this._handler.setPageSize(rows);
+      this.rows = rows;
+    }
   }
 
 }

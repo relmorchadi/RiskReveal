@@ -28,6 +28,19 @@ public class UserDashboardWidgetColumnController {
         return ResponseEntity.ok("Updated");
     }
 
+    @PutMapping("resetFilter")
+    public ResponseEntity<?> resetFilter(@RequestParam long widgetId) {
+        userDashboardWidgetColumnsService.resetFilterForWidget(widgetId);
+        return ResponseEntity.ok("Updated");
+    }
+
+    @PutMapping("resetSort")
+    public ResponseEntity<?> resetSort(@RequestParam long widgetId) {
+        userDashboardWidgetColumnsService.resetSortForWidget(widgetId);
+        return ResponseEntity.ok("Updated");
+    }
+
+
     @PutMapping("updateSort")
     public ResponseEntity<?> updateColumnSort(@RequestParam long columnId,@RequestParam int sort,@RequestParam String sortType) throws RRException{
         userDashboardWidgetColumnsService.updateColumnSort(columnId,sort,sortType);

@@ -3,7 +3,13 @@
     <div class="body-wrapper-header">
       <div class="body-wrapper-header-left">
         <hr>
-        <div class="header-title">Analysis Results</div>
+        <div class="header-title">Analysis Results
+            <nz-badge
+                    style="float: right"
+                    [nzCount]="data?.analysis?.length"
+                    [nzStyle]="{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset' }"
+            ></nz-badge>
+        </div>
       </div>
       <div class="body-wrapper-header-right-summary">
         <!--        <ng-container>-->

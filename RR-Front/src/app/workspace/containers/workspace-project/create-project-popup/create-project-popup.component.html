@@ -9,9 +9,9 @@
 >
 
   <p-header>
-    <span *ngIf="!editOption" style="margin-left: 10px">Create <span
-      *ngIf="newProjectForm.controls['projectId'].value">Linked</span>
-        <span *ngIf="!newProjectForm.controls['projectId'].value">New</span> Project
+    <span *ngIf="!editOption" style="margin-left: 10px">Create
+      <span *ngIf="newProjectForm?.controls['projectId'].value">Linked</span>
+      <span *ngIf="!newProjectForm?.controls['projectId'].value">New</span> Project
     </span>
     <span *ngIf="editOption" style="margin-left: 10px">Edit Project</span>
     <span (click)="cancelCreateProject()" style="float: right; cursor: pointer;">&#10006;</span>
@@ -30,7 +30,7 @@
     </div>
   </div>
   <div class="a-form-control" *ngIf="!editOption" [formGroup]="newProjectForm" style="margin-top: 16px;">
-    <div *ngIf="newProjectForm.controls['projectId'].value" class="a-form-input-wrapper">
+    <div *ngIf="newProjectForm?.controls['projectId'].value" class="a-form-input-wrapper">
       <label class="label-input">Project ID</label>
       <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" [attr.disabled]="true"
              placeholder="Project ID" formControlName="projectId"/>
@@ -87,8 +87,8 @@
 
     <div class="a-form-input-wrapper">
       <label class="label-input">Assigned To</label>
-      <nz-select class="a-dropdown-label" [(ngModel)]="editValue">
-        <nz-option nzLabel="Nathalie Dulac" nzValue="Nathalie Dulac"></nz-option>
+      <nz-select class="a-dropdown-label" nzShowSearch [(ngModel)]="projectForm.assignedTo">
+        <nz-option *ngFor="let user of users" [nzLabel]="user?.firstName + ' ' + user?.lastName" [nzValue]="user?.userId"></nz-option>
       </nz-select>
     </div>
 
@@ -102,8 +102,7 @@
       </div>
       <div class="a-form-input-wrapper">
         <label class="label-input">Due Date</label>
-        <p-calendar [(ngModel)]="projectForm.dueDate" appendTo="body"
-                    placeholder="Select Date" [showIcon]="true" [disabled]="projectForm.projectType === 'FAC'">
+        <p-calendar [(ngModel)]="projectForm.dueDate" appendTo="body" placeholder="Select Date" [showIcon]="true">
 
         </p-calendar>
       </div>

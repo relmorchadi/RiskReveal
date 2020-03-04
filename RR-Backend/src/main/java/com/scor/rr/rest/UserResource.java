@@ -1,7 +1,9 @@
 package com.scor.rr.rest;
 
 
+import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.UserResponse;
+import com.scor.rr.repository.UserRrRepository;
 import com.scor.rr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,9 @@ public class UserResource {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserRrRepository userRrRepository;
 
     @GetMapping("/{userName}")
     List<UserResponse> getUsers(@RequestParam String userName) {
@@ -30,6 +35,11 @@ public class UserResource {
         }
     }
 
+
+    @GetMapping("all")
+    List<UserRrEntity> getAllUsers() {
+        return userRrRepository.findAll();
+    }
 
 
 }

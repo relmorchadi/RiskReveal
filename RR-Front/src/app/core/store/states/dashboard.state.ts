@@ -22,7 +22,8 @@ const initiateState: DashboardModel = {
         fac: {},
         treaty: {},
         dataCounter: {},
-        virtualScroll: {},
+        assignedFac: {},
+        assignedDataCounter: {}
     }
 };
 
@@ -52,13 +53,23 @@ export class DashboardState implements NgxsOnInit {
     }
 
     @Selector()
-    static getVirtualScroll(state: DashboardModel) {
-        return state.data.virtualScroll;
+    static getAssignedData(state: DashboardModel) {
+        return state.data.assignedFac;
+    }
+
+    @Selector()
+    static getAssignedDataCounter(state: DashboardModel) {
+        return state.data.assignedDataCounter;
     }
 
     @Selector()
     static getSelectedDashboard(state: DashboardModel) {
         return state.tabs.selectedDashboard;
+    }
+
+    @Selector()
+    static getSelectedTab(state: DashboardModel) {
+        return state.tabs.tabIndex;
     }
 
     @Selector()
@@ -82,9 +93,8 @@ export class DashboardState implements NgxsOnInit {
 
     @Action(fromHD.ChangeSelectedDashboard)
     changeSelected(ctx: StateContext<DashboardModel>, {payload}: fromHD.ChangeSelectedDashboard) {
-        const {selectedDashboard} = payload;
+        const {selectedDashboard, tabIndex} = payload;
         const state = ctx.getState();
-        const tabIndex = _.get(payload, 'tabIndex', state.tabs.tabIndex);
         ctx.patchState(produce(ctx.getState(), draft => {
             draft.tabs = {selectedDashboard, tabIndex};
         }));
@@ -99,11 +109,11 @@ export class DashboardState implements NgxsOnInit {
             carStatus,
             entity: 1,
             pageNumber: pageNumber,
+            filterByAnalyst: false,
             pageSize: 50,
             selectionList: '',
             sortSelectedAction: '',
             sortSelectedFirst: false,
-            userCode: "DEV",
             userDashboardWidgetId: identifier
         };
 
@@ -113,7 +123,37 @@ export class DashboardState implements NgxsOnInit {
                 ctx.patchState(produce(ctx.getState(), draft => {
                     draft.data.fac[identifier] = fixData;
                     draft.data.dataCounter[identifier] = data.refCount;
-                    draft.data.virtualScroll[identifier] = data.refCount > 100;
+                }));
+            }),
+            catchError(err => {
+                return of( ctx.dispatch(new fromHD.LoadDashboardFacDataFailAction()));
+            })
+        )
+    }
+
+    @Action(fromHD.LoadDashboardAssignedFacDataAction)
+    loadDashboardFacDataForAnalyst(ctx: StateContext<DashboardModel>, {payload}: fromHD.LoadDashboardAssignedFacDataAction) {
+        const state = ctx.getState();
+        const {identifier, pageNumber, carStatus} = payload;
+
+        const dataParams = {
+            carStatus,
+            entity: 1,
+            pageNumber: pageNumber,
+            filterByAnalyst: true,
+            pageSize: 50,
+            selectionList: '',
+            sortSelectedAction: '',
+            sortSelectedFirst: false,
+            userDashboardWidgetId: identifier
+        };
+
+        return this.dashboardAPI.getFacDashboardResources(dataParams).pipe(
+            tap((data: any) => {
+                const fixData = _.map(this._formatDate(data.content), item => ({...item, carStatus: _.startCase(_.capitalize(item.carStatus))}));
+                ctx.patchState(produce(ctx.getState(), draft => {
+                    draft.data.assignedFac[identifier] = fixData;
+                    draft.data.assignedDataCounter[identifier] = data.refCount;
                 }));
             }),
             catchError(err => {

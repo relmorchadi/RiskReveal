@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.DataSourceType;
 import com.scor.rr.domain.enums.ScanLevelEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
@@ -85,7 +86,7 @@ public class RmsService {
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
 
     @Autowired
-    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
+    private PEQTRegionPerilMappingRepository peqtRegionPerilMappingRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -479,21 +480,36 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
-        //@Todo by BTP Count S/p
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset/size) + ", @page_size=" + size;
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
-
-
         this.logger.debug("Service starts executing the query ...");
-
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";
             countSql += ", @filter='" + keyword + "'";
         }
 
-        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
-                sql,
-                new DataSourceRowMapper());
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
+
+        Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
+                countSql,
+                Integer.class);
+
+        this.logger.debug("the data returned ", dataSources);
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount);
+    }
+
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size, DataSourceType type) {
+        if(type == null)
+            throw new RuntimeException("No data source type specified for data sources extraction !");
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type="+ type.getValue() +" , @count_only=1";
+        this.logger.debug("Service starts executing the query ...");
+        if (!StringUtils.isEmpty(keyword)) {
+            sql += ", @filter='" + keyword + "'";
+            countSql += ", @filter='" + keyword + "'";
+        }
+
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
 
         Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
                 countSql,
@@ -1040,10 +1056,10 @@ public class RmsService {
                 if (rp != null) {
                     String rootRegionPerilCode = rlAnalysis.getRpCode();
                     //TODO: need to define a new ref table
-//                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPeril(analysis.getRpCode());
-//                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPeril())) {
-//                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPeril();
-//                    }
+                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPerilCode(rlAnalysis.getRpCode());
+                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
+                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPerilCode();
+                    }
                     if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {
                         fillWithParenting(regionPerilMap, rp, analysisProfileRegion);
                     }
@@ -1101,6 +1117,11 @@ public class RmsService {
     }
 
     private String crawlDownToSystemRegionPeril(RegionPerilNode node) {
+
+        // TODO : return when linking is implemented
+//        if(node.getRegionPerilTIV(false)>0.0d) {
+//            return node.getRegionPeril().getRegionPerilCode();
+//        }
         if (node.getRegionPerilAAL(false) > 0.0d) {
             return node.getRegionPeril().getRegionPerilCode();
         } else {
@@ -1110,7 +1131,7 @@ public class RmsService {
                     candidates.add(child);
                 }
             }
-            if (candidates.size() < 1) {
+            if (candidates.size() > 1) {
                 return node.getRegionPeril().getRegionPerilCode();
             } else {
                 for (RegionPerilNode c : candidates) {
@@ -1175,6 +1196,35 @@ public class RmsService {
                 return 0d;
             }
         }
+
+//        public Double getRegionPerilTIV(boolean withChildren)
+//        {
+//
+//            if(associatedPortfolioRegions!=null)
+//            {
+//                Double sum=0d;
+//                // FIXME which currency AAL is returned ?
+//                for(PortfolioAssociation pa:associatedPortfolioRegions)
+//                {
+//                    if(pa.portfolioRegion!=null&&pa.portfolioRegion.getTotalTIVinUSD()!=null)
+//                    {
+//                        sum+=pa.portfolioRegion.getTotalTIV();
+//                    }
+//                }
+//                if(withChildren&&children!=null&&!children.isEmpty())
+//                {
+//                    for(RegionPerilNode rpn:children)
+//                    {
+//                        sum+=rpn.getRegionPerilTIV(withChildren);
+//                    }
+//                }
+//                return sum;
+//            }
+//            else
+//            {
+//                return 0d;
+//            }
+//        }
 
 
         public RegionPerilNode getParent() {

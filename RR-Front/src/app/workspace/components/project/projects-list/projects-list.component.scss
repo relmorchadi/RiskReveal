@@ -470,18 +470,32 @@
 }
 
 .project-kpi-creat-wrap {
-  flex: 1;
+  flex: 3;
   font-weight: 700;
   letter-spacing: 0.08px;
   white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.date-style {
+  flex:1;
+  color: rgba(0,0,0,0.87);
+  letter-spacing: 0.08px;
+  padding-right: 8px;
+}
+
+.intro-style {
+  flex:2;
+  letter-spacing: 0.08px;
+  white-space: nowrap;
 }
 
 .line-height-m {
   line-height: 32px;
   height: 32px;
   font-size: 14px;
-  padding-left: 1.5rem;
+  padding-left: 1rem;
 
   @media screen and (min-width: 1450px) and (max-width: 1690px) {
     line-height: 28px;
@@ -546,7 +560,7 @@
 }
 
 .field-car-status {
-  flex: 0 0 32%;
+  flex: 0 0 34%;
   letter-spacing: 0.08px;
 }
 

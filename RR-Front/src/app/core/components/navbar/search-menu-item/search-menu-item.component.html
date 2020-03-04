@@ -57,7 +57,7 @@
                         <span class="search-history-header">RECENT SEARCH</span>
                         <!--                <span class="search-history-viewAll">See All</span>-->
                     </div>
-                    <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
+                    <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0; else emptyRecent">
                         <li scrollItem
                             (onTrigger)="appendSearchBadges(recentSearch?.items, recentSearch?.globalSearchKeyword)"
                             *ngFor="let recentSearch of state?.recentSearch"

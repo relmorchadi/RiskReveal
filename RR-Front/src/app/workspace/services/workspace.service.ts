@@ -70,22 +70,13 @@ export class WorkspaceService {
         leftNavbarCollapsed: false,
         plts: {},
         pltManager: {
-          data: {},
-          deleted: {},
-          filters: {
-            systemTag: [], userTag: []
-          },
-          openedPlt: {},
-          userTags: {},
-          userTagManager: {
-            usedInWs: {},
-            suggested: {},
-            allTags: {}
-          },
+          columns: [],
+          data: {totalCount: 0, plts: []},
+          selectedIds: {},
+          initialized: false,
           pltDetails: {
             summary: {}
           },
-          cloneConfig: {},
           loading: false
         },
         contract: {
@@ -150,6 +141,8 @@ export class WorkspaceService {
     const carSelected = _.get(payload, 'carSelected', null);
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
+
+    console.log('OPEN')
 
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
@@ -284,13 +277,15 @@ export class WorkspaceService {
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
-    const {wsId, uwYear, project} = payload;
+    const {id, wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
+
+    return this.projectApi.createProject({...project}, wsId, uwYear)
       .pipe(map(prj => {
+          console.log(prj);
         ctx.patchState(produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
-          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true}) : null
+          prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true, projectType: 'TREATY'}) : null
         }));
         return ctx.dispatch(new fromWS.AddNewProjectSuccess(prj));
       }), catchError(err => {
@@ -309,13 +304,13 @@ export class WorkspaceService {
 
   updateProject(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {assignedTo, projectId, projectName, projectDescription} = payload.data;
+    const {assignedTo, projectId, projectName, projectDescription, dueDate} = payload.data;
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription).pipe(
+    return this.projectApi.updateProject(assignedTo, projectId, projectName, projectDescription, dueDate).pipe(
       map( (prj: any) => ctx.patchState(produce(ctx.getState(), draft => {
         prj ? draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => {
           return item.projectId === projectId ? {...prj, projectType: prj.carRequestId === null ? 'TREATY' : 'FAC'
-            , selected: item.selected, projectName, projectDescription} : {...item};
+            , selected: item.selected, projectName, projectDescription, dueDate, assignedTo} : {...item};
         }) : null;
       }))
     ), catchError(err => {
@@ -326,6 +321,7 @@ export class WorkspaceService {
 
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear} = payload;
+    const state = ctx.getState();
     const wsIdentifier = `${wsId}-${uwYear}`;
     return this.projectApi.deleteProject(projectId.projectId)
       .pipe(catchError(err => {
@@ -334,7 +330,11 @@ export class WorkspaceService {
       }))
       .subscribe((p) => {
         ctx.patchState(produce(ctx.getState(), draft => {
+          const selectedPrj = _.find(state.content[wsIdentifier].projects, item => item.projectId === projectId.projectId);
           draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== projectId.projectId)
+          if (selectedPrj.selected) {
+            draft.content[wsIdentifier].projects[0].selected = true;
+          }
         }));
         return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
       });

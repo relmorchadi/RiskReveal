@@ -1,18 +1,31 @@
-import {Component, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output
+} from '@angular/core';
 
 import {Subject} from 'rxjs';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
 import * as fromWS from '../../../store/actions/workspace.actions'
 import {EventListener} from "@angular/core/src/debug/debug_node";
+import {WsApi} from "../../../services/api/workspace.api";
+import {BaseContainer} from "../../../../shared/base";
+import {Router} from "@angular/router";
+import {AuthState, GeneralConfigState} from "../../../../core/store/states";
 
 @Component({
   selector: 'app-create-project-popup',
   templateUrl: './create-project-popup.component.html',
   styleUrls: ['./create-project-popup.component.scss'],
 })
-export class CreateProjectPopupComponent implements OnInit, OnDestroy {
+export class CreateProjectPopupComponent extends BaseContainer implements OnInit, OnDestroy {
 
   unSubscribe$: Subject<void>;
   @Output('onCancelCreateProject')
@@ -23,15 +36,32 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   @Input('edit') editOption: any;
   @Input('editForm') projectForm: any;
 
-  editValue = 'Nathalie Dulac';
-  newProjectForm: FormGroup;
+  @Select(GeneralConfigState.getAllUsers) users$;
+  @Select(AuthState.getUser) user$;
 
-  constructor(private store: Store) {
+  currentUser: any;
+  newProjectForm: FormGroup;
+  editCreateBLock = false;
+  users: any[];
+
+  constructor(private store: Store, private wsApi: WsApi,
+              _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.unSubscribe$ = new Subject<void>();
   }
 
   ngOnInit() {
     this.initNewProjectForm();
+    this.users$.pipe().subscribe(value => {
+      this.users = value;
+      this.detectChanges();
+    });
+
+    this.user$.pipe().subscribe(value => {
+      this.currentUser = value;
+      this.initNewProjectForm();
+      this.detectChanges();
+    })
   }
 
   ngOnDestroy(): void {
@@ -44,10 +74,25 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     if (this.newProjectForm.controls.projectId.value) {
       project = {
         ...project,
-        linkFlag: true,
+        isLinked: true,
         cloneSourceProjectId: this.newProjectForm.value.projectId,
       };
     }
+
+/*    const secondProject = {
+      workspaceByFkWorkspaceId: {
+        clientName: '',
+        entity: 0,
+        workspaceContext: '',
+        workspaceContextCode: '',
+        workspaceId: 0,
+        workspaceMarketChannel: '',
+        workspaceName: '',
+        workspaceUwYear: 0
+      },
+      workspaceId: 0
+  };*/
+
     this.store.dispatch(new fromWS.AddNewProject({
       id: _.get(this.workspace, 'id', null),
       wsId: this.workspace.wsId,
@@ -60,15 +105,16 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     this.store.dispatch(new fromWS.EditProject({
       data: {
         projectName: this.projectForm.projectName || '',
-        assignedTo: 1,
+        assignedTo: this.projectForm.assignedTo,
         projectId: this.projectForm.projectId || '',
-        projectDescription: this.projectForm.projectDescription || ''
-      },
+        projectDescription: this.projectForm.projectDescription || '',
+        dueDate: new Date(this.projectForm.dueDate) || new Date()
+      }
     }))
   }
 
   checkValid() {
-    return this.projectForm.projectName !== '' && this.projectForm.assignedTo !== '';
+    return !_.isEmpty(_.trim(this.projectForm.projectName))
   }
 
   cancelCreateProject() {
@@ -77,11 +123,23 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   patchNewProject() {
+    this.editCreateBLock = false;
     this.newProject && this.newProjectForm.patchValue(this.newProject);
+    console.log(this.currentUser, this.projectForm, this.newProject);
+    if (this.editOption) {
+      this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
+    }
   }
 
   @HostListener('document: keydown.enter', ['$event']) keyBoardEnter() {
-    this.editOption ? this.updateProject() : this.createUpdateProject();
+    if (!this.editCreateBLock) {
+      this.editCreateBLock = true;
+      if (this.editOption) {
+        this.checkValid() ? this.updateProject() : null;
+      } else {
+        this.newProjectForm.valid ? this.createUpdateProject() : null;
+      }
+    }
   }
 
   initNewProjectForm() {
@@ -89,7 +147,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       assignedTo: new FormControl(null),
       cloneSourceProjectId: new FormControl(null),
       clonedFlag: new FormControl(false),
-      createdBy: new FormControl("Nathalie Dulac", Validators.required),
+      createdBy: new FormControl(this.currentUser, Validators.required),
       creationDate: new FormControl(new Date()),
       deleted: new FormControl(false),
       deletedBy: new FormControl(null),
@@ -105,7 +163,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       projectDescription: new FormControl(null),
       projectId: new FormControl(null),
       projectImportRunId: new FormControl(null),
-      projectName: new FormControl(null, Validators.required),
+      projectName: new FormControl(null, [Validators.required, Validators.pattern('^(?!\\s*$).+')]),
       publishFlag: new FormControl(null),
       receptionDate: new FormControl(new Date(), Validators.required),
       rmsModelDataSourceId: new FormControl(null),
