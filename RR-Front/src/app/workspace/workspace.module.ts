@@ -13,7 +13,7 @@ import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
-import {CalendarModule, DragDropModule, DropdownModule, RadioButtonModule} from 'primeng/primeng';
+import {CalendarModule, ConfirmationService, DragDropModule, DropdownModule, RadioButtonModule} from 'primeng/primeng';
 import {ToastModule} from 'primeng/toast';
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
@@ -75,7 +75,7 @@ import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filte
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

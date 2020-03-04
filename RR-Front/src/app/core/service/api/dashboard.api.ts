@@ -74,11 +74,11 @@ export class DashboardApi {
     }
 
     resetFilters(widgetId): Observable<any> {
-        return this.http.put(`${this.TableURL}resetFilter`, {}, {params: {widgetId}});
+        return this.http.put(`${this.TableURL}resetFilter`, {}, {params: {widgetId}, responseType: 'text' as 'json'});
     }
 
     resetSort(widgetId): Observable<any> {
-        return this.http.put(`${this.TableURL}resetSort`, {}, {params: {widgetId}})
+        return this.http.put(`${this.TableURL}resetSort`, {}, {params: {widgetId}, responseType: 'text' as 'json'});
     }
 
     getFacDashboardResources(filters): Observable<any>  {
