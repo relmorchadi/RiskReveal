@@ -7,6 +7,8 @@ import {Injectable} from '@angular/core';
 import {Observable, BehaviorSubject, forkJoin, of} from "rxjs";
 import {ExposuresApi} from "../../api/exposures.api";
 import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.model";
+import {HEADERCONFIG} from "../../../containers/workspace-exposures/fakeExposuresData";
+import {first, map} from "rxjs/operators";
 
 @Injectable()
 export class ExposuresHeaderService {
@@ -19,9 +21,37 @@ export class ExposuresHeaderService {
         this.headerConfig$ = new BehaviorSubject<ExposuresHeaderConfig>(new ExposuresHeaderConfig())
     }
 
-    loadHeaderConfig() {
-        return this._api.loadHeaderConfig();
+    loadHeaderConfig(projectId){
+        return this._api.loadHeaderConfig(projectId).pipe(map((headerConfigApi: any) =>
+            ({
+                ...headerConfigApi,
+                exposureViews: HEADERCONFIG.exposureViews
+            })
+        ))
     }
 
+    changeCurrency(currency: any) {
+        return this._api.changeCurrency(currency);
+    }
+
+    changeFinancialUnit(financialUnit: any) {
+        return this._api.changeFinancialUnit(financialUnit);
+    }
+
+    changeDivision(division: any) {
+        return this._api.changeDivision(division);
+    }
+
+    changePortfolio(portfolio: any) {
+        return this._api.changePortfolio(portfolio);
+    }
+
+    changeView(view: any) {
+        return this._api.changeView(view);
+    }
+
+    handleHeaderConfig(apiData: any) {
+        return
+    }
 
 }

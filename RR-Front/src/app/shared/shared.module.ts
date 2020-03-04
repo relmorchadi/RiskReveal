@@ -61,6 +61,7 @@ import { RRDatePipe } from './pipes/rr-date.pipe';
     AngularResizedEventModule,
     NgxEchartsModule,
     AngularResizeElementModule,
+    ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
       ...DIRECTIVES
