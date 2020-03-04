@@ -239,4 +239,25 @@ public class ConfigurationResource {
         }
     }
 
+    @DeleteMapping(value = "delete-analysis-summary")
+    public ResponseEntity<?> deleteAnalysisSummary(@RequestParam List<Long> rlAnalysisId, @RequestParam Long projectId) {
+        try {
+            configurationService.deleteAnalysisSummary(rlAnalysisId,projectId);
+            return new ResponseEntity<>("Operation succeeded", HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping(value = "delete-portfolio-summary")
+    public ResponseEntity<?> deletePortfolioSummary(@RequestParam List<Long> rlPortfolioId, @RequestParam Long projectId) {
+        try {
+            configurationService.deletePortfolioSummary(rlPortfolioId, projectId);
+            return new ResponseEntity<>("Operation succeeded", HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

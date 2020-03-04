@@ -16,11 +16,6 @@ import {HttpErrorResponse} from '@angular/common/http';
     providedIn: 'root'
 })
 export class RiskLinkStateService {
-    divisionTag = {
-        'Division N°1': '_01',
-        'Division N°2': '_02',
-        'Division N°3': '_03'
-    };
 
     constructor(private riskApi: RiskApi) {
     }
@@ -345,8 +340,8 @@ export class RiskLinkStateService {
 
         ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].riskLink.facSelection[payload] = {
-                analysis: _.merge({},draft.content[wsIdentifier].riskLink.selection.analysis),
-                portfolios: _.merge({},draft.content[wsIdentifier].riskLink.selection.portfolios),
+                analysis: _.merge({}, draft.content[wsIdentifier].riskLink.selection.analysis),
+                portfolios: _.merge({}, draft.content[wsIdentifier].riskLink.selection.portfolios),
             };
             draft.content[wsIdentifier].riskLink.selection = {
                 ...draft.content[wsIdentifier].riskLink.selection,
@@ -493,7 +488,7 @@ export class RiskLinkStateService {
                 }));
     }
 
-    private _triggerAutoAttach(state, ctx:StateContext<WorkspaceModel> ){
+    private _triggerAutoAttach(state, ctx: StateContext<WorkspaceModel>) {
         const wsIdentifier = _.get(state.currentTab, 'wsIdentifier', null);
         if (state.content[wsIdentifier].riskLink.type == 'FAC') {
             const {riskLink} = state.content[wsIdentifier];
@@ -631,7 +626,6 @@ export class RiskLinkStateService {
                 catchError(err => of(err)))
 
     }
-
 
 
     getRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1023,12 +1017,22 @@ export class RiskLinkStateService {
     }
 
     deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, payload: any) {
-        const {type, ids} = payload;
+        const {type, ids, projectId} = payload;
         switch (_.upperCase(type)) {
             case 'PORTFOLIO':
-                return this.deletePortfolioFromSelection(ctx, ids);
+                return this.riskApi.deletePortfolioSummary(ids, projectId)
+                    .pipe(catchError((err) => {
+                        if (err.status != 200)
+                            return of(err);
+                        return this.deletePortfolioFromSelection(ctx, ids);
+                    }));
             case 'ANALYSIS':
-                return this.deleteAnalysisFromSelection(ctx, ids);
+                return this.riskApi.deleteAnalysisSummary(ids, projectId)
+                    .pipe(catchError((err) => {
+                        if (err.status != 200)
+                            return of(err);
+                        return this.deleteAnalysisFromSelection(ctx, ids);
+                    }));
         }
     }
 
@@ -1475,9 +1479,9 @@ export class RiskLinkStateService {
     clearSelection(ctx: StateContext<WorkspaceModel>) {
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft.currentTab, 'wsIdentifier', null);
-            let state:RiskLink = draft.content[wsIdentifier].riskLink;
+            let state: RiskLink = draft.content[wsIdentifier].riskLink;
             state.clearSelection();
-            draft.content[wsIdentifier].riskLink= _.merge({}, state);
+            draft.content[wsIdentifier].riskLink = _.merge({}, state);
         }));
     }
 
