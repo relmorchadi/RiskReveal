@@ -274,7 +274,7 @@ export class WorkspaceService {
     const {id, wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
 
-    return this.projectApi.createProject({...project, createdBy: 1}, wsId, uwYear)
+    return this.projectApi.createProject({...project}, wsId, uwYear)
       .pipe(map(prj => {
           console.log(prj);
         ctx.patchState(produce(ctx.getState(), draft => {
