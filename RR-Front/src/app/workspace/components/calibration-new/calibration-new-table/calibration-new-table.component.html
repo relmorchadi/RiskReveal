@@ -276,7 +276,7 @@
              class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
           <i (click)="toggleGrouping()" *ngIf="tableConfig?.isGrouped"
              class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
-          <i class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
+          <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
         </div>
       </div>
       <div class="resize resize__right"

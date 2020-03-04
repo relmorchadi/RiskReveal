@@ -1,5 +1,34 @@
 :host {
   ::ng-deep {
+    .iconYellow {
+      color: #fde729;
+      font-size: 17px;
+    }
+
+    .iconYellow2 {
+      color: #d8880f;
+      font-size: 17px;
+    }
+
+    .iconGreen {
+      color: #00B396;
+      font-size: 17px;
+    }
+
+    .iconBlue {
+      color: #21aae6;
+      font-size: 17px;
+    }
+
+    .iconRed {
+      color: #b8200c;
+      font-size: 17px;
+    }
+
+    .iconRed2 {
+      color: #ff2126;
+      font-size: 17px;
+    }
 
     .table-container-loading {
       min-height: calc(100vh - 333px);
@@ -211,6 +240,7 @@
     }
 
   }
+
   .checkbox-off{
     padding-left: 9px;
     display: flex;
@@ -233,34 +263,4 @@
       display: block;
     }
   }
-}
-
-.iconYellow {
-  color: #fde729;
-  font-size: 17px;
-}
-
-.iconYellow2 {
-  color: #d8880f;
-  font-size: 17px;
-}
-
-.iconGreen {
-  color: #00B396;
-  font-size: 17px;
-}
-
-.iconBlue {
-  color: #21aae6;
-  font-size: 17px;
-}
-
-.iconRed {
-  color: #b8200c;
-  font-size: 17px;
-}
-
-.iconRed2 {
-  color: #ff2126;
-  font-size: 17px;
 }
