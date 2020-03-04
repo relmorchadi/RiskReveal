@@ -23,6 +23,7 @@ import {ExposuresMainTableComponent} from "./exposures/exposures-main-table/expo
 import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-header.component";
 import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
 import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
+import {CalibrationColumnManagerComponent} from "./calibration-new/column-manager/column-manager.component";
 
 export const COMPONENTS = [
     LeftMenuComponent,
@@ -49,7 +50,8 @@ export const COMPONENTS = [
     ExposuresMainTableComponent,
     ExposuresHeaderComponent,
     ExposuresLeftMenuComponent,
-    DatasourceListComponent
+    DatasourceListComponent,
+    CalibrationColumnManagerComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

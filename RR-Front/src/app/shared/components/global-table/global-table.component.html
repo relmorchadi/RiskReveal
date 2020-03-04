@@ -169,31 +169,27 @@
 <!--Body-Templates-->
 
 <ng-template #id let-data>
-    <span style="display: block;font-size: 12px;font-weight: bold;text-align: right">
-        {{data}}
-    </span>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: bold;text-align: right">
+     {{ data}}
+  </div>
 </ng-template>
 
 <ng-template #number let-data>
-    <span
-            style="display: block;font-size: 12px;font-weight: 400;text-align: right"
-            appRrNumber
-            [number]="data"
-            [config]="config"
-    >
-    </span>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;text-align: right">
+     {{ data | number : '1.0-3'}}
+  </div>
 </ng-template>
 
 <ng-template #text let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;">
-        <div class="text-ellipsis">{{data}}</div>
-    </span>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;">
+    {{data}}
+  </div>
 </ng-template>
 
 <ng-template #date let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;">
-        <div class="text-ellipsis">{{data | date}}</div>
-    </span>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;">
+    {{data | date}}
+  </div>
 </ng-template>
 
 <ng-template #indicator let-data>
@@ -203,7 +199,17 @@
 </ng-template>
 
 <ng-template #status let-data>
-  <div></div>
+  <div>
+    <i [ngClass]="{ 'icon-history-alt iconYellow': data=='In progress',
+                                         'icon-check-circle iconGreen': data=='Valid' ,
+                                         'icon-lock-alt iconRed': data=='Locked',
+                                         'icon-error_24px iconRed2': data=='Fail',
+                                         'icon-star iconBlue': data=='Pending',
+                                         'icon-report_problem_24px iconYellow2': data=='Requires Regeneration' }"
+       [nz-tooltip]="data"
+       class="tooltipMsg">
+    </i>
+  </div>
 </ng-template>
 
 <!--****************-->
