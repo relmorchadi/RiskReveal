@@ -130,9 +130,10 @@ public class WorkspaceService {
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<UserWorkspaceTabs>> getTabs(String userCode) {
+    public ResponseEntity<List<UserWorkspaceTabs>> getTabs() {
+        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
-            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByOpenedDateDesc(userCode));
+            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByOpenedDateDesc(user.getUserCode()));
         } catch(Exception e) {
             return ResponseEntity.ok(new ArrayList<>());
         }
@@ -148,14 +149,15 @@ public class WorkspaceService {
         }
     }
 
-    public ResponseEntity<?> openTab(UserWorkspaceTabsRequest request) {
+    public ResponseEntity<?> openTab(String workspaceContextCode, Integer workspaceUwYear) {
+        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
-            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(request.getUserCode(), request.getWorkspaceContextCode(), request.getWorkspaceUwYear());
+            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(user.getUserCode(), workspaceContextCode, workspaceUwYear);
 
             if(opt.isPresent()) {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date())));
             } else {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date())));
             }
 
         } catch (Exception e) {

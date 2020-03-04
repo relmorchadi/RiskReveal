@@ -64,13 +64,13 @@ public class WorkspaceResource {
         return this.workspaceService.togglePinnedWorkspace(request);
     }
 
-    @GetMapping("tabs/{userCode}")
-    ResponseEntity<List<UserWorkspaceTabs>> getTabs(@PathVariable String userCode) { return this.workspaceService.getTabs(userCode);}
+    @GetMapping("tabs/")
+    ResponseEntity<List<UserWorkspaceTabs>> getTabs() { return this.workspaceService.getTabs();}
 
     @PostMapping("tabs/close")
     ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.closeTab(request);}
 
     @PostMapping("tabs/open")
-    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request);}
+    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear());}
 
 }
