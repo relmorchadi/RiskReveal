@@ -257,7 +257,6 @@ export class TableComponent implements OnInit {
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
     row.selected = true;
     tableColumn.handler(this.selectedRows);
-
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {

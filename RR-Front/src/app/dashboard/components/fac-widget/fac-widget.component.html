@@ -73,7 +73,7 @@
                     <ul nz-menu style="font-size: 12px">
                         <li nz-menu-item (click)="resetSort()">Reset Sort</li>
                         <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
-                        <li nz-menu-item (click)="resetSort(); resetFilters()">Reset Sort/Filters</li>
+                        <li nz-menu-item (click)="resetSortFilter()">Reset Sort/Filters</li>
                         <li nz-menu-divider></li>
                         <li nz-menu-item *ngIf="widgetId === 1" (click)="openPopUpAction('newCar')">Manage Columns</li>
                         <li nz-menu-item *ngIf="widgetId === 2" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>

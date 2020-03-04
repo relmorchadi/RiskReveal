@@ -184,6 +184,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
 
   filterData($event) {
     const carStatus = this.carStatus[this.widgetId];
+    this.dashCols = _.map(this.dashCols, item => { return item.userDashboardWidgetColumnId === $event.colId ?
+        {...item, filterCriteria: $event.filteredValue} : {...item}});
     this.secondaryLoad = true;
     this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
         .subscribe(() => {}, () => {}, () => {
@@ -292,19 +294,57 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   resetFilters() {
-    this.loading = true;
-    this.dashboardAPI.resetFilters(this.identifier).subscribe(() => {}, () => {}, () => {
-      this.loading = false;
+    this.secondaryLoad = true;
+    const carStatus = this.carStatus[this.widgetId];
+    return this.dashboardAPI.resetFilters(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.dashCols = _.map(this.dashCols, item => {
+        return {...item, filterCriteria: ''};
+      });
+      this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+        new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+      ]).subscribe(() => {}, () => {}, () => {
+        this.secondaryLoad = false;
+        this.detectChanges();
+      });
       this.detectChanges();
     })
   }
 
   resetSort() {
-    this.loading = true;
-    this.dashboardAPI.resetSort(this.identifier).subscribe(() => {}, () => {}, () => {
-      this.loading = false;
+    this.secondaryLoad = true;
+    const carStatus = this.carStatus[this.widgetId];
+    return this.dashboardAPI.resetSort(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.globalSort = {};
+      this.sortList = [];
+      this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+        new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+      ]).subscribe(() => {}, () => {}, () => {
+        this.secondaryLoad = false;
+        this.detectChanges();
+      });
       this.detectChanges();
     });
+  }
+
+  resetSortFilter() {
+      this.secondaryLoad = true;
+      const carStatus = this.carStatus[this.widgetId];
+      return forkJoin(this.dashboardAPI.resetSort(this.identifier), this.dashboardAPI.resetFilters(this.identifier)).subscribe(
+          () => {
+            this.globalSort = {};
+            this.sortList = [];
+            this.dashCols = _.map(this.dashCols, item => {
+              return {...item, filterCriteria: ''};
+            });
+          }, () => {}, () => {
+            this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+              new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+            ]).subscribe(() => {}, () => {}, () => {
+              this.secondaryLoad = false;
+              this.detectChanges();
+            });
+          }
+      )
   }
 
   private _formatDate(data) {
