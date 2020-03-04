@@ -128,7 +128,7 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
     }
 
-    getSummaryOrDefaultDataSources(instanceId, projectId, userId): Observable<any> {
+    getSummaryOrDefaultDataSources(instanceId, projectId, userId='1'): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-global-data-sources`, {
             params: {
                 instanceId,
@@ -138,7 +138,7 @@ export class RiskApi {
         })
     }
 
-    getDefaultDataSources(instanceId, projectId: any, userId): Observable<any> {
+    getDefaultDataSources(instanceId, projectId: any, userId='1'): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`,{
             params: {
                 instanceId,

@@ -26,6 +26,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   selectedDashboard: any;
   searchMode = 'Treaty';
 
+  carStatus = {"1": 'NEW', "2": 'In Progress', "3": 'Archived'};
+
   immutableCols: any;
 
   manageNewPopUp = false;
@@ -37,6 +39,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   idTab = 0;
   rightSliderCollapsed = false;
   initDash = true;
+  loadingWidget = false;
 
   previousUrl: string;
 
@@ -161,7 +164,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   loadDashboardAction() {
-    this.dashboardAPI.getDashboards(1).subscribe(data => {
+    this.dashboardAPI.getDashboards().subscribe(data => {
       let dashboards = [];
       _.forEach(data, item => {
         dashboards = [...dashboards, this._formatData(item)]
@@ -352,22 +355,29 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
         visible: true}
     });
     event = _.map(event , item => ({...item, visible: true, display: true}));
-    this.dashboards = _.map(this.dashboards, item => {
-      if (item.id === this.selectedDashboard.id) {
-        return {...item, widgets: _.map(item.widgets, widget => {
-            if (widget.userDashboardWidgetId === this.editedWidget.id) {
-              _.forEach(widget.columns, element => {
-                if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
-                  tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
-                  event = [...event, {element, visible: false}];
-                }
-              });
-              return {...widget, columns: [...event]}
-            } else {return widget}
-          })}
-      } else {return item}
+    const indexDash = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    const dashUpdated = _.find(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    const widgetIndex = _.findIndex(dashUpdated.widgets, (item: any) => item.userDashboardWidgetId === this.editedWidget.id);
+    const updatedWidget = _.find(dashUpdated.widgets, (item: any) => item.userDashboardWidgetId === this.editedWidget.id);
+    _.forEach(updatedWidget.columns, element => {
+      if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
+        tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
+        event = [...event, {...element, visible: false}];
+      }
     });
-    this.dashboardAPI.manageColumnsWidget(tableCols).subscribe();
+    this.dashboards = _.merge(this.dashboards,  { [indexDash]: {
+        widgets: _.merge(this.dashboards[indexDash].widgets,  { [widgetIndex]: {columns: [...event]}
+          })}
+      });
+    this.loadingWidget = true;
+    this.dashboardAPI.manageColumnsWidget(tableCols).subscribe(() => {}, () => {}, () => {
+      const carStatus = this.carStatus[updatedWidget.widgetId];
+      const identifier = updatedWidget.id;
+      this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier ,  pageNumber: 1, carStatus})).subscribe(() => {}, () => {}, () => {
+        this.loadingWidget = false;
+        this.detectChanges();
+      })
+    });
     this.closePopUp();
   }
 

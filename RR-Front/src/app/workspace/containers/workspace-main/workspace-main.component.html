@@ -61,11 +61,11 @@
                           <a nz-dropdown>
                             <span class="d-flex align-items-center">
                               <span class="dropdown-project-style">
-                                <ng-container *ngIf="filterSelected()?.projectType === 'FAC'">
-                                  {{filterSelected()?.projectName}} [{{filterSelected()?.projectId}}] - {{filterSelected()?.carRequestStatus}}
+                                <ng-container *ngIf="selectedPrj?.projectType === 'FAC'">
+                                  {{selectedPrj?.projectName}} [{{selectedPrj?.projectId}}] - {{selectedPrj?.carRequestStatus}}
                                 </ng-container>
-                                <ng-container *ngIf="filterSelected()?.projectType === 'TREATY'">
-                                  {{filterSelected()?.projectName}} [{{filterSelected()?.projectId}}] - Manual
+                                <ng-container *ngIf="selectedPrj?.projectType === 'TREATY'">
+                                  {{selectedPrj?.projectName}} [{{selectedPrj?.projectId}}] - Manual
                                 </ng-container>
                               </span>
                               <span class="d-flex">
@@ -74,7 +74,7 @@
                               </span>
                             </span>
                           </a>
-                          <ul style="padding:0; max-height: 250px; overflow: auto" *ngIf="filterListProject().length > 0 && data[wsIdentifier]?.workspaceType === 'fac'" nz-menu>
+                          <ul style="padding:0; max-height: 250px; overflow: auto" *ngIf="filterListProject().length > 0 && wsStatus === 'fac'" nz-menu>
                             <li (click)="selectProject(item.projectId)" *ngFor="let item of filterListProject()" nz-menu-item>
                               <ng-container *ngIf="item.projectType === 'FAC'">
                                 {{item?.carRequestId}} [{{item?.projectId}}] - {{item?.carRequestStatus}}
@@ -133,17 +133,24 @@
                   <div style="width: 40%">
                     <div class="item-workspace-info full-width-flex">
                       <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Subsidary :</span>
-                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.subsidiaryId}}
-                        - {{data[wsIdentifier]?.subsidiaryName}}</span>
+                      <span *ngIf="wsStatus === 'treaty'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{data[wsIdentifier]?.subsidiaryId}} - {{data[wsIdentifier]?.subsidiaryName}}</span>
+                      <span *ngIf="wsStatus === 'fac'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{selectedPrj?.subsidiary}} - {{selectedPrj?.subsidiaryName}}</span>
                     </div>
                     <div class="item-workspace-info full-width-flex">
                       <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Subsidary Ledger :</span>
-                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.subsidiaryLedgerId}}
-                        - {{data[wsIdentifier]?.ledgerName}}</span>
+                      <span *ngIf="wsStatus === 'treaty'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{data[wsIdentifier]?.subsidiaryLedgerId}} - {{data[wsIdentifier]?.ledgerName}}</span>
+                      <span *ngIf="wsStatus === 'fac'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{data[wsIdentifier]?.ledgerName}}</span>
                     </div>
                     <div class="item-workspace-info full-width-flex">
                         <span style="flex: 0 0 45.333333%;" class="tab-metadata-title">Contract Source :</span>
-                      <span class="tab-metadata-value text-wrap-ellipsis">{{data[wsIdentifier]?.contractDatasource}}</span>
+                      <span *ngIf="wsStatus === 'treaty'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{data[wsIdentifier]?.contractDatasource}}</span>
+                      <span *ngIf="wsStatus === 'fac'" class="tab-metadata-value text-wrap-ellipsis">
+                        {{selectedPrj?.contractDatasource}}</span>
                     </div>
                   </div>
                   <div class="flex-horizontal-sb-layout workspace-treaty-date-wrapper">
@@ -159,7 +166,7 @@
                       </div>
                     </div>
                     <div  style="border-left: 1px solid rgba(255,255,255,0.5); width: 60%;" class="flex-vertical-layout"
-                          *ngIf="data[wsIdentifier]?.workspaceType === 'treaty'">
+                          *ngIf="wsStatus === 'treaty'">
                       <span style="line-height: 17px; padding: 0 0 6px 15px" class="tab-metadata-title">Treaty Section :</span>
                       <ul class="treaty-list">
                         <li
@@ -173,10 +180,10 @@
                       </ng-container>
                     </div>
                     <div style="border-left: 1px solid rgba(255,255,255,0.5); width: 60%;" class="flex-vertical-layout"
-                         *ngIf="data[wsIdentifier]?.workspaceType === 'fac'">
+                         *ngIf="wsStatus === 'fac'">
                       <span style="line-height: 17px; padding: 0 0 6px 15px" class="tab-metadata-title">Division :</span>
                       <ul class="treaty-list" style="padding-left: 20px;">
-                        <li *ngFor="let division of filterSelectedDivision()">
+                        <li *ngFor="let division of selectedPrj?.divisions">
                           Division N°{{division}}
                         </li>
                       </ul>

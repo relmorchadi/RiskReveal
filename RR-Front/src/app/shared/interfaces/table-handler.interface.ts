@@ -1,8 +1,10 @@
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import { Column } from '../types/column.type'
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 
 export interface TableHandlerInterface {
+
+  unsubscribe$: Subject<void>;
 
   _data: any[];
   data$: BehaviorSubject<any[]>;
@@ -52,7 +54,7 @@ export interface TableHandlerInterface {
   onResetFilter();
   onSort(index: number);
   onResetSort();
-  onRowSelect(id: number, index: number, $event: MouseEvent);
+  onRowSelect(id: number, index: number, $event: MouseEvent, byCheckBox);
   onCheckAll();
   onContainerResize(newWidth: number);
   onVirtualScroll(event);
@@ -66,5 +68,7 @@ export interface TableHandlerInterface {
   reloadTable(request: FetchViewContextDataRequest): Observable<any>;
   setPageSize(rows: number);
   loadDataSubscription();
+
+  ngOnDestroy(): void;
 
 }

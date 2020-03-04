@@ -3,7 +3,13 @@
         <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
                 <hr>
-                <div>Exposure Summaries</div>
+                <div>Exposure Summaries
+                    <nz-badge
+                            style="float: right"
+                            [nzCount]="portfolios?.length"
+                            [nzStyle]="{ backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset', float: 'right' }"
+                    ></nz-badge>
+                </div>
             </div>
             <div class="body-wrapper-header-right-summary">
                 <div class="body-wrapper-header-right">

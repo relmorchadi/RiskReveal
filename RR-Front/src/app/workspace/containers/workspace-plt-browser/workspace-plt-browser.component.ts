@@ -109,10 +109,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         tap(({wsId, year}) => {
           this.workspaceId = wsId;
           this.uwy = year;
-          this.params = {
-            workspaceContextCode: wsId,
-            workspaceUwYear: year
-          };
           this.updateLeftMenuInputs('wsId', this.workspaceId);
           this.updateLeftMenuInputs('uwYear', this.uwy);
           this.updateMenuKey('wsIdentifier', this.workspaceId+"-"+this.uwy);
@@ -169,11 +165,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
-
-    this.observeRouteParamsWithSelector(() => this.getSelectedProject()).subscribe( project => {
-      this.selectedProject = project;
-      this.detectChanges();
-    })
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
@@ -298,9 +289,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.destroy();
   }
 
-  patchState({data: {leftNavbarCollapsed}}): void {
+  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects}}): void {
     this.leftIsHidden = leftNavbarCollapsed;
-    this.detectChanges();
+    this.params = {
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear
+    };
+    this.selectedProject = _.find(projects, project => project.selected);
   }
 
   protected detectChanges() {
@@ -353,7 +348,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   collapseLeftMenu() {
     this.collapsedTags= !this.collapsedTags;
-    console.log(this.leftMenu);
     this.detectChanges();
   }
 

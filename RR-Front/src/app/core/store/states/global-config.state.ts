@@ -5,7 +5,7 @@ import * as fromGeneralConfig from '../actions';
 import {Data} from '../../model/data';
 import produce from "immer";
 import {from, of} from "rxjs";
-import {catchError, map, mergeMap} from "rxjs/operators";
+import {catchError, map, mergeMap, tap} from "rxjs/operators";
 import {GlobalConfigApi} from '../../service/api/global-config.api';
 
 const initiateState: GeneralConfig = {
@@ -42,7 +42,8 @@ const initiateState: GeneralConfig = {
   epCurves: {
     returnPeriod: {data: [], selected: []},
     display: '',
-  }
+  },
+  users: []
 };
 
 @State<GeneralConfig>({
@@ -82,6 +83,11 @@ export class GeneralConfigState implements NgxsOnInit {
   @Selector()
   static getColors(state: GeneralConfig) {
     return state.general.colors;
+  }
+
+  @Selector()
+  static getAllUsers(state:GeneralConfig) {
+    return state.users;
   }
 
   /**
@@ -306,19 +312,9 @@ export class GeneralConfigState implements NgxsOnInit {
   }
 
   @Action(fromGeneralConfig.AddNewColors)
-  addNewColors(ctx
-                 :
-                 StateContext<GeneralConfig>, {payload}
-                 :
-                 fromGeneralConfig.AddNewColors
-  ) {
-    const {
-      colors
-    } = payload;
-
-    const {
-      general
-    } = ctx.getState();
+  addNewColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.AddNewColors) {
+    const {colors} = payload;
+    const {general} = ctx.getState();
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
@@ -328,19 +324,9 @@ export class GeneralConfigState implements NgxsOnInit {
   }
 
   @Action(fromGeneralConfig.RemoveColors)
-  removeColors(ctx
-                 :
-                 StateContext<GeneralConfig>, {payload}
-                 :
-                 fromGeneralConfig.RemoveColors
-  ) {
-    const {
-      colors
-    } = payload;
-
-    const {
-      general
-    } = ctx.getState();
+  removeColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.RemoveColors) {
+    const {colors} = payload;
+    const {general} = ctx.getState();
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
@@ -350,19 +336,9 @@ export class GeneralConfigState implements NgxsOnInit {
   }
 
   @Action(fromGeneralConfig.ReplaceColors)
-  replaceColors(ctx
-                  :
-                  StateContext<GeneralConfig>, {payload}
-                  :
-                  fromGeneralConfig.ReplaceColors
-  ) {
-    const {
-      colors
-    } = payload;
-
-    const {
-      general
-    } = ctx.getState();
+  replaceColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.ReplaceColors) {
+    const {colors} = payload;
+    const {general} = ctx.getState();
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
@@ -379,13 +355,7 @@ export class GeneralConfigState implements NgxsOnInit {
   }
 
   @Action(fromGeneralConfig.LoadColors)
-  loadColors(ctx
-               :
-               StateContext<GeneralConfig>, {payload}
-               :
-               fromGeneralConfig.LoadColors
-  ) {
-
+  loadColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.LoadColors) {
     return of(JSON.parse(localStorage.getItem('colors')))
       .pipe(
         mergeMap((colors) => {
@@ -401,5 +371,16 @@ export class GeneralConfigState implements NgxsOnInit {
           return of(null);
         })
       )
+  }
+
+  @Action(fromGeneralConfig.GetAllUsers)
+  getAllUsersAction(ctx: StateContext<GeneralConfig>) {
+    return this.globalAPI.getAllUsers().pipe(
+        tap(data => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.users = data;
+          }))
+        })
+    )
   }
 }

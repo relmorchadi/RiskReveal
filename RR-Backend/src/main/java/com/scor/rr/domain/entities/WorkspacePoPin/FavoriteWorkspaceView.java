@@ -25,7 +25,7 @@ public class FavoriteWorkspaceView {
     private Integer workspaceUwYear;
 
     @Column(name = "userId")
-    private Integer userId;
+    private Long userId;
 
     @Column(name = "WorkspaceName")
     private String workspaceName;
