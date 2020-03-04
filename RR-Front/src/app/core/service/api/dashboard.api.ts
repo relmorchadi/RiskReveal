@@ -14,8 +14,8 @@ export class DashboardApi {
     constructor(private http: HttpClient) {
     }
 
-    getDashboards(userId): Observable<any> {
-        return this.http.get(`${this.URL}getDashboards`, {params: {userId}});
+    getDashboards(): Observable<any> {
+        return this.http.get(`${this.URL}getDashboards`);
     }
 
     creatDashboards(data): Observable<any> {

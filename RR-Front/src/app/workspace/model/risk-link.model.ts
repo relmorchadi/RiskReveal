@@ -131,8 +131,6 @@ export class RiskLink {
         };
         this.facSelection = refData.division === null ? {} : Object.assign({}, ...refData.division.map(item => ({
                 [item.divisionNumber]: {
-                    edms: {},
-                    rdms: {},
                     analysis: {},
                     portfolios: {}
                 }
@@ -154,8 +152,6 @@ export class RiskLink {
         };
         this.facSelection = this.financialValidator.division.data === null ? {} : Object.assign({}, ...this.financialValidator.division.data.map(item => ({
                 [item.divisionNumber]: {
-                    edms: {},
-                    rdms: {},
                     analysis: {},
                     portfolios: {}
                 }

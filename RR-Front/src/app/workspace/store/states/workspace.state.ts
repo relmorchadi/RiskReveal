@@ -64,6 +64,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getWorkspaceStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
+  }
+
+  @Selector()
   static getProjects(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].projects;
@@ -149,6 +155,22 @@ export class WorkspaceState {
    * Plt Selectors
    *
    ***********************************/
+
+  static getGlobalTableData(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
+  }
+
+  static getGlobalTableColumns(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.columns);
+  }
+
+  static getGlobalTableSelection(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.selectedIds);
+  }
+
+  static isGlobalTableInitialized(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.initialized);
+  }
 
   @Selector()
   static getCloneConfig(state: WorkspaceModel) {
@@ -458,6 +480,11 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromWS.InitWorkspace)
+  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
+    return this.wsService.initWs(ctx, payload);
+  }
+
   @Action(fromWS.LoadWS)
   loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWS) {
     return this.wsService.loadWs(ctx, payload);
@@ -520,7 +547,6 @@ export class WorkspaceState {
 
   @Action(fromWS.AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
-    console.log('add new project', payload);
     return this.wsService.addNewProject(ctx, payload);
   }
 
@@ -571,6 +597,20 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Action(fromPlt.SaveGlobalTableData)
+  saveGlobalTableData(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableData) {
+    this.pltStateService.saveGlobalTableData(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableColumns)
+  saveGlobalTableColumns(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableColumns) {
+    this.pltStateService.saveGlobalTableColumns(ctx, payload);
+  }
+
+  @Action(fromPlt.SaveGlobalTableSelection)
+  saveGlobalTableSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableSelection) {
+    this.pltStateService.saveGlobalTableSelection(ctx, payload);
+  }
 
   @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
@@ -1040,11 +1080,6 @@ export class WorkspaceState {
   @Action(fromWS.DeleteEdmRdmAction)
   deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
     return this.riskLinkFacade.deleteEdmRdm(ctx, payload);
-  }
-
-  @Action(fromWS.LoadDivisionSelection)
-  loadDivisionSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDivisionSelection) {
-    this.riskLinkFacade.loadDivisionSelection(ctx);
   }
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)

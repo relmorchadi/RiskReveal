@@ -4,5 +4,5 @@
      [options]="chartOption"
      [autoResize]="true"
      [merge]="updateOption"
-     (chartInit)="init(e)"
+     (chartInit)="init($event)"
      (chartLegendSelectChanged)="onLegendSelectionChange($event)"></div>

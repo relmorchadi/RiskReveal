@@ -15,10 +15,10 @@ public interface FavoriteWorkspaceViewRepository extends JpaRepository<FavoriteW
     @Query("from FavoriteWorkspaceView fwsv where" +
             " (fwsv.cedantName like :kw or fwsv.workspaceContextCode like :kw or fwsv.workspaceName like :kw or fwsv.workspaceUwYear like :kw ) " +
             " and fwsv.userId = :userId order by fwsv.createdDate desc")
-    List<FavoriteWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
+    List<FavoriteWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Long userId, Pageable page);
 
     @Transactional
     @Procedure(procedureName = "dbonew.usp_Count_Favorite_Workspace", outputParameterName = "count")
-    Integer getFavoriteWSCount(@Param("userId") Integer userId);
+    Integer getFavoriteWSCount(@Param("userId") Long userId);
 
 }

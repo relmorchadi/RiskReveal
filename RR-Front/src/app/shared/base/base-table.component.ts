@@ -23,6 +23,7 @@ import {Message} from "../message";
 export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChanges {
 
   @Input() params: any;
+  @Input() selectedProject: any;
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter();
 
   @ViewChild('tableContainer') container;
@@ -46,6 +47,8 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   _injectors: any;
   _handler: TableHandlerInterface;
 
+  tableInitialized: boolean;
+
   constructor(private injector: Injector, private cdRef: ChangeDetectorRef) {
     this._injectors = {
       'plt-manager': ({
@@ -55,7 +58,6 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     };
 
     this.selectedIds= {};
-    this.rows= 7;
   }
 
   ngOnInit() {
@@ -64,11 +66,12 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
 
   ngOnChanges(changes: SimpleChanges): void {
     const {
-      params
+      params,
+      selectedProject
     } = changes;
-    if(!params.previousValue && params.currentValue) {
-      this.initTable();
-    }
+    console.log("Changes", changes);
+    this.initTable(params, selectedProject);
+    this.selectedProjectFilter(selectedProject);
   }
 
   ngAfterViewInit(): void {
@@ -82,7 +85,6 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
       handler
     } = this._injectors[key];
 
-    //this._api = api;
     this._handler = handler;
     this._handler.init({
       _api: api
@@ -90,8 +92,19 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
     this._handler.initApi(`${backendUrl()}plt/`);
   }
 
-  protected initTable() {
-    this._handler.initTable(this.params);
+  initTable(params, selectedProject) {
+    if(this.params && !this.tableInitialized && selectedProject && selectedProject.previousValue != selectedProject.currentValue) {
+      this.tableInitialized = true;
+      this._handler.initTable(this.params, selectedProject.currentValue);
+    }
+  }
+
+  selectedProjectFilter(selectedProject) {
+    if(this.tableInitialized && selectedProject && selectedProject.previousValue && selectedProject.previousValue != selectedProject.currentValue) {
+      console.log("selected project");
+      console.log(selectedProject);
+      this._handler.filterByProjectId(selectedProject.currentValue.projectId);
+    }
   }
 
   onColumnResize(event) {
@@ -117,7 +130,12 @@ export class BaseTable implements TableInterface , OnInit, AfterViewInit, OnChan
   }
 
   onRowSelect(id: number, index: number, $event: MouseEvent) {
-    this._handler.onRowSelect(id, index, $event);
+    this._handler.onRowSelect(id, index, $event, false);
+  }
+
+  onCheckBox(id: number, index: number, $event: MouseEvent) {
+    console.log("checkbox")
+    this._handler.onRowSelect(id, index, $event, true);
   }
 
   onCheckAll() {

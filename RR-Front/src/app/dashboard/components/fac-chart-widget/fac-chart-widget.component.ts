@@ -93,6 +93,11 @@ export class FacChartWidgetComponent implements OnInit {
         align: 'left',
         left: 10
       },
+      dataZoom: [
+        {
+          type: 'inside'
+        }
+      ],
       tooltip: {},
       toolbox: {
         feature: {
@@ -107,7 +112,12 @@ export class FacChartWidgetComponent implements OnInit {
       },
       xAxis: {
         type: 'category',
-        data: []
+        data: [],
+        ticks: {
+          stepSize: 1,
+          min: 0,
+          autoSkip: false
+        }
       },
       yAxis: {
         type: 'value'
@@ -118,7 +128,6 @@ export class FacChartWidgetComponent implements OnInit {
       series: [],
       color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31', 'rgb(0, 118, 66)']
     };
-    console.log('loader', this.chartOption);
     this.newDashboard = this.dashboard;
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',

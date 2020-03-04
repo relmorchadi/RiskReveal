@@ -39,7 +39,7 @@ public class DashboardWidgetController {
 
     @PostMapping("create")
     public UserWidgetResponse createDashboardWidget(@RequestBody DashboardWidgetCreationRequest request) throws RRException {
-        return userDashboardWidgetService.createDashboardWidget(request.getReferenceWidgetId(),request.getDashoardId(),request.getUserId());
+        return userDashboardWidgetService.createDashboardWidget(request.getReferenceWidgetId(),request.getDashoardId());
     }
 
     @PutMapping("update")

@@ -1,7 +1,9 @@
 package com.scor.rr.service;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.MarketChannelEntity;
 import com.scor.rr.domain.ProjectEntity;
+import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
@@ -11,6 +13,7 @@ import com.scor.rr.repository.Project.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -64,7 +67,7 @@ public class ProjectService {
     private MarketChannelRepository marketChannelRepository;
 
     //FIXME: need to group into one function later
-    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, ProjectEntity p) {
+    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, String clientName, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
                 .orElseGet(() -> {
@@ -74,7 +77,7 @@ public class ProjectService {
                                             uwy,
                                             "FAC",
                                             facNum, //FIXME: workspace name and client name - check with Shaun
-                                            facNum));
+                                            clientName));
                             return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId()));
                         }
                 );
@@ -93,7 +96,9 @@ public class ProjectService {
     }
 
     private ProjectEntity prePersistProject(ProjectEntity p, Long wsId) {
+        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
+        p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
         return p;
     }
 

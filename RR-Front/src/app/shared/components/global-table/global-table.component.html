@@ -31,15 +31,14 @@
             [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
             (resized)="onContainerResize($event)"
     >
-      <div *ngIf="columns.length > 1" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
         <p-table
-                [class]="'plt-list'"
+                [styleClass]=" data.length > 0 ? '': 'activate-header-scroll'"
                 dataKey="pltId" [value]="data" [columns]="columns"
                 [loading]="loading$ | async"
                 [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
                 [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
                 [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
-                [virtualRowHeight]="45.556" [lazy]="true" [virtualScroll]="true" [rows]="7" [totalRecords]="totalRecords" [lazyLoadOnInit]="false" (onLazyLoad)="onVirtualScroll($event)"
         >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -48,7 +47,7 @@
             </colgroup>
           </ng-template>
           <ng-template pTemplate="header" let-cols>
-            <tr (click)="log(dt)">
+            <tr>
               <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
                 <label nz-checkbox
                        [nzChecked]="selectAll"
@@ -79,12 +78,12 @@
             <tr
                     [ngClass]="{'active_plt_item': selectedIds[row.pltId]}"
                     [pContextMenuRow]="row"
-                    style="height:45.556px">
+                    style="height: 46px">
               <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
                 <div style="padding-left: 9px;">
                   <label nz-checkbox
                          [nzChecked]="selectedIds[row.pltId]"
-                         (nzCheckedChange)="onRowSelect(row.pltId, i, $event)"></label>
+                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
                 </div>
               </td>
               <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">
@@ -101,7 +100,7 @@
           </ng-template>
         </p-table>
       </div>
-      <div *ngIf="!(columns.length > 1)" [style.width]="totalColumnWidth + 'px'">
+      <div *ngIf="!(columns.length > 0)" [style.width]="totalColumnWidth + 'px'">
         <p-progressSpinner></p-progressSpinner>
       </div>
     </div>

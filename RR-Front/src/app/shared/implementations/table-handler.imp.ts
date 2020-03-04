@@ -1,22 +1,43 @@
-import { Injectable } from '@angular/core';
-import {Observable, BehaviorSubject, forkJoin, of} from 'rxjs';
+import {Injectable, OnDestroy} from '@angular/core';
+import {Observable, BehaviorSubject, forkJoin, of, iif, Subject} from 'rxjs';
 import { TableHandlerInterface } from '../interfaces/table-handler.interface';
 import { TableServiceInterface } from '../interfaces/table-service.interface';
 import { Column } from '../types/column.type';
 import * as _ from 'lodash';
-import {catchError, debounceTime, exhaustMap, map, mergeMap, share, switchMap, tap} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  exhaustMap,
+  map,
+  mergeMap,
+  share,
+  switchMap,
+  take,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {FetchViewContextDataRequest} from "../types/fetchviewcontextdatarequest.type";
 import * as tableStore from "../components/plt/plt-main-table/store";
 import {ExcelService} from "../services/excel.service";
+import {Store} from "@ngxs/store";
+import {WorkspaceState} from "../../workspace/store/states";
+import {SaveGlobalTableColumns, SaveGlobalTableData, SaveGlobalTableSelection} from "../../workspace/store/actions";
 
 @Injectable()
-export class TableHandlerImp implements TableHandlerInterface {
+export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
+
+  unsubscribe$: Subject<void>;
 
   offset: number= 10;
   private _api: TableServiceInterface;
 
   _data: any[];
   data$: BehaviorSubject<any[]>;
+
+  _rows: number;
+  rows$: BehaviorSubject<number>;
+
+  maxRows: number;
 
   loading$: BehaviorSubject<boolean>;
 
@@ -56,13 +77,15 @@ export class TableHandlerImp implements TableHandlerInterface {
 
   config = {
     pageNumber: 1,
-    pageSize: 7,
+    pageSize: 10000,
     entity: 1
   };
 
   protected containerWidth: number;
 
-  constructor(private excel: ExcelService) {
+  constructor(private excel: ExcelService, private store: Store) {
+    this.unsubscribe$ =  new Subject<void>();
+
     this.columns$ = new BehaviorSubject([]);
     this.visibleColumns$ = new BehaviorSubject([]);
     this.availableColumns$ = new BehaviorSubject([]);
@@ -70,6 +93,9 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.data$ = new BehaviorSubject([]);
     this.loading$ = new BehaviorSubject(false);
     this.totalRecords$ = new BehaviorSubject(0);
+    this._rows = 3;
+    this.maxRows = 10000;
+    this.rows$ = new BehaviorSubject(3);
     this.totalColumnWidth$ = new BehaviorSubject(1);
 
     this.selectedIds$ = new BehaviorSubject({});
@@ -106,12 +132,6 @@ export class TableHandlerImp implements TableHandlerInterface {
     return this._api.getColumns();
   }
 
-  public setPageSize(rows) {
-    // this.config.pageSize = rows;
-    //
-    // this.loadChunk(this.config.pageNumber * rows, rows);
-  }
-
   private loadSelectedIds () {
     return this._api.getIDs(this.params);
   }
@@ -127,6 +147,7 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.loadData({
       ...this.params,
       ...this.config,
+      pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
       selectionList: _.join(this._selectedIds, ','),
       sortSelectedFirst: this._sortSelectedFirst,
       sortSelectedAction: this._sortSelectedAction
@@ -151,13 +172,143 @@ export class TableHandlerImp implements TableHandlerInterface {
     })
   }
 
-  initTable(params) {
-    this.updateLoading(true);
+  private getInitializedFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.isGlobalTableInitialized(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private getDataFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableData(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveData = data => {
+    const {totalCount, plts} = data;
+    this.updateTotalRecords(totalCount);
+    this.updateData(plts,);
+    this.updateLoading(false);
+
+    //save to store
+    this.saveData(this.params, data);
+  };
+
+  private getColumnsFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableColumns(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveColumns = (columns) => {
+    this.updateColumns(columns);
+    this.updateTotalColumnWidth(columns);
+
+    //save to store
+    this.saveColumns(this.params, columns);
+
+  }
+
+  private getSelectionFromStore({workspaceContextCode, workspaceUwYear}) {
+    return this.store.select(WorkspaceState.getGlobalTableSelection(workspaceContextCode+'-'+workspaceUwYear))
+  }
+
+  private resolveSelection = (ids) => {
+    let newIds = {};
+
+    _.forEach(ids, e => {
+      newIds[e.pltId] = this._selectedIds[e.pltId] || false;
+    });
+
+    const newSelection = { ...this._selectedIds, ...newIds };
+    this.updateSelectedIDs(newSelection);
+    const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+    this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+    this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+
+    //save to store
+    this.saveSelection(this.params, this._selectedIds);
+  };
+
+  private saveData({workspaceContextCode, workspaceUwYear}, data) {
+    this.store.dispatch(new SaveGlobalTableData({
+      data,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
+  private saveColumns({workspaceContextCode, workspaceUwYear}, columns) {
+    this.store.dispatch(new SaveGlobalTableColumns({
+      columns,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
+  private saveSelection({workspaceContextCode, workspaceUwYear}, selectedIds) {
+    this.store.dispatch(new SaveGlobalTableSelection({
+      selectedIds,
+      wsIdentifier: workspaceContextCode+'-'+workspaceUwYear
+    }))
+  }
+
+  initTable(params, selectedProject) {
     this.params = params;
 
-    this.loadColsSubscription();
-    this.loadDataSubscription();
-    this.loadSelectionIdsSubscription();
+    const init$ = this._api.filterByProject({
+      projectId: selectedProject.projectId
+    }).pipe(
+        take(1),
+        share()
+    );
+
+    const initialized$ = this.getInitializedFromStore(this.params)
+        .pipe(
+            take(1),
+            share()
+        );
+
+
+    this.updateLoading(true);
+
+    initialized$
+        .pipe(
+            mergeMap(
+                isInitialized =>
+                    iif(() => isInitialized,
+                        forkJoin(
+                            this.getDataFromStore(this.params).pipe(take(1)),
+                            this.getSelectionFromStore(this.params).pipe(take(1))
+                        ),
+                        init$.pipe(
+                            switchMap( () => forkJoin(
+                                this.loadData({
+                                  ...this.params,
+                                  ...this.config,
+                                  pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
+                                  selectionList: _.join(this._selectedIds, ','),
+                                  sortSelectedFirst: this._sortSelectedFirst,
+                                  sortSelectedAction: this._sortSelectedAction
+                                }),
+                                this.loadSelectedIds()
+                            ))
+                        )
+                    )
+            )
+        ).subscribe(([data, ids]) => {
+          this.resolveData(data);
+          this.resolveSelection(ids);
+          this.updateLoading(false);
+    });
+
+    initialized$
+        .pipe(
+            mergeMap(
+                isInitialized =>
+                    iif(() => isInitialized,
+                        this.getColumnsFromStore(this.params).pipe(take(1)),
+                        init$.pipe(
+                            switchMap( () => this.loadColumns())
+                        )
+                    )
+            )
+        ).subscribe((data) => {
+      this.resolveColumns(data);
+      this.updateLoading(false);
+    });
   }
 
   reloadTable(request: FetchViewContextDataRequest) {
@@ -170,7 +321,6 @@ export class TableHandlerImp implements TableHandlerInterface {
   onColumnResize({element: { id: index }, delta }) {
 
     //call API
-    //Mocking API behavior
 
     const col = this._visibleColumns[index];
 
@@ -203,23 +353,25 @@ export class TableHandlerImp implements TableHandlerInterface {
     const filter$ = this._api.updateColumnFilter({
       ..._.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId']),
       filterCriteria
-    }).pipe(share());
+    }).pipe(
+        take(1),
+        share()
+    );
 
 
     filter$.pipe(
         switchMap( () => this.reloadTable({
           ...this.params,
           ...this.config,
+          pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
           selectionList: _.join(this._selectedIds, ','),
           sortSelectedFirst: this._sortSelectedFirst,
           sortSelectedAction: this._sortSelectedAction
         })),
     ).subscribe(
             ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
-              this.updateColumns(columns);
-              this.updateData(plts);
+              this.resolveColumns(columns);
+              this.resolveData(data);
             },
             (error) => {
               console.error(error);
@@ -229,20 +381,39 @@ export class TableHandlerImp implements TableHandlerInterface {
     filter$.pipe(
         switchMap( () => this.loadSelectedIds())
     ).subscribe((ids) => {
-      let newIds = {};
-
-      _.forEach(ids, e => {
-        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-      });
-
-      const newSelection = { ...this._selectedIds, ...newIds };
-      this.updateSelectedIDs(newSelection);
+      this.resolveSelection(ids);
     })
 
   }
 
   onResetFilter() {
-    this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])))
+    const filter$ = this._api.resetColumnFilter(_.pick(this._visibleColumns[0], ['viewContextId'])).pipe(take(1),share());
+
+
+    filter$.pipe(
+        switchMap( () => forkJoin(
+            this.loadColumns(),
+            this.loadData({
+              ...this.params,
+              ...this.config,
+              pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
+              selectionList: _.join(this._selectedIds, ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            }),
+            this.loadSelectedIds()
+        )),
+    ).subscribe(
+        ([columns, data, ids]: any) => {
+          this.resolveColumns(columns);
+          this.resolveData(data);
+          this.resolveSelection(ids);
+        },
+        (error) => {
+          console.error(error);
+        }
+    );
+
   }
 
   onSort(index: number){
@@ -260,57 +431,24 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.onApiSuccessLoadDataAndColumns(() => this._api.resetColumnSort(_.pick(this._visibleColumns[0], ['viewContextId'])));
   }
 
-  onRowSelect(id: number, index: number, $event: MouseEvent) {
+  onRowSelect(id: number, index: number, $event: MouseEvent, byCheckBox) {
     const isSelected = _.findIndex(this._selectedIds, (v, k) => k == id) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.selectionConfig.lastClick = 'withKey';
       this.handlePLTClickWithKey(id, index, !isSelected, $event);
     } else {
       this.selectionConfig.lastSelectedId = index;
-      const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
+      let newIds = {};
+      _.forEach(this._selectedIds, (v,k: number) => {
+        newIds[k] = k == id ? (byCheckBox ? !v : true) : (byCheckBox ? v : false);
+      });
       this.updateSelectedIDs(newIds);
       const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
       this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
       this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
       this.selectionConfig.lastClick = null;
     }
-  }
-
-  private handlePLTClickWithKey(id: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      const newIds = { ...this._selectedIds, [id] : !this._selectedIds[id]};
-      this.updateSelectedIDs(newIds);
-      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
-      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
-      this.selectionConfig.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.selectionConfig.lastSelectedId) this.selectionConfig.lastSelectedId = 0;
-      if (this.selectionConfig.lastSelectedId  >= 0) {
-        const max = _.max([i, this.selectionConfig.lastSelectedId]);
-        const min = _.min([i, this.selectionConfig.lastSelectedId]);
-
-        //Filter concerned range of data
-        const data = _.filter(this._data, (plt, i) => i <= max && i >= min);
-        const newIds = {};
-
-        //Select all filtered PLTs
-        _.forEach(data, plt => {
-          newIds[plt.pltId] = true;
-        });
-
-        this.updateSelectedIDs(newIds);
-        const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-        this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
-        this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
-      } else {
-        this.selectionConfig.lastSelectedId = i;
-      }
-      return;
-    }
+    this.saveSelection(this.params, this._selectedIds);
   }
 
   onContainerResize(newWidth) {
@@ -319,16 +457,22 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   onCheckAll() {
-    const newIds = {};
+    let newIds = {};
 
     _.forEach(this._selectedIds, (v,k) => {
-      newIds[k] = this._selectAll ? false : !this._indeterminate;
+      newIds[k] = !this._indeterminate && !this._selectAll;
     });
 
     this.updateSelectedIDs(newIds);
     const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
     this.updateSelectAll(this.totalRecords == numberOfSelectedRows);
     this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+    this.saveSelection(this.params, this._selectedIds);
+  }
+
+  public setPageSize(rows) {
+    // this.config.pageSize = rows;
+    // this.loadChunk(this.config.pageNumber * rows, rows);
   }
 
   onVirtualScroll(event) {
@@ -340,11 +484,40 @@ export class TableHandlerImp implements TableHandlerInterface {
     if(event.first != (pageNumber * pageSize) || this.config.pageSize != event.rows) {
       this.config.pageSize= event.rows;
       if (event.first === this.totalRecords)
-        this.loadChunk(event.first, this.config.pageSize);
+        this.loadChunk(event.first, 3);
       else
-        this.loadChunk(event.first, this.config.pageSize);
+        this.loadChunk(event.first, Math.floor(this.config.pageSize));
     }
 
+  }
+
+  onExport() {
+    this._api.getData({
+      ...this.params,
+      pageNumber: 1,
+      pageSize: this.totalRecords,
+      entity: 1,
+      selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
+      sortSelectedFirst: this._sortSelectedFirst,
+      sortSelectedAction: this._sortSelectedAction
+    }).subscribe(({plts, totalCount}) => {
+      let filters = [];
+
+      _.forEach(_.filter(this._visibleColumns, column => column.filterCriteria), (col: Column) => {
+        filters.push({
+          column: col.displayName,
+          value: col.filterCriteria
+        })
+      });
+
+      this.excel.exportAsExcelFile(
+          [
+            { sheetData: plts, sheetName: "Data"},
+            { sheetData: filters, sheetName: "Filters"}
+          ],
+          `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
+      )
+    })
   }
 
   loadChunk(offset, size) {
@@ -357,6 +530,7 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.loadData({
       ...this.params,
       ...this.config,
+      pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
       selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
       sortSelectedFirst: this._sortSelectedFirst,
       sortSelectedAction: this._sortSelectedAction
@@ -366,6 +540,88 @@ export class TableHandlerImp implements TableHandlerInterface {
       this.updateLoading(false);
       this.loading$.next(false);
     })
+  }
+
+  filterByProjectId(projectId: number) {
+    const projectIdColumnIndex = _.findIndex(this._columns, col => col.columnName == 'projectId');
+
+    console.log(projectIdColumnIndex, this._columns);
+
+
+    const filter$ = this._api.updateColumnFilter({
+      ..._.pick(this._columns[projectIdColumnIndex], ['viewContextColumnId', 'viewContextId']),
+      filterCriteria: projectId
+    }).pipe(share());
+
+
+    filter$.pipe(
+        switchMap( () => this.reloadTable({
+          ...this.params,
+          ...this.config,
+          selectionList: _.join(this._selectedIds, ','),
+          sortSelectedFirst: this._sortSelectedFirst,
+          sortSelectedAction: this._sortSelectedAction
+        })),
+    ).subscribe(
+        ([columns, data]: any) => {
+          const {totalCount, plts} = data;
+          this.updateTotalRecords(totalCount);
+          this.updateColumns(columns);
+          this.updateData(plts);
+        },
+        (error) => {
+          console.error(error);
+        }
+    );
+
+    filter$.pipe(
+        switchMap( () => this.loadSelectedIds())
+    ).subscribe((ids) => {
+      let newIds = {};
+
+      _.forEach(ids, e => {
+        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
+      });
+
+      const newSelection = { ...this._selectedIds, ...newIds };
+      this.updateSelectedIDs(newSelection);
+    })
+  }
+
+  private handlePLTClickWithKey(id: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      const newIds = { ...this._selectedIds, [id] : true};
+      this.updateSelectedIDs(newIds);
+      const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+      this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+      this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      this.selectionConfig.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.selectionConfig.lastSelectedId) this.selectionConfig.lastSelectedId = 0;
+      if (this.selectionConfig.lastSelectedId  >= 0) {
+
+        const max = _.max([i, this.selectionConfig.lastSelectedId]);
+        const min = _.min([i, this.selectionConfig.lastSelectedId]);
+
+
+        const newIds = {};
+
+        _.forEach(this._data, (plt, i) => {
+          newIds[plt.pltId] =  i <= max && i >= min;
+        });
+
+        this.updateSelectedIDs(newIds);
+        const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
+        this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+        this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
+      } else {
+        this.selectionConfig.lastSelectedId = i;
+      }
+      return;
+    }
   }
 
   private updateColumns (col) {
@@ -397,6 +653,9 @@ export class TableHandlerImp implements TableHandlerInterface {
   }
 
   private updateTotalRecords(t) {
+    // if(t < this.maxRows && t) {
+    //   this.updateRows(t);
+    // }
     this.totalRecords= t;
     this.totalRecords$.next(t);
   }
@@ -436,13 +695,20 @@ export class TableHandlerImp implements TableHandlerInterface {
     this.indeterminate$.next(this._indeterminate);
   }
 
+  private updateRows(r) {
+    this._rows = r;
+    this.rows$.next(this._rows);
+  }
+
   private onApiSuccessLoadDataAndColumns = (api) => {
     this.loading$.next(true);
     api()
         .pipe(
+            take(1),
             switchMap( () => this.reloadTable({
               ...this.params,
               ...this.config,
+              pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
               selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
               sortSelectedFirst: this._sortSelectedFirst,
               sortSelectedAction: this._sortSelectedAction
@@ -450,10 +716,8 @@ export class TableHandlerImp implements TableHandlerInterface {
         )
         .subscribe(
             ([columns, data]: any) => {
-              const {totalCount, plts} = data;
-              this.updateTotalRecords(totalCount);
-              this.updateColumns(columns);
-              this.updateData(plts);
+              this.resolveColumns(columns);
+              this.resolveData(data);
               this.loading$.next(false);
             },
             (error) => {
@@ -465,9 +729,11 @@ export class TableHandlerImp implements TableHandlerInterface {
   private onApiSuccessLoadData = (api) => {
     api()
         .pipe(
+            takeUntil(this.unsubscribe$),
             switchMap( () => this.loadData({
               ...this.params,
               ...this.config,
+              pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
               selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
               sortSelectedFirst: this._sortSelectedFirst,
               sortSelectedAction: this._sortSelectedAction
@@ -483,50 +749,27 @@ export class TableHandlerImp implements TableHandlerInterface {
               console.error(error);
             }
         )
-  }
+  };
 
   private onApiSuccessLoadColumns = (api) => {
     api()
         .pipe(
+            take(1),
             switchMap( () => this.loadColumns())
         )
         .subscribe(
             (columns) => {
-              this.updateColumns(columns);
+              this.resolveColumns(columns);
             },
             (error) => {
               console.error(error);
             }
         )
-  }
+  };
 
-  onExport() {
-    this._api.getData({
-        ...this.params,
-      pageNumber: 1,
-      pageSize: this.totalRecords,
-      entity: 1,
-      selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
-      sortSelectedFirst: this._sortSelectedFirst,
-      sortSelectedAction: this._sortSelectedAction
-    }).subscribe(({plts, totalCount}) => {
-      let filters = [];
-
-      _.forEach(_.filter(this._visibleColumns, column => column.filterCriteria), (col: Column) => {
-        filters.push({
-          column: col.displayName,
-          value: col.filterCriteria
-        })
-      });
-
-      this.excel.exportAsExcelFile(
-          [
-              { sheetData: plts, sheetName: "Data"},
-              { sheetData: filters, sheetName: "Filters"}
-              ],
-          `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
-      )
-    })
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }

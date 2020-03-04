@@ -151,20 +151,19 @@
           {{project?.projectDescription}}
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="dt-11 line-height-m" style="flex:1;	letter-spacing: 0.08px;">Created</span>
-          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
-          <span class="text-center dt-11 line-height-m" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
+          <span class="line-height-m intro-style">Created</span>
+          <span class="line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
+          <span class="text-center line-height-m date-style">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Last Modified</span>
-          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
-          <span class="text-center line-height-m dt-11"
-                style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+          <span class="line-height-m intro-style">Last Modified</span>
+          <span class="line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
+          <span class="text-center line-height-m date-style">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
-          <span class="dt-11 line-height-m" style="flex:1; letter-spacing: 0.08px;">Assigned Analyst</span>
-          <span class="pr-4 dt-11 line-height-m project-kpi-creat-wrap">Nathalie Dulac</span>
-          <span class="text-center line-height-m dt-11" style="flex:1; color: rgba(0,0,0,0.87); letter-spacing: 0.08px;"></span>
+          <span class="line-height-m intro-style">Assigned Analyst</span>
+          <span class="line-height-m project-kpi-creat-wrap">{{getUserName(project.assignedTo)}}</span>
+          <span class="text-center line-height-m date-style"></span>
         </div>
       </div>
     </div>

@@ -41,6 +41,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   itemWidget: any;
   @Input()
   dashboard: any;
+  @Input()
+  loading = false;
 
   @Select(DashboardState.getFacData)facData$;
   @Select(DashboardState.getDataCounter)dataCounter$;
@@ -67,7 +69,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   data: any = [];
   dataCounter = 10;
   rows: any;
-  loading = false;
   secondaryLoad = false;
 
   filters = {};
@@ -253,8 +254,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   changeHeight($event) {
-    this.rows = $event;
-    console.log('rows', this.rows);
+    //this.rows = $event;
+    //console.log('rows', this.rows);
   }
 
   getNumberOfRows() {

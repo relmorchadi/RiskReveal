@@ -294,7 +294,6 @@ export class FacSubsidiaryChartComponent implements OnInit {
   }
 
   switchData() {
-    // console.log('switch data');
     const switchedSeries = this.chartOption.series;
     this.myChart.setOption({
       series: this.alternateSeriesData

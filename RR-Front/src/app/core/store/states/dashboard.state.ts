@@ -103,7 +103,6 @@ export class DashboardState implements NgxsOnInit {
             selectionList: '',
             sortSelectedAction: '',
             sortSelectedFirst: false,
-            userCode: "DEV",
             userDashboardWidgetId: identifier
         };
 

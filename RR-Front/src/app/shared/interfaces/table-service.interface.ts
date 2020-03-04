@@ -10,6 +10,7 @@ export interface TableServiceInterface {
   updateColumnWidth(body): Observable<any>;
   updateColumnFilter(body): Observable<any>;
   resetColumnFilter(body): Observable<any>;
+  filterByProject(body): Observable<any>;
   updateColumnSort(body): Observable<any>;
   resetColumnSort(body): Observable<any>;
   updateColumnsOrderAndVisibility(body): Observable<any>;

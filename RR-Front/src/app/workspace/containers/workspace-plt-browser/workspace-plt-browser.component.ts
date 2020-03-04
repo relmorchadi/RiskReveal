@@ -54,6 +54,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   availableColumns: any[];
   visibleColumns: any[];
 
+  selectedProject: any;
+
   constructor(
     private nzDropdownService: NzDropdownService,
     private zone: NgZone,
@@ -107,10 +109,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         tap(({wsId, year}) => {
           this.workspaceId = wsId;
           this.uwy = year;
-          this.params = {
-            workspaceContextCode: wsId,
-            workspaceUwYear: year
-          };
           this.updateLeftMenuInputs('wsId', this.workspaceId);
           this.updateLeftMenuInputs('uwYear', this.uwy);
           this.updateMenuKey('wsIdentifier', this.workspaceId+"-"+this.uwy);
@@ -132,6 +130,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   getOpenedPlt() {
     return this.select(WorkspaceState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
+  }
+
+  getSelectedProject() {
+    return this.select(WorkspaceState.getSelectedProject);
   }
 
   openedPlt: any;
@@ -287,9 +289,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.destroy();
   }
 
-  patchState({data: {leftNavbarCollapsed}}): void {
+  patchState({data: {leftNavbarCollapsed, wsId, uwYear, projects}}): void {
     this.leftIsHidden = leftNavbarCollapsed;
-    this.detectChanges();
+    this.params = {
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear
+    };
+    this.selectedProject = _.find(projects, project => project.selected);
   }
 
   protected detectChanges() {
@@ -342,7 +348,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   collapseLeftMenu() {
     this.collapsedTags= !this.collapsedTags;
-    console.log(this.leftMenu);
     this.detectChanges();
   }
 
