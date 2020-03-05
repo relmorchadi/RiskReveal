@@ -9,6 +9,7 @@ import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import com.scor.rr.domain.views.RLAnalysisToTargetRAP;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.batch.abstraction.RegionPerilExtractorInterface;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
@@ -26,7 +27,7 @@ import java.util.*;
 
 @Service
 @StepScope
-public class RegionPerilExtractor {
+public class RegionPerilExtractor implements RegionPerilExtractorInterface {
 
     private static final Logger log = LoggerFactory.getLogger(RegionPerilExtractor.class);
 
@@ -338,7 +339,7 @@ public class RegionPerilExtractor {
         return RepeatStatus.FINISHED;
     }
 
-    private RegionPerilEntity getRegionPeril(RLImportSelection sourceResult) {
+    public RegionPerilEntity getRegionPeril(RLImportSelection sourceResult) {
         String rpCode = sourceResult.getTargetRegionPeril();
         if (rpCode == null || rpCode.isEmpty()) {
             rpCode = sourceResult.getRlAnalysis().getSystemRegionPeril();
@@ -353,7 +354,7 @@ public class RegionPerilExtractor {
         return regionPerilRepository.findByRegionPerilCode(rpCode);
     }
 
-    private LossDataHeaderEntity makeSourceRRLT(ModelAnalysisEntity modelAnalysisEntity, RLImportSelection sourceResult, String financialPerspective, CurrencyEntity analysisCurrencyEntity) {
+    public LossDataHeaderEntity makeSourceRRLT(ModelAnalysisEntity modelAnalysisEntity, RLImportSelection sourceResult, String financialPerspective, CurrencyEntity analysisCurrencyEntity) {
 
         if (financialPerspective == null) {
             log.debug("no analysis financial perspective found for source result {}", sourceResult.getRlImportSelectionId());
@@ -373,7 +374,7 @@ public class RegionPerilExtractor {
         return rrLossTable;
     }
 
-    private LossDataHeaderEntity makeConformedRRLT(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity sourceRRLT, CurrencyEntity currencyEntity) {
+    public LossDataHeaderEntity makeConformedRRLT(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity sourceRRLT, CurrencyEntity currencyEntity) {
 
         LossDataHeaderEntity conformedRRLT = new LossDataHeaderEntity();
 //        conformedRRLT.setRrRepresentationDatasetId(sourceRRLT.getRrRepresentationDatasetId());
