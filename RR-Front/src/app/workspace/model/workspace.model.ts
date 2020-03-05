@@ -4,6 +4,7 @@ export class WorkspaceModel {
   };
   currentTab: {
     index: number,
+    openedTabs: any,
     wsIdentifier: string
   };
   constants: {

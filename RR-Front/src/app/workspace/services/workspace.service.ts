@@ -24,32 +24,35 @@ export class WorkspaceService {
   }
 
   initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
-    return of();
-    // return this.wsApi.getOpenedTabs(1).pipe(
-    //     tap(data => {
-    //       _.forEach(data, (item: any) => {
-    //         ctx.dispatch(new fromWS.LoadWS(
-    //             {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', type: 'TTY'}))
-    //       })
-    //     })
-    // );
+    return this.wsApi.getOpenedTabs().pipe(
+        tap(data => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.currentTab.openedTabs = data;
+          }));
+          _.forEach(data, (item: any) => {
+            ctx.dispatch(new fromWS.LoadWS(
+                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', redirect: false}))
+          })
+        })
+    );
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {wsId, uwYear, route, type, carSelected} = payload;
+    const redirect = _.get(payload, 'redirect', null);
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear, type)
       .pipe(
         mergeMap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId, uwYear, ws, route, carSelected
+          wsId, uwYear, ws, route, carSelected, redirect
         }))}),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route} = payload;
+    const {wsId, uwYear, ws, route, redirect} = payload;
     const carSelected = _.get(payload, 'carSelected', null);
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
@@ -58,18 +61,18 @@ export class WorkspaceService {
       draft.content[wsIdentifier] = {
         wsId,
         uwYear,
+        route,
         ...ws,
+        isPinned: false,
+        collapseWorkspaceDetail: true,
+        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
+        leftNavbarCollapsed: false,
+        plts: {},
         projects: _.map(projects.reverse(), (prj, index: any) => {
           prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
           prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
           return prj;
         }),
-        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
-        isPinned: false,
-        collapseWorkspaceDetail: true,
-        route,
-        leftNavbarCollapsed: false,
-        plts: {},
         pltManager: {
           columns: [],
           data: {totalCount: 0, plts: []},
@@ -132,7 +135,7 @@ export class WorkspaceService {
       draft.loading = false;
       ctx.dispatch([new fromWS.SetCurrentTab({
         index: _.size(draft.content),
-        wsIdentifier
+        wsIdentifier, redirect
       })]);
     }));
   }
@@ -142,8 +145,6 @@ export class WorkspaceService {
     const carSelected = _.get(payload, 'carSelected', null);
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
-
-    console.log('OPEN')
 
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
@@ -183,26 +184,24 @@ export class WorkspaceService {
 
   setCurrentTab(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SetCurrentTab) {
     const {
-      index,
-      wsIdentifier,
+      index, wsIdentifier, redirect
     } = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
       draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
+      if (redirect == null) {
+        ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
+      }
     }));
   }
 
   closeWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CloseWS) {
-    const {
-      wsIdentifier
-    } = payload;
-
-    const {
-      currentTab,
-      content
-    } = ctx.getState();
+    const {wsIdentifier} = payload;
+    const {currentTab, content} = ctx.getState();
+    let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier);
+    let deletedTab = _.find(currentTab.openedTabs, ws => ws.workspaceContextCode + '-' + ws.workspaceUwYear == wsIdentifier);
+    const closedTab = _.omit(deletedTab, ['openedDate']);
 
     // To keep at least one tab open
     if (_.size(content) == 1)
@@ -221,7 +220,6 @@ export class WorkspaceService {
         }));
       }
     } else {
-      let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier);
       if (currentTab.index > i) {
         ctx.dispatch(new fromWS.SetCurrentTab({
           index: currentTab.index - 1,
@@ -229,9 +227,15 @@ export class WorkspaceService {
         }));
       }
     }
-    ctx.patchState({
-      content: _.keyBy(_.filter(content, ws => ws.wsId + '-' + ws.uwYear != wsIdentifier), (el) => el.wsId + '-' + el.uwYear)
-    });
+    return this.wsApi.closeTab(closedTab).pipe(
+        tap( data => {
+          ctx.patchState({
+            content: _.keyBy(_.filter(content, ws => ws.wsId + '-' + ws.uwYear != wsIdentifier), (el) => el.wsId + '-' + el.uwYear)
+          });}),
+        catchError(err => {
+          return of();
+        })
+    );
   }
 
   toggleWsDetails(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsDetails) {
