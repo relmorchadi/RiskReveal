@@ -797,8 +797,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   exportEPMetrics() {
     let exportedList = [];
+    let item = null;
 
     _.forEach(this.data, pure => {
+      item = this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId];
 
       exportedList.push({..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]});
 
@@ -808,10 +810,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
     });
 
-    this.excel.exportAsExcelFile(
-        [{sheetData: exportedList, sheetName: "Main"}],
-        'EP Metrics-Calibration'
-    )
+    if(item) {
+      console.log(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], e => e.header), item);
+
+      this.excel.exportAsExcelFile(
+          [{sheetData: exportedList, sheetName: "Main", headerOptions: _.keys(exportedList[0])}],
+          'EP Metrics-Calibration'
+      )
+    }
   }
 
   deltaChange(newDelta) {

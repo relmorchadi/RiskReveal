@@ -18,9 +18,10 @@ export class ExcelService {
     const workbook: XLSX.WorkBook = {Sheets: {}, SheetNames: []};
 
     _.forEach(sheets, sheet => {
-      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheet.sheetData), sheet.sheetName)
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.json_to_sheet(sheet.sheetData, { header: sheet.headerOptions }), sheet.sheetName)
     });
     const excelBuffer: any = XLSX.write(workbook, {bookType: 'xlsx', type: 'array'});
+    console.log(excelBuffer);
     this.saveAsExcelFile(excelBuffer, excelFileName);
   }
 
