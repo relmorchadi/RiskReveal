@@ -24,6 +24,7 @@ import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-h
 import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
 import {ExposuresRightMenuComponent} from "./exposures/exposures-right-menu/exposures-right-menu.component";
 import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
+import {CalibrationColumnManagerComponent} from "./calibration-new/column-manager/column-manager.component";
 
 export const COMPONENTS = [
     LeftMenuComponent,
@@ -51,7 +52,8 @@ export const COMPONENTS = [
     ExposuresHeaderComponent,
     ExposuresLeftMenuComponent,
     ExposuresRightMenuComponent,
-    DatasourceListComponent
+    DatasourceListComponent,
+    CalibrationColumnManagerComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

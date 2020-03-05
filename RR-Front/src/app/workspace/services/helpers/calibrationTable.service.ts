@@ -60,7 +60,7 @@ export class CalibrationTableService {
     ];
 
     CalibrationTableService.frozenColsTail = [
-      {field: 'status', type: 'status', width: "40", unit: 'px', icon:'', filter: false, sortable: false, resizable: false, isFrozen: true}
+      {header: 'Status', field: 'status', type: 'status', width: "40", unit: 'px', icon:'', filter: false, sortable: false, resizable: false, isFrozen: true}
     ];
 
     CalibrationTableService.frozenColsExpanded = [
@@ -178,4 +178,15 @@ export class CalibrationTableService {
       result[result.length - 1].resizable = false;
       return  result;
     })
+
+  onManageFrozenColumns = (newFrozenColumns) => {
+    const frozenColumns = [ {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true}, ...newFrozenColumns];
+    const frozenWidth = _.reduce(frozenColumns, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
+
+    this.updateColumnsConfig({
+        ...this.columnsConfig$.getValue(),
+      frozenColumns,
+      frozenWidth
+    })
+  }
 }

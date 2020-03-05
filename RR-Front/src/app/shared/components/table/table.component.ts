@@ -179,20 +179,6 @@ export class TableComponent implements OnInit {
     );
   }
 
-  filterCol(searchValue: string, searchAddress: string, key): void {
-    if(this.virtualScroll) {
-      this.event.first = 0;
-      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
-      body.scrollTop = 0;
-    }
-    if (searchValue) {
-      this.FilterData =  _.merge({}, this.FilterData, {[key]: searchValue}) ;
-    } else {
-      this.FilterData =  _.omit(this.FilterData, [key]);
-    }
-    this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
-  }
-
   updateFavValue(row) {
     this.updateStatus.emit(row);
   }
@@ -271,7 +257,6 @@ export class TableComponent implements OnInit {
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
     row.selected = true;
     tableColumn.handler(this.selectedRows);
-
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
@@ -323,7 +308,8 @@ export class TableComponent implements OnInit {
 
   filter(key: string, event, colId) {
     const value = event.target.value;
-    if (this.virtualScroll) {
+    const first = _.get(this.event, 'first', null);
+    if (this.virtualScroll && first !== null) {
       this.event.first = 0;
       let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
       body.scrollTop = 0;
@@ -334,7 +320,21 @@ export class TableComponent implements OnInit {
       this.FilterData =  _.omit(this.FilterData, [key]);
     }
     this.filterQueryChanged.next({key, value, colId});
+  }
 
+  filterCol(searchValue: string, searchAddress: string, key): void {
+    const first = _.get(this.event, 'first', null);
+    if(this.virtualScroll && first !== null) {
+      this.event.first = 0;
+      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+      body.scrollTop = 0;
+    }
+    if (searchValue) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: searchValue}) ;
+    } else {
+      this.FilterData =  _.omit(this.FilterData, [key]);
+    }
+    this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
   }
 
   resize(event) {

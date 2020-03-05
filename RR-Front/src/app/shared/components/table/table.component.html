@@ -126,7 +126,7 @@
          [virtualScroll]="true"
          [virtualRowHeight]="virtualRowHeight"
          (onLazyLoad)="loadDataOnScroll($event)"
-         [lazy]="true" [showLoader]="false"
+         [lazy]="true" [showLoader]="false" [lazyLoadOnInit]="fromSearch"
          [(contextMenuSelection)]="contextSelectedItem"
          [contextMenu]="getContextMenu()" class="table-ngPrime"
          [selectionMode]="selectionMode"
@@ -198,7 +198,9 @@
               (click)="selectRow(rowData, i)">
             <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
               <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-              <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+              <span  *ngIf="col?.type !== 'date'" [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+              <span  *ngIf="col?.type === 'date'" class="text-wrapper">
+                {{rowData[col?.field] | rRDate: 'shortFormat': 'date'}}</span>
             </div>
             <div class="fav-status-info" *ngIf="col?.type === 'favStatus'">
               <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>

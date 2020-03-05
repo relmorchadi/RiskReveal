@@ -73,20 +73,16 @@ export class DashboardApi {
             responseType: 'text' as 'json'});
     }
 
+    resetFilters(widgetId): Observable<any> {
+        return this.http.put(`${this.TableURL}resetFilter`, {}, {params: {widgetId}, responseType: 'text' as 'json'});
+    }
+
+    resetSort(widgetId): Observable<any> {
+        return this.http.put(`${this.TableURL}resetSort`, {}, {params: {widgetId}, responseType: 'text' as 'json'});
+    }
+
     getFacDashboardResources(filters): Observable<any>  {
         return this.http.post(`${backendUrl()}dashboard/getData`, filters);
-    }
-
-    getWidgetCarStatusCount(): Observable<any> {
-        return this.http.get(`${backendUrl()}dashboard/`);
-    }
-
-    getWidgetAssignedCountByUwAnalysis(): Observable<any> {
-        return this.http.get(`${backendUrl()}dashboard/`)
-    }
-
-    getWidgetAssignedPercentageByUwAnalysis(): Observable<any> {
-        return this.http.get(`${backendUrl()}dashboard/`)
     }
 
 }

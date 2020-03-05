@@ -26,12 +26,14 @@ public interface UserDashboardRepository extends JpaRepository<UserDashboard,Lon
             " @UserDashboardWidgetId=:userDashboardWidgetId," +
             "@UserCode=:userCode," +
             "@PageNumber=:pageNumber," +
-            "@PageSize=:pageSize", nativeQuery = true)
+            "@PageSize=:pageSize," +
+            "@FilterByAnalyst=:filterByAnalyst", nativeQuery = true)
     List<Map<String,Object>> getDataForWidget(@Param("carStatus") String carStatus,
                                               @Param("entity") int entity,
                                               @Param("userDashboardWidgetId") long userDashboardWidgetId,
                                               @Param("userCode") String userCode,
                                               @Param("pageNumber") int pageNumber,
-                                              @Param("pageSize") int pageSize);
+                                              @Param("pageSize") int pageSize,
+                                              @Param("filterByAnalyst") boolean filterByAnalyst);
 
 }

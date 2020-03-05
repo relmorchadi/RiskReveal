@@ -325,7 +325,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             ).subscribe(p => {
             const {edms, rdms, currentDataSource} = this.state.selection;
             const dataSources = [..._.values(edms), ..._.values(rdms)];
-            if (!_.isEmpty(dataSources) && !currentDataSource) {
+            if (!_.isEmpty(dataSources)) {
                 this.toggleItemsListRDM(_.first(dataSources));
             }
         });

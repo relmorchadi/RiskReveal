@@ -28,9 +28,14 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   currentWsIdentifier: string;
   wsStatus: string;
   selectedPrj: any = {};
+  wsId: any;
+  uwYear: any;
+  route: any;
+  ws: any;
 
   @Select(WorkspaceState.getWorkspaceStatus) status$;
   @Select(WorkspaceState.getSelectedProject) selectedPrj$;
+  @Select(WorkspaceState.getWorkspaces) ws$;
 
   constructor(
     private _helper: HelperService,
@@ -44,10 +49,18 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
+    this.ws$.pipe().subscribe(value => {
+     this.ws = value;
+    });
+
     this._route.params
-      .pipe(this.unsubscribeOnDestroy,
-        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: ''})))
-      .subscribe(action => this.dispatch(action));
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(({wsId, year, route}: any) => {
+        const openedWs = _.get(this.ws, `${wsId}-${year}`, null);
+        if (openedWs === null) {
+          this.dispatch(new fromWs.OpenWS({wsId, uwYear: year, route}))
+        }
+      });
 
     this.select(WorkspaceState.getCurrentTab)
       .pipe(this.unsubscribeOnDestroy)

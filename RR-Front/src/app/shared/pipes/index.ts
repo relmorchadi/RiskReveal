@@ -18,31 +18,36 @@ import {TrimSecondaryFormatPipe} from './trim-secondary-format.pipe';
 import {StartCasePipe} from "./start-case.pipe";
 import {FinancialUnitPipe} from "../../workspace/pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "./exchange-rate.pipe";
+import {RRDatePipe} from "./rr-date.pipe";
+import {RrNumberPipe} from "./rr-number.pipe";
 
 export const PIPES = [
-  CalibratePipe,
-  PickKeysPipe,
-  ReFormatPIDPipe,
-  HighlightDirective,
-  TableSortAndFilterPipe,
-  TextLengthPipe,
-  TrimFormatPipe,
-  TrimSecondaryFormatPipe,
-  KeysPipe,
-  ShowLastPipe,
-  InputSearchPipe,
-  ToArrayPipe,
-  LogPipe,
-  BoldPipe,
-  SystemTagFilterPipe,
-  FilterByStatusPipe,
-  FalselyFilterPipe,
-  StartCasePipe,
-  FinancialUnitPipe,
-  ExchangeRatePipe
+    RRDatePipe,
+    CalibratePipe,
+    PickKeysPipe,
+    ReFormatPIDPipe,
+    HighlightDirective,
+    TableSortAndFilterPipe,
+    TextLengthPipe,
+    TrimFormatPipe,
+    TrimSecondaryFormatPipe,
+    KeysPipe,
+    ShowLastPipe,
+    InputSearchPipe,
+    ToArrayPipe,
+    LogPipe,
+    BoldPipe,
+    SystemTagFilterPipe,
+    FilterByStatusPipe,
+    FalselyFilterPipe,
+    StartCasePipe,
+    FinancialUnitPipe,
+    ExchangeRatePipe,
+    RrNumberPipe
 ];
 
 export * from './trim-secondary-format.pipe';
+export * from './rr-date.pipe';
 export * from './trim-format.pipe';
 export * from './input-search.pipe';
 export * from './keys.pipe';
