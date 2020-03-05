@@ -172,9 +172,9 @@ public class ELTToPLTConverter extends AbstractWriter {
             }
 
             //PLT Truncator
-            String region = rlAnalysisOpt.map(RLAnalysis::getRegion).orElse(null);
-            String peril = rlAnalysisOpt.map(RLAnalysis::getPeril).orElse(null);
-            String currency = rlAnalysisOpt.map(RLAnalysis::getAnalysisCurrency).orElse(null);
+//            String region = rlAnalysisOpt.map(RLAnalysis::getRegion).orElse(null);
+//            String peril = rlAnalysisOpt.map(RLAnalysis::getPeril).orElse(null);
+//            String currency = rlAnalysisOpt.map(RLAnalysis::getAnalysisCurrency).orElse(null);
 //            double threshold = truncator.getThresholdFor(region, peril, currency, "PLT");
             double threshold = 0.0;
 
@@ -251,7 +251,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 int start = i * chunkSize;
                 int end = (i + 1) * chunkSize < entry.getValue().size() ? (i + 1) * chunkSize : entry.getValue().size();
                 List<PltHeaderEntity> scorPLTHeaderEntities = entry.getValue().subList(start, end);
-//                List<ScorPLTHeader> scorPLTHeaders = entry.getValue();
+//////                List<ScorPLTHeader> scorPLTHeaders = entry.getValue();
                 Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT = new HashMap<>(scorPLTHeaderEntities.size());
                 for (PltHeaderEntity scorPltHeaderEntity : scorPLTHeaderEntities) {
                     TransformationBundle bundle = bundleForPLT.get(scorPltHeaderEntity.getPltHeaderId());
@@ -427,6 +427,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 fc = FileChannel.open(f.toPath(), StandardOpenOption.READ);
                 long fileSize = fc.size();
                 long bufferSize = 1024 * 1024 * 16;
+//                long bufferSize = 1024 * 1024;
 
                 if (fileSize < bufferSize) {
                     bufferSize = (int) fileSize;
@@ -621,12 +622,11 @@ public class ELTToPLTConverter extends AbstractWriter {
                         writeBufferToOutputStream(outputStream, pltLossDataList);
                     } catch (IOException e) {
                         log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
-                    }finally {
+                    } finally {
                         pltLossDataList.clear();
                         try {
-                            if(outputStream != null)
-                                outputStream.close();
-                        }catch (IOException exp){
+                            outputStream.close();
+                        } catch (IOException exp) {
                             exp.printStackTrace();
                         }
                     }
