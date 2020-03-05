@@ -29,7 +29,7 @@
 
     <properties>
         <!-- SONAR LIBRARIES -->
-        <rr_version>4.0.13.0001-SNAPSHOT</rr_version>
+        <rr_version>4.0.13.0002-SNAPSHOT</rr_version>
         <sonar.jacoco.reportPath>${project.basedir}/../report/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.surefire.reportPath>${project.basedir}/../report/surefire-reports</sonar.surefire.reportPath>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
