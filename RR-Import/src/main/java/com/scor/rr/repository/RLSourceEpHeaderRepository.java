@@ -21,4 +21,9 @@ public interface RLSourceEpHeaderRepository extends JpaRepository<RLSourceEpHead
     @Modifying
     @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId IN (:analysisIds)")
     void deleteByRLAnalysisIdList(@Param("analysisIds") List<Long> analysisIds);
+
+    @Transactional(transactionManager = "rrTransactionManager")
+    @Modifying
+    @Query(value = "DELETE FROM RLSourceEpHeader WHERE RLModelAnalysisId = :analysisId")
+    void deleteByRLAnalysisId(@Param("analysisId") Long analysisId);
 }
