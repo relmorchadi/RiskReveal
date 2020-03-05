@@ -15,8 +15,8 @@ export class GlobalConfigApi {
     return this.http.post(`${this.URL}`, data);
   }
 
-  getGlobalConfig(userId) {
-    return this.http.get(`${this.URL}`, {params: {userId}});
+  getGlobalConfig() {
+    return this.http.get(`${this.URL}`);
   }
 
   delGlobalConfig(userPreferenceId) {

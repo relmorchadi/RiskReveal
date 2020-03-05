@@ -3,8 +3,7 @@
 <ng-container *ngTemplateOutlet="title"></ng-container>
 
 <ng-container *ngIf="widgetId !== 1">
-    <nz-tabset
-            [(nzSelectedIndex)]="tabIndex"
+    <nz-tabset [(nzSelectedIndex)]="tabIndex"
             class="tabs-standard-top">
         <nz-tab>
             <div style="height: 100%" class="renewal-contract-table">
@@ -22,9 +21,9 @@
         <nz-tab>
             <div style="height: 100%" class="renewal-contract-table">
                 <app-table [sortable]="true" [virtualScroll]="true" [rows]="25"
-                           [totalRecords]="dataCounter" [loading]="loading"
+                           [totalRecords]="dataCounterAssigned" [loading]="loading"
                            [tableColumn]="dashCols" [sortList]="sortList" [secondaryLoader]="secondaryLoad"
-                           [listOfData]="filterAssign()" [fromSearch]="false" [filterModeFront]="false"
+                           [listOfData]="dataAssigned" [fromSearch]="false" [filterModeFront]="false"
                            (dbClickItem)="openFacItem($event)" (loadMore)="loadMore($event)"
                            (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
                            (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
@@ -42,11 +41,10 @@
                    [rows]="50" [totalRecords]="dataCounter" [secondaryLoader]="secondaryLoad"
                    [loading]="loading" [tableColumn]="dashCols" [sortList]="sortList"
                    [listOfData]="data" [fromSearch]="false" [filterModeFront]="false"
-                   (loadMore)="loadMore($event)" (sortDataChange)="sortChange($event)"
-                   (resizeChange)="resizeTable($event)" (dbClickItem)="openFacItem($event)"
-                   (updateFavStatus)="valueFavChange($event)" [virtualRowHeight]="30"
-                   [sortData]="globalSort" (filterData)="filterData($event)"
-        >
+                   (dbClickItem)="openFacItem($event)" (loadMore)="loadAssignedMore($event)"
+                   (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
+                   (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
+                   [sortData]="globalSort">
         </app-table>
     </div>
 </ng-container>
@@ -73,15 +71,15 @@
                         <i class="icon-settings_24px"></i>
                     </a>
                     <ul nz-menu style="font-size: 12px">
-                        <li nz-menu-item>Reset Sort</li>
-                        <li nz-menu-item>Reset Filters</li>
-                        <li nz-menu-item>Reset Sort/Filters</li>
+                        <li nz-menu-item (click)="resetSort()">Reset Sort</li>
+                        <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
+                        <li nz-menu-item (click)="resetSortFilter()">Reset Sort/Filters</li>
                         <li nz-menu-divider></li>
                         <li nz-menu-item *ngIf="widgetId === 1" (click)="openPopUpAction('newCar')">Manage Columns</li>
                         <li nz-menu-item *ngIf="widgetId === 2" (click)="openPopUpAction('inProgressCar')">Manage Columns</li>
                         <li nz-menu-item *ngIf="widgetId === 3" (click)="openPopUpAction('archivedCar')">Manage Columns</li>
-                        <li nz-menu-divider></li>
-                        <li nz-menu-item>Unselect All</li>
+                        <!--li nz-menu-divider></li>
+                        <li nz-menu-item>Unselect All</li-->
                     </ul>
                 </nz-dropdown>
             </div>

@@ -19,6 +19,7 @@ const initialState: WorkspaceModel = {
   content: {},
   currentTab: {
     index: 0,
+    openedTabs: [],
     wsIdentifier: null,
   },
   constants: {

@@ -15,5 +15,6 @@ public class DashboardRequest {
     String selectionList;
     boolean sortSelectedFirst;
     String sortSelectedAction;
+    boolean filterByAnalyst;
 
 }

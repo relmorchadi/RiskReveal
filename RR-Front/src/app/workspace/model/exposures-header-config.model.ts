@@ -1,8 +1,8 @@
 export class ExposuresHeaderConfig {
     exposureViews: any[];
     currencies: any[];
-    financialUnits: any[];
+    financialPerspectives: any[];
     divisions: any[];
     portfolios: any[];
-    view:string;
+    summariesDefinitions: any[];
 }

@@ -1,6 +1,6 @@
-package com.scor.rr.repository;
+package com.scor.rr.repository.userPreferences;
 
-import com.scor.rr.domain.UserPreference;
+import com.scor.rr.domain.entities.userPreferences.UserPreference;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, DecimalPipe} from '@angular/common';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
@@ -20,9 +20,10 @@ import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
+import { RRDatePipe } from './pipes/rr-date.pipe';
 
 @NgModule({
-  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
+  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe, RRDatePipe],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -43,7 +44,7 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     NgxEchartsModule,
     AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe],
   exports: [
     CommonModule,
     NgZorroAntdModule,
@@ -60,6 +61,7 @@ import { AngularResizeElementModule } from 'angular-resize-element';
     AngularResizedEventModule,
     NgxEchartsModule,
     AngularResizeElementModule,
+    ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
       ...DIRECTIVES

@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.toList;
  * @author Ayman IKAR
  * @created 19/12/2019
  */
+
 @Service
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -366,10 +367,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     }
 
-    /*private List<String> getPortfolioCurrencies(Long rlPortfolioId){
-
-    }*/
-
     @Override
     public void clearProjectAndLoadDefaultDataSources(Long projectId) {
         rlModelDataSourceRepository.findByProjectId(projectId)
@@ -377,5 +374,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 .forEach(ds -> {
                     rlModelDataSourceRepository.deleteRLModelDataSourceById(ds.getRlModelDataSourceId());
                 });
+    }
+
+    @Override
+    public void deleteAnalysisSummary(List<Long> rlAnalysisId, Long projectId) {
+        rlAnalysisId.stream()
+                .forEach(id -> rlImportSelectionRepository.deleteByRlAnalysisIdAndProjectId(id, projectId));
+    }
+
+    @Override
+    public void deletePortfolioSummary(List<Long> rlPortfolioId, Long projectId) {
+        rlPortfolioId.stream()
+                .forEach(id -> rlPortfolioSelectionRepository.deleteByPortfolioIdAndProjectId(id,projectId));
     }
 }

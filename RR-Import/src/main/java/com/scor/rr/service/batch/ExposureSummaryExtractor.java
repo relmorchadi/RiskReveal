@@ -315,7 +315,8 @@ public class ExposureSummaryExtractor {
             ExposureSummaryData exposureSummaryData = new ExposureSummaryData();
 
             exposureSummaryData.setCountryCode(rlExposureSummaryItem.getCountryCode());
-            exposureSummaryData.setAdmin1Code(rlExposureSummaryItem.getAdmin1Code());
+            exposureSummaryData.setAdmin1Code(rlExposureSummaryItem.getAdmin1Code() != null ?
+                    rlExposureSummaryItem.getAdmin1Code().equals("") ? null : rlExposureSummaryItem.getAdmin1Code() : null);
             exposureSummaryData.setGlobalViewSummary(rlExposureSummaryItem.getGlobalViewSummary());
             exposureSummaryData.setAnalysisRegionCode(rlExposureSummaryItem.getAnalysisRegionCode());
             exposureSummaryData.setConformedCurrency(rlExposureSummaryItem.getConformedCurrency());

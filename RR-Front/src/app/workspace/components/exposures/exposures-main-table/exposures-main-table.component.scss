@@ -6,7 +6,7 @@
           padding: 7px 10px 5px !important;
           font-size: 11px;
           vertical-align: top;
-          text-align: center;
+          text-align: end;
           color: rgba(0, 0, 0, 0.38) !important;
           background-color: #fff !important;
           font-family: Rubik;
@@ -97,5 +97,25 @@
   }
   .grouped-metric-first {
     border-bottom: none !important;
+  }
+  .grouped-metric-last {
+    font-size: 0px !important;
+  }
+  .eye-icon {
+    font-size: 15px;
+    float: left;
+    margin-left: 8px;
+    color: #83828b;
+    margin-top: 3px;
+  }
+  .eye-icon-selected {
+    font-size: 15px;
+    float: left;
+    margin-left: 8px;
+    color: #52b8e4;
+    margin-top: 3px;
+  }
+  .eye-icon:hover {
+    color: #52b8e4;
   }
 }

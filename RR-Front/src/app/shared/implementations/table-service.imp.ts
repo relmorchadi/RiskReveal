@@ -11,7 +11,9 @@ export class TableServiceImp implements TableServiceInterface {
   url: string;
   _url: string;
 
-  constructor(private _http: HttpClient) {}
+  constructor(private _http: HttpClient) {
+    console.log('init', 1)
+  }
 
   setUrl(url: string) {
     this._url = url;

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
 import {Select, Store} from "@ngxs/store";
@@ -26,8 +26,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   @Select(WorkspaceState.getCurrentTabStatus) status$;
   status;
 
-  constructor(private _router: Router, private _store: Store) {
-    super(_router, null, null);
+  constructor(private _router: Router, private _store: Store, private changeRef: ChangeDetectorRef) {
+    super(_router, changeRef, _store);
     this.toggleCollapseEmitter = new EventEmitter();
     this.navigationEmitter = new EventEmitter();
   }
