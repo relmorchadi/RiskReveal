@@ -20,4 +20,15 @@ export class WsApi {
     return this._http.get(`${backendUrl() + 'user/all'}`);
   }
 
+  getOpenedTabs() {
+    return this._http.get(`${this.api}tabs/`);
+  }
+
+  closeTab(payload) {
+    return this._http.post(`${this.api}tabs/close`, payload)
+  }
+
+  openTab(payload) {
+    return this._http.post(`${this.api}tabs/open`, payload)
+  }
 }
