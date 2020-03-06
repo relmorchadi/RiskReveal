@@ -4,6 +4,7 @@ import {WsApi} from './api/workspace.api';
 import {PreviousNavigationService} from './previous-navigation.service';
 import {ExcelService} from '../../shared/services/excel.service';
 import {TagsApi} from './api/tags.api';
+import {ColumnsFormatterService} from "../../shared/services/columnsFormatter.service";
 
 export const SERVICE = [
   WsApi,
@@ -11,5 +12,6 @@ export const SERVICE = [
   TagsApi,
   HelperService,
   PreviousNavigationService,
-  ExcelService
+  ExcelService,
+  ColumnsFormatterService
 ];

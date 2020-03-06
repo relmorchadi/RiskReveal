@@ -143,8 +143,8 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   navigateFromHyperLink({route}) {
     const {wsId, uwYear} = this.workspace;
     this.dispatch(
-      [new UpdateWsRouting(this.wsIdentifier, route),
-        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+        [new UpdateWsRouting(this.wsIdentifier, route),
+          new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
     );
   }
 
