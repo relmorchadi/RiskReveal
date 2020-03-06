@@ -63,5 +63,4 @@ export class ProjectsListComponent extends BaseContainer implements OnInit {
     const user = _.find(this.users, item => item.userId == id);
     return _.get(user, 'firstName', 'Unassigned') + ' ' + _.get(user, 'lastName', '');
   }
-
 }
