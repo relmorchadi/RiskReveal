@@ -139,7 +139,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             List<Long> analysis = Collections.singletonList(rlAnalysisOptional.get().getRlId());
             Optional<RLModelDataSource> rlModelDataSourceOp = rlModelDataSourceRepository.findById(rlAnalysisOptional.get().getRlModelDataSourceId());
             if (rlModelDataSourceOp.isPresent()) {
-                rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(analysis);
+                rlSourceEpHeaderRepository.deleteByRLAnalysisId(rlAnalysisId);
                 rmsService.extractSourceEpHeaders(rlModelDataSourceOp.get().getInstanceId(), rlModelDataSourceOp.get().getRlId(),
                         rlModelDataSourceOp.get().getRlDataSourceName(), rlAnalysisOptional.get().getProjectId(), epPoints, analysis, fpCodes);
                 return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
