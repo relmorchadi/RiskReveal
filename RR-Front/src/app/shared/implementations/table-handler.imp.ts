@@ -505,15 +505,21 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
       _.forEach(_.filter(this._visibleColumns, column => column.filterCriteria), (col: Column) => {
         filters.push({
-          column: col.displayName,
-          value: col.filterCriteria
+          Column: col.displayName,
+          Filter: col.filterCriteria
         })
       });
 
+      let columnsHeader = _.map(this._visibleColumns, col => col.displayName);
+      let columnsField = _.map(this._visibleColumns, col => col.columnName);
+      let columnsType;
+
+
+
       this.excel.exportAsExcelFile(
           [
-            { sheetData: plts, sheetName: "Data"},
-            { sheetData: filters, sheetName: "Filters"}
+            { sheetData: _.map(plts, plt => this.transformItem(columnsHeader, columnsField, plt)), sheetName: "Data", headerOptions: columnsHeader},
+            { sheetData: filters, sheetName: "Filters" ,headerOptions: ["Column", "Filter"]}
           ],
           `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
       )
@@ -586,6 +592,14 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
       const newSelection = { ...this._selectedIds, ...newIds };
       this.updateSelectedIDs(newSelection);
     })
+  }
+
+  private transformItem(columnsHeader, columnsField, item) {
+    let newItem= {};
+    _.forEach(columnsField, (field, i) => {
+      newItem[columnsHeader[i]] = item[field];
+    });
+    return newItem;
   }
 
   private handlePLTClickWithKey(id: number, i: number, isSelected: boolean, $event: MouseEvent) {

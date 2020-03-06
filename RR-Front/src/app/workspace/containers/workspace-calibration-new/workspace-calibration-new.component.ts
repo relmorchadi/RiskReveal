@@ -797,27 +797,50 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   exportEPMetrics() {
     let exportedList = [];
+    let columnsHeader = _.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], 'header'), e => e);
+    const columnsField = _.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], 'field'), e => e != 'arrow');
     let item = null;
 
     _.forEach(this.data, pure => {
-      item = this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId];
-
-      exportedList.push({..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]});
+      item = {..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]};
+      exportedList.push(this.transformItem(columnsHeader, columnsField, item));
 
       _.forEach(pure.threads, thread => {
-        exportedList.push({..._.omit(thread, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId]});
+        exportedList.push(this.transformItem(columnsHeader, columnsField, item));
       })
 
     });
 
     if(item) {
-      console.log(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], e => e.header), item);
 
       this.excel.exportAsExcelFile(
-          [{sheetData: exportedList, sheetName: "Main", headerOptions: _.keys(exportedList[0])}],
+          [
+              {
+                sheetData: exportedList,
+                sheetName: "Main",
+                headerOptions: _.values(_.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], e => e.header), e => e))
+              },
+              {
+                sheetData: _.map(this.tableConfig.filterData, (v,k) => ({
+                  Filter: v,
+                  Column: columnsHeader[_.findIndex(columnsField, e => e == k)]
+                })),
+                sheetName: "Filters",
+                headerOptions: ["Column", "Filter"]
+              }
+              ],
           'EP Metrics-Calibration'
       )
+
     }
+  }
+
+  transformItem(columnsHeader, columnsField, item) {
+    let newItem= {};
+    _.forEach(columnsField, (field, i) => {
+      newItem[columnsHeader[i]] = item[field];
+    });
+    return newItem;
   }
 
   deltaChange(newDelta) {
@@ -867,7 +890,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.isFrozenManageColumnsVisible = false;
         break;
 
-      case "Close":
+      case "Close Column Manager":
         this.isFrozenManageColumnsVisible= false;
         break;
 
