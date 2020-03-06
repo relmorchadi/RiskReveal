@@ -1,4 +1,10 @@
-import {Component, Input, OnDestroy, OnInit} from "@angular/core";
+
+/*
+ * Date : 20/2/2020.
+ * Author : Reda El Morchadi
+ */
+
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from "@angular/core";
 
 @Component({
     selector: 'exposures-left-menu',
@@ -8,7 +14,7 @@ import {Component, Input, OnDestroy, OnInit} from "@angular/core";
 export class ExposuresLeftMenuComponent implements OnInit, OnDestroy {
 
     @Input("leftMenuConfig") leftMenuConfig: any;
-
+    @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(){
 

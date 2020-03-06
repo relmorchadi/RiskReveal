@@ -29,6 +29,7 @@ import static java.util.stream.Collectors.toList;
  * @author Ayman IKAR
  * @created 19/12/2019
  */
+
 @Service
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
@@ -138,7 +139,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             List<Long> analysis = Collections.singletonList(rlAnalysisOptional.get().getRlId());
             Optional<RLModelDataSource> rlModelDataSourceOp = rlModelDataSourceRepository.findById(rlAnalysisOptional.get().getRlModelDataSourceId());
             if (rlModelDataSourceOp.isPresent()) {
-                rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(analysis);
+                rlSourceEpHeaderRepository.deleteByRLAnalysisId(rlAnalysisId);
                 rmsService.extractSourceEpHeaders(rlModelDataSourceOp.get().getInstanceId(), rlModelDataSourceOp.get().getRlId(),
                         rlModelDataSourceOp.get().getRlDataSourceName(), rlAnalysisOptional.get().getProjectId(), epPoints, analysis, fpCodes);
                 return rlSourceEPHeaderViewRepository.findByRLAnalysisId(rlAnalysisId);
@@ -366,10 +367,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
     }
 
-    /*private List<String> getPortfolioCurrencies(Long rlPortfolioId){
-
-    }*/
-
     @Override
     public void clearProjectAndLoadDefaultDataSources(Long projectId) {
         rlModelDataSourceRepository.findByProjectId(projectId)
@@ -377,5 +374,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 .forEach(ds -> {
                     rlModelDataSourceRepository.deleteRLModelDataSourceById(ds.getRlModelDataSourceId());
                 });
+    }
+
+    @Override
+    public void deleteAnalysisSummary(List<Long> rlAnalysisId, Long projectId) {
+        rlAnalysisId.stream()
+                .forEach(id -> rlImportSelectionRepository.deleteByRlAnalysisIdAndProjectId(id, projectId));
+    }
+
+    @Override
+    public void deletePortfolioSummary(List<Long> rlPortfolioId, Long projectId) {
+        rlPortfolioId.stream()
+                .forEach(id -> rlPortfolioSelectionRepository.deleteByPortfolioIdAndProjectId(id,projectId));
     }
 }

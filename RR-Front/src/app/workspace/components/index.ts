@@ -22,6 +22,7 @@ import {NonLinearAdjustmentTableComponent} from "./calibration-new/non-linear-ad
 import {ExposuresMainTableComponent} from "./exposures/exposures-main-table/exposures-main-table.component";
 import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-header.component";
 import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
+import {ExposuresRightMenuComponent} from "./exposures/exposures-right-menu/exposures-right-menu.component";
 import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
 import {CalibrationColumnManagerComponent} from "./calibration-new/column-manager/column-manager.component";
 
@@ -50,6 +51,7 @@ export const COMPONENTS = [
     ExposuresMainTableComponent,
     ExposuresHeaderComponent,
     ExposuresLeftMenuComponent,
+    ExposuresRightMenuComponent,
     DatasourceListComponent,
     CalibrationColumnManagerComponent
 ];

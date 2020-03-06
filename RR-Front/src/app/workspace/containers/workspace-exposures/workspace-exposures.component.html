@@ -11,16 +11,26 @@
     </div>
     <div class="exposures-table-container">
       <div class="exposures-header">
-        <exposures-header>
+        <exposures-header (actionDispatcher)="headerActionDispatcher($event)"
+                          [selectedHeaderConfig]="selectedHeaderConfig"
+                          [headerConfig]="headerConfig$ | async">
 
         </exposures-header>
       </div>
 
       <div class="exposures-main-table">
         <exposures-main-table (actionDispatcher)="mainTableActionDispatcher($event)"
-                              [tableConfig]="tableConfig">
+                              [sortConfig]="sortConfig"
+                              [tableColumnsConfig]="tableColumnsConfig$ | async"
+                              [tableConfig]="tableConfig$ | async">
         </exposures-main-table>
       </div>
+    </div>
+    <div class="exposures-right-menu">
+      <exposures-right-menu (actionDispatcher)="rightMenuActionDispatcher($event)"
+                            [rightMenuConfig]="rightMenuConfig$ | async">
+
+      </exposures-right-menu>
     </div>
 
   </div>

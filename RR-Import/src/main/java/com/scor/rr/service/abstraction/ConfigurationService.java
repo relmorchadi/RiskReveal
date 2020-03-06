@@ -57,4 +57,8 @@ public interface ConfigurationService {
     void deleteRlDataSource(Long rlDataSourceId);
 
     void clearProjectAndLoadDefaultDataSources(Long projectId);
+
+    void deleteAnalysisSummary(List<Long> rlAnalysisId, Long projectId);
+
+    void deletePortfolioSummary(List<Long> rlPortfolioId, Long projectId);
 }

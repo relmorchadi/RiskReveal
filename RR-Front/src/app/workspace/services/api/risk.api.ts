@@ -194,7 +194,13 @@ export class RiskApi {
 
     saveAnalysisConfig(analysisConfig) {
         return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
-
     }
 
+    deletePortfolioSummary(rlPortfolioId: any, projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-portfolio-summary`, {params: {projectId, rlPortfolioId}});
+    }
+
+    deleteAnalysisSummary(rlAnalysisId: any, projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-analysis-summary`, {params: {projectId, rlAnalysisId}});
+    }
 }
