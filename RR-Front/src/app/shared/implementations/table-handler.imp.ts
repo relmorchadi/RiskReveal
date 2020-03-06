@@ -512,9 +512,6 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
       let columnsHeader = _.map(this._visibleColumns, col => col.displayName);
       let columnsField = _.map(this._visibleColumns, col => col.columnName);
-      let columnsType;
-
-
 
       this.excel.exportAsExcelFile(
           [
