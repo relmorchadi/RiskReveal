@@ -127,6 +127,7 @@ public class ELTToPLTConverter extends AbstractWriter {
         Map<String, List<PltHeaderEntity>> pltsByPeqt = new HashMap<>();
         Map<Long, TransformationBundle> bundleForPLT = new HashMap<>();
 
+        // loop trough each bundle/ELT and generate the associated PLT Headers
         for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
             RLImportSelection sourceResult = bundle.getSourceResult();
             Map<String, Long> fpRRAnalysis = transformationPackage.getMapAnalysisRRAnalysisIds().get(String.valueOf(sourceResult.getRlImportSelectionId()));
@@ -147,6 +148,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 }
                 continue;
             }
+            // Generate list of TargetRaps associated with the given ELT
             List<TargetRapEntity> targetRapEntities = analysisIncludedTargetRAPRepository.findByModelAnalysisId(bundle.getModelAnalysis().getRrAnalysisId())
                     .map(AnalysisIncludedTargetRAPEntity::getTargetRAPId)
                     .map(targetRAPRepository::findById)
@@ -164,6 +166,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 continue;
             }
 
+            // Generate PLT Headers (One per TargetRap)
             List<PltHeaderEntity> pltHeaderEntities = makePurePLTHeaders(bundle, targetRapEntities, modelingBasis);
             if (pltHeaderEntities == null || pltHeaderEntities.isEmpty()) {
 //                log.error("RRLT {} has no PLTs, dataset {} error", bundle.getConformedELTHeader().getId(), bundle.getConformedELTHeader().getRepresentationDataset().getId());
@@ -178,6 +181,7 @@ public class ELTToPLTConverter extends AbstractWriter {
 //            double threshold = truncator.getThresholdFor(region, peril, currency, "PLT");
             double threshold = 0.0;
 
+            // Generate Headers for each ELT / TargetRap Combination
             for (PltHeaderEntity pltHeaderEntity : pltHeaderEntities) {
                 PLTBundle pltBundle = new PLTBundle();
                 pltBundle.setHeader(pltHeaderEntity);
@@ -242,6 +246,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             nbLauncher += entry.getValue().size() / chunkSize + 1;
         }
         CountDownLatch launcherCountDown = new CountDownLatch(nbLauncher);
+        // For each PEQT
         for (Map.Entry<String, List<PltHeaderEntity>> entry : pltsByPeqt.entrySet()) {
             log.debug("Running ELT2PLT convertor for PEQT file {}", entry.getKey());
             BinFile peqtFile = new BinFile(entry.getKey(), peqtPath, null);
@@ -253,6 +258,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 List<PltHeaderEntity> scorPLTHeaderEntities = entry.getValue().subList(start, end);
 //////                List<ScorPLTHeader> scorPLTHeaders = entry.getValue();
                 Map<Long, Map<Long, ELTLossBetaConvertFunction>> convertFunctionMapForPLT = new HashMap<>(scorPLTHeaderEntities.size());
+                // Loop trough each PLT header associated with the given PEQT
                 for (PltHeaderEntity scorPltHeaderEntity : scorPLTHeaderEntities) {
                     TransformationBundle bundle = bundleForPLT.get(scorPltHeaderEntity.getPltHeaderId());
                     if (bundle != null) {
@@ -275,6 +281,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         convertFunctionMapForPLT.put(scorPltHeaderEntity.getPltHeaderId(), convertFunctionMap);
                     }
                 }
+                log.debug("Call executor for {}",peqtFile.getFileName());
                 executor.execute(new TreatyBatchLauncher(launcherCountDown, peqtFile, scorPLTHeaderEntities, convertFunctionMapForPLT));
             }
         }

@@ -22,8 +22,9 @@ public class TaskPoolConfiguration implements AsyncConfigurer {
     @Bean("importExecutor")
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor=new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(MAX_POOL_SIZE);
-        executor.setCorePoolSize(CORE_POOL_SIZE);
+//        executor.setCorePoolSize(MAX_POOL_SIZE);
+//        executor.setCorePoolSize(CORE_POOL_SIZE);
+        executor.setCorePoolSize(1);
         executor.setQueueCapacity(QUEUE_CAPACITY);
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.setThreadNamePrefix("Import-Executor");

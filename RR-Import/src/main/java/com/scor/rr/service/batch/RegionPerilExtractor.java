@@ -124,7 +124,7 @@ public class RegionPerilExtractor {
         if (sourceResultIdsInput != null) {
             String[] sourceResultIds = sourceResultIdsInput.split(";");
 
-            log.debug(">>>> Creation of RRAnalysis");
+            log.debug(">>>> Creation of RRAnalysis and Extraction of ELT");
             for (String sourceResultId : sourceResultIds) {
 
                 RLImportSelection sourceResult;
@@ -209,6 +209,7 @@ public class RegionPerilExtractor {
 
                 ModelAnalysisEntity modelAnalysisEntityLambda = rrAnalysisRepository.saveAndFlush(modelAnalysisEntity);
 
+                // Please follow up with Shaun Bevan and Huw on this FAC Specific
                 if (marketChannel.equalsIgnoreCase("Fac") && (sourceResult.getTargetRaps() == null || sourceResult.getTargetRaps().isEmpty())) {
                     List<Map<String, Object>> analysis = rmsService.getByQuery(EmbeddedQueries.REGION_PERIL_QUERY.replaceAll(":rdm:", sourceResult.getRlAnalysis().getRdmName()),
                             rlModelDataSource.isPresent() ? rlModelDataSource.get().getInstanceId() : instanceId,
@@ -251,6 +252,7 @@ public class RegionPerilExtractor {
                     analysisCurrencyEntity = currencyRepository.findByCode("USD");
                 }
 
+                // Create source loss data table header
                 LossDataHeaderEntity sourceRRLT = makeSourceRRLT(modelAnalysisEntity, sourceResult, sourceResult.getFinancialPerspective(), analysisCurrencyEntity);
 
                 CurrencyEntity targetCurrencyEntity;
@@ -261,6 +263,7 @@ public class RegionPerilExtractor {
                     targetCurrencyEntity = currencyRepository.findByCode("USD");
                 }
 
+                // Create conformed loss data table header
                 LossDataHeaderEntity conformedRRLT = makeConformedRRLT(modelAnalysisEntity, sourceRRLT, targetCurrencyEntity);
 
                 bundle.setFinancialPerspective(sourceResult.getFinancialPerspective());
