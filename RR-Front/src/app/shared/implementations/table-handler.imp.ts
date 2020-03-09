@@ -22,6 +22,7 @@ import {ExcelService} from "../services/excel.service";
 import {Store} from "@ngxs/store";
 import {WorkspaceState} from "../../workspace/store/states";
 import {SaveGlobalTableColumns, SaveGlobalTableData, SaveGlobalTableSelection} from "../../workspace/store/actions";
+import {ColumnsFormatterService} from "../services/columnsFormatter.service";
 
 @Injectable()
 export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
@@ -83,7 +84,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
   protected containerWidth: number;
 
-  constructor(private excel: ExcelService, private store: Store) {
+  constructor(private excel: ExcelService, private store: Store, private formatter: ColumnsFormatterService) {
     this.unsubscribe$ =  new Subject<void>();
 
     this.columns$ = new BehaviorSubject([]);
@@ -506,16 +507,23 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
       _.forEach(_.filter(this._visibleColumns, column => column.filterCriteria), (col: Column) => {
         filters.push({
           Column: col.displayName,
-          Filter: col.filterCriteria
+          Filter: col.filterCriteria ?  this.formatter.format(col.filterCriteria, col.dataDisplayType) : null
         })
       });
 
-      let columnsHeader = _.map(this._visibleColumns, col => col.displayName);
-      let columnsField = _.map(this._visibleColumns, col => col.columnName);
+      let columnsHeader = [],
+          columnsField = [],
+          columnsType = [];
+
+      _.forEach(this._visibleColumns, (col, i) => {
+        columnsHeader[i] = col.displayName;
+        columnsField[i] = col.columnName;
+        columnsType[i] = col.dataDisplayType;
+      });
 
       this.excel.exportAsExcelFile(
           [
-            { sheetData: _.map(plts, plt => this.transformItem(columnsHeader, columnsField, plt)), sheetName: "Data", headerOptions: columnsHeader},
+            { sheetData: _.map(plts, plt => this.transformItem(columnsHeader, columnsField, columnsType, plt)), sheetName: "Data", headerOptions: columnsHeader},
             { sheetData: filters, sheetName: "Filters" ,headerOptions: ["Column", "Filter"]}
           ],
           `PLTList-${this.params.workspaceContextCode}-${this.params.workspaceUwYear}`
@@ -591,10 +599,10 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     })
   }
 
-  private transformItem(columnsHeader, columnsField, item) {
+  private transformItem(columnsHeader, columnsField, columnsType, item) {
     let newItem= {};
     _.forEach(columnsField, (field, i) => {
-      newItem[columnsHeader[i]] = item[field];
+      newItem[columnsHeader[i]] = item[field] ? this.formatter.format(item[field], columnsType[i]) : null;
     });
     return newItem;
   }

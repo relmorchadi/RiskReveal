@@ -20,10 +20,10 @@ import { TrimFormatPipe } from './pipes/trim-format.pipe';
 import { TrimSecondaryFormatPipe } from './pipes/trim-secondary-format.pipe';
 import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
-import { RRDatePipe } from './pipes/rr-date.pipe';
+import {SERVICES} from "./services";
 
 @NgModule({
-  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe, RRDatePipe],
+  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -44,7 +44,7 @@ import { RRDatePipe } from './pipes/rr-date.pipe';
     NgxEchartsModule,
     AngularResizeElementModule
   ],
-  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe, DecimalPipe, ...SERVICES, ...PIPES],
   exports: [
     CommonModule,
     NgZorroAntdModule,
@@ -64,7 +64,7 @@ import { RRDatePipe } from './pipes/rr-date.pipe';
     ProgressSpinnerModule,
     ...COMPONENTS,
     ...PIPES,
-      ...DIRECTIVES
+    ...DIRECTIVES
   ]
 })
 export class SharedModule { }

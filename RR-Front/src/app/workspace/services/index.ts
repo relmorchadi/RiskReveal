@@ -11,7 +11,5 @@ export const SERVICE = [
   PltApi,
   TagsApi,
   HelperService,
-  PreviousNavigationService,
-  ExcelService,
-  ColumnsFormatterService
+  PreviousNavigationService
 ];

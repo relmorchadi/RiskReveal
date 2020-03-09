@@ -4,10 +4,9 @@ import {GeneralConfigState} from "../../core/store/states";
 import * as _ from "lodash";
 import {DecimalPipe} from "@angular/common";
 import {RRDatePipe} from "../pipes";
+import * as moment from 'moment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ColumnsFormatterService {
 
   numberConfig: {
@@ -17,9 +16,21 @@ export class ColumnsFormatterService {
     negativeFormat: string;
   };
 
-  constructor(private store: Store, private numberPipe: DecimalPipe, private datePipe: RRDatePipe) {
+  dateConfig: {
+    shortDate: string;
+    longDate: string;
+    shortTime: string;
+    longTime: string;
+    timeZone: string;
+  };
+
+  constructor(private store: Store, private numberPipe: DecimalPipe) {
     this.store.select(GeneralConfigState.getNumberFormatConfig).subscribe( ({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat, numberHistory }) => {
       this.numberConfig = { numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat };
+    });
+
+    this.store.select(GeneralConfigState.getDateConfig).subscribe((dateConfig) => {
+      this.dateConfig = dateConfig;
     })
   }
 
@@ -62,7 +73,8 @@ export class ColumnsFormatterService {
   }
 
   formatDate(d) {
-    return this.datePipe.transform(d, 'longFormat', 'date');
+    console.log(this.dateConfig.longDate)
+    return moment(new Date(d), 'DD/MM/YYYY').format(this.dateConfig.longDate);
   }
 
   formatIndicator(i) {

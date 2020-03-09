@@ -13,6 +13,8 @@ export class RRDatePipe implements PipeTransform {
 
   constructor(private userPref: UserPreferenceService) {
 
+    console.log('init date pipe');
+
     const dateConfig = this.userPref.getDateConfig();
     this.shortDate = dateConfig.shortDate;
     this.longDate = dateConfig.longDate;
@@ -21,6 +23,7 @@ export class RRDatePipe implements PipeTransform {
   }
 
   transform(value: any, dateFormat: any, timeOrDate): any {
+    console.log(this.longDate, this.shortDate);
     if (dateFormat === 'shortFormat') {
       return moment(value, 'DD/MM/YYYY').format(timeOrDate === 'time' ? this.shortTime : this.shortDate);
     } else {
