@@ -246,7 +246,7 @@ public class SearchService {
         if (!CollectionUtils.isEmpty(contracts)) {
             UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), user.getUserId());
-            this.workspaceService.openTab(workspaceId, Integer.valueOf(uwy));
+            this.workspaceService.openTab(workspaceId, Integer.valueOf(uwy), "Projects");
             return buildTtyWS(
                     contracts,
                     years,
@@ -268,7 +268,7 @@ public class SearchService {
             Optional<FacContractCurrency> currency = this.facContractCurrencyRepository.findById(wsOpt.get().getWorkspaceId());
             UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             this.recentWorkspaceRepository.toggleRecentWorkspace(workspaceId, Integer.valueOf(uwy), user.getUserId());
-            this.workspaceService.openTab(workspaceId, Integer.valueOf(uwy));
+            this.workspaceService.openTab(workspaceId, Integer.valueOf(uwy), "Projects");
             return buildFacWS(
                     wsOpt.get(),
                     projects,
