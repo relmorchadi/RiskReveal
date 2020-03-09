@@ -37,7 +37,7 @@ export abstract class BaseContainer implements OnInit {
                 decimalThousandSeparator,
                 negativeFormat
               };
-              this._baseCdr.detectChanges();
+              this.detectChanges();
             }
         );
   }

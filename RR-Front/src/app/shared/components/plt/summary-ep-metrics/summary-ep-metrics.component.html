@@ -54,13 +54,21 @@
       <nz-tab [nzTitle]="table">
           <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
           <div class="metric-table-content">
-            <p-table [value]="rps" [columns]="epMetricsTableConfig.columns"
+            <p-table [value]="rps" [resizableColumns]="true" [columns]="epMetricsTableConfig.columns"
                      [scrollable]="true"
                      class="table metric-table">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col  [style.width.px]="100">
+                  <col *ngFor="let col of columns" [style]="{'width': 160 + 'px' }">
+                </colgroup>
+              </ng-template>
               <ng-template pTemplate="header" let-columns>
                 <tr>
                   <th style="width: 100px;">Return Period</th>
-                  <th style="width: 160px;text-align: right;" *ngFor="let col of columns">{{col?.header}}</th>
+                  <th style="width: 160px;text-align: right;" *ngFor="let col of columns" pResizableColumn>
+                    {{col?.header}}
+                    <span class="ui-column-resizer" style="cursor: default !important;"></span></th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
@@ -71,7 +79,9 @@
                     {{rowData}}
                   </td>
                   <td style="width: 160px;" *ngFor="let col of epMetricsTableConfig.columns">
+                    <span class="text-elipsice">
                     {{epMetrics[col.field][rowData] | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}
+                    </span>
                   </td>
                 </tr>
               </ng-template>
@@ -102,19 +112,19 @@
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
+                      <div class="text-elipsice" nz-col nzSpan="5">{{epMetricsLosses?.purePremium | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
+                      <div class="text-elipsice" nz-col nzSpan="5">{{epMetricsLosses?.standardDeviation | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <div nz-row>
                       <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                       <div nz-col nzSpan="1">&nbsp;</div>
-                      <div nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
+                      <div class="text-elipsice" nz-col nzSpan="5">{{epMetricsLosses?.cov | exchangeRate: exchangeRates : sourceCurrency : summaryEpMetricsConfig?.selectedCurrency | financialUnit: summaryEpMetricsConfig.selectedFinancialUnit | number : '1.0-9'}}</div>
                       <div nz-col nzSpan="3">&nbsp;</div>
                   </div>
                   <!--              <ng-template pTemplate="footer" let-columns>
