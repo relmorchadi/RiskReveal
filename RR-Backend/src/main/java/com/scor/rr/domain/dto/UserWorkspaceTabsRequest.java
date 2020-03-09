@@ -8,6 +8,6 @@ public class UserWorkspaceTabsRequest {
     private Long userWorkspaceTabsId;
     private Integer workspaceUwYear;
     private String workspaceContextCode;
-    private String userCode;
+    private String screen;
 
 }

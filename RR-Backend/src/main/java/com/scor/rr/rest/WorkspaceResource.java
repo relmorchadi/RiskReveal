@@ -71,6 +71,6 @@ public class WorkspaceResource {
     ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.closeTab(request);}
 
     @PostMapping("tabs/open")
-    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear());}
+    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getScreen());}
 
 }

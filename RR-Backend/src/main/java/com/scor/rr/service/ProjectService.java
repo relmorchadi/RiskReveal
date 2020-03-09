@@ -99,6 +99,7 @@ public class ProjectService {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
         p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
+        p.setAssignedTo(user.getUserId());
         return p;
     }
 
