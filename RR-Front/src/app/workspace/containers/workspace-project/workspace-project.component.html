@@ -35,10 +35,7 @@
                    [(ngModel)]="selectedPrStatus">
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
-        <app-pin
-          [active]="!workspace?.isPinned"
-          (pinWs)="pinWorkspace()"
-        >
+        <app-pin [active]="!workspace?.isPinned" (pinWs)="pinWorkspace()">
         </app-pin>
       </div>
     </div>

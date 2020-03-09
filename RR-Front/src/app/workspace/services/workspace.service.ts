@@ -31,7 +31,7 @@ export class WorkspaceService {
           }));
           _.forEach(data, (item: any) => {
             ctx.dispatch(new fromWS.LoadWS(
-                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: 'projects', redirect: false}))
+                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: item.screen, redirect: false}))
           })
         })
     );
@@ -53,10 +53,14 @@ export class WorkspaceService {
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route, redirect} = payload;
+    const state = ctx.getState();
     const carSelected = _.get(payload, 'carSelected', null);
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-
+    ctx.dispatch([new fromWS.SetCurrentTab({
+      index: _.size(state.content),
+      wsIdentifier, redirect
+    })]);
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {
         wsId,
@@ -133,10 +137,7 @@ export class WorkspaceService {
         inuring: defaultInuringState
       };
       draft.loading = false;
-      ctx.dispatch([new fromWS.SetCurrentTab({
-        index: _.size(draft.content),
-        wsIdentifier, redirect
-      })]);
+
     }));
   }
 
@@ -186,6 +187,7 @@ export class WorkspaceService {
     const {
       index, wsIdentifier, redirect
     } = payload;
+    console.log(payload);
     return ctx.patchState(produce(ctx.getState(), draft => {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
@@ -250,10 +252,25 @@ export class WorkspaceService {
     }));
   }
 
-  updateWsRouting(ctx: StateContext<WorkspaceModel>, {wsId, route}: fromWS.UpdateWsRouting) {
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].route = route;
-    }));
+  updateWsRouting(ctx: StateContext<WorkspaceModel>, {route}: fromWS.UpdateWsRouting) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {wsId, uwYear} = state.content[wsIdentifier];
+    const openedTabInfo = _.find(state.currentTab.openedTabs, item => item.workspaceContextCode === wsId && item.workspaceUwYear === uwYear);
+    console.log(openedTabInfo);
+    const openedTab = {
+      screen: route,
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear,
+      userWorkspaceTabsId: openedTabInfo.userWorkspaceTabsId
+    };
+
+    return this.wsApi.openTab(openedTab).pipe(tap( data =>
+        ctx.patchState(produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].route = route;
+        }))
+    ))
+
   }
 
   toggleFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFavorite) {

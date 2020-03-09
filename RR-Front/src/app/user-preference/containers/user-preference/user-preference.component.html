@@ -22,21 +22,6 @@
       <nz-tab [nzTitle]="generalConfig">
         <div>
           <div class="settings-holder">
-            <!--            <span class="head-title">Search</span>
-                        <div class="settings-wrapper">
-                          <div class="user-config-item">
-                            <span>Search Target :</span>
-                            <nz-select class="dropdown-default"
-                                       style="width: 270px;"
-                                       [ngModel]="searchTarget"
-                                       (ngModelChange)="changeSearch($event)"
-                                       nzShowSearch>
-                              <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
-                              <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
-                            </nz-select>
-                          </div>
-                        </div>-->
-
             <div class="flex-horizontal-sb-layout">
               <div class="main-tab-title" style="margin-left: 5px">General</div>
               <div>
@@ -174,11 +159,6 @@
                       <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
                       <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
                     </nz-select>
-                    <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
-                                          <label nz-radio nzValue=",">,</label>
-                                          <label nz-radio nzValue=".">.</label>
-                                          <label nz-radio nzValue="'">'</label>
-                                        </nz-radio-group>-->
                   </div>
                 </div>
                 <div class="a-card-item number-config-item column-config"><span>Negative Numbers</span>
@@ -422,42 +402,6 @@
           <span>EP Curves</span>
         </ng-template>
       </nz-tab>
-      <!--      <nz-tab [nzTitle]="gamConfig">
-              <div>
-                <span class="main-tab-title">GAM Settings</span>
-                <div>
-
-                  <span class="head-title">Default Settings</span>
-                  <div class="settings-wrapper">
-                    <div class="user-config-item"><span>Generating the default thread</span></div>
-                  </div>
-                </div>
-                <div class="footer-tab-settings">
-                  <button class="button-standard">Save</button>
-                </div>
-              </div>
-              <ng-template #gamConfig>
-                <span>GAM Configuration</span>
-              </ng-template>
-            </nz-tab>
-            <nz-tab [nzTitle]="searchConfig">
-              <div>
-                <span class="main-tab-title">Search Settings</span>
-                <div>
-                  <span class="head-title">Search Result Order</span>
-
-                  <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-                    <div class="example-box" *ngFor="let item of search" cdkDrag>{{item}}</div>
-                  </div>
-                </div>
-                <div class="footer-tab-settings">
-                  <button class="button-standard">Save</button>
-                </div>
-              </div>
-              <ng-template #searchConfig>
-                <span>Search Configuration</span>
-              </ng-template>
-            </nz-tab>-->
     </nz-tabset>
   </div>
 </div>

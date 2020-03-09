@@ -152,13 +152,14 @@
         </div>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="line-height-m intro-style">Created</span>
-          <span class="line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
+          <span class="line-height-m project-kpi-creat-wrap">{{project?.createdBy}}</span>
           <span class="text-center line-height-m date-style">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="line-height-m intro-style">Last Modified</span>
-          <span class="line-height-m project-kpi-creat-wrap">{{project?.createdBy === '1' ? 'Nathalie Dulac' : project?.createdBy}}</span>
-          <span class="text-center line-height-m date-style">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+          <span class="line-height-m project-kpi-creat-wrap">{{project?.lastUpdatedBy === null ? project.createdBy : getUserNameByUserId(project?.lastUpdatedBy)}}</span>
+          <span *ngIf="project.lastUpdatedOn !== null" class="text-center line-height-m date-style">{{project?.lastUpdatedOn | date:'dd/MM/yyyy'}}</span>
+          <span *ngIf="project.lastUpdatedOn === null" class="text-center line-height-m date-style">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
         </div>
         <div class="border-top d-flex project-kpi-details-content">
           <span class="line-height-m intro-style">Assigned Analyst</span>

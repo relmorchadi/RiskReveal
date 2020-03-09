@@ -8,8 +8,12 @@
     padding-right: 15px !important;
   }
 
-  ::ng-deep .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
-    //border-left: 4px solid #00c2a8;
+  ::ng-deep {
+    .ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left {
+      border-radius: 16px;
+      background-color: #0007CF;
+      border: none;
+    }
   }
 }
 
