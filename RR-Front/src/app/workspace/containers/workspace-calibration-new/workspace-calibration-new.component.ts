@@ -13,6 +13,7 @@ import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
 import {ExcelService} from "../../../shared/services/excel.service";
 import produce from "immer";
+import {ColumnsFormatterService} from "../../../shared/services/columnsFormatter.service";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -103,7 +104,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     private calibrationTableService: CalibrationTableService,
     private calibrationApi: CalibrationAPI,
     private actions$: Actions,
-    private excel: ExcelService
+    private excel: ExcelService,
+    private formatter: ColumnsFormatterService
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -163,6 +165,14 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   ngOnInit() {
     this.workspaceCurrency= null;
+
+    this.select(WorkspaceState.getSelectedProject).subscribe( project => {
+      this.tableConfig = {
+          ...this.tableConfig,
+        filterData: project ? { ...this.tableConfig.filterData, projectId: project.projectId } : this.tableConfig.filterData
+      };
+      this.detectChanges();
+    });
 
     this.actions$.pipe(
         ofActionCompleted(fromWorkspaceStore.SaveOrDeleteRPs),
@@ -797,16 +807,21 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   exportEPMetrics() {
     let exportedList = [];
-    let columnsHeader = _.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], 'header'), e => e);
-    const columnsField = _.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], 'field'), e => e != 'arrow');
+    let columns = [
+        ..._.map(_.filter(this.columnsConfig.frozenColumns, col => col.header), c => ({field: c.field, header: c.header, type: 'text'})),
+        ..._.map(this.columnsConfig.columns, c => ({field: c.field, header: c.header, type: c.type}))
+    ];
+    let columnsHeader = _.map(columns, 'header');
+    let columnsType = _.map(columns, 'type');
+    const columnsField =_.map(columns, 'field');
     let item = null;
 
     _.forEach(this.data, pure => {
       item = {..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]};
-      exportedList.push(this.transformItem(columnsHeader, columnsField, item));
+      exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item));
 
       _.forEach(pure.threads, thread => {
-        exportedList.push(this.transformItem(columnsHeader, columnsField, item));
+        exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, thread));
       })
 
     });
@@ -835,10 +850,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     }
   }
 
-  transformItem(columnsHeader, columnsField, item) {
+  transformItem(columnsHeader, columnsField, columnsType, item) {
     let newItem= {};
     _.forEach(columnsField, (field, i) => {
-      newItem[columnsHeader[i]] = item[field];
+      newItem[columnsHeader[i]] = item[field] ? this.formatter.format(item[field], columnsType[i]) : null;
     });
     return newItem;
   }

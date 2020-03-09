@@ -153,7 +153,7 @@ export class CalibrationTableService {
     }
   }
 
-  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, width: "100", icon:'', filter: false, sort: false, align: 'right', resizable:true}));
+  generateColumns = (arr) => _.map(arr, el => ({header: el,field: el, type: 'number', width: "100", icon:'', filter: false, sort: false, align: 'right', resizable:true}));
 
   setCols = (cols, view) => {
     this[view] = this.generateColumns(cols);
