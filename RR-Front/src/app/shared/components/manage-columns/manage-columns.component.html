@@ -3,6 +3,7 @@
   [styleClass]="'m-dialog-modal-col-manager'"
   [autoZIndex]="false"
   [baseZIndex]="1"
+  [positionTop]="100"
   [closable]="false"
   [modal]="true"
   [responsive]="true"
@@ -71,16 +72,15 @@
       </div>
     </div>
 
-    <div style="display: flex;flex-direction: column;">
+    <div #scrollEl cdk-scrollable style="display: flex;flex-direction: column;">
       <h6>Show these columns in order:</h6>
-      <div
-        cdkDropList
-        [id]="'usedListOfColumns'"
-        #usedListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[availableListOfColumns]"
-        [cdkDropListData]="listOfUsedColumns"
-        class="m-box-d"
-        (cdkDropListDropped)="drop($event)">
+      <div cdkDropList
+           [id]="'usedListOfColumns'"
+           #usedListOfColumns="cdkDropList"
+           [cdkDropListConnectedTo]="[availableListOfColumns]"
+           [cdkDropListData]="listOfUsedColumns"
+           class="m-box-d"
+           (cdkDropListDropped)="drop($event)">
         <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
           <div class="m-box-drag" cdkDrag>
             <div class="m-box-overlay">

@@ -9,21 +9,28 @@ import {GeneralConfigState} from "../../core/store/states";
 
 export abstract class BaseContainer implements OnInit {
 
-  config: {
+  numberConfig: {
     numberOfDecimals: number;
     decimalSeparator: string;
     decimalThousandSeparator: string;
     negativeFormat: string;
   };
 
-  protected unSubscriton$: Subject<void>;
+  dateConfig: {
+    shortDate: '',
+    shortTime: '',
+    longDate: '',
+    longTime: ''
+  };
+
+  protected unSubscription$: Subject<void>;
 
   protected constructor(private _baseRouter: Router, private _baseCdr: ChangeDetectorRef, private _baseStore: Store) {
-    this.unSubscriton$ = new Subject<void>();
+    this.unSubscription$ = new Subject<void>();
   }
 
   get unsubscribeOnDestroy(): MonoTypeOperatorFunction<any> {
-    return takeUntil(this.unSubscriton$);
+    return takeUntil(this.unSubscription$);
   }
 
   ngOnInit() {
@@ -31,13 +38,22 @@ export abstract class BaseContainer implements OnInit {
         .select(GeneralConfigState.getNumberFormatConfig)
         .pipe(this.unsubscribeOnDestroy)
         .subscribe(({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat }) => {
-              this.config = {
+              this.numberConfig = {
                 numberOfDecimals,
                 decimalSeparator,
                 decimalThousandSeparator,
                 negativeFormat
               };
-              this._baseCdr.detectChanges();
+              this.detectChanges();
+            }
+        );
+
+    this._baseStore
+        .select(GeneralConfigState.getDateConfig)
+        .pipe(this.unsubscribeOnDestroy)
+        .subscribe((config) => {
+              this.dateConfig = config;
+              this.detectChanges();
             }
         );
   }
@@ -56,8 +72,8 @@ export abstract class BaseContainer implements OnInit {
   }
 
   protected destroy() {
-    this.unSubscriton$.next();
-    this.unSubscriton$.complete();
+    this.unSubscription$.next();
+    this.unSubscription$.complete();
   }
 
   protected dispatch(action: any | any[]): Observable<any> {

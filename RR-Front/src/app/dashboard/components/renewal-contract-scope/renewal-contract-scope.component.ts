@@ -29,6 +29,8 @@ export class RenewalContractScopeComponent implements OnInit {
   dashboard: any;
   @Input()
   identifier: number;
+  @Input()
+  dateConfig;
   newDashboard: any;
   editName = false;
 

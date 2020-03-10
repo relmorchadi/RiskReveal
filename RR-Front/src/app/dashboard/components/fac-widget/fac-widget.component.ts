@@ -54,6 +54,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     this.inputName = elRef;
   };
 
+  @Input() dateConfig;
+
   virtualScroll: any;
 
   carStatus = {"1": 'NEW', "2": 'In Progress', "3": 'Archived'};
@@ -117,6 +119,8 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
       this.dataCounterAssigned =  _.get(value, `${this.identifier}`, 10);
       this.detectChanges();
     });
+
+
   }
 
   selectTab(index) {

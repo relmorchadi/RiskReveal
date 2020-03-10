@@ -4,6 +4,10 @@
   height: 100%;
 
   ::ng-deep {
+    ::-webkit-scrollbar {
+      height: 12px;
+    }
+
     nz-spin.ant-spin-nested-loading {
       height: 100%;
       .ant-spin-container {

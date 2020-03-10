@@ -175,8 +175,9 @@
 </ng-template>
 
 <ng-template #number let-data>
-  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;text-align: right">
-     {{ data | number : '1.0-3'}}
+  <div    appRrNumber [number]="data" [config]="numberConfig"
+          class="text-ellipsis"
+          style="font-size: 12px;font-weight: 400;text-align: right">
   </div>
 </ng-template>
 
@@ -188,7 +189,7 @@
 
 <ng-template #date let-data>
   <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;">
-    {{data | date}}
+    {{data | rRDate: 'shortFormat' : 'date' : dateConfig}}
   </div>
 </ng-template>
 
