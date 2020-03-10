@@ -43,7 +43,7 @@ export class WorkspaceService {
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear, type)
       .pipe(
-        mergeMap(ws => {
+        tap(ws => {
           return ctx.dispatch(new fromWS.LoadWsSuccess({
           wsId, uwYear, ws, route, carSelected, redirect
         }))}),
@@ -139,11 +139,14 @@ export class WorkspaceService {
           inuring: defaultInuringState
         };
         draft.loading = false;
+        draft.currentTab = {...draft.currentTab,
+          index: _.findIndex(_.keys(draft.content), item => item === wsIdentifier),
+          wsIdentifier: wsIdentifier
+        }
       }));
-      ctx.dispatch([new fromWS.SetCurrentTab({
-        index: _.size(state.content),
-        wsIdentifier, redirect
-      })]);
+      if (redirect == null) {
+        ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
+      }
     }));
 
   }

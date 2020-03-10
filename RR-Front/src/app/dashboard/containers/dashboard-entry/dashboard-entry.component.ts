@@ -69,6 +69,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.dispatch([new LoadReferenceWidget()]);
 
     this.refWidget$.pipe().subscribe( value => {
