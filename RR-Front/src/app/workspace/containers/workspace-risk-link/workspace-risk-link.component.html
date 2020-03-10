@@ -292,7 +292,8 @@
                            syncScroll
                            [class]="'portfolio-table'"
                            [classIdentifier]="'portfolio-table'"
-                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading">
+                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading"
+                           (onSort)="sortPortfolio($event)" [customSort]="true">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -364,7 +365,8 @@
                              syncScroll
                              [class]="'analysis-table'"
                              [classIdentifier]="'analysis-table'"
-                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading">
+                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading"
+                             (onSort)="sortAnalysis($event)" [customSort]="true">
                       <!--  -->
                       <ng-template pTemplate="colgroup" let-columns>
                         <colgroup>

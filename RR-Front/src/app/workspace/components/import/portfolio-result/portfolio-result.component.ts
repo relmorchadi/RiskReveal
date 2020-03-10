@@ -90,7 +90,6 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
 
     updateRowData(key, value, index) {
-        console.log('Update Row data', {key, value, index})
         this.store.dispatch(new fromRiskLink.PatchPortfolioResultAction({
             key, value, index
         }))

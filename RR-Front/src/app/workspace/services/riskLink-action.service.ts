@@ -629,12 +629,12 @@ export class RiskLinkStateService {
 
 
     getRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
-        const {rdmId, projectId, instanceId, paginationParams, userId, filter} = payload;
+        const {rdmId, projectId, instanceId, paginationParams, userId, filter, sort} = payload;
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.analysis.loading = true;
         }));
-        return this.riskApi.filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter)
+        return this.riskApi.filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, sort)
             .pipe(mergeMap(({content, number, size, totalElements, last}: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
@@ -657,12 +657,12 @@ export class RiskLinkStateService {
     }
 
     getRiskLinkPortfolios(ctx: StateContext<WorkspaceModel>, payload) {
-        const {edmId, projectId, instanceId, paginationParams, userId, filter} = payload;
+        const {edmId, projectId, instanceId, paginationParams, userId, filter, sort} = payload;
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
             draft.content[wsIdentifier].riskLink.portfolios.loading = true;
         }));
-        return this.riskApi.filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter)
+        return this.riskApi.filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, sort)
             .pipe(mergeMap(({content, number, size, totalElements, last}: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
                         const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');

@@ -47,7 +47,7 @@ export class RiskApi {
         });
     }
 
-    filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, withPagination = true) {
+    filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, sort, withPagination = true) {
         return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-analysis`, {
             params: {
                 ...paginationParams,
@@ -55,12 +55,13 @@ export class RiskApi {
                 projectId,
                 rdmId,
                 userId,
-                withPagination, ...filter
+                withPagination, ...filter,
+                sort
             }
         });
     }
 
-    filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, withPagination = true) {
+    filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, sort, withPagination = true) {
         return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-portfolio`, {
             params: {
                 ...paginationParams,
@@ -68,7 +69,8 @@ export class RiskApi {
                 projectId,
                 edmId,
                 userId,
-                withPagination, ...filter
+                withPagination, ...filter,
+                sort
             }
         });
     }
