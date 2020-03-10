@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -27,6 +27,7 @@ import {NotificationService} from '../../../shared/services';
 import {debounceTime, take} from 'rxjs/operators';
 import {FormControl} from "@angular/forms";
 import {Debounce} from "../../../shared/decorators";
+import {GeneralConfigState} from "../../../core/store/states";
 
 @Component({
     selector: 'app-workspace-risk-link',
@@ -133,6 +134,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     @Select(WorkspaceState.getRiskLinkPortfolioSummary)
     portfolioSummary$;
 
+    @Select(GeneralConfigState.getImportConfig)
+    importConfig$;
+    importConfig;
+
     filterAnalysis = {
         rlId: '',
         analysisName: '',
@@ -161,10 +166,24 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         peril: '',
     };
 
+    sortParams = {analysis: {}, portfolio: {}};
+
     datasourceKeywordFc: FormControl;
+
+    dataSourcesSelectedIndex;
+
+    dataSourcesContextMapping = {
+        0: null,
+        1: 'EDM',
+        2: 'RDM',
+    };
 
     readonly analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
     readonly portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
+    readonly sortMapper = {
+        '1': 'asc',
+        '-1': 'desc'
+    };
 
     constructor(
         private _helper: HelperService,
@@ -209,6 +228,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             this.loadSummaryOrDefaultDataSources();
             this.detectChanges();
         });
+        this.importConfig$.pipe(this.unsubscribeOnDestroy)
+            .subscribe(val => this.importConfig=val);
+
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
             this.importInit();
@@ -340,7 +362,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }));
     }
 
-    resetDefaultSelection(){
+    resetDefaultSelection() {
         if (this.selectedProject)
             this.dispatch(new fromWs.ResetToDefaultSelectionAction({
                 projectId: this.selectedProject.projectId,
@@ -361,32 +383,55 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.wsIdentifier = wsIdentifier;
     }
 
+    toggleDatasourcesDisplay(type?) {
+        this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+        this._dataSourcesDropdownInit();
+        setTimeout(() => {
+            this.searchInput.nativeElement.focus();
+        })
+    }
 
-    lazyLoadDataSources(lazyLoadEvent) {
-        const {first, rows} = lazyLoadEvent;
+    changeDataSourcesTabs(tabEvent){
+        console.log('Change DataSources Tab', tabEvent);
+        // this._dataSourcesDropdownInit();
+        setTimeout(() => {
+            this.searchInput.nativeElement.focus();
+        })
+    }
+
+    lazyLoadDataSources(lazyLoadEvent, type?) {
+        console.log('Lazy load dataSources', lazyLoadEvent, type,this.state.listEdmRdm.totalElements);
+        const {first, rows} = lazyLoadEvent.$event;
         if (first + rows < this.state.listEdmRdm.totalElements) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                 keyword: this.datasourceKeywordFc.value,
                 offset: first,
                 size: rows,
+                type
             }));
         }
     }
 
-    toggleDatasourcesDisplay() {
-        this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    onInputSearch(keyword) {
+        this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            keyword, offset: 0, size: '100',
+            type: this.dataSourcesContextMapping[this.dataSourcesSelectedIndex] || null
+        }));
+        this.detectChanges();
+    }
+
+    private _dataSourcesDropdownInit(){
         if (this.displayDropdownRDMEDM) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                 keyword: '',
                 offset: 0,
                 size: 100,
+                type: this.dataSourcesContextMapping[this.dataSourcesSelectedIndex] || null
             }));
         }
-        setTimeout(() => {
-            this.searchInput.nativeElement.focus();
-        })
     }
 
     setFilterDivision() {
@@ -412,13 +457,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         })]);
     }
 
-    onInputSearch(keyword) {
-        this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-            keyword, offset: 0, size: '100'
-        }));
-        this.detectChanges();
-    }
+
 
     /** Manage Columns Method's */
 
@@ -448,6 +487,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     toggleItemsListRDM(datasource) {
         const {rmsId, type} = datasource;
+        this.sortParams = {analysis: {}, portfolio: {}};
         this.dispatch([new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction({
             instanceId: datasource.instanceId,
             projectId: this.selectedProject.projectId,
@@ -467,7 +507,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     /** Select EDM & RDM DropDown Method's */
-    toggleItems(RDM, event, source) {
+    toggleItems(RDM, event, source, type?) {
         this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
         if (event !== null) {
             event.stopPropagation();
@@ -686,6 +726,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.getRiskLinkPortfolio(page, rows);
     }
 
+    sortPortfolio({field, order}) {
+        this.sortParams.portfolio = {[field]: order};
+        this.getRiskLinkPortfolio();
+    }
+
+    sortAnalysis({field, order}) {
+        this.sortParams.analysis = {[field]: order};
+        this.getRiskLinkAnalysis();
+    }
+
     @Debounce()
     private getRiskLinkAnalysis(page = this.state.analysis.page, size = this.state.analysis.size) {
         return this.dispatch(new fromWs.GetRiskLinkAnalysisAction({
@@ -694,7 +744,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             projectId: this.selectedProject.projectId,
             instanceId: this.state.selection.rdms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterAnalysis),
-            userId: 1
+            userId: 1,
+            sort: _.reduce(this.sortParams.analysis, (acc, value, key) => acc + key + ',' + this.sortMapper[value], '')
         }));
     }
 
@@ -706,7 +757,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             projectId: this.selectedProject.projectId,
             instanceId: this.state.selection.edms[this.state.selection.currentDataSource].instanceId,
             filter: this.parseFilter(this.filterPortfolio),
-            userId: 1
+            userId: 1,
+            sort: _.reduce(this.sortParams.portfolio, (acc, value, key) => acc + key + ',' + this.sortMapper[value], '')
         }));
     }
 
@@ -947,9 +999,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }
         if (this.tabStatus == 'FAC') {
             const carId = this.selectedProject.carRequestId;
-            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId}));
+            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId, config: this.importConfig}));
         } else {
-            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null}));
+            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null, config: this.importConfig}));
         }
     }
 

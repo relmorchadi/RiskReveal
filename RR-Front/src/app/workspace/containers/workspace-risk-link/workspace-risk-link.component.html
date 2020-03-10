@@ -150,17 +150,52 @@
                     <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All"
                        (click)="unselectAll()" nzPlacement="bottom" class="icon-minus-square"></i>
                   </div>
-                  <nz-tabset class="a-tab-minitab">
+                  <nz-tabset class="a-tab-minitab" [(nzSelectedIndex)]="dataSourcesSelectedIndex"
+                             (nzSelectedIndexChange)="changeDataSourcesTabs($event)">
                     <nz-tab nzTitle="EDM & RDM">
+                      <ng-template nz-tab>
                         <datasource-list [data]="listEdmRdm?.data"
-                                             [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
-                                             (lazyLoad)="lazyLoadDataSources($event)"
-                                             (select)="toggleItems($event.item, $event.$event, $event.link)">
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event)"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link)">
 
                         </datasource-list>
-                      <div class="search-bar-result-button">
-                        <button (click)="scanDataSources()" class="a-buttons-contained">ADD</button>
-                      </div>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
+                    </nz-tab>
+                    <nz-tab nzTitle="EDM">
+                      <ng-template nz-tab>
+                        <datasource-list [data]="listEdmRdm?.data"
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event, 'EDM')"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link, 'EDM')">
+
+                        </datasource-list>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
+                    </nz-tab>
+                    <nz-tab nzTitle="RDM">
+                      <ng-template nz-tab>
+                        <datasource-list [data]="listEdmRdm?.data"
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event,'RDM')"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link, 'RDM')">
+
+                        </datasource-list>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
                     </nz-tab>
                   </nz-tabset>
                 </div>
@@ -292,7 +327,8 @@
                            syncScroll
                            [class]="'portfolio-table'"
                            [classIdentifier]="'portfolio-table'"
-                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading">
+                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading"
+                           (onSort)="sortPortfolio($event)" [customSort]="true">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -364,7 +400,8 @@
                              syncScroll
                              [class]="'analysis-table'"
                              [classIdentifier]="'analysis-table'"
-                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading">
+                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading"
+                             (onSort)="sortAnalysis($event)" [customSort]="true">
                       <!--  -->
                       <ng-template pTemplate="colgroup" let-columns>
                         <colgroup>

@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DataSourceRowMapper implements RowMapper<DataSource> {
 
+    DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     @Override
     public DataSource mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -25,9 +26,13 @@ public class DataSourceRowMapper implements RowMapper<DataSource> {
         } else {
             dataSource.setType(ModelDataSourceType.UNKNOWN.toString());
         }
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        dataSource.setDateCreated(df.format(rs.getTimestamp("create_dt").toLocalDateTime()));
+
+        dataSource.setDateCreated(this.df.format(rs.getTimestamp("create_dt").toLocalDateTime()));
         dataSource.setVersionId(rs.getInt("version_num"));
+
+        dataSource.setMatchedRmsId(rs.getLong("matched_db_id"));
+        dataSource.setMatchedName(rs.getString("matched_db_name"));
+        dataSource.setMatchedType(rs.getString("matched_db_type"));
 
         return dataSource;
 
