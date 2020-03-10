@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {Debounce} from "../../../../shared/decorators";
 
 @Component({
     selector: 'datasource-list',
@@ -39,6 +38,5 @@ export class DatasourceListComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        console.log('Destroy data sources', this);
     }
 }

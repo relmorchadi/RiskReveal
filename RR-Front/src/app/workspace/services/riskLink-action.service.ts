@@ -158,6 +158,10 @@ export class RiskLinkStateService {
                 case 'selectOne':
                     const targetDatasource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.rmsId];
                     targetDatasource.selected = !targetDatasource.selected;
+                    if(RDM.matchedRmsId){
+                        const matchedDataSource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.matchedRmsId];
+                        matchedDataSource && (matchedDataSource.selected = true);
+                    }
                     break;
 
                 case 'selectAll':
