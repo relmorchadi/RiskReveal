@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.dto.ExposureManagerData;
 import com.scor.rr.domain.dto.ExposureManagerDto;
 import com.scor.rr.domain.dto.ExposureManagerParamsDto;
@@ -56,7 +57,8 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
         exposureManagerRefDto.setCurrencies(currencyRepository.findAllCurrencies());
         exposureManagerRefDto.setFinancialPerspectives(financialPerspectiveRepository.findSelectableCodes());
-        exposureManagerRefDto.setDivisions(divisionService.getDivisions(projectConfigurationForeWriterRepository.findByProjectId(projectId).getCaRequestId()));
+        ProjectConfigurationForeWriter pcfw = projectConfigurationForeWriterRepository.findByProjectId(projectId);
+        exposureManagerRefDto.setDivisions(divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null));
         exposureManagerRefDto.setSummariesDefinitions(exposureViewDefinitionRepository.findExposureViewDefinitionsAliases());
         exposureManagerRefDto.setPortfolios(modelPortfolioRepository.findPortfolioNamesByProjectId(projectId));
 
