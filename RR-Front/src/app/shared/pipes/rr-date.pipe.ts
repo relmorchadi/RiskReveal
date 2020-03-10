@@ -1,34 +1,22 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {UserPreferenceService} from "../services/user-preference.service";
 import * as moment from 'moment';
 
 @Pipe({
-  name: 'rRDate'
+  name: 'rRDate',
+  pure: true
 })
 export class RRDatePipe implements PipeTransform {
-  shortDate: any;
-  longDate: any;
-  shortTime: any;
-  longTime: any;
 
-  constructor(private userPref: UserPreferenceService) {
+  constructor() {}
 
-    console.log('init date pipe');
-
-    const dateConfig = this.userPref.getDateConfig();
-    this.shortDate = dateConfig.shortDate;
-    this.longDate = dateConfig.longDate;
-    this.shortTime = dateConfig.shortTime;
-    this.longTime = dateConfig.longTime;
-  }
-
-  transform(value: any, dateFormat: any, timeOrDate): any {
-    console.log(this.longDate, this.shortDate);
-    if (dateFormat === 'shortFormat') {
-      return moment(value, 'DD/MM/YYYY').format(timeOrDate === 'time' ? this.shortTime : this.shortDate);
-    } else {
-      return moment(value, 'DD/MM/YYYY').format(timeOrDate === 'time' ? this.longTime : this.longDate);
-    }
+  transform(value: any, dateFormat: any, timeOrDate, dateConfig): any {
+    if(value) {
+      if (dateFormat === 'shortFormat') {
+        return moment(new Date(value), 'DD/MM/YYYY').format(timeOrDate === 'time' ? dateConfig.shortTime : dateConfig.shortDate);
+      } else {
+        return moment(new Date(value), 'DD/MM/YYYY').format(timeOrDate === 'time' ? dateConfig.longTime : dateConfig.longDate);
+      }
+    } else return "";
   }
 
 }

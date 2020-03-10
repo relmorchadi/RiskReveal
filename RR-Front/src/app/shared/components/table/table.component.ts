@@ -53,6 +53,13 @@ export class TableComponent implements OnInit {
   contextSelectedItemNv: any;
   FilterData: any = {};
 
+  @Input() dateConfig: {
+    shortDate: '',
+    shortTime: '',
+    longDate: '',
+    longTime: ''
+  };
+
   @Input('sortData') sortData;
   private _sortedData: any;
   filterInput: any;
