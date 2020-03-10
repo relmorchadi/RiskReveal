@@ -14,7 +14,9 @@
                            (loadMore)="loadMore($event)" (dbClickItem)="openFacItem($event)"
                            (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
                            (sortDataChange)="sortChange($event)" [virtualRowHeight]="30" (heightChange)="changeHeight($event)"
-                           [sortData]="globalSort">
+                           [sortData]="globalSort"
+                           [dateConfig]="dateConfig"
+                >
                 </app-table>
             </div>
         </nz-tab>
@@ -27,7 +29,9 @@
                            (dbClickItem)="openFacItem($event)" (loadMore)="loadMore($event)"
                            (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
                            (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
-                           [sortData]="globalSort">
+                           [sortData]="globalSort"
+                           [dateConfig]="dateConfig"
+                >
                 </app-table>
             </div>
         </nz-tab>
@@ -44,7 +48,9 @@
                    (dbClickItem)="openFacItem($event)" (loadMore)="loadAssignedMore($event)"
                    (resizeChange)="resizeTable($event)" (updateFavStatus)="valueFavChange($event)" (filterData)="filterData($event)"
                    (sortDataChange)="sortChange($event)" [virtualRowHeight]="30"
-                   [sortData]="globalSort">
+                   [sortData]="globalSort"
+                   [dateConfig]="dateConfig"
+        >
         </app-table>
     </div>
 </ng-container>
