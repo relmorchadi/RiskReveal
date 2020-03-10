@@ -165,6 +165,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     datasourceKeywordFc: FormControl;
 
+    dataSourcesSelectedIndex;
+
+    dataSourcesContextMapping = {
+        0: null,
+        1: 'EDM',
+        2: 'RDM',
+    };
+
     readonly analysisConfigFields = ['financialPerspectives', 'projectId', 'proportion', 'rlAnalysisId', 'targetCurrency', 'targetRAPCodes', 'targetRegionPeril', 'unitMultiplier', 'divisions', 'occurrenceBasis', 'occurrenceBasisOverrideReason'];
     readonly portfolioConfigFields = ['analysisRegions', 'importLocationLevel', 'projectId', 'proportion', 'rlPortfolioId', 'targetCurrency', 'unitMultiplier', 'divisions'];
     readonly sortMapper = {
@@ -367,32 +375,55 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.wsIdentifier = wsIdentifier;
     }
 
+    toggleDatasourcesDisplay(type?) {
+        this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+        this._dataSourcesDropdownInit();
+        setTimeout(() => {
+            this.searchInput.nativeElement.focus();
+        })
+    }
 
-    lazyLoadDataSources(lazyLoadEvent) {
-        const {first, rows} = lazyLoadEvent;
+    changeDataSourcesTabs(tabEvent){
+        console.log('Change DataSources Tab', tabEvent);
+        // this._dataSourcesDropdownInit();
+        setTimeout(() => {
+            this.searchInput.nativeElement.focus();
+        })
+    }
+
+    lazyLoadDataSources(lazyLoadEvent, type?) {
+        console.log('Lazy load dataSources', lazyLoadEvent, type,this.state.listEdmRdm.totalElements);
+        const {first, rows} = lazyLoadEvent.$event;
         if (first + rows < this.state.listEdmRdm.totalElements) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                 keyword: this.datasourceKeywordFc.value,
                 offset: first,
                 size: rows,
+                type
             }));
         }
     }
 
-    toggleDatasourcesDisplay() {
-        this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    onInputSearch(keyword) {
+        this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
+            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
+            keyword, offset: 0, size: '100',
+            type: this.dataSourcesContextMapping[this.dataSourcesSelectedIndex] || null
+        }));
+        this.detectChanges();
+    }
+
+    private _dataSourcesDropdownInit(){
         if (this.displayDropdownRDMEDM) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                 keyword: '',
                 offset: 0,
                 size: 100,
+                type: this.dataSourcesContextMapping[this.dataSourcesSelectedIndex] || null
             }));
         }
-        setTimeout(() => {
-            this.searchInput.nativeElement.focus();
-        })
     }
 
     setFilterDivision() {
@@ -418,13 +449,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         })]);
     }
 
-    onInputSearch(keyword) {
-        this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
-            instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-            keyword, offset: 0, size: '100'
-        }));
-        this.detectChanges();
-    }
+
 
     /** Manage Columns Method's */
 
@@ -474,7 +499,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     /** Select EDM & RDM DropDown Method's */
-    toggleItems(RDM, event, source) {
+    toggleItems(RDM, event, source, type?) {
         this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
         if (event !== null) {
             event.stopPropagation();

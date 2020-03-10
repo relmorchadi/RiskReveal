@@ -75,14 +75,15 @@ export class RiskApi {
         });
     }
 
-    searchRiskLinkData(instanceId, keyword, offset, size): Observable<any> {
+    searchRiskLinkData(instanceId, keyword, offset, size, type): Observable<any> {
         keyword = this._parseKeyword(keyword);
         return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {
             params: {
                 instanceId,
                 keyword,
                 offset,
-                size
+                size,
+                type
             }
         });
     }
