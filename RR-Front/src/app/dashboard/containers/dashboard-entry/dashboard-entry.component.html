@@ -49,19 +49,25 @@
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                                  (duplicate)="duplicateWidgetAction($event)"
+                                  [dateConfig]="dateConfig"
+                                  class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 2" [dashboard]="dashboard" [itemWidget]="item" [loading]="loadingWidget"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                                  (duplicate)="duplicateWidgetAction($event)"
+                                  [dateConfig]="dateConfig"
+                                  class="no-drag">
                   </app-fac-widget>
                   <app-fac-widget *ngIf="item?.widgetId === 3" [dashboard]="dashboard" [itemWidget]="item" [loading]="loadingWidget"
                                   (managePopUp)="openPopUp($event)" (changeName)="changeWidgetName($event)"
                                   (widgetColsUpdate)="updateColsListener($event)"
                                   (delete)="deleteWidgetAction($event)"
-                                  (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                                  (duplicate)="duplicateWidgetAction($event)"
+                                  [dateConfig]="dateConfig"
+                                  class="no-drag">
                   </app-fac-widget>
                   <app-fac-chart-widget *ngIf="item?.widgetId === 4" [itemWidget]="item"
                                         [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
@@ -73,7 +79,9 @@
                                             [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                             (changeName)="changeWidgetName($event)"
                                             (delete)="deleteWidgetAction($event)"
-                                            (duplicate)="duplicateWidgetAction($event)" class="no-drag">
+                                            (duplicate)="duplicateWidgetAction($event)"
+                                            [dateConfig]="dateConfig"
+                                            class="no-drag">
                   </app-fac-subsidiary-chart>
                 </gridster-item>
               </gridster>
