@@ -57,88 +57,95 @@ export class WorkspaceService {
     const carSelected = _.get(payload, 'carSelected', null);
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    ctx.dispatch([new fromWS.SetCurrentTab({
-      index: _.size(state.content),
-      wsIdentifier, redirect
-    })]);
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {
-        wsId,
-        uwYear,
-        route,
-        ...ws,
-        isPinned: false,
-        collapseWorkspaceDetail: true,
-        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
-        leftNavbarCollapsed: false,
-        plts: {},
-        projects: _.map(projects.reverse(), (prj, index: any) => {
-          prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
-          prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-          return prj;
-        }),
-        pltManager: {
-          columns: [],
-          data: {totalCount: 0, plts: []},
-          selectedIds: {},
-          initialized: false,
-          pltDetails: {
-            summary: {}
+    const openedTab = {
+      screen: route || 'projects',
+      workspaceContextCode: wsId,
+      workspaceUwYear: uwYear,
+    };
+    return this.wsApi.openTab(openedTab).pipe(tap(data => {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier] = {
+          wsId,
+          uwYear,
+          ...ws,
+          route: route || 'projects',
+          isPinned: false,
+          collapseWorkspaceDetail: true,
+          workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
+          leftNavbarCollapsed: false,
+          plts: {},
+          projects: _.map(projects.reverse(), (prj, index: any) => {
+            prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
+            prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+            return prj;
+          }),
+          pltManager: {
+            columns: [],
+            data: {totalCount: 0, plts: []},
+            selectedIds: {},
+            initialized: false,
+            pltDetails: {
+              summary: {}
+            },
+            loading: false
           },
-          loading: false
-        },
-        contract: {
-          treaty: {},
-          fac: {},
-          loading: false,
-          typeWs: null,
-        },
-        calibrationNew: {
-          plts: [],
-          epMetrics: {
-            cols: [],
-            rps: []
+          contract: {
+            treaty: {},
+            fac: {},
+            loading: false,
+            typeWs: null,
           },
-          adjustments: {},
-          loading: false
-        },
-        calibration: {
-          data: {},
-          deleted: {},
-          loading: false,
-          filters: {
-            systemTag: [],
-            userTag: []
+          calibrationNew: {
+            plts: [],
+            epMetrics: {
+              cols: [],
+              rps: []
+            },
+            adjustments: {},
+            loading: false
           },
-          userTags: {},
-          selectedPLT: [],
-          extendPltSection: false,
-          extendState: false,
-          collapseTags: true,
-          lastCheckedBool: false,
-          firstChecked: '',
-          adjustments: [],
-          adjustmentApplication: {},
-          defaultAdjustment: {},
-          adjustementType: _.assign({}, ADJUSTMENT_TYPE),
-          allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
-        },
-        riskLink: new RiskLink(),
-        scopeOfCompletence: {
-          data: {},
-          wsType: null
-        },
-        fileBaseImport: {
-          folders: null,
-          files: null,
-          selectedFiles: null,
-          importedPLTs: null
-        },
-        inuring: defaultInuringState
-      };
-      draft.loading = false;
-
+          calibration: {
+            data: {},
+            deleted: {},
+            loading: false,
+            filters: {
+              systemTag: [],
+              userTag: []
+            },
+            userTags: {},
+            selectedPLT: [],
+            extendPltSection: false,
+            extendState: false,
+            collapseTags: true,
+            lastCheckedBool: false,
+            firstChecked: '',
+            adjustments: [],
+            adjustmentApplication: {},
+            defaultAdjustment: {},
+            adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+            allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+          },
+          riskLink: new RiskLink(),
+          scopeOfCompletence: {
+            data: {},
+            wsType: null
+          },
+          fileBaseImport: {
+            folders: null,
+            files: null,
+            selectedFiles: null,
+            importedPLTs: null
+          },
+          inuring: defaultInuringState
+        };
+        draft.loading = false;
+      }));
+      ctx.dispatch([new fromWS.SetCurrentTab({
+        index: _.size(state.content),
+        wsIdentifier, redirect
+      })]);
     }));
+
   }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
@@ -187,7 +194,6 @@ export class WorkspaceService {
     const {
       index, wsIdentifier, redirect
     } = payload;
-    console.log(payload);
     return ctx.patchState(produce(ctx.getState(), draft => {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
