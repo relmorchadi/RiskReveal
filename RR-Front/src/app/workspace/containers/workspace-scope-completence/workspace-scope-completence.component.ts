@@ -96,10 +96,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   ngOnInit() {
     this.treatySections = _.toArray(trestySections);
 
-    this.dispatch(new fromWs.LoadScopeCompletenessDataSuccess({
-      params: {workspaceId: this.workspaceId, uwy: this.uwy},
-      wsIdentifier: this.workspaceId + '-' + this.uwy
-    }));
+    combineLatest(
+        this.route.params
+    ).pipe(this.unsubscribeOnDestroy)
+        .subscribe((dt: any) => {
+          const {wsId, year} = dt[0];
+          this.workspaceUrl = {wsId, uwYear: year};
+        });
+
+/*    this.dispatch(new fromWs.LoadScopeCompletenessDataSuccess({
+      params: {workspaceId: this.workspaceUrl.wsId, uwy: this.workspaceUrl.uwYear},
+      wsIdentifier: this.workspaceUrl.wsId + '-' + this.workspaceUrl.uwYear
+    }));*/
 
     this.select(WorkspaceState.getCurrentTab)
       .pipe(this.unsubscribeOnDestroy)
@@ -127,19 +135,20 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.selectedProject$.pipe().subscribe(value => {
       this.tabStatus = _.get(value, 'projectType', null);
+      console.log(this.tabStatus, this.wsStatus, this.wsType);
       this.selectedProject = value;
       if (this.tabStatus === 'treaty' || this.tabStatus === null) {
-        this.dataSource = this.getData(this.treatySections[0]);
-        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
+/*        this.dataSource = this.getData(this.treatySections[0]);
+        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);*/
       } else {
-        if (this.importStatus[this.selectedProject.projectId] || this.checkImport(this.selectedProject)) {
+/*        if (this.importStatus[this.selectedProject.projectId] || this.checkImport(this.selectedProject)) {
           const facData = this.formatData(this.treatySections[1]);
           this.dataSource = this.getData(facData);
           this.treatySectionContainer = _.cloneDeep(facData);
         } else {
           this.dataSource = this.getData(this.treatySections[0]);
           this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
-        }
+        }*/
       }
     });
 
@@ -155,14 +164,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       if (payload.wsIdentifier != this.wsIdentifier) this.destroy();
       this.detectChanges();
     });*/
-
-    combineLatest(
-      this.route.params
-    ).pipe(this.unsubscribeOnDestroy)
-      .subscribe((dt: any) => {
-        const {wsId, year} = dt[0];
-        this.workspaceUrl = {wsId, uwYear: year};
-      });
   }
 
   checkImport(project) {

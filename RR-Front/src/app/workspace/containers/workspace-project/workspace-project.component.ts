@@ -121,7 +121,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   delete(projectId) {
     this.confirmationService.confirm({
-      message: 'Are you sure you want To delete this project?',
+      message: 'Are you sure you want to delete this project?',
       accept: () => {
         this.dispatch(new fromWs.DeleteProject({
           wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, projectId,

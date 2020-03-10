@@ -209,8 +209,7 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
     _.forEach(this.selectedFinancialPerspectiveELT, item => financialPerspective = financialPerspective + item + ' ');
     _.forEach(this.selectedCountries, item => country = country + item.countryCode + ' ');
     //_.forEach(state.contractOfInterest.uwUnit, item => uwUnit = uwUnit + item.id + ' ');
-
-    console.log(this.shortDate, this.shortDate);
+    
     const configData = {
       decimalSeparator: this.decimalSeparator,
       decimalThousandSeparator: this.decimalThousandSeparator,
@@ -232,7 +231,6 @@ export class UserPreferenceComponent extends BaseContainer implements OnInit {
       timeZone: this.timeZone,
       countryCode: country,
     };
-
 
     this.dispatch(new PostNewConfigAction(configData));
   }

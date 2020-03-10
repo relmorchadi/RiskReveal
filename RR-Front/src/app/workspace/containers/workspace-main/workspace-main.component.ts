@@ -24,7 +24,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   state: WorkspaceMain = null;
   selectedTabIndex: number;
   loading: boolean;
-  data: { [p: string]: any };
+  data: { [p: string]: any } = null;
   currentWsIdentifier: string;
   wsStatus: string;
   selectedPrj: any = {};
@@ -35,6 +35,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   @Select(WorkspaceState.getWorkspaceStatus) status$;
   @Select(WorkspaceState.getSelectedProject) selectedPrj$;
+  @Select(WorkspaceState.getCurrentTab) currentTab$;
   @Select(WorkspaceState.getWorkspaces) ws$;
 
   constructor(
@@ -62,10 +63,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
         }
       });
 
-    this.select(WorkspaceState.getCurrentTab)
-      .pipe(this.unsubscribeOnDestroy)
+    this.currentTab$.pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
         this.selectedTabIndex = curTab.index;
+/*        this.data === null ? this.selectedTabIndex = curTab.index
+            : this.selectedTabIndex = _.findIndex(_.keys(this.data), item => this.currentWsIdentifier === item);*/
         this.currentWsIdentifier = curTab.wsIdentifier;
         this.detectChanges();
       });

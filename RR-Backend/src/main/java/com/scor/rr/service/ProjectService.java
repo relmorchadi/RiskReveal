@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -99,6 +100,7 @@ public class ProjectService {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
         p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
+        p.setAssignedTo(user.getUserId());
         return p;
     }
 
@@ -107,12 +109,15 @@ public class ProjectService {
         if(request.getProjectId() != null) {
             Optional<ProjectEntity> prjOpt = projectEntityRepository.findById(request.getProjectId());
             if(prjOpt.isPresent()) {
+                UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
                 ProjectEntity prj = prjOpt.get();
 
                 prj.setAssignedTo(request.getAssignedTo());
                 prj.setProjectName(request.getProjectName());
                 prj.setProjectDescription(request.getProjectDescription());
                 prj.setDueDate(request.getDueDate());
+                prj.setLastUpdatedBy(user.getUserCode());
+                prj.setLastUpdatedOn(new Date());
                 projectEntityRepository.save(prj);
 
                 return new ResponseEntity<>(projectCardViewRepository.findByProjectId(request.getProjectId()), HttpStatus.OK);

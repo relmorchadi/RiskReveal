@@ -31,4 +31,7 @@ public class UserWorkspaceTabs {
     @Column(name = "OpenedDate")
     private Date openedDate;
 
+    @Column(name = "Screen")
+    private String screen;
+
 }
