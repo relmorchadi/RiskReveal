@@ -27,6 +27,7 @@ import {NotificationService} from '../../../shared/services';
 import {debounceTime, take} from 'rxjs/operators';
 import {FormControl} from "@angular/forms";
 import {Debounce} from "../../../shared/decorators";
+import {GeneralConfigState} from "../../../core/store/states";
 
 @Component({
     selector: 'app-workspace-risk-link',
@@ -133,6 +134,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     @Select(WorkspaceState.getRiskLinkPortfolioSummary)
     portfolioSummary$;
 
+    @Select(GeneralConfigState.getImportConfig)
+    importConfig$;
+    importConfig;
+
     filterAnalysis = {
         rlId: '',
         analysisName: '',
@@ -223,6 +228,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             this.loadSummaryOrDefaultDataSources();
             this.detectChanges();
         });
+        this.importConfig$.pipe(this.unsubscribeOnDestroy)
+            .subscribe(val => this.importConfig=val);
+
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
             this.importInit();
@@ -991,9 +999,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }
         if (this.tabStatus == 'FAC') {
             const carId = this.selectedProject.carRequestId;
-            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId}));
+            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId, config: this.importConfig}));
         } else {
-            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null}));
+            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null, config: this.importConfig}));
         }
     }
 

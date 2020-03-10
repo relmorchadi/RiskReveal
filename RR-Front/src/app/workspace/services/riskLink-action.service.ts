@@ -852,16 +852,19 @@ export class RiskLinkStateService {
 
     /** LOAD DATA WHEN OPEN RISK LINK PAGE */
     loadRiskLinkData(ctx: StateContext<WorkspaceModel>, payload) {
-        const {type, carId} = payload;
+        const {type, carId, config} = payload;
+        console.log('config from ref data', config);
         return this.riskApi.loadImportRefData(carId)
             .pipe(
                 mergeMap(
                     (refData: any) => {
+                        console.log('refs', refData)
                         return of(ctx.patchState(
                             produce(ctx.getState(), draft => {
+
                                 const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
                                 let riskLinkContext: RiskLink = draft.content[wsIdentifier].riskLink;
-                                riskLinkContext.setRefData(refData);
+                                riskLinkContext.setRefData(refData, config.rmsInstance);
                                 riskLinkContext.setType(type);
                                 draft.content[wsIdentifier].riskLink = _.merge({}, riskLinkContext);
                                 draft.content[wsIdentifier].riskLink.analysis.data = [];
