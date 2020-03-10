@@ -148,8 +148,7 @@
                   <div class="custom-radio">
                     <nz-select
                       style="width: 270px;"
-                      [ngModel]="decimalThousandSeparator"
-                      (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')"
+                      [(ngModel)]="decimalThousandSeparator"
                       nzShowSearch
                       class="a-dropdown-small"
                       nzPlaceHolder="Select A Time Format"
@@ -219,7 +218,6 @@
                 <span>Default Import Type</span>
                 <div class="a-card-item-right">
                   <nz-select [(ngModel)]="importPage"
-                             (ngModelChange)="changeLog($event)"
                     class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                     nzShowSearch
@@ -241,7 +239,6 @@
                 <span>Financial Perspective Event Level</span>
                 <div class="a-card-item-right">
                   <p-multiSelect [(ngModel)]="selectedFinancialPerspectiveELT"
-                                 (ngModelChange)="changeLog($event)"
                                  [options]="financialPerspectiveELT"
                                  [style]="{width: '270px'}"
                                  defaultLabel="Select Financial Perspective"
