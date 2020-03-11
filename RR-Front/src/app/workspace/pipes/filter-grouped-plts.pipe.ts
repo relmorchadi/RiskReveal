@@ -14,7 +14,7 @@ export class FilterGroupedPltsPipe implements PipeTransform {
       return _.filter(data, pure => {
         pure.threads = _.filter(pure.threads, thread => _.every(filterKeys, key => _.some(_.split(filter[key], ','), keyword => {
           const trimmedKeyword = _.toString(_.trim(keyword));
-          return trimmedKeyword ? _.includes(_.toString(thread[key]), trimmedKeyword) : false;
+          return trimmedKeyword ? _.includes(_.toLower(_.toString(thread[key])), _.toLower(trimmedKeyword)) : false;
         })));
         return pure.threads.length;
       })

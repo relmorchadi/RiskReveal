@@ -73,8 +73,7 @@ export class ColumnsFormatterService {
   }
 
   formatDate(d) {
-    console.log(this.dateConfig.longDate)
-    return moment(new Date(d), 'DD/MM/YYYY').format(this.dateConfig.longDate);
+    return moment(new Date(d), 'DD/MM/YYYY').format(this.dateConfig.shortDate);
   }
 
   formatIndicator(i) {
