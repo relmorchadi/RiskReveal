@@ -1,7 +1,9 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.JobExecutionEntity;
 import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.model.RRJob;
+import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.service.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Service("jobManagerImpl")
@@ -27,6 +30,9 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
     @Autowired
     private JobLauncher jobLauncher;
+
+    @Autowired
+    private JobExecutionRepository jobExecutionRepository;
 
     @Override
     public void submitJob(Long jobId) {
@@ -69,5 +75,10 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Override
     public boolean isTaskRunning(Long taskId) {
         return false;
+    }
+
+    @Override
+    public List<JobExecutionEntity> findRunningJobsForUser(String userId) {
+        return jobExecutionRepository.findRunningJobsForUser(userId);
     }
 }

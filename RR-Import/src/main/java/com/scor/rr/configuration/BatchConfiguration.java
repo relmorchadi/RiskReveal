@@ -69,7 +69,7 @@ public class BatchConfiguration {
     @Bean(name = "MyJobExplorer")
     public JobExplorer getJobExplorer() throws Exception {
         JobExplorerFactoryBean factoryBean = new JobExplorerFactoryBean();
-        factoryBean.setDataSource(this.dataSource);
+        factoryBean.setDataSource(this.rrDataSource);
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
     }

@@ -1,7 +1,5 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import java.sql.Timestamp;
-
 public class AdjustmentThreadCreationRequest {
     private Long pltPureId;
     private String createdBy;

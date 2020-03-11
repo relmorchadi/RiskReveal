@@ -2,6 +2,7 @@ package com.scor.rr.service.abstraction;
 
 import com.google.gson.Gson;
 import com.scor.rr.domain.JobEntity;
+import com.scor.rr.domain.JobExecutionEntity;
 import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.JobStatus;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -96,6 +98,8 @@ public abstract class JobManagerAbstraction implements JobManager {
 
     @Override
     public abstract boolean isTaskRunning(Long taskId);
+
+    public abstract List<JobExecutionEntity> findRunningJobsForUser(String userId);
 
     @Override
     public JobStatus getJobStatus(Long jobId) {
