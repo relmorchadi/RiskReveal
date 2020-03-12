@@ -8,7 +8,7 @@ import {NavigationStart, Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
 import {ofActionCompleted, Select, Store} from "@ngxs/store";
 import * as fromHD from "../../../core/store/actions";
-import {DashboardState} from "../../../core/store/states";
+import {DashboardState, GeneralConfigState} from "../../../core/store/states";
 import {catchError} from "rxjs/operators";
 import {LoadReferenceWidget} from "../../../core/store/actions";
 import {Actions, ofActionDispatched} from '@ngxs/store';

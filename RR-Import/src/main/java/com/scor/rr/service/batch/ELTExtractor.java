@@ -62,12 +62,12 @@ public class ELTExtractor {
 
             // Build Parameters
             RLAnalysis riskLinkAnalysis = bundle.getRlAnalysis();
-            RLImportSelection sourceResult =  bundle.getSourceResult();
+            RLImportSelection sourceResult = bundle.getSourceResult();
 
             String fpCode = bundle.getFinancialPerspective();
             String defaultInstanceId = bundle.getInstanceId();
 
-            Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId)  : null;
+            Integer treatyLabelID = isTreaty(fpCode) ? Integer.valueOf(contractId) : null;
 
             Long analysisId = riskLinkAnalysis.getRlId();
             Long rdmId = riskLinkAnalysis.getRdmId();
@@ -78,9 +78,9 @@ public class ELTExtractor {
                     .map(dsId -> rlModelDataSourceRepository.findById(dsId).get())
                     .map(RLModelDataSource::getInstanceId)
                     .orElseGet(() -> {
-                log.warn("RmsModelDatasource is null for rlAnalysis {} - use instanceId from batch", riskLinkAnalysis.getRlId());
-                return defaultInstanceId;
-            });
+                        log.warn("RmsModelDatasource is null for rlAnalysis {} - use instanceId from batch", riskLinkAnalysis.getRlId());
+                        return defaultInstanceId;
+                    });
 
 
             RLAnalysisELT rlAnalysisELT = extractedELT.get(new MultiKey(instanceId, rdmId, analysisId, fpCode, treatyLabelID));
