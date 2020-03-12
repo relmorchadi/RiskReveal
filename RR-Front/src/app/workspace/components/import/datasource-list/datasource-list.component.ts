@@ -1,11 +1,11 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 
 @Component({
     selector: 'datasource-list',
     templateUrl: './datasource-list.component.html',
     styleUrls: ['./datasource-list.component.scss']
 })
-export class DatasourceListComponent implements OnInit {
+export class DatasourceListComponent implements OnInit, OnDestroy {
     @Input('data')
     data: any;
 
@@ -28,12 +28,15 @@ export class DatasourceListComponent implements OnInit {
     }
 
     lazyLoadDataSources($event: any) {
-        this.lazyLoadEmitter.emit($event);
+        this.lazyLoadEmitter.emit({$event});
     }
 
     toggleItems(item, $event: MouseEvent, link: string) {
         this.selectEmitter.emit({
             item, $event, link
         })
+    }
+
+    ngOnDestroy(): void {
     }
 }

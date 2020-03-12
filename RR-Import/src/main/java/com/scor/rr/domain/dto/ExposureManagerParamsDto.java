@@ -18,4 +18,5 @@ public class ExposureManagerParamsDto {
     private Integer page;
     private Integer pageSize;
     private Boolean requestTotalRow;
+    private String regionPerilFilter;
 }

@@ -40,6 +40,8 @@ import { PopUpPltTableNewComponent } from './components/calibration-new/pop-up-p
 import { ResizableModule  } from 'angular-resizable-element';
 import { ContextMenuModule } from "primeng/primeng";
 import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filter.pipe';
+import {FilterGroupedPltsPipe} from "./pipes/filter-grouped-plts.pipe";
+import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
 import { ScopeTableComponent } from './components/scopeCompleteness/scope-table/scope-table.component';
 
 @NgModule({
@@ -75,7 +77,7 @@ import { ScopeTableComponent } from './components/scopeCompleteness/scope-table/
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

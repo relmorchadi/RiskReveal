@@ -501,8 +501,8 @@ public class RmsService {
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size, DataSourceType type) {
         if(type == null)
             throw new RuntimeException("No data source type specified for data sources extraction !");
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
-        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @type="+ type.getValue() +" , @count_only=1";
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type="+ type.getValue() +" , @count_only=1";
         this.logger.debug("Service starts executing the query ...");
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";

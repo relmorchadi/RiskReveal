@@ -17,4 +17,7 @@ public class DataSource {
     private String instanceId;
     private String instanceName;
 
+    private Long matchedRmsId;
+    private String matchedName;
+    private String matchedType;
 }
