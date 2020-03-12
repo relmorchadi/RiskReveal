@@ -271,7 +271,7 @@ export class WorkspaceService {
       screen: route,
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear,
-      userWorkspaceTabsId: openedTabInfo.userWorkspaceTabsId
+      userWorkspaceTabsId: _.get(openedTabInfo, 'userWorkspaceTabsId' , null)
     };
 
     return this.wsApi.openTab(openedTab).pipe(tap( data =>
