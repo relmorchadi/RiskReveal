@@ -96,8 +96,11 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     _.forEach(this.dashCols, item => {
       this.ColsTotalWidth = this.ColsTotalWidth + item.widthNumber + 5;
     });
+
     this.loadFacData(1);
-    this.loadAssignedFacData(1);
+    if (this.widgetId !== 1) {
+      this.loadAssignedFacData(1);
+    }
     this.sortFirstUpdate();
 
     this.facData$.pipe().subscribe(value => {
@@ -150,6 +153,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   sortChange(event) {
+    console.log('sortCahnge')
     this.globalSort = event.newSort;
     this.sortList = event.newSortingList;
     const carStatus = this.carStatus[this.widgetId];

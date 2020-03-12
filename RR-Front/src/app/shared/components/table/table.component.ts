@@ -16,7 +16,7 @@ import {
   debounceTime,
   map,
   distinctUntilChanged,
-  filter
+  filter, debounce
 } from "rxjs/operators";
 
 @Component({
@@ -331,7 +331,7 @@ export class TableComponent implements OnInit {
 
   filterCol(searchValue: string, searchAddress: string, key): void {
     const first = _.get(this.event, 'first', null);
-    if(this.virtualScroll && first !== null) {
+    if (this.virtualScroll && first !== null) {
       this.event.first = 0;
       let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
       body.scrollTop = 0;
