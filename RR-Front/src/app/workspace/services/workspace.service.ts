@@ -219,24 +219,10 @@ export class WorkspaceService {
       return;
 
     if (wsIdentifier == currentTab.wsIdentifier) {
-      if (currentTab.index === _.size(content) - 1) {
-        ctx.dispatch(new fromWS.SetCurrentTab({
-          index: currentTab.index - 1,
-          wsIdentifier: _.keys(content)[currentTab.index - 1]
-        }));
-      } else {
-        ctx.dispatch(new fromWS.SetCurrentTab({
-          index: currentTab.index,
-          wsIdentifier: _.keys(content)[currentTab.index + 1]
-        }));
-      }
-    } else {
-      if (currentTab.index > i) {
-        ctx.dispatch(new fromWS.SetCurrentTab({
-          index: currentTab.index - 1,
-          wsIdentifier: currentTab.wsIdentifier
-        }));
-      }
+      ctx.dispatch(new fromWS.SetCurrentTab({
+        index: i === 0 ? i : i - 1,
+        wsIdentifier: i === 0 ? _.keys(content)[i + 1] : _.keys(content)[i - 1]
+      }));
     }
     return this.wsApi.closeTab(closedTab).pipe(
         tap( data => {
@@ -265,13 +251,10 @@ export class WorkspaceService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     const {wsId, uwYear} = state.content[wsIdentifier];
-    const openedTabInfo = _.find(state.currentTab.openedTabs, item => item.workspaceContextCode === wsId && item.workspaceUwYear === uwYear);
-    console.log(openedTabInfo);
     const openedTab = {
       screen: route,
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear,
-      userWorkspaceTabsId: _.get(openedTabInfo, 'userWorkspaceTabsId' , null)
     };
 
     return this.wsApi.openTab(openedTab).pipe(tap( data =>

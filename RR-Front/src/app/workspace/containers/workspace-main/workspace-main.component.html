@@ -14,7 +14,9 @@
             workspaceName: data[wsIdentifier]?.workspaceName,
             workSpaceId: data[wsIdentifier]?.wsId,
             year: data[wsIdentifier]?.uwYear,
-            years: data[wsIdentifier]?.years
+            years: data[wsIdentifier]?.years,
+            index: k,
+            wsIdentifier: wsIdentifier
           }"
         ></ng-container>
       </ng-template>
@@ -253,6 +255,8 @@
   let-title='title'
   let-name="workspaceName"
   let-workSpaceId="workSpaceId"
+  let-index="index"
+  let-wsIdentifier="wsIdentifier"
   let-year='year'
   let-years='years'
   #tabTitle>
