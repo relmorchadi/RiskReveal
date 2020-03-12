@@ -193,6 +193,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           this.idTab = this.dashboards.length - 1;
           this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
           this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
+          this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: this.idSelected}));
         }
     )
   }

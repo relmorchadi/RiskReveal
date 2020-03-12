@@ -21,7 +21,7 @@ import * as moment from "moment";
 import {BaseContainer} from "../../../shared/base";
 import {Router} from "@angular/router";
 import * as fromHD from "../../../core/store/actions";
-import {debounce} from "rxjs/operators";
+import {debounce} from "../../utilities/debounce";
 
 @Component({
   selector: 'app-fac-widget',
@@ -186,6 +186,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     _.forEach(sort, item => this.globalSort = _.merge({}, this.globalSort,{[item.field]: item.sortType}));
   }
 
+  @debounce(1000)
   filterData($event) {
     const carStatus = this.carStatus[this.widgetId];
     this.dashCols = _.map(this.dashCols, item => { return item.userDashboardWidgetColumnId === $event.colId ?
