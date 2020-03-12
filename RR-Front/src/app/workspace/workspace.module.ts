@@ -42,13 +42,13 @@ import { ContextMenuModule } from "primeng/primeng";
 import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filter.pipe';
 import {FilterGroupedPltsPipe} from "./pipes/filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
-import { ScopeTableComponent } from './components/scopeCompleteness/scope-table/scope-table.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, ScopeTableComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe
+
   ],
   imports: [
     GridsterModule,
