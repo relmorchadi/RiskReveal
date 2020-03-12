@@ -1,6 +1,7 @@
-<div class="table-wrapper">
-    <p-table [columns]="tableColumnsConfig" [frozenColumns]="tableConfig.frozenColumns"
-             [frozenValue]="tableConfig.frozenValues" [value]="tableConfig.values"
+<div class="table-wrapper" *ngIf="tableConfig != null else spinner">
+    <p-table *ngIf="tableConfig.data != null  else noDataFound"
+             [columns]="tableConfig.columns" [frozenColumns]="tableConfig.frozenColumns"
+             [frozenValue]="tableConfig.frozenRow" [value]="tableConfig.data"
              [scrollable]="true"
              syncScroll
              [customSort]="true"
@@ -9,13 +10,13 @@
         <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
                 <col *ngFor="let col of columns"
-                     [ngStyle]="{'width':col.field == 'metric'?'120px':'100px'}">
+                     [ngStyle]="{'width':col.field == 'country'?'120px':'100px'}">
             </colgroup>
         </ng-template>
         <ng-template pTemplate="frozenheader" let-columns>
             <tr>
                 <ng-container *ngFor="let col of columns">
-                    <th [colSpan]="col.field == 'metric' ? 2 : 1"
+                    <th [colSpan]="col.field == 'country' ? 2 : 1"
                         [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
                         <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
@@ -43,7 +44,7 @@
             <tr (mouseenter)="hoveredRow = rowIndex"
                 (mouseleave)="hoveredRow = null">
                 <ng-container *ngFor="let col of columns">
-                    <td [colSpan]="col.field == 'metric' ? 2 : 1">
+                    <td [colSpan]="col.field == 'country' ? 2 : 1">
                         <b>{{rowData[col.field]}}</b>
                     </td>
                 </ng-container>
@@ -54,16 +55,16 @@
                 (mouseleave)="hoveredRow = null"
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
-                    <ng-container *ngIf="col.field == 'metric'">
-                        <td [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.values.length - 1 &&
-                                         rowData['metric'] == tableConfig.values[rowIndex + 1]['metric'],
-                                        'grouped-metric-next':rowIndex > 0 && rowIndex < tableConfig.values.length - 1 &&
-                                         rowData['metric'] == tableConfig.values[rowIndex - 1]['metric'] &&
-                                         rowData['metric'] == tableConfig.values[rowIndex + 1]['metric'],
+                    <ng-container *ngIf="col.field == 'country'">
+                        <td [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.data.length - 1 &&
+                                         rowData['country'] == tableConfig.data[rowIndex + 1]['country'],
+                                        'grouped-metric-next':rowIndex > 0 && rowIndex < tableConfig.data.length - 1 &&
+                                         rowData['country'] == tableConfig.data[rowIndex - 1]['country'] &&
+                                         rowData['country'] == tableConfig.data[rowIndex + 1]['country'],
                                          'grouped-metric-last': rowIndex > 0 &&
-                                         rowData['metric'] == tableConfig.values[rowIndex - 1]['metric'] &&
-                                         (tableConfig.values[rowIndex + 1] == undefined || 
-                                         rowData['metric'] != tableConfig.values[rowIndex + 1]['metric'])}">
+                                         rowData['country'] == tableConfig.data[rowIndex - 1]['country'] &&
+                                         (tableConfig.data[rowIndex + 1] == undefined || 
+                                         rowData['country'] != tableConfig.data[rowIndex + 1]['country'])}">
 
                             <i *ngIf="hoveredRow == rowIndex || selectedRowRegionPeril == rowIndex"
                                (click)="filterRowRegionPeril(rowData,rowIndex)"
@@ -73,10 +74,10 @@
                             {{rowData[col.field]}}
                         </td>
                         <td>
-                            {{rowData['state']}}
+                            {{rowData['admin1']}}
                         </td>
                     </ng-container>
-                    <ng-container *ngIf="col.field != 'metric'">
+                    <ng-container *ngIf="col.field != 'country'">
                         <td>
                             {{rowData[col.field]}}
                         </td>
@@ -99,6 +100,7 @@
         </ng-template>
     </p-table>
 </div>
+
 <ng-template #metricRow let-class="class" let-rowIndex let-rowData="rowData" >
     <td [ngClass]="class">
         <i *ngIf="hoveredRow == rowIndex || selectedRowRegionPeril == rowIndex"
@@ -107,10 +109,23 @@
            [ngClass]="{'eye-icon': selectedRowRegionPeril != rowIndex,
                        'eye-icon-selected': selectedRowRegionPeril == rowIndex}">
         </i>
-        {{rowData['metric']}}
+        {{rowData['country']}}
     </td>
     <td>
-        {{rowData['state']}}
+        {{rowData['admin1']}}
     </td>
+</ng-template>
+
+<ng-template #spinner>
+    <div style="margin: auto">
+        <p-progressSpinner  [style]="{width: '50px', height: '50px'}"
+                            strokeWidth="5" fill="#EEEEEE" animationDuration=".3s">
+        </p-progressSpinner>
+    </div>
+</ng-template>
+<ng-template #noDataFound>
+    <div style="margin: auto">
+        No Records Found
+    </div>
 </ng-template>
 
