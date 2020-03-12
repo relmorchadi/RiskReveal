@@ -1,11 +1,13 @@
 package com.scor.rr.service.abstraction;
 
 import com.scor.rr.domain.JobEntity;
+import com.scor.rr.domain.JobExecutionEntity;
 import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.StepStatus;
 
+import java.util.List;
 import java.util.Map;
 
 public interface JobManager {
@@ -25,6 +27,8 @@ public interface JobManager {
     void cancelTask(Long taskId);
 
     boolean isJobRunning(Long jobId);
+
+    List<JobExecutionEntity> findRunningJobsForUser(String userId);
 
     boolean isTaskRunning(Long taskId);
 

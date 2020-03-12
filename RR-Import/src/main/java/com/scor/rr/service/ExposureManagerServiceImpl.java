@@ -1,5 +1,6 @@
 package com.scor.rr.service;
 
+import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.dto.ExposureManagerData;
 import com.scor.rr.domain.dto.ExposureManagerDto;
 import com.scor.rr.domain.dto.ExposureManagerParamsDto;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -56,7 +54,8 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
         exposureManagerRefDto.setCurrencies(currencyRepository.findAllCurrencies());
         exposureManagerRefDto.setFinancialPerspectives(financialPerspectiveRepository.findSelectableCodes());
-        exposureManagerRefDto.setDivisions(divisionService.getDivisions(projectConfigurationForeWriterRepository.findByProjectId(projectId).getCaRequestId()));
+        ProjectConfigurationForeWriter pcfw = projectConfigurationForeWriterRepository.findByProjectId(projectId);
+        exposureManagerRefDto.setDivisions(divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null));
         exposureManagerRefDto.setSummariesDefinitions(exposureViewDefinitionRepository.findExposureViewDefinitionsAliases());
         exposureManagerRefDto.setPortfolios(modelPortfolioRepository.findPortfolioNamesByProjectId(projectId));
 
@@ -71,7 +70,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
         List<Map<String, Object>> values = exposureSummaryDataRepository.getExposureData(params.getProjectId(),
                 params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(),
-                params.getPage(), params.getPageSize());
+                params.getPage(), params.getPageSize(), params.getRegionPerilFilter());
 
         if (params.getRequestTotalRow()) {
             Map<String, Object> totalRow = exposureSummaryDataRepository.getTotalRowExposureData(params.getProjectId(),
@@ -84,6 +83,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
             exposureManagerData.setTotalTiv((BigDecimal) totalRow.get("Unmapped"));
             Map<String, Object> map = new HashMap<>(totalRow);
             map.remove("Unmapped");
+            map.values().removeAll(Collections.singleton(null));
             exposureManagerData.setRegionPerils(map);
 
             exposureManagerDto.setFrozenRow(exposureManagerData);
@@ -96,14 +96,17 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                 exposureManagerData.setTotalTiv((BigDecimal) entry.get("Unmapped"));
                 exposureManagerData.setCountry((String) entry.get("CountryCode"));
                 exposureManagerData.setAdmin1((String) entry.get("Admin1Code"));
+
                 Map<String, Object> map = new HashMap<>(entry);
                 map.remove("Unmapped");
                 map.remove("CountryCode");
                 map.remove("Admin1Code");
-                exposureManagerData.setRegionPerils(map);
 
                 if (exposureManagerDto.getColumns() == null)
                     exposureManagerDto.setColumns(new ArrayList<>(map.keySet()));
+
+                map.values().removeAll(Collections.singleton(null));
+                exposureManagerData.setRegionPerils(map);
 
                 data.add(exposureManagerData);
             }

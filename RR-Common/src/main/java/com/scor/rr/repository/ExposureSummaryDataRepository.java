@@ -17,9 +17,10 @@ public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSum
             "@currency=:currency," +
             "@fp=:fp," +
             "@pageNumber=:pageNumber," +
-            "@pageSize=:pageSize", nativeQuery = true)
+            "@pageSize=:pageSize," +
+            "@RegionPerilCodeFilter=:regionPerilCodeFilter", nativeQuery = true)
     List<Map<String, Object>> getExposureData(Long projectId, String portfolioName, String summaryType, Integer division,
-                                              String currency, String fp, Integer pageNumber, Integer pageSize);
+                                              String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter);
 
     @Query(value = "EXEC dbonew.usp_ExposureManagerTotalRow " +
             "@projectId=:projectId," +

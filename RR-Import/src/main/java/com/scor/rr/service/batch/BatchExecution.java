@@ -2,15 +2,16 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
+import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.abstraction.JobManager;
+import com.scor.rr.service.JobManagerImpl;
+import com.scor.rr.service.abstraction.JobManagerAbstraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,12 @@ public class BatchExecution {
     private static final Logger log = LoggerFactory.getLogger(BatchExecution.class);
 
     @Autowired
+    @Qualifier(value = "MyJobLauncher")
     private JobLauncher jobLauncher;
 
     @Autowired
-    private JobRepository jobRepository;
+    @Qualifier(value = "jobManagerImpl")
+    private JobManagerAbstraction jobManager;
 
     @Autowired
     private ProjectRepository projectRepository;
@@ -54,10 +57,6 @@ public class BatchExecution {
 
     @Autowired
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
-
-    @Autowired
-    @Qualifier(value = "jobManagerImpl")
-    private JobManager jobManager;
 
     @Autowired
     @Qualifier(value = "importLossData")
@@ -101,12 +100,17 @@ public class BatchExecution {
 
                 JobExecution execution = null;
 
-                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                    execution = jobLauncher.run(importLossData, builder.toJobParameters());
-                else
-                    execution = jobLauncher.run(importLossDataFac, builder.toJobParameters());
+//                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+//                    execution = jobLauncher.run(importLossData, builder.toJobParameters());
+//                else
+//                    execution = jobLauncher.run(importLossDataFac, builder.toJobParameters());
 
-                return execution.getId();
+                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                    ((JobManagerImpl) jobManager).submitJob(importLossData, JobPriority.MEDIUM, builder.toJobParameters());
+                else
+                    ((JobManagerImpl) jobManager).submitJob(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters());
+
+                return 1L;
             } else {
                 log.error("parameters are empty");
                 return null;
@@ -191,7 +195,7 @@ public class BatchExecution {
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
         String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
-        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ?  contractSearchResult.getCedantName() : "";
+        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ? contractSearchResult.getCedantName() : "";
         String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
