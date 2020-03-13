@@ -778,7 +778,6 @@ export class WorkspaceState {
 
   @Action(fromWS.ToggleSelectCalibPlts)
   ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectCalibPlts){
-    console.log(payload)
     return this.calibrationNewService.selectPlts(ctx, payload);
   }
 

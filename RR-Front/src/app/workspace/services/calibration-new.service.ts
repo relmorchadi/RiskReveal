@@ -179,7 +179,7 @@ export class CalibrationNewService {
       wsIdentifier
     } = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].calibrationNew.plts = plts;
+      draft.content[wsIdentifier].calibrationNew.plts = [...plts];
     }));
   }
 
