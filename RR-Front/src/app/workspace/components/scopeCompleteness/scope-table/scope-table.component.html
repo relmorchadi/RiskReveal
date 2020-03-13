@@ -1,5 +1,38 @@
 <div>
-  <p-table [value]="dataSource" scrollHeight="340px" dataKey="id">
+  <p-table [columns]="columns"
+          [value]="dataSource" scrollHeight="340px" dataKey="id">
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <ng-container  *ngFor="let col of columns">
+          <col *ngIf="col.visible" [ngStyle]="{'width': col?.width}">
+        </ng-container>
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <ng-container *ngFor="let col of columns" >
+          <td>
+            <div *ngIf="col.field === 'PLtHeader'">
+              <div style="display: flex;">
+                <div style="width: 75px"></div>
+                <div style="width: 69px">ID</div>
+                <div style="width: 225px">Name</div>
+                <div style="width: 46px">P</div>
+                <div style="width: 60px">Peril</div>
+              </div>
+              <div style="display: flex;">
+                <div style="margin-top: 13px;margin-right: 9px;height: 10px;">
+                  <i class="icon-plus-square" style="font-size: 25px;cursor: pointer;" (click)="expandAllRows()"></i>
+                  <i class="icon-minus-square" style="font-size: 25px;cursor: pointer;" (click)="closeAllRows()"></i>
+                </div>
 
+                <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="wsType !== 'FAC'"
+                        (click)="addRemoveModal=true; rowInformation= null">Attach PLTs</button>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
   </p-table>
 </div>

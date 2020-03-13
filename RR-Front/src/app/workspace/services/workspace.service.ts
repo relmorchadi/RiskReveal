@@ -224,6 +224,7 @@ export class WorkspaceService {
         wsIdentifier: i === 0 ? _.keys(content)[i + 1] : _.keys(content)[i - 1]
       }));
     }
+
     return this.wsApi.closeTab(closedTab).pipe(
         tap( data => {
           ctx.patchState({
