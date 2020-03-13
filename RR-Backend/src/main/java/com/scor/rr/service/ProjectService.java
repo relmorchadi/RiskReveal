@@ -70,7 +70,7 @@ public class ProjectService {
     //FIXME: need to group into one function later
     public ProjectEntity addNewProjectFac(String facNum, Integer uwy, String clientName, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
-                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
+                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId(), true)))
                 .orElseGet(() -> {
                             WorkspaceEntity newWs = workspaceEntityRepository.save(
                                     new WorkspaceEntity(
@@ -79,28 +79,28 @@ public class ProjectService {
                                             "FAC",
                                             facNum, //FIXME: workspace name and client name - check with Shaun
                                             clientName));
-                            return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId()));
+                            return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), true));
                         }
                 );
     }
 
     public ProjectEntity addNewProject(String wsId, Integer uwy, ProjectEntity p) {
         return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(wsId, uwy)
-                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId())))
+                .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId(), false)))
                 .orElseGet(() ->
                         contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(wsId, uwy)
                                 .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), "TTY",
                                         targetContract.getWorkspaceName(),targetContract.getCedantName())))
-                                .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId())))
+                                .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), false)))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
                 );
     }
 
-    private ProjectEntity prePersistProject(ProjectEntity p, Long wsId) {
-        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+    private ProjectEntity prePersistProject(ProjectEntity p, Long wsId, Boolean isFac) {
+        UserRrEntity user = isFac ? null : ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
-        p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
-        p.setAssignedTo(user.getUserId());
+        if(!isFac) p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
+        p.setAssignedTo(!isFac ? user.getUserId() : null);
         return p;
     }
 
@@ -118,7 +118,7 @@ public class ProjectService {
                 prj.setDueDate(request.getDueDate());
                 prj.setLastUpdatedBy(user.getUserCode());
                 prj.setLastUpdatedOn(new Date());
-                projectEntityRepository.save(prj);
+                projectEntityRepository.saveAndFlush(prj);
 
                 return new ResponseEntity<>(projectCardViewRepository.findByProjectId(request.getProjectId()), HttpStatus.OK);
             }

@@ -110,7 +110,7 @@ export class CalibrationColumnManagerComponent implements OnInit {
       if(newJ < 0) newJ = 0;
 
       if( newJ > middle.length) {
-        newJ = middle.length - 1;
+        newJ = middle.length;
       }
 
       transferArrayItem(prevCont.data, middle, i, newJ);
