@@ -9,6 +9,7 @@ import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.compo
 import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
+import {ScopeTableComponent} from "./scopeCompleteness/scope-table/scope-table.component";
 import {
     FinancialPerspSelectionDialogComponent,
     OverrideRegionPerilDialogComponent,
@@ -35,6 +36,7 @@ export const COMPONENTS = [
     InuringPackageDetailsComponent,
     NodeCreationPopupComponent,
     InuringGraphComponent,
+    ScopeTableComponent,
     ...INURING_NODES,
     AttachPltPopUpComponent,
     AnalysisResultComponent,
