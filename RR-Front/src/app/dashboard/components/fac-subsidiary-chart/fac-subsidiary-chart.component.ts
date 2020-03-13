@@ -192,6 +192,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
       userDashboardWidgetId: 0
     };
 
+    console.log('chartInit');
+
     this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
       this.data = data.content;
       this.filteredData = data.content;
