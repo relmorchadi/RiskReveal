@@ -385,7 +385,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     toggleDatasourcesDisplay(type?) {
         this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
-        this._dataSourcesDropdownInit();
+        this._dataSourcesDropdownInit(this.datasourceKeywordFc.value || '');
+        this.dispatch(new fromWs.InitDatasourcesSelection())
         setTimeout(() => {
             this.searchInput.nativeElement.focus();
         })
@@ -393,7 +394,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     changeDataSourcesTabs(tabEvent){
         console.log('Change DataSources Tab', tabEvent);
-        // this._dataSourcesDropdownInit();
+        this._dataSourcesDropdownInit(this.datasourceKeywordFc.value || '');
         setTimeout(() => {
             this.searchInput.nativeElement.focus();
         })
@@ -422,11 +423,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.detectChanges();
     }
 
-    private _dataSourcesDropdownInit(){
+    private _dataSourcesDropdownInit(keyword=''){
         if (this.displayDropdownRDMEDM) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
-                keyword: '',
+                keyword,
                 offset: 0,
                 size: 100,
                 type: this.dataSourcesContextMapping[this.dataSourcesSelectedIndex] || null
@@ -548,7 +549,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.selectedProject$.pipe(take(1))
             .subscribe(p => {
                 const projectId = p.projectId;
-                const selectedDS = _.toArray(this.listEdmRdm.data).filter(ds => ds.selected);
+                const selectedDS = [..._.values(this.listEdmRdm.selection.edms), ..._.values(this.listEdmRdm.selection.rdms)];
                 const {instanceId, instanceName} = this.state.financialValidator.rmsInstance.selected;
                 this.dispatch(new fromWs.DatasourceScanAction({
                     selectedDS: _.map(selectedDS, item => ({...item, instanceId, instanceName})),

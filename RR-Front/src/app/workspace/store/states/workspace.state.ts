@@ -1231,6 +1231,11 @@ export class WorkspaceState {
     return this.riskLinkFacade.clearSelection(ctx);
   }
 
+  @Action(fromWS.InitDatasourcesSelection)
+  initDataSourcesSelection(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.initDataSourcesSelection(ctx);
+  }
+
 
 
 

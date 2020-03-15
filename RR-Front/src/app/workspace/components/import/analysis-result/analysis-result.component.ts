@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {Select, Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import componentData from "./data";
@@ -15,6 +15,9 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
 
     @Input('context')
     context;
+
+    @ViewChild('analysisResultTable')
+    tables: any;
 
     @Input('data')
     data: { analysis, epCurves, targetRaps, regionPerilsByAnalysis } = {
@@ -110,6 +113,13 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         if (changes.context && changes.context.currentValue) {
             this._loadDataTableCols();
         }
+    }
+
+    resetSort() {
+        this.tables.sortOrder = this.tables.defaultSortOrder;
+        this.tables.sortField = '';
+        this.tables.multiSortMeta = null;
+        this.tables.tableService.onSort(null);
     }
 
     private _loadDataTableCols() {
