@@ -202,7 +202,13 @@ export class RiskLinkStateService {
                     targetDatasource.selected = !targetDatasource.selected;
                     if (RDM.matchedRmsId && targetDatasource.selected) {
                         const matchedDataSource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.matchedRmsId];
-                        matchedDataSource && (matchedDataSource.selected = true);
+                        if (matchedDataSource) {
+                            matchedDataSource.selected = true;
+                            if (matchedDataSource.type == 'EDM')
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms[matchedDataSource.rmsId] = matchedDataSource;
+                            else
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms[matchedDataSource.rmsId] = matchedDataSource;
+                        }
                     }
                     if (targetDatasource.selected) {
                         if (RDM.type == 'EDM')
