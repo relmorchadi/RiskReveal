@@ -216,7 +216,7 @@ export class RiskLinkStateService {
                         else
                             draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms[RDM.rmsId] = RDM;
                     } else {
-                        if (RDM.type == 'RDM')
+                        if (RDM.type == 'EDM')
                             draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms = _.omit(
                                 draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms,
                                 [RDM.rmsId]
