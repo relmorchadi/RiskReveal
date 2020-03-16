@@ -1,6 +1,7 @@
 package com.scor.rr.configuration;
 
 import com.google.gson.Gson;
+import com.scor.rr.domain.model.RRJob;
 import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.ListableJobLocator;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -23,6 +24,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -111,6 +113,11 @@ public class BatchConfiguration {
 
     @Bean(name = "RRThreadPoolWithQueue")
     public ThreadPoolExecutor RRThreadPoolWithQueue() {
-        return new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500));
+        return new ThreadPoolExecutor(1, 1, 1, TimeUnit.SECONDS, new PriorityBlockingQueue<Runnable>(500, new Comparator<Runnable>() {
+            @Override
+            public int compare(Runnable o1, Runnable o2) {
+                return ((RRJob) o1).compareTo((RRJob) o2);
+            }
+        }));
     }
 }

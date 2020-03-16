@@ -1,12 +1,11 @@
 package com.scor.rr.domain;
 
 import com.scor.rr.domain.enums.JobStatus;
-import com.scor.rr.domain.enums.JobType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -16,16 +15,18 @@ import java.util.Objects;
 public class TaskEntity {
 
     private Long taskId;
-    private JobEntity jobId;
-    private JobType taskCode;
+    private Long jobExecutionId;
+    private JobEntity job;
+    private String taskType;
     private String taskParams;
-    private JobStatus status;
+    private String status;
     private Integer priority;
-    private Timestamp submittedDate;
-    private Timestamp startedDate;
-    private Timestamp finishedDate;
+    private Date submittedDate;
+    private Date startedDate;
+    private Date finishedDate;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "taskId", nullable = false)
     public Long getTaskId() {
         return taskId;
@@ -37,22 +38,31 @@ public class TaskEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jobId")
-    public JobEntity getJobId() {
-        return jobId;
+    public JobEntity getJob() {
+        return job;
     }
 
-    public void setJobId(JobEntity jobId) {
-        this.jobId = jobId;
+    public void setJob(JobEntity job) {
+        this.job = job;
+    }
+
+    @Column(name = "jobExecutionId", nullable = true, length = 255)
+    public Long getJobExecutionId() {
+        return jobExecutionId;
+    }
+
+    public void setJobExecutionId(Long jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
     }
 
     @Basic
-    @Column(name = "taskCode", nullable = true, length = 255)
-    public JobType getTaskCode() {
-        return taskCode;
+    @Column(name = "taskType", nullable = true, length = 255)
+    public String getTaskType() {
+        return taskType;
     }
 
-    public void setTaskCode(JobType taskCode) {
-        this.taskCode = taskCode;
+    public void setTaskType(String taskType) {
+        this.taskType = taskType;
     }
 
     @Basic
@@ -67,11 +77,11 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "status", nullable = true, length = 255)
-    public JobStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(JobStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -87,31 +97,31 @@ public class TaskEntity {
 
     @Basic
     @Column(name = "submittedDate", nullable = true)
-    public Timestamp getSubmittedDate() {
+    public Date getSubmittedDate() {
         return submittedDate;
     }
 
-    public void setSubmittedDate(Timestamp submittedDate) {
+    public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
     }
 
     @Basic
     @Column(name = "startedDate", nullable = true)
-    public Timestamp getStartedDate() {
+    public Date getStartedDate() {
         return startedDate;
     }
 
-    public void setStartedDate(Timestamp startedDate) {
+    public void setStartedDate(Date startedDate) {
         this.startedDate = startedDate;
     }
 
     @Basic
     @Column(name = "finishedDate", nullable = true)
-    public Timestamp getFinishedDate() {
+    public Date getFinishedDate() {
         return finishedDate;
     }
 
-    public void setFinishedDate(Timestamp finishedDate) {
+    public void setFinishedDate(Date finishedDate) {
         this.finishedDate = finishedDate;
     }
 
@@ -121,8 +131,8 @@ public class TaskEntity {
         if (o == null || getClass() != o.getClass()) return false;
         TaskEntity that = (TaskEntity) o;
         return taskId == that.taskId &&
-                Objects.equals(jobId, that.jobId) &&
-                Objects.equals(taskCode, that.taskCode) &&
+                Objects.equals(job, that.job) &&
+                Objects.equals(taskType, that.taskType) &&
                 Objects.equals(taskParams, that.taskParams) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(startedDate, that.startedDate) &&
@@ -131,6 +141,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, jobId, taskCode, taskParams, status, startedDate, finishedDate);
+        return Objects.hash(taskId, job, taskType, taskParams, status, startedDate, finishedDate);
     }
 }

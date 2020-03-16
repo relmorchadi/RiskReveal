@@ -50,7 +50,7 @@ public class ImportResource {
         List<Long> analysisIds = rmsService.saveAnalysisImportSelection(config.getAnalysisConfig());
         List<Long> portfolioIds = rmsService.savePortfolioImportSelection(config.getPortfolioConfig());
         ImportLossDataParams params = new ImportLossDataParams(config, analysisIds, portfolioIds);
-        return new ResponseEntity<>(batchExecution.RunImportLossData(params), HttpStatus.OK);
+        return new ResponseEntity<>(batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()),  Long.valueOf(params.getUserId())), HttpStatus.OK);
     }
 
     @GetMapping("/is-job-running")

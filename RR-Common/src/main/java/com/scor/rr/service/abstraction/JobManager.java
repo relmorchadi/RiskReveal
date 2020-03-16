@@ -1,9 +1,6 @@
 package com.scor.rr.service.abstraction;
 
-import com.scor.rr.domain.JobEntity;
-import com.scor.rr.domain.JobExecutionEntity;
-import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.StepStatus;
 
@@ -12,9 +9,9 @@ import java.util.Map;
 
 public interface JobManager {
 
-    JobEntity createJob(Map<String, Object> params, Integer priority, Long userId);
+    JobEntity createJob(Map<String, String> params, Integer priority, Long userId);
 
-    TaskEntity createTask(Map<String, Object> params, JobEntity job, Integer priority);
+    TaskEntity createTask(Map<String, String> params, JobEntity job, Integer priority, TaskType taskType);
 
     StepEntity createStep(Long taskId, String stepCode, Integer stepOrder);
 
@@ -32,9 +29,9 @@ public interface JobManager {
 
     boolean isTaskRunning(Long taskId);
 
-    JobStatus getJobStatus(Long jobId);
+    String getJobStatus(Long jobId);
 
-    JobStatus getTaskStatus(Long taskId);
+    String getTaskStatus(Long taskId);
 
     void logJob(Long jobId, JobStatus status);
 

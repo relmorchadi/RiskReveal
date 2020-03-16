@@ -2,10 +2,14 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.ProjectImportRunEntity;
+import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.CARStatus;
+import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.TrackingStatus;
+import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.ProjectConfigurationForeWriterRepository;
 import com.scor.rr.repository.ProjectImportRunRepository;
+import com.scor.rr.repository.TaskEntityRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
@@ -27,11 +31,23 @@ public class ProjectImportRunAndCARStatus {
     @Autowired
     private ProjectConfigurationForeWriterRepository projectConfigurationForeWriterRepository;
 
+    @Autowired
+    private TaskEntityRepository taskEntityRepository;
+
+    @Autowired
+    private JobEntityRepository jobEntityRepository;
+
     @Value("#{jobParameters['projectId']}")
     private String projectId;
 
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
+
+    @Value("#{stepExecution.jobExecution.jobId}")
+    private Long jobId;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
 
     public RepeatStatus changeProjectImportRunStatus() {
 
@@ -60,6 +76,19 @@ public class ProjectImportRunAndCARStatus {
                 } else {
                     log.info("No car configuration was found");
                 }
+            }
+        }
+
+        TaskEntity task = taskEntityRepository.findById(Long.valueOf(taskId)).orElse(null);
+        if (task != null) {
+            task.setStatus(JobStatus.SUCCEEDED.getCode());
+            task.setFinishedDate(new Date());
+            taskEntityRepository.save(task);
+            if (task.getJob().getTasks().stream()
+                    .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()) && !t.getTaskId().equals(task.getTaskId()))) {
+                task.getJob().setStatus(JobStatus.SUCCEEDED.getCode());
+                task.getJob().setFinishedDate(new Date());
+                jobEntityRepository.save(task.getJob());
             }
         }
         return RepeatStatus.FINISHED;

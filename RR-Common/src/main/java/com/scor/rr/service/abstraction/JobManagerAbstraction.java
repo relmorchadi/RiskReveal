@@ -1,10 +1,7 @@
 package com.scor.rr.service.abstraction;
 
 import com.google.gson.Gson;
-import com.scor.rr.domain.JobEntity;
-import com.scor.rr.domain.JobExecutionEntity;
-import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.JobType;
 import com.scor.rr.domain.enums.StepStatus;
@@ -33,7 +30,7 @@ public abstract class JobManagerAbstraction implements JobManager {
     private StepEntityRepository stepEntityRepository;
 
     @Override
-    public JobEntity createJob(Map<String, Object> params, Integer priority, Long userId) {
+    public JobEntity createJob(Map<String, String> params, Integer priority, Long userId) {
 
         Gson gson = new Gson();
         String parameters = gson.toJson(params);
@@ -43,7 +40,7 @@ public abstract class JobManagerAbstraction implements JobManager {
         job.setJobTypeCode(JobType.IMPORT);
         job.setJobTypeDesc("Batch Import Job");
         job.setSubmittedDate(new Timestamp((new Date()).getTime()));
-        job.setStatus(JobStatus.PENDING);
+        job.setStatus(JobStatus.PENDING.getCode());
         job.setPriority(priority);
         job.setSubmittedByUser(userId);
 
@@ -51,18 +48,18 @@ public abstract class JobManagerAbstraction implements JobManager {
     }
 
     @Override
-    public TaskEntity createTask(Map<String, Object> params, JobEntity job, Integer priority) {
+    public TaskEntity createTask(Map<String, String> params, JobEntity job, Integer priority, TaskType taskType) {
 
         Gson gson = new Gson();
         String parameters = gson.toJson(params);
 
         TaskEntity task = new TaskEntity();
-        task.setJobId(job);
+        task.setJob(job);
         task.setTaskParams(parameters);
         task.setPriority(priority);
-        task.setStatus(JobStatus.PENDING);
+        task.setStatus(JobStatus.PENDING.getCode());
         task.setSubmittedDate(new Timestamp((new Date()).getTime()));
-        task.setTaskCode(JobType.IMPORT);
+        task.setTaskType(taskType.getCode());
 
         return taskEntityRepository.save(task);
     }
@@ -102,12 +99,12 @@ public abstract class JobManagerAbstraction implements JobManager {
     public abstract List<JobExecutionEntity> findRunningJobsForUser(String userId);
 
     @Override
-    public JobStatus getJobStatus(Long jobId) {
+    public String getJobStatus(Long jobId) {
         return jobEntityRepository.findById(jobId).map(JobEntity::getStatus).orElse(null);
     }
 
     @Override
-    public JobStatus getTaskStatus(Long taskId) {
+    public String getTaskStatus(Long taskId) {
         return taskEntityRepository.findById(taskId).map(TaskEntity::getStatus).orElse(null);
     }
 

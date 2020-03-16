@@ -19,7 +19,7 @@ public interface RLPortfolioSelectionRepository extends JpaRepository<RLPortfoli
 
     List<RLPortfolioSelection> findByProjectId(Long projectId);
 
-    @Procedure("dbonew.uspRiskLinkDeletePortfolioSummary")
+    @Procedure("dbo.uspRiskLinkDeletePortfolioSummary")
     void deleteByPortfolioIdAndProjectId(@Param("rlPortfolioId") Long rlPortfolioId, @Param("projectId") Long projectId);
 
 }

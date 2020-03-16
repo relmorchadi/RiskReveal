@@ -1,9 +1,12 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.JobExecutionEntity;
+import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.model.RRJob;
+import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.JobExecutionRepository;
+import com.scor.rr.repository.TaskRepository;
 import com.scor.rr.service.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -34,6 +37,12 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Autowired
     private JobExecutionRepository jobExecutionRepository;
 
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @Autowired
+    private JobEntityRepository jobRepository;
+
     @Override
     public void submitJob(Long jobId) {
     }
@@ -55,6 +64,10 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Override
     public void submitTask(Long taskId) {
 
+    }
+
+    public void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity) {
+        executor.execute(new RRJob(importLossData, priority, params, jobLauncher, taskEntity, taskRepository, jobRepository));
     }
 
     @Override

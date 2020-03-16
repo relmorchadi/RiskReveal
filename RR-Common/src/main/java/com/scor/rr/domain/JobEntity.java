@@ -1,13 +1,13 @@
 package com.scor.rr.domain;
 
-import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,7 +23,7 @@ public class JobEntity {
     @Column(name = "SubmittedByUser")
     private Long submittedByUser;
     @Column(name = "SubmittedDate")
-    private Timestamp submittedDate;
+    private Date submittedDate;
     @Column(name = "JobCode")
     private String jobCode;
     @Column(name = "JobParams")
@@ -31,12 +31,16 @@ public class JobEntity {
     @Column(name = "Priority")
     private Integer priority;
     @Column(name = "Status")
-    private JobStatus status;
+    private String status;
     @Column(name = "StartedDate")
-    private Timestamp startedDate;
+    private Date startedDate;
     @Column(name = "FinishedDate")
-    private Timestamp finishedDate;
+    private Date finishedDate;
     @Column(name = "JobTypeCode")
     private JobType jobTypeCode;
     @Column(name = "JobTypeDesc")
-    private String jobTypeDesc;}
+    private String jobTypeDesc;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<TaskEntity> tasks;
+}

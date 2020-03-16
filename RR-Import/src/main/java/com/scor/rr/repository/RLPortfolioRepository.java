@@ -18,7 +18,7 @@ public interface RLPortfolioRepository extends JpaRepository<RLPortfolio, Long>,
 
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
-    @Query(value = "exec dbonew.usp_DeleteRLModelPortfolioByRLModelDataSourceId @ModelDataSourceId =:rlModelDataSourceId", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DeleteRLModelPortfolioByRLModelDataSourceId @ModelDataSourceId =:rlModelDataSourceId", nativeQuery = true)
     void deleteByRlModelDataSourceRlModelDataSourceId(@Param("rlModelDataSourceId") Long rlModelDataSourceId);
 
     @Modifying()
