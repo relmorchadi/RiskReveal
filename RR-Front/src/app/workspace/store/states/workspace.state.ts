@@ -1113,7 +1113,7 @@ export class WorkspaceState {
   }
 
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
-  @Action(fromWS.SearchRiskLinkEDMAndRDMAction)
+  @Action(fromWS.SearchRiskLinkEDMAndRDMAction, { cancelUncompleted: true })
   searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SearchRiskLinkEDMAndRDMAction) {
     return this.riskLinkFacade.searchRiskLinkEDMAndRDM(ctx, payload);
   }
