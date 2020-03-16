@@ -150,15 +150,15 @@ public class WorkspaceService {
         }
     }
 
-    public ResponseEntity<?> openTab(String workspaceContextCode, Integer workspaceUwYear) {
+    public ResponseEntity<?> openTab(String workspaceContextCode, Integer workspaceUwYear, String screen) {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
             Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(user.getUserCode(), workspaceContextCode, workspaceUwYear);
 
             if(opt.isPresent()) {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen)));
             } else {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date())));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen)));
             }
 
         } catch (Exception e) {

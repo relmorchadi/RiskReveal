@@ -25,7 +25,7 @@ public class ProjectConfigurationForeWriter {
                                           String carName,
                                           String uwAnalysis,
                                           Date requestCreationDate,
-                                          Integer requestCreationBy,
+                                          String requestCreationBy,
                                           String code,
                                           String narrative) {
         this.entity = entity;
@@ -72,7 +72,7 @@ public class ProjectConfigurationForeWriter {
     private Long assignedTo;
 
     @Column(name = "LastUpdateBy", nullable = false)
-    private Integer lastUpdateBy;
+    private String lastUpdateBy;
 
     @LastModifiedDate
     @Column(name = "LastUpdateDate", nullable = false)
@@ -83,7 +83,7 @@ public class ProjectConfigurationForeWriter {
     private Date requestCreationDate;
 
     @Column(name = "RequestCreationBy")
-    private Integer requestCreationBy;
+    private String requestCreationBy;
 
     @Column(name = "Code", length = 50)
     private String code;

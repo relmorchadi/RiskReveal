@@ -1,6 +1,6 @@
 import {Router} from "@angular/router";
 import {ChangeDetectorRef, OnChanges, OnInit, SimpleChanges} from "@angular/core";
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
 import {MonoTypeOperatorFunction, Observable, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {Navigate} from '@ngxs/router-plugin';
@@ -22,6 +22,8 @@ export abstract class BaseContainer implements OnInit {
     longDate: '',
     longTime: ''
   };
+
+  @Select(GeneralConfigState.getDateConfig) dateConfig$;
 
   protected unSubscription$: Subject<void>;
 
@@ -48,14 +50,11 @@ export abstract class BaseContainer implements OnInit {
             }
         );
 
-    this._baseStore
-        .select(GeneralConfigState.getDateConfig)
-        .pipe(this.unsubscribeOnDestroy)
+    this.dateConfig$.pipe(this.unsubscribeOnDestroy)
         .subscribe((config) => {
-              this.dateConfig = config;
-              this.detectChanges();
-            }
-        );
+          this.dateConfig = config;
+          this.detectChanges();
+        });
   }
 
   protected navigate(commands: any[]) {

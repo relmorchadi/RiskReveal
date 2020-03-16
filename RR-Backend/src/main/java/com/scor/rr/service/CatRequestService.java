@@ -80,7 +80,7 @@ public class CatRequestService {
                     projectConfigurationForeWriter.get().setCarStatus(CARStatus.CANC);
                 }
                 projectConfigurationForeWriter.get().setLastUpdateDate(date);
-                projectConfigurationForeWriter.get().setLastUpdateBy(1); // SHOULD BE USER SYSTEM
+                projectConfigurationForeWriter.get().setLastUpdateBy(data.userFN + " " + data.userLN); // SHOULD BE USER SYSTEM
                 projectConfigurationForeWriterRepository.save(projectConfigurationForeWriter.get());
             }
         }
@@ -92,7 +92,7 @@ public class CatRequestService {
                 null,
                 data.uwAnalysisName,
                 date,
-                1, //FIXME: check with SHAUN: data.userFN + " " + data.userLN
+                data.userFN + " " + data.userLN, //FIXME: check with SHAUN: data.userFN + " " + data.userLN
                 null,
                 null));
 

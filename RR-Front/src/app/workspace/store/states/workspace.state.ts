@@ -778,7 +778,6 @@ export class WorkspaceState {
 
   @Action(fromWS.ToggleSelectCalibPlts)
   ToggleSelectCalibPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectCalibPlts){
-    console.log(payload)
     return this.calibrationNewService.selectPlts(ctx, payload);
   }
 
@@ -1114,7 +1113,7 @@ export class WorkspaceState {
   }
 
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
-  @Action(fromWS.SearchRiskLinkEDMAndRDMAction)
+  @Action(fromWS.SearchRiskLinkEDMAndRDMAction, { cancelUncompleted: true })
   searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SearchRiskLinkEDMAndRDMAction) {
     return this.riskLinkFacade.searchRiskLinkEDMAndRDM(ctx, payload);
   }
@@ -1230,6 +1229,11 @@ export class WorkspaceState {
   @Action(fromWS.ClearSelectionAction)
   clearSelection(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.clearSelection(ctx);
+  }
+
+  @Action(fromWS.InitDatasourcesSelection)
+  initDataSourcesSelection(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.initDataSourcesSelection(ctx);
   }
 
 

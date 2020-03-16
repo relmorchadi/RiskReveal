@@ -54,6 +54,7 @@ export class ColumnsFormatterService {
   }
 
   formatNumber(n) {
+    if(!_.floor(n)) return '0';
     switch (this.numberConfig.negativeFormat) {
       case 'simple':
         return this.simple(n);
@@ -69,12 +70,11 @@ export class ColumnsFormatterService {
   }
 
   formatText(t) {
-    return t.toString();
+    return _.toString(t);
   }
 
   formatDate(d) {
-    console.log(this.dateConfig.longDate)
-    return moment(new Date(d), 'DD/MM/YYYY').format(this.dateConfig.longDate);
+    return moment(new Date(d), 'DD/MM/YYYY').format(this.dateConfig.shortDate);
   }
 
   formatIndicator(i) {

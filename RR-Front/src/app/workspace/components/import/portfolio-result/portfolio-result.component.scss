@@ -385,6 +385,9 @@ COMPONENT STYLE
     .ui-table-scrollable-wrapper {
       display: flex;
     }
+    i.pi-sort-down, i.pi-sort-up {
+      color: #848484 !important;
+    }
   }
 }
 

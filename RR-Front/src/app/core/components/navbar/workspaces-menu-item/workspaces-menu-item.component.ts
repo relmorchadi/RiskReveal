@@ -112,7 +112,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   ngOnInit() {
-    this.dispatch(new fromWS.InitWorkspace({}));
     this.countWs$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.countWs = _.merge({}, value);
       this.detectChanges();
@@ -160,7 +159,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       .valueChanges
       .pipe(takeUntil(this.unSubscribeRec$), debounceTime(500))
       .subscribe((value) => {
-        this.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: this.recentPageable, userId: 1, search: value}))
+        this.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: this.recentPageable, search: value}))
       });
 
     this.subscriptionsFavorite = this.contractFilterFormGroup.get('favoriteSearch')
@@ -170,7 +169,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.dispatch(new fromHD.LoadFavoriteWorkspace({
           offset: 0,
           size: this.favoritePageable,
-          userId: 1,
           search: value
         }))
       });
@@ -182,7 +180,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.dispatch(new fromHD.LoadAssignedWorkspace({
           offset: 0,
           size: this.assignedPageable,
-          userId: 1,
           search: value
         }))
       });

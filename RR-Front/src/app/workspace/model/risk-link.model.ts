@@ -110,11 +110,11 @@ export class RiskLink {
         };
     }
 
-    setRefData(refData) {
+    setRefData(refData, defaultRmsInstance?) {
         this.financialValidator = {
             rmsInstance: {
                 data: refData.rmsInstances,
-                selected: _.last(refData.rmsInstances)
+                selected: defaultRmsInstance ? _.first(_.filter(refData.rmsInstances, rd => rd.instanceName == defaultRmsInstance )) : _.last(refData.rmsInstances)
             },
             financialPerspectiveELT: {
                 data: refData.financialPerspectives,

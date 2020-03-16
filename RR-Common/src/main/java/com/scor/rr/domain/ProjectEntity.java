@@ -88,6 +88,12 @@ public class ProjectEntity {
     @Column(name = "DeletedBy")
     private String deletedBy;
 
+    @Column(name = "LastUpdatedBy")
+    private String lastUpdatedBy;
+
+    @Column(name = "LastUpdatedOn")
+    private Date lastUpdatedOn;
+
     public void initProject(Long workspaceId) {
         this.projectId = null;
         this.workspaceId = workspaceId;

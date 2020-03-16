@@ -192,6 +192,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
       userDashboardWidgetId: 0
     };
 
+    console.log('chartInit');
+
     this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
       this.data = data.content;
       this.filteredData = data.content;
@@ -238,8 +240,9 @@ export class FacSubsidiaryChartComponent implements OnInit {
       _.forEach(this.selectedSubsidiary, subsItem => {
         trad = [...trad, _.filter(this.data, dt =>
             dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length];
-        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
-            _.filter(this.data, dt => dt.uwAnalysis === subsItem).length) * 100];
+        const percentage = _.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
+            _.filter(this.data, dt => dt.uwAnalysis === subsItem).length * 100;
+        part = [...part, Math.floor(percentage * 100) / 100];
       });
       series = [...series, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' :item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
       alternateSeries = [...alternateSeries, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' : item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
@@ -277,7 +280,17 @@ export class FacSubsidiaryChartComponent implements OnInit {
   switchData() {
     this.switch = !this.switch;
     this.myChart.setOption({
-      series: this.switch ? this.alternateSeriesData : this.switchedSeriesData
+      series: this.switch ? this.alternateSeriesData : this.switchedSeriesData,
+      tooltip: this.switch ? {
+        formatter: (params) => {
+          return params.name + '<br/>' + `<span style="background-color: ${params.color}; height: 10px; width: 10px; display: inline-flex; border-radius: 20px;"></span> 
+            ${params.seriesName}: ${params.data} %`;
+        }
+      } : {
+        formatter: (params) => {
+          return params.name + '<br/>' + `<span style="background-color: ${params.color}; height: 10px; width: 10px; display: inline-flex; border-radius: 20px;"></span> 
+            ${params.seriesName}: ${params.data}`;
+        }}
     });
   }
 

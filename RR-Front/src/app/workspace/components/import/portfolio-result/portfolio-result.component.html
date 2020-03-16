@@ -28,7 +28,7 @@
                         <i class="icon-settings_24px"></i>
                     </a>
                     <ul nz-menu style="font-size: 12px">
-                        <li nz-menu-item>Reset Sort</li>
+                        <li nz-menu-item (click)="resetSort()">Reset Sort</li>
                         <li nz-menu-item>Reset Filters</li>
                         <li nz-menu-item>Reset Sort/Filters</li>
                         <li nz-menu-divider></li>
@@ -37,7 +37,7 @@
                     </ul>
                 </nz-dropdown>
             </div>
-            <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
+            <p-table #exposureSummaryTable [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                      [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
                      [(contextMenuSelection)]="contextSelectedItem"
                      [contextMenu]="cmR"
@@ -57,7 +57,7 @@
                 <ng-template let-columns pTemplate="header">
                     <tr>
                         <ng-container *ngFor="let col of columns">
-                            <th *ngIf="col.visible" pResizableColumn>
+                            <th *ngIf="col.visible" pResizableColumn [pSortableColumn]="col.field">
                                 <ng-container *ngIf="col.type === 'selection'">
                                     <!--                  <label style="margin-top:20px" nz-checkbox (ngModelChange)="updateAllChecked($event, 'summaries')"></label>
                                                       <label style="margin-top:20px" nz-checkbox
@@ -65,22 +65,21 @@
                                                       <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                                 </ng-container>
                                 <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
-                                    <ng-container [pSortableColumn]="col.field">
+                                    <ng-container>
                                         {{col.header}}
-                                        <!--                    <ng-container *ngIf="col.sorting" [ngSwitch]="col?.sorting">
-                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
-                                                                 class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
-                                                                 class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                                                              <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchDefault class="icon-direction"
-                                                                 style="font-size: 1.4em;"></i>
-                                                            </ng-container>
-                                                            <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
+                                        <p-sortIcon style="color: #848484 !important;" [field]="col.field"
+                                                    ariaLabel="Activate to sort"
+                                                    ariaLabelDesc="Activate to sort in descending order"
+                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                     </ng-container>
                                     <div *ngIf="col.filtered" class="search-bar-table">
                                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                         <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)"
                                                pInputText type="text">
+<!--                                        <p-sortIcon style="color: #848484 !important;" [field]="col.field"-->
+<!--                                                    ariaLabel="Activate to sort"-->
+<!--                                                    ariaLabelDesc="Activate to sort in descending order"-->
+<!--                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
                                     </div>
                                 </div>
                                 <div *ngIf="col.type === 'icon'">

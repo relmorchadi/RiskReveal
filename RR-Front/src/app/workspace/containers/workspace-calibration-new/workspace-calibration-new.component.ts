@@ -14,6 +14,9 @@ import {combineLatest, Subscription} from "rxjs";
 import {ExcelService} from "../../../shared/services/excel.service";
 import produce from "immer";
 import {ColumnsFormatterService} from "../../../shared/services/columnsFormatter.service";
+import {FilterGroupedPltsPipe} from "../../pipes/filter-grouped-plts.pipe";
+import {SortGroupedPltsPipe} from "../../pipes/sort-grouped-plts.pipe";
+import {ExchangeRatePipe} from "../../../shared/pipes/exchange-rate.pipe";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -105,7 +108,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     private calibrationApi: CalibrationAPI,
     private actions$: Actions,
     private excel: ExcelService,
-    private formatter: ColumnsFormatterService
+    private formatter: ColumnsFormatterService,
+    private filterGroupedPlts: FilterGroupedPltsPipe,
+    private sortGroupedPlts: SortGroupedPltsPipe,
+    private exchangeRatePipe: ExchangeRatePipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
 
@@ -282,6 +288,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       )
       .subscribe(epMetrics => {
       this.epMetrics = epMetrics;
+      console.log(epMetrics);
 
       this.initEpMetricsCols(this.epMetrics);
 
@@ -816,13 +823,29 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const columnsField =_.map(columns, 'field');
     let item = null;
 
-    _.forEach(this.data, pure => {
-      item = {..._.omit(pure, 'threads'), ...this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId]};
-      exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item));
+    _.forEach(
+        this.sortGroupedPlts.transform(
+            this.filterGroupedPlts.transform(
+                this.data,
+                this.tableConfig.filterData
+            ),
+            this.tableConfig.sortData
+        ), pure => {
+          let pureMetrics = {};
+          _.forEach(this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId], (v,k) => {
+            pureMetrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, pure.currencyCode, this.tableConfig.selectedCurrency);
+          })
+          item = {..._.omit(pure, 'threads'), ...pureMetrics};
+          exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item))
 
-      _.forEach(pure.threads, thread => {
-        exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, thread));
-      })
+          _.forEach(pure.threads, thread => {
+            let metrics = {};
+            _.forEach(this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId], (v,k) => {
+              metrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, thread.currencyCode, this.tableConfig.selectedCurrency);
+            })
+            item = {..._.omit(thread, 'threads'), ...metrics};
+            exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item));
+          })
 
     });
 
@@ -838,7 +861,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
               {
                 sheetData: _.map(this.tableConfig.filterData, (v,k) => ({
                   Filter: v,
-                  Column: columnsHeader[_.findIndex(columnsField, e => e == k)]
+                  Column: k == 'projectId' ? 'Project ID' : columnsHeader[_.findIndex(columnsField, e => e == k)]
                 })),
                 sheetName: "Filters",
                 headerOptions: ["Column", "Filter"]
@@ -853,7 +876,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   transformItem(columnsHeader, columnsField, columnsType, item) {
     let newItem= {};
     _.forEach(columnsField, (field, i) => {
-      newItem[columnsHeader[i]] = item[field] ? this.formatter.format(item[field], columnsType[i]) : null;
+      newItem[columnsHeader[i]] =  this.formatter.format(item[field], columnsType[i])
     });
     return newItem;
   }

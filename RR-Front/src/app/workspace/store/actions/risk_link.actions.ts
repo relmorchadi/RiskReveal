@@ -341,3 +341,7 @@ export class ClearSelectionAction {
   constructor() {}
 }
 
+export class InitDatasourcesSelection{
+  static readonly type= '[Risk Link] Init data sources selection action';
+  constructor() {}
+}
