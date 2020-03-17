@@ -32,8 +32,21 @@ public class ProjectForewriterExpectedScopeService {
     @Value(value = "${application.expectedScope.separator}")
     private String separator;
 
+    public List<String> getFileNames() {
+        File file = new File(path);
+        List<String> fileNames = new ArrayList<>();
+        for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
+                System.out.println(fileEntry.getName());
+            fileNames.add(fileEntry.getName());
+            }
+
+        return fileNames;
+        }
+
+
+
     public List<ForeWriterExpectedScope> readForewriterFile(String fileName) throws RRException {
-        File file = new File(path +  fileName);
+        File file = new File(path+ separator+ fileName);
         if (!file.exists())
             throw new ExpectedScopeFileNotFoundException();
         if (!"txt".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
@@ -42,14 +55,14 @@ public class ProjectForewriterExpectedScopeService {
         try {
             List<ForeWriterExpectedScope> listOfExpectedScopes = new ArrayList<>();
             Scanner sc = new Scanner(new FileReader(file));
-            sc.useDelimiter("\\r\\n|\\t");
+            sc.useDelimiter("\\r\\n|\\t|\\n");
             if (sc.hasNextLine()) {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
 
                 String accntNum = String.valueOf(sc.next()); //AccountNumber
-                if(!accntNum.equals("")){
+                if (!accntNum.equals("")) {
                     int year = Integer.parseInt(sc.next()); //Year
                     int order = Integer.parseInt(sc.next()); // Order
                     int endorNum = Integer.parseInt(sc.next()); // Endor_Num
@@ -70,12 +83,12 @@ public class ProjectForewriterExpectedScopeService {
                             analysisName,
                             division,
                             country,
-                            state,
+                            state.split("-")[1],
                             perils,
                             tiv,
                             currency));
                 }
-                }
+            }
 
             return listOfExpectedScopes;
         } catch (IOException | NoSuchElementException e) {
@@ -87,25 +100,37 @@ public class ProjectForewriterExpectedScopeService {
 
     }
 
-    public void storeTheExpectedScopeFac(String fileName) throws RRException {
+    public void storeTheExpectedScopeFac(String carName) throws RRException {
 
-        List<ForeWriterExpectedScope> listScope = readForewriterFile(fileName);
-        Long projectID = getProjectId(fileName.split("_")[10]);
-        List<ProjectForewriterExpectedScope> finalList = new ArrayList<>();
-        if(!listScope.isEmpty()){
-            for(ForeWriterExpectedScope scope : listScope){
-                ProjectForewriterExpectedScope projectForewriterExpectedScope = modelMapper.map(scope, ProjectForewriterExpectedScope.class);
-                projectForewriterExpectedScope.setEntity(1);
-                projectForewriterExpectedScope.setProjectId(projectID);
-                finalList.add(projectForewriterExpectedScope);
+        List<String> namesOfFiles = getFileNames();
+        if(!namesOfFiles.isEmpty()){
+            for(String fileName : namesOfFiles){
+                if(fileName.split("_")[10].equals(carName)){
+                    List<ForeWriterExpectedScope> listScope = readForewriterFile(fileName);
+                    Long projectID = getProjectId(fileName.split("_")[10]);
+                    List<ProjectForewriterExpectedScope> finalList = new ArrayList<>();
+                    if (!listScope.isEmpty()) {
+                        for (ForeWriterExpectedScope scope : listScope) {
+                            ProjectForewriterExpectedScope projectForewriterExpectedScope = modelMapper.map(scope, ProjectForewriterExpectedScope.class);
+                            projectForewriterExpectedScope.setEntity(1);
+                            projectForewriterExpectedScope.setProjectId(projectID);
+                            finalList.add(projectForewriterExpectedScope);
+                        }
+                        projectForewriterExpectedScopeRepository.saveAll(finalList);
+                    }
+                }
+
             }
-            projectForewriterExpectedScopeRepository.saveAll(finalList);
+
         }
+
 
 
     }
 
-    public Long getProjectId(String carId){
-            return projectForewriterExpectedScopeRepository.getProjectIdByCarRequestId(carId);
+    public Long getProjectId(String carId) {
+        return projectForewriterExpectedScopeRepository.getProjectIdByCarRequestId(carId);
+
+        
     }
 }

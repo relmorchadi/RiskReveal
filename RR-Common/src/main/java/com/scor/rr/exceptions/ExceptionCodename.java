@@ -34,6 +34,7 @@ public enum ExceptionCodename {
     EXPECTED_SCOPE_FILE_NOT_FOUND_EXCEPTION("Expected scope file not found"),
     EXPECTED_SCOPE_FILE_EXTENSION_NOT_SUPPORTED_EXCEPTION("Expected scope file extension not supported"),
     EXPECTED_SCOPE_FILE_CORRUPTED_EXCEPTION("Expected scope file is corrupted"),
+    ACCUMULATION_PACKAGE_NOT_FOUND("Accumulation Package not found"),
 
 
     /* This section is for DashboardExceptions*/
