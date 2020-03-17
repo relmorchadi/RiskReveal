@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import {Select, Store} from "@ngxs/store";
 import componentData from './data';
@@ -29,6 +29,9 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
     saveEmitter = new EventEmitter();
 
     @Select(WorkspaceState.getSelectedProject) selectedProject$;
+
+    @ViewChild('exposureSummaryTable')
+    tables: any;
 
     refs = {
         currencies: [
@@ -88,6 +91,12 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         }
     }
 
+    resetSort(){
+        this.tables.sortOrder = this.tables.defaultSortOrder;
+        this.tables.sortField = '';
+        this.tables.multiSortMeta = null;
+        this.tables.tableService.onSort(null);
+    }
 
     updateRowData(key, value, index) {
         this.store.dispatch(new fromRiskLink.PatchPortfolioResultAction({

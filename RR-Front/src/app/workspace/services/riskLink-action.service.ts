@@ -10,7 +10,7 @@ import produce from 'immer';
 import {RiskLink} from "../model/risk-link.model";
 import {RLAnalysisFilter} from "../model/rl-analysis-filter.model";
 import {RlPortfolioFilter} from "../model/rl-portfolio-filter.model";
-import {HttpErrorResponse} from '@angular/common/http';
+
 
 @Injectable({
     providedIn: 'root'
@@ -150,6 +150,48 @@ export class RiskLinkStateService {
         ));
     }
 
+    initDataSourcesSelection(ctx: StateContext<WorkspaceModel>) {
+        ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+            // const {riskLink} = draft.content[wsIdentifier]
+            draft.content[wsIdentifier].riskLink.listEdmRdm.selection = {
+                edms: {}, //_.merge({}, riskLink.selection.edms),
+                rdms: {} //_.merge({}, riskLink.selection.rdms)
+            };
+        }));
+    }
+
+    /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
+    searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
+        const {keyword, offset, size, instanceId, type} = payload;
+        ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+            draft.content[wsIdentifier].riskLink.listEdmRdm.data = {};
+        }));
+        return this.riskApi.searchRiskLinkData(instanceId, keyword, offset, size, type || '').pipe(
+            mergeMap(
+                ({content, numberOfElement, totalElements, last}: any) => {
+                    ctx.patchState(produce(ctx.getState(), draft => {
+                        const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
+                        const {riskLink} = draft.content[wsIdentifier];
+                        const selectedDataSources = [..._.keys(riskLink.listEdmRdm.selection.edms), ..._.keys(riskLink.listEdmRdm.selection.rdms)];
+                        draft.content[wsIdentifier].riskLink.listEdmRdm.data = {};
+                        _.forEach(content, ds => {
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.data[ds.rmsId] = {
+                                ...ds,
+                                selected: !!_.find(selectedDataSources, d => d == ds.rmsId),
+                            }
+                        });
+                        draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement = numberOfElement;
+                        draft.content[wsIdentifier].riskLink.listEdmRdm.totalElements = totalElements;
+                        draft.content[wsIdentifier].riskLink.listEdmRdm.last = last;
+                    }));
+                    return of(content);
+                })
+        );
+    }
+
+
     toggleRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
         const {action, RDM, source} = payload;
         ctx.patchState(produce(ctx.getState(), draft => {
@@ -158,22 +200,60 @@ export class RiskLinkStateService {
                 case 'selectOne':
                     const targetDatasource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.rmsId];
                     targetDatasource.selected = !targetDatasource.selected;
-                    if(RDM.matchedRmsId){
+                    if (RDM.matchedRmsId && targetDatasource.selected) {
                         const matchedDataSource = draft.content[wsIdentifier].riskLink.listEdmRdm.data[RDM.matchedRmsId];
-                        matchedDataSource && (matchedDataSource.selected = true);
+                        if (matchedDataSource) {
+                            matchedDataSource.selected = true;
+                            if (matchedDataSource.type == 'EDM')
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms[matchedDataSource.rmsId] = matchedDataSource;
+                            else
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms[matchedDataSource.rmsId] = matchedDataSource;
+                        }
+                    }
+                    if (targetDatasource.selected) {
+                        if (RDM.type == 'EDM')
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms[RDM.rmsId] = RDM;
+                        else
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms[RDM.rmsId] = RDM;
+                    } else {
+                        if (RDM.type == 'EDM')
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms = _.omit(
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms,
+                                [RDM.rmsId]
+                            );
+                        else
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms = _.omit(
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms,
+                                [RDM.rmsId]
+                            );
                     }
                     break;
 
                 case 'selectAll':
                     _.forEach(draft.content[wsIdentifier].riskLink.listEdmRdm.data, (value, key) => {
                         value.selected = true;
+                        if (value.type == 'EDM')
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms[value.rmsId] = value;
+                        else
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms[value.rmsId] = value;
                     });
                     break;
 
                 case 'unselectAll':
                     _.forEach(draft.content[wsIdentifier].riskLink.listEdmRdm.data, (value, key) => {
                         value.selected = false;
+                        if (value.type == 'EDM')
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms = _.omit(
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.edms,
+                                [value.rmsId]
+                            );
+                        else
+                            draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms = _.omit(
+                                draft.content[wsIdentifier].riskLink.listEdmRdm.selection.rdms,
+                                [value.rmsId]
+                            );
                     });
+
                     break;
             }
 
@@ -795,36 +875,6 @@ export class RiskLinkStateService {
         ctx.dispatch(new fromWs.LoadPortfolioFacAction(_.toArray(mergedEDM)));
     }
 
-    /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
-    searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
-        const {keyword, offset, size, instanceId, type} = payload;
-        ctx.patchState(produce(ctx.getState(), draft => {
-            const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
-            draft.content[wsIdentifier].riskLink.listEdmRdm.data={};
-        }));
-        return this.riskApi.searchRiskLinkData(instanceId, keyword, offset, size, type || '').pipe(
-            mergeMap(
-                ({content, numberOfElement, totalElements, last}: any) => {
-                    ctx.patchState(produce(ctx.getState(), draft => {
-                        const wsIdentifier = _.get(draft, 'currentTab.wsIdentifier');
-                        const {riskLink} = draft.content[wsIdentifier];
-                        const selectedDataSources = [..._.keys(riskLink.selection.edms), ..._.keys(riskLink.selection.rdms)];
-                        draft.content[wsIdentifier].riskLink.listEdmRdm.data = {};
-                        _.forEach(content, ds => {
-                            draft.content[wsIdentifier].riskLink.listEdmRdm.data[ds.rmsId] = {
-                                ...ds,
-                                selected: !!_.find(selectedDataSources, d => d == ds.rmsId),
-                            }
-                        });
-                        draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement = numberOfElement;
-                        draft.content[wsIdentifier].riskLink.listEdmRdm.totalElements = totalElements;
-                        draft.content[wsIdentifier].riskLink.listEdmRdm.last = last;
-                    }));
-                    return of(content);
-                })
-        );
-    }
-
     /** LOAD DATA FOR FINANCIAL PERSPECTIVE */
     loadFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
         const state = ctx.getState();
@@ -1023,7 +1073,7 @@ export class RiskLinkStateService {
         switch (_.upperCase(type)) {
             case 'PORTFOLIO':
                 return this.riskApi.deletePortfolioSummary(ids, projectId)
-                    .pipe(catchError((err:any) => {
+                    .pipe(catchError((err: any) => {
                         if (err.status != 200)
                             return of(err);
                         this.deletePortfolioFromSelection(ctx, ids);
@@ -1199,27 +1249,6 @@ export class RiskLinkStateService {
                     return of(err);
                 })
             );
-    }
-
-    private _facDataFactor(data, selection, dataSourceId, scope) {
-        let result = null;
-        console.log('factor Data', JSON.parse(JSON.stringify({data, selection, dataSourceId, scope})));
-        if (_.includes(_.keys(selection), `${dataSourceId}`)) {
-            if (scope === 'RDM') {
-                result = _.map(data, item => {
-                    return {...item, selected: _.includes(_.keys(selection[dataSourceId]), `${item.rlAnalysisId}`)}
-                });
-            } else {
-                result = _.map(data, item => {
-                    return {...item, selected: _.includes(_.keys(selection[dataSourceId]), `${item.rlPortfolioId}`)}
-                });
-            }
-        } else {
-            result = _.map(data, item => {
-                return {...item, selected: false}
-            });
-        }
-        return _.merge({}, ...result);
     }
 
     private _update(source, list) {

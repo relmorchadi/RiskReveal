@@ -28,7 +28,7 @@
                         <i class="icon-settings_24px"></i>
                     </a>
                     <ul nz-menu style="font-size: 12px">
-                        <li nz-menu-item>Reset Sort</li>
+                        <li nz-menu-item (click)="resetSort()">Reset Sort</li>
                         <li nz-menu-item>Reset Filters</li>
                         <li nz-menu-item>Reset Sort/Filters</li>
                         <li nz-menu-divider></li>
@@ -37,7 +37,7 @@
                     </ul>
                 </nz-dropdown>
             </div>
-            <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
+            <p-table #exposureSummaryTable [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                      [resizableColumns]="true" columnResizeMode="expand" [scrollHeight]="'175px'"
                      [(contextMenuSelection)]="contextSelectedItem"
                      [contextMenu]="cmR"
