@@ -14,7 +14,7 @@ import { first, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
-import {closeSearch, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
+import {closeSearch, LoadShortCuts, showSavedSearch} from '../../../store/actions/search-nav-bar.action';
 import {Actions, Select, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
@@ -46,6 +46,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   @ViewChild('searchInput') searchInput: ElementRef;
 
   @Select(DashboardState.getSelectedDashboard) selectedDashboard$;
+  @Select(SearchNavBarState.getMapTableNameToBadgeKey) mapTableName$;
 
   contractFilterFormGroup: FormGroup;
   subscriptions: Subscription;
@@ -88,6 +89,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   }
 
   ngOnInit() {
+    this.dispatch(new LoadShortCuts());
     this.selectedDashboard$.pipe().subscribe(value => {
       this.searchMode = _.get(value, 'searchMode', null);
       this.resetToDash = this.searchMode !== null;
@@ -103,8 +105,8 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
       this.detectChanges();
     });
 
-    this.store.select(SearchNavBarState.getMapTableNameToBadgeKey).pipe(first(v => v)).subscribe( mapTableNameToBadgeKey => {
-      this.mapTableNameToBadgeKey = mapTableNameToBadgeKey;
+    this.mapTableName$.pipe().subscribe(value => {
+      this.mapTableNameToBadgeKey = value;
       this.detectChanges();
     });
 
@@ -148,7 +150,6 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
   onEnter(evt) {
     evt.preventDefault();
     const globalKeywordBadge = this.convertExpressionToBadge(this.globalKeyword);
-    console.log(globalKeywordBadge);
     const expr = this.convertBadgeToExpression(globalKeywordBadge ? [...this.state.badges, globalKeywordBadge ] : this.state.badges);
     this.store.dispatch(new SearchActions.ExpertModeSearchAction(expr));
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
@@ -195,7 +196,7 @@ export class SearchMenuItemComponent extends BaseContainer implements OnInit, On
 
   convertExpressionToBadge(expression) {
     const foundShortCut = _.find(this.searchShortCuts, shortCut => _.includes(expression, _.camelCase(shortCut.shortCutLabel)));
-    return foundShortCut ? { key: _.camelCase(foundShortCut.shortCutLabel), operator: "LIKE", value: expression.substring(foundShortCut.shortCutLabel.length) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
+    return foundShortCut ? { key: _.camelCase(foundShortCut.shortCutLabel), operator: "LIKE", value: expression.substring(_.camelCase(foundShortCut.shortCutLabel).length + 1) } : ( expression ? { key: 'global search', operator: "LIKE", value: expression } : null);
   }
 
   selectSearchBadge(key, value) {

@@ -17,6 +17,7 @@ import {WorkspaceState} from "../../../../workspace/store/states";
 import {debounceTime, take, takeUntil} from "rxjs/operators";
 import {Navigate} from "@ngxs/router-plugin";
 import {Subject, Subscription} from "rxjs";
+import * as fromWS from "../../../../workspace/store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -92,8 +93,8 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
 
   workspaceCols = [
     {width: '15px', type: 'select'},
-    {width: '160px', type: 'multi'},
-    {width: '35px', type: 'text'}
+    {width: '150px', type: 'multi'},
+    {width: '45px', type: 'text'}
   ];
 
   constructor(private _helperService: HelperService,
@@ -158,7 +159,7 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
       .valueChanges
       .pipe(takeUntil(this.unSubscribeRec$), debounceTime(500))
       .subscribe((value) => {
-        this.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: this.recentPageable, userId: 1, search: value}))
+        this.dispatch(new fromHD.LoadRecentWorkspace({offset: 0, size: this.recentPageable, search: value}))
       });
 
     this.subscriptionsFavorite = this.contractFilterFormGroup.get('favoriteSearch')
@@ -168,7 +169,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.dispatch(new fromHD.LoadFavoriteWorkspace({
           offset: 0,
           size: this.favoritePageable,
-          userId: 1,
           search: value
         }))
       });
@@ -180,7 +180,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
         this.dispatch(new fromHD.LoadAssignedWorkspace({
           offset: 0,
           size: this.assignedPageable,
-          userId: 1,
           search: value
         }))
       });
@@ -327,7 +326,6 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   async openSingleWorkspace(ws) {
-    console.log('redirection', ws);
     this.router.navigate([`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`]);
     this.visible = false;
   }

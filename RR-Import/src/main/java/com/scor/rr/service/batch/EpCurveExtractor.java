@@ -233,8 +233,9 @@ public class EpCurveExtractor extends AbstractWriter {
 
 
                 log.info("Finish import progress STEP 7 : EXTRACT_CONFORMED_EPCURVE_STATS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+
+                log.debug("RMSEPCurveExtractor.runConformedExtraction completed");
             }
-            log.debug("RMSEPCurveExtractor.runConformedExtraction completed");
         }
         return RepeatStatus.FINISHED;
     }
@@ -274,7 +275,7 @@ public class EpCurveExtractor extends AbstractWriter {
             // @TODO : Get the treaty label regarding the FP Object
             AnalysisSummaryStats summaryStats =
                     ofNullable(rmsService.getAnalysisSummaryStats(instanceId, rdmId, rdmName, rlId, fp, null))
-                            .map(l -> l.isEmpty() ? null : l ).map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
+                            .map(l -> l.isEmpty() ? null : l).map(l -> l.get(0)).orElse(new AnalysisSummaryStats());
             result.fpToELTSumStat.put(fp, summaryStats);
         });
         return result;

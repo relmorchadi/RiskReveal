@@ -13,6 +13,11 @@ export class LoadDashboardFacDataAction {
     constructor(public payload?: any) {}
 }
 
+export class LoadDashboardAssignedFacDataAction {
+    static readonly type = '[Dashboard] Dashboard Fac Load Data';
+    constructor(public payload?: any) {}
+}
+
 export class LoadDashboardFacDataFailAction {
     static readonly type = '[Dashboard] Dashboard Fac Load Data Fail';
     constructor(public payload?: any) {}

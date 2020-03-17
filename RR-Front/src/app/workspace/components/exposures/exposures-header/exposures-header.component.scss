@@ -1,0 +1,59 @@
+.title-as-tab {
+  color: #585858;
+  display: flex;
+
+  span.title {
+    min-width: 101px;
+    padding: 15px 0 0 15px;
+    font-size: 15.22px;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+    font-family: Rubik;
+  }
+
+  .icon-wrapper {
+    margin-top: 10px;
+    margin-right: 4px;
+
+    .icon-chevron_right_24px, .icon-chevron_left_24px {
+      font-size: 24px;
+    }
+  }
+}
+/*
+.radio-wrapper {
+  margin-left: 160px;
+  margin-top: 6px;
+  ::ng-deep label,span {
+    color: rgba(0, 0, 0, 0.48) !important;
+    background-color: transparent;
+    outline-color: #F3F3F3;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: Rubik;
+    border: none;
+    padding: 0 2px;
+    overflow: visible;
+    }
+
+}
+*/
+
+.view-details {
+  color: #0700e4;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+  margin: 30px 10px 0 0;
+}
+.view-details:hover {
+  color: #52b8e4;
+}
+.top-right-menu-dropdown {
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 25px;
+}
+.info-icon {
+  font-size: 18px;
+}

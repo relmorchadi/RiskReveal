@@ -1,13 +1,38 @@
 :host {
   width: 100%;
-  height: max-content;
   display: flex;
-  min-height: 100vh;
+  min-height: 100%;
   background-color: #F4F6FC;
 }
 
 .app-body{
   display: flex;
-  height:500px;
+  height:100%;
   background-color: #fff;
 }
+.a-app-wrapper {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  background-color: #F4F6FC;
+  width: 100%;
+  height: calc(100vh - 226px);
+}
+.exposures-header{
+  width: 100%;
+  height: 75px;
+}
+.exposures-lef-menu {
+  width: 0%;
+
+  height: 100%;
+}
+.exposures-main-table {
+  width: 100%;
+  height: calc(100% - 75px);
+}
+.exposures-table-container {
+  width: 100%;
+}
+

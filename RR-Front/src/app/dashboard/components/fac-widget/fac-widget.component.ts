@@ -21,7 +21,7 @@ import * as moment from "moment";
 import {BaseContainer} from "../../../shared/base";
 import {Router} from "@angular/router";
 import * as fromHD from "../../../core/store/actions";
-import {debounce} from "rxjs/operators";
+import {debounce} from "../../utilities/debounce";
 
 @Component({
   selector: 'app-fac-widget',
@@ -41,15 +41,20 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   itemWidget: any;
   @Input()
   dashboard: any;
+  @Input()
+  loading = false;
 
-  @Select(DashboardState.getFacData)facData$;
-  @Select(DashboardState.getDataCounter)dataCounter$;
-  @Select(DashboardState.getVirtualScroll)virtualScroll$;
+  @Select(DashboardState.getFacData) facData$;
+  @Select(DashboardState.getDataCounter) dataCounter$;
+  @Select(DashboardState.getAssignedData) assignedData$;
+  @Select(DashboardState.getAssignedDataCounter) assignedDataCounter$;
 
   inputName: ElementRef;
   @ViewChild('inputName') set assetInput(elRef: ElementRef) {
     this.inputName = elRef;
   };
+
+  @Input() dateConfig;
 
   virtualScroll: any;
 
@@ -59,14 +64,16 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   itemName: any;
   widgetId: any;
   dashCols: any;
-  persisted: any;
+  ColsTotalWidth: any = 0;
   newDashboard: any;
   editName = false;
   tabIndex = 1;
 
   data: any = [];
-  dataCounter = {};
-  loading = false;
+  dataCounter = 10;
+  dataAssigned: any = [];
+  dataCounterAssigned = 10;
+  rows: any;
   secondaryLoad = false;
 
   filters = {};
@@ -86,8 +93,14 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     this.widgetId = this.itemWidget.widgetId;
     this.itemName = this.itemWidget.name;
     this.dashCols = this.itemWidget.columns;
+    _.forEach(this.dashCols, item => {
+      this.ColsTotalWidth = this.ColsTotalWidth + item.widthNumber + 5;
+    });
 
     this.loadFacData(1);
+    if (this.widgetId !== 1) {
+      this.loadAssignedFacData(1);
+    }
     this.sortFirstUpdate();
 
     this.facData$.pipe().subscribe(value => {
@@ -96,14 +109,21 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     });
 
     this.dataCounter$.pipe().subscribe(value => {
-      this.dataCounter = _.get(value, `${this.identifier}`, 0);
+      this.dataCounter = _.get(value, `${this.identifier}`, 10);
       this.detectChanges();
     });
 
-    this.virtualScroll$.pipe().subscribe(value => {
-      this.virtualScroll =  _.get(value, `${this.identifier}`, false);
+    this.assignedData$.pipe().subscribe(value => {
+      this.dataAssigned =  _.get(value, `${this.identifier}`, []);
       this.detectChanges();
-    })
+    });
+
+    this.assignedDataCounter$.pipe().subscribe(value => {
+      this.dataCounterAssigned =  _.get(value, `${this.identifier}`, 10);
+      this.detectChanges();
+    });
+
+
   }
 
   selectTab(index) {
@@ -133,6 +153,7 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   sortChange(event) {
+    console.log('sortCahnge')
     this.globalSort = event.newSort;
     this.sortList = event.newSortingList;
     const carStatus = this.carStatus[this.widgetId];
@@ -169,12 +190,16 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
     _.forEach(sort, item => this.globalSort = _.merge({}, this.globalSort,{[item.field]: item.sortType}));
   }
 
+  @debounce(1000)
   filterData($event) {
     const carStatus = this.carStatus[this.widgetId];
+    this.dashCols = _.map(this.dashCols, item => { return item.userDashboardWidgetColumnId === $event.colId ?
+        {...item, filterCriteria: $event.filteredValue} : {...item}});
     this.secondaryLoad = true;
     this.dashboardAPI.updateFilterCols( $event.colId, $event.filteredValue)
         .subscribe(() => {}, () => {}, () => {
-          this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})).subscribe(
+          this.dispatch([new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+              new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})]).subscribe(
               () => {}, () => {}, () => {
                 this.secondaryLoad = false;
                 this.detectChanges();
@@ -236,8 +261,99 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
         })
   }
 
-  loadMore(event) {
+  loadAssignedFacData(pageNumber) {
+    this.loading = true;
+    const carStatus = this.carStatus[this.widgetId];
+    this.dispatch(new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+        .subscribe(() => {}, ()=> {}, () => {
+          this.loading = false;
+          this.detectChanges();
+        })
+  }
 
+  loadMore(event) {
+    const carStatus = this.carStatus[this.widgetId];
+    const pageNumber =  (event.first / (event.rows / 2)) + 1;
+    this.loading = true;
+    if (event.rows === 50) {
+      this.dispatch(new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+          .subscribe(() => {}, ()=> {}, () => {
+            this.loading = false;
+            this.detectChanges();
+          });
+    }
+  }
+
+  loadAssignedMore(event) {
+    const carStatus = this.carStatus[this.widgetId];
+    const pageNumber =  (event.first / (event.rows / 2)) + 1;
+    this.loading = true;
+    if (event.rows === 50) {
+      this.dispatch(new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber, carStatus}))
+          .subscribe(() => {}, ()=> {}, () => {
+            this.loading = false;
+            this.detectChanges();
+          });
+    }
+  }
+
+  changeHeight($event) {
+    //this.rows = $event;
+    //console.log('rows', this.rows);
+  }
+
+  resetFilters() {
+    this.secondaryLoad = true;
+    const carStatus = this.carStatus[this.widgetId];
+    return this.dashboardAPI.resetFilters(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.dashCols = _.map(this.dashCols, item => {
+        return {...item, filterCriteria: ''};
+      });
+      this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+        new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+      ]).subscribe(() => {}, () => {}, () => {
+        this.secondaryLoad = false;
+        this.detectChanges();
+      });
+      this.detectChanges();
+    })
+  }
+
+  resetSort() {
+    this.secondaryLoad = true;
+    const carStatus = this.carStatus[this.widgetId];
+    return this.dashboardAPI.resetSort(this.identifier).subscribe(() => {}, () => {}, () => {
+      this.globalSort = {};
+      this.sortList = [];
+      this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+        new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+      ]).subscribe(() => {}, () => {}, () => {
+        this.secondaryLoad = false;
+        this.detectChanges();
+      });
+      this.detectChanges();
+    });
+  }
+
+  resetSortFilter() {
+      this.secondaryLoad = true;
+      const carStatus = this.carStatus[this.widgetId];
+      return forkJoin(this.dashboardAPI.resetSort(this.identifier), this.dashboardAPI.resetFilters(this.identifier)).subscribe(
+          () => {
+            this.globalSort = {};
+            this.sortList = [];
+            this.dashCols = _.map(this.dashCols, item => {
+              return {...item, filterCriteria: ''};
+            });
+          }, () => {}, () => {
+            this.dispatch([new fromHD.LoadDashboardAssignedFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus}),
+              new fromHD.LoadDashboardFacDataAction({identifier: this.identifier, pageNumber: 1, carStatus})
+            ]).subscribe(() => {}, () => {}, () => {
+              this.secondaryLoad = false;
+              this.detectChanges();
+            });
+          }
+      )
   }
 
   private _formatDate(data) {

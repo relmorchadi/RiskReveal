@@ -102,7 +102,7 @@ export class CalibrationNewService {
     return _.replace(curveType, /(-)/g, '');
   }
 
-  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, userId, curveType, resetMetrics}: any) {
+  loadEpMetrics(ctx: StateContext<WorkspaceModel>, {wsId, uwYear, curveType, resetMetrics}: any) {
 
     const {
       currentTab: {
@@ -110,7 +110,7 @@ export class CalibrationNewService {
       }
     } = ctx.getState();
 
-    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, userId, this.formatCurveType(curveType), 'Calibration').pipe(
+    return this.calibrationAPI.loadEpMetrics(wsId, uwYear, this.formatCurveType(curveType), 'Calibration').pipe(
         tap(epMetrics => {
 
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -123,8 +123,6 @@ export class CalibrationNewService {
 
             const innerDraft = this.getCalibState(draft, wsIdentifier);
 
-            console.log(epMetrics);
-
             _.forEach(epMetrics, (metric: any, i) => {
 
               const {
@@ -132,7 +130,10 @@ export class CalibrationNewService {
                 curveType
               } = metric;
 
+              console.log(metric, i, i == '0')
+
               if (i == '0') {
+                console.log('init cols');
                 const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
                 innerDraft.epMetrics.rps = rps;
                 innerDraft.epMetrics.cols = ['AAL', ...rps];
@@ -179,23 +180,23 @@ export class CalibrationNewService {
       wsIdentifier
     } = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].calibrationNew.plts = plts;
+      draft.content[wsIdentifier].calibrationNew.plts = [...plts];
     }));
   }
 
-  saveRPs(ctx: StateContext<WorkspaceModel>, {userId, rps, wsId, uwYear, curveType}: any) {
-    return this.calibrationAPI.saveListOfRPsByUserId(rps, userId, 'Calibration')
+  saveRPs(ctx: StateContext<WorkspaceModel>, {rps, wsId, uwYear, curveType}: any) {
+    return this.calibrationAPI.saveListOfRPsByUserId(rps, 'Calibration')
       .pipe(
-        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, curveType, resetMetrics: true})))
       )
   }
 
-  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, userId, wsId, uwYear, curveType}) {
+  saveOrDeleteRPs(ctx: StateContext<WorkspaceModel>, {deletedRPs, newlyAddedRPs, wsId, uwYear, curveType}) {
     return forkJoin(
-        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, userId, 'Calibration'),
-        this.calibrationAPI.deleteListOfRPsByUserId(userId, deletedRPs, 'Calibration')
+        this.calibrationAPI.saveListOfRPsByUserId(newlyAddedRPs, 'Calibration'),
+        this.calibrationAPI.deleteListOfRPsByUserId(deletedRPs, 'Calibration')
     ).pipe(
-        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, userId, curveType, resetMetrics: true})))
+        mergeMap(() => ctx.dispatch(new LoadEpMetrics({wsId, uwYear, curveType, resetMetrics: true})))
     )
   }
 

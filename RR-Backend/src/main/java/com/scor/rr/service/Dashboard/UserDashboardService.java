@@ -1,5 +1,6 @@
 package com.scor.rr.service.Dashboard;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.Response.UserDashboardResponse;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.entities.Dashboard.UserDashboard;
@@ -13,6 +14,7 @@ import com.scor.rr.repository.Dashboard.UserDashboardRepository;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetRepository;
 import com.scor.rr.repository.UserRrRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,14 +35,16 @@ public class UserDashboardService {
     @Autowired
     private UserRrRepository userRrRepository;
 
+    public List<UserDashboardResponse> getDashboardForUser() throws RRException {
 
+        long userCode = 0;
+        if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
+            userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+        }
+        UserRrEntity user = userRrRepository.findByUserId(userCode);
+        if (user == null) throw new UserNotFoundException(userCode);
 
-    public List<UserDashboardResponse> getDashboardForUser(long userId) throws RRException {
-
-        UserRrEntity user = userRrRepository.findByUserId(userId);
-        if (user == null) throw new UserNotFoundException(userId);
-
-        List<UserDashboard> listDash = userDashboardRepository.findByUserId(userId);
+        List<UserDashboard> listDash = userDashboardRepository.findByUserId(userCode);
 
         List<UserDashboardResponse> responses = new ArrayList<>();
 
@@ -49,7 +53,7 @@ public class UserDashboardService {
             listDash = new ArrayList<>();
             UserDashboard userDashboard = new UserDashboard();
             userDashboard.setDashboardName("Treaty Dashboard");
-            userDashboard.setUserId(userId);
+            userDashboard.setUserId(userCode);
             userDashboard.setSearchMode("Treaty");
             userDashboard.setVisible(true);
             listDash.add(userDashboard);
@@ -59,7 +63,7 @@ public class UserDashboardService {
 
             UserDashboard userDashboard1 = new UserDashboard();
             userDashboard1.setDashboardName("Fac Dashboard");
-            userDashboard1.setUserId(userId);
+            userDashboard1.setUserId(userCode);
             userDashboard1.setSearchMode("Fac");
             userDashboard1.setVisible(true);
             listDash.add(userDashboard1);
@@ -86,12 +90,16 @@ public class UserDashboardService {
 
     public UserDashboard createDashboard(UserDashboardCreationRequest request) throws RRException {
 
-        UserRrEntity user = userRrRepository.findByUserId(request.getUserId());
-        if (user == null) throw new UserNotFoundException(request.getUserId());
+        long userCode = -1;
+        if(SecurityContextHolder.getContext().getAuthentication() !=null && SecurityContextHolder.getContext() !=null ) {
+            userCode = (((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+        }
+        UserRrEntity user = userRrRepository.findByUserId(userCode);
+        if (user == null) throw new UserNotFoundException(userCode);
 
         UserDashboard userDashboard = new UserDashboard();
         userDashboard.setDashboardName(request.getDashboardName());
-        userDashboard.setUserId(request.getUserId());
+        userDashboard.setUserId(userCode);
         userDashboard.setSearchMode("Fac");
         userDashboard.setVisible(true);
 
@@ -114,7 +122,7 @@ public class UserDashboardService {
 
 
 
-        List<UserDashboardResponse> listDash = getDashboardForUser(dashboard.getUserId());
+        List<UserDashboardResponse> listDash = getDashboardForUser();
         if(listDash.size() == 1 ) throw new ImpossibleDeletionOfDashboard();
         List<UserDashboardWidget> widgets = userDashboardWidgetRepository.findByUserDashboardId(dashboardId);
         if(!widgets.isEmpty()){

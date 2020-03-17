@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.enums.DataSourceType;
 import com.scor.rr.domain.enums.ScanLevelEnum;
 import com.scor.rr.domain.enums.StatisticMetric;
 import com.scor.rr.domain.riskLink.*;
@@ -85,7 +86,7 @@ public class RmsService {
     private RLImportTargetRAPSelectionRepository rlImportTargetRAPSelectionRepository;
 
     @Autowired
-    private RLAnalysisToTargetRAPRepository rLAnalysisToTargetRAPRepository;
+    private PEQTRegionPerilMappingRepository peqtRegionPerilMappingRepository;
 
     @Autowired
     private ConfigurationService configurationService;
@@ -317,7 +318,6 @@ public class RmsService {
                     .forEach(key -> analysisByRdms.put(key, this.getAnalysisIdByRdm((Long) key.getKey(0), (String) key.getKey(1), rlAnalysisList)));
 
 //            rlSourceEpHeaderRepository.deleteByRLAnalysisIdList(rlAnalysisList.stream().map(AnalysisHeader::getRlAnalysisId).collect(toList()));
-//
 //            ExecutorService executorService = Executors.newFixedThreadPool(1);
 //            executorService.execute(() -> this.getSourceEpHeaders(analysisByRdms, epPoints, fpCodes, projectId, instanceId));
 
@@ -327,6 +327,17 @@ public class RmsService {
                 String rdmName = (String) multiKeyListEntry.getKey().getKey(1);
 
                 RLModelDataSource dataSource = rlModelDataSourcesRepository.findByRlIdAndNameAndProjectId(rdmId, rdmName, projectId);
+
+                rlAnalysisProfileRegionsRepository.saveAll(
+                        this.getRdmAllAnalysisProfileRegions(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
+                                .stream()
+                                .map(analysisProfileRegion -> {
+                                    RLAnalysis analysis = rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId);
+                                    rlAnalysisProfileRegionsRepository.deleteByAnalysisId(analysis.getRlAnalysisId());
+                                    return new RLAnalysisProfileRegion(analysisProfileRegion, analysis);
+                                })
+                                .collect(toList()));
+
                 this.listRdmAnalysis(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
                         .forEach(rdmAnalysis -> {
                             RLAnalysis rlAnalysis = this.rlAnalysisRepository.findByProjectIdAndAnalysis(projectId, rdmAnalysis);
@@ -336,18 +347,7 @@ public class RmsService {
                             rlAnalysisRepository.save(rlAnalysis);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
                             allScannedAnalysis.add(rlAnalysis);
-                            cache.put(rlAnalysis.getRlAnalysisId(), rlAnalysis);
-                            //this.rlAnalysisScanStatusRepository.updateScanLevelByRlModelAnalysisId(rlAnalysis.getRlAnalysisId());
                         });
-//                rlAnalysisRepository.saveAll(allScannedAnalysis);
-
-                rlAnalysisProfileRegionsRepository.saveAll(
-                        this.getRdmAllAnalysisProfileRegions(dataSource.getInstanceId(), rdmId, rdmName, multiKeyListEntry.getValue())
-                                .stream()
-                                .map(analysisProfileRegion -> new RLAnalysisProfileRegion(analysisProfileRegion, cache.get(analysisProfileRegion.getAnalysisId()) != null ?
-                                        cache.get(analysisProfileRegion.getAnalysisId()) :
-                                        rlAnalysisRepository.findByRdmIdAndRdmNameAndRlIdAndProjectId(rdmId, rdmName, analysisProfileRegion.getAnalysisId(), projectId)))
-                                .collect(toList()));
             }
         }
 
@@ -382,7 +382,9 @@ public class RmsService {
 
     private void updateRLPortfolio(RLPortfolio rlPortfolio, EdmPortfolio edmPortfolio) {
         rlPortfolio.setTiv(edmPortfolio.getTiv());
-        //rlPortfolio.setNumber(edmPortfolio.getNumber());
+        rlPortfolio.setAgCedent(edmPortfolio.getAgCedant());
+        rlPortfolio.setAgCurrency(edmPortfolio.getAgCurrency());
+        rlPortfolio.setAgSource(edmPortfolio.getAgSource());
     }
 
     private int scanPortfolioBasicForEdm(String instanceId, RLModelDataSource edm) {
@@ -459,8 +461,9 @@ public class RmsService {
     private List<String> getPortfolioIdPortfolioTypeCurrencyByEdm(Long edmId, String edmName, List<PortfolioHeader> rlPortfolioList) {
         return rlPortfolioList.stream().filter(item -> item.getEdmId().longValue() == edmId.longValue() && item.getEdmName().equals(edmName))
                 .map(portfolioHeader -> {
-                    String currency = portfolioHeader.getCurrency() == null ? "USD" : portfolioHeader.getCurrency();
-                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType() + "~" + currency;
+//                    String currency = portfolioHeader.getCurrency() == null ? "USD" : portfolioHeader.getCurrency();
+//                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType() + "~" + currency;
+                    return portfolioHeader.getPortfolioId() + "~" + portfolioHeader.getPortfolioType();
                 }).collect(toList());
     }
 
@@ -477,21 +480,36 @@ public class RmsService {
     /****** Risk Link Interface ******/
 
     public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + offset + ", @page_size=" + size;
-        //@Todo by BTP Count S/p
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @page_num=" + (offset/size) + ", @page_size=" + size;
         String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @count_only=1";
-
-
         this.logger.debug("Service starts executing the query ...");
-
         if (!StringUtils.isEmpty(keyword)) {
             sql += ", @filter='" + keyword + "'";
             countSql += ", @filter='" + keyword + "'";
         }
 
-        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(
-                sql,
-                new DataSourceRowMapper());
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
+
+        Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
+                countSql,
+                Integer.class);
+
+        this.logger.debug("the data returned ", dataSources);
+        return new PageImpl<DataSource>(dataSources, PageRequest.of(offset / size, size), dataSourcesCount);
+    }
+
+    public Page<DataSource> listAvailableDataSources(String instanceId, String keyword, int offset, int size, DataSourceType type) {
+        if(type == null)
+            throw new RuntimeException("No data source type specified for data sources extraction !");
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type=" + type.getValue() + ", @page_num=" + (offset/size) + ", @page_size=" + size;
+        String countSql = "execute " + DATABASE + ".dbo.RR_RL_ListAvailableDataSources @db_type="+ type.getValue() +" , @count_only=1";
+        this.logger.debug("Service starts executing the query ...");
+        if (!StringUtils.isEmpty(keyword)) {
+            sql += ", @filter='" + keyword + "'";
+            countSql += ", @filter='" + keyword + "'";
+        }
+
+        List<DataSource> dataSources = getJdbcTemplate(instanceId).query(sql, new DataSourceRowMapper());
 
         Integer dataSourcesCount = getJdbcTemplate(instanceId).queryForObject(
                 countSql,
@@ -530,7 +548,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolioBasic> listEdmPortfolioBasic(String instanceId, Long id, String name) {
-        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name=" + name;
+        String sql = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolioBasic @edm_id=" + id + ",@edm_name='" + name +"'";
         this.logger.debug("Service starts executing the query ...");
         List<EdmPortfolioBasic> edmPortfolioBasic = getJdbcTemplate(instanceId).query(
                 sql, new EdmPortfolioBasicRowMapper()
@@ -540,7 +558,7 @@ public class RmsService {
     }
 
     public List<EdmPortfolio> listEdmPortfolio(String instanceId, Long id, String name, List<String> portfolioList) {
-        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name=" + name;
+        String query = "execute " + DATABASE + ".dbo.RR_RL_ListEdmPortfolio @edm_id=" + id + ",@edm_name='" + name +"'";
         List<EdmPortfolio> edmPortfolios = new ArrayList<>();
         this.logger.debug("Service starts executing the query ...");
 
@@ -1038,10 +1056,10 @@ public class RmsService {
                 if (rp != null) {
                     String rootRegionPerilCode = rlAnalysis.getRpCode();
                     //TODO: need to define a new ref table
-//                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPeril(analysis.getRpCode());
-//                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPeril())) {
-//                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPeril();
-//                    }
+                    PEQTRegionPerilMapping peqtRegionPerilMapping = peqtRegionPerilMappingRepository.findByPeqtRegionPerilCode(rlAnalysis.getRpCode());
+                    if (peqtRegionPerilMapping != null && ! StringUtils.isEmpty(peqtRegionPerilMapping.getRrRegionPerilCode())) {
+                        rootRegionPerilCode = peqtRegionPerilMapping.getRrRegionPerilCode();
+                    }
                     if (isSameRegionPerilHierarchy(rootRegionPerilCode, rp)) {
                         fillWithParenting(regionPerilMap, rp, analysisProfileRegion);
                     }
@@ -1099,6 +1117,11 @@ public class RmsService {
     }
 
     private String crawlDownToSystemRegionPeril(RegionPerilNode node) {
+
+        // TODO : return when linking is implemented
+//        if(node.getRegionPerilTIV(false)>0.0d) {
+//            return node.getRegionPeril().getRegionPerilCode();
+//        }
         if (node.getRegionPerilAAL(false) > 0.0d) {
             return node.getRegionPeril().getRegionPerilCode();
         } else {
@@ -1108,7 +1131,7 @@ public class RmsService {
                     candidates.add(child);
                 }
             }
-            if (candidates.size() < 1) {
+            if (candidates.size() > 1) {
                 return node.getRegionPeril().getRegionPerilCode();
             } else {
                 for (RegionPerilNode c : candidates) {
@@ -1173,6 +1196,35 @@ public class RmsService {
                 return 0d;
             }
         }
+
+//        public Double getRegionPerilTIV(boolean withChildren)
+//        {
+//
+//            if(associatedPortfolioRegions!=null)
+//            {
+//                Double sum=0d;
+//                // FIXME which currency AAL is returned ?
+//                for(PortfolioAssociation pa:associatedPortfolioRegions)
+//                {
+//                    if(pa.portfolioRegion!=null&&pa.portfolioRegion.getTotalTIVinUSD()!=null)
+//                    {
+//                        sum+=pa.portfolioRegion.getTotalTIV();
+//                    }
+//                }
+//                if(withChildren&&children!=null&&!children.isEmpty())
+//                {
+//                    for(RegionPerilNode rpn:children)
+//                    {
+//                        sum+=rpn.getRegionPerilTIV(withChildren);
+//                    }
+//                }
+//                return sum;
+//            }
+//            else
+//            {
+//                return 0d;
+//            }
+//        }
 
 
         public RegionPerilNode getParent() {

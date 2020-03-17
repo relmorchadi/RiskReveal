@@ -126,15 +126,15 @@ public class RLAnalysis {
     @Column(name = "Grouping")
     private String isGrouping;
 
-    @OneToOne(mappedBy = "rlAnalysis")
-    @JsonBackReference
-    private RLAnalysisScanStatus rlAnalysisScanStatus;
+//    @OneToOne(mappedBy = "rlAnalysis")
+//    @JsonBackReference
+//    private RLAnalysisScanStatus rlAnalysisScanStatus;
 
     @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     private List<RLImportSelection> RLImportSelection;
 
-    @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<RLSourceEpHeader> rlSourceEpHeaders;
 

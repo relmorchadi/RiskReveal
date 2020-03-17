@@ -47,7 +47,7 @@ export class RiskApi {
         });
     }
 
-    filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, withPagination = true) {
+    filterRlAnalysis(paginationParams, instanceId, projectId, rdmId, userId, filter, sort, withPagination = true) {
         return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-analysis`, {
             params: {
                 ...paginationParams,
@@ -55,12 +55,13 @@ export class RiskApi {
                 projectId,
                 rdmId,
                 userId,
-                withPagination, ...filter
+                withPagination, ...filter,
+                sort
             }
         });
     }
 
-    filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, withPagination = true) {
+    filterRlPortfolios(paginationParams, instanceId, projectId, edmId, userId, filter, sort, withPagination = true) {
         return this.http.get(`${this.IMPORT_URL}import/config/filter-riskLink-portfolio`, {
             params: {
                 ...paginationParams,
@@ -68,19 +69,21 @@ export class RiskApi {
                 projectId,
                 edmId,
                 userId,
-                withPagination, ...filter
+                withPagination, ...filter,
+                sort
             }
         });
     }
 
-    searchRiskLinkData(instanceId, keyword, offset, size): Observable<any> {
+    searchRiskLinkData(instanceId, keyword, offset, size, type): Observable<any> {
         keyword = this._parseKeyword(keyword);
         return this.http.get(`${this.IMPORT_URL}rms/listAvailableDataSources`, {
             params: {
                 instanceId,
                 keyword,
                 offset,
-                size
+                size,
+                type
             }
         });
     }
@@ -128,12 +131,30 @@ export class RiskApi {
         return this.http.get(`${this.IMPORT_URL}import/config/get-region-peril-for-multi-analysis`, {params: {rlAnalysisIds}})
     }
 
-    getSummaryOrDefaultDataSources(instanceId, projectId, userId) {
+    getSummaryOrDefaultDataSources(instanceId, projectId, userId='1'): Observable<any> {
         return this.http.get(`${this.IMPORT_URL}import/config/get-global-data-sources`, {
             params: {
                 instanceId,
                 projectId,
                 userId
+            }
+        })
+    }
+
+    getDefaultDataSources(instanceId, projectId: any, userId='1'): Observable<any> {
+        return this.http.get(`${this.IMPORT_URL}import/config/get-default-data-sources`,{
+            params: {
+                instanceId,
+                projectId,
+                userId
+            }
+        })
+    }
+
+    deleteDataSourcesByProjectId(projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-datasources-by-project-id`,{
+            params: {
+                projectId
             }
         })
     }
@@ -176,6 +197,13 @@ export class RiskApi {
 
     saveAnalysisConfig(analysisConfig) {
         return this.http.post(`${this.IMPORT_URL}import/config/save-analysis-import-selection`, analysisConfig);
+    }
 
+    deletePortfolioSummary(rlPortfolioId: any, projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-portfolio-summary`, {params: {projectId, rlPortfolioId}});
+    }
+
+    deleteAnalysisSummary(rlAnalysisId: any, projectId: any) {
+        return this.http.delete(`${this.IMPORT_URL}import/config/delete-analysis-summary`, {params: {projectId, rlAnalysisId}});
     }
 }

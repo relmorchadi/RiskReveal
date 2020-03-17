@@ -1,0 +1,129 @@
+.search-bar-result-list {
+  padding: 6px;
+
+  ::ng-deep {
+    .ui-virtualscroller .ui-virtualscroller-content {
+      border: none;
+      width: 98%;
+      margin: auto;
+    }
+
+    .ui-virtualscroller .ui-virtualscroller-content .ui-virtualscroller-list li {
+      border: none;
+    }
+  }
+
+  .icon-check_box_outline_blank_24px{
+    color: rgba(0,0,0,0.36);
+  }
+
+  .no-check{
+    display: inline-block;
+    margin: 0px 5px;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    border-collapse: separate;
+    transition: all 0.3s;
+
+    &:hover {
+      border: 1.1px solid #0700CF;
+    }
+  }
+
+  .check {
+    width: 16px;
+    height: 16px;
+    background-color: #0700CF;
+    color: #FFFFFF;
+    font-size: 14px !important;
+    display: inline-block;
+    border-radius: 2px;
+    margin: 0 5px;
+    vertical-align: middle;
+    text-align: center;
+
+    i {
+      font-weight: bold;
+      margin-left: 1px;
+      margin-top: 1px;
+      display: flex;
+    }
+  }
+
+  .loading-text {
+    height: 20px;
+    margin: auto;
+    margin-left: 12px;
+    width: 97%;
+    background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+    background-size: 400% 100%;
+    -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
+    animation: ant-skeleton-loading 1.4s ease infinite;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0 2px 3px 0;
+    height: 305px;
+    overflow-y: auto;
+    width: 98%;
+    margin: auto;
+  }
+
+  .poover-menu-item {
+    padding: 3px 5px;
+    margin: 1px 6px 0 12px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    user-select: none;
+
+    span {
+      font-size: 12px;
+    }
+
+    .logo {
+      color: #FFFFFF;
+      padding: 2px 5px 2px 4px;
+      font-family: Rubik;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.17px;
+      line-height: 24px;
+      text-align: center;
+      margin-right: 7px;
+    }
+
+    .icon-check_24px {
+      border: 1px solid transparent;
+      border-radius: 100px;
+      background-color: #03DAC4;
+      color: #fff;
+    }
+  }
+
+  .poover-menu-item-active {
+    background-color: #FCF9D6;
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  .search-bar-result-list {
+    ul {
+      height: 250px;
+    }
+
+    ::ng-deep {
+      cdk-virtual-scroll-viewport.cdk-virtual-scroll-viewport.cdk-virtual-scroll-orientation-vertical {
+        height: 250px !important;
+      }
+
+      .ui-virtualscroller .ui-virtualscroller-content .ui-virtualscroller-list li {
+        font-size: 11px;
+      }
+    }
+  }
+}

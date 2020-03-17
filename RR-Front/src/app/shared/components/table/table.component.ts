@@ -16,7 +16,7 @@ import {
   debounceTime,
   map,
   distinctUntilChanged,
-  filter
+  filter, debounce
 } from "rxjs/operators";
 
 @Component({
@@ -38,6 +38,7 @@ export class TableComponent implements OnInit {
   @Output('updateFavStatus') updateStatus: any = new EventEmitter<any>();
   @Output('sortDataChange') sortDataChange: any = new EventEmitter<any>();
   @Output('resizeChange') resizeTable: any = new EventEmitter<any>();
+  @Output('heightChange') heightChange: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -51,6 +52,13 @@ export class TableComponent implements OnInit {
   contextSelectedItem: any;
   contextSelectedItemNv: any;
   FilterData: any = {};
+
+  @Input() dateConfig: {
+    shortDate: '',
+    shortTime: '',
+    longDate: '',
+    longTime: ''
+  };
 
   @Input('sortData') sortData;
   private _sortedData: any;
@@ -86,10 +94,13 @@ export class TableComponent implements OnInit {
   sortList = [];
   @Input()
   activateContextMenu = false;
+  @Input()
+  virtualRowHeight: any;
 
   _activateContextMenu: boolean;
 
   filterQueryChanged: Subject<any> = new Subject<any>();
+  dashRows;
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -175,13 +186,6 @@ export class TableComponent implements OnInit {
     );
   }
 
-  filterCol(searchValue: string, searchAddress: string): void {
-    this.event.first = 0;
-    let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
-    body.scrollTop = 0;
-    this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
-  }
-
   updateFavValue(row) {
     this.updateStatus.emit(row);
   }
@@ -238,6 +242,11 @@ export class TableComponent implements OnInit {
     this.isIndeterminate();
   }
 
+  rowsChange(rows) {
+    this.dashRows = rows;
+    this.heightChange.emit(rows);
+  }
+
   private selectSection(from, to) {
     this.listOfData.forEach(dt => dt.selected = false);
     if (from === to) {
@@ -255,7 +264,6 @@ export class TableComponent implements OnInit {
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
     row.selected = true;
     tableColumn.handler(this.selectedRows);
-
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
@@ -307,15 +315,33 @@ export class TableComponent implements OnInit {
 
   filter(key: string, event, colId) {
     const value = event.target.value;
-    if (this.filterModeFront) {
-      if (value) {
-        this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
-      } else {
-        this.FilterData =  _.omit(this.FilterData, [key]);
-      }
-    } else {
-      this.filterQueryChanged.next({key, value, colId});
+    const first = _.get(this.event, 'first', null);
+    if (this.virtualScroll && first !== null) {
+      this.event.first = 0;
+      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+      body.scrollTop = 0;
     }
+    if (value) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
+    } else {
+      this.FilterData =  _.omit(this.FilterData, [key]);
+    }
+    this.filterQueryChanged.next({key, value, colId});
+  }
+
+  filterCol(searchValue: string, searchAddress: string, key): void {
+    const first = _.get(this.event, 'first', null);
+    if (this.virtualScroll && first !== null) {
+      this.event.first = 0;
+      let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+      body.scrollTop = 0;
+    }
+    if (searchValue) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: searchValue}) ;
+    } else {
+      this.FilterData =  _.omit(this.FilterData, [key]);
+    }
+    this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
   }
 
   resize(event) {

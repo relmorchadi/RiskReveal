@@ -35,16 +35,14 @@
                    [(ngModel)]="selectedPrStatus">
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
-        <app-pin
-          [active]="!workspace?.isPinned"
-          (pinWs)="pinWorkspace()"
-        >
+        <app-pin [active]="!workspace?.isPinned" (pinWs)="pinWorkspace()">
         </app-pin>
       </div>
     </div>
     <div>
       <projects-list (select)="selectProject($event)" [projects]="workspace?.projects" [status]="status"
                      (edit)="edit($event)" (delete)="delete($event)"></projects-list>
+      <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
     </div>
 
     <!--<app-workspace-project-popup [isVisible]="searchWorkspace"-->

@@ -17,4 +17,6 @@ public interface ProjectConfigurationForeWriterDivisionRepository extends JpaRep
 
     @Query(value ="exec dbonew.usp_DivisionListForCarID @CARID =:CARID", nativeQuery = true)
     List<Map<String, Object>> findByCARId(@Param("CARID") String carId);
+
+
 }

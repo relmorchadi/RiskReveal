@@ -1,7 +1,7 @@
  import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as fromWs from '../../store/actions';
 import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions';
@@ -24,8 +24,19 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   state: WorkspaceMain = null;
   selectedTabIndex: number;
   loading: boolean;
-  data: { [p: string]: any };
+  data: { [p: string]: any } = null;
   currentWsIdentifier: string;
+  wsStatus: string;
+  selectedPrj: any = {};
+  wsId: any;
+  uwYear: any;
+  route: any;
+  ws: any;
+
+  @Select(WorkspaceState.getWorkspaceStatus) status$;
+  @Select(WorkspaceState.getSelectedProject) selectedPrj$;
+  @Select(WorkspaceState.getCurrentTab) currentTab$;
+  @Select(WorkspaceState.getWorkspaces) ws$;
 
   constructor(
     private _helper: HelperService,
@@ -39,15 +50,24 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this._route.params
-      .pipe(this.unsubscribeOnDestroy,
-        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: ''})))
-      .subscribe(action => this.dispatch(action));
+    this.ws$.pipe().subscribe(value => {
+     this.ws = value;
+    });
 
-    this.select(WorkspaceState.getCurrentTab)
+    this._route.params
       .pipe(this.unsubscribeOnDestroy)
+      .subscribe(({wsId, year, route}: any) => {
+        const openedWs = _.get(this.ws, `${wsId}-${year}`, null);
+        if (openedWs === null) {
+          this.dispatch(new fromWs.OpenWS({wsId, uwYear: year, route}))
+        }
+      });
+
+    this.currentTab$.pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
         this.selectedTabIndex = curTab.index;
+/*        this.data === null ? this.selectedTabIndex = curTab.index
+            : this.selectedTabIndex = _.findIndex(_.keys(this.data), item => this.currentWsIdentifier === item);*/
         this.currentWsIdentifier = curTab.wsIdentifier;
         this.detectChanges();
       });
@@ -63,6 +83,16 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
         this.data = content;
         this.detectChanges();
       });
+
+    this.status$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.wsStatus = value;
+      this.detectChanges();
+    });
+
+    this.selectedPrj$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+      this.selectedPrj = value;
+      this.detectChanges();
+    })
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -90,6 +120,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   close(wsId, uwYear) {
+    event.stopPropagation();
     this.dispatch(new fromWs.CloseWS({
       wsIdentifier: wsId + '-' + uwYear
     }));
@@ -143,7 +174,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   filterSelected() {
-    return _.filter(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => item.selected)[0];
+    return _.find(_.get(this.data[this.currentWsIdentifier], 'projects' , []), item => item.selected);
   }
 
   filterSelectedDivision() {

@@ -150,36 +150,52 @@
                     <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All"
                        (click)="unselectAll()" nzPlacement="bottom" class="icon-minus-square"></i>
                   </div>
-                  <nz-tabset class="a-tab-minitab">
+                  <nz-tabset class="a-tab-minitab" [(nzSelectedIndex)]="dataSourcesSelectedIndex"
+                             (nzSelectedIndexChange)="changeDataSourcesTabs($event)">
                     <nz-tab nzTitle="EDM & RDM">
-                      <div class="search-bar-result-list">
-                        <p-virtualScroller [value]="listEdmRdm?.data | rmsDatasource" scrollHeight="305px"
-                                           [itemSize]="30" [lazy]="true" (onLazyLoad)="lazyLoadDataSources($event)"
-                                           [rows]="100" [totalRecords]="state?.listEdmRdm?.totalElements">
-                          <ng-template let-item pTemplate="item">
-                            <div class="poover-menu-item"
-                                 (click)="$event.stopPropagation(); toggleItems(item, $event, 'link')"
-                                 [ngClass]="{'poover-menu-item-active': item?.selected}">
+                      <ng-template nz-tab>
+                        <datasource-list [data]="listEdmRdm?.data"
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event)"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link)">
 
-                              <span *ngIf="!item.selected; else selected" class="no-check"></span>
-                              <ng-template #selected>
-                                <span class="check">
-                                  <i style="margin-right: 5px" class="icon-check"></i>
-                                </span>
-                              </ng-template>
-                              <span class="logo" *ngIf="item?.type === 'RDM'" style="background: #03DAC4">R</span>
-                              <span class="logo" *ngIf="item?.type === 'EDM'" style="background: #0700CF">E</span>
-                              <span>{{item?.name}}</span>
-                            </div>
-                          </ng-template>
-                          <ng-template let-car pTemplate="loadingItem">
-                            <div *ngIf="state?.listEdmRdm?.totalElements && !state?.listEdmRdm?.last" class="loading-text"></div>
-                          </ng-template>
-                        </p-virtualScroller>
-                      </div>
-                      <div class="search-bar-result-button">
-                        <button (click)="scanDataSources()" class="a-buttons-contained">ADD</button>
-                      </div>
+                        </datasource-list>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
+                    </nz-tab>
+                    <nz-tab nzTitle="EDM">
+                      <ng-template nz-tab>
+                        <datasource-list [data]="listEdmRdm?.data"
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event, 'EDM')"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link, 'EDM')">
+
+                        </datasource-list>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
+                    </nz-tab>
+                    <nz-tab nzTitle="RDM">
+                      <ng-template nz-tab>
+                        <datasource-list [data]="listEdmRdm?.data"
+                                         [params]="{last: state?.listEdmRdm?.last, totalElements: state?.listEdmRdm?.totalElements}"
+                                         (lazyLoad)="lazyLoadDataSources($event,'RDM')"
+                                         (select)="toggleItems($event.item, $event.$event, $event.link, 'RDM')">
+
+                        </datasource-list>
+                        <div class="search-bar-result-button">
+                          <button (click)="scanDataSources()" class="a-buttons-contained">
+                            ADD
+                          </button>
+                        </div>
+                      </ng-template>
                     </nz-tab>
                   </nz-tabset>
                 </div>
@@ -205,7 +221,7 @@
                   <div class="action-icon-wrapper">
                     <i nz-tooltip nzTitle="Save as default selection" (click)="saveDefaultSelection()"
                        class="icon-save_24px"></i>
-                    <i nz-tooltip nzTitle="Reset to default selection" (click)="loadSummaryOrDefaultDataSources()"
+                    <i nz-tooltip nzTitle="Reset to default selection" (click)="resetDefaultSelection()"
                        class="icon-sync_24px"></i>
                     <i nz-tooltip nzTitle="Clear default settings" (click)="clearDefaultSelection()"
                        class="icon-close_24px"></i>
@@ -232,7 +248,7 @@
                        <span class="loading">Scanning</span>
                        <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
                       </ng-container>
-                      <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
+                      <i *ngIf="!itemsE.scanning" (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
@@ -256,7 +272,7 @@
                         <span class="loading">Scanning</span>
                         <i style="color: #0CB79B" class="logo-right pi pi-spin pi-spinner"></i>
                       </ng-container>
-                      <i (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
+                      <i *ngIf="!itemsR.scanning" (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
@@ -311,7 +327,8 @@
                            syncScroll
                            [class]="'portfolio-table'"
                            [classIdentifier]="'portfolio-table'"
-                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading">
+                          [totalRecords]="portfolios?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="portfolios?.loading"
+                           (onSort)="sortPortfolio($event)" [customSort]="true">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
                         <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -383,7 +400,8 @@
                              syncScroll
                              [class]="'analysis-table'"
                              [classIdentifier]="'analysis-table'"
-                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading">
+                            [totalRecords]="state?.analysis?.total" [virtualScroll]="true" [virtualRowHeight]="28" [loading]="state?.analysis?.loading"
+                             (onSort)="sortAnalysis($event)" [customSort]="true">
                       <!--  -->
                       <ng-template pTemplate="colgroup" let-columns>
                         <colgroup>
@@ -493,7 +511,7 @@
             </div>
 
             <div class="body-wrap-footer-right">
-              <button style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
+              <button *ngIf="summarySelectionSize$ | async" style="padding: 6px 20px 7px" (click)="triggerImport()" class="a-buttons-contained-mini">IMPORT</button>
             </div>
           </div>
         </div>

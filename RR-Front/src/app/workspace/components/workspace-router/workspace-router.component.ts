@@ -1,10 +1,10 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
   WorkspaceCalibrationComponent,
-  WorkspaceContractComponent,
+  WorkspaceContractComponent, WorkspaceExposuresComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
-  WorkspaceRiskLinkComponent,
+  WorkspaceRiskLinkComponent, WorkspaceScopeCompletenceComponent,
 } from "../../containers";
 import {WsRouterDirective} from "../../directives/ws-router.directive";
 import {StateSubscriber} from "../../model/state-subscriber";
@@ -46,12 +46,12 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
     //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
-    //Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
+    Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
     //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
     Calibration: {component: WorkspaceCalibrationNewComponent, selector: (state) => state},
     //'TB-Calibration': {component: WorkspaceCalibrationNewComponent, selector: state => state},
     //Inuring: {component: WorkspaceInuringComponent, selector: (state) => state},
-    //ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
+    ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
     //Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},
   };
 

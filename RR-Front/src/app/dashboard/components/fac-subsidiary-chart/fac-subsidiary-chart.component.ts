@@ -42,8 +42,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
   };
 
   initOps = {
-    height: '400px',
-    width: '1600px'
+    height: '360px'
   };
 
   chartOption: any = {
@@ -65,7 +64,7 @@ export class FacSubsidiaryChartComponent implements OnInit {
         myCostumeTool: {
           show: true,
           title: 'rate',
-          // icon: 'image://http://echarts.baidu.com/images/favicon.png',
+          icon: 'path://M432.45,595.444c0,2.177-4.661,6.82-11.305,6.82c-6.475,0-11.306-4.567-11.306-6.82s4.852-6.812,11.306-6.812C427.841,588.632,432.452,593.191,432.45,595.444L432.45,595.444z M421.155,589.876c-3.009,0-5.448,2.495-5.448,5.572s2.439,5.572,5.448,5.572c3.01,0,5.449-2.495,5.449-5.572C426.604,592.371,424.165,589.876,421.155,589.876L421.155,589.876z M421.146,591.891c-1.916,0-3.47,1.589-3.47,3.549c0,1.959,1.554,3.548,3.47,3.548s3.469-1.589,3.469-3.548C424.614,593.479,423.062,591.891,421.146,591.891L421.146,591.891zM421.146,591.891',
           onclick: () => {
             this.switchData();
           }
@@ -80,32 +79,12 @@ export class FacSubsidiaryChartComponent implements OnInit {
     yAxis: {
       type: 'value'
     },
-    visualMap: {
-      type: 'continuous',
-      dimension: 1,
-      text: ['High', 'Low'],
-      itemHeight: 200,
-      calculable: true,
-      min: 0,
-      max: 10,
-      top: 60,
-      left: 10,
-      inRange: {
-        colorLightness: [0.4, 0.8]
-      },
-      outOfRange: {
-        color: '#bbb'
-      },
-      controller: {
-        inRange: {
-          color: '#2f4554'
-        }
-      }
-    },
     series: [],
     color: ['#F8E71C', '#F5A623', '#E70010', '#DDDDDD', '#7BBE31']
   };
+  switch = false;
   alternateSeriesData: any;
+  switchedSeriesData: any;
 
   @ViewChild('chartS') chart;
 
@@ -213,6 +192,8 @@ export class FacSubsidiaryChartComponent implements OnInit {
       userDashboardWidgetId: 0
     };
 
+    console.log('chartInit');
+
     this.dashboardAPI.getFacDashboardResources(dataParams).subscribe( data => {
       this.data = data.content;
       this.filteredData = data.content;
@@ -259,13 +240,15 @@ export class FacSubsidiaryChartComponent implements OnInit {
       _.forEach(this.selectedSubsidiary, subsItem => {
         trad = [...trad, _.filter(this.data, dt =>
             dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length];
-        part = [...part, (_.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
-            _.filter(this.data, dt => dt.uwAnalysis === subsItem).length) * 100];
+        const percentage = _.filter(this.data, dt => dt.assignedAnalyst === item && dt.uwAnalysis === subsItem).length /
+            _.filter(this.data, dt => dt.uwAnalysis === subsItem).length * 100;
+        part = [...part, Math.floor(percentage * 100) / 100];
       });
       series = [...series, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' :item, data: trad, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
       alternateSeries = [...alternateSeries, {name: _.isEmpty(_.trim(item)) ? 'Unassigned' : item, data: part, type: 'bar', stack: 'one', itemStyle: this.itemStyle}];
     });
     this.alternateSeriesData = alternateSeries;
+    this.switchedSeriesData = series;
 
     this.myChart.setOption({
       xAxis: {
@@ -295,12 +278,20 @@ export class FacSubsidiaryChartComponent implements OnInit {
   }
 
   switchData() {
-    // console.log('switch data');
-    const switchedSeries = this.chartOption.series;
+    this.switch = !this.switch;
     this.myChart.setOption({
-      series: this.alternateSeriesData
+      series: this.switch ? this.alternateSeriesData : this.switchedSeriesData,
+      tooltip: this.switch ? {
+        formatter: (params) => {
+          return params.name + '<br/>' + `<span style="background-color: ${params.color}; height: 10px; width: 10px; display: inline-flex; border-radius: 20px;"></span> 
+            ${params.seriesName}: ${params.data} %`;
+        }
+      } : {
+        formatter: (params) => {
+          return params.name + '<br/>' + `<span style="background-color: ${params.color}; height: 10px; width: 10px; display: inline-flex; border-radius: 20px;"></span> 
+            ${params.seriesName}: ${params.data}`;
+        }}
     });
-    this.alternateSeriesData = switchedSeries;
   }
 
   setFilter(col: string, $event: {}) {

@@ -1,70 +1,224 @@
-<div class="parent" style="width: 100%;" (resized)="onContainerResize($event)" #tableContainer>
-  <div [style.width]="totalColumnWidth + 'px'">
-    <p-table
-            dataKey="pltId"
-            [value]="data"
-            [columns]="columns"
-            [scrollable]="true"
-            [scrollHeight]="'calc( 100vh - 407px )'"
-            [resizableColumns]="true"
-            columnResizeMode="expand"
-            (onColResize)="onColumnResize($event)"
+<div #cte class="table-container">
+  <div class="title-as-tab">
+    <div class="div-title">
+      <span class="title">PLTs</span>
+    </div>
+    <div class="right">
+      <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
+        <a style="max-height: 28px;display: flex;" nz-dropdown>
+          <i class="icon-settings_24px"></i>
+        </a>
+        <ul nz-menu style="font-size: 12px">
+
+          <li nz-menu-item (click)="onResetFilter()" >Reset Filters</li>
+          <li nz-menu-item (click)="onResetSort()" >Reset Sort</li>
+
+          <li nz-menu-divider></li>
+
+          <li nz-menu-item (click)="showDialog()" >Manage Columns</li>
+
+          <li nz-menu-divider></li>
+
+          <li nz-menu-item (click)="onExport()">Export</li>
+
+        </ul>
+      </nz-dropdown>
+    </div>
+  </div>
+  <div class="PLTs-content">
+    <div
+            #tableContainer class="parent"
+            [ngClass]="{ 'table-container-loading': !(columns.length > 1)}"
+            (resized)="onContainerResize($event)"
     >
-      <ng-template pTemplate="colgroup" let-columns>
-        <colgroup>
-          <col *ngFor="let col of columns" [style.width]="col.width + 'px'">
-        </colgroup>
-      </ng-template>
-      <ng-template pTemplate="header" let-cols>
-        <tr>
-          <th [attr.id]="i" *ngFor="let col of cols;let i= index;" pResizableColumn [pResizableColumnDisabled]="!col?.isResizable">
-            <span style="display:flex;justify-content: space-between;">
-                {{col?.displayName}}
-                <ng-container [ngSwitch]="col?.sortType">
-                  <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
-                  <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
-                  <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.columnName,sortData[col.columnName])" style="font-size: 1.4em;"></i>
+      <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
+        <p-table
+                [styleClass]=" data.length > 0 ? '': 'activate-header-scroll'"
+                dataKey="pltId" [value]="data" [columns]="columns"
+                [loading]="loading$ | async"
+                [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
+                [scrollable]="true" [scrollHeight]="'calc(100vh - 408px)'"
+                [resizableColumns]="true" columnResizeMode="expand" (onColResize)="onColumnResize($event)"
+        >
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col [style.width]="40 + 'px'">
+              <col *ngFor="let col of columns" [style.width]="col.width + 'px'">
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-cols>
+            <tr>
+              <th class="checkBoxHead" [ngStyle]="{'width': 40 + 'px' }">
+                <label nz-checkbox
+                       [nzChecked]="selectAll"
+                       [nzIndeterminate]="indeterminate"
+                       (nzCheckedChange)="onCheckAll()"
+                ></label>
+                <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: -1, sortType: sortSelectedAction}"></ng-container>
+              </th>
+              <th [attr.id]="i" pResizableColumn [pResizableColumnDisabled]="!col?.isResizable" *ngFor="let col of cols;let i= index;">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="primary_header_indicator" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
+                  <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="primary_header_status" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="primary_header_default" [ngTemplateOutletContext]="{$implicit: col, i:i}"></ng-container>
                 </ng-container>
-              </span>
-            <span class="ui-column-resizer" style="cursor: default !important;"></span>
-          </th>
-        </tr>
-        <tr>
-          <ng-container *ngFor="let col of cols;let i=index;">
-            <th class="filter-head" [ngClass]="{'icon-header': col?.icon}">
-              <app-input [visible]="true" (onInput)="filter(col?.columnName, $event)" [value]="col?.filterCriteria"></app-input>
-              <span class="ui-column-resizer" style="cursor: default !important;"></span>
-            </th>
-          </ng-container>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-row let-cols="columns">
-        <tr>
-          <td *ngFor="let col of cols">
-            <!--<ng-container *ngIf="col.displayType == 'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>-->
-            <!--<ng-container *ngIf="col.displayType == 'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>-->
-            <ng-container [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
+              </th>
+            </tr>
+            <tr>
+              <th></th>
+              <ng-container *ngFor="let col of cols;let i=index;">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="secondary_header_indecator" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="secondary_header_default" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
+                </ng-container>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row let-i="rowIndex" let-cols="columns">
+            <tr
+                    [ngClass]="{'active_plt_item': selectedIds[row.pltId]}"
+                    [pContextMenuRow]="row"
+                    style="height: 46px">
+              <td  class="ui-resizable-column" [ngStyle]="{'width': 40 + 'px' }">
+                <div style="padding-left: 9px;">
+                  <label nz-checkbox
+                         [nzChecked]="selectedIds[row.pltId]"
+                         (nzCheckedChange)="onCheckBox(row.pltId, i, $event)"></label>
+                </div>
+              </td>
+              <td (click)="onRowSelect(row.pltId, i, $event)" *ngFor="let col of cols">
+                <ng-container [ngSwitch]="col?.dataDisplayType">
+                  <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="indicator" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="status" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'date'" [ngTemplateOutlet]="date" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'number'" [ngTemplateOutlet]="number" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchCase="'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                  <ng-container *ngSwitchDefault [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+      <div *ngIf="!(columns.length > 0)" [style.width]="totalColumnWidth + 'px'">
+        <p-progressSpinner></p-progressSpinner>
+      </div>
+    </div>
   </div>
 </div>
 
-<ng-template #id let-data>
-    <span style="display: block;font-size: 12px;font-weight: bold;text-align: right">
-        {{data}}
+
+<!--Context Menu-->
+
+<p-contextMenu #cm [model]="contextMenu" appendTo="body"></p-contextMenu>
+
+<!--Header-Templates-->
+
+<ng-template #primary_header_indicator let-col let-i="i">
+  <div *ngIf="col?.icon" style="display: flex;justify-content: space-between">
+    <i [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 20px;" [ngClass]="col?.icon">
+      <ng-template #tooltipInfo>
+        {{ col?.highlight }}
+      </ng-template>
+    </i>
+    <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: i, sortType: col?.sortType}"></ng-container>
+  </div>
+  <span *ngIf="!col?.icon" style="display:flex;justify-content: space-between;">
+    {{col?.displayName}}
+    <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: i, sortType: col?.sortType}"></ng-container>
+  </span>
+</ng-template>
+
+<ng-template #primary_header_status let-col let-i="i">
+    <span style="display:flex;justify-content: space-between;">
+        {{col?.displayName}}
     </span>
+</ng-template>
+
+<ng-template #primary_header_default let-col let-i="i">
+    <span style="display:flex;justify-content: space-between;">
+      {{col?.displayName}}
+      <ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: i, sortType: col?.sortType}"></ng-container>
+    </span>
+</ng-template>
+
+<ng-template #secondary_header_indecator let-col>
+  <th class="filter-head icon-header">
+    <label nz-checkbox [ngModel]="col?.filterCriteria" (ngModelChange)="filterByFalsely(col?.fields)"></label>
+  </th>
+</ng-template>
+
+<ng-template #secondary_header_default let-col let-i="i">
+  <th class="filter-head">
+    <app-input [visible]="true" (onInput)="onFilter(i, $event)" [value]="col?.filterCriteria"></app-input>
+    <span *ngIf="col?.isResizable" class="ui-column-resizer" style="cursor: default !important;"></span>
+  </th>
+</ng-template>
+
+<ng-template #sort_icon let-i let-sortType="sortType">
+  <ng-container [ngSwitch]="sortType">
+    <i *ngSwitchCase="'ASC'" class="icon-keyboard_arrow_up_24px" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+    <i *ngSwitchCase="'DESC'" class="icon-keyboard_arrow_down_24px" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+    <i *ngSwitchDefault class="icon-direction" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+  </ng-container>
+</ng-template>
+
+<!--****************-->
+
+
+<!--Body-Templates-->
+
+<ng-template #id let-data>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: bold;text-align: right">
+     {{ data}}
+  </div>
 </ng-template>
 
 <ng-template #number let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;text-align: right">
-        {{ data | number : '1.0-3'}}
-    </span>
+  <div    appRrNumber [number]="data" [config]="numberConfig"
+          class="text-ellipsis"
+          style="font-size: 12px;font-weight: 400;text-align: right">
+  </div>
 </ng-template>
 
 <ng-template #text let-data>
-    <span style="display: block;font-size: 12px;font-weight: 400;">
-        <div class="text-ellipsis">{{data}}</div>
-    </span>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;">
+    {{data}}
+  </div>
 </ng-template>
+
+<ng-template #date let-data>
+  <div class="text-ellipsis" style="font-size: 12px;font-weight: 400;">
+    {{data | rRDate: 'shortFormat' : 'date' : dateConfig}}
+  </div>
+</ng-template>
+
+<ng-template #indicator let-data>
+  <div style="text-align: center;">
+    <i class="icon-check" *ngIf="data"></i>
+  </div>
+</ng-template>
+
+<ng-template #status let-data>
+  <div>
+    <i [ngClass]="{ 'icon-history-alt iconYellow': data=='In progress',
+                                         'icon-check-circle iconGreen': data=='Valid' ,
+                                         'icon-lock-alt iconRed': data=='Locked',
+                                         'icon-error_24px iconRed2': data=='Fail',
+                                         'icon-star iconBlue': data=='Pending',
+                                         'icon-report_problem_24px iconYellow2': data=='Requires Regeneration' }"
+       [nz-tooltip]="data"
+       class="tooltipMsg"
+       style="vertical-align: super;"
+    >
+    </i>
+  </div>
+</ng-template>
+
+<!--****************-->
+
+<d-col-manager *ngIf="isModalVisible"
+               [visibleList]="visibleList"
+               [availableList]="availableList"
+               (actionDispatcher)="handleManageColumnsActions($event)">
+</d-col-manager>

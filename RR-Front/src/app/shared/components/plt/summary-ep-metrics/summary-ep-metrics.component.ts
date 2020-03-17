@@ -108,4 +108,8 @@ export class SummaryEpMetricsComponent implements OnInit {
     })
   }
 
+  handleChartActions(action: Message) {
+    this.actionDispatcher.emit(action);
+  }
+
 }

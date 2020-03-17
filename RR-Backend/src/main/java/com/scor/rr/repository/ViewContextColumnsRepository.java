@@ -15,4 +15,28 @@ public interface ViewContextColumnsRepository  extends JpaRepository<ViewContext
     @Transactional
     @Procedure(procedureName = "dbonew.usp_ViewContextUpdateColumnWidth")
     void updateColumnWidth(@Param("UserCode") String userCode, @Param("ViewContextColumnId") Long viewContextColumnId, @Param("Width") Integer width);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextUpdateColumnSortOrder")
+    void updateColumnSort(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ViewContextColumnId") Long viewContextColumnId);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextResetSort")
+    void resetColumnSort(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextUpdateFilterCriteria")
+    void updateColumnFilterCriteria(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ViewContextColumnId") Long viewContextColumnId, @Param("FilterCriteria") String filterCriteria);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextFilterByProjectId")
+    void filterByProjectId(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ProjectId") String projectId);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextResetFilterCriteria")
+    void resetColumnFilterCriteria(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId);
+
+    @Transactional
+    @Procedure(procedureName = "dbonew.usp_ViewContextUpdateColumnOrderAndVisibility")
+    void updateColumnOrderAndVisibility(@Param("UserCode") String userCode, @Param("ViewContextId") Long viewContextId, @Param("ColumnsList") String columnsList);
 }

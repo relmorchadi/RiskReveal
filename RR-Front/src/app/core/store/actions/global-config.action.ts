@@ -3,28 +3,8 @@ export class PatchNumberFormatAction {
   constructor(public payload?: any) {}
 }
 
-export class PatchDateFormatAction {
-  static readonly type = '[Global Configuration] Patch Date Format';
-  constructor(public payload?: any) {}
-}
-
 export class PatchTimeZoneAction {
   static readonly type = '[Global Configuration] Patch Time Zone';
-  constructor(public payload?: any) {}
-}
-
-export class PatchGeneralRecentAction {
-  static readonly type = '[Global Configuration] Patch Global Recent Format';
-  constructor(public payload?: any) {}
-}
-
-export class PatchImportDataAction {
-  static readonly type = '[Global Configuration] Import Data Action';
-  constructor(public payload?: any) {}
-}
-
-export class PatchWidgetDataAction {
-  static readonly type = '[Global Configuration] Widget Data Action';
   constructor(public payload?: any) {}
 }
 
@@ -71,4 +51,9 @@ export class PostNewConfigSuccessAction {
 export class PostNewConfigFailAction {
   static readonly type = '[Global Configuration Colors] Post New Config Fail';
   constructor(public payload: any) {}
+}
+
+export class GetAllUsers {
+  static readonly type = '[Global Configuration] Get All Users';
+  constructor(public payload?: any) {}
 }

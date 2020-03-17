@@ -3,6 +3,7 @@ package com.scor.rr.repository;
 import com.scor.rr.domain.entities.PLTManagerView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
@@ -55,4 +56,16 @@ public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, 
 
     @Query(value = "EXEC dbonew.usp_GetColumnsByUserCodeAndViewContext @UserCode =:UserCode, @ViewContext =:ViewContext", nativeQuery = true)
     List<Map<String, Object>> getColumns(@Param("UserCode") String userCode, @Param("ViewContext") Long viewContext);
+
+    @Query(value = "EXEC dbonew.usp_PLTManagerGetThreadEndPLTsIDs " +
+            "@WorkspaceContextCode= :WorkspaceContextCode, " +
+            "@WorkspaceUwYear= :WorkspaceUwYear, " +
+            "@Entity =:Entity, " +
+            "@UserCode =:UserCode", nativeQuery = true)
+    List<Map<String, Object>> getIDs(
+            @Param("WorkspaceContextCode") String WorkspaceContextCode,
+            @Param("WorkspaceUwYear") Integer WorkspaceUwYear,
+            @Param("Entity") Integer Entity,
+            @Param("UserCode") String UserCode
+    );
 }

@@ -1,6 +1,6 @@
-export class loadWSFromLocalStorage {
-  static readonly type = '[Workspace] Load WS from Local Storage';
-  constructor() {}
+export class InitWorkspace {
+  static readonly type = '[Workspace] Init Opened Workspaces For User';
+  constructor(public payload: any) {}
 }
 
 export class loadWorkSpaceAndPlts {

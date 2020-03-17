@@ -96,6 +96,10 @@ public class ProjectCardView {
     @Column(name = "contractDatasource")
     private String contractDatasource;
 
+    private String lastUpdatedBy;
+
+    private Date lastUpdatedOn;
+
     @Transient
     private List<String> divisions;
 }

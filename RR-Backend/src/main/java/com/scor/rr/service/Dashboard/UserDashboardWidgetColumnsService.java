@@ -1,5 +1,6 @@
 package com.scor.rr.service.Dashboard;
 
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.entities.Dashboard.DashboardWidgetColumns;
 import com.scor.rr.domain.entities.Dashboard.UserDashboardWidgetColumns;
 import com.scor.rr.domain.requests.OrderAndVisibilityRequest;
@@ -7,6 +8,7 @@ import com.scor.rr.exceptions.Dashboard.UserDashboardColumnNotFoundException;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.Dashboard.UserDashboardWidgetColumnsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -20,7 +22,7 @@ public class UserDashboardWidgetColumnsService {
     @Autowired
     private UserDashboardWidgetColumnsRepository userDashboardWidgetColumnsRepository;
 
-    public void createWidgetColumns(List<DashboardWidgetColumns> columns, long userId, long widgetId) {
+    public void createWidgetColumns(List<DashboardWidgetColumns> columns, long widgetId) {
 
         List<UserDashboardWidgetColumns> listCols = new ArrayList<>();
 
@@ -29,7 +31,9 @@ public class UserDashboardWidgetColumnsService {
             ) {
                 UserDashboardWidgetColumns userDashboardWidgetColumns = new UserDashboardWidgetColumns();
                 userDashboardWidgetColumns.setUserDashboardWidgetId(widgetId);
-                userDashboardWidgetColumns.setUserID(userId);
+                if(SecurityContextHolder.getContext() !=null && SecurityContextHolder.getContext().getAuthentication() !=null) {
+                    userDashboardWidgetColumns.setUserID(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
+                }
                 userDashboardWidgetColumns.setDataType(col.getDataType());
                 userDashboardWidgetColumns.setDashboardWidgetColumnName(col.getColumnName());
                 userDashboardWidgetColumns.setDashboardWidgetColumnWidth(col.getDefaultWidth());
@@ -88,6 +92,14 @@ public class UserDashboardWidgetColumnsService {
 //        userDashboardWidgetColumns.setDashboardWidgetColumnWidth(columnWidth);
 //        userDashboardWidgetColumnsRepository.save(userDashboardWidgetColumns);
         userDashboardWidgetColumnsRepository.updateDashboardWidgetColumnWidth(columnId,columnWidth);
+    }
+
+    public void resetFilterForWidget(long widgetId){
+        userDashboardWidgetColumnsRepository.resetFilter(widgetId);
+    }
+
+    public void resetSortForWidget(long widgetId){
+        userDashboardWidgetColumnsRepository.resetSort(widgetId);
     }
 
     public void updateColumnFilter(long columnId, String filter) throws RRException {

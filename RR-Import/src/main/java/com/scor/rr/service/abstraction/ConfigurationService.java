@@ -55,4 +55,10 @@ public interface ConfigurationService {
     Map<Long, AnalysisPortfolioDto> getAutoAttach(String wsId, List<Long> edmIds,List<Long> rdmIds, List<Long> divisionsIds);
 
     void deleteRlDataSource(Long rlDataSourceId);
+
+    void clearProjectAndLoadDefaultDataSources(Long projectId);
+
+    void deleteAnalysisSummary(List<Long> rlAnalysisId, Long projectId);
+
+    void deletePortfolioSummary(List<Long> rlPortfolioId, Long projectId);
 }

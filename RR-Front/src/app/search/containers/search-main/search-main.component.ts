@@ -70,14 +70,16 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   globalSearchItem = '';
   currentWorkspace = null;
   loading = true;
+  secondaryLoading = false;
+
   columns = [
     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-    {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CountryName'},
-    {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CedantName'},
-    {field: 'cedantCode', header: 'Cedant Code', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CedantCode'},
-    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UwYear'},
-    {field: 'workspaceName', header: 'Workspace Name', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceName'},
-    {field: 'workSpaceId', header: 'Workspace Context', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceId'},
+    {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: ''},
+    {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_NAME'},
+    {field: 'cedantCode', header: 'Cedant Code', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
+    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
+    {field: 'workspaceName', header: 'Workspace Name', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
+    {field: 'workSpaceId', header: 'Workspace Context', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
     {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false},
     {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
   ];
@@ -90,14 +92,14 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
 
   columnsFac = [
     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-    {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CountryName'},
-    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UwYear'},
-    {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceName'},
-    {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'workSpaceContextCode'},
+    {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
+    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
+    {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
+    {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
     {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
-    {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'carequestId'},
+    {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CAR_ID'},
     {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'carStatus'},
-    {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'assignedTo'},
+    {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'USR'},
     {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false},
     {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false}
   ];
@@ -193,7 +195,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   @Debounce(500)
-  filterData($event, target) {
+  filterData($event, target, event) {
+    this.secondaryLoading = true;
     this._filter = {...this._filter, [target]: $event || null};
     this._loadData(0, 100, true);
   }
@@ -230,7 +233,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       }
     });
 
-    let tableFilter = _.map(this._filter, (value, key) => ({key: this._badgeService.transformToMapping(key),
+    let tableFilter = _.map(this._filter, (value, key) => ({key,
       value: this._badgeService.clearString(this._badgeService.parseAsterisk(value))}));
     return {
       filters: _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
@@ -265,6 +268,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filters,
       keyword
     } = this.filter;
+    console.log(filters);
 
     setTimeout(() => {
       let params = {
@@ -282,6 +286,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           .subscribe((data: any) => {
             this.contracts = _.map(data.content, item => ({...item, selected: false}));
             this.loading = false;
+            this.secondaryLoading = false;
             const {
               pageable: {
                 offset,
@@ -399,7 +404,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
     } else {
       this.columnsFac = [...this.columnsFacCache];
-      this.extraColumnsFac = [...this.extraColumnsCacheFac];
+      this.extraColumnsFac = [...this.extraColumnsCacheFac] ;
       this.columnsFac.splice(_.findIndex(this.columnsFac, row => row.field == 'checkbox'), 1);
       this.columnsFac.unshift({
         field: 'checkbox',
@@ -465,7 +470,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.saveSearchPopup = false;
     }
   }
-
 
   toggleSavedSearch() {
     this.store.dispatch(new toggleSavedSearch());

@@ -1,12 +1,17 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
+import {Select, Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import {BaseContainer} from "../../../../shared/base";
+import * as fromGeneralConfig from "../../../../core/store/actions";
+import {GeneralConfigState} from "../../../../core/store/states";
 
 @Component({
   selector: 'projects-list',
   templateUrl: './projects-list.component.html',
   styleUrls: ['./projects-list.component.scss']
 })
-export class ProjectsListComponent implements OnInit {
+export class ProjectsListComponent extends BaseContainer implements OnInit {
 
   @Input('projects') projects;
   @Input('status') status;
@@ -25,13 +30,21 @@ export class ProjectsListComponent implements OnInit {
     "Priced": 'linear-gradient(to top, rgb(0, 118, 66) 0%, rgb(26, 192, 139) 100%)'
   };
 
-  constructor() {
+  @Select(GeneralConfigState.getAllUsers) users$;
+  users: any[] = [];
+
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.selectEmitter = new EventEmitter();
     this.deleteEmitter = new EventEmitter();
     this.editEmitter = new EventEmitter();
   }
 
   ngOnInit() {
+    this.users$.pipe().subscribe(value => {
+      this.users = value;
+      this.detectChanges();
+    });
   }
 
   select = (project) => this.selectEmitter.emit(project);
@@ -46,4 +59,13 @@ export class ProjectsListComponent implements OnInit {
     return _.capitalize(string);
   }
 
+  getUserName(id) {
+    const user = _.find(this.users, item => item.userId == id);
+    return _.get(user, 'firstName', 'Unassigned') + ' ' + _.get(user, 'lastName', '');
+  }
+
+  getUserNameByUserId(id) {
+    const user = _.find(this.users, item => item.userCode == id);
+    return _.get(user, 'firstName', '') + ' ' + _.get(user, 'lastName', '');
+  }
 }

@@ -1,21 +1,60 @@
 import {Router} from "@angular/router";
-import {ChangeDetectorRef} from "@angular/core";
-import {Store} from "@ngxs/store";
+import {ChangeDetectorRef, OnChanges, OnInit, SimpleChanges} from "@angular/core";
+import {Select, Store} from "@ngxs/store";
 import {MonoTypeOperatorFunction, Observable, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
 import {Navigate} from '@ngxs/router-plugin';
+import {GeneralConfigState} from "../../core/store/states";
 
 
-export abstract class BaseContainer {
+export abstract class BaseContainer implements OnInit {
 
-  protected unSubscriton$: Subject<void>;
+  numberConfig: {
+    numberOfDecimals: number;
+    decimalSeparator: string;
+    decimalThousandSeparator: string;
+    negativeFormat: string;
+  };
+
+  dateConfig: {
+    shortDate: '',
+    shortTime: '',
+    longDate: '',
+    longTime: ''
+  };
+
+  @Select(GeneralConfigState.getDateConfig) dateConfig$;
+
+  protected unSubscription$: Subject<void>;
 
   protected constructor(private _baseRouter: Router, private _baseCdr: ChangeDetectorRef, private _baseStore: Store) {
-    this.unSubscriton$ = new Subject<void>();
+    this.unSubscription$ = new Subject<void>();
   }
 
   get unsubscribeOnDestroy(): MonoTypeOperatorFunction<any> {
-    return takeUntil(this.unSubscriton$);
+    return takeUntil(this.unSubscription$);
+  }
+
+  ngOnInit() {
+    this._baseStore
+        .select(GeneralConfigState.getNumberFormatConfig)
+        .pipe(this.unsubscribeOnDestroy)
+        .subscribe(({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat }) => {
+              this.numberConfig = {
+                numberOfDecimals,
+                decimalSeparator,
+                decimalThousandSeparator,
+                negativeFormat
+              };
+              this.detectChanges();
+            }
+        );
+
+    this.dateConfig$.pipe(this.unsubscribeOnDestroy)
+        .subscribe((config) => {
+          this.dateConfig = config;
+          this.detectChanges();
+        });
   }
 
   protected navigate(commands: any[]) {
@@ -32,8 +71,8 @@ export abstract class BaseContainer {
   }
 
   protected destroy() {
-    this.unSubscriton$.next();
-    this.unSubscriton$.complete();
+    this.unSubscription$.next();
+    this.unSubscription$.complete();
   }
 
   protected dispatch(action: any | any[]): Observable<any> {

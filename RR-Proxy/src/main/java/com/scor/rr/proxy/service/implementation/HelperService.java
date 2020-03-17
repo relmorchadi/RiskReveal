@@ -9,6 +9,7 @@ public class HelperService implements HelperServiceAbs {
 
     @Override
     public String getUserId() {
-        return SecurityContextHolder.getContext().getAuthentication().getName().split("@")[0];
+        String userName= SecurityContextHolder.getContext().getAuthentication().getName();
+        return userName.contains("@") ? userName.split("@")[0] : userName;
     }
 }

@@ -9,34 +9,53 @@ import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.compo
 import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
-import {FinancialPerspSelectionDialogComponent, OverrideRegionPerilDialogComponent, OverridePeqtDialogComponent, OverrideOccurenceBasisDialogComponent} from "./import/analysis-result";
+import {ScopeTableComponent} from "./scopeCompleteness/scope-table/scope-table.component";
+import {
+    FinancialPerspSelectionDialogComponent,
+    OverrideRegionPerilDialogComponent,
+    OverridePeqtDialogComponent,
+    OverrideOccurenceBasisDialogComponent
+} from "./import/analysis-result";
 import {CalibrationNewTableComponent} from "./calibration-new/calibration-new-table/calibration-new-table.component";
 import {AdjustmentPopUpNewComponent} from "./calibration-new/adjustment-pop-up-new/adjustment-pop-up-new.component";
 import {ReturnPeriodPopUpComponent} from "./calibration-new/return-period-pop-up/return-period-pop-up.component";
 import {NonLinearAdjustmentTableComponent} from "./calibration-new/non-linear-adjustment-table/non-linear-adjustment-table.component";
+import {ExposuresMainTableComponent} from "./exposures/exposures-main-table/exposures-main-table.component";
+import {ExposuresHeaderComponent} from "./exposures/exposures-header/exposures-header.component";
+import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposures-left-menu.component";
+import {ExposuresRightMenuComponent} from "./exposures/exposures-right-menu/exposures-right-menu.component";
+import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
+import {CalibrationColumnManagerComponent} from "./calibration-new/column-manager/column-manager.component";
 
 export const COMPONENTS = [
-  LeftMenuComponent,
-  ProjectsListComponent,
-  PinComponent,
-  WorkspaceRouterComponent,
-  InuringDatatableComponent,
-  InuringPackageDetailsComponent,
-  NodeCreationPopupComponent,
-  InuringGraphComponent,
-  ...INURING_NODES,
-  AttachPltPopUpComponent,
-  AnalysisResultComponent,
-  PortfolioResultComponent,
-  CalibrationNewTableComponent,
-  AdjustmentPopUpNewComponent,
-  ReturnPeriodPopUpComponent,
-  PortfolioResultComponent,
-  OverrideRegionPerilDialogComponent,
-  FinancialPerspSelectionDialogComponent,
-  OverridePeqtDialogComponent,
-  OverrideOccurenceBasisDialogComponent,
-    NonLinearAdjustmentTableComponent
+    LeftMenuComponent,
+    ProjectsListComponent,
+    PinComponent,
+    WorkspaceRouterComponent,
+    InuringDatatableComponent,
+    InuringPackageDetailsComponent,
+    NodeCreationPopupComponent,
+    InuringGraphComponent,
+    ScopeTableComponent,
+    ...INURING_NODES,
+    AttachPltPopUpComponent,
+    AnalysisResultComponent,
+    PortfolioResultComponent,
+    CalibrationNewTableComponent,
+    AdjustmentPopUpNewComponent,
+    ReturnPeriodPopUpComponent,
+    PortfolioResultComponent,
+    OverrideRegionPerilDialogComponent,
+    FinancialPerspSelectionDialogComponent,
+    OverridePeqtDialogComponent,
+    OverrideOccurenceBasisDialogComponent,
+    NonLinearAdjustmentTableComponent,
+    ExposuresMainTableComponent,
+    ExposuresHeaderComponent,
+    ExposuresLeftMenuComponent,
+    ExposuresRightMenuComponent,
+    DatasourceListComponent,
+    CalibrationColumnManagerComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

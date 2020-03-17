@@ -6,6 +6,7 @@ export class DashboardModel {
         fac: any,
         treaty: any,
         dataCounter: any,
-        virtualScroll: any
+        assignedFac: any,
+        assignedDataCounter: any
     }
 }

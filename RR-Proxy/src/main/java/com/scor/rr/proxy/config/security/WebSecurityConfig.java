@@ -85,7 +85,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http.csrf().disable().cors().and().authorizeRequests()
                 .antMatchers("/api/**").authenticated().and().httpBasic()
                 .authenticationEntryPoint(restSpenegoEntryPoint()).and()
@@ -100,6 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         filterChain.doFilter(httpServletRequest, httpServletResponse);
                     }
                 }, UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Bean

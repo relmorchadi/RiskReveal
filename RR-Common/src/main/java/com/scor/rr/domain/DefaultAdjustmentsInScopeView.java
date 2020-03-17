@@ -42,6 +42,8 @@ public class DefaultAdjustmentsInScopeView {
 
     private String adjustmentType;
 
+    private String adjustmentTypeShortName;
+
     private Boolean capped;
 
     public Object getFactors() {

@@ -24,9 +24,10 @@
         <li *ngFor="let project of leftMenuInputs.projects" (click)="filter('projectId',null,project.projectId)"
             class="clickable-item"
             [ngClass]="{'active-path': project.selected}">
-          <i class="icon-assignment_24px"></i>
-          <span class="body-list"
-                [nz-tooltip]="project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')">{{( project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+          <i [ngClass]="{ 'icon-assignment_24px': !project.carRequestId  , 'icon-copy': project.carRequestId }" ></i>
+          <span class="body-list" [nz-tooltip]="project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))">
+            {{( project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
+          </span>
         </li>
         <li>
           <div class="plt-trash" [ngStyle]="{'display': leftMenuInputs.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': leftMenuInputs.showDeleted ? 'rgb(253, 251, 223)' : 'white'}" style="font-size: 0.7em;">

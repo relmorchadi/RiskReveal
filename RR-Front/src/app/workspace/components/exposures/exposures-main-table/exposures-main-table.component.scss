@@ -1,0 +1,121 @@
+.table-wrapper {
+  ::ng-deep {
+    .ui-table-thead {
+      tr {
+        th {
+          padding: 7px 10px 5px !important;
+          font-size: 11px;
+          vertical-align: top;
+          text-align: end;
+          color: rgba(0, 0, 0, 0.38) !important;
+          background-color: #fff !important;
+          font-family: Rubik;
+          height: 30px;
+          border: none !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+
+          .search-bar-table {
+            display: flex;
+            background-color: #F5F5F5;
+
+            input {
+              width: 80%;
+              background-color: #F5F5F5;
+              height: 24px;
+              font-size: 10px;
+              border: none;
+
+              &:focus {
+                outline: 0;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .ui-table-tbody {
+      tr, tr:nth-child(even) {
+        background-color: #FFFFFF;
+        user-select: none;
+      }
+
+      tr.ui-contextmenu-selected {
+        background-color: #f4f6fc !important;
+      }
+
+      tr {
+        .expanded-row {
+          background-color: #E5E9FA !important;
+        }
+      }
+
+      tr:hover {
+        //background-color: #418ba4 !important;
+      }
+
+      th, td {
+        padding: 0 0 3.75px 0 !important;
+        cursor: pointer;
+        color: rgb(0, 0, 0);
+        font-size: 12px;
+        height: 27px;
+        text-align: end;
+        letter-spacing: 0.08px;
+        border: none !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+
+        span {
+          font-weight: 400;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+
+      }
+
+      .selected-item {
+        background-color: #FDFBDF !important;
+      }
+    }
+  }
+
+  .row-hover {
+    cursor: pointer;
+    background: rgba(233, 235, 241, 0.49) !important;
+  }
+
+  ::ng-deep .ui-table-frozen-view {
+    border-right: 3px solid #dcdee4;
+  }
+  .shown-metric {
+
+  }
+  .grouped-metric-next {
+    border-bottom: none !important;
+    font-size: 0px !important;
+  }
+  .grouped-metric-first {
+    border-bottom: none !important;
+  }
+  .grouped-metric-last {
+    font-size: 0px !important;
+  }
+  .eye-icon {
+    font-size: 15px;
+    float: left;
+    margin-left: 8px;
+    color: #83828b;
+    margin-top: 3px;
+  }
+  .eye-icon-selected {
+    font-size: 15px;
+    float: left;
+    margin-left: 8px;
+    color: #52b8e4;
+    margin-top: 3px;
+  }
+  .eye-icon:hover {
+    color: #52b8e4;
+  }
+}

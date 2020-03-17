@@ -76,10 +76,6 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
-    ctx.dispatch(new LoadShortCuts());
-    ctx.dispatch(new LoadRecentSearch());
-    ctx.dispatch(new LoadSavedSearch());
-    ctx.dispatch(new LoadMostUsedSavedSearch());
   }
 
   /**
@@ -151,10 +147,10 @@ export class SearchNavBarState implements NgxsOnInit {
       .pipe(
         tap( (shortCuts: any[]) => {
           ctx.patchState(produce(ctx.getState(), (draft: SearchNavBar) => {
-             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["PLT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
-                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC'));
-             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["PLT", "SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
-                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC')));
+             draft.shortcuts = _.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY'));
+             draft.mapTableNameToBadgeKey = this._badgesService.initMappers(_.filter(shortCuts, shortCut => !_.includes(["SECTION_NAME", "UW_UNIT"], shortCut.mappingTable) && (shortCut.mappingTable !== "PROJECT_ID" || shortCut.type !== 'TTY')
+                 && (shortCut.mappingTable !== "CLIENT_NAME" || shortCut.type !== 'FAC') && (shortCut.mappingTable !== "PLT" || shortCut.type !== 'TTY')));
              draft.shortcutFormKeysMapper = this._badgesService.initShortCutsFromKeysMapper(_.map(shortCuts,({shortCutLabel, shortCutAttribute, mappingTable, type}) => new ShortCut(shortCutLabel, shortCutAttribute, mappingTable, type)))
           }));
         })
@@ -465,6 +461,7 @@ export class SearchNavBarState implements NgxsOnInit {
     return this._searchService.saveSearch({...payload, userId: 1})
       .pipe(
         tap( searchItem => {
+          console.log(searchItem);
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.savedSearch = [...draft.savedSearch, {..._.pick(searchItem, ['label', 'userId', 'id']), badges: searchItem.items}];
           }))
@@ -490,7 +487,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   private checkShortCut(shortCuts: ShortCut[], keyword: string) {
     const foundShortCut = _.find(shortCuts, shortCut => _.includes(keyword, _.camelCase(shortCut.shortCutLabel)));
-    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(foundShortCut.shortCutLabel.length) : keyword ] : null;
+    return foundShortCut ? [ foundShortCut.mappingTable , foundShortCut ? keyword.substring(_.camelCase(foundShortCut.shortCutLabel).length + 1) : keyword ] : null;
   }
 
   private searchLoader(keyword, table = '') {

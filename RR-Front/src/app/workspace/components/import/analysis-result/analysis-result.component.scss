@@ -3,18 +3,22 @@
 TABLE STYLE
 =======================================================================================
 */
-.frozenRow{
+.frozenRow {
   pointer-events: none;
   background-color: #663366;
 }
 
-:host{
-  ::ng-deep{
+:host {
+  ::ng-deep {
     .ui-table-scrollable-wrapper {
       display: flex;
     }
+    i.pi-sort-down, i.pi-sort-up {
+      color: #848484 !important;
+    }
   }
 }
+
 
 .button-container {
   display: flex;
@@ -738,7 +742,7 @@ LINKING MODAL STYLE
 }
 
 
-.col-edit-input{
+.col-edit-input {
   width: 70%;
   margin: auto;
   background-color: #F4F6FC;
@@ -746,3 +750,4 @@ LINKING MODAL STYLE
   border-bottom: 2px solid #0700CF;
   text-align: right;
 }
+
