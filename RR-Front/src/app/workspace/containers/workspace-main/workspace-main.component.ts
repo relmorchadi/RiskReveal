@@ -120,6 +120,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   close(wsId, uwYear) {
+    event.stopPropagation();
     this.dispatch(new fromWs.CloseWS({
       wsIdentifier: wsId + '-' + uwYear
     }));

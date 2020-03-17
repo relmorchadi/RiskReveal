@@ -123,8 +123,6 @@ export class CalibrationNewService {
 
             const innerDraft = this.getCalibState(draft, wsIdentifier);
 
-            console.log(epMetrics);
-
             _.forEach(epMetrics, (metric: any, i) => {
 
               const {
@@ -132,7 +130,10 @@ export class CalibrationNewService {
                 curveType
               } = metric;
 
+              console.log(metric, i, i == '0')
+
               if (i == '0') {
+                console.log('init cols');
                 const rps = _.keys(_.omit(metric, ['pltId', 'curveType', 'AAL']));
                 innerDraft.epMetrics.rps = rps;
                 innerDraft.epMetrics.cols = ['AAL', ...rps];
