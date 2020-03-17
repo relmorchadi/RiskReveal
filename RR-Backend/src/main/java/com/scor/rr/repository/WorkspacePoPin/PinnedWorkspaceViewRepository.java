@@ -18,7 +18,7 @@ public interface PinnedWorkspaceViewRepository extends JpaRepository<PinnedWorks
     List<PinnedWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Integer userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "dbonew.usp_Count_Pinned_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "dbo.usp_Count_Pinned_Workspace", outputParameterName = "count")
     Integer getPinnedWSCount(@Param("userId") Integer userId);
 
 }

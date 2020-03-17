@@ -135,7 +135,7 @@ public class PltBrowserService {
     Integer useGetPLTManagerDataCountProc(PLTManagerViewRequest request) {
         UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         StoredProcedureQuery query = entityManager
-                .createStoredProcedureQuery("dbonew.usp_PLTManagerGetThreadEndPLTsCount")
+                .createStoredProcedureQuery("dbo.usp_PLTManagerGetThreadEndPLTsCount")
                 .registerStoredProcedureParameter(
                         "WorkspaceContextCode",
                         String.class,
