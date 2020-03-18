@@ -49,7 +49,7 @@ export class CalibrationNewService {
           }))
         }),
         catchError(e => {
-          console.log(e);
+
           return EMPTY;
         })
       )
@@ -92,7 +92,7 @@ export class CalibrationNewService {
           }))
         }),
         catchError(e => {
-          console.log(e);
+
           return EMPTY;
         })
       )
@@ -123,7 +123,7 @@ export class CalibrationNewService {
 
             const innerDraft = this.getCalibState(draft, wsIdentifier);
 
-            console.log(epMetrics);
+
 
             _.forEach(epMetrics, (metric: any, i) => {
 
@@ -147,7 +147,7 @@ export class CalibrationNewService {
 
         }),
         catchError(e => {
-          console.log(e);
+
           return EMPTY;
         })
       )

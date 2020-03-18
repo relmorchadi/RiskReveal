@@ -388,6 +388,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       view: newView
     };
     this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded);
+    console.log(this.columnsConfig.columns);
+    console.log(this.columnsConfig.frozenColumns);
   }
 
   toggleGrouping() {
@@ -620,6 +622,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: true
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, true);
+    console.log(this.columnsConfig.columns);
+    console.log(this.columnsConfig.frozenColumns);
   }
 
   expandColumnsOff() {
@@ -629,6 +633,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: false
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, false);
+    console.log(this.columnsConfig.columns);
+    console.log(this.columnsConfig.frozenColumns);
   }
 
   viewAdjustmentDetail(newAdjustment) {

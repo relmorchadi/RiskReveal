@@ -27,27 +27,28 @@
 
   <!-- frozen col groupe
   -->
-  <ng-template pTemplate="frozencolgroup" let-columns>
+  <ng-template pTemplate="frozencolgroup" let-columns *ngIf="!tableConfig.isExpanded">
     <colgroup>
       <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
     </colgroup>
   </ng-template>
 
   <!-- Frozen columns ( "side" is to tell wish header to call) -->
-  <ng-template pTemplate="frozenheader" let-columns>
-    <ng-container [ngTemplateOutlet]="header" [ngTemplateOutletContext]="{$implicit: columns, side: leftHeader}"></ng-container>
+  <ng-template pTemplate="frozenheader" let-columns *ngIf="!tableConfig.isExpanded">
+    <ng-container [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: leftHeader}"></ng-container>
   </ng-template>
 
   <!-- others columns -->
   <ng-template pTemplate="header" let-columns>
-    <ng-container [ngTemplateOutlet]="header" [ngTemplateOutletContext]="{$implicit: columns, side: rightHeader}"></ng-container>
+    <ng-container *ngIf="!tableConfig.isExpanded" [ngTemplateOutlet]="unexpandedHeader" [ngTemplateOutletContext]="{$implicit: columns, side: rightHeader}"></ng-container>
+    <ng-container *ngIf="tableConfig.isExpanded" [ngTemplateOutlet]="expandedHeader" [ngTemplateOutletContext]="{$implicit: columns}"></ng-container>
   </ng-template>
 
   <!--
   FROZEN BODY
   -->
 
-  <ng-template pTemplate="frozenbody" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+  <ng-template *ngIf="tableConfig.isExpanded" pTemplate="frozenbody" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
 
     <ng-container [ngTemplateOutlet]="tableConfig?.isGrouped ? grouped : nonGrouped" [ngTemplateOutletContext]="{$implicit: rowData, rowIndex: rowIndex, expanded: expanded, columns: columns}"></ng-container>
 
@@ -66,30 +67,31 @@
   <!--
   Header Template
   -->
-  <ng-template #header let-columns let-side="side">
+  <ng-template #unexpandedHeader let-columns let-side="side">
     <tr>
-      <ng-container *ngIf="tableConfig.isExpanded">
-        <ng-container *ngIf="side === leftHeader">
-          <th class="header-cnt" [attr.colspan]="columns | frozenColsLength" [style.height]="'120px'">
-            <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
-          </th>
-        </ng-container>
-
-        <ng-container *ngIf="side === rightHeader">
-          <th  class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
-            <ng-container [ngTemplateOutlet]="rightHeader" [ngTemplateOutletContext]="{ $implicit: tableConfig.isExpanded }"></ng-container>
-          </th>
-        </ng-container>
-
-      </ng-container>
-      <ng-container *ngIf="!tableConfig.isExpanded">
-        <th class="header-cnt" *ngIf="columns" [style.height]="'120px'" [ngStyle]="{'padding-top': (side === leftHeader ? '0' : '120') + 'px'}">
+        <th class="header-cnt" [attr.colspan]="columns.length" *ngIf="columns">
           <ng-container [ngTemplateOutlet]="side"></ng-container>
         </th>
         <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [style.height]="'120px'" [style.background]="'transparent'"></th>
-      </ng-container>
-
     </tr>
+    <ng-container [ngTemplateOutlet]="headerFields" [ngTemplateOutletContext]="{ $implicit: columns }"></ng-container>
+  </ng-template>
+
+  <ng-template #expandedHeader let-columns>
+    <tr>
+          <th   class="header-cnt" [attr.colspan]="columns | frozenColsLength" [style.height]="'120px'">
+            <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
+          </th>
+
+          <th  class="header-cnt" [attr.colspan]="columns.length - (columns | frozenColsLength)" [style.height]="'120px'">
+            <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
+          </th>
+    </tr>
+    <ng-container [ngTemplateOutlet]="headerFields" [ngTemplateOutletContext]="{ $implicit: columns }"></ng-container>
+  </ng-template>
+
+  <!-- Header fields - column name and filter inputs (row 2 & 3)  -->
+  <ng-template #headerFields let-columns>
     <tr>
       <ng-container *ngFor="let col of columns;let i= index;" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width, index: i}"></ng-container>
     </tr>
@@ -99,7 +101,6 @@
       </th>
     </tr>
   </ng-template>
-
   <!--
   Grouped Template
   -->
@@ -362,13 +363,12 @@
     </div>
   </ng-template>
 
-  <ng-template #rightHeader let-expanded>
+  <ng-template #rightHeader >
 
 
-    <div [ngClass]="{ 'table-header-right-container' : expanded }">
-      <div class="table-header-right" [ngClass]="{ 'button-toggle-empetric-config' : !expanded }" style="background-color: #fff">
+    <div class="table-header-right-container">
+      <div class="table-header-right"   style="background-color: #fff">
         <div *ngIf="tableConfig?.view == 'epMetrics'"
-             [ngStyle]="{marginRight: ((expanded)?  '-1px' : '-385px')}"
              class="title-as-tab" style="height: 58px">
           <span class="title" style="margin-right: 16px">
            Thread Level EP Metrics
@@ -436,7 +436,7 @@
           </div>
         </div>
       </div>
-      <div [ngClass]="{ 'button-toggle' : !expanded }" [ngStyle]="{ marginRight: (tableConfig?.view == 'epMetrics' ? -385 : -220)  + 'px'}">
+      <div  [ngStyle]="{ marginRight: (tableConfig?.view == 'epMetrics' ? -385 : -220)  + 'px'}">
         <div style="display: inline-block"><span style="font-weight: bold; margin-right: 10px">View: </span></div>
         <div class="p-button-group" style="display: inline-block">
           <p-radioButton (onClick)="onViewChange('adjustments')" [ngModel]="tableConfig.view"
