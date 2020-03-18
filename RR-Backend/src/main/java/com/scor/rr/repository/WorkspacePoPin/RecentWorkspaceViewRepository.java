@@ -18,7 +18,7 @@ public interface RecentWorkspaceViewRepository extends JpaRepository<RecentWorks
     List<RecentWorkspaceView> findAllByUserId(@Param("kw") String kw, @Param("userId") Long userId, Pageable page);
 
     @Transactional
-    @Procedure(procedureName = "dbonew.usp_Count_Recent_Workspace", outputParameterName = "count")
+    @Procedure(procedureName = "dbo.usp_Count_Recent_Workspace", outputParameterName = "count")
     Integer getRecentWSCount(@Param("userId") Long userId);
 
 }

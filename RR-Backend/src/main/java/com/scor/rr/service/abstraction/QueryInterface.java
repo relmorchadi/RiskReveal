@@ -24,4 +24,5 @@ public interface QueryInterface {
     Collection<? extends String> generateGlobalSearchClause(String keyword);
 
     String generateCountQuery(List<ExpertModeFilter> filter,String keyword);
-    }
+
+}

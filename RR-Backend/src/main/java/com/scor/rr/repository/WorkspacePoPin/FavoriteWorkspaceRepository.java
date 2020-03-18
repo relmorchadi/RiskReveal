@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface FavoriteWorkspaceRepository extends JpaRepository<FavoriteWorkspace, Long> {
 
-    @Procedure("dbonew.usp_ToggleFavoriteWorkspace")
+    @Procedure("dbo.usp_ToggleFavoriteWorkspace")
     void toggleFavoriteWorkspace(@Param("workspaceContextCode") String workspaceContextCode, @Param("workspaceUwYear") Integer workspaceUwYear, @Param("userId") Long userId);
 
     Boolean existsByWorkspaceContextCodeAndWorkspaceUwYearAndUserId(String workspaceContextCode, Integer workspaceUwYear, Integer userId);
