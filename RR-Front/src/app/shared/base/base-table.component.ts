@@ -104,6 +104,7 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   }
 
   selectedProjectFilter(selectedProject) {
+    console.log(selectedProject);
     if(this.tableInitialized && selectedProject && selectedProject.previousValue && selectedProject.previousValue != selectedProject.currentValue) {
       this._handler.filterByProjectId(selectedProject.currentValue.projectId);
     }
