@@ -337,6 +337,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
+
       this.columnsConfig= config;
       this.calibrationTableService.updateColumnsConfigCache(config);
 
@@ -398,7 +399,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleTableActions(action: Message) {
-    console.log(action);
+
     switch (action.type) {
 
       case "Open Column Manager":
@@ -490,7 +491,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 
@@ -501,7 +502,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.selectedAdjustment = null;
         break;
       default:
-        console.log(action);
+
     }
   }
 
@@ -529,7 +530,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 
@@ -622,6 +623,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   expandColumnsOff() {
+
     this.tableConfig = {
       ...this.tableConfig,
       isExpanded: false
@@ -866,7 +868,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 

@@ -97,12 +97,14 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   unexpandColumns() {
+    console.log(this.tableConfig.isExpanded);
     this.actionDispatcher.emit({
       type: "Expand columns OFF"
     })
   }
 
   expandColumns() {
+    console.log(this.tableConfig.isExpanded);
     this.actionDispatcher.emit({
       type: "Expand columns ON"
     })
@@ -349,7 +351,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   onTableSeparatorResize(event) {
     const {currentWidthValue, originalWidthValue} = event;
     const delta = currentWidthValue - originalWidthValue;
-    console.log(event, delta);
+
     this.actionDispatcher.emit({
       type: "Resize Table Separator",
       payload: delta
