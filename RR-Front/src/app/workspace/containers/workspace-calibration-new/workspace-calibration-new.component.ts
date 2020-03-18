@@ -832,7 +832,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             this.tableConfig.sortData
         ), pure => {
           let pureMetrics = {};
-          _.forEach(this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId], (v,k) => {
+          _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId], 'pltId'), (v,k) => {
             pureMetrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, pure.currencyCode, this.tableConfig.selectedCurrency);
           })
           item = {..._.omit(pure, 'threads'), ...pureMetrics};
@@ -840,7 +840,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
           _.forEach(pure.threads, thread => {
             let metrics = {};
-            _.forEach(this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId], (v,k) => {
+            _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId], 'pltId'), (v,k) => {
               metrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, thread.currencyCode, this.tableConfig.selectedCurrency);
             })
             item = {..._.omit(thread, 'threads'), ...metrics};

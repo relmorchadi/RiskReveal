@@ -284,7 +284,7 @@ public class CalculateAdjustmentService {
             updates.add("RP" + defaultReturnPeriodEntity.getReturnPeriod() + " numeric(19, 2)");
         }
 
-        String query = "CREATE TABLE dbonew.ZZ_SummaryStatisticsDetail\n" +
+        String query = "CREATE TABLE dbo.ZZ_SummaryStatisticsDetail\n" +
                 "(\n" +
                 " SummaryStatisticsDetailId INT PRIMARY KEY NOT NULL,\n" +
                 "      Entity INT,\n" +

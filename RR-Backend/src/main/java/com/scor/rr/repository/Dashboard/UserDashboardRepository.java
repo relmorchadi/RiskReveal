@@ -21,7 +21,7 @@ public interface UserDashboardRepository extends JpaRepository<UserDashboard,Lon
 
     @Transactional
     @Modifying
-    @Query(value = "exec dbonew.uspDashboardWidgetGetCarsBasedOnStatus @CarStatus=:carStatus," +
+    @Query(value = "exec dbo.uspDashboardWidgetGetCarsBasedOnStatus @CarStatus=:carStatus," +
             "  @Entity=:entity," +
             " @UserDashboardWidgetId=:userDashboardWidgetId," +
             "@UserCode=:userCode," +
