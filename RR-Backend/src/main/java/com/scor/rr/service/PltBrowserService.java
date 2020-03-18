@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.*;
+import com.scor.rr.domain.entities.GroupedPLTs;
 import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.entities.Tag;
@@ -16,6 +17,7 @@ import com.scor.rr.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.procedure.ProcedureOutputs;
 import org.hibernate.sql.Update;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -101,6 +103,58 @@ public class PltBrowserService {
 
             return response;
 
+    }
+
+    public List<GroupedPLTs> getPLTManagerGroupedPLTs(PLTManagerViewRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setFieldMatchingEnabled(true);
+
+        List<GroupedPLTs> plts = this.pltManagerViewRepository.getPLTManagerGroupedPLTs(
+                request.getWorkspaceContextCode(),
+                request.getWorkspaceUwYear(),
+                request.getEntity(),
+                user.getUserCode(),
+                request.getPageNumber(),
+                request.getPageSize(),
+                request.getSelectionList(),
+                request.getSortSelectedFirst(),
+                request.getSortSelectedAction()
+        ).stream()
+                .map(plt -> mapper.map(plt, GroupedPLTs.class))
+                .collect(Collectors.toList());
+
+        Map<Long, GroupedPLTs> pures = new HashMap<>();
+
+        plts.stream()
+                .filter(plt -> plt.getThreadId() == null)
+                .forEach(pure -> pures.put(pure.getPltId(), pure));
+
+        Map<Long, List<GroupedPLTs>> threadsByPureId =  plts
+                .stream()
+                .filter(plt -> plt.getThreadId() != null)
+                .collect(Collectors.groupingBy(plt -> plt.getPureId() == null ? -1 : plt.getPureId()));
+
+        return threadsByPureId
+                .keySet()
+                .stream()
+                .map(pureId -> {
+                    GroupedPLTs pure = pures.get(pureId);
+                    pure.setThreads(threadsByPureId.get(pureId));
+                    return pure;
+                }).collect(Collectors.toList());
+
+//        return this.pltManagerViewRepository.getPLTManagerGroupedPLTs(
+//                request.getWorkspaceContextCode(),
+//                request.getWorkspaceUwYear(),
+//                request.getEntity(),
+//                user.getUserCode(),
+//                request.getPageNumber(),
+//                request.getPageSize(),
+//                request.getSelectionList(),
+//                request.getSortSelectedFirst(),
+//                request.getSortSelectedAction()
+//        );
     }
 
     public List<Map<String, Object>> getColumns() {

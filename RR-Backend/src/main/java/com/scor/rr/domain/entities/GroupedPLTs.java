@@ -4,18 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "vw_PltManagerView")
-public class PLTManagerView {
+public class GroupedPLTs {
 
-    @Id
     @Column(name = "pltId")
     private Long pltId;
 
@@ -202,10 +201,14 @@ public class PLTManagerView {
     @Transient
     private Set<Tag> tags;
 
+    @Transient
+    private List<GroupedPLTs> threads;
+
     //ADDITIONAL FIELDS
 
     private Long targetRapId;
     private Long regionPerilId;
 
-
+    private Long pureId;
+    private Long threadId;
 }
