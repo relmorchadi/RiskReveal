@@ -199,7 +199,7 @@ public class UserDashboardWidgetService {
             userCode=(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserCode());
         }
 
-        StoredProcedureQuery query = em.createStoredProcedureQuery("dbonew.uspDashboardWidgetGetFiltredRecCount")
+        StoredProcedureQuery query = em.createStoredProcedureQuery("dbo.uspDashboardWidgetGetFiltredRecCount")
                 .registerStoredProcedureParameter("CarStatus", String.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("Entity", Integer.class, ParameterMode.IN)
                 .registerStoredProcedureParameter("UserDashboardWidgetId", Long.class, ParameterMode.IN)

@@ -15,7 +15,7 @@ public interface ExchangerateRepository extends JpaRepository<ExchangeRateEntity
 
 
     @Transactional
-    @Query(value = "exec dbonew.usp_FindExchangeRatesBySourceCurrencies @effectiveDate=:effectiveDate, @currencies=:currencies", nativeQuery = true)
+    @Query(value = "exec dbo.usp_FindExchangeRatesBySourceCurrencies @effectiveDate=:effectiveDate, @currencies=:currencies", nativeQuery = true)
     List<Map<String, Object>> findExchangeRatesBySourceCurrenciesAndEffectiveDate(@Param("effectiveDate") Date effectiveDate, @Param("currencies") String currencies);
 
 

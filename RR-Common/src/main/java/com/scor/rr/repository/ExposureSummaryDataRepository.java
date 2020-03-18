@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSummaryData, Long> {
 
-    @Query(value = "EXEC dbonew.usp_ExposureManagerData " +
+    @Query(value = "EXEC dbo.usp_ExposureManagerData " +
             "@projectId=:projectId," +
             "@portfolioName=:portfolioName," +
             "@division=:division," +
@@ -22,7 +22,7 @@ public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSum
     List<Map<String, Object>> getExposureData(Long projectId, String portfolioName, String summaryType, Integer division,
                                               String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter);
 
-    @Query(value = "EXEC dbonew.usp_ExposureManagerTotalRow " +
+    @Query(value = "EXEC dbo.usp_ExposureManagerTotalRow " +
             "@projectId=:projectId," +
             "@portfolioName=:portfolioName," +
             "@division=:division," +
