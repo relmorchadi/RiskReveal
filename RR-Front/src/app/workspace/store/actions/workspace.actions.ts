@@ -70,14 +70,7 @@ export class TogglePinned {
 
 export class ToggleProjectSelection {
   static readonly type = '[Workspace] Toggle project selection';
-
-  constructor(public payload: { wsIdentifier: string, projectIndex: number }) {
-  }
-}
-
-export class AddNewFacProject {
-  static readonly type = '[Workspace] Add new Fac project';
-  constructor(public payload?: any) {}
+  constructor(public payload: { wsIdentifier: string, projectIndex: number }) {}
 }
 
 export class AddNewProject {

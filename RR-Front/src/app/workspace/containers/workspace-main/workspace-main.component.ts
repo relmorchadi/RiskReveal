@@ -31,7 +31,6 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   wsId: any;
   uwYear: any;
   route: any;
-  ws: any;
 
   @Select(WorkspaceState.getWorkspaceStatus) status$;
   @Select(WorkspaceState.getSelectedProject) selectedPrj$;
@@ -51,13 +50,14 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   ngOnInit() {
     this.ws$.pipe().subscribe(value => {
-     this.ws = value;
+      this.data = value;
+      this.detectChanges();
     });
 
     this._route.params
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(({wsId, year, route}: any) => {
-        const openedWs = _.get(this.ws, `${wsId}-${year}`, null);
+        const openedWs = _.get(this.data, `${wsId}-${year}`, null);
         if (openedWs === null) {
           this.dispatch(new fromWs.OpenWS({wsId, uwYear: year, route}))
         }
@@ -65,22 +65,15 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
     this.currentTab$.pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
-        this.selectedTabIndex = curTab.index;
-/*        this.data === null ? this.selectedTabIndex = curTab.index
-            : this.selectedTabIndex = _.findIndex(_.keys(this.data), item => this.currentWsIdentifier === item);*/
         this.currentWsIdentifier = curTab.wsIdentifier;
+        this.selectedTabIndex = _.findIndex(_.keys(this.data), item => item === this.currentWsIdentifier);
         this.detectChanges();
       });
+
     this.select(WorkspaceState.getLoading)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(loading => {
         this.loading = loading;
-        this.detectChanges();
-      });
-    this.select(WorkspaceState.getWorkspaces)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(content => {
-        this.data = content;
         this.detectChanges();
       });
 

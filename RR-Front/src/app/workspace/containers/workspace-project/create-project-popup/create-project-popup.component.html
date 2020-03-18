@@ -113,8 +113,8 @@
   <p-footer>
     <div class="a-control-buttons">
       <button class="a-button-text-cancel" (click)="cancelCreateProject()">CANCEL</button>
-      <button [ngClass]="{'a-buttons-contained-disabled' : !checkValid(), 'a-buttons-contained': checkValid()}"
-              *ngIf="editOption" [disabled]="!checkValid()" (click)="updateProject()">SAVE
+      <button [ngClass]="{'a-buttons-contained-disabled' : !checkGlobalValid(), 'a-buttons-contained': checkGlobalValid()}"
+              *ngIf="editOption" [disabled]="!checkGlobalValid()" (click)="updateProject()">SAVE
       </button>
       <button
         [ngClass]="{'a-buttons-contained-disabled' : !newProjectForm.valid, 'a-buttons-contained': newProjectForm.valid}"

@@ -140,7 +140,7 @@ export class WorkspaceService {
         };
         draft.loading = false;
         draft.currentTab = {...draft.currentTab,
-          index: _.findIndex(_.keys(draft.content), item => item === wsIdentifier),
+          //index: _.findIndex(_.keys(draft.content), item => item === wsIdentifier),
           wsIdentifier: wsIdentifier
         }
       }));
@@ -224,6 +224,7 @@ export class WorkspaceService {
         wsIdentifier: i === 0 ? _.keys(content)[i + 1] : _.keys(content)[i - 1]
       }));
     }
+
     return this.wsApi.closeTab(closedTab).pipe(
         tap( data => {
           ctx.patchState({
@@ -306,14 +307,6 @@ export class WorkspaceService {
         ctx.dispatch(new fromWS.AddNewProjectFail({}));
         return EMPTY;
       }));
-  }
-
-  addNewFacProject(ctx: StateContext<WorkspaceModel>, payload) {
-    const state = ctx.getState();
-    const wsIdentifier = state.currentTab.wsIdentifier;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].projects = [payload, ...draft.content[wsIdentifier].projects];
-    }));
   }
 
   updateProject(ctx: StateContext<WorkspaceModel>, payload) {

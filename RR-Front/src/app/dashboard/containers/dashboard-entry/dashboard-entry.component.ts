@@ -187,7 +187,8 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     });
   }
 
-  createNewDashboardAction(payload) {
+  createNewDashboardAction(payload)
+  {
     this.dashboardAPI.creatDashboards(payload).subscribe(data => {
           this.dashboards = [...this.dashboards, this._formatData(data)];
           this.idTab = this.dashboards.length - 1;
@@ -371,7 +372,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     const updatedWidget = _.find(dashUpdated.widgets, (item: any) => item.userDashboardWidgetId === this.editedWidget.id);
     _.forEach(updatedWidget.columns, element => {
       if (_.findIndex(tableCols, item => item.columnId === element.columnId) === -1) {
-        tableCols = [...tableCols, {columnId: element.columnId, order: 0, visible: false}];
+        tableCols = [...tableCols, {columnId: element.columnId, order: tableCols.length + 1, visible: false}];
         event = [...event, {...element, visible: false}];
       }
     });
@@ -504,12 +505,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   updateColsListener($event) {
     const {widgetId, dashCols} = $event;
-    this.dashboards = _.map(this.dashboards, dash => {
-      return dash.id === this.selectedDashboard.id ? {...dash, widgets: _.map(dash.widgets, item => {
+    const index = _.findIndex(this.dashboards, (item: any) => item.id === this.selectedDashboard.id);
+    this.dashboards = _.merge(this.dashboards, { [index]: {
+      widgets: _.map(this.dashboards[index].widgets, item => {
       return item.id === widgetId ? {...item, columns: dashCols} : item})
-    } : dash });
-
-    console.log(_.find(this.dashboards, item => item.id === this.selectedDashboard.id))
+    }});
+    this.detectChanges();
   }
 
   selectTab(id: any) {

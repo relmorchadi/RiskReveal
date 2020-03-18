@@ -78,7 +78,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
 
   ngOnInit() {
-    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess, fromWs.AddNewFacProject))
+    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess))
       .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
       .subscribe(() => {
           this.newProject = false;

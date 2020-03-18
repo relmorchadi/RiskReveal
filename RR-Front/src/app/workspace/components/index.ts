@@ -2,6 +2,7 @@ import {LeftMenuComponent} from "./left-menu/left-menu.component";
 import {ProjectsListComponent} from "./project/projects-list/projects-list.component";
 import {PinComponent} from './pin/pin.component';
 import {WorkspaceRouterComponent} from './workspace-router/workspace-router.component';
+import {ScopeTableComponent} from "./scopeCompleteness/scope-table/scope-table.component";
 import {InuringDatatableComponent} from "./inuring";
 import {InuringPackageDetailsComponent} from "./inuring/inuring-package-details/inuring-package-details.component";
 import {NodeCreationPopupComponent} from "./inuring/node-creation-popup/node-creation-popup.component";
@@ -9,7 +10,6 @@ import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.compo
 import {INURING_NODES} from "./inuring/nodes";
 import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
 import {AnalysisResultComponent, PortfolioResultComponent} from "./import";
-import {ScopeTableComponent} from "./scopeCompleteness/scope-table/scope-table.component";
 import {
     FinancialPerspSelectionDialogComponent,
     OverrideRegionPerilDialogComponent,
@@ -31,12 +31,12 @@ export const COMPONENTS = [
     LeftMenuComponent,
     ProjectsListComponent,
     PinComponent,
+    ScopeTableComponent,
     WorkspaceRouterComponent,
     InuringDatatableComponent,
     InuringPackageDetailsComponent,
     NodeCreationPopupComponent,
     InuringGraphComponent,
-    ScopeTableComponent,
     ...INURING_NODES,
     AttachPltPopUpComponent,
     AnalysisResultComponent,

@@ -551,11 +551,6 @@ export class WorkspaceState {
     return this.wsService.addNewProject(ctx, payload);
   }
 
-  @Action(fromWS.AddNewFacProject)
-  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
-    return this.wsService.addNewFacProject(ctx, payload);
-  }
-
   @Action(fromWS.EditProject)
   editProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.EditProject) {
     return this.wsService.updateProject(ctx, payload);

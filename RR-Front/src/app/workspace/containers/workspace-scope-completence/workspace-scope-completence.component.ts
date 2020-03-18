@@ -71,9 +71,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   @Select(WorkspaceState.getCurrentWorkspaces) wsIndept$;
   wsIndept: any;
 
-  wsStatus: any;
-  currentWsIdentifier: any;
-
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
   selectedProject: any;
   tabStatus: any;
@@ -81,6 +78,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   @Select(WorkspaceState.getImportStatus) importStatus$;
   importStatus: any;
 
+  wsStatus: any;
+  currentWsIdentifier: any;
   workspace: any;
   index: any;
   workspaceUrl: any;
