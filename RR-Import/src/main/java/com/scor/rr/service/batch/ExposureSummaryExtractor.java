@@ -1,6 +1,7 @@
 package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.mapper.RLExposureSummaryItemRowMapper;
@@ -8,6 +9,7 @@ import com.scor.rr.repository.*;
 import com.scor.rr.service.LocationLevelExposure;
 import com.scor.rr.service.RegionPerilService;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.writer.ExposureWriter;
 import com.scor.rr.service.state.TransformationPackage;
 import org.apache.commons.collections.keyvalue.MultiKey;
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -76,6 +79,12 @@ public class ExposureSummaryExtractor {
     private LocationLevelExposure locationLevelExposure;
     @Autowired
     private RLPortfolioRepository rlPortfolioRepository;
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
 
     private MultiKey createEdmKey(String instance, Long edmId, String edmName) {
         return new MultiKey(instance, edmId, edmName);
@@ -83,6 +92,7 @@ public class ExposureSummaryExtractor {
 
     public RepeatStatus extract() {
 
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 13);
         try {
             //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
             List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));
@@ -289,19 +299,28 @@ public class ExposureSummaryExtractor {
                             rmsService.removeEDMPortfolioContext(instance, runId);
                         } else {
                             log.error("Error: runId is null");
+                            jobManager.onTaskError(Long.valueOf(taskId));
+                            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
                         }
                     }
 
                 } else {
                     log.warn("No default view was found");
+                    jobManager.onTaskError(Long.valueOf(taskId));
+                    jobManager.logStep(step.getStepId(), StepStatus.FAILED);
                 }
             } else {
                 log.info("No model portfolio selected");
+                jobManager.onTaskError(Long.valueOf(taskId));
+                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             }
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
             return RepeatStatus.FINISHED;
         } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.FINISHED;
+            return RepeatStatus.valueOf("FAILED");
         }
 
     }

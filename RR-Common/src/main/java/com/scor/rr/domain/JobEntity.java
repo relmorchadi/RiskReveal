@@ -41,6 +41,6 @@ public class JobEntity {
     @Column(name = "JobTypeDesc")
     private String jobTypeDesc;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
     private List<TaskEntity> tasks;
 }

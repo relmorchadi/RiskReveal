@@ -10,6 +10,7 @@ import com.scor.rr.repository.StepEntityRepository;
 import com.scor.rr.repository.TaskEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -44,7 +45,7 @@ public abstract class JobManagerAbstraction implements JobManager {
         job.setPriority(priority);
         job.setSubmittedByUser(userId);
 
-        return jobEntityRepository.save(job);
+        return jobEntityRepository.saveAndFlush(job);
     }
 
     @Override
@@ -61,7 +62,7 @@ public abstract class JobManagerAbstraction implements JobManager {
         task.setSubmittedDate(new Timestamp((new Date()).getTime()));
         task.setTaskType(taskType.getCode());
 
-        return taskEntityRepository.save(task);
+        return taskEntityRepository.saveAndFlush(task);
     }
 
     @Override
@@ -72,10 +73,11 @@ public abstract class JobManagerAbstraction implements JobManager {
         step.setStartedDate(new Timestamp((new Date()).getTime()));
         step.setStepName(stepCode);
         step.setStepOrder(stepOrder);
-        step.setTaskId(taskId);
-        step.setStatus(StepStatus.RUNNING);
+        TaskEntity task = taskEntityRepository.findById(taskId).orElse(null);
+        step.setTask(task);
+        step.setStatus(StepStatus.RUNNING.getCode());
 
-        return stepEntityRepository.save(step);
+        return stepEntityRepository.saveAndFlush(step);
     }
 
     @Override
@@ -98,6 +100,8 @@ public abstract class JobManagerAbstraction implements JobManager {
 
     public abstract List<JobExecutionEntity> findRunningJobsForUser(String userId);
 
+    public abstract void onTaskError(Long taskId);
+
     @Override
     public String getJobStatus(Long jobId) {
         return jobEntityRepository.findById(jobId).map(JobEntity::getStatus).orElse(null);
@@ -109,17 +113,20 @@ public abstract class JobManagerAbstraction implements JobManager {
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logJob(Long jobId, JobStatus status) {
         jobEntityRepository.updateStatus(jobId, status);
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logTask(Long taskId, JobStatus status) {
         taskEntityRepository.updateStatus(taskId, status);
     }
 
     @Override
+    @Transactional(transactionManager = "theTransactionManager")
     public void logStep(Long stepId, StepStatus status) {
-        stepEntityRepository.updateStatus(stepId, status);
+        stepEntityRepository.updateStatus(stepId, status.getCode(), new Date());
     }
 }

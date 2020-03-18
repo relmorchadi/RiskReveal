@@ -1,5 +1,6 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.domain.JobEntity;
 import com.scor.rr.domain.ProjectConfigurationForeWriter;
 import com.scor.rr.domain.ProjectImportRunEntity;
 import com.scor.rr.domain.TaskEntity;
@@ -83,12 +84,13 @@ public class ProjectImportRunAndCARStatus {
         if (task != null) {
             task.setStatus(JobStatus.SUCCEEDED.getCode());
             task.setFinishedDate(new Date());
-            taskEntityRepository.save(task);
-            if (task.getJob().getTasks().stream()
+            taskEntityRepository.saveAndFlush(task);
+            JobEntity job = jobEntityRepository.findById(task.getJob().getJobId()).orElse(null);
+            if (job != null && job.getTasks().stream()
                     .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()) && !t.getTaskId().equals(task.getTaskId()))) {
-                task.getJob().setStatus(JobStatus.SUCCEEDED.getCode());
-                task.getJob().setFinishedDate(new Date());
-                jobEntityRepository.save(task.getJob());
+                job.setStatus(JobStatus.SUCCEEDED.getCode());
+                job.setFinishedDate(new Date());
+                jobEntityRepository.saveAndFlush(job);
             }
         }
         return RepeatStatus.FINISHED;

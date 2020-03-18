@@ -1,7 +1,5 @@
 package com.scor.rr.domain;
 
-import com.scor.rr.domain.enums.StepStatus;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -11,16 +9,17 @@ import java.util.Objects;
 public class StepEntity {
 
     private Long stepId;
-    private Long taskId;
+    private TaskEntity task;
     private String stepCode;
     private Integer stepOrder;
     private String stepParams;
-    private StepStatus status;
+    private String status;
     private Timestamp submittedDate;
     private Timestamp startedDate;
     private Timestamp finishedDate;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stepId", nullable = false)
     public Long getStepId() {
         return stepId;
@@ -30,18 +29,18 @@ public class StepEntity {
         this.stepId = stepId;
     }
 
-    @Basic
-    @Column(name = "taskId", nullable = true)
-    public Long getTaskId() {
-        return taskId;
+    @ManyToOne
+    @JoinColumn(name = "taskId")
+    public TaskEntity getTask() {
+        return task;
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public void setTask(TaskEntity task) {
+        this.task = task;
     }
 
     @Basic
-    @Column(name = "stepCode", nullable = true, length = 255)
+    @Column(name = "stepName", nullable = true, length = 255)
     public String getStepName() {
         return stepCode;
     }
@@ -72,11 +71,11 @@ public class StepEntity {
 
     @Basic
     @Column(name = "status", nullable = true, length = 255)
-    public StepStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(StepStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -116,7 +115,7 @@ public class StepEntity {
         if (o == null || getClass() != o.getClass()) return false;
         StepEntity that = (StepEntity) o;
         return stepId == that.stepId &&
-                Objects.equals(taskId, that.taskId) &&
+                Objects.equals(task, that.task) &&
                 Objects.equals(stepCode, that.stepCode) &&
                 Objects.equals(stepOrder, that.stepOrder) &&
                 Objects.equals(stepParams, that.stepParams) &&
@@ -127,6 +126,6 @@ public class StepEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepId, taskId, stepCode, stepOrder, stepParams, status, startedDate, finishedDate);
+        return Objects.hash(stepId, task, stepCode, stepOrder, stepParams, status, startedDate, finishedDate);
     }
 }

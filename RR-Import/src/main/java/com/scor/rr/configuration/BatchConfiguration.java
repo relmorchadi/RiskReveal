@@ -49,6 +49,12 @@ public class BatchConfiguration {
         return dataSourceTransactionManager;
     }
 
+    @Bean(name = "theTransactionManager")
+    public DataSourceTransactionManager getTransactionManager() {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(rrDataSource);
+        return dataSourceTransactionManager;
+    }
 
     @Bean(name = "rrJobRepository")
     public JobRepository getJobRepository() throws Exception {

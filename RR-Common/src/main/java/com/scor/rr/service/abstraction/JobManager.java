@@ -27,6 +27,8 @@ public interface JobManager {
 
     List<JobExecutionEntity> findRunningJobsForUser(String userId);
 
+    void onTaskError(Long taskId);
+
     boolean isTaskRunning(Long taskId);
 
     String getJobStatus(Long jobId);

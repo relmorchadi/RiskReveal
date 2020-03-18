@@ -1,11 +1,11 @@
 package com.scor.rr.domain;
 
-import com.scor.rr.domain.enums.JobStatus;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +24,17 @@ public class TaskEntity {
     private Date submittedDate;
     private Date startedDate;
     private Date finishedDate;
+
+    private List<StepEntity> steps;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    public List<StepEntity> getSteps() {
+        return steps;
+    }
+
+    public void setSteps(List<StepEntity> steps) {
+        this.steps = steps;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

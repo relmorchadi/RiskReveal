@@ -3,6 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.domain.JobExecutionEntity;
 import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.JobPriority;
+import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.model.RRJob;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.JobExecutionRepository;
@@ -93,5 +94,17 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Override
     public List<JobExecutionEntity> findRunningJobsForUser(String userId) {
         return jobExecutionRepository.findRunningJobsForUser(userId);
+    }
+
+    @Override
+    public void onTaskError(Long taskId) {
+        TaskEntity task = taskRepository.findById(taskId).orElse(null);
+
+        if (task != null) {
+            task.getJob().setStatus(JobStatus.FAILED.getCode());
+            task.setStatus(JobStatus.FAILED.getCode());
+            jobRepository.saveAndFlush(task.getJob());
+            taskRepository.saveAndFlush(task);
+        }
     }
 }

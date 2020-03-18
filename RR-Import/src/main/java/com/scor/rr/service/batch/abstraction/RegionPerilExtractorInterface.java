@@ -5,9 +5,12 @@ import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.domain.RegionPerilEntity;
 import com.scor.rr.domain.riskLink.RLImportSelection;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.repeat.RepeatStatus;
 
 public interface RegionPerilExtractorInterface {
+
+    void beforeJob();
 
     RepeatStatus loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
 
