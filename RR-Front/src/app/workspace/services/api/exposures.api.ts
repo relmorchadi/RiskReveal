@@ -19,13 +19,13 @@ export class ExposuresApi {
     private readonly divisionDetails:any;
 
     constructor(private _http: HttpClient) {
-        this.fakeTableConfig = FAKEDATA;
+       /* this.fakeTableConfig = FAKEDATA;*/
         this.portfolioDetails = 'Portfolio Details';
         this.divisionDetails = 'Division Details';
     }
 
-    loadTableConfig(){
-        return of<ExposuresMainTableConfig>(this.fakeTableConfig)
+    loadTableConfig(headerConfig){
+        return this._http.post(this.URL+'exposure-manager-data',headerConfig)
     }
 
     loadTableColumnsConfig(){
