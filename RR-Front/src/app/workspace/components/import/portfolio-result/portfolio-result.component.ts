@@ -5,6 +5,7 @@ import componentData from './data';
 import * as _ from 'lodash';
 import {WorkspaceState} from "../../../store/states";
 import {take} from "rxjs/operators";
+import * as fromWs from "../../../store/actions";
 
 @Component({
     selector: 'portfolio-result',
@@ -32,6 +33,11 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
     @ViewChild('exposureSummaryTable')
     tables: any;
+
+    allCheckedItems:boolean;
+    indeterminateItems:boolean;
+
+    selectedRows;
 
     refs = {
         currencies: [
@@ -77,6 +83,7 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         if (changes.context) {
             this.loadTablesCols();
         }
+        this.updateTreeStateCheckBox();
     }
 
     private loadTablesCols() {
@@ -104,8 +111,34 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         }))
     }
 
-    checkRow($event, rowData, type) {
+    updateAllChecked(nextValue) {
+        if(nextValue)
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids : _.map(this.portfolios, item => item.rlPortfolioId)
+            }));
+        else {
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids : []
+            }));
+        }
+    }
 
+    getSelection(data){
+        console.log('get selection', data);
+        //if (data.length > 1) {
+        this.store.dispatch(new fromWs.TogglePortfolioResultSelectionAction({
+            action: 'selectChunk',
+            ids: _.map(data, a => a.rlPortfolioId)
+        }));
+        // }
+    }
+
+    updateSelection(id){
+        if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids : [id]
+            }));
+        }
     }
 
     selectRows(rowData, index) {
@@ -132,6 +165,12 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
     savePortfolioSelection() {
         this.saveEmitter.emit('PORTFOLIO');
+    }
+
+    private updateTreeStateCheckBox(){
+        const selection = _.filter(this.portfolios, item => item.selected);
+        this.allCheckedItems = selection.length === this.portfolios.length && selection.length > 0;
+        this.indeterminateItems = (selection.length < this.portfolios.length && selection.length > 0);
     }
 
 }

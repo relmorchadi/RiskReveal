@@ -44,6 +44,8 @@
             </div>
             <p-table [columns]="scrollableColsResults" [frozenColumns]="frozenColsResults"
                      [value]="data.analysis" [scrollHeight]="'175px'"
+                     (selectionChange)="getSelection($event)"
+                     selectionMode="multiple" [metaKeySelection]="true" [(selection)]="selectedRows"
                      [(contextMenuSelection)]="contextSelectedItem"
                      [contextMenu]="cmR"
                      syncScroll
@@ -65,14 +67,14 @@
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible" pResizableColumn [pSortableColumn]="col.field">
                                 <ng-container *ngIf="col.type === 'selection'">
+                                    <label nz-checkbox [ngModel]="allCheckedItems"
+                                           (ngModelChange)="updateAllChecked($event)"
+                                           [nzIndeterminate]="indeterminateItems"></label>
                                 </ng-container>
                                 <div style="white-space: nowrap;" *ngIf="!col.filtered">
                                     {{col.header}}
-                                    <p-sortIcon style="color: #848484 !important;" [field]="col.field"
-                                                ariaLabel="Activate to sort"
-                                                ariaLabelDesc="Activate to sort in descending order"
-                                                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                                 </div>
+
                                 <div style="white-space: nowrap;"
                                      *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                                     {{col.header}}
@@ -80,11 +82,11 @@
                                                 ariaLabel="Activate to sort"
                                                 ariaLabelDesc="Activate to sort in descending order"
                                                 ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                                    <div class="search-bar-table">
+                                    <!--<div class="search-bar-table">
                                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                         <input pInputText type="text"
                                                (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
-                                    </div>
+                                    </div>-->
                                 </div>
                                 <div *ngIf="col.type === 'check'">
                                     <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
@@ -93,15 +95,24 @@
                             </th>
                         </ng-container>
                     </tr>
+                    <tr>
+                        <th *ngFor="let col of columns" pResizableColumn>
+                            <div class="search-bar-table" *ngIf="col.filtered">
+                                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                <input pInputText type="text"
+                                       (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
+                            </div>
+                        </th>
+                    </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                    <tr [pContextMenuRow]="rowData" [ngClass]="{'frozenRow': rowData.isScanning}">
+                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i" [pContextMenuRow]="rowData" [ngClass]="{'frozenRow': rowData.isScanning}">
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                                 [ngClass]="{'selected-item': rowData?.selected}">
                                 <div class="" *ngIf="col.type === 'selection'">
                                     <label nz-checkbox
-                                           (ngModelChange)="updateRowData(col.field, $event, rowData?.rlAnalysisId)"
+                                           (ngModelChange)="updateSelection(rowData?.rlAnalysisId)"
                                            [ngModel]="rowData.selected"></label>
                                 </div>
                                 <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
@@ -137,7 +148,7 @@
                                         </div>
                                     </ng-template>
                                 </div>
-                                <div class="text-data" (click)="selectRows(rowData, i)"
+                                <div class="text-data" (click)="updateSelection(rowData?.rlAnalysisId)"
                                      [ngClass]="{'highlight-temp': col.highlight}"
                                      *ngIf="col.type === 'number'">
                                     <input *ngIf="col.field=='unitMultiplier'; else formattedNumber" type="number"
@@ -148,7 +159,7 @@
                                         <span>{{rowData[col.field] | number: '1.2-2'}}</span>
                                     </ng-template>
                                 </div>
-                                <div class="text-data" (click)="selectRows(rowData, i)"
+                                <div class="text-data" (click)="updateSelection(rowData?.rlAnalysisId)"
                                      [ngClass]="{'highlight-temp': col.highlight}"
                                      *ngIf="col.type === 'percentage'">
                                     <input *ngIf="col.field=='proportion'; else formattedNumber" type="number"
@@ -160,7 +171,7 @@
                                     </ng-template>
 
                                 </div>
-                                <div class="text-data" (click)="selectRows(rowData, i)"
+                                <div class="text-data" (click)="updateSelection(rowData?.rlAnalysisId)"
                                      [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                                      [ngClass]="{'highlight-temp': col.highlight}"
                                      *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
@@ -171,7 +182,7 @@
                       {{rowData[col.field]}}
                     </span>
                                 </div>
-                                <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'division'"
+                                <div (click)="updateSelection(rowData?.rlAnalysisId)" *ngIf="col.type === 'division'"
                                      class="highlight-temp text-data">
                                     <span nz-tooltip
                                           [nzTitle]="DivisionInfo">{{rowData[col.field]?.length > 1 ? 'M*' : (rowData[col.field]?.length == 1 ? rowData[col.field][0] : '0') }}</span>

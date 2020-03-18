@@ -1145,10 +1145,21 @@ export class WorkspaceState {
     return this.riskLinkFacade.patchAnalysisResult(ctx, payload);
   }
 
+  @Action(fromWS.ToggleAnalysisResultSelectionAction)
+  toggleAnalysisResultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.toggleAnalysisResultSelection(ctx, payload);
+  }
+
   @Action(fromWS.PatchPortfolioResultAction)
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+
+  @Action(fromWS.TogglePortfolioResultSelectionAction)
+  togglePortfolioResultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.togglePortfolioResultSelection(ctx, payload);
+  }
+
   @Action(fromWS.DeleteFromImportBasketAction)
   deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.deleteFromImportBasket(ctx, payload);

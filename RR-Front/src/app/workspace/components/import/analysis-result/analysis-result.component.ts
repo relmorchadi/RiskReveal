@@ -1,10 +1,22 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges,
+    ViewChild
+} from '@angular/core';
 import {Select, Store} from "@ngxs/store";
 import * as fromRiskLink from "../../../store/actions/risk_link.actions";
 import componentData from "./data";
 import * as _ from 'lodash';
 import {WorkspaceState} from "../../../store/states";
 import {take} from "rxjs/operators";
+import * as fromWs from "../../../store/actions";
+import {Debounce} from "../../../../shared/decorators";
 
 @Component({
     selector: 'analysis-result',
@@ -82,6 +94,7 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         ].map(item => ({...item, selected: false}))
     };
 
+    selectedRows: any;
     showOverrideRpDialog = false;
     showSelectFinancialPerspDialog = false;
     showOverridePEQTDialog = false;
@@ -102,7 +115,10 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         },
     ];
 
-    constructor(private store: Store) {
+    allCheckedItems=false;
+    indeterminateItems=false;
+
+    constructor(private store: Store, private cdr:ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -113,6 +129,7 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         if (changes.context && changes.context.currentValue) {
             this._loadDataTableCols();
         }
+        this.updateTreeStateCheckBox();
     }
 
     resetSort() {
@@ -132,12 +149,24 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         }
     }
 
-    updateAllChecked(evt, target) {
+    onFilter(kw, field, mode){
+        return this.tables.filter(kw, field, 'contains');
+    }
 
+    updateAllChecked(nextValue) {
+        if(nextValue)
+            this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
+                action: 'selectChunk', ids : _.map(this.data.analysis, item => item.rlAnalysisId)
+            }));
+        else {
+            this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
+                action: 'selectChunk', ids : []
+            }));
+        }
     }
 
     sortChange(field, sorting, target) {
-
+        console.log('sort', {field, sorting, target});
     }
 
     updateRowData(key, value, index) {
@@ -146,12 +175,25 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
         }));
     }
 
-    openFinancialP(fp) {
-        this.showSelectFinancialPerspDialog = true;
+    updateSelection(id){
+        if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
+            this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
+                action: 'selectChunk', ids : [id]
+            }));
+        }
     }
 
-    selectRows(rowData, i) {
-        this.updateRowData('selected', rowData.selected, i);
+    getSelection(data){
+        //if (data.length > 1) {
+            this.store.dispatch(new fromWs.ToggleAnalysisResultSelectionAction({
+                action: 'selectChunk',
+                ids: _.map(data, a => a.rlAnalysisId)
+            }));
+       // }
+    }
+
+    openFinancialP(fp) {
+        this.showSelectFinancialPerspDialog = true;
     }
 
     overrideRegionPerilOccurrenceBasis(row, colType, index) {
@@ -215,5 +257,11 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
 
     saveAnalysisSelection() {
         this.saveEmitter.emit('ANALYSIS');
+    }
+
+    private updateTreeStateCheckBox(){
+        const selection = _.filter(this.data.analysis, item => item.selected);
+        this.allCheckedItems = selection.length === this.data.analysis.length && selection.length > 0;
+        this.indeterminateItems = (selection.length < this.data.analysis.length && selection.length > 0);
     }
 }

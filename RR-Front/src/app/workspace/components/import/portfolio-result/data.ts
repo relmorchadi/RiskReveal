@@ -26,6 +26,8 @@ export default {
       {field: 'agCurrency', header: 'Source Currency', width: '100px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
       {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorting: '', filtered: true, highlight: true, visible: true, edit: true},
       {field: 'edmName', header: 'EDM', width: '250px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
+      {field: 'unitMultiplier', header: 'Unit Multiplier', width: '50px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
+      {field: 'proportion', header: 'Proportion', width: '50px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
       {field: 'importLocationLevel', header: 'Location Level Scan', width: '50px', type: 'selection', sorting: '', filtered: false, highlight: false, visible: true},
       /*  {field: 'action', header: '', width: '25px', type: 'icon', sorting: ', filtered: false, highlight: false},*/
     ],
