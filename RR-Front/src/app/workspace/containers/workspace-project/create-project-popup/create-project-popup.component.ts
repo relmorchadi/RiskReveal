@@ -40,6 +40,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   @Select(AuthState.getUser) user$;
 
   currentUser: any;
+  projectFormInit: any;
   newProjectForm: FormGroup;
   editCreateBLock = false;
   users: any[];
@@ -114,7 +115,15 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   }
 
   checkValid() {
-    return !_.isEmpty(_.trim(this.projectForm.projectName))
+    return _.isEmpty(_.trim(this.projectForm.projectName))
+  }
+
+  checkChange() {
+    return _.isEqual(this.projectFormInit, this.projectForm);
+  }
+
+  checkGlobalValid() {
+    return this.checkValid() ? false : !this.checkChange();
   }
 
   cancelCreateProject() {
@@ -128,6 +137,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
     console.log(this.currentUser, this.projectForm, this.newProject);
     if (this.editOption) {
       this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
+      this.projectFormInit = {...this.projectForm};
     }
   }
 
@@ -135,7 +145,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
     if (!this.editCreateBLock) {
       this.editCreateBLock = true;
       if (this.editOption) {
-        this.checkValid() ? this.updateProject() : null;
+        this.checkGlobalValid() ? this.updateProject() : null;
       } else {
         this.newProjectForm.valid ? this.createUpdateProject() : null;
       }
