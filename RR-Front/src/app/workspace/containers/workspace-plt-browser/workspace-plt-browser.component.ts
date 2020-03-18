@@ -95,7 +95,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       userTags: [],
       selectedListOfPlts: [],
       systemTagsCount: {},
-      wsHeaderSelected: true,
+      wsHeaderSelected: false,
       pathTab: true,
       isTagsTab: false
     };
@@ -162,7 +162,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
-      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateLeftMenuInputs('projects', projects);
       this.detectChanges();
     });
 

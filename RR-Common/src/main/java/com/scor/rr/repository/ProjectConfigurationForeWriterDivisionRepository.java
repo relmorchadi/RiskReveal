@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface ProjectConfigurationForeWriterDivisionRepository extends JpaRepository<ProjectConfigurationForeWriterDivision, Long> {
 
-    @Query(value ="exec dbonew.usp_DivisionListForCarID @CARID =:CARID", nativeQuery = true)
+    @Query(value ="exec dbo.usp_DivisionListForCarID @CARID =:CARID", nativeQuery = true)
     List<Map<String, Object>> findByCARId(@Param("CARID") String carId);
 
 

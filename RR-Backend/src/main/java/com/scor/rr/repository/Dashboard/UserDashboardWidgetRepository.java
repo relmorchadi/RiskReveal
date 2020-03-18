@@ -17,7 +17,7 @@ public interface UserDashboardWidgetRepository extends JpaRepository<UserDashboa
     List<UserDashboardWidget> findByUserDashboardIdAndWidgetId(long id,long refId);
 
 
-    @Query( value ="select assignedAnalyst,carStatus,  COUNT(carStatus) as numberCarsPerAnalyst from dbonew.vw_Dashboard where assignedAnalyst <> ' '   group by  assignedAnalyst,carStatus order by assignedAnalyst", nativeQuery = true)
+    @Query( value ="select assignedAnalyst,carStatus,  COUNT(carStatus) as numberCarsPerAnalyst from dbo.vw_Dashboard where assignedAnalyst <> ' '   group by  assignedAnalyst,carStatus order by assignedAnalyst", nativeQuery = true)
     List<Map<String,Object>> getDataForChart(@Param("fromm")Date from, @Param("too") Date to);
 
 

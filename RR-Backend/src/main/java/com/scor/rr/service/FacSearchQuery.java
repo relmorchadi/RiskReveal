@@ -87,7 +87,7 @@ public class FacSearchQuery implements QueryInterface {
         else if (!fieldsSearchCondition.trim().equals("")) whereCondition = " where " + fieldsSearchCondition;
         String groupByClause = generateGroupByClause();
         String selectClause = generateSelectClause();
-        String query = "select distinct " + selectClause + " from [dbonew].[vw_FacContractSearchResult] c " + whereCondition + " group by " + groupByClause;
+        String query = "select distinct " + selectClause + " from [dbo].[vw_FacContractSearchResult] c " + whereCondition + " group by " + groupByClause;
 
         return query;
     }

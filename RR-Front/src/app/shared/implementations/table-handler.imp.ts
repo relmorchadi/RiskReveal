@@ -82,6 +82,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     entity: 1
   };
 
+
   protected containerWidth: number;
 
   constructor(private excel: ExcelService, private store: Store, private formatter: ColumnsFormatterService) {
@@ -198,7 +199,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   private resolveColumns = (columns) => {
     this.updateColumns(columns);
     this.updateTotalColumnWidth(columns);
-
+    this.updateLoading(false);
     //save to store
     this.saveColumns(this.params, columns);
 
@@ -223,6 +224,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
     //save to store
     this.saveSelection(this.params, this._selectedIds);
+    this.updateLoading(false);
   };
 
   private saveData({workspaceContextCode, workspaceUwYear}, data) {
@@ -263,7 +265,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         );
 
 
-    this.updateLoading(true);
+    //this.updateLoading(true);
 
     initialized$
         .pipe(
@@ -292,7 +294,6 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         ).subscribe(([data, ids]) => {
           this.resolveData(data);
           this.resolveSelection(ids);
-          this.updateLoading(false);
     });
 
     initialized$
@@ -308,7 +309,6 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
             )
         ).subscribe((data) => {
       this.resolveColumns(data);
-      this.updateLoading(false);
     });
   }
 
@@ -532,36 +532,30 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   }
 
   loadChunk(offset, size) {
-    this.config = {
-      pageSize: size,
-      pageNumber: Math.floor( offset / size),
-      entity: 1
-    };
-    this.loading$.next(true);
-    this.loadData({
-      ...this.params,
-      ...this.config,
-      pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
-      selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
-      sortSelectedFirst: this._sortSelectedFirst,
-      sortSelectedAction: this._sortSelectedAction
-    }).subscribe(({totalCount, plts}) => {
-      this.updateTotalRecords(totalCount);
-      this.updateData(plts);
-      this.updateLoading(false);
-      this.loading$.next(false);
-    })
+    // this.config = {
+    //   pageSize: size,
+    //   pageNumber: Math.floor( offset / size),
+    //   entity: 1
+    // };
+    // this.loading$.next(true);
+    // this.loadData({
+    //   ...this.params,
+    //   ...this.config,
+    //   pageSize: this.config.pageSize ? this.config.pageSize : this.maxRows,
+    //   selectionList: _.join(_.filter(_.keys(this._selectedIds), id => this._selectedIds[id]), ','),
+    //   sortSelectedFirst: this._sortSelectedFirst,
+    //   sortSelectedAction: this._sortSelectedAction
+    // }).subscribe(({totalCount, plts}) => {
+    //   this.updateTotalRecords(totalCount);
+    //   this.updateData(plts);
+    //   this.updateLoading(false);
+    //   this.loading$.next(false);
+    // })
   }
 
   filterByProjectId(projectId: number) {
-    const projectIdColumnIndex = _.findIndex(this._columns, col => col.columnName == 'projectId');
-
-    console.log(projectIdColumnIndex, this._columns);
-
-
-    const filter$ = this._api.updateColumnFilter({
-      ..._.pick(this._columns[projectIdColumnIndex], ['viewContextColumnId', 'viewContextId']),
-      filterCriteria: projectId
+    const filter$ = this._api.filterByProject({
+      projectId: projectId
     }).pipe(share());
 
 
@@ -579,6 +573,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
           this.updateTotalRecords(totalCount);
           this.updateColumns(columns);
           this.updateData(plts);
+          this.updateLoading(false);
         },
         (error) => {
           console.error(error);
@@ -588,14 +583,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     filter$.pipe(
         switchMap( () => this.loadSelectedIds())
     ).subscribe((ids) => {
-      let newIds = {};
-
-      _.forEach(ids, e => {
-        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-      });
-
-      const newSelection = { ...this._selectedIds, ...newIds };
-      this.updateSelectedIDs(newSelection);
+      this.resolveSelection(ids);
     })
   }
 
@@ -720,7 +708,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   }
 
   private onApiSuccessLoadDataAndColumns = (api) => {
-    this.loading$.next(true);
+    //this.loading$.next(true);
     api()
         .pipe(
             take(1),
@@ -737,7 +725,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
             ([columns, data]: any) => {
               this.resolveColumns(columns);
               this.resolveData(data);
-              this.loading$.next(false);
+              //this.loading$.next(false);
             },
             (error) => {
               console.error(error);
