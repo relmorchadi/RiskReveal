@@ -10,6 +10,7 @@ import com.scor.rr.domain.enums.*;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.calculation.CMBetaConvertFunctionFactory;
 import com.scor.rr.service.calculation.ConvertFunctionFactory;
@@ -82,6 +83,13 @@ public class ELTToPLTConverter extends AbstractWriter {
     @Qualifier("importExecutor")
     private Executor executor;
 
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
+
     @Value("${ihub.treaty.peqt.path}")
     private String peqtPath;
 
@@ -115,6 +123,7 @@ public class ELTToPLTConverter extends AbstractWriter {
     }
 
     private void batchConvert() {
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ELTtoPLTConversion", 11);
         log.debug("Starting batchConvert");
         Date startDate = new Date();
         // @TODO Get TTFinancial persp Ref Table
@@ -289,9 +298,12 @@ public class ELTToPLTConverter extends AbstractWriter {
         try {
             launcherCountDown.await();
         } catch (InterruptedException e) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             e.printStackTrace();
         }
         log.debug("batchConvert completed");
+        jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
     }
 
     private List<PltHeaderEntity> makePurePLTHeaders(TransformationBundle bundle, List<TargetRapEntity> targetRapEntities, PLTModelingBasis modelingBasis) {
@@ -500,6 +512,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 log.info("total time to read PEQT : {}", System.currentTimeMillis() - time);
             } catch (IOException e) {
                 log.error("Master {}: reading PEQT {}, IOException", this.id, peqtFile.getFileName(), e);
+                jobManager.onTaskError(Long.valueOf(taskId));
             } finally {
                 log.info("Master {}: finish reading PEQT {}, total period count {}", this.id, peqtFile.getFileName(), periodCount);
                 IOUtils.closeQuietly(fc);
@@ -513,6 +526,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             try {
                 workerLatch.await();
             } catch (InterruptedException e) {
+                jobManager.onTaskError(Long.valueOf(taskId));
                 log.error("Exception: {}, {}", peqtFile.getFileName(), e);
             }
 
@@ -619,6 +633,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                     }
                 } catch (Throwable e) {
                     log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
+                    jobManager.onTaskError(Long.valueOf(taskId));
                 }
             } while (true);
             for (PltHeaderEntity scorPltHeaderEntity : scorPLTHeaderEntities) {
@@ -629,6 +644,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         writeBufferToOutputStream(outputStream, pltLossDataList);
                     } catch (IOException e) {
                         log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
+                        jobManager.onTaskError(Long.valueOf(taskId));
                     } finally {
                         pltLossDataList.clear();
                         try {

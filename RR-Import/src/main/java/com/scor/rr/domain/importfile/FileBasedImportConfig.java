@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "FileBasedImportConfig", schema = "dbonew", catalog = "RiskReveal")
+@Table(name = "FileBasedImportConfig", schema = "dbo", catalog = "RiskReveal")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

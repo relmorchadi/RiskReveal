@@ -4,9 +4,12 @@ import com.scor.rr.configuration.file.BinFile;
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
 import com.scor.rr.domain.RlEltLoss;
+import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.LossDataHeaderEntityRepository;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.PathUtils;
@@ -16,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +45,13 @@ public class ELTWriter extends AbstractWriter {
     @Autowired
     private LossDataHeaderEntityRepository lossDataHeaderEntityRepository;
 
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
+
     @Value("${ihub.treaty.out.path}")
     private String iHub;
 
@@ -49,21 +60,31 @@ public class ELTWriter extends AbstractWriter {
 
     public RepeatStatus writeBinary() {
 
-        log.debug("Starting ELTBinaryWriter");
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ELTBinaryWriter", 8);
+        try {
+            log.debug("Starting ELTBinaryWriter");
 
-        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
+            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getRlId());
+                log.info("Writing RRLT binary file for analysis " + bundle.getRlAnalysis().getRlId());
 
-            writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
+                writeELT(bundle.getModelAnalysis(), bundle.getSourceRRLT(), bundle.getRlAnalysisELT().getEltLosses());
 
-            log.debug("Starting ELTConformer");
-            writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
+                log.debug("Starting ELTConformer");
+                writeELT(bundle.getModelAnalysis(), bundle.getConformedRRLT(), bundle.getConformedRlAnalysisELT().getEltLosses());
 
-            log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+                log.info("Finish import progress STEP 9 : WRITE_ELT_BINARY for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+            }
+            log.debug("ELTBinaryWriter completed");
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
         }
-        log.debug("ELTBinaryWriter completed");
-        return RepeatStatus.FINISHED;
     }
 
     private void writeELT(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity rrImportedLossData, List<RlEltLoss> eltLossList) {
@@ -147,22 +168,31 @@ public class ELTWriter extends AbstractWriter {
 
     public RepeatStatus writeHeader() {
 
-        log.debug("Starting writeHeader");
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ELTHeaderWriter", 9);
+        try {
+            log.debug("Starting writeHeader");
 
-        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
+            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
-            lossDataHeaderEntityRepository.save(sourceRRLT);
+                LossDataHeaderEntity sourceRRLT = bundle.getSourceRRLT();
+                lossDataHeaderEntityRepository.save(sourceRRLT);
 
-            if (marketChannel.equalsIgnoreCase("Treaty")) {
-                LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
-                lossDataHeaderEntityRepository.save(conformedRRLT);
-                log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
+                if (marketChannel.equalsIgnoreCase("Treaty")) {
+                    LossDataHeaderEntity conformedRRLT = bundle.getConformedRRLT();
+                    lossDataHeaderEntityRepository.save(conformedRRLT);
+                    log.info("Finish persisting ELT {}, conformed ELT {}", sourceRRLT.getLossDataHeaderId(), conformedRRLT.getLossTableType());
+                }
+
+                log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
             }
-
-            log.info("Finish import progress STEP 10 : WRITE_ELT_HEADER for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+            log.debug("writeHeader completed");
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
         }
-        log.debug("writeHeader completed");
-        return RepeatStatus.FINISHED;
     }
 }

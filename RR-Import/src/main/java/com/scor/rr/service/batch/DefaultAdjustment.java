@@ -9,11 +9,13 @@ import com.scor.rr.domain.dto.SummaryStatisticType;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadCreationRequest;
 import com.scor.rr.domain.enums.PLTPublishStatus;
 import com.scor.rr.domain.enums.StatisticsType;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.EPCurveHeaderEntityRepository;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.repository.RegionPerilRepository;
 import com.scor.rr.repository.SummaryStatisticHeaderRepository;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
 import com.scor.rr.service.batch.writer.EpSummaryStatWriter;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -57,6 +60,13 @@ public class DefaultAdjustment extends AbstractWriter {
     @Autowired
     private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
 
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
+
     @Value(value = "${thread.creation.service}")
     private String threadCreationURL;
 
@@ -81,61 +91,74 @@ public class DefaultAdjustment extends AbstractWriter {
 
     public RepeatStatus defaultAdjustment() {
 
-        log.debug("Starting default adjustment");
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "DefaultAdjustment", 13);
+        try {
+            log.debug("Starting default adjustment");
 
-        for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
+            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-            if (bundle.getPltBundles() != null) {
+                if (bundle.getPltBundles() != null) {
 
-                RestTemplate restTemplate = new RestTemplate();
-                for (PLTBundle pltBundle : bundle.getPltBundles()) {
-                    if (!pltBundle.getPltError()) {
+                    RestTemplate restTemplate = new RestTemplate();
+                    for (PLTBundle pltBundle : bundle.getPltBundles()) {
+                        if (!pltBundle.getPltError()) {
 
-                        HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
-                                new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));
+                            HttpEntity<AdjustmentThreadCreationRequest> createThreadRequest =
+                                    new HttpEntity<>(new AdjustmentThreadCreationRequest(pltBundle.getHeader().getPltHeaderId(), "", true));
 
-                        ResponseEntity<AdjustmentThread> response = restTemplate
-                                .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThread.class);
+                            ResponseEntity<AdjustmentThread> response = restTemplate
+                                    .exchange(threadCreationURL, HttpMethod.POST, createThreadRequest, AdjustmentThread.class);
 
-                        if (response.getStatusCode().equals(HttpStatus.OK)) {
-                            AdjustmentThread adjustmentThread = response.getBody();
+                            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                                AdjustmentThread adjustmentThread = response.getBody();
 
-                            if (adjustmentThread != null && adjustmentThread.getAdjustmentThreadId() != null) {
+                                if (adjustmentThread != null && adjustmentThread.getAdjustmentThreadId() != null) {
 
-                                HttpHeaders requestHeaders = new HttpHeaders();
-                                requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
+                                    HttpHeaders requestHeaders = new HttpHeaders();
+                                    requestHeaders.add("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-                                HttpEntity<String> request = new HttpEntity<>(requestHeaders);
+                                    HttpEntity<String> request = new HttpEntity<>(requestHeaders);
 
-                                UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
-                                        .queryParam("threadId", adjustmentThread.getAdjustmentThreadId());
+                                    UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(threadCalculationURL)
+                                            .queryParam("threadId", adjustmentThread.getAdjustmentThreadId());
 
-                                ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
-                                        .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
+                                    ResponseEntity<PltHeaderEntity> calculationResponse = restTemplate
+                                            .exchange(uriBuilder.toUriString(), HttpMethod.POST, request, PltHeaderEntity.class);
 
-                                if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
-                                    log.info("Calculation for thread has ended successfully");
-                                    //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
-                                } else {
-                                    log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
+                                    if (calculationResponse.getStatusCode().equals(HttpStatus.OK)) {
+                                        log.info("Calculation for thread has ended successfully");
+                                        //this.getAndWriteStatsForPlt(adjustmentThread.getFinalPLT(), restTemplate, true, adjustmentThread.getAdjustmentThreadId());
+                                    } else {
+                                        log.error("An error has occurred while calculating for thread with id {}", adjustmentThread.getAdjustmentThreadId());
+                                        jobManager.onTaskError(Long.valueOf(taskId));
+                                        jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                                    }
                                 }
+                                //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
+                            } else {
+                                log.error("An error has occurred {}", response.getStatusCodeValue());
                             }
-                            //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
-                        } else {
-                            log.error("An error has occurred {}", response.getStatusCodeValue());
+                            this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                         }
-                        this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                     }
+
+                } else {
+                    log.error("ERROR : no PLTs were found");
+                    jobManager.onTaskError(Long.valueOf(taskId));
+                    jobManager.logStep(step.getStepId(), StepStatus.FAILED);
                 }
-
-            } else {
-                log.error("ERROR : no PLTs were found");
             }
+
+            log.debug("Default adjustment completed");
+
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
         }
-
-        log.debug("Default adjustment completed");
-
-        return RepeatStatus.FINISHED;
     }
 
     private void calculateSummaryStat(PltHeaderEntity pltHeader, RestTemplate restTemplate) {
