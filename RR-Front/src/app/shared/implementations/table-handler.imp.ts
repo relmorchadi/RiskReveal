@@ -554,12 +554,8 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
   }
 
   filterByProjectId(projectId: number) {
-    const projectIdColumnIndex = _.findIndex(this._columns, col => col.columnName == 'projectId');
-
-
-    const filter$ = this._api.updateColumnFilter({
-      ..._.pick(this._columns[projectIdColumnIndex], ['viewContextColumnId', 'viewContextId']),
-      filterCriteria: projectId
+    const filter$ = this._api.filterByProject({
+      projectId: projectId
     }).pipe(share());
 
 
