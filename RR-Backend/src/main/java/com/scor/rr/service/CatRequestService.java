@@ -52,7 +52,7 @@ public class CatRequestService {
     private static final long CAR_ID_OFFSET = 100000;
 
     public String createRequest(CatRequestData data){
-        log.debug("{}", data);
+        log.info("Req from FW : {}", data);
         final Date date = new Date();
 
         Optional<RefInsureds> client = refInsuredsRepository.findById(data.insurNumber.toString());
