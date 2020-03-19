@@ -4,6 +4,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.CARStatus;
 import com.scor.rr.domain.enums.CARType;
 import com.scor.rr.repository.*;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +140,7 @@ public class CatRequestService {
         return projectConfigurationForeWriter.getCaRequestId();
     }
 
+    @ToString
     public static class CatRequestData {
         final Integer businessType;
         final Integer endorsementNumber;
