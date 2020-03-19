@@ -119,7 +119,7 @@ public class CatRequestService {
                 data.uwYear,
                 data.order,
                 data.endorsementNumber,
-                data.facNumber, //FIXME: Contract name ?
+                data.label,
                 data.businessType.toString(), //FIXME: FK or name ? if name need a ref data for look up
                 clientName,
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
