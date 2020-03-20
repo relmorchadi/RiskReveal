@@ -42,20 +42,15 @@ export class CalibrationColumnManagerComponent implements OnInit {
       container
     } = event;
 
-    const col: any = previousContainer.data[previousIndex];
-    console.log(col);
-    console.log(event);
-    if(col.field != 'status' && col.field != 'pltId' && col.field != 'pltName') {
-      if (previousContainer === container) {
-       this.moveItem(container, previousIndex, currentIndex);
-      } else {
-        this.transferItem(
-            previousContainer,
-            container,
-            previousIndex,
-            currentIndex
-        );
-      }
+    if (previousContainer === container) {
+      this.moveItem(container, previousIndex, currentIndex);
+    } else {
+      this.transferItem(
+          previousContainer,
+          container,
+          previousIndex,
+          currentIndex
+      );
     }
 
 
