@@ -68,6 +68,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   visibleFrozenColumns: any[];
   availableFrozenColumns: any[];
+
+  visibleColumns: any[];
+  availableColumns: any[];
+
   exchangeRates: any;
 
   //POP-UPs
@@ -119,7 +123,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.adjustmentTypes= [];
     this.basis= [];
     this.tableConfig = {
-      view: "adjustments",
+      view: 'epMetrics',
       selectedCurveType: "OEP",
       isGrouped: true,
       isExpanded: false,
@@ -354,11 +358,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   subscribeToColumns() {
     this.calibrationTableService.columnsConfig$.subscribe(config => {
+
       this.columnsConfig= config;
       this.calibrationTableService.updateColumnsConfigCache(config);
 
       this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
       this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');
+
+      this.visibleColumns = _.slice(config.columns.filter(c => c.isFrozen), 1);
+      this.availableColumns = _.differenceBy(CalibrationTableService.frozenColsExpanded, this.visibleColumns, 'field');
+
       this.detectChanges();
     })
   }
@@ -404,6 +413,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       view: newView
     };
     this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded);
+
+
   }
 
   toggleGrouping() {
@@ -415,7 +426,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleTableActions(action: Message) {
-    console.log(action);
+
     switch (action.type) {
 
       case "Open Column Manager":
@@ -507,7 +518,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 
@@ -518,7 +529,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.selectedAdjustment = null;
         break;
       default:
-        console.log(action);
+
     }
   }
 
@@ -546,7 +557,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 
@@ -639,6 +650,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   expandColumnsOff() {
+
     this.tableConfig = {
       ...this.tableConfig,
       isExpanded: false
@@ -921,10 +933,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleManageColumnsActions(action) {
+
     switch (action.type) {
 
       case "Manage Frozen Columns":
-        this.calibrationTableService.onManageFrozenColumns(action.payload);
+        if(this.tableConfig.isExpanded) {
+          this.calibrationTableService.onManageFrozenColumnsExpand(action.payload);
+
+        } else {
+          this.calibrationTableService.onManageFrozenColumnsUnexpand(action.payload);
+        }
         this.isFrozenManageColumnsVisible = false;
         break;
 
@@ -933,7 +951,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-        console.log(action);
+
     }
   }
 
