@@ -46,6 +46,8 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     selectedRowsAnalysis;
     selectedRowsEpc;
 
+    loadingEpc:boolean= true;
+
     colsFinancialAnalysis = [
         {
             field: 'selected',
@@ -224,7 +226,8 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         if (changes.data) {
             this._loadEpCurvesChanges();
         }
-        this.updateTreeStateCheckBox()
+        this.updateTreeStateCheckBoxAnalysis();
+        this.updateTreeStateCheckBoxEpc();
     }
 
 
@@ -243,13 +246,14 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
                 ...analysis,
                 selected: nextValue
             });
+            this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
             _.forEach(this.changes.epCurves, (epc, index) => this.changes.epCurves[index] = {
                 ...epc,
                 selected: nextValue
             });
+            this.updateTreeStateCheckBoxEpc();
         }
-        this.updateTreeStateCheckBox();
     }
 
     getSelection(data, type) {
@@ -259,36 +263,53 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
             _.forEach(this.changes.analysis, (analysis, index) => {
                 this.changes.analysis[index].selected = _.includes(ids, Number(index));
             });
+            this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
             const codes = _.map(data, d => d.financialPerspective);
             _.forEach(this.changes.epCurves, (epc, index) => {
                 this.changes.epCurves[index].selected = _.includes(codes, epc.code);
             });
+            this.updateTreeStateCheckBoxEpc();
         }
-        this.updateTreeStateCheckBox();
     }
 
     selectRdm(item) {
         // console.log('select RDM', item);
     }
 
+    checkAnalysisRow(analysisId) {
+        this.changes.analysis[analysisId].selected = !this.changes.analysis[analysisId].selected;
+        this.loadingEpc= true;
+        if (this._countSelectedAnalysis() == 1)
+            this.loadEpCurvesEmitter.emit(analysisId);
+        this.updateTreeStateCheckBoxAnalysis();
+    }
+
     toggleAnalysisSelection(analysisId) {
         _.forEach(this.changes.analysis, (analysis, index) => {
             this.changes.analysis[index].selected = analysisId == index;
         });
+        this.loadingEpc= true;
         if (this._countSelectedAnalysis() == 1)
             this.loadEpCurvesEmitter.emit(analysisId);
+        this.updateTreeStateCheckBoxAnalysis();
+    }
+
+    checkRpCurveRow(rowIndex) {
+        this.changes.epCurves[rowIndex].selected = !this.changes.epCurves[rowIndex].selected;
+        this.updateTreeStateCheckBoxEpc();
     }
 
     toggleEpCurveSelection(rowIndex) {
         _.forEach(this.changes.epCurves, (epc, index) => {
             this.changes.epCurves[index].selected = rowIndex == index;
         });
+        this.updateTreeStateCheckBoxEpc();
     }
 
     onFpApplicationChange(evt) {
         // console.log('fp application change', evt);
-        this.changes.fpApplication=evt;
+        this.changes.fpApplication = evt;
     }
 
     applyChanges() {
@@ -397,6 +418,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         this.changes.epCurves = _.reduce(this.data.epCurves, (result, value, index) => {
             return _.merge(result, {[index]: {selected: false, code: value.financialPerspective}})
         }, {});
+        this.loadingEpc= false;
     }
 
     private _countSelectedAnalysis() {
@@ -411,13 +433,15 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         return true;
     }
 
-    private updateTreeStateCheckBox() {
-        const selectionAnalysis = _.filter(this.data.analysis, item => (this.changes.analysis[item.rlAnalysisId]||{selected: false}).selected);
+    private updateTreeStateCheckBoxAnalysis() {
+        const selectionAnalysis = _.filter(this.data.analysis, item => (this.changes.analysis[item.rlAnalysisId] || {selected: false}).selected);
         this.allCheckedAnalysis = selectionAnalysis.length === this.data.analysis.length && selectionAnalysis.length > 0;
         this.indeterminateAnalysis = (selectionAnalysis.length < this.data.analysis.length && selectionAnalysis.length > 0);
+    }
 
-        const selectedEpCurves = _.filter(this.data.analysis, (item, index) => (this.changes.epCurves[index]||{selected: false}).selected);
-        this.allCheckedEpc= selectedEpCurves.length === this.data.epCurves.length && selectedEpCurves.length > 0;
+    private updateTreeStateCheckBoxEpc() {
+        const selectedEpCurves = _.filter(this.data.epCurves, (item, index) => (this.changes.epCurves[index] || {selected: false}).selected);
+        this.allCheckedEpc = selectedEpCurves.length === this.data.epCurves.length && selectedEpCurves.length > 0;
         this.indeterminateEpc = (selectedEpCurves.length < this.data.epCurves.length && selectedEpCurves.length > 0);
     }
 

@@ -97,7 +97,7 @@
                 <th *ngFor="let col of columns" class="ui-resizable-column"
                     [ngClass]="{'selected-item': changes.analysis[rowData.rlAnalysisId].selected}">
                   <div *ngIf="col.type === 'select'">
-                    <label nz-checkbox (ngModelChange)="toggleAnalysisSelection(rowData.rlAnalysisId)"
+                    <label nz-checkbox (ngModelChange)="checkAnalysisRow(rowData.rlAnalysisId)"
                            [ngModel]="changes.analysis[rowData.rlAnalysisId].selected"></label>
                   </div>
                   <div class="text-data" (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" *ngIf="col.type === 'iconIndicator'">
@@ -145,6 +145,7 @@
                      [resizableColumns]="true" columnResizeMode="expand"
                      (selectionChange)="getSelection($event,'epc')"
                      selectionMode="multiple" [metaKeySelection]="true" [(selection)]="selectedRowsEpc"
+                     [loading]="loadingEpc"
                      [scrollable]="true" scrollHeight="232px">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
@@ -182,7 +183,7 @@
                       [ngClass]="{'selected-item': changes.epCurves[i].selected}">
                     <div *ngIf="col.type === 'select'">
                       <label nz-checkbox
-                             (ngModelChange)="toggleEpCurveSelection(i)"
+                             (ngModelChange)="checkRpCurveRow(i)"
                              [ngModel]="changes.epCurves[i].selected"></label></div>
                     <div (click)="toggleEpCurveSelection(i)" *ngIf="col.type === 'indicator'">
                     <span class="indicator-flag" *ngIf="rowData.exposedLocation"

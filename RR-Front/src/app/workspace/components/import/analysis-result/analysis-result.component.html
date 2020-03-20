@@ -112,7 +112,7 @@
                                 [ngClass]="{'selected-item': rowData?.selected}">
                                 <div class="" *ngIf="col.type === 'selection'">
                                     <label nz-checkbox
-                                           (ngModelChange)="updateSelection(rowData?.rlAnalysisId)"
+                                           (ngModelChange)="checkRow(rowData?.rlAnalysisId)"
                                            [ngModel]="rowData.selected"></label>
                                 </div>
                                 <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
