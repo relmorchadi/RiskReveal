@@ -350,10 +350,10 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         }))
   }
 
-  onFilter(index: number, filterCriteria: string){
+  onFilter(index: number, filterCriteria: any){
     const filter$ = this._api.updateColumnFilter({
       ..._.pick(this._visibleColumns[index], ['viewContextColumnId', 'viewContextId']),
-      filterCriteria
+      filterCriteria: filterCriteria
     }).pipe(
         take(1),
         share()
@@ -385,6 +385,28 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
       this.resolveSelection(ids);
     })
 
+  }
+
+  onFilterByStatus(index: number, status) {
+    let filterCriteria = this._visibleColumns[index].filterCriteria;
+    if(_.includes(filterCriteria, status)) {
+      this.onFilter(
+          index,
+          _.trim(
+              _.replace(
+                  _.replace(filterCriteria, status, ''),
+                  ',,',
+                  ''
+              ),
+              ','
+          )
+      )
+    } else {
+      this.onFilter(
+          index,
+          filterCriteria ? filterCriteria + ',' + status : status
+      )
+    }
   }
 
   onResetFilter() {
