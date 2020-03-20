@@ -50,4 +50,8 @@ public class AccumulationPackage {
 
     public AccumulationPackage() {
     }
+
+    public AccumulationPackage(long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
 }

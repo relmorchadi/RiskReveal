@@ -1,5 +1,6 @@
-package com.scor.rr.rest.ScopeOfCompleteness;
+package com.scor.rr.rest.ScopeOfCompleteness.AccumulationPackage;
 
+import com.scor.rr.domain.Response.ScopeAndCompleteness.ScopeAndCompletenessResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.ForeWriterExpectedScope;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.ProjectForewriterExpectedScope;
@@ -15,22 +16,17 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/DashBoard/ScopeFac")
-public class ScopeOfCompletenessFac {
+@RequestMapping("api/ScopeAndCompleteness/AccumulationPackage")
+public class AccumulationPackageController {
 
-    @Autowired
-    private ProjectForewriterExpectedScopeService projectForewriterExpectedScopeService;
     @Autowired
     private AccumulationPackageService accumulationPackageService;
 
-    @PostMapping("create")
-    public ResponseEntity<?> getTheExpectedScopeFac(@RequestParam("fileName") String fileName ) throws RRException {
-         projectForewriterExpectedScopeService.storeTheExpectedScopeFac(fileName);
-         return ResponseEntity.ok("Saved successfully");
+
+    @GetMapping("getScopeOnly")
+    public List<ScopeAndCompletenessResponse> getScopeOnlyData(@RequestParam("workspaceId") String workspaceId,@RequestParam("uwyear") int uwyear){
+        return accumulationPackageService.getScopeOnly(workspaceId,uwyear);
     }
 
-//    @GetMapping("getExpectedScope")
-//    public List<Map<String,Object>> getDataForExpectedScope(@RequestParam("ProjectId") long projectId){
-//        return accumulationPackageService.getExpectedScope(projectId);
-//    }
+
 }

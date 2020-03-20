@@ -16,7 +16,7 @@ public interface AccumulationPackageRepository extends JpaRepository<Accumulatio
 
     @Transactional
     @Modifying
-    @Query(value = "exec [dbonew].[usp_ExpectedScope_Get_ScopeOnly_By_FACNumber_UWYear] @facNumber=:facNumber,@uwYear=:uwYear", nativeQuery = true)
+    @Query(value = "exec [dbo].[usp_ExpectedScope_Get_ScopeOnly_By_FACNumber_UWYear] @facNumber=:facNumber,@uwYear=:uwYear", nativeQuery = true)
     List<Map<String,Object>> getExpectedScopeOnly(@Param("facNumber") String facNumber,@Param("uwYear") int uwYear);
 
     AccumulationPackage findByAccumulationPackageId(long id);
