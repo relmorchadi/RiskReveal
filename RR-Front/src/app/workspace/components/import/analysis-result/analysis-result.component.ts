@@ -163,6 +163,11 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
                 action: 'selectChunk', ids : []
             }));
         }
+        // if(this.indeterminateItems){
+        //     event.preventDefault();
+        //     this.indeterminateItems= false;
+        //     this.allCheckedItems=false;
+        // }
     }
 
     sortChange(field, sorting, target) {
@@ -172,6 +177,12 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     updateRowData(key, value, index) {
         this.store.dispatch(new fromRiskLink.PatchAnalysisResultAction({
             key, value, index
+        }));
+    }
+
+    checkRow(id){
+        this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
+            action: 'selectOne', ids : [id]
         }));
     }
 
