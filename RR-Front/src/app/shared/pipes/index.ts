@@ -20,6 +20,7 @@ import {FinancialUnitPipe} from "../../workspace/pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "./exchange-rate.pipe";
 import {RRDatePipe} from "./rr-date.pipe";
 import {RrNumberPipe} from "./rr-number.pipe";
+import {HasStatusPipe} from "./has-status.pipe";
 
 export const PIPES = [
     RRDatePipe,
@@ -43,7 +44,8 @@ export const PIPES = [
     StartCasePipe,
     FinancialUnitPipe,
     ExchangeRatePipe,
-    RrNumberPipe
+    RrNumberPipe,
+    HasStatusPipe
 ];
 
 export * from './trim-secondary-format.pipe';

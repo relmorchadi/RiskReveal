@@ -40,6 +40,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   rightSliderCollapsed = false;
   initDash = true;
   loadingWidget = false;
+  closePrevent = false;
 
   previousUrl: string;
 
@@ -210,13 +211,12 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   updateDashboardAction(payload) {
     const {dashboardId, updatedDashboard} = payload;
-    const frontData = {
-      ...updatedDashboard,
-      name: updatedDashboard.dashboardName
-    };
-    this.dashboards = _.map(this.dashboards, item => {
-      return item.id === dashboardId ? _.merge({}, item, frontData) : item;
-    });
+    const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === dashboardId);
+    this.dashboards = _.merge(this.dashboards,  {[dashIndex]: {
+       visible: updatedDashboard.visible,
+       searchMode: updatedDashboard.searchMode,
+       name: updatedDashboard.dashboardName
+    }});
     this.selectedDashboard = _.find(this.dashboards, item => item.id === dashboardId);
     this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: dashboardId}));
     this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
@@ -298,6 +298,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   openRightSlider() {
+    this._closePrevent();
     this.rightSliderCollapsed = true;
     const dashId = _.get(_.filter(this.dashboards, item => item.visible)[this.idTab], 'id', this.dashboards[0].id);
     this.selectTab(dashId);
@@ -393,7 +394,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   emptyField() {
-    this.newDashboardTitle = ''
+    this.newDashboardTitle = '';
   }
 
   focusInput() {
@@ -414,6 +415,13 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
           'error', 'bottomRight', 6000);
       this.emptyField();
     }
+  }
+
+  visibilityCheck(event) {
+      console.log(event);
+      event ? this.closePrevent = true : setTimeout(() => {
+          this.closePrevent = false; this.emptyField();
+      }, 100);
   }
 
   updateDash(tab, newObject, option = null): void {
@@ -544,9 +552,23 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
     }
   }
 
+  detectClickOutside() {
+      console.log('clicked', this.closePrevent)
+      if (!this.closePrevent) {
+          this.rightSliderCollapsed = false;
+      }
+  }
+
   getSelection(item) {
     return _.filter(_.get(this.selectedDashboard, 'widgets', []),
             items => items.widgetId === item.widgetId).length > 0;
+  }
+
+  private _closePrevent() {
+      this.closePrevent = true;
+      setTimeout(() => {
+          this.closePrevent = false;
+      }, 200)
   }
 
   private _formatData(data) {
