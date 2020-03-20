@@ -1,11 +1,11 @@
-package com.scor.rr.domain.enums;
+package com.scor.rr.domain;
 
-public enum StepStatus {
-    RUNNING("RUNNING"), SUCCEEDED("SUCCEEDED"), FAILED("FAILED");
+public enum TaskType {
+    IMPORT_ANALYSIS("IMPORT_ANALYSIS"), IMPORT_PORTFOLIO("IMPORT_PORTFOLIO");
 
     String code;
 
-    StepStatus(String code) {
+    TaskType(String code) {
         this.code = code;
     }
 

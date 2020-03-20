@@ -1060,11 +1060,39 @@ export class RiskLinkStateService {
         }))
     }
 
+    toggleAnalysisResultSelection(ctx: StateContext<WorkspaceModel>, payload: any) {
+        const {action, ids} = payload;
+        ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            switch (action) {
+                case 'selectChunk':
+                    _.forEach(draft.content[wsIdentifier].riskLink.summary.analysis, (analysis, index) => {
+                        draft.content[wsIdentifier].riskLink.summary.analysis[index].selected= _.includes(ids,Number(index));
+                    });
+                    break;
+            }
+        }))
+    }
+
     patchPortfolioResult(ctx: StateContext<WorkspaceModel>, payload: any) {
         const {index, key, value} = payload;
         ctx.patchState(produce(ctx.getState(), draft => {
             const wsIdentifier = draft.currentTab.wsIdentifier;
             draft.content[wsIdentifier].riskLink.summary.portfolios[index][key] = value;
+        }))
+    }
+
+    togglePortfolioResultSelection(ctx: StateContext<WorkspaceModel>, payload: any) {
+        const {action, ids} = payload;
+        ctx.patchState(produce(ctx.getState(), draft => {
+            const wsIdentifier = draft.currentTab.wsIdentifier;
+            switch (action) {
+                case 'selectChunk':
+                    _.forEach(draft.content[wsIdentifier].riskLink.summary.portfolios, (portfolio, index) => {
+                        draft.content[wsIdentifier].riskLink.summary.portfolios[index].selected= _.includes(ids,Number(index));
+                    });
+                    break;
+            }
         }))
     }
 

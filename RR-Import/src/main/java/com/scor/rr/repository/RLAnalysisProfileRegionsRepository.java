@@ -11,6 +11,6 @@ public interface RLAnalysisProfileRegionsRepository extends JpaRepository<RLAnal
 
     List<RLAnalysisProfileRegion> findByRlAnalysisRlAnalysisId(Long rlAnalysisId);
 
-    @Procedure(procedureName = "dbonew.usp_RiskLinkDeleteRlAnalysisProfileRegionByAnalysis")
+    @Procedure(procedureName = "dbo.usp_RiskLinkDeleteRlAnalysisProfileRegionByAnalysis")
     void deleteByAnalysisId(@Param("analysisId") Long analysisId);
 }

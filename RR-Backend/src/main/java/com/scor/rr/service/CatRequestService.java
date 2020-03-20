@@ -4,6 +4,7 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.enums.CARStatus;
 import com.scor.rr.domain.enums.CARType;
 import com.scor.rr.repository.*;
+import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,7 @@ public class CatRequestService {
     private static final long CAR_ID_OFFSET = 100000;
 
     public String createRequest(CatRequestData data){
-        log.debug("{}", data);
+        log.info("Req from FW : {}", data);
         final Date date = new Date();
 
         Optional<RefInsureds> client = refInsuredsRepository.findById(data.insurNumber.toString());
@@ -119,7 +120,7 @@ public class CatRequestService {
                 data.uwYear,
                 data.order,
                 data.endorsementNumber,
-                data.facNumber, //FIXME: Contract name ?
+                data.label,
                 data.businessType.toString(), //FIXME: FK or name ? if name need a ref data for look up
                 clientName,
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
@@ -139,6 +140,7 @@ public class CatRequestService {
         return projectConfigurationForeWriter.getCaRequestId();
     }
 
+    @ToString
     public static class CatRequestData {
         final Integer businessType;
         final Integer endorsementNumber;

@@ -90,12 +90,12 @@ export default {
         visible: true,
         edit: false,
         canOverride: false
-      }, /**
+      },
       {
         field: 'unitMultiplier',
         header: 'Unit Multiplier',
         width: '80px',
-        type: 'number',
+        type: 'text',
         sorting: '',
         filtered: true,
         highlight: false,
@@ -106,13 +106,13 @@ export default {
         field: 'proportion',
         header: 'Proportion',
         width: '70px',
-        type: 'percentage',
+        type: 'text',
         sorting: '',
         filtered: true,
         highlight: false,
         visible: true,
         edit: false
-      }, */
+      },
       {
         field: 'rdmName',
         header: 'RDM',

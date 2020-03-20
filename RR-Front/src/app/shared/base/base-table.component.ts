@@ -52,6 +52,8 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
 
   tableInitialized: boolean;
 
+  statusCodes: any[];
+
   constructor(private injector: Injector, _baseRouter: Router,  _baseCdr: ChangeDetectorRef,  _baseStore: Store) {
     super(_baseRouter, _baseCdr, _baseStore);
     this._injectors = {
@@ -62,6 +64,14 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
     };
 
     this.selectedIds= {};
+    this.statusCodes = [
+      { code: 'In progress' },
+      { code: 'Valid' },
+      { code: 'Locked' },
+      { code: 'Fail' },
+      { code: 'Pending' },
+      { code: 'Requires Regeneration' }
+    ]
   }
 
   ngOnInit() {
@@ -73,7 +83,6 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
       params,
       selectedProject
     } = changes;
-    console.log("Changes", changes);
     this.initTable(params, selectedProject);
     this.selectedProjectFilter(selectedProject);
   }
@@ -104,7 +113,6 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   }
 
   selectedProjectFilter(selectedProject) {
-    console.log(selectedProject);
     if(this.tableInitialized && selectedProject && selectedProject.previousValue && selectedProject.previousValue != selectedProject.currentValue) {
       this._handler.filterByProjectId(selectedProject.currentValue.projectId);
     }
@@ -119,6 +127,14 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   onFilter = _.debounce((index, filter: string) => {
     this._handler.onFilter(index, filter);
   }, 500);
+
+  filterByFalsely = _.debounce((index, filter: any) => {
+    this._handler.onFilter(index, filter ? 1 : 0);
+  }, 300);
+
+  onFilterByStatus(index, filter) {
+    this._handler.onFilterByStatus(index, filter);
+  }
 
   onResetFilter() {
     this._handler.onResetFilter();

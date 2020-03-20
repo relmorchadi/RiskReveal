@@ -17,9 +17,9 @@ export const FAKEDATA = {
     { field: 'cnty', header: 'CNTY' },
     { field: 'jpws', header: 'JPWS' }],
     frozenColumns:[
-    { field: 'metric', header: 'Metric' },
-    { field: 'expected', header: 'Expected' },
-    { field: 'total', header: 'TOTAL' },
+    { field: 'country', header: 'Metric' },
+    { field: 'expectedTiv', header: 'Expected' },
+    { field: 'totalTiv', header: 'TOTAL' },
     { field: 'diff', header: 'Diff' }],
     values:[
     { metric: "Australia",state:"", stateCount:1, expected:8020743, total:8020743, diff:null, euws:2352215411, iteq:5326451254,nahu:2552153234},

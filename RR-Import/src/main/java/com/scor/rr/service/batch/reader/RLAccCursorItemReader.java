@@ -1,7 +1,10 @@
 package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
+import com.scor.rr.domain.StepEntity;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.mapper.RLAccItemRowMapper;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
@@ -12,6 +15,7 @@ import org.springframework.batch.item.database.ExtendedConnectionDataSourceProxy
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.support.ListPreparedStatementSetter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
@@ -33,6 +37,13 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
 
     @Autowired
     private TransformationPackage transformationPackage;
+
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
 
     @Value("#{jobParameters['instanceId']}")
     private String instanceId;
@@ -75,20 +86,27 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Override
     protected void openCursor(Connection con) {
 
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 14);
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
-            setSql(getSql().replace("@database", database));
+            try {
+                setSql(getSql().replace("@database", database));
 
-            ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
-            List<Object> queryParameters = new LinkedList<>();
+                ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
+                List<Object> queryParameters = new LinkedList<>();
 
-            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getDataSourceName());
-            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
+                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getDataSourceName());
+                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
 
-            pss.setParameters(queryParameters);
-            setPreparedStatementSetter(pss);
+                pss.setParameters(queryParameters);
+                setPreparedStatementSetter(pss);
 
-            super.openCursor(con);
+                super.openCursor(con);
+            } catch (Exception ex) {
+                jobManager.onTaskError(Long.valueOf(taskId));
+                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                ex.printStackTrace();
+            }
 
         }
 
