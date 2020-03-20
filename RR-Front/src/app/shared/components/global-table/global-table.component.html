@@ -69,6 +69,7 @@
               <ng-container *ngFor="let col of cols;let i=index;">
                 <ng-container [ngSwitch]="col?.dataDisplayType">
                   <ng-container *ngSwitchCase="'indicator'" [ngTemplateOutlet]="secondary_header_indecator" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
+                  <ng-container *ngSwitchCase="'status'" [ngTemplateOutlet]="secondary_header_empty" ></ng-container>
                   <ng-container *ngSwitchDefault [ngTemplateOutlet]="secondary_header_default" [ngTemplateOutletContext]="{$implicit: col, i: i}"></ng-container>
                 </ng-container>
               </ng-container>
@@ -130,8 +131,28 @@
 </ng-template>
 
 <ng-template #primary_header_status let-col let-i="i">
-    <span style="display:flex;justify-content: space-between;">
-        {{col?.displayName}}
+  <span style="justify-content: space-between;width: 30px;height: 30px">
+            <nz-dropdown [nzPlacement]="'bottomLeft'">
+              <i nz-dropdown class="icon-ballot_24px" style="font-size: 15px;"></i>
+              <ul nz-menu>
+                <li *ngFor="let st of statusCodes" nz-menu-item>
+                  <div class="checkboxInput">
+                    <label [ngModel]="col?.filterCriteria | hasStatus : st?.code"
+                           (ngModelChange)="onFilterByStatus(i, st?.code)"
+                           nz-checkbox
+                           style="margin-right: 12px;">
+                      <i [ngClass]="{   'icon-history-alt iconYellow': st?.code=='In progress',
+                                        'icon-check-circle iconGreen': st?.code=='Valid' ,
+                                        'icon-lock-alt iconRed': st?.code=='Locked',
+                                        'icon-error_24px iconRed2': st?.code=='Fail',
+                                        'icon-star iconBlue': st?.code=='Pending',
+                                        'icon-report_problem_24px iconYellow2': st?.code=='Requires Regeneration' }"></i>
+                      {{st?.code}}
+                    </label>
+                  </div>
+                </li>
+              </ul>
+            </nz-dropdown>
     </span>
 </ng-template>
 
@@ -142,9 +163,9 @@
     </span>
 </ng-template>
 
-<ng-template #secondary_header_indecator let-col>
+<ng-template #secondary_header_indecator let-col let-i="i">
   <th class="filter-head icon-header">
-    <label nz-checkbox [ngModel]="col?.filterCriteria" (ngModelChange)="filterByFalsely(col?.fields)"></label>
+    <label nz-checkbox [ngModel]="col?.filterCriteria == '1'" (ngModelChange)="filterByFalsely(i, $event)"></label>
   </th>
 </ng-template>
 
@@ -153,6 +174,10 @@
     <app-input [visible]="true" (onInput)="onFilter(i, $event)" [value]="col?.filterCriteria"></app-input>
     <span *ngIf="col?.isResizable" class="ui-column-resizer" style="cursor: default !important;"></span>
   </th>
+</ng-template>
+
+<ng-template #secondary_header_empty>
+  <th></th>
 </ng-template>
 
 <ng-template #sort_icon let-i let-sortType="sortType">
