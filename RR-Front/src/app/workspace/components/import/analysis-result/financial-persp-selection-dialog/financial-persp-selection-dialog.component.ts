@@ -242,13 +242,13 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     updateAllChecked(nextValue, type) {
         // console.log('check all', this.changes.analysis, nextValue);
         if (type == 'analysis') {
-            _.forEach(this.changes.analysis, (analysis, index) => this.changes.analysis[index] = {
+            _.forEach(this.changes.analysis, (analysis:any, index) => this.changes.analysis[index] = {
                 ...analysis,
                 selected: nextValue
             });
             this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
-            _.forEach(this.changes.epCurves, (epc, index) => this.changes.epCurves[index] = {
+            _.forEach(this.changes.epCurves, (epc:any, index) => this.changes.epCurves[index] = {
                 ...epc,
                 selected: nextValue
             });
@@ -266,7 +266,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
             this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
             const codes = _.map(data, d => d.financialPerspective);
-            _.forEach(this.changes.epCurves, (epc, index) => {
+            _.forEach(this.changes.epCurves, (epc:any, index) => {
                 this.changes.epCurves[index].selected = _.includes(codes, epc.code);
             });
             this.updateTreeStateCheckBoxEpc();
