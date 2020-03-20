@@ -25,8 +25,8 @@
 
 <calib-col-manager
                 *ngIf="isFrozenManageColumnsVisible"
-               [visibleList]="visibleFrozenColumns"
-               [availableList]="availableFrozenColumns"
+               [visibleList]="(tableConfig.isExpanded) ? visibleColumns : visibleFrozenColumns"
+               [availableList]="(tableConfig.isExpanded) ? availableColumns : availableFrozenColumns"
                (actionDispatcher)="handleManageColumnsActions($event)">
 </calib-col-manager>
 

@@ -64,6 +64,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   visibleFrozenColumns: any[];
   availableFrozenColumns: any[];
+
+  visibleColumns: any[];
+  availableColumns: any[];
+
   exchangeRates: any;
 
   //POP-UPs
@@ -111,7 +115,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.adjustmentTypes= [];
     this.basis= [];
     this.tableConfig = {
-      view: "adjustments",
+      view: 'epMetrics',
       selectedCurveType: "OEP",
       isGrouped: true,
       isExpanded: false,
@@ -343,6 +347,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
       this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');
+
+      this.visibleColumns = _.slice(config.columns.filter(c => c.isFrozen), 1);
+      this.availableColumns = _.differenceBy(CalibrationTableService.frozenColsExpanded, this.visibleColumns, 'field');
+
       this.detectChanges();
     })
   }
@@ -388,8 +396,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       view: newView
     };
     this.calibrationTableService.getColumns(newView, this.tableConfig.isExpanded);
-    console.log(this.columnsConfig.columns);
-    console.log(this.columnsConfig.frozenColumns);
+
+
   }
 
   toggleGrouping() {
@@ -622,8 +630,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: true
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, true);
-    console.log(this.columnsConfig.columns);
-    console.log(this.columnsConfig.frozenColumns);
   }
 
   expandColumnsOff() {
@@ -633,8 +639,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       isExpanded: false
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, false);
-    console.log(this.columnsConfig.columns);
-    console.log(this.columnsConfig.frozenColumns);
   }
 
   viewAdjustmentDetail(newAdjustment) {
@@ -862,10 +866,16 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   handleManageColumnsActions(action) {
+
     switch (action.type) {
 
       case "Manage Frozen Columns":
-        this.calibrationTableService.onManageFrozenColumns(action.payload);
+        if(this.tableConfig.isExpanded) {
+          this.calibrationTableService.onManageFrozenColumnsExpand(action.payload);
+
+        } else {
+          this.calibrationTableService.onManageFrozenColumnsUnexpand(action.payload);
+        }
         this.isFrozenManageColumnsVisible = false;
         break;
 
