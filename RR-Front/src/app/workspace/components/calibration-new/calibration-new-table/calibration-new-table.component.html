@@ -76,7 +76,7 @@
             <ng-container [ngTemplateOutlet]="leftHeader"></ng-container>
           </th>
 
-          <th   class="header-cnt" style="position:fixed; " [attr.colspan]="columnsConfig?.columns.length" [style.height]="'120px'"
+          <th   class="header-cnt" style="position:fixed; z-index: 999;" [attr.colspan]="columnsConfig?.columns.length" [style.height]="'120px'"
                 [ngStyle]="{ width: 'calc( ' + dtContainer.offsetWidth + 'px - ' + columnsConfig.frozenWidth + ' )'}">
             <ng-container [ngTemplateOutlet]="rightHeader" ></ng-container>
           </th>
@@ -88,8 +88,7 @@
           <th  class="header-cnt" [attr.colspan]="columns.length" *ngIf="columns">
 
           </th>
-          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length"
-              [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
+          <th class="header-cnt" *ngIf="!(columns | frozenColsLength)" [attr.colspan]="columns.length" [ngStyle]="{ height: '120px', background: 'transparent'}" ></th>
         </tr>
       </ng-container>
       <ng-container [ngTemplateOutlet]="headerFields" [ngTemplateOutletContext]="{ $implicit: columns }"></ng-container>

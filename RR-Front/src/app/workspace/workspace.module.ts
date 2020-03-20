@@ -41,6 +41,8 @@ import { ResizableModule  } from 'angular-resizable-element';
 import { ContextMenuModule } from "primeng/primeng";
 import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filter.pipe';
 import { FrozenColumnsFilterPipe } from './pipes/frozen-columns-filter.pipe';
+import {FilterGroupedPltsPipe} from "./pipes/filter-grouped-plts.pipe";
+import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -77,7 +79,7 @@ import { FrozenColumnsFilterPipe } from './pipes/frozen-columns-filter.pipe';
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, FrozenColumnsFilterPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
