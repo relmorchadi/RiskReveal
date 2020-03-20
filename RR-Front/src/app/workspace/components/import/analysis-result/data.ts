@@ -56,7 +56,7 @@ export default {
         highlight: true,
         visible: true,
         edit: false
-      },/**
+      },
       {
         field: 'occurrenceBasis',
         header: 'Occurrence Basis',
@@ -67,7 +67,7 @@ export default {
         highlight: true,
         visible: true,
         edit: false
-      },
+      },/**
       {
         field: 'targetRap',
         header: 'Target RAP',

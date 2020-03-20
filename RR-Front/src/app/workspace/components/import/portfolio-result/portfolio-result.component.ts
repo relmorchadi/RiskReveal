@@ -140,6 +140,11 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
             }));
         }
     }
+    checkRow(id){
+        this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+            action: 'selectOne', ids : [id]
+        }));
+    }
 
     selectRows(rowData, index) {
         this.updateRowData('selected', rowData.selected, index);

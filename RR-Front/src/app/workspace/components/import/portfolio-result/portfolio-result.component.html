@@ -68,7 +68,8 @@
                                 <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
                                     <ng-container>
                                         {{col.header}}
-                                        <p-sortIcon *ngIf="col.type != 'selection'" style="color: #848484 !important;" [field]="col.field"
+                                        <p-sortIcon *ngIf="col.type != 'selection'" style="color: #848484 !important;"
+                                                    [field]="col.field"
                                                     ariaLabel="Activate to sort"
                                                     ariaLabelDesc="Activate to sort in descending order"
                                                     ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
@@ -77,10 +78,10 @@
                                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                         <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)"
                                                pInputText type="text">-->
-<!--                                        <p-sortIcon style="color: #848484 !important;" [field]="col.field"-->
-<!--                                                    ariaLabel="Activate to sort"-->
-<!--                                                    ariaLabelDesc="Activate to sort in descending order"-->
-<!--                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
+                                    <!--                                        <p-sortIcon style="color: #848484 !important;" [field]="col.field"-->
+                                    <!--                                                    ariaLabel="Activate to sort"-->
+                                    <!--                                                    ariaLabelDesc="Activate to sort in descending order"-->
+                                    <!--                                                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
                                     <!--</div>-->
                                 </div>
                                 <div *ngIf="col.type === 'icon'">
@@ -100,12 +101,13 @@
                     </tr>
                 </ng-template>
                 <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i" [pContextMenuRow]="rowData" [pContextMenuRowIndex]="i">
+                    <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i" [pContextMenuRow]="rowData"
+                        [pContextMenuRowIndex]="i">
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                                 [ngClass]="{'selected-item': rowData?.selected}">
                                 <div *ngIf="col.type === 'selection'" style="text-align: center">
-                                    <label (ngModelChange)="updateSelection(rowData?.rlPortfolioId)"
+                                    <label (ngModelChange)="checkRow(rowData?.rlPortfolioId)"
                                            [ngModel]="rowData[col.field]"
                                            nz-checkbox></label>
                                 </div>

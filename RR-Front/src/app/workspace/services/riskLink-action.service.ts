@@ -1070,6 +1070,10 @@ export class RiskLinkStateService {
                         draft.content[wsIdentifier].riskLink.summary.analysis[index].selected= _.includes(ids,Number(index));
                     });
                     break;
+                case 'selectOne':
+                    const [id]= ids;
+                    draft.content[wsIdentifier].riskLink.summary.analysis[id].selected= !draft.content[wsIdentifier].riskLink.summary.analysis[id].selected;
+                    break;
             }
         }))
     }
@@ -1091,6 +1095,10 @@ export class RiskLinkStateService {
                     _.forEach(draft.content[wsIdentifier].riskLink.summary.portfolios, (portfolio, index) => {
                         draft.content[wsIdentifier].riskLink.summary.portfolios[index].selected= _.includes(ids,Number(index));
                     });
+                    break;
+                case 'selectOne':
+                    const [id]= ids;
+                    draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected= !draft.content[wsIdentifier].riskLink.summary.portfolios[id].selected;
                     break;
             }
         }))

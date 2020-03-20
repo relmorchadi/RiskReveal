@@ -374,7 +374,7 @@
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
                           <div style="display: flex;" *ngIf="col.type === 'select'">
-                            <label nz-checkbox (ngModelChange)="selectRows(rowData, i)"
+                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
                                    [ngModel]="rowData.selected"></label>
                           </div>
                           <div class="text-data" (click)="selectRows(rowData, i)"
