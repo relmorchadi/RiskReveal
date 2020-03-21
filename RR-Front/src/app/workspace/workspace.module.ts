@@ -79,7 +79,7 @@ import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, FrozenColumnsFilterPipe
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, FrozenColumnsFilterPipe, ...PIPES
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

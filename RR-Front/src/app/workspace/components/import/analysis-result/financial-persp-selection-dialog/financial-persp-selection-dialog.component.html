@@ -57,7 +57,7 @@
           </div>
         </div>
         <div class="resize-table">
-          <p-table #fat [columns]="colsFinancialAnalysis" [value]="data?.analysis | analysisByRdm:rdmFilter"
+          <p-table #fat [columns]="colsFinancialAnalysis" [value]="(data?.analysis | analysisByRdm:rdmFilter ) | tableFilter:analysisFilter "
                    [resizableColumns]="true" columnResizeMode="expand"
                    (selectionChange)="getSelection($event,'analysis')"
                    selectionMode="multiple" [metaKeySelection]="true" [(selection)]="selectedRowsAnalysis"
@@ -83,7 +83,7 @@
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"
-                             (input)="fat.filter($event.target.value, col.field, col.filterMatchMode)">
+                             (input)="onFilterAnalysis($event.target.value, col.field, col.filterMatchMode)">
                     </div>
                   </div>
                   <div *ngIf="col.type === 'icon'">
@@ -141,7 +141,7 @@
                 </ul>
               </nz-dropdown>
             </div>
-            <p-table #fpt [columns]="colsFinancialStandard" [value]="data?.epCurves"
+            <p-table #fpt [columns]="colsFinancialStandard" [value]="data?.epCurves | tableFilter:epcFilter"
                      [resizableColumns]="true" columnResizeMode="expand"
                      (selectionChange)="getSelection($event,'epc')"
                      selectionMode="multiple" [metaKeySelection]="true" [(selection)]="selectedRowsEpc"
@@ -168,7 +168,7 @@
                       <div class="search-bar-table">
                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                         <input pInputText type="text"
-                               (input)="fpt.filter($event.target.value, col.field, col.filterMatchMode)">
+                               (input)="onFilterEpc($event.target.value, col.field, col.filterMatchMode)">
                       </div>
                     </div>
                     <div *ngIf="col.type === 'icon'">
@@ -180,16 +180,16 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                   <th *ngFor="let col of columns" class="ui-resizable-column"
-                      [ngClass]="{'selected-item': changes.epCurves[i].selected}">
+                      [ngClass]="{'selected-item': changes.epCurves[rowData.financialPerspective].selected}">
                     <div *ngIf="col.type === 'select'">
                       <label nz-checkbox
-                             (ngModelChange)="checkRpCurveRow(i)"
-                             [ngModel]="changes.epCurves[i].selected"></label></div>
-                    <div (click)="toggleEpCurveSelection(i)" *ngIf="col.type === 'indicator'">
+                             (ngModelChange)="checkRpCurveRow(rowData.financialPerspective)"
+                             [ngModel]="changes.epCurves[rowData.financialPerspective].selected"></label></div>
+                    <div (click)="toggleEpCurveSelection(rowData.financialPerspective)" *ngIf="col.type === 'indicator'">
                     <span class="indicator-flag" *ngIf="rowData.exposedLocation"
                           style="background-color: #0700CF"></span>
                     </div>
-                    <div (click)="toggleEpCurveSelection(i)" class="text-data"
+                    <div (click)="toggleEpCurveSelection(rowData.financialPerspective)" class="text-data"
                          [ngClass]="{'highlight-temp': col.highlight}"
                          *ngIf="col.type === 'text'">
                       <span *ngIf="!col.number; else formattedNumber">{{rowData[col.field]}}</span>
@@ -197,7 +197,7 @@
                         <span>{{rowData[col.field] | number}}</span>
                       </ng-template>
                     </div>
-                    <div (click)="toggleEpCurveSelection(i)" class="text-data"
+                    <div (click)="toggleEpCurveSelection(rowData.financialPerspective)" class="text-data"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"></div>
                   </th>

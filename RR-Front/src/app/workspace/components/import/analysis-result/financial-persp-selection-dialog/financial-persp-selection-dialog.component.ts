@@ -3,6 +3,8 @@ import * as _ from "lodash";
 import {NotificationService} from "../../../../../shared/services";
 import * as fromWs from "../../../../store/actions";
 import * as fromRiskLink from "../../../../store/actions/risk_link.actions";
+import {TableFilterPipe} from "../../../../../shared/pipes/table-filter.pipe";
+import {AnalysisByRdmPipe} from "../../../../pipes";
 
 @Component({
     selector: 'financial-persp-selection-dialog',
@@ -47,6 +49,9 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     selectedRowsEpc;
 
     loadingEpc:boolean= true;
+
+    analysisFilter={};
+    epcFilter={};
 
     colsFinancialAnalysis = [
         {
@@ -219,7 +224,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         },
     ];
 
-    constructor(private _notificationService: NotificationService) {
+    constructor(private _notificationService: NotificationService, private _tableFilter:TableFilterPipe, private _rdmFilter:AnalysisByRdmPipe) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -239,18 +244,36 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         this.loadEpCurvesEmitter.emit(firstKey);
     }
 
+    onFilterAnalysis(kw, field, mode){
+        if(_.isEmpty(kw))
+            this.analysisFilter = _.omit(this.analysisFilter, [field]);
+        else
+            this.analysisFilter= _.merge({}, this.analysisFilter, {[field]: kw});
+    }
+
+    onFilterEpc(kw, field, mode){
+        if(_.isEmpty(kw))
+            this.epcFilter = _.omit(this.epcFilter, [field]);
+        else
+            this.epcFilter= _.merge({}, this.epcFilter, {[field]: kw});
+    }
+
     updateAllChecked(nextValue, type) {
         // console.log('check all', this.changes.analysis, nextValue);
         if (type == 'analysis') {
-            _.forEach(this.changes.analysis, (analysis:any, index) => this.changes.analysis[index] = {
+            _.forEach(this.filteredAnalysis, (analysis:any, index) => this.changes.analysis[analysis.rlAnalysisId] = {
                 ...analysis,
                 selected: nextValue
             });
             this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
-            _.forEach(this.changes.epCurves, (epc:any, index) => this.changes.epCurves[index] = {
-                ...epc,
-                selected: nextValue
+
+            _.forEach(this.changes.epCurves, (item:any, index) => {
+                if(_.includes(this.filteredEpc, item.code) )
+                    this.changes.epCurves[index] = {
+                        ...item,
+                        selected: nextValue
+                    }
             });
             this.updateTreeStateCheckBoxEpc();
         }
@@ -420,7 +443,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
 
     private _loadEpCurvesChanges() {
         this.changes.epCurves = _.reduce(this.data.epCurves, (result, value, index) => {
-            return _.merge(result, {[index]: {selected: false, code: value.financialPerspective}})
+            return _.merge(result, {[value.financialPerspective]: {selected: false, code: value.financialPerspective}})
         }, {});
         this.loadingEpc= false;
     }
@@ -444,9 +467,20 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     }
 
     private updateTreeStateCheckBoxEpc() {
-        const selectedEpCurves = _.filter(this.data.epCurves, (item, index) => (this.changes.epCurves[index] || {selected: false}).selected);
+        const selectedEpCurves = _.filter(this.data.epCurves, (item, index) => (this.changes.epCurves[item.financialPerspective] || {selected: false}).selected);
         this.allCheckedEpc = selectedEpCurves.length === this.data.epCurves.length && selectedEpCurves.length > 0;
         this.indeterminateEpc = (selectedEpCurves.length < this.data.epCurves.length && selectedEpCurves.length > 0);
+    }
+
+    get filteredAnalysis(){
+        return this._tableFilter.transform(
+            this._rdmFilter.transform(this.data.analysis, this.rdmFilter),
+            this.analysisFilter
+        );
+    }
+
+    get filteredEpc(){
+        return _.map(this._tableFilter.transform(this.data.epCurves, this.epcFilter), (item:any) => item.financialPerspective );
     }
 
 }
