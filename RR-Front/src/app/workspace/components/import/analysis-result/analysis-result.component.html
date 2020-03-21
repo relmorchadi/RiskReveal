@@ -43,7 +43,7 @@
                 </nz-dropdown>
             </div>
             <p-table [columns]="scrollableColsResults" [frozenColumns]="frozenColsResults"
-                     [value]="data.analysis" [scrollHeight]="'175px'"
+                     [value]="data.analysis | tableFilter:filter" [scrollHeight]="'175px'"
                      (selectionChange)="getSelection($event)"
                      selectionMode="multiple" [metaKeySelection]="true" [(selection)]="selectedRows"
                      [(contextMenuSelection)]="contextSelectedItem"
@@ -51,6 +51,7 @@
                      syncScroll
                      [class]="'analysis-result-table'"
                      [classIdentifier]="'analysis-result-table'"
+                     [rowTrackBy]="trackBy"
                      [resizableColumns]="true" columnResizeMode="expand"
                      #analysisResultTable [scrollable]="true" frozenWidth="445px">
                 <ng-template pTemplate="colgroup" let-columns>
@@ -82,11 +83,6 @@
                                                 ariaLabel="Activate to sort"
                                                 ariaLabelDesc="Activate to sort in descending order"
                                                 ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                                    <!--<div class="search-bar-table">
-                                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                                        <input pInputText type="text"
-                                               (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
-                                    </div>-->
                                 </div>
                                 <div *ngIf="col.type === 'check'">
                                     <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
@@ -97,7 +93,7 @@
                     </tr>
                     <tr>
                         <th *ngFor="let col of columns" pResizableColumn>
-                            <div class="search-bar-table" *ngIf="col.filtered">
+                            <div class="search-bar-table" *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                                 <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                 <input pInputText type="text"
                                        (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">

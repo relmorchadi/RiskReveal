@@ -1,7 +1,7 @@
 export default {
   FAC: {
     scrollableCols: [
-      {field: '', header: '', width: '80px', type: '', filtered: false, visible: false, highlight: false, edit: false},
+      // {field: '', header: '', width: '80px', type: '', filtered: false, visible: false, highlight: false, edit: false},
       {
         field: 'divisions',
         header: 'Divisions',
@@ -220,10 +220,10 @@ export default {
       {
         field: 'rlId',
         header: 'ID',
-        width: '40px',
+        width: '50px',
         type: 'text',
         sorting: '',
-        filtered: false,
+        filtered: true,
         highlight: false,
         visible: true,
         edit: false
@@ -242,7 +242,7 @@ export default {
       {
         field: 'analysisDescription',
         header: 'Description',
-        width: '200px',
+        width: '250px',
         type: 'text',
         sorting: '',
         filtered: true,

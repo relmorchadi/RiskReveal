@@ -16,12 +16,13 @@ import * as _ from 'lodash';
 import {WorkspaceState} from "../../../store/states";
 import {take} from "rxjs/operators";
 import * as fromWs from "../../../store/actions";
-import {Debounce} from "../../../../shared/decorators";
+import {Table} from "primeng/table";
+import {TableFilterPipe} from "../../../../shared/pipes/table-filter.pipe";
 
 @Component({
     selector: 'analysis-result',
     templateUrl: './analysis-result.component.html',
-    styleUrls: ['./analysis-result.component.scss']
+    styleUrls: ['./analysis-result.component.scss'],
 })
 export class AnalysisResultComponent implements OnInit, OnChanges {
 
@@ -29,7 +30,7 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     context;
 
     @ViewChild('analysisResultTable')
-    tables: any;
+    tables: Table;
 
     @Input('data')
     data: { analysis, epCurves, targetRaps, regionPerilsByAnalysis } = {
@@ -118,7 +119,11 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     allCheckedItems=false;
     indeterminateItems=false;
 
-    constructor(private store: Store, private cdr:ChangeDetectorRef) {
+    trackBy = (index, item) => item.rlAnalysisId;
+
+    filter={};
+
+    constructor(private store: Store, private cdr:ChangeDetectorRef, private _filterPipe:TableFilterPipe) {
     }
 
     ngOnInit() {
@@ -150,24 +155,22 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     }
 
     onFilter(kw, field, mode){
-        return this.tables.filter(kw, field, 'contains');
+        if(_.isEmpty(kw))
+            this.filter = _.omit(this.filter, [field]);
+        else
+            this.filter= _.merge({}, this.filter, {[field]: kw});
     }
 
     updateAllChecked(nextValue) {
         if(nextValue)
             this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
-                action: 'selectChunk', ids : _.map(this.data.analysis, item => item.rlAnalysisId)
+                action: 'selectChunk', ids : _.map(this.filteredAnalysis, item => item.rlAnalysisId)
             }));
         else {
             this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
                 action: 'selectChunk', ids : []
             }));
         }
-        // if(this.indeterminateItems){
-        //     event.preventDefault();
-        //     this.indeterminateItems= false;
-        //     this.allCheckedItems=false;
-        // }
     }
 
     sortChange(field, sorting, target) {
@@ -195,12 +198,12 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     }
 
     getSelection(data){
-        //if (data.length > 1) {
+        if (data.length > 1) {
             this.store.dispatch(new fromWs.ToggleAnalysisResultSelectionAction({
                 action: 'selectChunk',
                 ids: _.map(data, a => a.rlAnalysisId)
             }));
-       // }
+       }
     }
 
     openFinancialP(fp) {
@@ -268,6 +271,10 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
 
     saveAnalysisSelection() {
         this.saveEmitter.emit('ANALYSIS');
+    }
+
+    get filteredAnalysis(){
+        return this._filterPipe.transform(this.data.analysis, this.filter);
     }
 
     private updateTreeStateCheckBox(){

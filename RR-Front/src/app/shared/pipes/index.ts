@@ -21,6 +21,7 @@ import {ExchangeRatePipe} from "./exchange-rate.pipe";
 import {RRDatePipe} from "./rr-date.pipe";
 import {RrNumberPipe} from "./rr-number.pipe";
 import {HasStatusPipe} from "./has-status.pipe";
+import {TableFilterPipe} from "./table-filter.pipe";
 
 export const PIPES = [
     RRDatePipe,
@@ -45,7 +46,8 @@ export const PIPES = [
     FinancialUnitPipe,
     ExchangeRatePipe,
     RrNumberPipe,
-    HasStatusPipe
+    HasStatusPipe,
+    TableFilterPipe
 ];
 
 export * from './trim-secondary-format.pipe';

@@ -257,6 +257,8 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     }
 
     getSelection(data, type) {
+        if(_.size(data) <= 1)
+            return;
         // console.log('getSelction', {data, type, changes: this.changes.epCurves} );
         if (type == 'analysis') {
             const ids = _.map(data, a => a.rlAnalysisId);
@@ -286,13 +288,15 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
     }
 
     toggleAnalysisSelection(analysisId) {
-        _.forEach(this.changes.analysis, (analysis, index) => {
-            this.changes.analysis[index].selected = analysisId == index;
-        });
-        this.loadingEpc= true;
-        if (this._countSelectedAnalysis() == 1)
-            this.loadEpCurvesEmitter.emit(analysisId);
-        this.updateTreeStateCheckBoxAnalysis();
+        if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
+            _.forEach(this.changes.analysis, (analysis, index) => {
+                this.changes.analysis[index].selected = analysisId == index;
+            });
+            this.loadingEpc= true;
+            if (this._countSelectedAnalysis() == 1)
+                this.loadEpCurvesEmitter.emit(analysisId);
+            this.updateTreeStateCheckBoxAnalysis();
+        }
     }
 
     checkRpCurveRow(rowIndex) {
