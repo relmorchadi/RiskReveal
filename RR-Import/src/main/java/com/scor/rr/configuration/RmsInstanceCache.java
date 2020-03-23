@@ -58,7 +58,7 @@ public class RmsInstanceCache {
     private ModellingSystemInstanceRepository modellingSystemInstanceRepository;
 
     public synchronized DataSource getDataSource(String instanceId){
-        log.debug("getDatasource '{}' ",instanceId);
+        log.info("getDatasource '{}' ",instanceId);
         return cache.getUnchecked(instanceId);
     }
 

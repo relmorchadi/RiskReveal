@@ -31,7 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(unauthorizedHandler).and()
                 .cors().and().authorizeRequests()
                 .antMatchers("/api/**")
-                .authenticated().and()
+               // .authenticated().and()
+                .permitAll().and()//moi
                 .addFilterBefore(getJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
