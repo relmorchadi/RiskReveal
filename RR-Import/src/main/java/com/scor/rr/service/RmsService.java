@@ -135,7 +135,7 @@ public class RmsService {
                    //  Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
                   //  rdmAnalysisBasicMap.put((long) 252,rdmAnalysisBasicList.get(1));//corr ici dans map  analysisId=252
 
-                    count=rdmAnalysisBasicMap.size();
+                    count=rdmAnalysisBasicList.size();
 
                     List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
                     Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
