@@ -149,13 +149,13 @@ public class UserDashboardWidgetColumnsService {
             String isVisibleArray = "";
             String orderArray = "";
 
-            counter = request.size() + 1;
+            counter = request.size() ;
 
             for(OrderAndVisibilityRequest row : request){
-                UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(row.getColumnId());
-                if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(row.getColumnId());
+//                UserDashboardWidgetColumns userDashboardWidgetColumns = userDashboardWidgetColumnsRepository.findByUserDashboardWidgetColumnId(row.getColumnId());
+//                if (userDashboardWidgetColumns == null) throw new UserDashboardColumnNotFoundException(row.getColumnId());
 
-                columnIdArray = columnIdArray + "," + userDashboardWidgetColumns.getUserDashboardWidgetColumnId();
+                columnIdArray = columnIdArray + "," + row.getColumnId();
                 isVisibleArray = isVisibleArray + "," + row.isVisible();
                 orderArray = orderArray + "," + row.getOrder();
 
