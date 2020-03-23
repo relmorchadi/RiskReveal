@@ -188,9 +188,8 @@ public class RmsService {
             } else {
 
                 RLModelDataSource rlModelDataSource1=new  RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
-                System.out.println("rdm new 1");
                 rlModelDataSourcesRepository.save(rlModelDataSource1);
-                if (rlModelDataSource1.getType().equalsIgnoreCase("RDM")) {System.out.println("rdm new 2");
+                if (rlModelDataSource1.getType().equalsIgnoreCase("RDM")) {
                     count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource1);
                 } else if (rlModelDataSource1.getType().equalsIgnoreCase("EDM")) {
                     count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource1);
