@@ -77,7 +77,7 @@ export class WorkspaceState {
   }
 
   static getWorkspaceCurrency(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].currency);
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => _.find(state.content[wsIdentifier].projects, pr => pr.selected));
   }
 
   static getWorkspaceEffectiveDate(wsIdentifier: string) {

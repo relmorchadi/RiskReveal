@@ -70,7 +70,12 @@ public class WorkspaceResource {
     @PostMapping("tabs/close")
     ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.closeTab(request);}
 
-    @PostMapping("tabs/open")
-    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getScreen());}
+    @PostMapping("tabs/navigate")
+    ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getScreen(), request.getTabOrder());}
 
+    @PostMapping("tabs/select")
+    ResponseEntity<?> selectTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.selectTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear());}
+
+    @PostMapping("tabs/order")
+    ResponseEntity<?> setOrder(@RequestBody List<UserWorkspaceTabs> tabs) { return this.workspaceService.setOrder(tabs);}
 }

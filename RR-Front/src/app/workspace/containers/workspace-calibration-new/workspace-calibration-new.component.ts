@@ -332,11 +332,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             takeWhile(v => !_.isNil(v)),
             take(2),
             this.unsubscribeOnDestroy
-        ).subscribe( currency => {
-          this.workspaceCurrency = currency;
+        ).subscribe( selectedProject => {
+          this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
           this.tableConfig = {
               ...this.tableConfig,
-            selectedCurrency: currency
+            selectedCurrency: selectedProject ? selectedProject.currency : null
           };
           this.detectChanges();
     });

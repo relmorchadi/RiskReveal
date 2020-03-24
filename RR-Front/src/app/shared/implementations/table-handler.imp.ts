@@ -209,17 +209,24 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     return this.store.select(WorkspaceState.getGlobalTableSelection(workspaceContextCode+'-'+workspaceUwYear))
   }
 
-  private resolveSelection = (ids) => {
+  private resolveSelection = (ids, init) => {
     let newIds = {};
 
-    _.forEach(ids, e => {
-      newIds[e.pltId] = this._selectedIds[e.pltId] || false;
-    });
+    if(init) {
+      newIds = ids;
+    } else {
+      _.forEach(ids, e => {
+        newIds[e.pltId] = this._selectedIds[e.pltId] || false;
+      });
+    }
 
     const newSelection = { ...this._selectedIds, ...newIds };
     this.updateSelectedIDs(newSelection);
     const numberOfSelectedRows = _.filter(this._selectedIds, v => v).length;
-    this.updateSelectAll(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+    console.log("totalRecords :", this.totalRecords);
+    console.log("selected rows:", this._selectedIds);
+    console.log(this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0);
+    this.updateSelectAll(this.totalRecords && (this.totalRecords == numberOfSelectedRows || numberOfSelectedRows > 0));
     this.updateIndeterminate(this.totalRecords > numberOfSelectedRows && numberOfSelectedRows > 0);
 
     //save to store
@@ -273,11 +280,13 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
                 isInitialized =>
                     iif(() => isInitialized,
                         forkJoin(
+                            of(isInitialized),
                             this.getDataFromStore(this.params).pipe(take(1)),
                             this.getSelectionFromStore(this.params).pipe(take(1))
                         ),
                         init$.pipe(
                             switchMap( () => forkJoin(
+                                of(isInitialized),
                                 this.loadData({
                                   ...this.params,
                                   ...this.config,
@@ -291,9 +300,9 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
                         )
                     )
             )
-        ).subscribe(([data, ids]) => {
+        ).subscribe(([isInit, data, selectedIds]) => {
           this.resolveData(data);
-          this.resolveSelection(ids);
+          this.resolveSelection(selectedIds, isInit);
     });
 
     initialized$
@@ -382,7 +391,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     filter$.pipe(
         switchMap( () => this.loadSelectedIds())
     ).subscribe((ids) => {
-      this.resolveSelection(ids);
+      this.resolveSelection(ids, false);
     })
 
   }
@@ -430,7 +439,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
         ([columns, data, ids]: any) => {
           this.resolveColumns(columns);
           this.resolveData(data);
-          this.resolveSelection(ids);
+          this.resolveSelection(ids, false);
         },
         (error) => {
           console.error(error);
@@ -605,7 +614,7 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
     filter$.pipe(
         switchMap( () => this.loadSelectedIds())
     ).subscribe((ids) => {
-      this.resolveSelection(ids);
+      this.resolveSelection(ids, false);
     })
   }
 
