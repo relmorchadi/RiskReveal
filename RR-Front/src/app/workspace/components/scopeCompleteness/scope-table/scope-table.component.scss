@@ -1,0 +1,30 @@
+.divided-col {
+  border-left: 8px solid #F4F6FC !important;
+}
+
+.name-grain {
+  font-weight: bold;
+}
+
+.burger-menu {
+  font-size: 25px;
+  margin-right: 15px;
+  color: cornflowerblue;
+  display: none;
+}
+
+.burger-menu-visible{
+  font-size: 25px;
+  margin-right: 15px;
+  color: cornflowerblue;
+  display: block;
+}
+
+.row-hover:hover {
+  background-color: #cee5ef !important;
+
+  .burger-menu {
+    display: block;
+  }
+}
+

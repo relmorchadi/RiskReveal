@@ -1,27 +1,27 @@
 import {Injectable} from '@angular/core';
 import {StateContext, Store} from "@ngxs/store";
-import {catchError, mergeMap, switchMap} from "rxjs/operators";
+import {catchError, mergeMap, switchMap, tap} from "rxjs/operators";
 import * as _ from 'lodash';
 import {PltApi} from './api/plt.api';
 import produce from 'immer';
 import {ActivatedRoute} from '@angular/router';
 import {WorkspaceModel} from '../model';
 import {of} from 'rxjs';
+import {ScopeOfCompletenessApi} from "./api/scopeOfCompleteness.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScopeCompletenessService {
 
-  constructor(private store$: Store, private pltApi: PltApi, private route$: ActivatedRoute) {
-
+  constructor(private store$: Store, private pltApi: PltApi,
+              private route$: ActivatedRoute,
+              private scopeApi: ScopeOfCompletenessApi) {
   }
 
   publishToPricing(ctx: StateContext<WorkspaceModel>, paylaod) {
     const {
-      currentTab: {
-        wsIdentifier
-      }
+      currentTab: {wsIdentifier}
     } = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       const selectProject: any = _.filter(draft.content[wsIdentifier].projects, item => item.selected)[0];
@@ -36,24 +36,29 @@ export class ScopeCompletenessService {
   }
 
   loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, payload) {
-    const {
-      currentTab: {
-        wsIdentifier
-      }
-    } = ctx.getState();
-    return this.pltApi.getAllPlts(payload.params)
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {uwYear, wsId} = state.content[wsIdentifier];
+    return this.scopeApi.getData(uwYear, wsId)
       .pipe(
-        switchMap((data) => {
-          return of(ctx.patchState(produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].scopeOfCompletence.data =
-              _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt, visible: true}})));
-            draft.content[wsIdentifier].scopeOfCompletence.wsType = draft.content[wsIdentifier].workspaceType;
-          })));
+          tap((data: any[]) => {
+            console.log(data);
+            ctx.patchState(produce(ctx.getState(), draft => {
+              let regionPerils = [];
+              let targetRaps = [];
+              _.forEach(data, item => {
+                regionPerils = [...regionPerils, ...item.regionPerils];
+                targetRaps = [...targetRaps, ...item.targetRaps]
+              });
+              draft.content[wsIdentifier].scopeOfCompleteness.data = {
+                regionPerils: regionPerils,
+                targetRaps: targetRaps
+              };
+            }));
         }),
         catchError(err => {
-          return of(ctx.patchState(produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].scopeOfCompletence.wsType = draft.content[wsIdentifier].workspaceType;
-          })));
+          console.log(err);
+          return of();
         })
       );
   }

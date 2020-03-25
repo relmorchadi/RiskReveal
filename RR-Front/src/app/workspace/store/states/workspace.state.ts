@@ -467,12 +467,12 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence;
+    return state.content[wsIdentifier].scopeOfCompleteness.data;
   }
 
-  static getPltsForScopeCompleteness(wsIdentifier: string) {
+  static getScopeCompleteness(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompleteness.data`), 'pltId'));
   }
 
   /***********************************

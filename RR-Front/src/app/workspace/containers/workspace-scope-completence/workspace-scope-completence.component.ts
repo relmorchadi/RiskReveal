@@ -10,7 +10,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {tap} from "rxjs/operators";
-import {SetCurrentTab} from "../../store/actions";
+import {LoadScopeCompletenessDataSuccess, SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-scope-completence',
@@ -94,6 +94,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   ngOnInit() {
     this.treatySections = _.toArray(trestySections);
+    this.dispatch(new LoadScopeCompletenessDataSuccess());
 
     combineLatest(
         this.route.params
@@ -122,7 +123,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = _.get(value, 'data', null);
-      this.wsType = _.get(value, 'wsType', null);
       this.listOfPltsData = this.getSortedPlts(this.state);
       this.detectChanges();
     });
@@ -137,17 +137,17 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       console.log(this.tabStatus, this.wsStatus, this.wsType);
       this.selectedProject = value;
       if (this.tabStatus === 'treaty' || this.tabStatus === null) {
-/*        this.dataSource = this.getData(this.treatySections[0]);
-        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);*/
+        this.dataSource = this.getData(this.treatySections[0]);
+        this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
       } else {
-/*        if (this.importStatus[this.selectedProject.projectId] || this.checkImport(this.selectedProject)) {
+        if (this.checkImport(this.selectedProject)) {
           const facData = this.formatData(this.treatySections[1]);
           this.dataSource = this.getData(facData);
           this.treatySectionContainer = _.cloneDeep(facData);
         } else {
           this.dataSource = this.getData(this.treatySections[0]);
           this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
-        }*/
+        }
       }
     });
 
