@@ -320,7 +320,7 @@ public class ExposureSummaryExtractor {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
 
     }

@@ -2,6 +2,7 @@ package com.scor.rr.domain.model;
 
 import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.JobPriority;
+import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.TaskRepository;
 import lombok.AllArgsConstructor;
@@ -54,7 +55,6 @@ public class RRJob implements Runnable, Comparable<RRJob> {
     public void run() {
         try {
             execution = jobLauncher.run(job, params);
-
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException | JobParametersInvalidException e) {
             e.printStackTrace();
         }
@@ -68,5 +68,6 @@ public class RRJob implements Runnable, Comparable<RRJob> {
             return this.creationDate.compareTo(o.getCreationDate());
         return priorityComp;
     }
+
 
 }

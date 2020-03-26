@@ -83,7 +83,7 @@ public class ELTWriter extends AbstractWriter {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
     }
 
@@ -192,7 +192,7 @@ public class ELTWriter extends AbstractWriter {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
     }
 }

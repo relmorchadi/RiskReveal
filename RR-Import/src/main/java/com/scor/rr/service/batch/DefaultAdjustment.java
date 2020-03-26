@@ -137,6 +137,8 @@ public class DefaultAdjustment extends AbstractWriter {
                                 //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                             } else {
                                 log.error("An error has occurred {}", response.getStatusCodeValue());
+                                jobManager.onTaskError(Long.valueOf(taskId));
+                                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
                             }
                             this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                         }
@@ -157,7 +159,7 @@ public class DefaultAdjustment extends AbstractWriter {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
     }
 
