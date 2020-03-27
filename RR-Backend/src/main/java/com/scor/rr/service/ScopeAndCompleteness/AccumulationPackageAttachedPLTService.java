@@ -60,7 +60,6 @@ public class AccumulationPackageAttachedPLTService {
         return response;
     }
 
-
     public List<AttachedPLTsInfo> getAttachedPLTs(long accumulationPackageId) throws RRException {
         AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
         if(accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);

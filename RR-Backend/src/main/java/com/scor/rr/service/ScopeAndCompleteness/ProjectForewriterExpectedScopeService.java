@@ -36,17 +36,15 @@ public class ProjectForewriterExpectedScopeService {
         File file = new File(path);
         List<String> fileNames = new ArrayList<>();
         for (final File fileEntry : Objects.requireNonNull(file.listFiles())) {
-                System.out.println(fileEntry.getName());
+            System.out.println(fileEntry.getName());
             fileNames.add(fileEntry.getName());
-            }
-
-        return fileNames;
         }
 
-
+        return fileNames;
+    }
 
     public List<ForeWriterExpectedScope> readForewriterFile(String fileName) throws RRException {
-        File file = new File(path+ separator+ fileName);
+        File file = new File(path + separator + fileName);
         if (!file.exists())
             throw new ExpectedScopeFileNotFoundException();
         if (!"txt".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
@@ -74,6 +72,16 @@ public class ProjectForewriterExpectedScopeService {
                     String currency = String.valueOf(sc.next()); //CURR
                     String perils = String.valueOf(sc.next()); // Perils
 
+
+                    String[] chunkedState = state.split("-");
+                    String finalState = chunkedState[0];
+                    if(chunkedState.length == 1) {
+                        chunkedState = state.split("_");
+                        finalState = chunkedState[0];
+                        if(chunkedState.length == 1) {
+                            finalState = state;
+                        }
+                    }
 //                    List<String> perilsList = Arrays.asList(perils.split(","));
 
                     listOfExpectedScopes.add(new ForeWriterExpectedScope(accntNum,
@@ -83,7 +91,7 @@ public class ProjectForewriterExpectedScopeService {
                             analysisName,
                             division,
                             country,
-                            state.split("-")[1],
+                            finalState,
                             perils,
                             tiv,
                             currency));
@@ -103,9 +111,9 @@ public class ProjectForewriterExpectedScopeService {
     public void storeTheExpectedScopeFac(String carName) throws RRException {
 
         List<String> namesOfFiles = getFileNames();
-        if(!namesOfFiles.isEmpty()){
-            for(String fileName : namesOfFiles){
-                if(fileName.split("_")[10].equals(carName)){
+        if (!namesOfFiles.isEmpty()) {
+            for (String fileName : namesOfFiles) {
+                if (fileName.split("_")[10].equals(carName)) {
                     List<ForeWriterExpectedScope> listScope = readForewriterFile(fileName);
                     Long projectID = getProjectId(fileName.split("_")[10]);
                     List<ProjectForewriterExpectedScope> finalList = new ArrayList<>();
@@ -125,12 +133,9 @@ public class ProjectForewriterExpectedScopeService {
         }
 
 
-
     }
 
     public Long getProjectId(String carId) {
         return projectForewriterExpectedScopeRepository.getProjectIdByCarRequestId(carId);
-
-        
     }
 }
