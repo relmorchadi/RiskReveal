@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -142,7 +143,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
     // Find Jobs from RR custom schema
     @Override
     public List<JobDto> findRunningJobsForUserRR(Long userId) {
-        List<JobEntity> myJobs = jobRepository.findAllByUserIdAndStatus(userId);
+        List<JobEntity> myJobs = jobRepository.findAllByUserIdAndSubmittedDate(userId);
         List<JobDto> jobs = new ArrayList<>();
 //        List<JobDto> jobs = myJobs.stream().map(j -> modelMapper.map(j, JobDto.class)).collect(Collectors.toList());
         for (JobEntity j : myJobs) {

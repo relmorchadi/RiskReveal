@@ -37,7 +37,8 @@ public class JobDto {
         this.finishedDate = finishedDate;
         this.jobTypeCode = jobTypeCode;
         this.tasks = tasks;
-        this.percent = tasks.stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.SUCCEEDED.getCode())).count() /
-                tasks.stream().filter(t -> !t.getStatus().equalsIgnoreCase(JobStatus.SUCCEEDED.getCode())).count();
+        if (tasks != null)
+            this.percent = tasks.stream().filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.SUCCEEDED.getCode())).count() /
+                    tasks.size();
     }
 }
