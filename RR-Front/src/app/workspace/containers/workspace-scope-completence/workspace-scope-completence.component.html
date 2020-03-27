@@ -150,7 +150,8 @@
 
       </div>
       <div class="table-wrap">
-        <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
+        <app-scope-table [selectedSortBy]="selectedSortBy"></app-scope-table>
+<!--        <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
           <ng-template pTemplate="header" let-columns>
             <tr>
               <th style="width: 420px;height: 74px;">
@@ -167,20 +168,16 @@
                     <i class="icon-minus-square" style="font-size: 25px;cursor: pointer;" (click)="closeAllRows()"></i>
                   </div>
 
-                  <!--<button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button-->
-                  <!--nzType="default">Attach PLTs-->
-                  <!--</button>-->
-                  <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="wsType !== 'FAC'"
+                  <button class="a-buttons-contained-micro" style="margin-top: 12px;"
                           (click)="addRemoveModal=true; rowInformation= null">Attach PLTs</button>
                 </div>
               </th>
               <ng-container *ngFor="let item of treatySections[0]; let i = index">
-                <th class="divided-col" style="width:90px; "
-                    *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')">
-                  <ng-container *ngIf="wsType === 'treaty'">
+                <th class="divided-col" style="width:90px; ">
+                  <ng-container *ngIf="wsStatus === 'treaty'">
                     <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
                   </ng-container>
-                  <ng-container *ngIf="wsType === 'fac'">
+                  <ng-container *ngIf="wsStatus === 'fac'">
                     <div style="text-align: center;">Division N° {{i + 1}}<br/>{{item.divisionInfo}}<br/>{{item.property}}</div>
                   </ng-container>
                   <div *ngIf="checkTreatySectionAttached(item) " class="icon-holder" nz-tooltip [nzTitle]="checked">
@@ -204,22 +201,22 @@
                 <div style="display: flex; justify-content: space-between;">
                   <div class="info-rp" (click)="toggleParentExpand(rowData)" [pRowToggler]="rowData">
 
-                    <!--<ng-container *ngIf="selectedSortBy == 'Minimum Grain / RAP'">-->
-                    <!--<div style="width: 20px;">-->
-                    <!--<div *ngIf="checkRowAttached(rowData)">-->
-                    <!--<ng-container>-->
-                    <!--<i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>-->
-                    <!--</ng-container>-->
-                    <!--</div>-->
-                    <!--</div>-->
-                    <!--<i *ngIf="!regionCodes[rowData.id]" style="margin-top: 5px;"-->
-                    <!--class="icon-keyboard_arrow_down_24px"></i>-->
-                    <!--<i *ngIf="regionCodes[rowData.id]" style="margin-top: 5px;" class="icon-keyboard_arrow_up_24px"></i>-->
-                    <!--<i class="icon-map-marker-alt"></i>-->
-                    <!--<span class="code-rp">-->
-                    <!--{{rowData.id}}-->
-                    <!--</span><span style="font-weight: 400">{{rowData.description}}</span>-->
-                    <!--</ng-container>-->
+&lt;!&ndash;                    <ng-container *ngIf="selectedSortBy == 'Minimum Grain / RAP'">
+                    <div style="width: 20px;">
+                    <div *ngIf="checkRowAttached(rowData)">
+                    <ng-container>
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                    </ng-container>
+                    </div>
+                    </div>
+                    <i *ngIf="!regionCodes[rowData.id]" style="margin-top: 5px;"
+                    class="icon-keyboard_arrow_down_24px"></i>
+                    <i *ngIf="regionCodes[rowData.id]" style="margin-top: 5px;" class="icon-keyboard_arrow_up_24px"></i>
+                    <i class="icon-map-marker-alt"></i>
+                    <span class="code-rp">
+                    {{rowData.id}}
+                    </span><span style="font-weight: 400">{{rowData.description}}</span>
+                    </ng-container>&ndash;&gt;
 
                     <ng-container>
                       <div style="width: 33px;margin-top: 5px;">
@@ -262,20 +259,20 @@
                     </nz-dropdown>
 
                   </div>
-                  <!--<div *ngIf="selectedSortBy == 'Minimum Grain / RAP'">-->
+                  &lt;!&ndash;<div *ngIf="selectedSortBy == 'Minimum Grain / RAP'">&ndash;&gt;
 
-                  <!--<nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">-->
-                  <!--<a nz-dropdown>-->
-                  <!--<i class="icon-menu_24px"-->
-                  <!--[ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}"></i>-->
-                  <!--</a>-->
-                  <!--<ul nz-menu style="font-size: 12px">-->
-                  <!--<li nz-menu-item (click)="rowData.override = true">Override</li>-->
-                  <!--<li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>-->
-                  <!--</ul>-->
-                  <!--</nz-dropdown>-->
+                  &lt;!&ndash;<nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">&ndash;&gt;
+                  &lt;!&ndash;<a nz-dropdown>&ndash;&gt;
+                  &lt;!&ndash;<i class="icon-menu_24px"&ndash;&gt;
+                  &lt;!&ndash;[ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}"></i>&ndash;&gt;
+                  &lt;!&ndash;</a>&ndash;&gt;
+                  &lt;!&ndash;<ul nz-menu style="font-size: 12px">&ndash;&gt;
+                  &lt;!&ndash;<li nz-menu-item (click)="rowData.override = true">Override</li>&ndash;&gt;
+                  &lt;!&ndash;<li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>&ndash;&gt;
+                  &lt;!&ndash;</ul>&ndash;&gt;
+                  &lt;!&ndash;</nz-dropdown>&ndash;&gt;
 
-                  <!--</div>-->
+                  &lt;!&ndash;</div>&ndash;&gt;
                 </div>
 
               </th>
@@ -460,7 +457,7 @@
                       </div>
                       <span class="plt-info">{{plt.pltId | textLength}}</span>
                       <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName}}</span>
-                      <!--<label nz-checkbox></label>-->
+                      &lt;!&ndash;<label nz-checkbox></label>&ndash;&gt;
                       <div class="plt-info peril-indicator"
                            [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>
                       <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
@@ -479,9 +476,8 @@
                 </tr>
               </ng-container>
             </ng-container>
-
           </ng-template>
-        </p-table>
+        </p-table>-->
       </div>
 
     </div>

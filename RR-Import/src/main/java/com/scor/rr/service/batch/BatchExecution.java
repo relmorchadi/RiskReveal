@@ -1,5 +1,7 @@
 package com.scor.rr.service.batch;
 
+import com.google.common.base.Joiner;
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.domain.enums.JobPriority;
@@ -14,6 +16,7 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -123,27 +126,79 @@ public class BatchExecution {
 
     public boolean queueImportLossData(String instanceId, Long projectId, Long userId) {
 
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
+        }
+
         List<Long> rlImportSelections = rlImportSelectionRepository.findRLImportSelectionIdByProjectId(projectId);
         List<Long> rlPortfolioSelections = rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId);
 
-        if (rlImportSelections != null && !rlImportSelections.isEmpty()
-                && rlPortfolioSelections != null && !rlPortfolioSelections.isEmpty()) {
+        if ((rlImportSelections != null && !rlImportSelections.isEmpty())
+                || (rlPortfolioSelections != null && !rlPortfolioSelections.isEmpty())) {
             Map<String, String> params = extractNamingProperties(projectId, instanceId);
 
-//            JobParams jobParams = JobParams.builder()
-//                    .instanceId(instanceId)
-//                    .projectId(projectId)
-//                    .userId(userId)
-//                    .params(params)
-//                    .rlImportSelections(rlImportSelections)
-//                    .rlPortfolioSelections(rlPortfolioSelections)
-//                    .build();
-
             if (params != null) {
-                params.put("sourceResultIdsInput", String.join(";", rlImportSelections.toArray(new String[rlImportSelections.size()])));
-                params.put("rlPortfolioSelectionIds", String.join(";", rlPortfolioSelections.toArray(new String[rlPortfolioSelections.size()])));
+                params.put("projectId", String.valueOf(projectId));
+                params.put("instanceId", instanceId);
+                params.put("userId", String.valueOf(userId));
+
+                Map<String, String> jobParams = new HashMap<>(params);
+                Joiner joiner = Joiner.on("; ").skipNulls();
+
+                jobParams.put("sourceResultIdsInput", joiner.join(";", rlImportSelections));
+                jobParams.put("rlPortfolioSelectionIds", joiner.join(";", rlPortfolioSelections));
+                JobEntity job = jobManager.createJob(jobParams, JobPriority.MEDIUM.getCode(), userId);
+
+                JobParametersBuilder builder = new JobParametersBuilder();
+                builder
+                        .addString("reinsuranceType", params.get("reinsuranceType"))
+                        .addString("prefix", params.get("prefix"))
+                        .addString("clientName", params.get("clientName"))
+                        .addString("clientId", params.get("clientId"))
+                        .addString("contractId", params.get("contractId"))
+                        .addString("division", params.get("division"))
+                        .addString("uwYear", params.get("uwYear"))
+                        .addString("sourceVendor", params.get("sourceVendor"))
+                        .addString("modelSystemVersion", params.get("modelSystemVersion"))
+                        .addString("periodBasis", params.get("periodBasis"))
+                        .addLong("importSequence", Long.valueOf(params.get("importSequence")))
+                        .addString("jobType", params.get("jobType"))
+                        .addString("marketChannel", params.get("marketChannel"))
+                        .addString("carId", params.get("carId"))
+                        .addString("lob", params.get("lob"))
+                        .addString("userId", params.get("userId"))
+                        .addString("projectId", params.get("projectId"))
+                        .addString("instanceId", params.get("instanceId"))
+                        .addDate("runDate", new Date());
+
+                for (Long rlImportSelectionId : rlImportSelections) {
+                    params.put("sourceResultIdsInput", String.valueOf(rlImportSelectionId));
+                    params.put("rlPortfolioSelectionIds", "");
+
+                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_ANALYSIS);
+
+                    builder
+                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
+                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
+                            .addString("taskId", String.valueOf(task.getTaskId()));
+
+                    ((JobManagerImpl) jobManager).submitTask(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
+                }
+
+                for (Long rlPortfolioSelection : rlPortfolioSelections) {
+                    params.put("rlPortfolioSelectionIds", String.valueOf(rlPortfolioSelection));
+                    params.put("sourceResultIdsInput", "");
+
+                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_PORTFOLIO);
+
+                    builder
+                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
+                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
+                            .addString("taskId", String.valueOf(task.getTaskId()));
+
+                    ((JobManagerImpl) jobManager).submitTask(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
+                }
             }
-            //jobManager.createJob();
         }
         return true;
     }

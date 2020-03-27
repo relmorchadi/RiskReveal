@@ -2,10 +2,13 @@ package com.scor.rr.service.batch;
 
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.ModelAnalysisEntity;
+import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.enums.RRLossTableType;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.enums.XLTOT;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.XMLWriter;
 import com.scor.rr.service.state.TransformationBundle;
@@ -18,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +48,13 @@ public class ModellingOptionsExtractor extends AbstractWriter {
     @Autowired
     private RmsService rmsService;
 
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
+
     @Value("${ihub.treaty.out.path}")
     private String iHub;
 
@@ -53,39 +64,52 @@ public class ModellingOptionsExtractor extends AbstractWriter {
 
     public RepeatStatus extractModellingOptions() {
 
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractModellingOptions", 10);
 
-        if (marketChannel.equalsIgnoreCase("Treaty")) {
-            log.debug("Starting ELTConformer");
-            log.debug("Starting ModelingOptionsExtractor.extract");
+        try {
+            if (marketChannel.equalsIgnoreCase("Treaty")) {
+                log.debug("Starting ELTConformer");
+                log.debug("Starting ModelingOptionsExtractor.extract");
 
-            for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
+                for (TransformationBundle bundle : transformationPackage.getTransformationBundles()) {
 
-                String instanceId = bundle.getInstanceId();
+                    String instanceId = bundle.getInstanceId();
 
-                String modelingOptions = rmsService.getAnalysisModellingOptionSettings(instanceId, bundle.getRlAnalysis().getRdmId(),
-                        bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getRlId());
-                log.info("modelingOptions: {}", modelingOptions);
+                    String modelingOptions = rmsService.getAnalysisModellingOptionSettings(instanceId, bundle.getRlAnalysis().getRdmId(),
+                            bundle.getRlAnalysis().getRdmName(), bundle.getRlAnalysis().getRlId());
+                    log.info("modelingOptions: {}", modelingOptions);
 
-                List<String> options = null;
-                try {
-                    options = Utils.parseXMLForModelingOptions(modelingOptions);
-                } catch (DocumentException e) {
-                    log.error("modelingOptions DocumentException");
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    log.error("An exception has occurred while parsing modelling options xml");
-                    e.printStackTrace();
+                    List<String> options = null;
+                    try {
+                        options = Utils.parseXMLForModelingOptions(modelingOptions);
+                    } catch (DocumentException e) {
+                        log.error("modelingOptions DocumentException");
+                        jobManager.onTaskError(Long.valueOf(taskId));
+                        jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        log.error("An exception has occurred while parsing modelling options xml");
+                        jobManager.onTaskError(Long.valueOf(taskId));
+                        jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                        e.printStackTrace();
+                    }
+
+                    bundle.setModelingOptionsOfRRLT(options);
+
+                    writeFile(bundle.getModelAnalysis(), bundle.getConformedRRLT(), modelingOptions);
+
+                    log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
                 }
-
-                bundle.setModelingOptionsOfRRLT(options);
-
-                writeFile(bundle.getModelAnalysis(), bundle.getConformedRRLT(), modelingOptions);
-
-                log.info("Finish import progress STEP 8 : EXTRACT_MODELING_OPTIONS for analysis: {}", bundle.getSourceResult().getRlImportSelectionId());
+                log.debug("ModelingOptionsExtractor.extract completed");
             }
-            log.debug("ModelingOptionsExtractor.extract completed");
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
         }
-        return RepeatStatus.FINISHED;
     }
 
     private void writeFile(ModelAnalysisEntity modelAnalysisEntity, LossDataHeaderEntity rrLossTable, String options) {

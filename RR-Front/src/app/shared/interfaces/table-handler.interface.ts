@@ -50,7 +50,8 @@ export interface TableHandlerInterface {
 
   onColumnResize(event);
   onManageColumns(columns: Column[]);
-  onFilter(index: number, filter: string);
+  onFilter(index: number, filter: any);
+  onFilterByStatus(index: number, filter: any);
   onResetFilter();
   onSort(index: number);
   onResetSort();

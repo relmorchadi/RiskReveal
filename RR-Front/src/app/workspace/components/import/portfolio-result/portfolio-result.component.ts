@@ -5,6 +5,8 @@ import componentData from './data';
 import * as _ from 'lodash';
 import {WorkspaceState} from "../../../store/states";
 import {take} from "rxjs/operators";
+import * as fromWs from "../../../store/actions";
+import {TableFilterPipe} from "../../../../shared/pipes/table-filter.pipe";
 
 @Component({
     selector: 'portfolio-result',
@@ -32,6 +34,11 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
     @ViewChild('exposureSummaryTable')
     tables: any;
+
+    allCheckedItems: boolean;
+    indeterminateItems: boolean;
+
+    selectedRows;
 
     refs = {
         currencies: [
@@ -65,9 +72,12 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
             command: (event) => this.deletePortfolioFromBasket(event)
         },
     ];
+    filter={};
 
-    constructor(private store: Store) {
+    constructor(private store: Store, private _filterPipe: TableFilterPipe) {
     }
+
+    trackBy = (index, item) => item.rlPortfolioId;
 
     ngOnInit() {
         this.loadTablesCols();
@@ -77,6 +87,14 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         if (changes.context) {
             this.loadTablesCols();
         }
+        this.updateTreeStateCheckBox();
+    }
+
+    onFilter(kw, field, mode){
+        if(_.isEmpty(kw))
+            this.filter = _.omit(this.filter, [field]);
+        else
+            this.filter= _.merge({}, this.filter, {[field]: kw});
     }
 
     private loadTablesCols() {
@@ -91,7 +109,7 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         }
     }
 
-    resetSort(){
+    resetSort() {
         this.tables.sortOrder = this.tables.defaultSortOrder;
         this.tables.sortField = '';
         this.tables.multiSortMeta = null;
@@ -104,8 +122,39 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
         }))
     }
 
-    checkRow($event, rowData, type) {
+    updateAllChecked(nextValue) {
+        if (nextValue)
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids: _.map(this.filteredPortfolio, item => item.rlPortfolioId)
+            }));
+        else {
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids: []
+            }));
+        }
+    }
 
+    getSelection(data) {
+        if (data.length > 1) {
+            this.store.dispatch(new fromWs.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk',
+                ids: _.map(data, a => a.rlPortfolioId)
+            }));
+        }
+    }
+
+    updateSelection(id) {
+        if (!(window as any).event.ctrlKey && !(window as any).event.shiftKey) {
+            this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+                action: 'selectChunk', ids: [id]
+            }));
+        }
+    }
+
+    checkRow(id) {
+        this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
+            action: 'selectOne', ids: [id]
+        }));
     }
 
     selectRows(rowData, index) {
@@ -132,6 +181,16 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
 
     savePortfolioSelection() {
         this.saveEmitter.emit('PORTFOLIO');
+    }
+
+    get filteredPortfolio(){
+        return this._filterPipe.transform(this.portfolios, this.filter);
+    }
+
+    private updateTreeStateCheckBox() {
+        const selection = _.filter(this.portfolios, item => item.selected);
+        this.allCheckedItems = selection.length === this.portfolios.length && selection.length > 0;
+        this.indeterminateItems = (selection.length < this.portfolios.length && selection.length > 0);
     }
 
 }

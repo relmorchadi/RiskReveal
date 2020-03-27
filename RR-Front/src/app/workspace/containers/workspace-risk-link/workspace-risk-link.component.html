@@ -339,9 +339,9 @@
                         <ng-container *ngFor="let col of columns">
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
                               *ngIf="col.header === 'selected'">
-                            <!--<label nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="updateAllChecked('portfolio')"
-                                   [nzIndeterminate]="indeterminatePortfolio"></label>-->
+                            <label nz-checkbox [ngModel]="allCheckedPortolfios"
+                                   (ngModelChange)="updateAllChecked('portfolio',$event)"
+                                   [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
                               *ngIf="col.header === 'Imported'">
@@ -413,9 +413,9 @@
                           <ng-container *ngFor="let col of columns">
                             <th [ngClass]="{'select-header': col.header === 'selected'}"
                                 *ngIf="col.header === 'selected'">
-                              <!--<label nz-checkbox [ngModel]="allCheckedAnalysis"
-                                     (ngModelChange)="updateAllChecked('analysis')"
-                                     [nzIndeterminate]="indeterminateAnalysis"></label>-->
+                              <label nz-checkbox [ngModel]="allCheckedAnalysis"
+                                     (ngModelChange)="updateAllChecked('analysis',$event)"
+                                     [nzIndeterminate]="indeterminateAnalysis"></label>
                             </th>
                             <th [ngClass]="{'select-header': col.header === 'selected'}"
                                 *ngIf="col.header === 'Imported'">

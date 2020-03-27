@@ -236,8 +236,18 @@ export class PatchAnalysisResultAction{
   constructor(public payload: any) {}
 }
 
+export class ToggleAnalysisResultSelectionAction{
+  static readonly type = '[Risk Link] Toggle Analysis result Selection';
+  constructor(public payload: any) {}
+}
+
 export class PatchPortfolioResultAction{
   static readonly type = '[Risk Link] Patch Portfolio result';
+  constructor(public payload: any) {}
+}
+
+export class TogglePortfolioResultSelectionAction{
+  static readonly type = '[Risk Link] Toggle Portfolio result Selection';
   constructor(public payload: any) {}
 }
 

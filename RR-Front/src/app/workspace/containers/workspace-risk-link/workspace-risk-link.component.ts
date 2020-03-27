@@ -202,6 +202,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.importInit();
         this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
             this.state = _.merge({}, value);
+            this.UpdateCheckboxStatus();
             this.detectChanges();
         });
         this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
@@ -229,7 +230,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             this.detectChanges();
         });
         this.importConfig$.pipe(this.unsubscribeOnDestroy)
-            .subscribe(val => this.importConfig=val);
+            .subscribe(val => this.importConfig = val);
 
         this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
             this.hyperLinksConfig = {wsId, uwYear: year};
@@ -392,7 +393,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         })
     }
 
-    changeDataSourcesTabs(tabEvent){
+    changeDataSourcesTabs(tabEvent) {
         console.log('Change DataSources Tab', tabEvent);
         this._dataSourcesDropdownInit(this.datasourceKeywordFc.value || '');
         setTimeout(() => {
@@ -401,7 +402,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     lazyLoadDataSources(lazyLoadEvent, type?) {
-        console.log('Lazy load dataSources', lazyLoadEvent, type,this.state.listEdmRdm.totalElements);
+        console.log('Lazy load dataSources', lazyLoadEvent, type, this.state.listEdmRdm.totalElements);
         const {first, rows} = lazyLoadEvent.$event;
         if (first + rows < this.state.listEdmRdm.totalElements) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
@@ -423,7 +424,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.detectChanges();
     }
 
-    private _dataSourcesDropdownInit(keyword=''){
+    private _dataSourcesDropdownInit(keyword = '') {
         if (this.displayDropdownRDMEDM) {
             this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
                 instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
@@ -457,7 +458,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             "workspaceUwYear": this.workspaceInfo.uwYear
         })]);
     }
-
 
 
     /** Manage Columns Method's */
@@ -592,43 +592,20 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             });
     }
 
-    getIndeterminate() {
-        const data = [];  //this.filterData(this.getTableData());
-        const selection = _.filter(data, item => item.selected);
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            this.indeterminateAnalysis = (selection.length < data.length && selection.length > 0);
-        } else {
-            this.indeterminatePortfolio = (selection.length < data.length && selection.length > 0);
-        }
-        this.detectChanges();
-    }
-
-    getCheckedData() {
-        if (this.state.selectedEDMOrRDM === 'EDM') {
-            const selection = _.filter(this.state.portfolios.data, item => item.selected);
-            this.allCheckedAnalysis = selection.length === this.state.portfolios.data.length && selection.length > 0;
-        } else {
-            const selection = _.filter(this.state.analysis.data, item => item.selected);
-            this.allCheckedPortolfios = selection.length === this.state.analysis.data.length && selection.length > 0;
-        }
-        this.detectChanges();
-    }
-
     UpdateCheckboxStatus() {
-        this.getCheckedData();
-        this.getIndeterminate();
+        const data = this.state.selectedEDMOrRDM === 'RDM' ? this.state.analysis.data : this.state.portfolios.data;
+        const selection = _.filter(data, item => item.selected);
+        if (this.state.selectedEDMOrRDM === 'EDM') {
+            this.allCheckedPortolfios = selection.length === data.length && selection.length > 0;
+            this.indeterminatePortfolio = (selection.length < data.length && selection.length > 0);
+        } else {
+            this.allCheckedAnalysis = selection.length === data.length && selection.length > 0;
+            this.indeterminateAnalysis = (selection.length < data.length && selection.length > 0);
+        }
     }
 
     getTitle() {
         return this.state.selectedEDMOrRDM === 'RDM' ? 'Analysis' : 'Portfolio';
-    }
-
-    filterData(data) {
-        if (this.state.selectedEDMOrRDM === 'RDM') {
-            return this.tableFilter.transform(data, [{}, this.filterAnalysis]);
-        } else {
-            return this.tableFilter.transform(data, [{}, this.filterPortfolio]);
-        }
     }
 
     clearSelection(item, target) {
@@ -769,37 +746,35 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         return finalFilter;
     }
 
-    updateAllChecked(scope) {
+    updateAllChecked(scope,nextValue) {
         const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
-        /**
-         if (scope === 'analysis') {
-            if (selectedInChunk === 0) {
+        if (scope === 'analysis') {
+            this.allCheckedAnalysis = nextValue;
+            if (nextValue) {
                 this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
                     action: 'selectChunk',
-                    data: _.map(this.filterData(this.getTableData()), a => a.rlAnalysisId)
+                    data: _.map(this.state.analysis.data, a => a.rlAnalysisId)
                 }));
             } else {
-                this.allCheckedAnalysis = true;
                 this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
                     action: 'unSelectChunk',
                     data: this.getSelectedAnalysisIds()
                 }));
             }
         } else if (scope === 'portfolio') {
-            if (selectedInChunk === 0) {
+            this.allCheckedPortolfios = nextValue;
+            if (nextValue) {
                 this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                     action: 'selectChunk',
-                    data: _.map(this.filterData(this.getTableData()), p => p.rlPortfolioId)
+                    data: _.map(this.state.portfolios.data, p => p.rlPortfolioId)
                 }));
             } else {
-                this.allCheckedPortolfios = true;
                 this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                     action: 'unSelectChunk',
                     data: this.getSelectedPortfolioIds()
                 }));
             }
         }
-         */
         this.UpdateCheckboxStatus();
     }
 
@@ -1002,7 +977,11 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             const carId = this.selectedProject.carRequestId;
             this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId, config: this.importConfig}));
         } else {
-            this.dispatch(new fromWs.LoadRiskLinkDataAction({type: this.tabStatus, carId: null, config: this.importConfig}));
+            this.dispatch(new fromWs.LoadRiskLinkDataAction({
+                type: this.tabStatus,
+                carId: null,
+                config: this.importConfig
+            }));
         }
     }
 

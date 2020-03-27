@@ -104,11 +104,12 @@
                       (onCancel)="closePopUp()"></app-manage-columns>
   <div class="PLT-slider closed-slider">
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
-      <i class="clickable-item icon-settings_24px" style="font-size: 24px"
+      <i class="clickable-item icon-settings_24px" style="font-size: 24px" nz-tooltip="Dashboard Preference"
          (click)="openRightSlider()"></i>
     </div>
   </div>
-  <div class="collapsed-slider" [ngStyle]="{'display': rightSliderCollapsed ? 'flex' : 'none'}">
+  <div class="collapsed-slider" [ngStyle]="{'display': rightSliderCollapsed ? 'flex' : 'none'}"
+  (clickOutside)="detectClickOutside()">
     <div nz-row class="slider-header-item">
       <div nz-col class="center-items" nzSpan="8">
         <i class="clickable-item icon-settings_24px" style="color: #fff; font-size: 24px"
@@ -118,23 +119,25 @@
         Dashboard <br>
         Preferences
         <button nz-popconfirm (nzOnConfirm)="addDashboard()" (nzOnCancel)="emptyField()" (click)="focusInput()" [nzTitle]="dash" class="add-workspace-btn" nz-button
-                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" [(nzVisible)]="showAdd" #popConfirm>
+                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" (nzVisibleChange)="visibilityCheck($event)" [(nzVisible)]="showAdd" #popConfirm>
           <i nz-icon type="plus"></i>
         </button>
         <ng-template #dash>
-          <p class="popover-title">Add New Dashboard</p>
-          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name"
-                 class="a-textfield-standard" type="text" #searchInput>
+          <div>
+            <p class="popover-title">Add New Dashboard</p>
+            <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name"
+                   class="a-textfield-standard" type="text" #searchInput>
+          </div>
         </ng-template>
       </div>
     </div>
     <div class="slider-content">
       <div style="flex:1">
-        <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
+        <div class="collapse-command" (click)="rightSliderCollapsed = !rightSliderCollapsed">
           <i class="icon-arrow_forward_ios_24px"></i>
         </div>
         <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
-                   nzShowSearch class="a-dropdown-small"
+                   nzShowSearch class="a-dropdown-small" (nzOpenChange)="visibilityCheck($event)"
                    nzPlaceHolder="Select Dashboard" [ngModel]="idSelected">
           <nz-option *ngFor="let d of dashboards" nzCustomContent [nzLabel]="d?.name" [nzValue]="d?.id">
             {{d?.name}}
@@ -147,11 +150,11 @@
                  (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard?.name">
           <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted" *ngIf="dashboards?.length > 1"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
-            nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'"
+            nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'" (nzVisibleChange)="visibilityCheck($event)"
           ></i>
           <i nz-popconfirm nzPlacement="top" [nzTitle]="refDelete" *ngIf="dashboards?.length === 1"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
-             nzOkText="OK" [nzOkType]="'primary'" nzCancelText=""
+             nzOkText="OK" [nzOkType]="'primary'" nzCancelText="" (nzVisibleChange)="visibilityCheck($event)"
           ></i>
           <ng-template #refDelete>
             <p class="body-2">It's impossible to delete this dashboard</p>
@@ -164,7 +167,7 @@
         <div class="search-Mode">
           <span class="title">SEARCH MODE</span>
           <nz-select class="a-dropdown-small" style="width: 150px;" nzShowSearch
-            [nzAllowClear]="false" nzPlaceHolder="Select Search Mode"
+            [nzAllowClear]="false" nzPlaceHolder="Select Search Mode" (nzOpenChange)="visibilityCheck($event)"
             [ngModel]="selectedDashboard?.searchMode" [ngModelOptions]="{standalone: true}"
                      (ngModelChange)="updateDash(selectedDashboard, {searchMode: $event})"
           >

@@ -22,6 +22,7 @@ import {NgxEchartsModule} from 'ngx-echarts';
 import { AngularResizeElementModule } from 'angular-resize-element';
 import {SERVICES} from "./services";
 
+
 @NgModule({
   declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES, TrimFormatPipe, TrimSecondaryFormatPipe],
   imports: [

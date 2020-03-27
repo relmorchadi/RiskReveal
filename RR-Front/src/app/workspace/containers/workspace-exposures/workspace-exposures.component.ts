@@ -27,11 +27,13 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     wsIdentifier;
     workspaceInfo: any;
     tableConfig$: Observable<ExposuresMainTableConfig>;
+    tableConfig:ExposuresMainTableConfig;
     tableColumnsConfig$:Observable<any>;
     rightMenuConfig$: Observable<ExposuresRightMenuConfig>;
     headerConfig$: Observable<ExposuresHeaderConfig>;
     sortConfig:any;
     selectedHeaderConfig:any;
+    projectId:any;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
@@ -42,23 +44,39 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         this.rightMenuConfig$ = new BehaviorSubject<ExposuresRightMenuConfig>(new ExposuresRightMenuConfig());
         this.headerConfig$ = of<ExposuresHeaderConfig>( {exposureViews:[], financialPerspectives:[], currencies:[], divisions:[], portfolios:[], summariesDefinitions:[]});
         this.sortConfig = {};
-        this.initSelectedHeaderConfig();
+        this.selectedHeaderConfig = {
+            division:null,
+            portfolio:null,
+            currency:null,
+            exposureView:null,
+            financialPerspective:null
+        }
+        this.tableConfig = new ExposuresMainTableConfig();
     }
 
     ngOnInit() {
-        this.tableColumnsConfig$ = this.exposuresTableService.loadTableColumnsConfig();
-        this.tableConfig$ = this.exposuresTableService.loadTableConfig();
         this.selectedProject$.pipe(this.unsubscribeOnDestroy).subscribe(project => {
-            if (project) {
-                this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig(project.projectId);
-                this.initSelectedHeaderConfig();
+            if (project != undefined) {
+                this.projectId = project.projectId;
+                this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig(this.projectId);
+                this.headerConfig$.subscribe(headerConfig => {
+                        if (headerConfig)
+                            this.initSelectedHeaderConfig(headerConfig);
+                    },()=> {
+                    },() => {
+                        this.tableConfig$ = this.exposuresTableService.loadTableConfig({
+                            ...this.selectedHeaderConfig,
+                            projectId:this.projectId
+                        });
+                        this.detectChanges();
+                    })
             }
         });
-        this.tableConfig$.pipe(first()).subscribe(tableConfig => {
+        /*this.tableConfig$.pipe(first()).subscribe(tableConfig => {
             _.forEach([...tableConfig.frozenColumns, ...tableConfig.columns], column => {
                 this.sortConfig[column.field] = 0;
             })
-        })
+        })*/
     }
 
     patchState({wsIdentifier, data}: any): void {
@@ -82,13 +100,14 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         super.detectChanges();
     }
 
-    initSelectedHeaderConfig() {
+    initSelectedHeaderConfig(headerConfig) {
+        console.log(headerConfig);
         this.selectedHeaderConfig = {
-            division:null,
-            portfolio:null,
-            currency:null,
-            exposureView:null,
-            financialPerspective:null
+            division:headerConfig.divisions[0],
+            portfolio:headerConfig.portfolios[0],
+            currency:headerConfig.currencies[0],
+            exposureView:'tiv',
+            financialPerspective:headerConfig.financialPerspectives[0]
         }
     }
     sortTableColumn() {
@@ -125,22 +144,42 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         switch ($event.type) {
             case 'changeCurrency' : {
                 this.selectedHeaderConfig.currency = $event.payload;
-                this.tableConfig$ = this.exposuresHeaderService.changeCurrency($event.payload);
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                                    ...this.selectedHeaderConfig,
+                                    projectId:this.projectId
+                                }
+                    );
                 break;
             }
             case 'changeFinancialUnit' : {
                 this.selectedHeaderConfig.financialPerspective = $event.payload;
-                this.tableConfig$ = this.exposuresHeaderService.changeFinancialUnit($event.payload);
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId:this.projectId
+                    }
+                );
                 break;
             }
             case 'changeDivision' : {
                 this.selectedHeaderConfig.division = $event.payload;
-                this.tableConfig$ = this.exposuresHeaderService.changeDivision($event.payload);
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId:this.projectId
+                    }
+                );
                 break;
             }
             case 'changePortfolio' : {
                 this.selectedHeaderConfig.portfolio = $event.payload;
-                this.tableConfig$ = this.exposuresHeaderService.changePortfolio($event.payload);
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId:this.projectId
+                    }
+                );
                 break;
             }
             case 'changeView' : {

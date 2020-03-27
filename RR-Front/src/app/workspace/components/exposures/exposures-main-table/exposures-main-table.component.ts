@@ -16,6 +16,7 @@ import {
 } from "@angular/core";
 import {Store} from "@ngxs/store";
 import {ExposuresMainTableConfig} from "../../../model/exposures-main-table-config.model";
+import {FAKEDATA} from "../../../containers/workspace-exposures/fakeExposuresData";
 
 @Component({
     selector: 'exposures-main-table',
@@ -28,19 +29,20 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
 
 
     @Input('tableConfig') tableConfig: ExposuresMainTableConfig;
-    @Input('tableColumnsConfig') tableColumnsConfig: any;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
     @Input('sortConfig') sortConfig: any;
     private selectedRowRegionPeril: any;
     private hoveredRow: any;
+    private frozenColumns:any;
 
     constructor(private store: Store, changeDetectorRef: ChangeDetectorRef) {
         this.selectedRowRegionPeril = null;
         this.hoveredRow = null;
+        this.frozenColumns = FAKEDATA.frozenColumns;
     }
 
     ngOnInit(): void {
-
+        console.log('tableConfig ==> ',this.tableConfig);
     }
 
     ngAfterViewInit(): void {

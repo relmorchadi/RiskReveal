@@ -128,49 +128,49 @@ public class PLTManagerView {
     private String pltCcy;
 
     @Column(name = "aal")
-    private Integer aal;
+    private Double aal;
 
     @Column(name = "cov")
-    private Integer cov;
+    private Double cov;
 
     @Column(name = "stdDev")
-    private Integer stdDev;
+    private Double stdDev;
 
     @Column(name = "oep10")
-    private Integer oep10;
+    private Double oep10;
 
     @Column(name = "oep50")
-    private Integer oep50;
+    private Double oep50;
 
     @Column(name = "oep100")
-    private Integer oep100;
+    private Double oep100;
 
     @Column(name = "oep250")
-    private Integer oep250;
+    private Double oep250;
 
     @Column(name = "oep500")
-    private Integer oep500;
+    private Double oep500;
 
     @Column(name = "oep1000")
-    private Integer oep1000;
+    private Double oep1000;
 
     @Column(name = "aep10")
-    private Integer aep10;
+    private Double aep10;
 
     @Column(name = "aep50")
-    private Integer aep50;
+    private Double aep50;
 
     @Column(name = "aep100")
-    private Integer aep100;
+    private Double aep100;
 
     @Column(name = "aep250")
-    private Integer aep250;
+    private Double aep250;
 
     @Column(name = "aep500")
-    private Integer aep500;
+    private Double aep500;
 
     @Column(name = "aep1000")
-    private Integer aep1000;
+    private Double aep1000;
 
     @Column(name = "createdDate")
     private Date createdDate;

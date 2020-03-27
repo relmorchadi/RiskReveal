@@ -19,7 +19,7 @@ public interface RLImportSelectionRepository extends JpaRepository<RLImportSelec
     @Query("SELECT rlImportSelectionId FROM RLImportSelection WHERE projectId=:projectId")
     List<Long> findRLImportSelectionIdByProjectId(Long projectId);
 
-    @Procedure("dbonew.uspRiskLinkDeleteAnalysisSummary")
+    @Procedure("dbo.uspRiskLinkDeleteAnalysisSummary")
     void deleteByRlAnalysisIdAndProjectId(@Param("rlAnalysisId") Long analysisId, @Param("projectId") Long projectId);
 
 }

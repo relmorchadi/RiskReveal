@@ -26,31 +26,31 @@ public interface WorkspaceEntityRepository extends JpaRepository<WorkspaceEntity
     Optional<WorkspaceEntity> findWorkspaceByPltHeaderId(@Param("pltHeaderId") Long pltHeaderId);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_DistinctRegionPerilsInScope @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DistinctRegionPerilsInScope @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRegionPerilsInScopeCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_ExposureSummariesForExpectedScope @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_ExposureSummariesForExpectedScope @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getExpectedExposureSummariesCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_DistinctRegionPerilsByQualifyingPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DistinctRegionPerilsByQualifyingPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRegionPerilsByQualifyingPLTsCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_DistinctRPByPublishedToPricingQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DistinctRPByPublishedToPricingQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRPByPublishedToPricingQualifiedPLTsCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_DistinctRPByPricedQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DistinctRPByPricedQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRPByPricedQualifiedPLTsCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_DistinctRPByAccumulatedQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
+    @Query(value = "exec dbo.usp_DistinctRPByAccumulatedQualifiedPLTs @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear", nativeQuery = true)
     List<Map<String, Object>> getDistinctRPByAccumulatedQualifiedPLTsCount(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear);
 
     @Transactional
-    @Query(value = "exec dbonew.usp_WorkspaceHeaderStatistics @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear, @userId= :userId", nativeQuery = true)
+    @Query(value = "exec dbo.usp_WorkspaceHeaderStatistics @WorkspaceContextCode= :workspaceContextCode, @UwYear= :uwYear, @userId= :userId", nativeQuery = true)
     List<Map<String, Object>> getWorkspaceHeaderStatistics(@Param("workspaceContextCode") String workspaceContextCode, @Param("uwYear") Integer uwYear, @Param("userId") Long userId);
 
 

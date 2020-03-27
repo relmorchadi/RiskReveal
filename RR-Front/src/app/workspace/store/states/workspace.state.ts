@@ -467,12 +467,12 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence;
+    return state.content[wsIdentifier].scopeOfCompleteness.data;
   }
 
-  static getPltsForScopeCompleteness(wsIdentifier: string) {
+  static getScopeCompleteness(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompleteness.data`), 'pltId'));
   }
 
   /***********************************
@@ -549,11 +549,6 @@ export class WorkspaceState {
   @Action(fromWS.AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
     return this.wsService.addNewProject(ctx, payload);
-  }
-
-  @Action(fromWS.AddNewFacProject)
-  addNewFacProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewFacProject) {
-    return this.wsService.addNewFacProject(ctx, payload);
   }
 
   @Action(fromWS.EditProject)
@@ -1145,10 +1140,21 @@ export class WorkspaceState {
     return this.riskLinkFacade.patchAnalysisResult(ctx, payload);
   }
 
+  @Action(fromWS.ToggleAnalysisResultSelectionAction)
+  toggleAnalysisResultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.toggleAnalysisResultSelection(ctx, payload);
+  }
+
   @Action(fromWS.PatchPortfolioResultAction)
   patchPortfolioResult(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.patchPortfolioResult(ctx, payload);
   }
+
+  @Action(fromWS.TogglePortfolioResultSelectionAction)
+  togglePortfolioResultSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchAnalysisResultAction) {
+    return this.riskLinkFacade.togglePortfolioResultSelection(ctx, payload);
+  }
+
   @Action(fromWS.DeleteFromImportBasketAction)
   deleteFromImportBasket(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchPortfolioResultAction) {
     return this.riskLinkFacade.deleteFromImportBasket(ctx, payload);

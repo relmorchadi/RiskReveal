@@ -96,7 +96,9 @@ export class CalibrationTableService {
          head = _.slice(this.columnsConfigCache.frozenColumns, 0, this.columnsConfigCache.frozenColumns.length - 1);
          tail = this.columnsConfigCache.frozenColumns[this.columnsConfigCache.frozenColumns.length - 1];
       }
-      const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenColsExpanded, tail], 'field'), ...this.epMetrics] : this.epMetrics );
+
+
+      const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenCols, tail], 'field'), ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
       return ({
@@ -179,14 +181,57 @@ export class CalibrationTableService {
       return  result;
     })
 
-  onManageFrozenColumns = (newFrozenColumns) => {
+  onManageFrozenColumnsUnexpand = (newFrozenColumns) => {
+
     const frozenColumns = [ {field: 'arrow', type: "arrow", width: "45", unit: 'px', resizable: false, isFrozen: true}, ...newFrozenColumns];
-    const frozenWidth = _.reduce(frozenColumns, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
+
+    const statusCols = frozenColumns.filter(c => c.field == 'status' );
+
+    const frozenWidth = _.reduce(frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1),
+        (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
 
     this.updateColumnsConfig({
         ...this.columnsConfig$.getValue(),
       frozenColumns,
       frozenWidth
     })
+  }
+  onManageFrozenColumnsExpand = (newColumns) => {
+
+
+    let frozenColLength = this.columnsConfig$.getValue().columns.filter(items => items.isFrozen).length ;
+    /* Insert the now columns in the right position */
+    const columns = [
+        this.columnsConfig$.getValue().columns[0],
+        ...newColumns,
+        ...this.columnsConfig$.getValue().columns.slice(frozenColLength , this.columnsConfig$.getValue().columns.length + 1)
+    ];
+
+    /* update columns configuration */
+    this.updateColumnsConfig({
+        ...this.columnsConfig$.getValue(),
+        columns
+    });
+
+    /* Insert the new columns in frozen columns cache */
+    let frozenColCach = [
+      this.columnsConfig$.getValue().columns[0],
+      ...newColumns,
+    ];
+
+    /* Calculate the new frozen columns width */
+    let frozenWidth = 0;
+    const frozenColumns = columns.filter(c => c.isFrozen);
+
+    const statusCols = frozenColumns.filter(c => c.field == 'status' );
+
+    frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1).forEach(c => frozenWidth += +c.width);
+
+    /* Updating cache */
+    this.updateColumnsConfigCache({
+      ...this.columnsConfigCache,
+      frozenColumns: frozenColCach,
+      frozenWidth: frozenWidth + 'px'
+    });
   }
 }

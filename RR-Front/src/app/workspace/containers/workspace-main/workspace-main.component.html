@@ -5,7 +5,7 @@
     [nzTabPosition]="'top'"
     [nzType]="'card'"
     class="tabs-main-component">
-    <ng-container *ngFor="let wsIdentifier of data | keys;let k= index;">
+    <ng-container *ngFor="let wsIdentifier of data | keys; let k= index;">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"

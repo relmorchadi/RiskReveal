@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "FileImportSourceResult", schema = "dbonew", catalog = "RiskReveal")
+@Table(name = "FileImportSourceResult", schema = "dbo", catalog = "RiskReveal")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,12 +1,15 @@
 package com.scor.rr.service.batch;
 
+import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.domain.riskLink.RLModelDataSource;
 import com.scor.rr.repository.RLModelDataSourceRepository;
 import com.scor.rr.service.RmsService;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +42,12 @@ public class ELTExtractor {
     @Autowired
     RLModelDataSourceRepository rlModelDataSourceRepository;
 
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
 
     @Value("#{jobParameters['contractId']}")
     private String contractId;
@@ -47,8 +57,17 @@ public class ELTExtractor {
 
     public RepeatStatus extractElts() {
         // @TODO: Review with Viet use of Threshold parameter => TO be externalized. & Direct use in corresponding parts
-        this.extractELT();
-        return RepeatStatus.FINISHED;
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractELT", 4);
+        try {
+            this.extractELT();
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
+        }
     }
 
 

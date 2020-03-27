@@ -5,6 +5,8 @@ import com.scor.rr.domain.dto.TargetBuild.AssignTagToPltsRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTHeaderDeleteRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewRequest;
 import com.scor.rr.domain.dto.TargetBuild.PLTManagerViewResponse;
+import com.scor.rr.domain.entities.GroupedPLTs;
+import com.scor.rr.domain.entities.PLTManagerView;
 import com.scor.rr.service.PltBrowserService;
 import com.scor.rr.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -27,6 +30,9 @@ public class PltBrowserResource {
 
     @GetMapping
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
+
+    @GetMapping("/grouped")
+    public List<GroupedPLTs> getGroupedPLT(PLTManagerViewRequest request) { return pltBrowserService.getPLTManagerGroupedPLTs(request); }
 
     @GetMapping("ids")
     public ResponseEntity<?> getIDs(PLTManagerIDsRequest request) { return ResponseEntity.ok(pltBrowserService.getIDs(request));}

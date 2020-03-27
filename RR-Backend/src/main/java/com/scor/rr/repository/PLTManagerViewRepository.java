@@ -31,7 +31,7 @@ public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, 
     Set<PLTManagerView> findPLTs(@Param("workspaceContextCode") String workspaceContextCode,@Param("uwYear") Integer uwYear);
 
 
-    @Query(value = "EXEC dbonew.usp_PLTManagerGetThreadEndPLTs " +
+    @Query(value = "EXEC dbo.usp_PLTManagerGetThreadEndPLTs " +
             "@WorkspaceContextCode= :WorkspaceContextCode, " +
             "@WorkspaceUwYear= :WorkspaceUwYear, " +
             "@Entity =:Entity, " +
@@ -53,11 +53,33 @@ public interface PLTManagerViewRepository extends JpaRepository<PLTManagerView, 
             @Param("SortSelectedAction") String SortSelectedAction
             );
 
+    @Query(value = "EXEC dbo.usp_PLTManagerGroupedPLTs_tst " +
+            "@WorkspaceContextCode= :WorkspaceContextCode, " +
+            "@WorkspaceUwYear= :WorkspaceUwYear, " +
+            "@Entity =:Entity, " +
+            "@UserCode =:UserCode, " +
+            "@PageNumber =:PageNumber, " +
+            "@PageSize =:PageSize, " +
+            "@SelectionList =:SelectionList, " +
+            "@SortSelectedFirst =:SortSelectedFirst, " +
+            "@SortSelectedAction =:SortSelectedAction", nativeQuery = true)
+    List<Map<String, Object>> getPLTManagerGroupedPLTs(
+            @Param("WorkspaceContextCode") String WorkspaceContextCode,
+            @Param("WorkspaceUwYear") Integer WorkspaceUwYear,
+            @Param("Entity") Integer Entity,
+            @Param("UserCode") String UserCode,
+            @Param("PageNumber") Integer PageNumber,
+            @Param("PageSize") Integer PageSize,
+            @Param("SelectionList") String SelectionList,
+            @Param("SortSelectedFirst") Boolean SortSelectedFirst,
+            @Param("SortSelectedAction") String SortSelectedAction
+    );
 
-    @Query(value = "EXEC dbonew.usp_GetColumnsByUserCodeAndViewContext @UserCode =:UserCode, @ViewContext =:ViewContext", nativeQuery = true)
+
+    @Query(value = "EXEC dbo.usp_GetColumnsByUserCodeAndViewContext @UserCode =:UserCode, @ViewContext =:ViewContext", nativeQuery = true)
     List<Map<String, Object>> getColumns(@Param("UserCode") String userCode, @Param("ViewContext") Long viewContext);
 
-    @Query(value = "EXEC dbonew.usp_PLTManagerGetThreadEndPLTsIDs " +
+    @Query(value = "EXEC dbo.usp_PLTManagerGetThreadEndPLTsIDs " +
             "@WorkspaceContextCode= :WorkspaceContextCode, " +
             "@WorkspaceUwYear= :WorkspaceUwYear, " +
             "@Entity =:Entity, " +

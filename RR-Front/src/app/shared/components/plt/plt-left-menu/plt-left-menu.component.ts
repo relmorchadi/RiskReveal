@@ -57,28 +57,7 @@ export class PltLeftMenuComponent implements OnInit {
 
   filter(key, filterData, value){
     if (key == 'projectId') {
-      this.actionDispatcher.emit({
-        type: leftMenuStore.unCkeckAllPlts
-      });
-      if (this.leftMenuInputs.filterData['projectId'] && this.leftMenuInputs.filterData['projectId'] != '' && value == this.leftMenuInputs.filterData['projectId']) {
-        this.actionDispatcher.emit({
-          type: leftMenuStore.headerSelection,
-          payload: true
-        })
-        this.actionDispatcher.emit({
-          type: leftMenuStore.filterByProject,
-          payload: _.omit(this.leftMenuInputs.filterData, [key])
-        });
-      } else {
-        this.actionDispatcher.emit({
-          type: leftMenuStore.headerSelection,
-          payload: false
-        });
-        this.actionDispatcher.emit({
-          type: leftMenuStore.filterByProject,
-          payload: _.merge({}, this.leftMenuInputs.filterData, {[key]: value})
-        });
-      }
+
       this.actionDispatcher.emit({
         type: leftMenuStore.onSelectProjects,
         payload: _.map(this.leftMenuInputs.projects, t => {
@@ -89,6 +68,7 @@ export class PltLeftMenuComponent implements OnInit {
           }else return t;
         })
       })
+
     }
   }
 

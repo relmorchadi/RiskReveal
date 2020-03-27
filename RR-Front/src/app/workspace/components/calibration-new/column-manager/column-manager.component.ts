@@ -40,22 +40,19 @@ export class CalibrationColumnManagerComponent implements OnInit {
       previousContainer,
       container
     } = event;
-    console.log(event);
-    const col: any = previousContainer.data[previousIndex];
-    if(col.field != 'status' && col.field != 'pltId' && col.field != 'pltName') {
-      if (previousContainer === container) {
-       this.moveItem(container, previousIndex, currentIndex);
-      } else {
-        this.transferItem(
-            previousContainer,
-            container,
-            previousIndex,
-            currentIndex
-        );
-      }
+
+    if (previousContainer === container) {
+      this.moveItem(container, previousIndex, currentIndex);
+    } else {
+      this.transferItem(
+          previousContainer,
+          container,
+          previousIndex,
+          currentIndex
+      );
     }
 
-    console.log(event);
+
   }
 
   ngAfterViewInit(): void {
@@ -78,8 +75,10 @@ export class CalibrationColumnManagerComponent implements OnInit {
 
   moveAllLeft() {
     const head = _.slice(this._visibleList, 0,2);
-    const tail = _.slice(this._visibleList, this._visibleList.length - 1);
-    this._availableList = [..._.slice(this._visibleList,2, this._visibleList.length - 1), ...this._availableList];
+    const tail = this._visibleList.filter(col => col.field == 'status' );
+    const middle = this._visibleList.slice(2, this._visibleList.length)
+        .filter(col => col.field != 'status' );
+    this._availableList = [...middle, ...this._availableList];
     this._visibleList = [...head, ...tail];
   }
 
@@ -105,17 +104,17 @@ export class CalibrationColumnManagerComponent implements OnInit {
 
       const middle = _.slice(currCont.data, 2, currCont.data.length - 1);
 
+      console.log(j);
       let newJ = j - 2;
 
       if(newJ < 0) newJ = 0;
 
-      if( newJ > middle.length) {
-        newJ = middle.length;
-      }
-
       transferArrayItem(prevCont.data, middle, i, newJ);
 
-      currCont.data = _.assign(currCont.data, [ ...head, ...middle, ...tail]);
+      if( newJ < middle.length)
+        currCont.data = _.assign(currCont.data, [ ...head, ...middle, ...tail]);
+      else
+        currCont.data = _.assign(currCont.data, [ ...head, ...tail, ...middle]);
 
     } else {
 

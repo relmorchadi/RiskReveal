@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface RecentWorkspaceRepository extends JpaRepository<RecentWorkspace, Long> {
 
-    @Procedure("dbonew.usp_ToggleRecentWorkspace")
+    @Procedure("dbo.usp_ToggleRecentWorkspace")
     void toggleRecentWorkspace(@Param("workspaceContextCode") String workspaceContextCode, @Param("workspaceUwYear") Integer workspaceUwYear,@Param("userId") Long userId);
 
 }

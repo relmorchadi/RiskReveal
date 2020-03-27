@@ -4,13 +4,16 @@ package com.scor.rr.service.batch;
 import com.scor.rr.domain.LossDataHeaderEntity;
 import com.scor.rr.domain.RlEltLoss;
 import com.scor.rr.domain.RmsExchangeRate;
+import com.scor.rr.domain.StepEntity;
 import com.scor.rr.domain.dto.AnalysisELTnBetaFunction;
 import com.scor.rr.domain.dto.ELTLossnBetaFunction;
 import com.scor.rr.domain.dto.RLAnalysisELT;
 import com.scor.rr.domain.enums.FinancialPerspectiveCodeEnum;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.riskLink.RLAnalysis;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.repository.ModelAnalysisEntityRepository;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.state.TransformationBundle;
 import com.scor.rr.service.state.TransformationPackage;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,15 +40,20 @@ public class ELTConformer {
 
     @Autowired
     TransformationPackage transformationPackage;
-
     @Value("#{jobParameters['contractId']}")
     String contractId;
-
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
     @Value("#{jobParameters['marketChannel']}")
     private String marketChannel;
 
     public RepeatStatus conformeELT() {
 
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ConformELT", 6);
+        try {
             log.debug("Starting ELTConformer");
 
             Date startDate = new Date();
@@ -152,7 +161,14 @@ public class ELTConformer {
                 log.info("Finish import progress STEP 6 : CONFORM_ELT for analysis: {}", sourceResult.getRlImportSelectionId());
             }
             log.debug("ELTConformer completed");
-        return RepeatStatus.FINISHED;
+            jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            return RepeatStatus.FINISHED;
+        } catch (Exception ex) {
+            jobManager.onTaskError(Long.valueOf(taskId));
+            jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+            ex.printStackTrace();
+            return RepeatStatus.valueOf("FAILED");
+        }
     }
 
 

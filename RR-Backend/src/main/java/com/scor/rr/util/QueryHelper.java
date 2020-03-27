@@ -101,7 +101,7 @@ public class QueryHelper {
         else if (!fieldsSearchCondition.trim().equals("")) whereCondition = " where " + fieldsSearchCondition;
         String groupByClause = generateGroupByClause();
         String selectClause = generateSelectClause();
-        String query = "select " + selectClause + " from [dbonew].[ContractSearchResult] c " + whereCondition + " group by " + groupByClause;
+        String query = "select " + selectClause + " from [dbo].[ContractSearchResult] c " + whereCondition + " group by " + groupByClause;
 
         return query;
     }

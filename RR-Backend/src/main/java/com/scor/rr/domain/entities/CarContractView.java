@@ -17,28 +17,30 @@ import javax.persistence.Table;
 public class CarContractView {
 
     @Id
-    @Column(name = "Id")
+    @Column(name = "id")
     private Long id;
-    @Column(name = "CarId")
+    @Column(name = "carId")
     private String carId;
-    @Column(name = "ProjectId")
+    @Column(name = "projectId")
     private Long projectId;
-    @Column(name = "CarName")
+    @Column(name = "carName")
     private String carName;
-    @Column(name = "ContractId")
+    @Column(name = "contractId")
     private String contractId;
-    @Column(name = "ContractName")
-    private String ContractName;
-    @Column(name = "UwYear")
+    @Column(name = "contractName")
+    private String contractName;
+    @Column(name = "uwAnalysis")
+    private String uwAnalysis;
+    @Column(name = "uwYear")
     private Long uwYear;
-    @Column(name = "BusinessType")
+    @Column(name = "businessType")
     private String businessType;
-    @Column(name = "Lob")
+    @Column(name = "lob")
     private String lob;
-    @Column(name = "Client")
+    @Column(name = "client")
     private String client;
-    @Column(name = "Subsidiary")
+    @Column(name = "subsidiary")
     private String subsidiary;
-    @Column(name = "Sector")
+    @Column(name = "sector")
     private String sector;
 }

@@ -1,6 +1,6 @@
 export class ExposuresMainTableConfig {
-    values:any[];
-    frozenValues:any[];
+    data:any[];
+    frozenRow:any[];
     columns:any[];
     frozenColumns:any[];
 }

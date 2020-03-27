@@ -1,4 +1,14 @@
+:host {
+  width: 100%;
+  display: flex;
+  min-height: 100%;
+}
 .table-wrapper {
+  width: 100%;
+  display: flex;
+  p-table {
+    width: 100%;
+  }
   ::ng-deep {
     .ui-table-thead {
       tr {
