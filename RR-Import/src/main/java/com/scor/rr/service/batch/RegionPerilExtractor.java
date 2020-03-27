@@ -267,7 +267,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
                             } else {
                                 log.error("No targetRAP/ModelRAP has been found");
                                 jobManager.onTaskError(Long.valueOf(taskId));
-                                return RepeatStatus.valueOf("FAILED");
+                                return RepeatStatus.FINISHED;
                             }
                         }
                     } else if (marketChannel.equalsIgnoreCase("Treaty") ||
@@ -386,7 +386,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
     }
 

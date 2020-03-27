@@ -512,7 +512,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                 log.info("total time to read PEQT : {}", System.currentTimeMillis() - time);
             } catch (IOException e) {
                 log.error("Master {}: reading PEQT {}, IOException", this.id, peqtFile.getFileName(), e);
-                jobManager.onTaskError(Long.valueOf(taskId));
+//                jobManager.onTaskError(Long.valueOf(taskId));
             } finally {
                 log.info("Master {}: finish reading PEQT {}, total period count {}", this.id, peqtFile.getFileName(), periodCount);
                 IOUtils.closeQuietly(fc);
@@ -526,7 +526,7 @@ public class ELTToPLTConverter extends AbstractWriter {
             try {
                 workerLatch.await();
             } catch (InterruptedException e) {
-                jobManager.onTaskError(Long.valueOf(taskId));
+//                jobManager.onTaskError(Long.valueOf(taskId));
                 log.error("Exception: {}, {}", peqtFile.getFileName(), e);
             }
 
@@ -633,7 +633,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                     }
                 } catch (Throwable e) {
                     log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
-                    jobManager.onTaskError(Long.valueOf(taskId));
+//                    jobManager.onTaskError(Long.valueOf(taskId));
                 }
             } while (true);
             for (PltHeaderEntity scorPltHeaderEntity : scorPLTHeaderEntities) {
@@ -644,7 +644,7 @@ public class ELTToPLTConverter extends AbstractWriter {
                         writeBufferToOutputStream(outputStream, pltLossDataList);
                     } catch (IOException e) {
                         log.error("Slave {}.{}: error {}", this.masterId, this.id, e);
-                        jobManager.onTaskError(Long.valueOf(taskId));
+//                        jobManager.onTaskError(Long.valueOf(taskId));
                     } finally {
                         pltLossDataList.clear();
                         try {
