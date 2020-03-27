@@ -22,7 +22,7 @@ import {FAKEDATA} from "../../../containers/workspace-exposures/fakeExposuresDat
     selector: 'exposures-main-table',
     templateUrl: './exposures-main-table.component.html',
     styleUrls: ['./exposures-main-table.component.scss'],
-    changeDetection:ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -33,7 +33,8 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
     @Input('sortConfig') sortConfig: any;
     private selectedRowRegionPeril: any;
     private hoveredRow: any;
-    private frozenColumns:any;
+    private filteredColumn: string;
+    private frozenColumns: any;
 
     constructor(private store: Store, changeDetectorRef: ChangeDetectorRef) {
         this.selectedRowRegionPeril = null;
@@ -42,7 +43,7 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
     }
 
     ngOnInit(): void {
-        console.log('tableConfig ==> ',this.tableConfig);
+
     }
 
     ngAfterViewInit(): void {
@@ -54,27 +55,9 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
     }
 
     onSort($event: any) {
-        let order = this.sortConfig[$event.field];
-        this.actionDispatcher.emit({
-            type: 'sortTableColumn',
-            payload: {field: [$event.field][0], order: this.incrementSort(order)}
-        })
-        $event.data.sort((data1, data2) => {
-            let value1 = data1[$event.field];
-            let value2 = data2[$event.field];
-            let result = null;
-            if (value1 == null && value2 != null)
-                result = -1;
-            else if (value1 != null && value2 == null)
-                result = 1;
-            else if (value1 == null && value2 == null)
-                result = 0;
-            else if (typeof value1 === 'string' && typeof value2 === 'string')
-                result = value1.localeCompare(value2);
-            else
-                result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-            return (this.incrementSort(order) * result);
-        });
+        this.filteredColumn = $event.field != this.filteredColumn ? $event.field : null;
+        if (this.filteredColumn == 'totalTiv') this.filteredColumn = 'total';
+        this.actionDispatcher.emit({type: 'sortTableColumn', payload: this.filteredColumn});
     }
 
     incrementSort(order) {
@@ -93,8 +76,8 @@ export class ExposuresMainTableComponent implements OnInit, AfterViewInit, OnDes
             this.actionDispatcher.emit({type: 'filterRowRegionPeril', payload: rowData});
             this.selectedRowRegionPeril = rowIndex;
         } else {
-           this.actionDispatcher.emit({type:'removeFilter', payload:null});
-           this.selectedRowRegionPeril = null;
+            this.actionDispatcher.emit({type: 'removeFilter', payload: null});
+            this.selectedRowRegionPeril = null;
         }
     }
 }
