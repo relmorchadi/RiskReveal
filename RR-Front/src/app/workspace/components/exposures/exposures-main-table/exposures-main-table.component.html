@@ -19,10 +19,6 @@
                     <th [colSpan]="col.field == 'country' ? 2 : 1"
                         [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
-                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
-                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
-                                       'icon-direction':sortConfig[col.field] == 0}">
-                        </i>
                     </th>
                 </ng-container>
             </tr>
@@ -30,12 +26,9 @@
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <ng-container *ngFor="let col of columns">
-                    <th [pSortableColumn]="col.field">
+                    <th [pSortableColumn]="col.field"
+                        [ngClass]="{'filtered-column':filteredColumn == col.field}">
                         <span>{{col.header}}</span>
-                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
-                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
-                                       'icon-direction':sortConfig[col.field] == 0}">
-                        </i>
                     </th>
                 </ng-container>
             </tr>

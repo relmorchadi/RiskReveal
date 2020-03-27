@@ -25,7 +25,9 @@ export class ExposuresTableService {
     }
 
     public sortTableColumn(sortConfig) {
-        return this._api.sortTableColumn(sortConfig);
+        return this._api.loadTableConfig(
+            this.constructHeaderConfig(sortConfig)
+        ).pipe(map((tableConfig: any) => (this.constructTableConfig(tableConfig)))) as Observable<ExposuresMainTableConfig>;
     }
 
 
@@ -33,10 +35,13 @@ export class ExposuresTableService {
         this._api.exportTable()
     }
 
-    filterRowRegionPeril(rowData: any) {
-        return this._api.loadTableColumnsConfig().pipe(map((columns: any) =>
-            (columns.filter(row => rowData[row.field] != undefined))
-        ));
+    filterRowRegionPeril(tableConfig,rowData: any) {
+        return {
+            data: tableConfig.data,
+            columns:(tableConfig.columns.filter(row => rowData[row.field] != null)),
+            frozenRow: tableConfig.frozenRow,
+            frozenColumns: tableConfig.frozenColumns
+        };
     }
 
     loadTableColumnsConfig() {
@@ -55,6 +60,7 @@ export class ExposuresTableService {
     }
 
     constructHeaderConfig(headerConfig) {
+
         return {
             currency:headerConfig.currency,
             division:headerConfig.division.divisionNumber,
@@ -64,7 +70,8 @@ export class ExposuresTableService {
             portfolioName:headerConfig.portfolio,
             projectId:headerConfig.projectId,
             requestTotalRow:true,
-            summaryType:'Summary By Country'
+            summaryType:'Summary By Country',
+            regionPerilFilter: headerConfig.regionPerilFilter ? headerConfig.regionPerilFilter : null
         }
     }
 }
