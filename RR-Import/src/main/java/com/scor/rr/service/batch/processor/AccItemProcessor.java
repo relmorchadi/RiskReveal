@@ -52,6 +52,12 @@ public class AccItemProcessor implements ItemProcessor<RLAccRow, RLAccRow> {
             }
             if (forceCarId)
                 item.setCarID(carId);
+            TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
+            if (task != null) {
+                StepEntity step = task.getSteps().stream().filter(s -> s.getStepOrder() == 14).findFirst().orElse(null);
+                if (step != null)
+                    jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
+            }
             return item;
         } catch (Exception ex) {
             jobManager.onTaskError(Long.valueOf(taskId));

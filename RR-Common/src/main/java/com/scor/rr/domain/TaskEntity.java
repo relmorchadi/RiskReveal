@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -27,7 +29,8 @@ public class TaskEntity {
 
     private List<StepEntity> steps;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @JsonManagedReference
     public List<StepEntity> getSteps() {
         return steps;
     }
@@ -49,6 +52,7 @@ public class TaskEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jobId")
+    @JsonBackReference
     public JobEntity getJob() {
         return job;
     }
