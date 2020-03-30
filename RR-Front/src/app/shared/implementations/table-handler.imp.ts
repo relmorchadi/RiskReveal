@@ -591,31 +591,29 @@ export class TableHandlerImp implements TableHandlerInterface, OnDestroy {
 
 
     filter$.pipe(
-        switchMap( () => this.reloadTable({
-          ...this.params,
-          ...this.config,
-          selectionList: _.join(this._selectedIds, ','),
-          sortSelectedFirst: this._sortSelectedFirst,
-          sortSelectedAction: this._sortSelectedAction
-        })),
+        switchMap( () => forkJoin(
+            this.reloadTable({
+              ...this.params,
+              ...this.config,
+              selectionList: _.join(this._selectedIds, ','),
+              sortSelectedFirst: this._sortSelectedFirst,
+              sortSelectedAction: this._sortSelectedAction
+            }),
+            this.loadSelectedIds()
+        )),
     ).subscribe(
-        ([columns, data]: any) => {
+        ([[columns, data], ids]: any) => {
           const {totalCount, plts} = data;
           this.updateTotalRecords(totalCount);
           this.updateColumns(columns);
           this.updateData(plts);
+          this.resolveSelection(ids, false);
           this.updateLoading(false);
         },
         (error) => {
           console.error(error);
         }
     );
-
-    filter$.pipe(
-        switchMap( () => this.loadSelectedIds())
-    ).subscribe((ids) => {
-      this.resolveSelection(ids, false);
-    })
   }
 
   private transformItem(columnsHeader, columnsField, columnsType, item) {

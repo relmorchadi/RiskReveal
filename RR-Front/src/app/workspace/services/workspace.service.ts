@@ -6,7 +6,7 @@ import {catchError, map, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {WsApi} from './api/workspace.api';
 import produce from 'immer';
 import * as _ from 'lodash';
-import {Navigate} from '@ngxs/router-plugin';
+import {Navigate, RouterNavigation} from '@ngxs/router-plugin';
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
 import {EMPTY, forkJoin, of} from 'rxjs';
 import {defaultInuringState} from './inuring.service';
@@ -23,17 +23,16 @@ export class WorkspaceService {
               private store: Store) {
   }
 
-  initWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.InitWorkspace) {
-    return this.wsApi.getOpenedTabs().pipe(
-        tap(data => {
-          ctx.patchState(produce(ctx.getState(), draft => {
-            draft.currentTab.openedTabs = data;
-          }));
-          _.forEach(data, (item: any) => {
-            ctx.dispatch(new fromWS.LoadWS(
-                {wsId: item.workspaceContextCode, uwYear: item.workspaceUwYear, route: item.screen, redirect: false}))
-          })
-        })
+  initWs(ctx: StateContext<WorkspaceModel>, payload) {
+    const {wsId, uwYear, route, type} = payload;
+    const content = ctx.getState().content;
+    return this.wsApi.getOpenedTabs({workspaceContextCode: wsId, workspaceUwYear: uwYear, screen: route}).pipe(
+        switchMap((tabs: any[]) =>  forkJoin(
+            ..._.map(_.filter(tabs, t => !(content[t.workspaceContextCode + '-' + t.workspaceUwYear])), tab => this.wsApi.searchWorkspace(tab.workspaceContextCode, tab.workspaceUwYear, type ? type : ''))
+        ).pipe(
+            mergeMap(data => of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: data, tabs }))))
+            )
+        )
     );
   }
 
@@ -52,101 +51,86 @@ export class WorkspaceService {
   }
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route, redirect} = payload;
-    const state = ctx.getState();
+    const { wsId, uwYear, ws, route, redirect } = payload;
     const carSelected = _.get(payload, 'carSelected', null);
     const {projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
-    const openedTab = {
-      screen: route || 'projects',
-      workspaceContextCode: wsId,
-      workspaceUwYear: uwYear,
-    };
-    return this.wsApi.openTab(openedTab).pipe(tap(data => {
-      ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier] = {
-          wsId,
-          uwYear,
-          ...ws,
-          route: route || 'projects',
-          isPinned: false,
-          collapseWorkspaceDetail: true,
-          workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
-          leftNavbarCollapsed: false,
-          plts: {},
-          projects: _.map(projects.reverse(), (prj, index: any) => {
-            prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
-            prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
-            return prj;
-          }),
-          pltManager: {
-            columns: [],
-            data: {totalCount: 0, plts: []},
-            selectedIds: {},
-            initialized: false,
-            pltDetails: {
-              summary: {}
-            },
-            loading: false
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier] = {
+        wsId,
+        uwYear,
+        ...ws,
+        route: route || 'projects',
+        isPinned: false,
+        collapseWorkspaceDetail: true,
+        workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
+        leftNavbarCollapsed: false,
+        plts: {},
+        projects: _.map(projects.reverse(), (prj, index: any) => {
+          prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
+          prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+          return prj;
+        }),
+        pltManager: {
+          columns: [],
+          data: {totalCount: 0, plts: []},
+          selectedIds: {},
+          initialized: false,
+          pltDetails: {
+            summary: {}
           },
-          contract: {
-            treaty: {},
-            fac: {},
-            loading: false,
-            typeWs: null,
+          loading: false
+        },
+        contract: {
+          treaty: {},
+          fac: {},
+          loading: false,
+          typeWs: null,
+        },
+        calibrationNew: {
+          plts: [],
+          epMetrics: {
+            cols: [],
+            rps: []
           },
-          calibrationNew: {
-            plts: [],
-            epMetrics: {
-              cols: [],
-              rps: []
-            },
-            adjustments: {},
-            loading: false
+          adjustments: {},
+          loading: false
+        },
+        calibration: {
+          data: {},
+          deleted: {},
+          loading: false,
+          filters: {
+            systemTag: [],
+            userTag: []
           },
-          calibration: {
-            data: {},
-            deleted: {},
-            loading: false,
-            filters: {
-              systemTag: [],
-              userTag: []
-            },
-            userTags: {},
-            selectedPLT: [],
-            extendPltSection: false,
-            extendState: false,
-            collapseTags: true,
-            lastCheckedBool: false,
-            firstChecked: '',
-            adjustments: [],
-            adjustmentApplication: {},
-            defaultAdjustment: {},
-            adjustementType: _.assign({}, ADJUSTMENT_TYPE),
-            allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
-          },
-          riskLink: new RiskLink(),
-          scopeOfCompletence: {
-            data: {},
-            wsType: null
-          },
-          fileBaseImport: {
-            folders: null,
-            files: null,
-            selectedFiles: null,
-            importedPLTs: null
-          },
-          inuring: defaultInuringState
-        };
-        draft.loading = false;
-        draft.currentTab = {...draft.currentTab,
-          index: _.findIndex(_.keys(draft.content), item => item === wsIdentifier),
-          wsIdentifier: wsIdentifier
-        }
-      }));
-      if (redirect == null) {
-        ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
-      }
+          userTags: {},
+          selectedPLT: [],
+          extendPltSection: false,
+          extendState: false,
+          collapseTags: true,
+          lastCheckedBool: false,
+          firstChecked: '',
+          adjustments: [],
+          adjustmentApplication: {},
+          defaultAdjustment: {},
+          adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+          allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+        },
+        riskLink: new RiskLink(),
+        scopeOfCompletence: {
+          data: {},
+          wsType: null
+        },
+        fileBaseImport: {
+          folders: null,
+          files: null,
+          selectedFiles: null,
+          importedPLTs: null
+        },
+        inuring: defaultInuringState
+      };
+      draft.loading = false;
     }));
 
   }
@@ -172,63 +156,187 @@ export class WorkspaceService {
         wsIdentifier
       }));
     } else {
-      //this.wsApi.openTab();
-      return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear, route, type, carSelected}));
+      return ctx.dispatch(new fromWS.InitWorkspace({wsId, uwYear, route, type, carSelected}));
     }
   }
 
-  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenMultiWS) {
-    _.forEach(payload, item => {
-      const {wsId, uwYear} = item;
-      const state = ctx.getState();
-      const wsIdentifier = wsId + '-' + uwYear;
-      if (state.content[wsIdentifier]) {
-        return ctx.dispatch(new fromWS.SetCurrentTab({
-          index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
+  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload: {workspaces, tabs }}: fromWS.OpenMultiWS) {
+    let screenByTab = {};
+    let selectedTab: any = null;
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.loading = true;
+    }));
+
+    _.forEach(tabs, (tab, index) => {
+      const wsIdentifier = tab.workspaceContextCode + '-' + tab.workspaceUwYear;
+      screenByTab[wsIdentifier] =  tab.screen;
+
+      if(tab.selected) {
+        selectedTab = {
+          openedTabs: null,
+          index: tab.tabOrder,
           wsIdentifier
-        }));
-      } else {
-        return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear}));
+        };
       }
-    });
+
+      if(!ctx.getState().content[wsIdentifier]) {
+       const ws = _.find(workspaces, e => e.id == tab.workspaceContextCode && e.uwYear == tab.workspaceUwYear);
+       const carSelected = null;
+       const {projects} = ws;
+
+       ctx.patchState(produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier] = {
+            wsId: ws.id,
+            uwYear: ws.uwYear,
+            ...ws,
+            route: screenByTab[wsIdentifier] || 'projects',
+            isPinned: false,
+            collapseWorkspaceDetail: true,
+            workspaceType: ws.marketChannel == 'FAC' ? 'fac' : 'treaty',
+            leftNavbarCollapsed: false,
+            plts: {},
+            projects: _.map(projects.reverse(), (prj, index: any) => {
+              prj.selected = carSelected !== null ? prj.projectId === carSelected : index === 0;
+              prj.projectType = prj.carRequestId === null ? 'TREATY' : 'FAC';
+              return prj;
+            }),
+            pltManager: {
+              columns: [],
+              data: {totalCount: 0, plts: []},
+              selectedIds: {},
+              initialized: false,
+              pltDetails: {
+                summary: {}
+              },
+              loading: false
+            },
+            contract: {
+              treaty: {},
+              fac: {},
+              loading: false,
+              typeWs: null,
+            },
+            calibrationNew: {
+              plts: [],
+              epMetrics: {
+                cols: [],
+                rps: []
+              },
+              adjustments: {},
+              loading: false
+            },
+            calibration: {
+              data: {},
+              deleted: {},
+              loading: false,
+              filters: {
+                systemTag: [],
+                userTag: []
+              },
+              userTags: {},
+              selectedPLT: [],
+              extendPltSection: false,
+              extendState: false,
+              collapseTags: true,
+              lastCheckedBool: false,
+              firstChecked: '',
+              adjustments: [],
+              adjustmentApplication: {},
+              defaultAdjustment: {},
+              adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+              allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+            },
+            riskLink: new RiskLink(),
+            scopeOfCompletence: {
+              data: {},
+              wsType: null
+            },
+            fileBaseImport: {
+              folders: null,
+              files: null,
+              selectedFiles: null,
+              importedPLTs: null
+            },
+            inuring: defaultInuringState
+          }
+        }));
+      }
+
+    })
+
+    ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
+
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.currentTab = { ...selectedTab, openedTabs: tabs };
+      draft.loading = false;
+    }));
+
+    //return ctx.dispatch(new fromWS.UpdateWsRouting(null, screenByTab[selectedTab.wsIdentifier] ? screenByTab[selectedTab.wsIdentifier] : 'projects'))
   }
 
   setCurrentTab(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SetCurrentTab) {
     const {
       index, wsIdentifier, redirect
     } = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      const ws = draft.content[wsIdentifier];
-      const {route} = ws;
-      draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      if (redirect == null) {
-        ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
-      }
-    }));
+
+    const workspaceContextCode = wsIdentifier.split('-')[0];
+    const workspaceUwYear = wsIdentifier.split('-')[1];
+
+    const tab = _.find(ctx.getState().currentTab.openedTabs, tab => tab.workspaceContextCode == workspaceContextCode && tab.workspaceUwYear == workspaceUwYear);
+    if(!tab.selected) {
+      return this.wsApi.selectTab(tab).pipe(
+          tap(() => {
+            ctx.patchState(produce(ctx.getState(), draft => {
+              const ws = draft.content[wsIdentifier];
+              const {route} = ws;
+              draft.currentTab = {...draft.currentTab, index, wsIdentifier, openedTabs: _.map(draft.currentTab.openedTabs, tab => ({ ...tab, selected: tab.workspaceContextCode == workspaceContextCode && tab.workspaceUwYear == workspaceUwYear}))};
+              if (redirect == null) {
+                ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
+              }
+            }));
+          })
+      )
+    }
+
   }
 
   closeWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CloseWS) {
-    const {wsIdentifier} = payload;
+    const {wsId, uwYear} = payload;
+    const wsIdentifier = wsId + '-' + uwYear;
     const {currentTab, content} = ctx.getState();
-    let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier);
-    let deletedTab = _.find(currentTab.openedTabs, ws => ws.workspaceContextCode + '-' + ws.workspaceUwYear == wsIdentifier);
-    const closedTab = _.omit(deletedTab, ['openedDate']);
 
     // To keep at least one tab open
     if (_.size(content) == 1)
       return;
 
-    if (wsIdentifier == currentTab.wsIdentifier) {
-      ctx.dispatch(new fromWS.SetCurrentTab({
-        index: i === 0 ? i : i - 1,
-        wsIdentifier: i === 0 ? _.keys(content)[i + 1] : _.keys(content)[i - 1]
-      }));
+    let oldSelectedTab = _.find(currentTab.openedTabs, t => t.selected);
+    let closedTab = _.find(currentTab.openedTabs, t => t.workspaceContextCode == wsId && t.workspaceUwYear == uwYear);
+    let newSelectedIndex = 0;
+
+    if(oldSelectedTab.workspaceContextCode == closedTab.workspaceContextCode && oldSelectedTab.workspaceUwYear == closedTab.workspaceUwYear) {
+      newSelectedIndex = closedTab.tabOrder === 0 ? closedTab.tabOrder : closedTab.tabOrder - 1;
+    } else {
+      newSelectedIndex = oldSelectedTab.tabOrder < closedTab.tabOrder ? oldSelectedTab.tabOrder : oldSelectedTab.tabOrder - 1;
     }
-    return this.wsApi.closeTab(closedTab).pipe(
-        tap( data => {
-          ctx.patchState({
-            content: _.keyBy(_.filter(content, ws => ws.wsId + '-' + ws.uwYear != wsIdentifier), (el) => el.wsId + '-' + el.uwYear)
-          });}),
+
+    const tabs = _.map(_.filter(currentTab.openedTabs, t => !(t.workspaceContextCode == wsId && t.workspaceUwYear == uwYear)), (tab, index) => ({...tab, tabOrder: _.toNumber(index), selected: newSelectedIndex == _.toNumber(index)}) );
+    return this.wsApi.closeTab({toClose: closedTab, tabs}).pipe(
+        switchMap( data => {
+          const { workspaceContextCode, workspaceUwYear, screen } = tabs[newSelectedIndex];
+          const newWsIdentifier = workspaceContextCode + '-' + workspaceUwYear;
+
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.currentTab = {
+              openedTabs: tabs,
+              index: newSelectedIndex,
+              wsIdentifier: newWsIdentifier
+            };
+            draft.content = _.omit(draft.content, `${wsIdentifier}`);
+          }));
+
+          return ctx.dispatch(new Navigate(screen ? [`workspace/${workspaceContextCode}/${workspaceUwYear}/${screen}`] : [`workspace/${workspaceContextCode}/${workspaceUwYear}`]))
+        }),
         catchError(err => {
           return of();
         })
@@ -251,10 +359,22 @@ export class WorkspaceService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     const {wsId, uwYear} = state.content[wsIdentifier];
+    const tabs = state.currentTab.openedTabs;
+    let order = tabs.length;
+
+    for(let i=0; i< tabs.length; i++) {
+      const e = tabs[i];
+      if(e.workspaceContextCode == wsId && e.workspaceUwYear == uwYear) {
+        order = i;
+        break;
+      }
+    }
+
     const openedTab = {
       screen: route,
       workspaceContextCode: wsId,
       workspaceUwYear: uwYear,
+      order: order
     };
 
     return this.wsApi.openTab(openedTab).pipe(tap( data =>
@@ -290,13 +410,21 @@ export class WorkspaceService {
     }));
   }
 
+  selectProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectProject) {
+    const {wsIdentifier, projectId} = payload;
+    return ctx.patchState(produce(ctx.getState(), draft => {
+      const {projects} = draft.content[wsIdentifier];
+      draft.content[wsIdentifier].projects = _.map(projects || [], pr => ({...pr, selected: pr.projectId == projectId}) );
+      draft.content[wsIdentifier].riskLink= _.merge({}, new RiskLink());
+    }));
+  }
+
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
     const {id, wsId, uwYear, project} = payload;
     const wsIdentifier = `${wsId}-${uwYear}`;
 
     return this.projectApi.createProject({...project}, wsId, uwYear)
       .pipe(map(prj => {
-          console.log(prj);
         ctx.patchState(produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
           prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true, projectType: 'TREATY'}) : null

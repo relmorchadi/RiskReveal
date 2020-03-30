@@ -3,6 +3,7 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
+import com.scor.rr.domain.dto.UserWorkspaceTabsCloseRequest;
 import com.scor.rr.domain.dto.UserWorkspaceTabsRequest;
 import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
 import com.scor.rr.domain.entities.UserWorkspaceTabs;
@@ -64,13 +65,16 @@ public class WorkspaceResource {
         return this.workspaceService.togglePinnedWorkspace(request);
     }
 
-    @GetMapping("tabs/")
-    ResponseEntity<List<UserWorkspaceTabs>> getTabs() { return this.workspaceService.getTabs();}
+    @PostMapping("tabs/")
+    ResponseEntity<List<UserWorkspaceTabs>> getTabs(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.getTabs(request);}
+
+    @GetMapping("tabs/count")
+    ResponseEntity<Integer> getTabsCount() { return this.workspaceService.getTabsCount();}
 
     @PostMapping("tabs/close")
-    ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.closeTab(request);}
+    ResponseEntity<?> closeTab(@RequestBody UserWorkspaceTabsCloseRequest request) { return this.workspaceService.closeTab(request);}
 
-    @PostMapping("tabs/navigate")
+    @PostMapping("tabs/open")
     ResponseEntity<?> openTab(@RequestBody UserWorkspaceTabsRequest request) { return this.workspaceService.openTab(request.getWorkspaceContextCode(), request.getWorkspaceUwYear(), request.getScreen(), request.getTabOrder());}
 
     @PostMapping("tabs/select")

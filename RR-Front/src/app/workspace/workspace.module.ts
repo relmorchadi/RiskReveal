@@ -42,6 +42,9 @@ import { ContextMenuModule } from "primeng/primeng";
 import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filter.pipe';
 import {FilterGroupedPltsPipe} from "./pipes/filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
+import {GetDeltaPipe} from "./pipes/get-delta.pipe";
+import {FinancialUnitPipe} from "./pipes/financial-unit.pipe";
+import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
@@ -77,7 +80,7 @@ import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe
+    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, GetDeltaPipe, FinancialUnitPipe, ExchangeRatePipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

@@ -1,4 +1,4 @@
- import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
@@ -8,7 +8,6 @@ import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/ac
 import {BaseContainer} from '../../../shared/base';
 import {WorkspaceState} from '../../store/states';
 import {Navigate} from '@ngxs/router-plugin';
-import {map} from 'rxjs/operators';
 import * as fromHeader from 'src/app/core/store/actions/header.action';
 import {HelperService} from '../../../shared/services';
 
@@ -25,6 +24,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   selectedTabIndex: number;
   loading: boolean;
   data: { [p: string]: any } = null;
+  tabs: any[];
   currentWsIdentifier: string;
   wsStatus: string;
   selectedPrj: any = {};
@@ -32,6 +32,8 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   uwYear: any;
   route: any;
   ws: any;
+
+  currentTab: any;
 
   @Select(WorkspaceState.getWorkspaceStatus) status$;
   @Select(WorkspaceState.getSelectedProject) selectedPrj$;
@@ -66,9 +68,8 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
     this.currentTab$.pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
         this.selectedTabIndex = curTab.index;
-/*        this.data === null ? this.selectedTabIndex = curTab.index
-            : this.selectedTabIndex = _.findIndex(_.keys(this.data), item => this.currentWsIdentifier === item);*/
         this.currentWsIdentifier = curTab.wsIdentifier;
+        this.currentTab = curTab;
         this.detectChanges();
       });
     this.select(WorkspaceState.getLoading)
@@ -122,7 +123,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   close(wsId, uwYear) {
     event.stopPropagation();
     this.dispatch(new fromWs.CloseWS({
-      wsIdentifier: wsId + '-' + uwYear
+      wsId,uwYear
     }));
   }
 
@@ -155,10 +156,6 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   selectWorkspace(wsIdentifier, index) {
-    this.dispatch(new fromWs.setCloneConfig({
-      cloneConfig: {},
-      wsIdentifier: this.currentWsIdentifier
-    }));
     this.dispatch(new fromWs.SetCurrentTab({
       wsIdentifier,
       index
