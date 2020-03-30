@@ -1,9 +1,7 @@
 package com.scor.rr.service.ScopeAndCompleteness;
 
 import com.scor.rr.domain.PltHeaderEntity;
-import com.scor.rr.domain.Response.ScopeAndCompleteness.AccumulationPackageResponse;
-import com.scor.rr.domain.Response.ScopeAndCompleteness.AttachedPLTsInfo;
-import com.scor.rr.domain.Response.ScopeAndCompleteness.ScopeAndCompletenessResponse;
+import com.scor.rr.domain.Response.ScopeAndCompleteness.*;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackage;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackageAttachedPLT;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.AttachPLTRequest;
@@ -14,11 +12,13 @@ import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageAttachedPLTRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccumulationPackageAttachedPLTService {
@@ -36,12 +36,12 @@ public class AccumulationPackageAttachedPLTService {
 
     public AccumulationPackageResponse attachSelectedPlts(AttachPLTRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        if(!request.getPltList().isEmpty()){
-            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(),request.getWorkspaceId());
+        if (!request.getPltList().isEmpty()) {
+            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(), request.getWorkspaceId());
             List<AccumulationPackageAttachedPLT> listToSave = new ArrayList<>();
-            for(PLTAttachingInfo row : request.getPltList()){
+            for (PLTAttachingInfo row : request.getPltList()) {
                 PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(row.getPltHeaderId());
-                if(plt == null) throw new InputPLTNotFoundException(row.getPltHeaderId());
+                if (plt == null) throw new InputPLTNotFoundException(row.getPltHeaderId());
                 AccumulationPackageAttachedPLT accumulationPackageAttachedPLT = new AccumulationPackageAttachedPLT();
                 accumulationPackageAttachedPLT.setAccumulationPackageId(accumulationPackage.getAccumulationPackageId());
                 accumulationPackageAttachedPLT.setContractSectionId(String.valueOf(row.getContractSectionId()));
@@ -50,10 +50,9 @@ public class AccumulationPackageAttachedPLTService {
             }
             accumulationPackageAttachedPLTRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(), request.getUwYear()));
             response.setAttachedPLTs(getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
-
 
 
         }
@@ -62,12 +61,12 @@ public class AccumulationPackageAttachedPLTService {
 
     public List<AttachedPLTsInfo> getAttachedPLTs(long accumulationPackageId) throws RRException {
         AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
-        if(accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
+        if (accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
 
         List<AttachedPLTsInfo> pltReturnList = new ArrayList<>();
         List<AccumulationPackageAttachedPLT> attachedPLTS = accumulationPackageAttachedPLTRepository.findByAccumulationPackageId(accumulationPackageId);
-        if(!attachedPLTS.isEmpty()){
-            for(AccumulationPackageAttachedPLT plt : attachedPLTS){
+        if (!attachedPLTS.isEmpty()) {
+            for (AccumulationPackageAttachedPLT plt : attachedPLTS) {
                 AttachedPLTsInfo pltInfo = new AttachedPLTsInfo();
                 pltInfo.setAttachedPLT(pltHeaderRepository.findByPltHeaderId(plt.getPLTHeaderId()));
                 pltInfo.setContractSectionId(plt.getContractSectionId());
@@ -78,9 +77,9 @@ public class AccumulationPackageAttachedPLTService {
 
     }
 
-    public void deleteSelectedAttachedPLTs(List<Long> listPlts){
-        if(!listPlts.isEmpty()){
-            for(Long id: listPlts){
+    public void deleteSelectedAttachedPLTs(List<Long> listPlts) {
+        if (!listPlts.isEmpty()) {
+            for (Long id : listPlts) {
                 accumulationPackageAttachedPLTRepository.deleteById(id);
             }
 
@@ -88,14 +87,24 @@ public class AccumulationPackageAttachedPLTService {
     }
 
     public AccumulationPackage getTheAccumulationPackage(long accumulationPackageId, long workspaceId) throws RRException {
-        if(accumulationPackageId != 0) {
+        if (accumulationPackageId != 0) {
             AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
-            if(accumulationPackage == null ) throw new AccumulationPackageNotFoundException(accumulationPackageId);
+            if (accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
             return accumulationPackage;
 
 
-        }else{
-            return  accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId));
+        } else {
+            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId));
         }
     }
+
+    public List<PopUpPLTsResponse> getPLTs(long accumulationPackageId, long projectId) {
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setFieldMatchingEnabled(true);
+        return accumulationPackageAttachedPLTRepository.getPLTsData(accumulationPackageId, projectId)
+                .stream()
+                .map(exScope -> mapper.map(exScope, PopUpPLTsResponse.class))
+                .collect(Collectors.toList());
+    }
+
 }

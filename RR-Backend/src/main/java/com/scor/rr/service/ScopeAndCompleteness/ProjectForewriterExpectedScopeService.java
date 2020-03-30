@@ -74,15 +74,17 @@ public class ProjectForewriterExpectedScopeService {
 
 
                     String[] chunkedState = state.split("-");
-                    String finalState = chunkedState[0];
-                    if(chunkedState.length == 1) {
+                    String finalState = "";
+                    if (chunkedState.length == 1) {
                         chunkedState = state.split("_");
-                        finalState = chunkedState[0];
-                        if(chunkedState.length == 1) {
+                        if (chunkedState.length == 1) {
                             finalState = state;
+                        } else {
+                            finalState = chunkedState[1];
                         }
+                    } else {
+                        finalState = chunkedState[1];
                     }
-//                    List<String> perilsList = Arrays.asList(perils.split(","));
 
                     listOfExpectedScopes.add(new ForeWriterExpectedScope(accntNum,
                             year,
