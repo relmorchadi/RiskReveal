@@ -1,5 +1,6 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.scor.rr.domain.enums.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,7 +41,11 @@ public class JobEntity {
     private JobType jobTypeCode;
     @Column(name = "JobTypeDesc")
     private String jobTypeDesc;
+    @Column(name = "UserId")
+    private Long userId;
 
-    @OneToMany(mappedBy = "job", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "job", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<TaskEntity> tasks;
 }

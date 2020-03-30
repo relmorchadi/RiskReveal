@@ -62,8 +62,8 @@
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible" pResizableColumn [pSortableColumn]="col.field">
                                 <ng-container *ngIf="col.type === 'selection' && col.field != 'importLocationLevel'">
-                                    <label nz-checkbox [ngModel]="allCheckedItems"
-                                           (ngModelChange)="updateAllChecked($event)"
+                                    <label nz-checkbox [(ngModel)]="allCheckedItems"
+                                           (nzCheckedChange)="updateAllChecked($event)"
                                            [nzIndeterminate]="indeterminateItems"></label>
                                 </ng-container>
                                 <div style="white-space: nowrap;" *ngIf="!col.filtered">
@@ -72,7 +72,8 @@
                                 <div *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'" style="white-space: nowrap;">
                                     <ng-container>
                                         {{col.header}}
-                                        <p-sortIcon *ngIf="col.type != 'selection'" style="color: #848484 !important;"
+                                        <!--<ng-container [ngTemplateOutlet]="sort_icon" [ngTemplateOutletContext]="{$implicit: col, sortType: null}"></ng-container>-->
+                                        <p-sortIcon style="color: #848484 !important;"
                                                     [field]="col.field"
                                                     ariaLabel="Activate to sort"
                                                     ariaLabelDesc="Activate to sort in descending order"
@@ -95,13 +96,24 @@
                         </ng-container>
                     </tr>
                     <tr>
-                        <th *ngFor="let col of columns" pResizableColumn>
-                            <div class="search-bar-table" *ngIf="col.filtered">
-                                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                                <input pInputText type="text"
-                                       (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
-                            </div>
-                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.type != 'selection' || col.field == 'importLocationLevel'" pResizableColumn>
+                                <div class="search-bar-table" *ngIf="col.filtered">
+                                    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                    <input pInputText type="text"
+                                           (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
+                                </div>
+                            </th>
+                            <th *ngIf="col.type === 'selection' && col.field != 'importLocationLevel'" pResizableColumn [pSortableColumn]="col.field">
+                                <div style="white-space: nowrap;" >
+                                    <p-sortIcon style="color: #848484 !important;"
+                                                [field]="col.field"
+                                                ariaLabel="Activate to sort"
+                                                ariaLabelDesc="Activate to sort in descending order"
+                                                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                </div>
+                            </th>
+                        </ng-container>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
@@ -114,8 +126,8 @@
                                            [ngModel]="rowData[col.field]"
                                            nz-checkbox></label>
                                 </div>
-                                <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                                <div *ngIf="col.type === 'progress'">
+                                <div *ngIf="col.type === 'scan'" (click)="updateSelection(rowData?.rlPortfolioId)"><i class="icon-loop_24px"></i></div>
+                                <div *ngIf="col.type === 'progress'" (click)="updateSelection(rowData?.rlPortfolioId)">
                                     <div class="text-data" *ngIf="col.type === 'progress'">
                                         <ng-container *ngIf="!rowData.isScanning; else scanning">
                                             <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
@@ -219,3 +231,12 @@
     </div>
     <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
 </div>
+<!--
+<ng-template #sort_icon let-i let-sortType="sortType">
+    <ng-container [ngSwitch]="sortType">
+        <i *ngSwitchCase="'ASC'" class="icon-keyboard_arrow_up_24px" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+        <i *ngSwitchCase="'DESC'" class="icon-keyboard_arrow_down_24px" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+        <i *ngSwitchDefault class="icon-direction" (click)="onSort(i)" style="font-size: 1.4em;"></i>
+    </ng-container>
+</ng-template>
+-->

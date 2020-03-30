@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -31,6 +33,7 @@ public class StepEntity {
 
     @ManyToOne
     @JoinColumn(name = "taskId")
+    @JsonBackReference
     public TaskEntity getTask() {
         return task;
     }

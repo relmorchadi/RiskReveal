@@ -10,8 +10,6 @@ import org.springframework.batch.repeat.RepeatStatus;
 
 public interface RegionPerilExtractorInterface {
 
-    void beforeJob();
-
     RepeatStatus loadRegionPerilAndCreateRRAnalysisAndRRLossTableHeader();
 
     RegionPerilEntity getRegionPeril(RLImportSelection sourceResult);

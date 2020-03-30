@@ -68,8 +68,8 @@
                         <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible" pResizableColumn [pSortableColumn]="col.field">
                                 <ng-container *ngIf="col.type === 'selection'">
-                                    <label nz-checkbox [ngModel]="allCheckedItems"
-                                           (ngModelChange)="updateAllChecked($event)"
+                                    <label nz-checkbox [(ngModel)]="allCheckedItems"
+                                           (nzCheckedChange)="updateAllChecked($event)"
                                            [nzIndeterminate]="indeterminateItems"></label>
                                 </ng-container>
                                 <div style="white-space: nowrap;" *ngIf="!col.filtered">
@@ -92,13 +92,24 @@
                         </ng-container>
                     </tr>
                     <tr>
-                        <th *ngFor="let col of columns" pResizableColumn>
-                            <div class="search-bar-table" *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                                <input pInputText type="text"
-                                       (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
-                            </div>
-                        </th>
+                        <ng-container *ngFor="let col of columns">
+                            <th *ngIf="col.type != 'selection'" pResizableColumn>
+                                <div class="search-bar-table" *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
+                                    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                    <input pInputText type="text"
+                                           (input)="onFilter($event.target.value, col.field, col.filterMatchMode)">
+                                </div>
+                            </th>
+                            <th *ngIf="col.type === 'selection'" pResizableColumn [pSortableColumn]="col.field">
+                                <div style="white-space: nowrap;" >
+                                    <p-sortIcon style="color: #848484 !important;"
+                                                [field]="col.field"
+                                                ariaLabel="Activate to sort"
+                                                ariaLabelDesc="Activate to sort in descending order"
+                                                ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                                </div>
+                            </th>
+                        </ng-container>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
@@ -111,8 +122,8 @@
                                            (ngModelChange)="checkRow(rowData?.rlAnalysisId)"
                                            [ngModel]="rowData.selected"></label>
                                 </div>
-                                <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                                <div class="text-data" *ngIf="col.type === 'progress'">
+                                <div class="text-data" *ngIf="col.type === 'scan'" (click)="updateSelection(rowData?.rlAnalysisId)"><i class="icon-loop_24px"></i></div>
+                                <div class="text-data" *ngIf="col.type === 'progress'" (click)="updateSelection(rowData?.rlAnalysisId)">
                                     <ng-container *ngIf="!rowData.isScanning; else scanning">
                                         <nz-progress [nzPercent]="100" [ngClass]="{'hidden-text': true }"
                                                      [nzWidth]="20" nzType="circle"></nz-progress>

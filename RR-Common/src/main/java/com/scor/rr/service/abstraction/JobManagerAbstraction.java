@@ -1,7 +1,9 @@
 package com.scor.rr.service.abstraction;
 
 import com.google.gson.Gson;
+import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.JobDto;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.JobType;
 import com.scor.rr.domain.enums.StepStatus;
@@ -9,6 +11,7 @@ import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.StepEntityRepository;
 import com.scor.rr.repository.TaskEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +47,8 @@ public abstract class JobManagerAbstraction implements JobManager {
         job.setStatus(JobStatus.PENDING.getCode());
         job.setPriority(priority);
         job.setSubmittedByUser(userId);
+        if (SecurityContextHolder.getContext().getAuthentication() != null)
+            job.setUserId(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
 
         return jobEntityRepository.saveAndFlush(job);
     }
@@ -99,6 +104,8 @@ public abstract class JobManagerAbstraction implements JobManager {
     public abstract boolean isTaskRunning(Long taskId);
 
     public abstract List<JobExecutionEntity> findRunningJobsForUser(String userId);
+
+    public abstract List<JobDto> findRunningJobsForUserRR(Long userId);
 
     public abstract void onTaskError(Long taskId);
 

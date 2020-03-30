@@ -159,6 +159,7 @@ public class PltHeaderEntity {
         this.targetRAPId = other.getTargetRAPId();
         this.regionPerilId = other.regionPerilId;
         this.projectId = other.projectId;
+        this.perilCode= other.perilCode;
 //        this.adjustmentBasisByFkPreviousBasisId = other.adjustmentBasisByFkPreviousBasisId;
 //        this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
         this.entity = other.entity;
