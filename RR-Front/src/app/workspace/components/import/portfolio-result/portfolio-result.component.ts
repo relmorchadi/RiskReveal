@@ -88,6 +88,7 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
             this.loadTablesCols();
         }
         this.updateTreeStateCheckBox();
+        window['portfolioTable']= this.tables;
     }
 
     onFilter(kw, field, mode){
@@ -123,7 +124,8 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
     }
 
     updateAllChecked(nextValue) {
-        if (nextValue)
+        event.preventDefault();
+        if (nextValue && !this.indeterminateItems)
             this.store.dispatch(new fromRiskLink.TogglePortfolioResultSelectionAction({
                 action: 'selectChunk', ids: _.map(this.filteredPortfolio, item => item.rlPortfolioId)
             }));
@@ -182,6 +184,12 @@ export class PortfolioResultComponent implements OnInit, OnChanges {
     savePortfolioSelection() {
         this.saveEmitter.emit('PORTFOLIO');
     }
+
+/**
+    onSort(sortEvent){
+        console.log('Sort evt', sortEvent, this.tables);
+    }
+*/
 
     get filteredPortfolio(){
         return this._filterPipe.transform(this.portfolios, this.filter);

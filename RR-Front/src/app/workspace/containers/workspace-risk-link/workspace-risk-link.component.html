@@ -339,8 +339,8 @@
                         <ng-container *ngFor="let col of columns">
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
                               *ngIf="col.header === 'selected'">
-                            <label nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="updateAllChecked('portfolio',$event)"
+                            <label nz-checkbox [(ngModel)]="allCheckedPortolfios"
+                                   (nzCheckedChange)="updateAllChecked('portfolio',$event)"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                           </th>
                           <th [ngClass]="{'select-header': col.header === 'selected'}"
@@ -351,7 +351,7 @@
                               [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                             <div>
                               {{col.header}}
-                              <p-sortIcon style="position: absolute; float: right;"
+                              <p-sortIcon *ngIf="col.field != 'imported'" style="position: absolute; float: right;"
                                           [field]="col.field" ariaLabel="Activate to sort"
                                           ariaLabelDesc="Activate to sort in descending order"
                                           ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
@@ -413,7 +413,7 @@
                           <ng-container *ngFor="let col of columns">
                             <th [ngClass]="{'select-header': col.header === 'selected'}"
                                 *ngIf="col.header === 'selected'">
-                              <label nz-checkbox [ngModel]="allCheckedAnalysis"
+                              <label nz-checkbox [(ngModel)]="allCheckedAnalysis"
                                      (ngModelChange)="updateAllChecked('analysis',$event)"
                                      [nzIndeterminate]="indeterminateAnalysis"></label>
                             </th>
@@ -425,7 +425,7 @@
                                 [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                               <div>
                                 {{col.header}}
-                                <p-sortIcon style="position: absolute; float: right;"
+                                <p-sortIcon *ngIf="col.field != 'imported'" style="position: absolute; float: right;"
                                             [field]="col.field" ariaLabel="Activate to sort"
                                             ariaLabelDesc="Activate to sort in descending order"
                                             ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
