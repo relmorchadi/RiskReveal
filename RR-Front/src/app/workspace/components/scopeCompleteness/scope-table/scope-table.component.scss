@@ -21,10 +21,34 @@
 }
 
 .row-hover:hover {
-  background-color: #cee5ef !important;
+  background-color: #F7F8FD !important;
 
   .burger-menu {
     display: block;
   }
 }
 
+.center-header {
+  text-align: center;
+}
+
+.arrow-key-design {
+  color: #007AD9;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.checkbox-override-wrap {
+  text-align: center;
+
+  .unCheckedBoxTab {
+    border: 1px solid;
+    font-size: 20px !important;
+    color: darkgray;
+  }
+
+  .checkedBoxTab {
+    background-color: #0700CF;
+    color: #FFFFFF;
+  }
+}

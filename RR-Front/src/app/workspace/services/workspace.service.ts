@@ -131,8 +131,16 @@ export class WorkspaceService {
             scopeOfCompleteness: {
               data: {
                 targetRaps: [],
-                regionPerils: []
+                regionPerils: [],
+                scopeContext: null
               },
+              overrideInit: false,
+              overriddenRows: [],
+              scopeContext: {
+                accumulationStatus: 'Scope Only',
+                filterBy: 'All',
+                sortBy: 'Minimum Grain / RAP',
+              }
             },
             fileBaseImport: {
               folders: null,

@@ -10,7 +10,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {tap} from "rxjs/operators";
-import {LoadScopeCompletenessDataSuccess, SetCurrentTab} from "../../store/actions";
+import {LoadScopeCompletenessDataSuccess, PatchScopeOfCompletenessState, SetCurrentTab} from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-scope-completence',
@@ -78,7 +78,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   @Select(WorkspaceState.getImportStatus) importStatus$;
   importStatus: any;
 
+  @Select(WorkspaceState.getScopeContext) scopeContext$;
+
   wsStatus: any;
+  overrideStatus = false;
   currentWsIdentifier: any;
   workspace: any;
   index: any;
@@ -134,7 +137,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.selectedProject$.pipe().subscribe(value => {
       this.tabStatus = _.get(value, 'projectType', null);
-      console.log(this.tabStatus, this.wsStatus, this.wsType);
       this.selectedProject = value;
       if (this.tabStatus === 'treaty' || this.tabStatus === null) {
         this.dataSource = this.getData(this.treatySections[0]);
@@ -153,6 +155,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.ws$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.ws = _.merge({}, value);
+      this.detectChanges();
+    });
+
+    this.scopeContext$.pipe().subscribe(value => {
+      this.selectedSortBy = _.get(value, 'sortBy');
+      this.accumulationStatus = _.get(value, 'accumulationStatus');
       this.detectChanges();
     });
 
@@ -179,7 +187,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   formatData(data) {
     const divisions = _.get(this.selectedProject, 'division', []);
-    console.log(divisions);
     let scopeData = [];
     _.forEach(divisions, (item, index) => {
       if (index < data.length) {
@@ -229,6 +236,20 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       "workspaceContextCode": this.workspace.wsId,
       "workspaceUwYear": this.workspace.uwYear
     })]);
+  }
+
+  updateScopeStateAccumulation(data) {
+    this.accumulationStatus = data;
+    this.dispatch(new fromWs.PatchScopeOfCompletenessState({mergedData: {accumulationStatus: data}, scope: 'scopeContext'}))
+  }
+
+  updateScopeStateSort(data) {
+/*    this.changeSortBy(data);*/
+    this.dispatch(new fromWs.PatchScopeOfCompletenessState({mergedData: {sortBy: data}, scope: 'scopeContext'}))
+  }
+
+  updateScopeStateFilter(data) {
+    this.dispatch(new fromWs.PatchScopeOfCompletenessState({mergedData: {filterBy: data}, scope: 'scopeContext'}))
   }
 
   getData(treatySections) {
@@ -1143,6 +1164,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   /**switching to the override mode for the whole table**/
   overrideAll() {
+    this.dispatch(new PatchScopeOfCompletenessState({overrideInit: true}));
+    this.overrideStatus = true;
     this.dataSource.forEach(res => {
       res.override = true;
     });
@@ -1274,6 +1297,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   /**cancelling the override / emptying the override container**/
   cancelOverride() {
+    this.dispatch(new PatchScopeOfCompletenessState({overrideInit: false}));
+    this.overrideStatus = false;
     this.selectionForOverride = [];
     this.dataSource.forEach(res => {
       res.override = false;

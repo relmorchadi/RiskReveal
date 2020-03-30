@@ -470,9 +470,16 @@ export class WorkspaceState {
     return state.content[wsIdentifier].scopeOfCompleteness.data;
   }
 
-  static getScopeCompleteness(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompleteness.data`), 'pltId'));
+  @Selector()
+  static getOverrideStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompleteness.overrideInit;
+  }
+  
+  @Selector()
+  static getScopeContext(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.scopeContext;
   }
 
   /***********************************
@@ -1242,10 +1249,6 @@ export class WorkspaceState {
     return this.riskLinkFacade.initDataSourcesSelection(ctx);
   }
 
-
-
-
-
   /***********************************
    *
    * Scope And Completeness Actions
@@ -1259,6 +1262,11 @@ export class WorkspaceState {
   @Action(fromWS.PublishToPricingFacProject)
   publishToPricingFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PublishToPricingFacProject) {
     return this.scopService.publishToPricing(ctx, payload);
+  }
+
+  @Action(fromWS.PatchScopeOfCompletenessState)
+  PatchScopeOfCompletenessState(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchScopeOfCompletenessState) {
+    return this.scopService.patchScopeState(ctx, payload);
   }
 
 

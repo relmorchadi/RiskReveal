@@ -35,8 +35,8 @@
               </div>
             </div>
             <ul nz-menu>
-              <li nz-menu-item (click)="changeSortBy('Minimum Grain / RAP')">Minimum Grain / RAP</li>
-              <li nz-menu-item (click)="changeSortBy('RAP / Minimum Grain')">RAP / Minimum Grain</li>
+              <li nz-menu-item (click)="updateScopeStateSort('Minimum Grain / RAP')">Minimum Grain / RAP</li>
+              <li nz-menu-item (click)="updateScopeStateSort('RAP / Minimum Grain')">RAP / Minimum Grain</li>
               <!--<li nz-menu-item>Peak Peril Tier</li>-->
             </ul>
           </nz-dropdown>
@@ -74,8 +74,9 @@
               </div>
             </div>
             <ul nz-menu>
-              <li nz-menu-item (click)="accumulationStatus = 'Scope Only'">Scope Only</li>
-              <li nz-menu-item (click)="accumulationStatus = 'Pending'" *ngIf="showPendingOption">Pending</li>
+              <li nz-menu-item (click)="updateScopeStateAccumulation('Scope Only')">Scope Only</li>
+              <li nz-menu-item (click)="updateScopeStateAccumulation('Pricing')">Pricing</li>
+              <li nz-menu-item (click)="updateScopeStateAccumulation('Accumulation Package')">Accumulation Package</li>
             </ul>
           </nz-dropdown>
 
@@ -150,7 +151,7 @@
 
       </div>
       <div class="table-wrap">
-        <app-scope-table [selectedSortBy]="selectedSortBy"></app-scope-table>
+        <app-scope-table></app-scope-table>
 <!--        <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
           <ng-template pTemplate="header" let-columns>
             <tr>
