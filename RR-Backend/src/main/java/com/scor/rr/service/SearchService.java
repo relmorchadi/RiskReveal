@@ -289,6 +289,7 @@ public class SearchService {
         TreatyWorkspaceDTO detailsDTO;
         ContractSearchResult firstWs = contracts.get(0);
         detailsDTO = new TreatyWorkspaceDTO(firstWs, "TTY");
+        detailsDTO.setId(workspaceId);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYear(Integer.parseInt(uwy));
