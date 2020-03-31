@@ -5,6 +5,7 @@ import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceToggleRequest;
 import com.scor.rr.domain.dto.TargetBuild.WorkspaceCount;
+import com.scor.rr.domain.dto.UserWorkspaceTabsCloseRequest;
 import com.scor.rr.domain.dto.UserWorkspaceTabsRequest;
 import com.scor.rr.domain.entities.UserWorkspaceTabs;
 import com.scor.rr.repository.UserWorkspaceTabsRepository;
@@ -131,34 +132,106 @@ public class WorkspaceService {
         return new ResponseEntity<>("ok", HttpStatus.OK);
     }
 
-    public ResponseEntity<List<UserWorkspaceTabs>> getTabs() {
+    public ResponseEntity<Integer> getTabsCount() {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
         try {
-            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByOpenedDateDesc(user.getUserCode()));
+            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByTabOrderAsc(user.getUserCode()).size());
+        } catch(Exception e) {
+            return ResponseEntity.ok(0);
+        }
+    }
+
+    public ResponseEntity<List<UserWorkspaceTabs>> getTabs(UserWorkspaceTabsRequest request) {
+        UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(
+                user.getUserCode(),
+                request.getWorkspaceContextCode(),
+                request.getWorkspaceUwYear()
+        );
+
+        if(!opt.isPresent()) {
+            if(request.getWorkspaceUwYear() != null && request.getWorkspaceContextCode() != null) {
+                Optional<UserWorkspaceTabs> selectedOpt = this.workspaceTabsRepository.findByUserCodeAndSelected(user.getUserCode(),true);
+
+                if(selectedOpt.isPresent()) {
+                    UserWorkspaceTabs oldSelected = selectedOpt.get();
+                    oldSelected.setSelected(false);
+                    this.workspaceTabsRepository.save(oldSelected);
+                }
+
+                this.workspaceTabsRepository.save(new UserWorkspaceTabs(
+                        null,
+                        request.getWorkspaceContextCode(),
+                        request.getWorkspaceUwYear(),
+                        user.getUserCode(),
+                        new Date(),
+                        request.getScreen(),
+                        this.workspaceTabsRepository.findAllByUserCodeOrderByTabOrderAsc(user.getUserCode()).size(),
+                        true
+                ));
+            }
+        } else {
+
+            UserWorkspaceTabs tab = opt.get();
+
+            if(!tab.getSelected()) {
+                Optional<UserWorkspaceTabs> selectedOpt = this.workspaceTabsRepository.findByUserCodeAndSelected(user.getUserCode(),true);
+
+                if(selectedOpt.isPresent()) {
+                    UserWorkspaceTabs oldSelected = selectedOpt.get();
+                    oldSelected.setSelected(false);
+                    this.workspaceTabsRepository.save(oldSelected);
+                }
+            }
+
+            this.workspaceTabsRepository.save(new UserWorkspaceTabs(
+                    tab.getUserWorkspaceTabsId(),
+                    request.getWorkspaceContextCode(),
+                    request.getWorkspaceUwYear(),
+                    user.getUserCode(),
+                    new Date(),
+                    request.getScreen(),
+                    tab.getTabOrder(),
+                    true
+            ));
+
+        }
+
+        try {
+            return ResponseEntity.ok(this.workspaceTabsRepository.findAllByUserCodeOrderByTabOrderAsc(user.getUserCode()));
         } catch(Exception e) {
             return ResponseEntity.ok(new ArrayList<>());
         }
     }
 
-    public ResponseEntity<?> closeTab(UserWorkspaceTabsRequest request) {
+    public ResponseEntity<?> closeTab(UserWorkspaceTabsCloseRequest request) {
         try {
-            this.workspaceTabsRepository.deleteById(request.getUserWorkspaceTabsId());
+            this.workspaceTabsRepository.deleteById(request.getToClose().getUserWorkspaceTabsId());
+            this.workspaceTabsRepository.saveAll(request.getTabs());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Couldn't DELETE Tab with message: {}", e.getMessage());
+            log.error("Couldn't CLOSE Tab with message: {}", e.getMessage());
             return ResponseEntity.ok().build();
         }
     }
 
-    public ResponseEntity<?> openTab(String workspaceContextCode, Integer workspaceUwYear, String screen) {
+    public ResponseEntity<?> openTab(String workspaceContextCode, Integer workspaceUwYear, String screen, Integer order ) {
         UserRrEntity user = ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
+            Optional<UserWorkspaceTabs> selectedOpt = this.workspaceTabsRepository.findByUserCodeAndSelected(user.getUserCode(),true);
+            if (selectedOpt.isPresent()) {
+                UserWorkspaceTabs oldSelected = selectedOpt.get();
+                oldSelected.setSelected(false);
+                this.workspaceTabsRepository.saveAndFlush(oldSelected);
+            }
             Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(user.getUserCode(), workspaceContextCode, workspaceUwYear);
 
             if(opt.isPresent()) {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen)));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(opt.get().getUserWorkspaceTabsId(), workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen, order, true)));
             } else {
-                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen)));
+                return ResponseEntity.ok(this.workspaceTabsRepository.save(new UserWorkspaceTabs(null, workspaceContextCode, workspaceUwYear, user.getUserCode(), new Date(), screen, order, true)));
             }
 
         } catch (Exception e) {
@@ -167,6 +240,40 @@ public class WorkspaceService {
         }
     }
 
+    public ResponseEntity<?> selectTab(String workspaceContextCode, Integer workspaceUwYear) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
+        try {
+            Optional<UserWorkspaceTabs> opt = this.workspaceTabsRepository.findByUserCodeAndWorkspaceContextCodeAndWorkspaceUwYear(user.getUserCode(), workspaceContextCode, workspaceUwYear);
+            Optional<UserWorkspaceTabs> selectedOpt = this.workspaceTabsRepository.findByUserCodeAndSelected(user.getUserCode(),true);
+
+            if(opt.isPresent()) {
+                UserWorkspaceTabs newSelected = opt.get();
+                newSelected.setSelected(true);
+                this.workspaceTabsRepository.save(newSelected);
+            }
+
+            if (selectedOpt.isPresent()) {
+                UserWorkspaceTabs oldSelected = selectedOpt.get();
+                oldSelected.setSelected(false);
+                this.workspaceTabsRepository.save(oldSelected);
+            }
+
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Couldn't OPEN Tab with message: {}", e.getMessage());
+            return ResponseEntity.ok().build();
+        }
+    }
+
+    public ResponseEntity<?> setOrder(List<UserWorkspaceTabs> tabs) {
+        try {
+            this.workspaceTabsRepository.saveAll(tabs);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Couldn't ORDER Tabs with message: {}", e.getMessage());
+            return ResponseEntity.ok().build();
+        }
+    }
 
 }

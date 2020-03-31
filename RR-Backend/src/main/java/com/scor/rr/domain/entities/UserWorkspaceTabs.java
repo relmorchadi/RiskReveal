@@ -34,4 +34,10 @@ public class UserWorkspaceTabs {
     @Column(name = "Screen")
     private String screen;
 
+    @Column(name = "TabOrder")
+    private Integer tabOrder;
+
+    @Column(name = "Selected")
+    private Boolean selected;
+
 }

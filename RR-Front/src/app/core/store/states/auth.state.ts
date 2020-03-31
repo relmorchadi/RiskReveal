@@ -57,8 +57,8 @@ export class AuthState implements NgxsOnInit {
                     new LoadSavedSearch(),
                     new LoadMostUsedSavedSearch(),
                     new GetAllUsers(),
-                    new LoadConfiguration(),
-                    new InitWorkspace({})]);
+                    new LoadConfiguration()]
+                );
             }),
             catchError(err => {
                 console.log(err);
