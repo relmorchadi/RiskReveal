@@ -60,13 +60,7 @@ export class PltLeftMenuComponent implements OnInit {
 
       this.actionDispatcher.emit({
         type: leftMenuStore.onSelectProjects,
-        payload: _.map(this.leftMenuInputs.projects, t => {
-          if(t.projectId == value){
-            return ({...t,selected: !t.selected})
-          }else if(t.selected) {
-            return ({...t,selected: false})
-          }else return t;
-        })
+        payload: value
       })
 
     }

@@ -5,10 +5,8 @@ import {AuthenticationApi} from "../../service/api/authentication.api";
 import {catchError, mergeMap, tap} from "rxjs/operators";
 import produce from "immer";
 import {of} from "rxjs";
-import {DashboardModel} from "../../model/dashboard.model";
 import {GetAllUsers, LoadMostUsedSavedSearch, LoadRecentSearch, LoadSavedSearch, LoadShortCuts} from "../actions";
 import {LoadConfiguration} from "../actions";
-import {InitWorkspace} from "../../../workspace/store/actions";
 
 const initiateState: AuthModel = {
   fullName: '',
@@ -57,8 +55,8 @@ export class AuthState implements NgxsOnInit {
                     new LoadSavedSearch(),
                     new LoadMostUsedSavedSearch(),
                     new GetAllUsers(),
-                    new LoadConfiguration(),
-                    new InitWorkspace({})]);
+                    new LoadConfiguration()]
+                );
             }),
             catchError(err => {
                 console.log(err);
