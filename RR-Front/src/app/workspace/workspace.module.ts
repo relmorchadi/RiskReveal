@@ -82,7 +82,7 @@ import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, GetDeltaPipe, FinancialUnitPipe, ExchangeRatePipe, FrozenColumnsFilterPipe
+    ...SERVICE,...PIPES, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, GetDeltaPipe, FinancialUnitPipe, ExchangeRatePipe, FrozenColumnsFilterPipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
