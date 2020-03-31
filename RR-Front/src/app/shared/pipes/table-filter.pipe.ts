@@ -6,18 +6,22 @@ import * as _ from "lodash";
 })
 export class TableFilterPipe implements PipeTransform {
 
+  readonly fieldMapper= {
+    'financialPerspective': 'financialPerspectives'
+  };
+
   transform(data: any, filterData?: any): any {
     const filterDataKeys = _.keys(filterData);
-    console.log('Filter Data',data,filterData);
     if(filterDataKeys.length > 0 ) {
       return _.filter(data, row =>
           _.every(
               filterDataKeys,
               filteredCol => _.some(
-                  _.split(filterData[filteredCol],/[,;]/g), strs => {
+                  [filterData[filteredCol]], strs => {
                     if(_.startsWith(strs,"\"") && _.endsWith(strs,"\""))
                       return _.toLower(_.toString(row[filteredCol])) == _.toLower(_.toString(_.trim(strs, `\"`)));
-                    return _.includes(_.toLower(_.toString(JSON.stringify(row[filteredCol]))), _.toLower(_.toString(strs)));
+                    const toFilter = row[ this.fieldMapper[filteredCol] || filteredCol ];
+                    return _.includes(_.toLower(_.toString(JSON.stringify(toFilter))), _.toLower(_.toString(strs)));
                   }
               )
           )
