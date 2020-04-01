@@ -96,7 +96,7 @@
           <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
         </div>
 
-        <div style="display: flex; flex-direction: column" *ngIf="showCancelOverrideButton()()">
+        <div style="display: flex; flex-direction: column" *ngIf="showCancelOverrideButton()">
           <button class="a-buttons-contained-disabled-micro" *ngIf="!checkSelectionToCancelOverride()">Remove Override</button>
           <button class="a-buttons-contained-micro" *ngIf="checkSelectionToCancelOverride()" (click)="removeOverrideBack()">Remove Override</button>
           <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
