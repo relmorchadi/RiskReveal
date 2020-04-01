@@ -14,10 +14,11 @@ import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.act
 import {NotificationService} from '../../../../shared/notification.service';
 import {BaseContainer} from '../../../../shared/base';
 import {WorkspaceState} from "../../../../workspace/store/states";
-import {debounceTime, take, takeUntil} from "rxjs/operators";
+import {debounceTime, switchMap, take, takeUntil} from "rxjs/operators";
 import {Navigate} from "@ngxs/router-plugin";
-import {Subject, Subscription} from "rxjs";
+import {iif, of, Subject, Subscription} from "rxjs";
 import * as fromWS from "../../../../workspace/store/actions";
+import {WsApi} from "../../../../workspace/services/api/workspace.api";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -103,7 +104,9 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
               _baseCdr: ChangeDetectorRef,
               private _fb: FormBuilder, private store: Store,
               private notificationService: NotificationService,
-              private cdRef: ChangeDetectorRef) {
+              private cdRef: ChangeDetectorRef,
+              private wsApi: WsApi
+  ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.unSubscribeRec$ = new Subject<void>();
     this.unSubscribeFav$ = new Subject<void>();
@@ -326,7 +329,13 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   async openSingleWorkspace(ws) {
-    this.router.navigate([`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`]);
+    this.dispatch(new fromWS.OpenWS({
+      wsId: ws.workspaceContextCode,
+      uwYear: ws.workspaceUwYear,
+      route: 'projects',
+      type: ws.workspaceMarketChannel
+    }));
+    //this.router.navigate([`/workspace/${ws.workspaceContextCode}/${ws.workspaceUwYear}/projects`]);
     this.visible = false;
   }
 
@@ -395,17 +404,12 @@ export class WorkspacesMenuItemComponent extends BaseContainer implements OnInit
   }
 
   redirectWorkspace() {
-    this.lastWorkspace$
-      .pipe(take(1))
-      .subscribe(data => {
-        if (data) {
-          const {wsId, uwYear, route} = data;
-          return this.store.dispatch(
-            [new UpdateWsRouting(wsId.concat('-', uwYear), route),
-              new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
-          );
+    this.wsApi.getTabsCount()
+      .subscribe(size => {
+        if (size > 0) {
+          this.dispatch(new fromWS.InitWorkspace({}))
         } else {
-          return this.notificationService.createNotification('Information',
+          this.notificationService.createNotification('Information',
             'There is no Opened Workspaces please try searching for some before!',
             'error', 'bottomRight', 4000);
         }

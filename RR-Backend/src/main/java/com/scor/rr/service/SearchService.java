@@ -220,7 +220,7 @@ public class SearchService {
         if("TTY".equals(wsType)) return loadTreatyWorkspace(workspaceId, uwy, false, null);
         if("FAC".equals(wsType)) return loadFacWorkspace(workspaceId, uwy, false, null);
 
-        if(" ".equals(wsType)) {
+        if("".equals(wsType)) {
             List<ContractSearchResult> contracts = contractSearchResultRepository.findByTreatyidAndUwYear(workspaceId, uwy);
             if(!CollectionUtils.isEmpty(contracts)) {
                 return this.loadTreatyWorkspace(workspaceId, uwy, true, contracts);
@@ -289,6 +289,7 @@ public class SearchService {
         TreatyWorkspaceDTO detailsDTO;
         ContractSearchResult firstWs = contracts.get(0);
         detailsDTO = new TreatyWorkspaceDTO(firstWs, "TTY");
+        detailsDTO.setId(workspaceId);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYear(Integer.parseInt(uwy));

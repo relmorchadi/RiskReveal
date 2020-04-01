@@ -1,6 +1,6 @@
 export class InitWorkspace {
   static readonly type = '[Workspace] Init Opened Workspaces For User';
-  constructor(public payload: any) {}
+  constructor(public payload?: any) {}
 }
 
 export class loadWorkSpaceAndPlts {
@@ -30,7 +30,7 @@ export class OpenWS {
 
 export class OpenMultiWS {
   static readonly type = '[Workspace] Multiple OpenWS';
-  constructor(public payload?: any[]) {}
+  constructor(public payload?: any) {}
 }
 
 export class CloseWS {
@@ -71,6 +71,19 @@ export class TogglePinned {
 export class ToggleProjectSelection {
   static readonly type = '[Workspace] Toggle project selection';
   constructor(public payload: { wsIdentifier: string, projectIndex: number }) {}
+
+}
+
+export class SelectProject {
+  static readonly type = '[Workspace] Select Project';
+
+  constructor(public payload: { wsIdentifier: string, projectId: number }) {
+  }
+}
+
+export class AddNewFacProject {
+  static readonly type = '[Workspace] Add new Fac project';
+  constructor(public payload?: any) {}
 }
 
 export class AddNewProject {

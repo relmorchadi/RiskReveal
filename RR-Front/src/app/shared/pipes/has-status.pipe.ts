@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 export class HasStatusPipe implements PipeTransform {
 
   transform(value: any, status: any): any {
-    console.log(value, status)
     return _.includes(value, status);
   }
 
