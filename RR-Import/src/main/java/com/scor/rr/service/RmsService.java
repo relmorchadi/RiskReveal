@@ -120,66 +120,17 @@ public class RmsService {
 
     public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId) {
         return dataSources.stream().map(dataSource -> {
+            Integer count = null;
 
-            RLModelDataSource rlModelDataSource =
+            RLModelDataSource rlModelDataSource=
                     rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
-
             if (rlModelDataSource != null) {
 
                 if (rlModelDataSource.getType().equalsIgnoreCase("RDM")){
-                    List<RdmAnalysisBasic> rdmAnalysisBasicList=listRdmAnalysisBasic(dataSource.getInstanceId(),rlModelDataSource.getRlId(), rlModelDataSource.getName());
-                    Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
-                            . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
-               //Pour le cas ou data qui vient de rms contient un seul Analysis
-                   // System.out.println("*****"+rdmAnalysisBasicList);
-                   //  Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
-                  //  rdmAnalysisBasicMap.put((long) 252,rdmAnalysisBasicList.get(1));//corr ici dans map  analysisId=252
-
-                    count=rdmAnalysisBasicList.size();
-
-                    List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
-                    Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
-
-
-                    rlAnalysisMap.forEach((K, V) ->{if (rdmAnalysisBasicMap.containsKey(K)){
-                        rdmAnalysisBasicMap.remove(K);}
-                    else {
-                        rlAnalysisRepository.deleteByRLAnalysisisId(K,projectId);
-                    }
-                    });
-
-                    rdmAnalysisBasicMap.forEach((K, V) -> {RLAnalysis rlAnalysis= new RLAnalysis(V,rlModelDataSource);
-                        rlAnalysisRepository.save(rlAnalysis);
-                        RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
-                        rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
-                    });
+                      count=scanAnalysisBasicForRdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
                 }
                 else{
-                    List<EdmPortfolioBasic> edmPortfolioBasicList=listEdmPortfolioBasic(dataSource.getInstanceId(),rlModelDataSource.getRlId(), rlModelDataSource.getName());
-                    Map<Long,EdmPortfolioBasic> edmPortfolioBasicMap=edmPortfolioBasicList.stream()
-                            .collect(Collectors.toMap(edmPortfolioBasic -> edmPortfolioBasic.getPortfolioId(),edmPortfolioBasic -> edmPortfolioBasic));
-
-                    count=edmPortfolioBasicList.size();
-
-                    List<RLPortfolio> rlPortfolioList=this.rlPortfolioRepository.findByEdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
-                    Map<Long,RLPortfolio> rlPortfolioMap=rlPortfolioList.stream().collect(Collectors.toMap(rLPortfolio -> rLPortfolio.getRlId(),rLPortfolio -> rLPortfolio));
-
-                    rlPortfolioMap.forEach((K, V) -> {  if (edmPortfolioBasicMap.containsKey(K)){
-                        edmPortfolioBasicMap.remove(K);
-                    }
-                    else {
-                        rlPortfolioRepository.deleteByRLPortfolioId(K,projectId);
-                    }
-                    });
-
-                    edmPortfolioBasicMap.forEach((K,V) -> {RLPortfolio rlPortfolio= new RLPortfolio(V,rlModelDataSource);
-                        rlPortfolioRepository.save(rlPortfolio);
-                        RLPortfolioScanStatus rlPortfolioScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
-                        rlPortfolioScanStatusRepository.save(rlPortfolioScanStatus);
-                        rlPortfolio.setRlPortfolioScanStatus(rlPortfolioScanStatus);
-                        rlPortfolioRepository.save(rlPortfolio);
-
-                    });
+                      count=scanPortfolioBasicForEdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
                 }
 
                 rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);//update
@@ -360,30 +311,33 @@ public class RmsService {
         }
         return rdmAnalysisBasics.size();
     }
-    public  int  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+    public  Integer  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
         List<RdmAnalysisBasic> rdmAnalysisBasicList=listRdmAnalysisBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
-        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
-                . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
+       // Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
+        //        . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
+        //Pour le cas ou data qui vient de rms contient un seul Analysis
+        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
+        rdmAnalysisBasicMap.put((long) 11,rdmAnalysisBasicList.get(1));//corr ici dans map  analysisId=252
 
         List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
         Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
 
-        rlAnalysisMap.forEach((rlId, rlAnalysis) ->{if (rdmAnalysisBasicMap.containsKey(rlId)) {
-            updateRLAnalysis(rlAnalysis, rdmAnalysisBasicMap.get(rlId));
-            rdmAnalysisBasicMap.remove(rlId);
+        rlAnalysisMap.forEach((K, V) ->{if (rdmAnalysisBasicMap.containsKey(K)) {
+            updateRLAnalysis(V, rdmAnalysisBasicMap.get(K));
+            rdmAnalysisBasicMap.remove(K);
         }        else {
-            rlAnalysisRepository.deleteByRLAnalysisId(rlId,projectId);
+            rlAnalysisRepository.deleteByRLAnalysisId(K,projectId);
         }
         });
 
-        rdmAnalysisBasicMap.forEach((analysisId, rdmAnalysisBasic) -> { RLAnalysis rlAnalysis= new RLAnalysis(rdmAnalysisBasic,rlModelDataSource);
+        rdmAnalysisBasicMap.forEach((K, V) -> { RLAnalysis rlAnalysis= new RLAnalysis(V,rlModelDataSource);
             rlAnalysisRepository.save(rlAnalysis);
             RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
         });
         return rdmAnalysisBasicList.size();}
 
-    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {
+    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {System.out.println("***********"+);
         if(!rlAnalysis.getAnalysisName().equals(rdmAnalysisBasic.getAnalysisName())){             rlAnalysis.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
         if(!rlAnalysis.getAnalysisDescription().equals(rdmAnalysisBasic.getDescription()))  {     rlAnalysis.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
         if(!rlAnalysis.getEngineVersion().equals(rdmAnalysisBasic.getEngineVersion())){           rlAnalysis.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
@@ -397,17 +351,16 @@ public class RmsService {
         if(!rlAnalysis.getGroupType().equals(rdmAnalysisBasic.getGroupTypeName())){               rlAnalysis.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
         if(!rlAnalysis.getCedant().equals(rdmAnalysisBasic.getCedant())){                         rlAnalysis.setCedant(rdmAnalysisBasic.getCedant());}
         if(!rlAnalysis.getLob().equals(rdmAnalysisBasic.getLobName())){                           rlAnalysis.setLob(rdmAnalysisBasic.getLobName());}
-        rlAnalysis.setIsGroup(false);
         if(!rlAnalysis.getIsGroup().equals(rdmAnalysisBasic.getGrouping())){                      rlAnalysis.setIsGroup(rdmAnalysisBasic.getGrouping());}
         if(!rlAnalysis.getRegionName().equals(rdmAnalysisBasic.getRegionName())){                 rlAnalysis.setRegionName(rdmAnalysisBasic.getRegionName());}
         if(!rlAnalysis.getAnalysisMode().equals(rdmAnalysisBasic.getModeName())){                 rlAnalysis.setAnalysisMode(rdmAnalysisBasic.getModeName());}
-        rlAnalysisRepository.save(rlAnalysis);
+     rlAnalysisRepository.save(rlAnalysis);
     }
 
 
 
 
-        public  int  scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+        public  Integer  scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
         List<EdmPortfolioBasic> edmPortfolioBasicList=listEdmPortfolioBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
         Map<Long,EdmPortfolioBasic> edmPortfolioBasicMap=edmPortfolioBasicList.stream()
                 .collect(Collectors.toMap(edmPortfolioBasic -> edmPortfolioBasic.getPortfolioId(),edmPortfolioBasic -> edmPortfolioBasic));
@@ -415,16 +368,16 @@ public class RmsService {
         List<RLPortfolio> rlPortfolioList=this.rlPortfolioRepository.findByEdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
         Map<Long,RLPortfolio> rlPortfolioMap=rlPortfolioList.stream().collect(Collectors.toMap(rLPortfolio -> rLPortfolio.getRlId(),rLPortfolio -> rLPortfolio));
 
-        rlPortfolioMap.forEach((rlId, rLPortfolio) -> {  if (edmPortfolioBasicMap.containsKey(rlId)){
-            updateRLPortfolio(rLPortfolio,edmPortfolioBasicMap.get(rlId));
-            edmPortfolioBasicMap.remove(rlId);
+        rlPortfolioMap.forEach((K, V) -> {  if (edmPortfolioBasicMap.containsKey(K)){
+            updateRLPortfolio(V,edmPortfolioBasicMap.get(K));
+            edmPortfolioBasicMap.remove(K);
         }
         else {
-            rlPortfolioRepository.deleteByRLPortfolioId(rlId,projectId);
+            rlPortfolioRepository.deleteByRLPortfolioId(K,projectId);
         }
         });
 
-        edmPortfolioBasicMap.forEach((portfolioId,edmPortfolioBasic) -> {RLPortfolio rlPortfolio= new RLPortfolio(edmPortfolioBasic,rlModelDataSource);
+        edmPortfolioBasicMap.forEach((K,V) -> {RLPortfolio rlPortfolio= new RLPortfolio(V,rlModelDataSource);
             rlPortfolioRepository.save(rlPortfolio);
             RLPortfolioScanStatus rlPortfolioScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
             rlPortfolioScanStatusRepository.save(rlPortfolioScanStatus);
