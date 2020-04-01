@@ -1,7 +1,7 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
   WorkspaceCalibrationComponent,
-  WorkspaceContractComponent, WorkspaceExposuresComponent,
+  WorkspaceContractComponent, WorkspaceExposuresComponent, WorkspaceFileBaseImportComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
   WorkspaceRiskLinkComponent, WorkspaceScopeCompletenceComponent,
@@ -44,7 +44,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     //Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
-    //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
+    FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
     //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
