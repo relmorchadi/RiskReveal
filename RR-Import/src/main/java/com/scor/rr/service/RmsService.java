@@ -313,15 +313,15 @@ public class RmsService {
         List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
         Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
 
-        rlAnalysisMap.forEach((K, V) ->{if (rdmAnalysisBasicMap.containsKey(K)) {
-            updateRLAnalysis(V, rdmAnalysisBasicMap.get(K));
-            rdmAnalysisBasicMap.remove(K);
+        rlAnalysisMap.forEach((rlId, rlAnalysis) ->{if (rdmAnalysisBasicMap.containsKey(rlId)) {
+            updateRLAnalysis(rlAnalysis, rdmAnalysisBasicMap.get(rlId));
+            rdmAnalysisBasicMap.remove(rlId);
         }        else {
-            rlAnalysisRepository.deleteByRLAnalysisId(K,projectId);
+            rlAnalysisRepository.deleteByRLAnalysisId(rlId,projectId);
         }
         });
 
-        rdmAnalysisBasicMap.forEach((K, V) -> { RLAnalysis rlAnalysis= new RLAnalysis(V,rlModelDataSource);
+        rdmAnalysisBasicMap.forEach((analysisId, rdmAnalysisBasic) -> { RLAnalysis rlAnalysis= new RLAnalysis(rdmAnalysisBasic,rlModelDataSource);
             rlAnalysisRepository.save(rlAnalysis);
             RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
             rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
@@ -360,16 +360,16 @@ public class RmsService {
         List<RLPortfolio> rlPortfolioList=this.rlPortfolioRepository.findByEdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
         Map<Long,RLPortfolio> rlPortfolioMap=rlPortfolioList.stream().collect(Collectors.toMap(rLPortfolio -> rLPortfolio.getRlId(),rLPortfolio -> rLPortfolio));
 
-        rlPortfolioMap.forEach((K, V) -> {  if (edmPortfolioBasicMap.containsKey(K)){
-            updateRLPortfolio(V,edmPortfolioBasicMap.get(K));
-            edmPortfolioBasicMap.remove(K);
+        rlPortfolioMap.forEach((rlId, rLPortfolio) -> {  if (edmPortfolioBasicMap.containsKey(rlId)){
+            updateRLPortfolio(rLPortfolio,edmPortfolioBasicMap.get(rlId));
+            edmPortfolioBasicMap.remove(rlId);
         }
         else {
-            rlPortfolioRepository.deleteByRLPortfolioId(K,projectId);
+            rlPortfolioRepository.deleteByRLPortfolioId(rlId,projectId);
         }
         });
 
-        edmPortfolioBasicMap.forEach((K,V) -> {RLPortfolio rlPortfolio= new RLPortfolio(V,rlModelDataSource);
+        edmPortfolioBasicMap.forEach((portfolioId,edmPortfolioBasic) -> {RLPortfolio rlPortfolio= new RLPortfolio(edmPortfolioBasic,rlModelDataSource);
             rlPortfolioRepository.save(rlPortfolio);
             RLPortfolioScanStatus rlPortfolioScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
             rlPortfolioScanStatusRepository.save(rlPortfolioScanStatus);
