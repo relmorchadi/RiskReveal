@@ -306,11 +306,12 @@ export class WorkspaceService {
             inuring: defaultInuringState
           }
         }));
-
-       if(selectedTab && (selectedTab.wsIdentifier == tab.workspaceContextCode + '-' + tab.workspaceUwYear)) ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
       }
 
     });
+
+    ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
+
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.currentTab = { ...selectedTab, openedTabs: tabs };
       draft.loading = false;

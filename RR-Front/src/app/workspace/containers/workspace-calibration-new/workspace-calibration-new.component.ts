@@ -639,7 +639,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const frozenColumns= _.merge(columnsConfig.frozenColumns, {[index]: {
       width: _.toNumber(columnsConfig.frozenColumns[index].width) + delta + ''
     }});
-    const frozenWidth= _.reduce(frozenColumns, (acc, curr) => acc + _.toNumber(curr.width), 0) + "px";
+    const statusCols = frozenColumns.filter(c => c.field == 'status' );
+
+    console.log(frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1));
+    const frozenWidth= _.reduce(frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1),
+        (acc, curr) => acc + _.toNumber(curr.width), 0) + "px";
 
     columnsConfig = {
       ...columnsConfig,

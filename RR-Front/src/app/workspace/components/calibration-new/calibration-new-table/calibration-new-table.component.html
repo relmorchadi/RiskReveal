@@ -22,7 +22,7 @@
     -->
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
-        <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
+        <col *ngFor="let col of columns" [style.width]="col.width + col.unit">
       </colgroup>
     </ng-template>
 
@@ -30,7 +30,7 @@
     -->
     <ng-template pTemplate="frozencolgroup" let-columns *ngIf="!tableConfig.isExpanded">
       <colgroup >
-        <col *ngFor="let col of columns" [style.width]="col.width + 'px' ">
+        <col *ngFor="let col of columns" [style.width]="col.width + col.unit ">
       </colgroup>
     </ng-template>
 
@@ -111,7 +111,7 @@
     <!-- Header fields - column name and filter inputs (row 2 & 3)  -->
     <ng-template #headerFields let-columns>
       <tr>
-        <ng-container *ngFor="let col of columns;let i= index;" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col?.width, index: i}"></ng-container>
+        <ng-container *ngFor="let col of columns;let i= index;" [ngTemplateOutlet]="resizableTemplate" [ngTemplateOutletContext]="{$implicit: col?.resizable, col: col, width: col.width + col.unit, index: i}"></ng-container>
       </tr>
       <tr >
         <th *ngFor="let col of columns">
@@ -127,7 +127,7 @@
                  let-columns="columns">
       <tr>
         <td *ngFor="let col of columns; let i =index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}"
+            [ngStyle]="{'width': col.width + col?.unit, 'text-align-last': col.align}"
             style="background-color: #ecf1f7 !important; padding-right: 9px">
 
           <ng-container *ngIf="col?.type == 'arrow'">
@@ -183,7 +183,7 @@
         thread.pltId, rowIndex, index, 'checkbox')">
 
         <td *ngFor="let col of columns; let i=index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px','text-align-last': col?.align}"
+            [ngStyle]="{'width': col.width + col?.unit,'text-align-last': col?.align}"
             style="padding-right: 9px">
           <ng-container *ngIf="col?.type == 'arrow'" >
             <label nz-checkbox [(ngModel)]="thread.selected"
@@ -242,7 +242,7 @@
           (click)="handlepltClick($event,rowData.pltId, thread.pltId, rowIndex, index, 'checkbox')">
 
         <td *ngFor="let col of columns; let i=index; let last=last"
-            [ngStyle]="{'width': col?.width + 'px', 'text-align-last': col.align}" style="padding-right: 9px">
+            [ngStyle]="{'width': col.width + col?.unit, 'text-align-last': col.align}" style="padding-right: 9px">
 
           <ng-container *ngIf="col?.type == 'arrow'">
             <!--<div class="ui-g-12"><p-checkbox name="group1" value="New York" label="New York" inputId="ny"></p-checkbox></div>-->
@@ -321,7 +321,7 @@
 
     <!--Resizable Header-->
     <ng-template #resizableTemplate let-isResizable let-col="col" let-width="width" let-index="index" let-isLastColumn="isLastColumn">
-      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [style.width]="width + 'px'" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
+      <th [attr.aria-colindex]="index" [attr.aria-details]="col?.isFrozen" [attr.id]="col?.field" [style.width]="width" [ngStyle]="{'text-align-last': col.align}" style="padding-right: 9px" pResizableColumn [pResizableColumnDisabled]="!isResizable">
 
         <ng-container *ngIf="col?.type == 'status'">
           <ng-container [ngTemplateOutlet]="statusIcons"></ng-container>
