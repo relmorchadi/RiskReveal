@@ -180,8 +180,10 @@ public class RLAnalysis {
         this.exposureTIV = null;
         this.groupType = rdmAnalysisBasic.getGroupTypeName();
         this.cedant = rdmAnalysisBasic.getCedant();
-        this.lob = rdmAnalysisBasic.getLobName();
+        this.lob = rdmAnalysisBasic.getLobName();        System.out.println("+++++++++  1   "+this.isGroup);
+
         this.isGroup = rdmAnalysisBasic.getGrouping();
+        System.out.println("+++++++++  2   "+this.isGroup);
         this.regionName = rdmAnalysisBasic.getRegionName();
         this.analysisMode = rdmAnalysisBasic.getModeName();
     }

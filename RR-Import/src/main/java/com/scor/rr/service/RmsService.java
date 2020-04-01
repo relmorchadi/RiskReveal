@@ -337,7 +337,7 @@ public class RmsService {
         });
         return rdmAnalysisBasicList.size();}
 
-    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {System.out.println("***********"+);
+    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {
         if(!rlAnalysis.getAnalysisName().equals(rdmAnalysisBasic.getAnalysisName())){             rlAnalysis.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
         if(!rlAnalysis.getAnalysisDescription().equals(rdmAnalysisBasic.getDescription()))  {     rlAnalysis.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
         if(!rlAnalysis.getEngineVersion().equals(rdmAnalysisBasic.getEngineVersion())){           rlAnalysis.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
@@ -351,10 +351,11 @@ public class RmsService {
         if(!rlAnalysis.getGroupType().equals(rdmAnalysisBasic.getGroupTypeName())){               rlAnalysis.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
         if(!rlAnalysis.getCedant().equals(rdmAnalysisBasic.getCedant())){                         rlAnalysis.setCedant(rdmAnalysisBasic.getCedant());}
         if(!rlAnalysis.getLob().equals(rdmAnalysisBasic.getLobName())){                           rlAnalysis.setLob(rdmAnalysisBasic.getLobName());}
+        rlAnalysis.setIsGroup(false);
         if(!rlAnalysis.getIsGroup().equals(rdmAnalysisBasic.getGrouping())){                      rlAnalysis.setIsGroup(rdmAnalysisBasic.getGrouping());}
         if(!rlAnalysis.getRegionName().equals(rdmAnalysisBasic.getRegionName())){                 rlAnalysis.setRegionName(rdmAnalysisBasic.getRegionName());}
         if(!rlAnalysis.getAnalysisMode().equals(rdmAnalysisBasic.getModeName())){                 rlAnalysis.setAnalysisMode(rdmAnalysisBasic.getModeName());}
-     rlAnalysisRepository.save(rlAnalysis);
+        rlAnalysisRepository.save(rlAnalysis);
     }
 
 
