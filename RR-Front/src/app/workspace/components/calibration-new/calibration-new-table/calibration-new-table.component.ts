@@ -301,6 +301,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onColumnResize(event) {
+    console.log(event);
     const {delta, element} = event;
     const isFrozen = element.attributes['aria-details'].value;
     const index = element.attributes['aria-colindex'].value;
