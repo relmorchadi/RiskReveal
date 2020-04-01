@@ -92,12 +92,12 @@ public class ProjectImportRunAndCARStatus {
                 task.setFinishedDate(new Date());
                 taskEntityRepository.saveAndFlush(task);
                 JobEntity job = jobEntityRepository.findById(task.getJob().getJobId()).orElse(null);
-                if (job != null && job.getTasks().stream()
-                        .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()) && !t.getTaskId().equals(task.getTaskId())) &&
-                        job.getTasks().stream()
-                                .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.CANCELLED.getCode()))
-                ) {
-                    job.setStatus(JobStatus.SUCCEEDED.getCode());
+                if (job != null && job.getTasks().indexOf(task) == job.getTasks().size() - 1) {
+                    if (job.getTasks().stream()
+                            .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
+                        job.setStatus(JobStatus.FAILED.getCode());
+                    else
+                        job.setStatus(JobStatus.SUCCEEDED.getCode());
                     job.setFinishedDate(new Date());
                     jobEntityRepository.saveAndFlush(job);
                 }

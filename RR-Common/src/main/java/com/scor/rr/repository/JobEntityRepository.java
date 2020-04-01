@@ -18,5 +18,5 @@ public interface JobEntityRepository extends JpaRepository<JobEntity, Long> {
     void updateStatus(@Param("jobId") Long jobId, @Param("status") JobStatus status);
 
     @Query("FROM JobEntity WHERE userId=:userId AND (status='RUNNING' OR status='PENDING' OR status='FAILED')")
-    List<JobEntity> findAllByUserIdAndStatus(@Param("userId") Long userId);
+    List<JobEntity> findAllByUserIdAndSubmittedDate(@Param("userId") Long userId);
 }

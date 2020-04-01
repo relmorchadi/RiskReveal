@@ -50,7 +50,7 @@ public class TaskEntity {
         this.taskId = taskId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "jobId")
     @JsonBackReference
     public JobEntity getJob() {
