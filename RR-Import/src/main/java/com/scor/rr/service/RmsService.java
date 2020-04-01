@@ -125,31 +125,25 @@ public class RmsService {
             RLModelDataSource rlModelDataSource=
                     rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
             if (rlModelDataSource != null) {
-
                 if (rlModelDataSource.getType().equalsIgnoreCase("RDM")){
                       count=scanAnalysisBasicForRdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
                 }
                 else{
                       count=scanPortfolioBasicForEdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
                 }
-
-                rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);//update
-                rlModelDataSource.setCount(count);
-                return rlModelDataSource;
             } else {
-
-                RLModelDataSource rlModelDataSource1=new  RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
-                rlModelDataSourcesRepository.save(rlModelDataSource1);
-                if (rlModelDataSource1.getType().equalsIgnoreCase("RDM")) {
-                    count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource1);
-                } else if (rlModelDataSource1.getType().equalsIgnoreCase("EDM")) {
-                    count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource1);
+                 rlModelDataSource=new  RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
+                rlModelDataSourcesRepository.save(rlModelDataSource);
+                if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+                    count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
+                } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
+                    count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
                 }
-                rlModelDataSourcesRepository.updateCount(rlModelDataSource1.getRlModelDataSourceId(), count);
-                rlModelDataSource1.setCount(count);
-                return rlModelDataSource1;
-            }
 
+            }
+            rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);
+            rlModelDataSource.setCount(count);
+            return rlModelDataSource;
         }).collect(toList());
     }
 
@@ -311,11 +305,11 @@ public class RmsService {
         }
         return rdmAnalysisBasics.size();
     }
-    public  Integer  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+    public  int  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
         List<RdmAnalysisBasic> rdmAnalysisBasicList=listRdmAnalysisBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
        // Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
         //        . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
-        //Pour le cas ou data qui vient de rms contient un seul Analysis
+        //case when the data get by rms have one analysis
         Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
         rdmAnalysisBasicMap.put((long) 11,rdmAnalysisBasicList.get(1));//corr ici dans map  analysisId=252
 
@@ -361,7 +355,7 @@ public class RmsService {
 
 
 
-        public  Integer  scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+        public  int  scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
         List<EdmPortfolioBasic> edmPortfolioBasicList=listEdmPortfolioBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
         Map<Long,EdmPortfolioBasic> edmPortfolioBasicMap=edmPortfolioBasicList.stream()
                 .collect(Collectors.toMap(edmPortfolioBasic -> edmPortfolioBasic.getPortfolioId(),edmPortfolioBasic -> edmPortfolioBasic));
