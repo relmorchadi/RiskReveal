@@ -22,6 +22,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   @ViewChild('pTable') pTable: any;
 
+  overrideRowUnabled = false;
+  overriddenRowAccess = false;
 
   wsIdentifier;
   addRemoveModal: boolean = false;
@@ -252,6 +254,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.dispatch(new fromWs.PatchScopeOfCompletenessState({mergedData: {filterBy: data}, scope: 'scopeContext'}))
   }
 
+  unableOverride(event) {
+    this.overriddenRowAccess = event;
+  }
+
   getData(treatySections) {
     const res = [];
     const treatySectionsClone = _.cloneDeep(treatySections);
@@ -477,7 +483,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     return {rr, rd};
   }
-
 
   /** get which icon to be shown in the parent depending on the children's icons **/
   checkExpected(item, rowData) {
@@ -1048,7 +1053,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   }
 
-
   /** checking the parent's checkbox when all the children are selected**/
   checkParent(rowData, item) {
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
@@ -1299,15 +1303,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   cancelOverride() {
     this.dispatch(new PatchScopeOfCompletenessState({overrideInit: false}));
     this.overrideStatus = false;
-    this.selectionForOverride = [];
-    this.dataSource.forEach(res => {
-      res.override = false;
-      res.child.forEach(child => {
-        child.override = false;
-      });
-    });
-
+    this.overrideRowUnabled = false;
   }
+
 
   cancelRemoveOverride() {
     this.selectionForOverride = [];
@@ -1315,21 +1313,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   /** showing the override checkbox for the child selected, when the conditions of override are available**/
+  rowOverrideShowButton($event) {
+    this.overrideRowUnabled = $event;
+  }
+
   showOverrideButton() {
-    let checked = false;
-    if (this.dataSource !== undefined) {
-      this.dataSource.forEach(res => {
-        if (res.override == true) {
-          checked = true;
-        }
-        res.child.forEach(child => {
-          if (child.override) {
-            checked = true;
-          }
-        });
-      });
-    }
-    return checked;
+    return this.overrideRowUnabled || this.overrideStatus;
   }
 
   showRemoveOverrideButton() {

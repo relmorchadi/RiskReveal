@@ -65,6 +65,11 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getOpenedTabs(state: WorkspaceModel) {
+    return state.currentTab.openedTabs;
+  }
+
+  @Selector()
   static getWorkspaceStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].workspaceType;
@@ -77,7 +82,7 @@ export class WorkspaceState {
   }
 
   static getWorkspaceCurrency(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].currency);
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => _.find(state.content[wsIdentifier].projects, pr => pr.selected));
   }
 
   static getWorkspaceEffectiveDate(wsIdentifier: string) {
@@ -551,6 +556,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleProjectSelection)
   toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection) {
     return this.wsService.toggleProjectSelection(ctx, payload);
+  }
+
+  @Action(fromWS.SelectProject)
+  selectProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.SelectProject) {
+    return this.wsService.selectProject(ctx, payload);
   }
 
   @Action(fromWS.AddNewProject)
@@ -1269,6 +1279,15 @@ export class WorkspaceState {
     return this.scopService.patchScopeState(ctx, payload);
   }
 
+  @Action(fromWS.OverrideActiveAction)
+  overrideActiveAction(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideActiveAction) {
+    return this.scopService.overrideSelection(ctx, payload);
+  }
+
+  @Action(fromWS.OverrideDeleteAction)
+  overrideDelete(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideDeleteAction) {
+    return this.scopService.deleteOverride(ctx, payload);
+  }
 
   /***********************************
    *

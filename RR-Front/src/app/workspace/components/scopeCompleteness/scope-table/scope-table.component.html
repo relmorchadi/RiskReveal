@@ -84,10 +84,24 @@
                 </div>
               </div>
             </div>
+            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Accumulation Package'">
+              <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
+                <a nz-dropdown>
+                  <i class="icon-menu_24px"
+                     [ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}"
+                     style="margin-top:5px;"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item *ngIf="getOverrideCapability(rowData, 'parent')"
+                      (click)="overrideRowStatusChange(rowData,null, true)">Override</li>
+                  <!--                  <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>-->
+                </ul>
+              </nz-dropdown>
+            </div>
           </div>
         </th>
         <th *ngIf="col.type === 'contractCol'" class="divided-col">
-          <ng-container *ngIf="override && getOverrideCapability(rowData, 'parent')">
+          <ng-container *ngIf="(override && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
 
             <div class="checkbox-override-wrap icon-holder">
               <i (click)="overrideRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
@@ -95,7 +109,7 @@
             </div>
 
           </ng-container>
-          <ng-container *ngIf="override === false">
+          <ng-container *ngIf="override === false && !rowOverrideInit[rowData.id]">
             <div *ngIf="checkExpected(rowData, col)  == 'checked'" class="icon-holder">
               <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                 <i class="icon-reorder_24px" style="color: lightgray"></i>
@@ -180,7 +194,7 @@
                 </div>
               </div>
             </div>
-            <div style="padding-top: 8px">
+            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Accumulation Package'">
               <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
                 <a nz-dropdown>
                   <i class="icon-menu_24px"
@@ -188,7 +202,8 @@
                      style="margin-top:5px;"></i>
                 </a>
                 <ul nz-menu style="font-size: 12px">
-<!--                  <li nz-menu-item (click)="overrideRow(rowData)">Override</li>-->
+                  <li nz-menu-item *ngIf="getOverrideCapability(rowData, 'parent')"
+                      (click)="overrideRowStatusChange(rowData, null, true)">Override</li>
 <!--                  <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>-->
                 </ul>
               </nz-dropdown>
@@ -196,7 +211,7 @@
           </div>
         </th>
         <th *ngIf="col.type === 'contractCol'" class="divided-col">
-          <ng-container *ngIf="override && getOverrideCapability(rowData, 'parent')">
+          <ng-container *ngIf="(override && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
 
             <div class="checkbox-override-wrap icon-holder">
               <i (click)="overrideRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
@@ -204,7 +219,7 @@
             </div>
 
           </ng-container>
-          <ng-container *ngIf="override === false">
+          <ng-container *ngIf="override === false && !rowOverrideInit[rowData.id]">
             <div *ngIf="checkExpected(rowData, col)  == 'checked'" class="icon-holder">
               <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                 <i class="icon-reorder_24px" style="color: lightgray"></i>
@@ -288,20 +303,21 @@
                   </div>
                 </div>
               </div>
-              <div class="inner-menu">
+              <div class="inner-menu" *ngIf="accumulationStatus === 'Accumulation Package'">
                 <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event, row.id)">
                   <a nz-dropdown>
                     <i class="icon-menu_24px"
                        [ngClass]="{'burger-menu-visible': selectedDropDown == row.id, 'burger-menu': selectedDropDown != row.id}"></i>
                   </a>
                   <ul nz-menu style="font-size: 12px">
-                    <li nz-menu-item (click)="overrideChildMode(rowData, row)">Override</li>
+                    <li nz-menu-item *ngIf="getOverrideCapability(row, 'child')"
+                        (click)="overrideRowStatusChange(rowData, row, true)">Override</li>
                   </ul>
                 </nz-dropdown>
               </div>
             </th>
             <th *ngIf="col.type === 'contractCol'" class="divided-col">
-              <ng-container *ngIf="override && getOverrideCapability(row, 'child')">
+              <ng-container *ngIf="(override && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
 
                 <div class="checkbox-override-wrap icon-holder">
                   <i (click)="overrideChildMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
@@ -309,7 +325,7 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!override">
+              <ng-container *ngIf="!override && !rowOverrideInit[rowData.id + row.id]">
                 <!--          <ng-container *ngFor="let item of treatySections[0]">
 <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
@@ -426,20 +442,21 @@
                   </div>
                 </div>
               </div>
-              <div class="inner-menu">
+              <div class="inner-menu" *ngIf="accumulationStatus === 'Accumulation Package'">
                 <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event, row.id)">
                   <a nz-dropdown>
                     <i class="icon-menu_24px"
                        [ngClass]="{'burger-menu-visible': selectedDropDown == row.id, 'burger-menu': selectedDropDown != row.id}"></i>
                   </a>
                   <ul nz-menu style="font-size: 12px">
-                    <li nz-menu-item (click)="overrideChildMode(rowData, row)">Override</li>
+                    <li nz-menu-item *ngIf="getOverrideCapability(row, 'child')"
+                        (click)="overrideRowStatusChange(rowData, row, true)">Override</li>
                   </ul>
                 </nz-dropdown>
               </div>
             </th>
             <th *ngIf="col.type === 'contractCol'" class="divided-col">
-              <ng-container *ngIf="override && getOverrideCapability(row, 'child')">
+              <ng-container *ngIf="(override && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
 
                 <div class="checkbox-override-wrap icon-holder">
                   <i (click)="overrideChildMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
@@ -447,7 +464,7 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!override">
+              <ng-container *ngIf="!override && !rowOverrideInit[rowData.id + row.id]">
                 <!--          <ng-container *ngFor="let item of treatySections[0]">
 <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 

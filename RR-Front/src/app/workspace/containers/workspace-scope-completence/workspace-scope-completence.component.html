@@ -53,12 +53,12 @@
               </div>
             </div>
             <ul nz-menu>
-              <li nz-menu-item (click)="showAll()">All</li>
-              <li nz-menu-item (click)="showIncompleteOnly()">Incomplete Only</li>
-              <li nz-menu-item>Overridden Only</li>
-              <li nz-menu-item>Synthetic PLTs Only</li>
-              <li nz-menu-item>Expected Only</li>
-              <li nz-menu-item>Unexpected Only</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('All')">All</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('Incomplete Only')">Incomplete Only</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('Overridden Only')">Overridden Only</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('Synthetic PLTs Only')">Synthetic PLTs Only</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('Expected Only')">Expected Only</li>
+              <li nz-menu-item (click)="updateScopeStateFilter('Unexpected Only')">Unexpected Only</li>
             </ul>
           </nz-dropdown>
           <nz-dropdown [nzTrigger]="'click'">
@@ -91,20 +91,14 @@
           </ng-container>
         </div>
         <div style="display: flex; flex-direction: column" *ngIf="showOverrideButton()">
-          <button class="a-buttons-contained-disabled-micro" *ngIf="selectionForOverride.length == 0">Override Selected
-          </button>
-          <button class="a-buttons-contained-micro" (click)="showOverrideModal = true"
-                  *ngIf="selectionForOverride.length != 0">Override Selected
-          </button>
+          <button [ngClass]="{'a-buttons-contained-disabled-micro': !overriddenRowAccess, 'a-buttons-contained-micro': overriddenRowAccess}"
+                  (click)="showOverrideModal = true" [disabled]="!overriddenRowAccess">Override Selected</button>
           <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
         </div>
 
         <div style="display: flex; flex-direction: column" *ngIf="showRemoveOverrideButton()">
-          <button class="a-buttons-contained-disabled-micro" *ngIf="!checkSelectionToCancelOverride()">Remove Override
-          </button>
-          <button class="a-buttons-contained-micro" *ngIf="checkSelectionToCancelOverride()"
-                  (click)="removeOverrideBack()">Remove Override
-          </button>
+          <button class="a-buttons-contained-disabled-micro" *ngIf="!checkSelectionToCancelOverride()">Remove Override</button>
+          <button class="a-buttons-contained-micro" *ngIf="checkSelectionToCancelOverride()" (click)="removeOverrideBack()">Remove Override</button>
           <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
         </div>
 
@@ -151,7 +145,9 @@
 
       </div>
       <div class="table-wrap">
-        <app-scope-table></app-scope-table>
+        <app-scope-table (overrideUnable)="unableOverride($event)"
+                         (showOverrideButton)="rowOverrideShowButton($event)"
+        ></app-scope-table>
 <!--        <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
           <ng-template pTemplate="header" let-columns>
             <tr>

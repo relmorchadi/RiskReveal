@@ -20,7 +20,8 @@ import * as _ from "lodash";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScopeTableComponent extends BaseContainer implements OnInit {
-  @Output('attachPLTOpen') attachPltOpen: any = new EventEmitter<any>();
+  @Output('overrideUnable') overrideUnable: any = new EventEmitter<any>();
+  @Output('showOverrideButton') showOverrideButton: any = new EventEmitter<any>();
 
   @Input()
   dataSource;
@@ -30,6 +31,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   regionInnerCodes: any = {};
   targetInnerCodes: any = {};
   isAttachVisible = false;
+  rowOverrideInit = {};
   overriddenRows = {};
   workspaceType: any;
   scopeContext: any;
@@ -79,6 +81,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
     this.overrideStatus$.pipe().subscribe(value => {
       this.override = value;
+      this.override ? this.overrideStart() : this.overrideStop();
       this.detectChanges();
     });
 
@@ -283,6 +286,9 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRows[row.id + col.columnContext] = !this.overriddenRows[row + col.columnContext];
       }
     }
+
+    const childValues = _.values(this.overriddenChildRows);
+    this.overrideUnable.emit(_.includes(childValues, true));
   }
 
   overrideChildMode(rowData, row, col) {
@@ -315,6 +321,9 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         });
         this.overriddenRows[item.id + col.columnContext] = selectedAllRp;
       });
+
+      const childValues = _.values(this.overriddenChildRows);
+      this.overrideUnable.emit(_.includes(childValues, true));
     }
   }
 
@@ -387,6 +396,36 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       return null;
     }
+  }
+
+  overrideRowStatusChange(rowData, row, value) {
+    if (row === null) {
+      this.rowOverrideInit[rowData.id] = value;
+      if (this.sortBy === 'Minimum Grain / RAP') {
+        _.forEach(rowData.targetRaps, item => {
+          this.rowOverrideInit[rowData.id + item.id] = value;
+        })
+      } else {
+        _.forEach(rowData.regionPerils, item => {
+          this.rowOverrideInit[rowData.id + item.id] = value;
+        })
+      }
+    } else {
+      this.rowOverrideInit[rowData.id + row.id] = value;
+    }
+
+    const overrideRowUnable = _.values(this.rowOverrideInit);
+    this.showOverrideButton.emit(_.includes(overrideRowUnable, true));
+  }
+
+  overrideStart() {
+
+  }
+
+  overrideStop() {
+    this.overriddenRows = {};
+    this.overriddenChildRows = {};
+    this.rowOverrideInit = {};
   }
 
   checkInnerExpected(row, column) {

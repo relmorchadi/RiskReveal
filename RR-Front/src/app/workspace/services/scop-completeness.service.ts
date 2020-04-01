@@ -136,23 +136,33 @@ export class ScopeCompletenessService {
     const {wsIdentifier} = state.currentTab;
     const ws = state.content[wsIdentifier];
     let target = {
-      listOfOverrides: [
-/*      {
-        "accumulationRAPCode": "string",
-        "contractSectionId": 0,
-        "minimumGrainRegionPerilCode": "string"
-      }*/
-      ],
-      overrideBasisCode: "string",
-      overrideBasisNarrative: "string",
+      listOfOverrides: payload.listOfOverrides,
+      overrideBasisCode: payload.overrideBasisCode,
+      overrideBasisNarrative: payload.overrideBasisNarrative,
       uwYear: ws.uwYear,
-      workspaceId: ws.workspaceId,
+      workspaceId: ws.wsId,
       workspaceName: ws.workspaceName
-    }
+    };
+    return this.scopeApi.overrideDone(target).pipe(
+        tap(data => {})
+    )
   }
 
   deleteOverride(ctx: StateContext<WorkspaceModel>, payload) {
-
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const ws = state.content[wsIdentifier];
+    let target = {
+      listOfOverrides: payload.listOfOverrides,
+      overrideBasisCode: payload.overrideBasisCode,
+      overrideBasisNarrative: payload.overrideBasisNarrative,
+      uwYear: ws.uwYear,
+      workspaceId: ws.wsId,
+      workspaceName: ws.workspaceName
+    };
+    return this.scopeApi.overrideDelete(target).pipe(
+        tap(data => {})
+    )
   }
 
 }
