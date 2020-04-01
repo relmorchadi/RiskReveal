@@ -25,7 +25,8 @@ export class ExposuresHeaderService {
         return this._api.loadHeaderConfig(projectId).pipe(map((headerConfigApi: any) =>
             ({
                 ...headerConfigApi,
-                exposureViews: HEADERCONFIG.exposureViews
+                exposureViews: HEADERCONFIG.exposureViews,
+                financialUnits:HEADERCONFIG.financialUnits
             })
         ))
     }

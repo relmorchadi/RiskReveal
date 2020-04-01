@@ -182,7 +182,10 @@ public class BatchExecution {
                             .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
-                    ((JobManagerImpl) jobManager).submitTask(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
+                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                        ((JobManagerImpl) jobManager).submitJob(importLossData, JobPriority.MEDIUM, builder.toJobParameters());
+                    else
+                        ((JobManagerImpl) jobManager).submitJob(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters());
                 }
 
                 for (Long rlPortfolioSelection : rlPortfolioSelections) {
@@ -196,7 +199,10 @@ public class BatchExecution {
                             .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
-                    ((JobManagerImpl) jobManager).submitTask(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters(), task);
+                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                        ((JobManagerImpl) jobManager).submitJob(importLossData, JobPriority.MEDIUM, builder.toJobParameters());
+                    else
+                        ((JobManagerImpl) jobManager).submitJob(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters());
                 }
             }
         }

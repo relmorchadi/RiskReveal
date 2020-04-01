@@ -56,7 +56,7 @@ public class ProjectImportRunAndCARStatus {
 
     public RepeatStatus changeProjectImportRunStatus() {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 18);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ChangeProjectImportRunStatus", 18);
         try {
             log.info("Changing CAR and Project import run status");
             if (projectId != null) {

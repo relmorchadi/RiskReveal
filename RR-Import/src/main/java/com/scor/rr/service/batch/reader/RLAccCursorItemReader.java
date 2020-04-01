@@ -86,7 +86,7 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Override
     protected void openCursor(Connection con) {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 14);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
             try {

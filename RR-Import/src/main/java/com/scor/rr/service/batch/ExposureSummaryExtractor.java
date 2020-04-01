@@ -92,7 +92,7 @@ public class ExposureSummaryExtractor {
 
     public RepeatStatus extract() {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 13);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractExposureSummaries", 14);
         try {
             //NOTE: I think you could find ProjectImportRun by projectId and importSequence (in jobParameters) ?
             List<ProjectImportRunEntity> projectImportRunList = projectImportRunRepository.findByProjectId(Long.valueOf(projectId));

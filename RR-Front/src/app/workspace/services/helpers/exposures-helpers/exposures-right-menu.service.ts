@@ -24,10 +24,11 @@ export class ExposuresRightMenuService {
         return this._api.loadRightMenuContent(type);
     }
 
-    public constructRightMenuConfig(type: any) {
+    public constructRightMenuConfig(type: any,division?) {
+        console.log(division);
         return of<ExposuresRightMenuConfig>({
             type: type,
-            content: this.loadRightMenuContent(type),
+            content: type == 'division' ? division : this.loadRightMenuContent(type),
             visibility: true
         })
     }
