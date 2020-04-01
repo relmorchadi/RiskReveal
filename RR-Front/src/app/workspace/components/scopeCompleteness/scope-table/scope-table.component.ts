@@ -12,6 +12,12 @@ import {WorkspaceState} from "../../../store/states";
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import * as _ from "lodash";
+import {
+  LoadScopeCompletenessDataSuccess,
+  LoadScopeCompletenessPricingDataSuccess, OverrideActiveAction,
+  PatchScopeOfCompletenessState
+} from "../../../store/actions";
+import {catchError} from "rxjs/operators";
 
 @Component({
   selector: 'app-scope-table',
@@ -25,13 +31,20 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
   @Input()
   dataSource;
+  @Input()
+  showOverrideModal = false;
 
+  overriddenChildRemovedRows = {};
+  rowOverrideRemoveInit = {};
+  overriddenRemovedRows = {};
   overriddenChildRows = {};
+  overrideNarrative: string;
   selectedDropDown: any;
   regionInnerCodes: any = {};
   targetInnerCodes: any = {};
   isAttachVisible = false;
   rowOverrideInit = {};
+  overrideReason: string;
   overriddenRows = {};
   workspaceType: any;
   scopeContext: any;
@@ -41,6 +54,17 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   columns;
   keys;
 
+  overrideAll = false;
+  overrideRows = false;
+  removeOverrideAll = false;
+  removeOverrideRow = false;
+
+  perilZone = {
+    'EQ': '#E70010',
+    'WS': '#CCCCCC',
+    'FL': '#008694'
+  };
+
   @Select(WorkspaceState.getSelectedProject) selectedProject$;
   selectedProject: any;
   @Select(WorkspaceState.getCurrentWS) currentWs$;
@@ -48,7 +72,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   @Select(WorkspaceState.getScopeCompletenessData) scopeData$;
   scopeData;
   @Select(WorkspaceState.getOverrideStatus) overrideStatus$;
-  override;
+  overrideStatus;
   @Select(WorkspaceState.getScopeContext) scopeContext$;
   accumulationStatus;
   sortBy;
@@ -59,9 +83,24 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
+    this.scopeContext$.pipe().subscribe(value => {
+      this.filterBy = _.get(value, 'filterBy');
+      this.sortBy = _.get(value, 'sortBy');
+      this.accumulationStatus = _.get(value, 'accumulationStatus');
+      if (this.accumulationStatus === 'Pricing' ) {
+        this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
+      } else {
+        this.dispatch(new LoadScopeCompletenessDataSuccess());
+      }
+      this.detectChanges();
+    });
+
     this.selectedProject$.pipe().subscribe(value => {
       this.selectedProject = value;
       this.projectType = _.get(value, 'projectType', 'FAC');
+      if (this.accumulationStatus === 'Pricing' ) {
+        this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
+      }
       this.detectChanges();
     });
     this.currentWs$.pipe().subscribe(value => {
@@ -80,15 +119,12 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     });
 
     this.overrideStatus$.pipe().subscribe(value => {
-      this.override = value;
-      this.override ? this.overrideStart() : this.overrideStop();
-      this.detectChanges();
-    });
-
-    this.scopeContext$.pipe().subscribe(value => {
-      this.filterBy = _.get(value, 'filterBy');
-      this.sortBy = _.get(value, 'sortBy');
-      this.accumulationStatus = _.get(value, 'accumulationStatus');
+      this.overrideStatus = value;
+      this.overrideAll = value.overrideAll;
+      this.overrideRows = value.overrideRows;
+      this.removeOverrideAll = value.overrideCancelAll;
+      this.removeOverrideRow = value.overrideCancelRow;
+      this.overrideAll || this.overrideRows ? this.overrideInit() : this.overrideStop();
       this.detectChanges();
     });
   }
@@ -413,12 +449,49 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       this.rowOverrideInit[rowData.id + row.id] = value;
     }
+    const overrideRowUnable = _.values(this.rowOverrideInit);
+    this.showOverrideButton.emit(_.includes(overrideRowUnable, true));
+  }
 
+  overrideRowRemoveStatusChange(rowData, row, value) {
+    if (row === null) {
+      this.rowOverrideInit[rowData.id] = value;
+      if (this.sortBy === 'Minimum Grain / RAP') {
+        _.forEach(rowData.targetRaps, item => {
+          this.rowOverrideInit[rowData.id + item.id] = value;
+        })
+      } else {
+        _.forEach(rowData.regionPerils, item => {
+          this.rowOverrideInit[rowData.id + item.id] = value;
+        })
+      }
+    } else {
+      this.rowOverrideInit[rowData.id + row.id] = value;
+    }
     const overrideRowUnable = _.values(this.rowOverrideInit);
     this.showOverrideButton.emit(_.includes(overrideRowUnable, true));
   }
 
   overrideStart() {
+    let selectedForOverride = [];
+    _.forEach(this.scopeData.regionPerils, item => {
+      _.forEach(item.targetRaps, tr => {
+        _.forEach(this.scopeContext, (scope, key) => {
+          const targetRegion = item.id + tr.id + scope.id;
+          if (this.overriddenChildRows[targetRegion]) {
+            selectedForOverride = [...selectedForOverride, {
+              accumulationRAPCode: tr.id,
+              contractSectionId: key + 1,
+              minimumGrainRegionPerilCode: item.id
+            }];
+          }
+        })
+      })
+    });
+    this.dispatch(new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}));
+  }
+
+  overrideInit() {
 
   }
 
@@ -531,8 +604,10 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     return overrideCapability;
   }
 
-  selectedRow(row) {
-
+  onHide() {
+    this.showOverrideModal = false;
+    this.overrideNarrative = '';
+    this.overrideReason = null;
   }
 
   closePopUp() {

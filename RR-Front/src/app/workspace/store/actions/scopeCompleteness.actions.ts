@@ -3,6 +3,11 @@ export class LoadScopeCompletenessDataSuccess {
   constructor(public payload?: any) {}
 }
 
+export class LoadScopeCompletenessPricingDataSuccess {
+  static readonly type = '[ScopeCompleteness] Load Data Pricing Success';
+  constructor(public payload?: any) {}
+}
+
 export class PublishToPricingFacProject {
   static readonly type = '[ScopeCompleteness] Publish To Pricing Fac Project';
   constructor(public payload?: any) {}

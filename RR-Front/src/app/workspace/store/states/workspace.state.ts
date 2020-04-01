@@ -478,7 +478,9 @@ export class WorkspaceState {
   @Selector()
   static getOverrideStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompleteness.overrideInit;
+    const scopeData = state.content[wsIdentifier].scopeOfCompleteness;
+    return {overrideAll: scopeData.overrideAll, overrideRow: scopeData.overrideRow, overrideInit: scopeData.overrideInit,
+        overrideCancelAll: scopeData.overrideCancelAll, overrideCancelRow: scopeData.overrideCancelRow};
   }
   
   @Selector()
@@ -1267,6 +1269,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadScopeCompletenessDataSuccess)
   loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessPricingDataSuccess)
+  loadScopeCompletenessPricingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPricingDataSuccess) {
+      return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
   }
 
   @Action(fromWS.PublishToPricingFacProject)

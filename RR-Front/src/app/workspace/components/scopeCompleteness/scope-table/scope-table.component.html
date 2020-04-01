@@ -101,7 +101,7 @@
           </div>
         </th>
         <th *ngIf="col.type === 'contractCol'" class="divided-col">
-          <ng-container *ngIf="(override && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
+          <ng-container *ngIf="(overrideAll && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
 
             <div class="checkbox-override-wrap icon-holder">
               <i (click)="overrideRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
@@ -109,7 +109,7 @@
             </div>
 
           </ng-container>
-          <ng-container *ngIf="override === false && !rowOverrideInit[rowData.id]">
+          <ng-container *ngIf="!overrideAll && !rowOverrideInit[rowData.id]">
             <div *ngIf="checkExpected(rowData, col)  == 'checked'" class="icon-holder">
               <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                 <i class="icon-reorder_24px" style="color: lightgray"></i>
@@ -204,6 +204,8 @@
                 <ul nz-menu style="font-size: 12px">
                   <li nz-menu-item *ngIf="getOverrideCapability(rowData, 'parent')"
                       (click)="overrideRowStatusChange(rowData, null, true)">Override</li>
+                  <li nz-menu-item *ngIf="rowData.overriden"
+                      (click)="overrideRowRemoveStatusChange(rowData, null, true)">Remove Override</li>
 <!--                  <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>-->
                 </ul>
               </nz-dropdown>
@@ -211,15 +213,14 @@
           </div>
         </th>
         <th *ngIf="col.type === 'contractCol'" class="divided-col">
-          <ng-container *ngIf="(override && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
-
+          <ng-container *ngIf="(overrideAll && getOverrideCapability(rowData, 'parent')) || rowOverrideInit[rowData.id]">
             <div class="checkbox-override-wrap icon-holder">
               <i (click)="overrideRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
                  [ngClass]="{'checkedBoxTab': overriddenRows[rowData.id + col.columnContext]}"></i>
             </div>
 
           </ng-container>
-          <ng-container *ngIf="override === false && !rowOverrideInit[rowData.id]">
+          <ng-container *ngIf="!overrideAll && !rowOverrideInit[rowData.id]">
             <div *ngIf="checkExpected(rowData, col)  == 'checked'" class="icon-holder">
               <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                 <i class="icon-reorder_24px" style="color: lightgray"></i>
@@ -317,7 +318,7 @@
               </div>
             </th>
             <th *ngIf="col.type === 'contractCol'" class="divided-col">
-              <ng-container *ngIf="(override && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
+              <ng-container *ngIf="(overrideAll && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
 
                 <div class="checkbox-override-wrap icon-holder">
                   <i (click)="overrideChildMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
@@ -325,7 +326,7 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!override && !rowOverrideInit[rowData.id + row.id]">
+              <ng-container *ngIf="!overrideAll && !rowOverrideInit[rowData.id + row.id]">
                 <!--          <ng-container *ngFor="let item of treatySections[0]">
 <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
@@ -387,7 +388,7 @@
           </ng-container>
         </tr>
         <ng-container *ngFor="let plt of row?.pltsAttached">
-          <tr *ngIf="regionInnerCodes[row.id + rowData.id]" class="row-hover">
+          <tr *ngIf="targetInnerCodes[row.id + rowData.id]" class="row-hover">
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.type === 'multi'" class="inner-line">
                 <div class="grain-info-wrapper">
@@ -398,23 +399,19 @@
                               class="icon-ellipsis-h"></i></span>
                     </ng-container>
                   </div>
-                  <span class="plt-info">{{plt.pltId | textLength}}</span>
-                  <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName}}</span>
-                  <!--                <div class="plt-info peril-indicator"
-                                       [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>-->
+                  <span class="plt-info">{{plt.pltheaderId}}</span>
+                  <span class="plt-info text-ellipsis" style="width: 12%;">{{plt.defaultPltName}}</span>
+                  <div class="plt-info peril-indicator"
+                       [ngStyle]="{'background-color': perilZone[plt.perilCode]}">{{plt.perilCode}}</div>
                   <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
                 </div>
               </th>
               <th *ngIf="col.type === 'contractCol'" class="divided-col">
-                <!--            <ng-container *ngFor="let item of treatySections[0]">
-              <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
-                <div class="icon-holder">
+                <!--<div class="icon-holder">
                   <ng-container *ngIf="checkAttached(item, rowData,grain, plt) == 'attached'">
                     <i class="icon-check_circle_24px" style="font-size: 20px;color: #60E7DA;"></i>
                   </ng-container>
-                </div>
-              </th>
-            </ng-container>-->
+                </div>-->
               </th>
               <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
             </ng-container>
@@ -456,7 +453,7 @@
               </div>
             </th>
             <th *ngIf="col.type === 'contractCol'" class="divided-col">
-              <ng-container *ngIf="(override && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
+              <ng-container *ngIf="(overrideAll && getOverrideCapability(row, 'child')) || rowOverrideInit[rowData.id + row.id]">
 
                 <div class="checkbox-override-wrap icon-holder">
                   <i (click)="overrideChildMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
@@ -464,7 +461,7 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!override && !rowOverrideInit[rowData.id + row.id]">
+              <ng-container *ngIf="!overrideAll && !rowOverrideInit[rowData.id + row.id]">
                 <!--          <ng-container *ngFor="let item of treatySections[0]">
 <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
@@ -538,10 +535,10 @@
                               class="icon-ellipsis-h"></i></span>
                     </ng-container>
                   </div>
-                  <span class="plt-info">{{plt.pltId | textLength}}</span>
-                  <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName}}</span>
-                  <!--                <div class="plt-info peril-indicator"
-                                       [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>-->
+                  <span class="plt-info">{{plt.pltheaderId}}</span>
+                  <span class="plt-info text-ellipsis" style="width: 12%;">{{plt.defaultPltName}}</span>
+                  <div class="plt-info peril-indicator"
+                       [ngStyle]="{'background-color': perilZone[plt.perilCode]}">{{plt.perilCode}}</div>
                   <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
                 </div>
               </th>
@@ -568,3 +565,49 @@
 <app-attach-plts-pop-up [isVisible]="isAttachVisible" (closePopUp)="closePopUp()">
 
 </app-attach-plts-pop-up>
+
+<p-dialog
+        [visible]="showOverrideModal"
+        [closable]="false"
+        [modal]="true"
+        [autoZIndex]="false"
+
+        [responsive]="true"
+        [styleClass]="'m-dialog-modal-auto '">
+
+  <p-header>
+    <div class="header header-override">
+      <h6>Override Information</h6>
+      <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer;"></i>
+    </div>
+  </p-header>
+  <div class="body-body">
+    <div class="body-override">
+      <div class="label-override subtitle-2"><span>Basis:</span></div>
+      <div class="select-override">
+        <nz-select
+                nzPlaceHolder="Override Reason" class="a-dropdown-small"
+                [(ngModel)]="overrideReason" style="width: 300px;"
+        >
+          <nz-option nzLabel="De Minimis Results" nzValue="De Minimis Results"></nz-option>
+          <nz-option nzLabel="Region Peril Out of Scope" nzValue="Region Peril Out of Scope"></nz-option>
+          <nz-option nzLabel="Other" nzValue="Other"></nz-option>
+
+        </nz-select>
+      </div>
+    </div>
+
+    <div class="body-override">
+      <div class="label-override subtitle-2"><span>Narrative:</span></div>
+      <div class="textarea-override">
+        <textarea maxlength="255" [(ngModel)]="overrideNarrative" style="width: 100%;"></textarea>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="onHide()" class="a-button-text">Close</button>
+      <button (click)="overrideStart()" class="a-buttons-contained">Save</button>
+    </div>
+  </p-footer>
+</p-dialog>

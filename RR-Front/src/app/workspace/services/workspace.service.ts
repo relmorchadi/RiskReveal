@@ -126,8 +126,22 @@ export class WorkspaceService {
           },
           riskLink: new RiskLink(),
           scopeOfCompletence: {
-            data: {},
-            wsType: null
+            data: {
+              targetRaps: [],
+              regionPerils: [],
+              scopeContext: null
+            },
+            overrideAll: false,
+            overrideRow: false,
+            overrideInit: false,
+            overrideCancelAll: false,
+            overrideCancelRow: false,
+            overriddenRows: [],
+            scopeContext: {
+              accumulationStatus: 'Scope Only',
+              filterBy: 'All',
+              sortBy: 'Minimum Grain / RAP',
+            }
           },
           fileBaseImport: {
             folders: null,
@@ -265,9 +279,23 @@ export class WorkspaceService {
               allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
             },
             riskLink: new RiskLink(),
-            scopeOfCompletence: {
-              data: {},
-              wsType: null
+            scopeOfCompleteness: {
+              data: {
+                targetRaps: [],
+                regionPerils: [],
+                scopeContext: null
+              },
+              overrideAll: false,
+              overrideRow: false,
+              overrideInit: false,
+              overrideCancelAll: false,
+              overrideCancelRow: false,
+              overriddenRows: [],
+              scopeContext: {
+                accumulationStatus: 'Scope Only',
+                filterBy: 'All',
+                sortBy: 'Minimum Grain / RAP',
+              }
             },
             fileBaseImport: {
               folders: null,
