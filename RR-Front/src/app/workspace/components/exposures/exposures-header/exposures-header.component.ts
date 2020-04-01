@@ -60,4 +60,12 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
     exportExposuresTable() {
         this.actionDispatcher.emit({type: 'exportExposuresTable', payload: null})
     }
+
+    downloadIhubFiles() {
+        this.actionDispatcher.emit({type: 'downloadIhubFiles', payload: null})
+    }
+
+    downloadYoyReport() {
+        this.actionDispatcher.emit({type: 'downloadYoyReport', payload: null})
+    }
 }

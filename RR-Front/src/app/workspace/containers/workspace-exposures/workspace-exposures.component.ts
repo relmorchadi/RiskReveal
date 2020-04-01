@@ -49,7 +49,8 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             currencies: [],
             divisions: [],
             portfolios: [],
-            summariesDefinitions: []
+            summariesDefinitions: [],
+            financialUnits:[]
         });
         this.sortConfig = {};
         this.selectedHeaderConfig = {
@@ -216,7 +217,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'openDivisionDetails' : {
-                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division');
+                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division',this.selectedHeaderConfig.division);
                 break;
             }
             case 'exportExposuresTable' : {
