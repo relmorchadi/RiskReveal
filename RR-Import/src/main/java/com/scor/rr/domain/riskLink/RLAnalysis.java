@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scor.rr.domain.RdmAnalysisBasic;
 import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
+import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 @Data
 @Entity
@@ -129,6 +131,15 @@ public class RLAnalysis {
 //    @OneToOne(mappedBy = "rlAnalysis")
 //    @JsonBackReference
 //    private RLAnalysisScanStatus rlAnalysisScanStatus;
+    @Column(name = "ScanLevel")
+    private ScanLevelEnum scanLevel;
+    @Column(name = "ScanStatus")
+    private Integer scanStatus;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LastScan")
+    private Date lastScan;
+
+
 
     @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
@@ -145,7 +156,7 @@ public class RLAnalysis {
     @Transient
     private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 
-    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
+    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm, int scanStatus) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
         this.projectId = rdm.getProjectId();
@@ -180,11 +191,11 @@ public class RLAnalysis {
         this.exposureTIV = null;
         this.groupType = rdmAnalysisBasic.getGroupTypeName();
         this.cedant = rdmAnalysisBasic.getCedant();
-        this.lob = rdmAnalysisBasic.getLobName();        System.out.println("+++++++++  1   "+this.isGroup);
-
-        this.isGroup = rdmAnalysisBasic.getGrouping();
-        System.out.println("+++++++++  2   "+this.isGroup);
+        this.lob = rdmAnalysisBasic.getLobName();
         this.regionName = rdmAnalysisBasic.getRegionName();
         this.analysisMode = rdmAnalysisBasic.getModeName();
+        this.scanStatus = scanStatus;
+        this.scanLevel = ScanLevelEnum.get(scanStatus);
+        this.lastScan = new Date();
     }
 }

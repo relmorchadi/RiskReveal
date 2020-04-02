@@ -27,13 +27,13 @@ public class RLPortfolioScanStatus {
     @Column(name = "LastScan")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastScan;
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "RLPortfolioId")
-    private RLPortfolio rlPortfolio;
+    //@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JoinColumn(name = "RLPortfolioId")
+   // private RLPortfolio rlPortfolio;
 
     public RLPortfolioScanStatus(RLPortfolio rlPortfolio, int scanStatus) {
         this.entity = 1;
-        this.rlPortfolio = rlPortfolio;
+       // this.rlPortfolio = rlPortfolio;
         this.scanStatus = scanStatus;
         this.scanLevel = ScanLevelEnum.get(scanStatus);
     }

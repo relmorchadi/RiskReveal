@@ -2,6 +2,7 @@ package com.scor.rr.domain.riskLink;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.EdmPortfolioBasic;
+import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -56,20 +57,28 @@ public class RLPortfolio {
     @Column(name = "TIV")
     private BigDecimal tiv;
 
+    @Column(name = "ScanLevel")
+    private ScanLevelEnum scanLevel;
+    @Column(name = "ScanStatus")
+    private Integer scanStatus;
+    @Column(name = "LastScan")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastScan;
+
     @OneToMany(mappedBy = "rlPortfolio", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     private List<RLPortfolioAnalysisRegion> rlPortfolioAnalysisRegions;
 
-    @OneToOne(mappedBy = "rlPortfolio")
-    @JsonBackReference
-    private RLPortfolioScanStatus rlPortfolioScanStatus;
+
 
     @ManyToOne
     @JoinColumn(name = "RLDataSourceId")
     @JsonBackReference
     private RLModelDataSource rlModelDataSource;
 
-    public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm) {
+
+
+    public RLPortfolio(EdmPortfolioBasic edmPortfolioBasic, RLModelDataSource edm,int scanStatus) {
         this.entity = 1L;
         this.projectId = edm.getProjectId();
         this.edmId = edm.getRlId();
@@ -81,7 +90,6 @@ public class RLPortfolio {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        System.out.println(edmPortfolioBasic.getCreated()+"fffffffff"+this.created);
         this.number = edmPortfolioBasic.getNumber();
         this.description = edmPortfolioBasic.getDescription();
         this.type = edmPortfolioBasic.getType();
@@ -90,6 +98,7 @@ public class RLPortfolio {
         this.agCedent = edmPortfolioBasic.getAgCedant();
         this.agCurrency = edmPortfolioBasic.getAgCurrency();
         this.rlModelDataSource = edm;
-
+        this.scanStatus = scanStatus;
+        this.scanLevel = ScanLevelEnum.get(scanStatus);
     }
 }
