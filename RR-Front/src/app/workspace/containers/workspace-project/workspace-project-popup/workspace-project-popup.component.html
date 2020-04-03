@@ -38,7 +38,7 @@
                    (onEnter)="onEnter()"
                    #searchInput
                    formControlName="keyword"  (click)="search()"
-                   class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
+                   class="search-input" type="text" nz-input [placeholder]="'Search for ' + marketChannel">
           </nz-input-group>
 
           <ng-template #suffixIconSearch>
@@ -57,12 +57,12 @@
   <ng-container *ngIf="!browesing">
     <div style="height:600px;">
 
-      <app-table [tableColumn]="selectWsTable" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
-                 [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
+      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+                 [listOfData]="contracts" [virtualScroll]="false" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterData($event.searchValue, $event.searchAddress)"
                  (dbClickItem)="onRowSelect($event);getBrowesingItems($event)"
-                 (onRowSelect)="onRowSelect($event.data)"
+                 (onRowSelect)="onRowSelect($event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
                  [sortData]="{}"

@@ -572,6 +572,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   tableSeparatorResize(delta){
 
+
     const frozenColumns = [...this.columnsConfig.frozenColumns];
     const frozenWidthPixel = this.columnsConfig.frozenWidth;
     this.calibrationTableService.updateColumnsConfig({
@@ -586,15 +587,24 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     } = { frozenWidth: '', frozenColumns: []};
 
     const head = _.slice(frozenColumns, 0, 3);
-    const tail= _.slice(frozenColumns, frozenColumns.length - 1);
-    const headTailCols = [...head, ...tail];
+
+    const statusCols = frozenColumns.filter(c => c.field == 'status' );
+    let tail = frozenColumns.slice(frozenColumns.indexOf(statusCols[0]), frozenColumns.length);
+
+    const headTailCols = [...head, statusCols[0]];
     const minWidth = _.reduce(headTailCols, (acc, curr) => acc + _.toNumber(curr.width), 0);
     const frozenWidth = _.toNumber(_.trim(frozenWidthPixel, 'px'));
     const expandedMaxWidth = frozenWidth + delta - minWidth;
-    const possibleExpandedCols = _.uniqBy([..._.slice(frozenColumns,3, frozenColumns.length - 1), ...CalibrationTableService.frozenColsExpanded], 'field');
+    let possibleExpandedCols = _.uniqBy([..._.slice(frozenColumns,3), ...CalibrationTableService.frozenColsExpanded], 'field');
+
+    /**
+     *  Exclude tail cols from possible expanded cols
+     */
+    possibleExpandedCols = possibleExpandedCols.filter(t =>  tail.filter(m => m.field == t.field).length == 0);
 
     let expandedWidth = 0;
     let i =0;
+
 
     for(; i < possibleExpandedCols.length; i++) {
       const currentColWidth = _.toNumber(possibleExpandedCols[i].width);
@@ -615,21 +625,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       }
     }
 
+
     let resCols = [...head, ...middle , ...tail];
-    // const lastCol = resCols[resCols.length - 2];
-    // const diff = Math.abs(expandedMaxWidth - expandedWidth);
-    // const newColMinWidth = _.toNumber(lastCol.minWidth);
-    // let newColWidth = _.toNumber(lastCol.width) + (expandedWidth < expandedMaxWidth ?  -diff: diff);
-    // //
-    // resCols = _.map(resCols, (col, i)  => (_.toNumber(i) != (resCols.length - 2)) ?  col : {...lastCol, width : (newColWidth < newColMinWidth ? newColMinWidth : newColWidth) + ''});
-    res.frozenWidth= _.reduce(resCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
+
+    res.frozenWidth= _.reduce([...head, ...middle , statusCols[0]], (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px';
     res.frozenColumns= resCols;
 
     const tmp = {
       ...this.columnsConfig,
       ...res
     };
-
+    console.log(tmp);
     this.calibrationTableService.updateColumnsConfig(tmp);
 
   }
