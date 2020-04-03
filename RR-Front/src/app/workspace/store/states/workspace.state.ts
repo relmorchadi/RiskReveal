@@ -76,6 +76,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getWorkspaceMarketChannel(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].marketChannel;
+  }
+
+  @Selector()
   static getProjects(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].projects;
