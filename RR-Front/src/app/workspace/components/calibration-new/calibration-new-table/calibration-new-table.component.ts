@@ -350,6 +350,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onTableSeparatorResize(event) {
+    console.log('oe');
     const {currentWidthValue, originalWidthValue} = event;
     const delta = currentWidthValue - originalWidthValue;
 
