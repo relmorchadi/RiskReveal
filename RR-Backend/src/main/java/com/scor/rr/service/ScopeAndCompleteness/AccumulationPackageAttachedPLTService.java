@@ -4,6 +4,7 @@ import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.Response.ScopeAndCompleteness.*;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackage;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackageAttachedPLT;
+import com.scor.rr.domain.entities.ScopeAndCompleteness.Views.PricedScopeAndCompletenessView;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.AttachPLTRequest;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.PLTAttachingInfo;
 import com.scor.rr.exceptions.RRException;
@@ -12,6 +13,7 @@ import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageAttachedPLTRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageRepository;
+import com.scor.rr.repository.ScopeAndCompleteness.PricedScopeAndCompletenessViewRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class AccumulationPackageAttachedPLTService {
     @Autowired
     private AccumulationPackageService accumulationPackageService;
     @Autowired
-    private PltHeaderRepository pltHeaderRepository;
+    private PricedScopeAndCompletenessViewRepository pricedScopeAndCompletenessViewRepository;
     @Autowired
     private AccumulationPackageOverrideSectionService accumulationPackageOverrideSectionService;
 
@@ -40,7 +42,7 @@ public class AccumulationPackageAttachedPLTService {
             AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(), request.getWorkspaceId());
             List<AccumulationPackageAttachedPLT> listToSave = new ArrayList<>();
             for (PLTAttachingInfo row : request.getPltList()) {
-                PltHeaderEntity plt = pltHeaderRepository.findByPltHeaderId(row.getPltHeaderId());
+                PricedScopeAndCompletenessView plt = pricedScopeAndCompletenessViewRepository.findByPLTHeaderId(row.getPltHeaderId());
                 if (plt == null) throw new InputPLTNotFoundException(row.getPltHeaderId());
                 AccumulationPackageAttachedPLT accumulationPackageAttachedPLT = new AccumulationPackageAttachedPLT();
                 accumulationPackageAttachedPLT.setAccumulationPackageId(accumulationPackage.getAccumulationPackageId());
@@ -68,7 +70,7 @@ public class AccumulationPackageAttachedPLTService {
         if (!attachedPLTS.isEmpty()) {
             for (AccumulationPackageAttachedPLT plt : attachedPLTS) {
                 AttachedPLTsInfo pltInfo = new AttachedPLTsInfo();
-                pltInfo.setAttachedPLT(pltHeaderRepository.findByPltHeaderId(plt.getPLTHeaderId()));
+                pltInfo.setAttachedPLT(pricedScopeAndCompletenessViewRepository.findByPLTHeaderId(plt.getPLTHeaderId()));
                 pltInfo.setContractSectionId(plt.getContractSectionId());
                 pltReturnList.add(pltInfo);
             }

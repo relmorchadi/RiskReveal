@@ -9,4 +9,5 @@ import java.util.List;
 public interface PricedScopeAndCompletenessViewRepository extends JpaRepository<PricedScopeAndCompletenessView,Long> {
 
     List<PricedScopeAndCompletenessView> findByProjectId(long projectID);
+    PricedScopeAndCompletenessView findByPLTHeaderId(long pltHeaderId);
 }
