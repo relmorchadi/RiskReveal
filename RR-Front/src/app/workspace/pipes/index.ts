@@ -19,9 +19,11 @@ import {FilterGroupedPltsPipe} from "./filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "./sort-grouped-plts.pipe";
 import {IsEventAdjustmentPipe} from "./is-event-adjustment.pipe";
 import {GetEventAdjustmentParamsPipe} from "./get-event-adjustment-params.pipe";
+import {FrozenColumnsFilterPipe} from "./frozen-columns-filter.pipe";
 
 export const PIPES = [
   FilterByBadgePipe,
+  FrozenColumnsFilterPipe,
   FilterByUserTagPipe,
   FilterBySystemTagPipe,
   FilterByPathPipe,

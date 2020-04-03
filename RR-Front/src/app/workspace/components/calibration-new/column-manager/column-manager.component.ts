@@ -85,7 +85,6 @@ export class CalibrationColumnManagerComponent implements OnInit {
   moveItem(container, i, j) {
     if(container.id == "visible") {
       const head = _.slice(container.data, 0,2);
-//      const tail = _.slice(container.data, container.data.length - 1);
 
       const middle = _.slice(container.data, 2, container.data.length );
 
@@ -110,7 +109,7 @@ export class CalibrationColumnManagerComponent implements OnInit {
 
       transferArrayItem(prevCont.data, middle, i, newJ);
 
-        currCont.data = _.assign(currCont.data, [ ...head, ...middle]);
+      currCont.data = _.assign(currCont.data, [ ...head,  ...middle]);
 
     } else {
 

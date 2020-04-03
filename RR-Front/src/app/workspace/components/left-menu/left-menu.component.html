@@ -34,6 +34,13 @@
       <span class="test-list">PLT Manager</span>
     </span>
   </li>
+  <li (click)="routerNavigate('CloneData')" [nzTitle]="isCollapsed ? 'Clone data' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-database"></i></i>
+      <span class="test-list">Clone Data</span>
+    </span>
+  </li>
   <li (click)="routerNavigate('Exposures')" [nzTitle]="isCollapsed ? 'Exposure Manager' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
     <span title>

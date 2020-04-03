@@ -1,6 +1,6 @@
 import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
-  WorkspaceCalibrationComponent,
+  WorkspaceCalibrationComponent, WorkspaceCloneDataComponent,
   WorkspaceContractComponent, WorkspaceExposuresComponent,
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
@@ -45,7 +45,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
     //FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
-    //CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
+    CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},
     Exposures: {component: WorkspaceExposuresComponent, selector: (state) => state},
     //Results: {component: WorkspaceResultsComponent, selector: (state) => state},
     Calibration: {component: WorkspaceCalibrationNewComponent, selector: (state) => state},
@@ -82,6 +82,8 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
    * @param route
    */
   handleLeftMenuNavigation({route}) {
+    console.log('is route , ?');
+    console.log(route);
     const {wsId, uwYear} = this.state.data;
     this.store.dispatch(
       [new UpdateWsRouting(this.state.wsIdentifier, route), new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
