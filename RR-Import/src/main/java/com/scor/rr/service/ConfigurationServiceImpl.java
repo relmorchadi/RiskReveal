@@ -237,6 +237,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public List<RLImportSelectionDtoWithAnalysisInfo> getRLModelAnalysisConfigs(Long projectId) {
         List<RLImportSelection> data = rlImportSelectionRepository.findByProjectId(projectId);
         List<RLImportSelectionDtoWithAnalysisInfo> importedAnalysis = new ArrayList<>();
+        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
 
         if (data != null && !data.isEmpty()) {
             data.forEach(element -> {
@@ -264,6 +265,21 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 }
 
                 rlImportSelection.setReferenceTargetRaps(this.getTargetRapByAnalysisId(element.getRlAnalysis().getRlAnalysisId()));
+                Optional<RLModelDataSource> dsOpt= rlModelDataSourceRepository.findById(element.getRlAnalysis().getRlModelDataSourceId());
+
+                if(dsOpt.isPresent()){
+                    RLModelDataSource ds= dsOpt.get();
+                    rlImportSelection.setExpectedFinancialPerspectives(
+                            rmsService.getExpectedFinancialPersp(
+                                    ds.getInstanceId(),
+                                    element.getRlAnalysis().getRdmId(),
+                                    element.getRlAnalysis().getRdmName(),
+                                    Collections.singletonList(element.getRlAnalysis().getRlId()),
+                                    fpCodes
+                            )
+                    );
+                }
+
             });
         }
         return importedAnalysis;
