@@ -330,7 +330,9 @@ public class ImportLossDataJob {
     /**
      * Job
      */
-
+    /**
+     * Old version of job/jobBuilder beans
+     */
     @Bean(value = "importLossDataFac")
     public Job getImportLossDataFac(@Qualifier(value = "jobBuilder") SimpleJobBuilder simpleJobBuilder) {
         return simpleJobBuilder
@@ -366,5 +368,51 @@ public class ImportLossDataJob {
                 .next(getPltWriterStep())
                 .next(defaultAdjustmentStep())
                 .next(extractExposureSummaryStep());
+    }
+
+    /**
+     * Ends here
+     **/
+
+    @Bean(value = "importLossDataAnalysis")
+    public Job getJobBuilderAnalysisJob() {
+        return jobBuilderFactory.get("importLossDataAnalysis")
+                .start(getExtractRegionPerilStep())
+                .next(getExtractEpCurveStatsStep())
+                .next(getExtractExchangeRatesStep())
+                .next(geExtractELTStep())
+                .next(getELTTruncateELTStep())
+                .next(conformeEltStep())
+                .next(conformEPCurvesStep())
+                .next(getEltBinaryWritingStep())
+                .next(getEltHeaderWritingStep())
+                .next(getExtractModellingOptionsStep())
+                .next(getEltToPLTStep())
+                .next(getPltWriterStep())
+                .next(defaultAdjustmentStep())
+                .next(projectImportRunStatusChangeStep())
+                .build();
+    }
+
+    @Bean(value = "importLossDataPortfolio")
+    public Job getJobBuilderPortfolioJob() {
+        return jobBuilderFactory.get("importLossDataPortfolio")
+                .start(getExtractRegionPerilStep())
+                .next(extractExposureSummaryStep())
+                .next(projectImportRunStatusChangeStep())
+                .build();
+    }
+
+    @Bean(value = "importLossDataPortfolioFac")
+    public Job getJobBuilderPortfolioFacJob() {
+        return jobBuilderFactory.get("importLossDataPortfolio")
+                .start(getExtractRegionPerilStep())
+                .next(extractExposureSummaryStep())
+                .next(extractAccStep())
+                .next(extractLocStep())
+                .next(extractLocFWStep())
+                .next(copyAccAndLocFilesStep())
+                .next(projectImportRunStatusChangeStep())
+                .build();
     }
 }
