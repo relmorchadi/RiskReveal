@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public abstract class JobManagerAbstraction implements JobManager {
@@ -73,16 +74,24 @@ public abstract class JobManagerAbstraction implements JobManager {
     @Override
     public StepEntity createStep(Long taskId, String stepCode, Integer stepOrder) {
 
-        StepEntity step = new StepEntity();
-        step.setSubmittedDate(new Timestamp((new Date()).getTime()));
-        step.setStartedDate(new Timestamp((new Date()).getTime()));
-        step.setStepName(stepCode);
-        step.setStepOrder(stepOrder);
-        TaskEntity task = taskEntityRepository.findById(taskId).orElse(null);
-        step.setTask(task);
-        step.setStatus(StepStatus.RUNNING.getCode());
-
-        return stepEntityRepository.saveAndFlush(step);
+        Optional<TaskEntity> taskEntityOptional = taskEntityRepository.findById(taskId);
+        if (!taskEntityOptional.isPresent()) {
+            Optional<StepEntity> stepOp = taskEntityOptional.get().getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase(stepCode)).findFirst();
+            if (!stepOp.isPresent()) {
+                StepEntity step = new StepEntity();
+                step.setSubmittedDate(new Timestamp((new Date()).getTime()));
+                step.setStartedDate(new Timestamp((new Date()).getTime()));
+                step.setStepName(stepCode);
+                step.setStepOrder(stepOrder);
+                TaskEntity task = taskEntityRepository.findById(taskId).orElse(null);
+                step.setTask(task);
+                step.setStatus(StepStatus.RUNNING.getCode());
+                return stepEntityRepository.saveAndFlush(step);
+            } else {
+                return stepOp.get();
+            }
+        }
+        return null;
     }
 
     @Override
