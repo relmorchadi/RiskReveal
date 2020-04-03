@@ -128,9 +128,6 @@ public class RLAnalysis {
     @Column(name = "Grouping")
     private String isGrouping;
 
-//    @OneToOne(mappedBy = "rlAnalysis")
-//    @JsonBackReference
-//    private RLAnalysisScanStatus rlAnalysisScanStatus;
     @Column(name = "ScanLevel")
     private ScanLevelEnum scanLevel;
     @Column(name = "ScanStatus")
