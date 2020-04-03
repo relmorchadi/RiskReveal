@@ -407,6 +407,8 @@ public class RmsService {
 
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
 
+        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
+
 
         if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
 
@@ -442,11 +444,19 @@ public class RmsService {
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             rlAnalysisRepository.save(rlAnalysis);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
+                            rlAnalysis.setExpectedFinancialPerspectives(
+                                    this.getExpectedFinancialPersp(
+                                            dataSource.getInstanceId(),
+                                            rdmId,
+                                            rdmName,
+                                            Collections.singletonList(rlAnalysis.getRlId()),
+                                            fpCodes
+                                    )
+                            );
                             allScannedAnalysis.add(rlAnalysis);
                         });
             }
         }
-
         return allScannedAnalysis;
     }
 
@@ -1043,6 +1053,13 @@ public class RmsService {
                     });
                     rlSourceEpHeaderRepository.save(sourceEpHeader);
                 });
+    }
+
+    public List<ExpectedFinancialPerspective> getExpectedFinancialPersp(String instanceId, Long rdmId, String rdmName, List<Long> analysisIds, List<String> fpCodes){
+        return this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
+                .stream()
+                .map(ExpectedFinancialPerspective::new)
+                .collect(toList());
     }
 
     private String generateEpCurveFieldName(Long returnPeriod, int statisticMetric) throws Exception {
