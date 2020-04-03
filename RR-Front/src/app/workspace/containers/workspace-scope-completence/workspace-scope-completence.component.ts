@@ -1271,6 +1271,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   }
 
+  closeModal(event) {
+    this.showOverrideModal = event;
+  }
+
   /**cancelling the override / emptying the override container**/
   cancelOverride() {
     this.dispatch(new PatchScopeOfCompletenessState({overrideAll: false, overrideRow: false}));

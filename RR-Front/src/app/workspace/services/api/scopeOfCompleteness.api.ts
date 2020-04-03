@@ -33,7 +33,7 @@ export class ScopeOfCompletenessApi {
     }
 
     overrideDone(data) {
-        return this.http.post(`${this.api}OverrideSection/override`, data, {responseType: 'text' as 'json'})
+        return this.http.post(`${this.api}OverrideSection/override`, data)
     }
 
     overrideDelete(overriddenSections) {

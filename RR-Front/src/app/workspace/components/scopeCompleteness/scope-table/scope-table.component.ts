@@ -30,6 +30,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   @Output('overrideRemoveUnable') overrideRemoveUnable: any = new EventEmitter<any>();
   @Output('showOverrideButton') showOverrideButton: any = new EventEmitter<any>();
   @Output('showOverrideRemoveButton') showOverrideRemoveButton: any = new EventEmitter<any>();
+  @Output('closeModal') closeModal: any = new EventEmitter<any>();
 
   @Input()
   dataSource;
@@ -73,6 +74,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   currentWs;
   @Select(WorkspaceState.getScopeCompletenessData) scopeData$;
   scopeData;
+  @Select(WorkspaceState.getScopeCompletenessPendingData) pendingData$;
+  pendingData;
   @Select(WorkspaceState.getOverrideStatus) overrideStatus$;
   overrideStatus;
   @Select(WorkspaceState.getScopeContext) scopeContext$;
@@ -91,7 +94,11 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.accumulationStatus = _.get(value, 'accumulationStatus');
       if (this.accumulationStatus === 'Pricing' ) {
         this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
-      } else {
+        this.overrideStop();
+      } else if (this.accumulationStatus === 'Scope Only') {
+        this.dispatch(new LoadScopeCompletenessDataSuccess());
+        this.overrideStop();
+      } else if (this.accumulationStatus === 'Pending') {
         this.dispatch(new LoadScopeCompletenessDataSuccess());
       }
       this.detectChanges();
@@ -102,9 +109,11 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.projectType = _.get(value, 'projectType', 'FAC');
       if (this.accumulationStatus === 'Pricing' ) {
         this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
+        this.overrideStop();
       }
       this.detectChanges();
     });
+
     this.currentWs$.pipe().subscribe(value => {
       this.currentWs =  value;
       this.workspaceType = _.get(value, 'workspaceType', 'fac');
@@ -120,6 +129,11 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
+    this.pendingData$.pipe().subscribe(value => {
+      this.pendingData =  value;
+      this.detectChanges();
+    });
+
     this.overrideStatus$.pipe().subscribe(value => {
       this.overrideStatus = value;
       this.overrideAll = value.overrideAll;
@@ -129,6 +143,11 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.overrideAll || this.overrideRows ? this.overrideInit() : this.overrideStop();
       this.detectChanges();
     });
+  }
+
+  dataShown() {
+    console.log(this.accumulationStatus);
+    return this.accumulationStatus === 'Pending' ? this.pendingData : this.scopeData;
   }
 
   initTableCols() {
@@ -595,6 +614,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       })
     });
     this.dispatch(new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}));
+    this.onHide();
+    this.overrideStop();
   }
 
   overrideInit() {
@@ -605,6 +626,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     this.overriddenRows = {};
     this.overriddenChildRows = {};
     this.rowOverrideInit = {};
+    this.showOverrideButton.emit(false);
   }
 
   checkInnerExpected(row, column) {
@@ -682,38 +704,49 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
   getOverrideCapability(row, scope) {
     let overrideCapability = false;
+    let overridden = false;
     if (this.sortBy == 'Minimum Grain / RAP') {
       if (scope === 'parent') {
+        overridden = true;
         _.forEach(row.targetRaps, item => {
           if (_.toArray(item.pltsAttached).length === 0) {
-            overrideCapability = true
+            overrideCapability = true;
+          } if (!item.overridden) {
+            overridden = false;
           }
         });
       } else {
         if (_.toArray(row.pltsAttached).length === 0) {
-          overrideCapability = true
+          overrideCapability = true;
+        } if (row.overridden) {
+          overridden = true;
         }
       }
     } else {
       if (scope === 'parent') {
+        overridden = true;
         _.forEach(row.regionPerils, item => {
           if (_.toArray(item.pltsAttached).length === 0) {
             overrideCapability = true
+          } if (!item.overridden) {
+            overridden = false;
           }
         });
       } else {
         if (_.toArray(row.pltsAttached).length === 0) {
           overrideCapability = true
+        } if (row.overridden) {
+          overridden = true;
         }
       }
     }
-    return overrideCapability;
+    return overrideCapability && overridden === false;
   }
 
   onHide() {
-    this.showOverrideModal = false;
     this.overrideNarrative = '';
     this.overrideReason = null;
+    this.closeModal.emit(false);
   }
 
   closePopUp() {

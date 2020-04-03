@@ -476,6 +476,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getScopeCompletenessPendingData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompleteness.pendingData;
+  }
+
+  @Selector()
   static getOverrideStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const scopeData = state.content[wsIdentifier].scopeOfCompleteness;
@@ -1273,7 +1279,7 @@ export class WorkspaceState {
 
   @Action(fromWS.LoadScopeCompletenessPricingDataSuccess)
   loadScopeCompletenessPricingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPricingDataSuccess) {
-      return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
+    return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
   }
 
   @Action(fromWS.PublishToPricingFacProject)

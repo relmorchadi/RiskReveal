@@ -1,5 +1,5 @@
 <div>
-  <p-table [columns]="columns" [value]="sortBy == 'RAP / Minimum Grain' ? scopeData?.targetRaps : scopeData?.regionPerils" scrollHeight="340px" dataKey="id" [expandedRowKeys]="sortBy == 'RAP / Minimum Grain' ? targetCodes : regionCodes" >
+  <p-table [columns]="columns" [value]="sortBy == 'RAP / Minimum Grain' ? dataShown()?.targetRaps : dataShown()?.regionPerils" scrollHeight="340px" dataKey="id" [expandedRowKeys]="sortBy == 'RAP / Minimum Grain' ? targetCodes : regionCodes" >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
         <ng-container  *ngFor="let col of columns">
@@ -52,7 +52,7 @@
             <i class="icon-minus-square" style="font-size: 25px;cursor: pointer;" (click)="closeAllRows()"></i>
           </div>
           <div style="height: 35px">
-            <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="accumulationStatus === 'Accumulation Package'" (click)="openAttachPLT()">Attach PLTs</button>
+            <button class="a-buttons-contained-micro" style="margin-top: 12px;" *ngIf="accumulationStatus === 'Pending'" (click)="openAttachPLT()">Attach PLTs</button>
           </div>
         </div>
       </div>
@@ -84,7 +84,7 @@
                 </div>
               </div>
             </div>
-            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Accumulation Package'">
+            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Pending'">
               <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
                 <a nz-dropdown>
                   <i class="icon-menu_24px"
@@ -147,9 +147,9 @@
 
               <div *ngIf="checkExpected(rowData, col) == 'overridden'" class="icon-holder">
                 <div class="icon-holder">
-              <span>
-                <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-              </span>
+                  <span>
+                    <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                  </span>
                 </div>
               </div>
               <div *ngIf="checkExpected(rowData, col)== 'attached'" class="icon-holder" nz-tooltip
@@ -190,7 +190,7 @@
                 </div>
               </div>
             </div>
-            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Accumulation Package'">
+            <div style="padding-top: 8px" *ngIf="accumulationStatus === 'Pending'">
               <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
                 <a nz-dropdown>
                   <i class="icon-menu_24px"
@@ -293,7 +293,7 @@
                   </div>
                 </div>
               </div>
-              <div class="inner-menu" *ngIf="accumulationStatus === 'Accumulation Package'">
+              <div class="inner-menu" *ngIf="accumulationStatus === 'Pending'">
                 <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event, row.id)">
                   <a nz-dropdown>
                     <i class="icon-menu_24px"
@@ -324,61 +324,21 @@
                     </div>
                   </div>
                 </ng-container>
-                <!--          <ng-container *ngFor="let item of treatySections[0]">
-<th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'checked'" class="icon-holder">
-  <div class="icon-holder" style="padding:2px;" nz-tooltip [nzTitle]="checked">
-    <i class="icon-reorder_24px" style="color: lightgray"></i>
-    <i class="icon-plus"></i>
-  </div>
-</div>
-<ng-template #checked>
-  No Qualifying PLTs in Workspace
-</ng-template>
+                <ng-container *ngIf="!removeOverrideAll">
+                  <div *ngIf="row.overridden" class="icon-holder">
+                    <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
+                      <span>
+                        <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                      </span>
+                    </div>
+                  </div>
+                  <ng-template #overridden>
+                    Basis: {{row?.reason}}<br/>
+                    Narrative: {{row?.reasonNarrative}}
+                  </ng-template>
+                </ng-container>
 
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'overridden'" class="icon-holder">
-    <span nz-tooltip [nzTitle]="reason">
-      <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-    </span>
-</div>
-
-<ng-template #reason>
-  Basis: {{getReasonOverride(item, grain, rowData).rr}}
-  <br/>
-  Narrative: {{getReasonOverride(item, grain, rowData).rd}}
-</ng-template>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'override'" class="icon-holder">
-  <ng-container>
-    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px unCheckedBoxTab"
-       [ngClass]="{'checkedBoxTab': checkChild(rowData, item, grain)}"></i>
-  </ng-container>
-</div>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'attached'" class="icon-holder">
-  <ng-container>
-    <div nz-tooltip [nzTitle]="attached">
-      <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
-    </div>
-  </ng-container>
-</div>
-<ng-template #attached>
-  Qualifying PLTs Attached
-</ng-template>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'dispoWs'" class="icon-holder">
-  <div class="icon-holder" style="padding: 2px;" nz-tooltip [nzTitle]="dispoWs">
-    <i class="icon-reorder_24px"></i>
-    <i class="icon-plus"></i>
-  </div>
-</div>
-<ng-template #dispoWs>
-  One or more Qualifying PLTs in Workspace
-</ng-template>
-
-</th>
-</ng-container>-->
               </ng-container>
             </th>
             <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
@@ -436,7 +396,7 @@
                   </div>
                 </div>
               </div>
-              <div class="inner-menu" *ngIf="accumulationStatus === 'Accumulation Package'">
+              <div class="inner-menu" *ngIf="accumulationStatus === 'Pending'">
                 <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event, row.id)">
                   <a nz-dropdown>
                     <i class="icon-menu_24px"
@@ -468,61 +428,21 @@
                     </div>
                   </div>
                 </ng-container>
-                <!--          <ng-container *ngFor="let item of treatySections[0]">
-<th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'checked'" class="icon-holder">
-  <div class="icon-holder" style="padding:2px;" nz-tooltip [nzTitle]="checked">
-    <i class="icon-reorder_24px" style="color: lightgray"></i>
-    <i class="icon-plus"></i>
-  </div>
-</div>
-<ng-template #checked>
-  No Qualifying PLTs in Workspace
-</ng-template>
+                <ng-container *ngIf="!removeOverrideAll">
+                  <div *ngIf="row.overridden" class="icon-holder">
+                    <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
+                      <span>
+                        <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                      </span>
+                    </div>
+                  </div>
+                  <ng-template #overridden>
+                    Basis: {{row?.reason}}<br/>
+                    Narrative: {{row?.reasonNarrative}}
+                  </ng-template>
+                </ng-container>
 
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'overridden'" class="icon-holder">
-    <span nz-tooltip [nzTitle]="reason">
-      <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-    </span>
-</div>
-
-<ng-template #reason>
-  Basis: {{getReasonOverride(item, grain, rowData).rr}}
-  <br/>
-  Narrative: {{getReasonOverride(item, grain, rowData).rd}}
-</ng-template>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'override'" class="icon-holder">
-  <ng-container>
-    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px unCheckedBoxTab"
-       [ngClass]="{'checkedBoxTab': checkChild(rowData, item, grain)}"></i>
-  </ng-container>
-</div>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'attached'" class="icon-holder">
-  <ng-container>
-    <div nz-tooltip [nzTitle]="attached">
-      <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
-    </div>
-  </ng-container>
-</div>
-<ng-template #attached>
-  Qualifying PLTs Attached
-</ng-template>
-
-<div *ngIf="checkExpectedTwo(item,grain,rowData) == 'dispoWs'" class="icon-holder">
-  <div class="icon-holder" style="padding: 2px;" nz-tooltip [nzTitle]="dispoWs">
-    <i class="icon-reorder_24px"></i>
-    <i class="icon-plus"></i>
-  </div>
-</div>
-<ng-template #dispoWs>
-  One or more Qualifying PLTs in Workspace
-</ng-template>
-
-</th>
-</ng-container>-->
               </ng-container>
             </th>
             <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
