@@ -12,5 +12,6 @@ public class PopUpPLTsResponse {
     private String regionPerilDesc;
     private String grain;
     private String contractSectionId;
+    private String accumulationRapCode;
 
 }

@@ -62,6 +62,13 @@ export class ScopeCompletenessService {
                 targetRaps: targetRaps,
                 scopeContext: scopeContext
               };
+              if(draft.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils.length === 0) {
+                draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+                  regionPerils: regionPerils,
+                  targetRaps: targetRaps
+                };
+              }
+
             }));
         }),
         catchError(err => {
@@ -110,7 +117,54 @@ export class ScopeCompletenessService {
       workspaceName: ws.workspaceName
     };
     return this.scopeApi.overrideDone(target).pipe(
-        tap(data => {})
+        tap((data: any) => {
+          const overriddenData = data.overriddenSections;
+          const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.data.regionPerils);
+          const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.data.targetRaps);
+          _.forEach(overriddenData, overriddenItem => {
+            _.forEach(scopeDataRP, item => {
+              console.log(item.id, overriddenItem.minimumGrainRegionPerilCode);
+              if (item.id === overriddenItem.minimumGrainRegionPerilCode) {
+                const overriddenRpIndex = _.findIndex(scopeDataRP, (Otr: any) => Otr.id === item.id);
+                _.forEach(item.targetRaps, tr => {
+                  if (tr.id === overriddenItem.accumulationRAPCode) {
+                    const overriddenRpTrIndex = _.findIndex(item.targetRaps, (Otr: any) => Otr.id === tr.id);
+                    const overriddenTrIndex = _.findIndex(scopeDataTR, (Otr: any) => Otr.id === tr.id);
+                    const overriddenTrRpIndex = _.findIndex(scopeDataTR[overriddenTrIndex].regionPerils,
+                        (Otr: any) => Otr.id === item.id);
+
+                    scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex] = {
+                      ...scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex],
+                      overridden: true,
+                      reason: overriddenItem.overrideBasisCode,
+                      reasonNarrative: overriddenItem.overrideBasisNarrative
+                    };
+
+                    scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex] = {
+                      ...scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex],
+                      overridden: true,
+                      reason: overriddenItem.overrideBasisCode,
+                      reasonNarrative: overriddenItem.overrideBasisNarrative
+                    }
+
+                  }
+                })
+              }
+            });
+          });
+
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              regionPerils: scopeDataRP,
+              targetRaps: scopeDataTR
+            }
+          }))
+
+        }),
+        catchError(err => {
+          console.log(err);
+          return of();
+        })
     )
   }
 

@@ -2,8 +2,10 @@ package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
 import com.scor.rr.domain.StepEntity;
+import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.mapper.RLAccItemRowMapper;
+import com.scor.rr.repository.TaskRepository;
 import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.processor.rows.RLAccRow;
 import com.scor.rr.service.state.TransformationPackage;
@@ -42,6 +44,9 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Qualifier("jobManagerImpl")
     private JobManager jobManager;
 
+    @Autowired
+    private TaskRepository taskRepository;
+
     @Value("#{jobParameters['taskId']}")
     private String taskId;
 
@@ -59,6 +64,8 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
 
     private List<String> parameters;
 
+    private StepEntity step;
+
     public RLAccCursorItemReader() {
         super();
         setName(ClassUtils.getShortName(JdbcCursorItemReader.class));
@@ -67,6 +74,10 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Override
     public void afterPropertiesSet() throws Exception {
         log.info("nothing to see...");
+        TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
+        if (task != null && task.getSteps().stream().noneMatch(s -> s.getStepName().equalsIgnoreCase("ExtractACC"))) {
+            step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);
+        }
     }
 
     @PostConstruct
@@ -86,7 +97,6 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
     @Override
     protected void openCursor(Connection con) {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractACC", 15);
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
             try {
@@ -105,6 +115,7 @@ public class RLAccCursorItemReader extends JdbcCursorItemReader<RLAccRow> {
             } catch (Exception ex) {
                 jobManager.onTaskError(Long.valueOf(taskId));
                 jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                super.close();
                 ex.printStackTrace();
             }
 

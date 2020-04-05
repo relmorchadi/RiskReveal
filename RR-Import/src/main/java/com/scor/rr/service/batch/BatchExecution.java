@@ -1,10 +1,13 @@
 package com.scor.rr.service.batch;
 
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
 import com.scor.rr.domain.enums.JobPriority;
+import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.JobManagerImpl;
 import com.scor.rr.service.abstraction.JobManagerAbstraction;
@@ -19,7 +22,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BatchExecution {
@@ -62,12 +67,27 @@ public class BatchExecution {
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
 
     @Autowired
+    private JobEntityRepository jobEntityRepository;
+
+    @Autowired
     @Qualifier(value = "importLossData")
     private Job importLossData;
 
     @Autowired
     @Qualifier(value = "importLossDataFac")
     private Job importLossDataFac;
+
+    @Autowired
+    @Qualifier(value = "importLossDataAnalysis")
+    private Job importLossDataAnalysis;
+
+    @Autowired
+    @Qualifier(value = "importLossDataPortfolio")
+    private Job importLossDataPortfolio;
+
+    @Autowired
+    @Qualifier(value = "importLossDataPortfolioFac")
+    private Job importLossDataPortfolioFac;
 
     public Long RunImportLossData(ImportLossDataParams importLossDataParams) {
 
@@ -130,83 +150,28 @@ public class BatchExecution {
             userId = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId();
         }
 
-        List<Long> rlImportSelections = rlImportSelectionRepository.findRLImportSelectionIdByProjectId(projectId);
-        List<Long> rlPortfolioSelections = rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId);
+        Map<String, String> params = extractNamingProperties(projectId, instanceId);
 
-        if ((rlImportSelections != null && !rlImportSelections.isEmpty())
-                || (rlPortfolioSelections != null && !rlPortfolioSelections.isEmpty())) {
-            Map<String, String> params = extractNamingProperties(projectId, instanceId);
+        this.createJobsAndTasksAndSubmitThemToQueue(params, projectId, instanceId, userId);
 
-            if (params != null) {
-                params.put("projectId", String.valueOf(projectId));
-                params.put("instanceId", instanceId);
-                params.put("userId", String.valueOf(userId));
+        return true;
+    }
 
-                Map<String, String> jobParams = new HashMap<>(params);
-                Joiner joiner = Joiner.on("; ").skipNulls();
+    public void submitPendingAndRunningTasksToTheQueueAtStartUp() {
+        List<JobEntity> jobs = jobEntityRepository.findAllByStatusAndDate();
 
-                jobParams.put("sourceResultIdsInput", joiner.join(";", rlImportSelections));
-                jobParams.put("rlPortfolioSelectionIds", joiner.join(";", rlPortfolioSelections));
-                JobEntity job = jobManager.createJob(jobParams, JobPriority.MEDIUM.getCode(), userId);
+        for (JobEntity job : jobs) {
+            for (TaskEntity task : job.getTasks().stream()
+                    .filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PENDING.getCode()) || t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()))
+                    .collect(Collectors.toList())) {
+                Gson gson = new Gson();
+                Type paramType = new TypeToken<Map<String, String>>() {
+                }.getType();
+                Map<String, String> params = gson.fromJson(task.getTaskParams(), paramType);
 
-                JobParametersBuilder builder = new JobParametersBuilder();
-                builder
-                        .addString("reinsuranceType", params.get("reinsuranceType"))
-                        .addString("prefix", params.get("prefix"))
-                        .addString("clientName", params.get("clientName"))
-                        .addString("clientId", params.get("clientId"))
-                        .addString("contractId", params.get("contractId"))
-                        .addString("division", params.get("division"))
-                        .addString("uwYear", params.get("uwYear"))
-                        .addString("sourceVendor", params.get("sourceVendor"))
-                        .addString("modelSystemVersion", params.get("modelSystemVersion"))
-                        .addString("periodBasis", params.get("periodBasis"))
-                        .addLong("importSequence", Long.valueOf(params.get("importSequence")))
-                        .addString("jobType", params.get("jobType"))
-                        .addString("marketChannel", params.get("marketChannel"))
-                        .addString("carId", params.get("carId"))
-                        .addString("lob", params.get("lob"))
-                        .addString("userId", params.get("userId"))
-                        .addString("projectId", params.get("projectId"))
-                        .addString("instanceId", params.get("instanceId"))
-                        .addDate("runDate", new Date());
-
-                for (Long rlImportSelectionId : rlImportSelections) {
-                    params.put("sourceResultIdsInput", String.valueOf(rlImportSelectionId));
-                    params.put("rlPortfolioSelectionIds", "");
-
-                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_ANALYSIS);
-
-                    builder
-                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
-                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
-                            .addString("taskId", String.valueOf(task.getTaskId()));
-
-                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                        ((JobManagerImpl) jobManager).submitJob(importLossData, JobPriority.MEDIUM, builder.toJobParameters());
-                    else
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters());
-                }
-
-                for (Long rlPortfolioSelection : rlPortfolioSelections) {
-                    params.put("rlPortfolioSelectionIds", String.valueOf(rlPortfolioSelection));
-                    params.put("sourceResultIdsInput", "");
-
-                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_PORTFOLIO);
-
-                    builder
-                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
-                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
-                            .addString("taskId", String.valueOf(task.getTaskId()));
-
-                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                        ((JobManagerImpl) jobManager).submitJob(importLossData, JobPriority.MEDIUM, builder.toJobParameters());
-                    else
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataFac, JobPriority.MEDIUM, builder.toJobParameters());
-                }
+                this.submitJobsAndTasksToQueueAfterShutDown(params, task);
             }
         }
-        return true;
     }
 
     private Map<String, String> extractNamingProperties(Long projectId, String instanceId) {
@@ -304,5 +269,125 @@ public class BatchExecution {
         map.put("lob", lob);
 
         return map;
+    }
+
+    private void createJobsAndTasksAndSubmitThemToQueue(Map<String, String> params, Long projectId, String instanceId, Long userId) {
+
+        List<Long> rlImportSelections = rlImportSelectionRepository.findRLImportSelectionIdByProjectId(projectId);
+        List<Long> rlPortfolioSelections = rlPortfolioSelectionRepository.findRLPortfolioSelectionIdByProjectId(projectId);
+
+        if ((rlImportSelections != null && !rlImportSelections.isEmpty())
+                || (rlPortfolioSelections != null && !rlPortfolioSelections.isEmpty())) {
+
+            if (params != null) {
+                params.put("projectId", String.valueOf(projectId));
+                params.put("instanceId", instanceId);
+                params.put("userId", String.valueOf(userId));
+
+                Map<String, String> jobParams = new HashMap<>(params);
+                Joiner joiner = Joiner.on("; ").skipNulls();
+
+                jobParams.put("sourceResultIdsInput", joiner.join(";", rlImportSelections));
+                jobParams.put("rlPortfolioSelectionIds", joiner.join(";", rlPortfolioSelections));
+                JobEntity job = jobManager.createJob(jobParams, JobPriority.MEDIUM.getCode(), userId);
+
+                JobParametersBuilder builder = new JobParametersBuilder();
+                builder
+                        .addString("reinsuranceType", params.get("reinsuranceType"))
+                        .addString("prefix", params.get("prefix"))
+                        .addString("clientName", params.get("clientName"))
+                        .addString("clientId", params.get("clientId"))
+                        .addString("contractId", params.get("contractId"))
+                        .addString("division", params.get("division"))
+                        .addString("uwYear", params.get("uwYear"))
+                        .addString("sourceVendor", params.get("sourceVendor"))
+                        .addString("modelSystemVersion", params.get("modelSystemVersion"))
+                        .addString("periodBasis", params.get("periodBasis"))
+                        .addLong("importSequence", Long.valueOf(params.get("importSequence")))
+                        .addString("jobType", params.get("jobType"))
+                        .addString("marketChannel", params.get("marketChannel"))
+                        .addString("carId", params.get("carId"))
+                        .addString("lob", params.get("lob"))
+                        .addString("userId", params.get("userId"))
+                        .addString("projectId", params.get("projectId"))
+                        .addString("instanceId", params.get("instanceId"))
+                        .addDate("runDate", new Date());
+
+                for (Long rlImportSelectionId : rlImportSelections) {
+                    params.put("sourceResultIdsInput", String.valueOf(rlImportSelectionId));
+                    params.put("rlPortfolioSelectionIds", "");
+
+                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_ANALYSIS);
+
+                    builder
+                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
+                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
+                            .addString("taskId", String.valueOf(task.getTaskId()));
+
+                    ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.MEDIUM, builder.toJobParameters());
+                }
+
+                for (Long rlPortfolioSelection : rlPortfolioSelections) {
+                    params.put("rlPortfolioSelectionIds", String.valueOf(rlPortfolioSelection));
+                    params.put("sourceResultIdsInput", "");
+
+                    TaskEntity task = jobManager.createTask(params, job, JobPriority.MEDIUM.getCode(), TaskType.IMPORT_PORTFOLIO);
+
+                    builder
+                            .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
+                            .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
+                            .addString("taskId", String.valueOf(task.getTaskId()));
+
+                    if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters());
+                    else
+                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters());
+                }
+            }
+        }
+    }
+
+    private void submitJobsAndTasksToQueueAfterShutDown(Map<String, String> params, TaskEntity task) {
+
+        if (params != null) {
+
+            JobParametersBuilder builder = new JobParametersBuilder();
+
+            builder
+                    .addString("reinsuranceType", params.get("reinsuranceType"))
+                    .addString("prefix", params.get("prefix"))
+                    .addString("clientName", params.get("clientName"))
+                    .addString("clientId", params.get("clientId"))
+                    .addString("contractId", params.get("contractId"))
+                    .addString("division", params.get("division"))
+                    .addString("uwYear", params.get("uwYear"))
+                    .addString("sourceVendor", params.get("sourceVendor"))
+                    .addString("modelSystemVersion", params.get("modelSystemVersion"))
+                    .addString("periodBasis", params.get("periodBasis"))
+                    .addLong("importSequence", Long.valueOf(params.get("importSequence")))
+                    .addString("jobType", params.get("jobType"))
+                    .addString("marketChannel", params.get("marketChannel"))
+                    .addString("carId", params.get("carId"))
+                    .addString("lob", params.get("lob"))
+                    .addString("userId", params.get("userId"))
+                    .addString("projectId", params.get("projectId"))
+                    .addString("instanceId", params.get("instanceId"))
+                    .addString("sourceResultIdsInput", params.get("sourceResultIdsInput"))
+                    .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
+                    .addString("taskId", String.valueOf(task.getTaskId()))
+                    .addDate("runDate", new Date());
+
+            if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
+
+                ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.HIGH, builder.toJobParameters());
+
+            } else if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
+
+                if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
+                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.HIGH, builder.toJobParameters());
+                else
+                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.HIGH, builder.toJobParameters());
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.scor.rr.domain.Response.ScopeAndCompleteness;
 
 import com.scor.rr.domain.PltHeaderEntity;
+import com.scor.rr.domain.entities.ScopeAndCompleteness.Views.PricedScopeAndCompletenessView;
 import lombok.Data;
 
 import java.util.List;
@@ -9,5 +10,5 @@ import java.util.List;
 public class AttachedPLTsInfo {
 
     private String contractSectionId;
-    private PltHeaderEntity attachedPLT;
+    private PricedScopeAndCompletenessView attachedPLT;
 }

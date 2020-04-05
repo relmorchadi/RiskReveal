@@ -131,6 +131,10 @@ export class WorkspaceService {
               regionPerils: [],
               scopeContext: null
             },
+            pendingData: {
+              targetRaps: [],
+              regionPerils: [],
+            },
             overrideAll: false,
             overrideRow: false,
             overrideInit: false,
@@ -284,6 +288,10 @@ export class WorkspaceService {
                 targetRaps: [],
                 regionPerils: [],
                 scopeContext: null
+              },
+              pendingData: {
+                targetRaps: [],
+                regionPerils: [],
               },
               overrideAll: false,
               overrideRow: false,

@@ -61,7 +61,7 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
 
             TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
             if (task != null) {
-                StepEntity step = task.getSteps().stream().filter(s -> s.getStepOrder() == 14).findFirst().orElse(null);
+                StepEntity step = task.getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase("ExtractLOC")).findFirst().orElse(null);
                 if (step != null)
                     jobManager.logStep(step.getStepId(), StepStatus.SUCCEEDED);
             }
@@ -70,7 +70,7 @@ public class LocItemProcessor implements ItemProcessor<RLLocRow, RLLocRow> {
             jobManager.onTaskError(Long.valueOf(taskId));
             TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
             if (task != null) {
-                StepEntity step = task.getSteps().stream().filter(s -> s.getStepOrder() == 14).findFirst().orElse(null);
+                StepEntity step = task.getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase("ExtractLOC")).findFirst().orElse(null);
                 if (step != null)
                     jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             }

@@ -76,7 +76,7 @@
             <ul nz-menu>
               <li nz-menu-item (click)="updateScopeStateAccumulation('Scope Only')">Scope Only</li>
               <li nz-menu-item (click)="updateScopeStateAccumulation('Pricing')">Pricing</li>
-              <li nz-menu-item (click)="updateScopeStateAccumulation('Accumulation Package')">Accumulation Package</li>
+              <li nz-menu-item (click)="updateScopeStateAccumulation('Pending')">Pending</li>
             </ul>
           </nz-dropdown>
 
@@ -134,8 +134,8 @@
               <i class="icon-menu_24px" style="font-size: 25px;"></i>
             </a>
             <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item *ngIf="accumulationStatus === 'Accumulation Package'" (click)="overrideAll()">Override</li>
-              <li nz-menu-item *ngIf="accumulationStatus === 'Accumulation Package'"  (click)="RemoveOverrideAll()">Remove Override</li>
+              <li nz-menu-item *ngIf="accumulationStatus === 'Pending'" (click)="overrideAll()">Override</li>
+              <li nz-menu-item *ngIf="accumulationStatus === 'Pending'"  (click)="RemoveOverrideAll()">Remove Override</li>
               <li nz-menu-item>Generate Synthetic</li>
               <li nz-menu-item>Export Data</li>
               <li nz-menu-item>Manage Columns</li>
@@ -147,6 +147,7 @@
       <div class="table-wrap">
         <app-scope-table (overrideUnable)="unableOverride($event)"
                          (showOverrideButton)="rowOverrideShowButton($event)"
+                         (closeModal)="closeModal($event)"
                          [showOverrideModal]="showOverrideModal"
         ></app-scope-table>
 <!--        <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
