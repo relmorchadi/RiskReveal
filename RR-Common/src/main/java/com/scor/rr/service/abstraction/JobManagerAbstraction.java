@@ -75,7 +75,7 @@ public abstract class JobManagerAbstraction implements JobManager {
     public StepEntity createStep(Long taskId, String stepCode, Integer stepOrder) {
 
         Optional<TaskEntity> taskEntityOptional = taskEntityRepository.findById(taskId);
-        if (!taskEntityOptional.isPresent()) {
+        if (taskEntityOptional.isPresent()) {
             Optional<StepEntity> stepOp = taskEntityOptional.get().getSteps().stream().filter(s -> s.getStepName().equalsIgnoreCase(stepCode)).findFirst();
             if (!stepOp.isPresent()) {
                 StepEntity step = new StepEntity();
