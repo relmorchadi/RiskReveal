@@ -23,7 +23,7 @@ public class AccumulationPackageAttachedPLT {
     @Column(name = "PLTHeaderId")
     private long pLTHeaderId;
 
-    @Column(name = "ContractSectionId")//****??????
+    @Column(name = "ContractSectionId")
     private String contractSectionId;
 
     public AccumulationPackageAttachedPLT() {
