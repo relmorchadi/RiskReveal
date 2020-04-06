@@ -305,7 +305,10 @@ public class RmsService {
         List<RdmAnalysisBasic> rdmAnalysisBasicList=listRdmAnalysisBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
                 . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
-        
+        /*for testing the case when the data coming from the rms differs from that of the RR
+        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=new HashMap<Long,RdmAnalysisBasic>();
+        rdmAnalysisBasicMap.put((long) 11,rdmAnalysisBasicList.get(1));
+       */
         List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
         Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
 
