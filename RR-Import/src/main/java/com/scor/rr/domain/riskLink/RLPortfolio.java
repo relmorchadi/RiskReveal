@@ -2,6 +2,7 @@ package com.scor.rr.domain.riskLink;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.scor.rr.domain.EdmPortfolioBasic;
+import com.scor.rr.domain.RdmAnalysisBasic;
 import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,7 +57,6 @@ public class RLPortfolio {
     private String type;
     @Column(name = "TIV")
     private BigDecimal tiv;
-
     @Column(name = "ScanLevel")
     private ScanLevelEnum scanLevel;
     @Column(name = "ScanStatus")
@@ -100,5 +100,30 @@ public class RLPortfolio {
         this.rlModelDataSource = edm;
         this.scanStatus = scanStatus;
         this.scanLevel = ScanLevelEnum.get(scanStatus);
+        this.lastScan = new Date();
     }
+    public Boolean compare(EdmPortfolioBasic edmAnalysisBasic){
+        return edmAnalysisBasic.getName() != this.name || edmAnalysisBasic.getDescription() != this.description  || edmAnalysisBasic.getType() != this.type
+                ||edmAnalysisBasic.getNumber() != this.number  || edmAnalysisBasic.getPeril() != this.peril || edmAnalysisBasic.getAgSource() != this.agSource
+                ||edmAnalysisBasic.getAgCedant() != this.agCedent || edmAnalysisBasic.getAgCurrency() != this.agCurrency;
+
+    }
+
+    public void updateBasic(EdmPortfolioBasic edmPortfolioBasic){
+             if(!this.name.equals(edmPortfolioBasic.getName())){               this.setName(edmPortfolioBasic.getName());}
+             if(!this.description.equals(edmPortfolioBasic.getDescription())){ this.setDescription(edmPortfolioBasic.getDescription());}
+             if(!this.type.equals(edmPortfolioBasic.getType())){               this.setType(edmPortfolioBasic.getType()); }
+             if(!this.number.equals(edmPortfolioBasic.getNumber())){           this.setNumber(edmPortfolioBasic.getNumber());}
+             if(!this.peril.equals(edmPortfolioBasic.getPeril())){             this.setPeril(edmPortfolioBasic.getPeril());}
+             if(!this.agSource.equals(edmPortfolioBasic.getAgSource())){       this.setAgSource(edmPortfolioBasic.getAgSource());}
+             if(!this.agCedent.equals(edmPortfolioBasic.getAgCedant())){       this.setAgCedent(edmPortfolioBasic.getAgCedant());}
+             if(!this.agCurrency.equals(edmPortfolioBasic.getAgCurrency())){   this.setAgCurrency(edmPortfolioBasic.getAgCurrency());}
+        Date createdEdmPortfolioBasic = null;
+            try {
+            createdEdmPortfolioBasic = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(edmPortfolioBasic.getCreated());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+            if(!this.created.equals(createdEdmPortfolioBasic)){                 this.setCreated(createdEdmPortfolioBasic);}
+}
 }
