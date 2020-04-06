@@ -16,6 +16,10 @@ export class ScopeOfCompletenessApi {
         return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId}});
     }
 
+    getDataPricing(UWYear, WorkspaceName, projectId) {
+        return this.http.get(`${this.api}PricedScopeAndCompleteness/getPricedScope`, { params: {UWYear, WorkspaceName, projectId}});
+    }
+
     attachePLTCreate(data) {
         return this.http.post(`${this.api}AttachPLT/attachPLTs`, data, {responseType: 'text' as 'json'});
     }
@@ -29,7 +33,7 @@ export class ScopeOfCompletenessApi {
     }
 
     overrideDone(data) {
-        return this.http.post(`${this.api}OverrideSection/override`, data, {responseType: 'text' as 'json'})
+        return this.http.post(`${this.api}OverrideSection/override`, data)
     }
 
     overrideDelete(overriddenSections) {

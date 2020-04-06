@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProjectForewriterExpectedScopeRepository extends JpaRepository<ProjectForewriterExpectedScope,Long> {
 
-    @Query(nativeQuery = true, value = "select projectId from dbonew.vw_projectCard where carRequestId = ?1")
+    @Query(nativeQuery = true, value = "select projectId from dbo.vw_projectCard where carRequestId = ?1")
     Long getProjectIdByCarRequestId( String carId);
 }

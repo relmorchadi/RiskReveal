@@ -161,7 +161,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
     }
 
     @Override
-    @Transactional(transactionManager = "theTransactionManager", propagation = Propagation.REQUIRES_NEW)
+    @Transactional(transactionManager = "theTransactionManager")
     public void onTaskError(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId).orElse(null);
 

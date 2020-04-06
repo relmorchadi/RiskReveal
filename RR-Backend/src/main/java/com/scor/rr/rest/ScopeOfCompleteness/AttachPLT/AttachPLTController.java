@@ -1,6 +1,7 @@
 package com.scor.rr.rest.ScopeOfCompleteness.AttachPLT;
 
 import com.scor.rr.domain.Response.ScopeAndCompleteness.AccumulationPackageResponse;
+import com.scor.rr.domain.Response.ScopeAndCompleteness.PopUpPLTsResponse;
 import com.scor.rr.domain.Response.ScopeAndCompleteness.ScopeAndCompletenessResponse;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.AttachPLTRequest;
 import com.scor.rr.exceptions.RRException;
@@ -21,6 +22,11 @@ public class AttachPLTController {
     @PostMapping("attachPLTs")
     public AccumulationPackageResponse attachSelectedPLTs(@RequestBody AttachPLTRequest request) throws RRException {
         return accumulationPackageAttachedPLTService.attachSelectedPlts(request);
+    }
+
+    @GetMapping("getPLTsForPopUp")
+    public List<PopUpPLTsResponse> getPLTsForPopUp(@RequestParam long accumulationPackageId, @RequestParam long projectId) throws RRException {
+        return accumulationPackageAttachedPLTService.getPLTs(accumulationPackageId,projectId);
     }
 
     @DeleteMapping("deleteAttachements")

@@ -7,9 +7,10 @@
 .right-menu-container {
   right: 0;
   height: 100%;
-  width: 340px;
+  width: 650px;
   margin-left: 10px;
   background: #fff;
+  position: absolute;
   box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-flow: column;
@@ -22,14 +23,22 @@
   justify-content: space-between;
   .right-menu-title {
     color: #585858;
-    display: flex;
-    span.title {
-      min-width: 101px;
-      padding: 15px 0 0 15px;
-      font-size: 15.22px;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
-      font-family: Rubik;
+    width: 100%;
+    hr {
+      height: 4px;
+      background-color: #0700CF;
+      margin: 0;
+      width: 30%;
+    }
+    .title {
+      margin-top: 15px;
+      padding-left: 20px;
+      padding-bottom: 15px;
+      color: rgba(0, 0, 0, 0.87);
+      font-size: 20.32px;
+      font-weight: 500;
+      letter-spacing: 0.25px;
+      line-height: 24px;
     }
   }
 }
@@ -108,4 +117,21 @@
     -webkit-transform: translateX(0);
     transform: translateX(0);
   }
+}
+.division-title {
+  font-size: 16px;
+  margin-left: 7px;
+
+  .division-sub-title{
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 13px;
+    margin-left: 7px;
+  }
+}
+.division-content {
+  margin-top: 30px;
+  border-top: 1px solid #b7b4b4;
+  padding-top: 15px;
 }

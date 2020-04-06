@@ -46,13 +46,14 @@ import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
 import {GetDeltaPipe} from "./pipes/get-delta.pipe";
 import {FinancialUnitPipe} from "./pipes/financial-unit.pipe";
 import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
+import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-plts-pop-up/attach-plts-pop-up.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
     FrozenColumnsFilterPipe,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, AttachPltsPopUpComponent
 
   ],
   imports: [

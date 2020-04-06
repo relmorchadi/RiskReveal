@@ -85,12 +85,11 @@ export class CalibrationColumnManagerComponent implements OnInit {
   moveItem(container, i, j) {
     if(container.id == "visible") {
       const head = _.slice(container.data, 0,2);
-      const tail = _.slice(container.data, container.data.length - 1);
 
-      const middle = _.slice(container.data, 2, container.data.length - 1);
+      const middle = _.slice(container.data, 2, container.data.length );
 
       moveItemInArray(middle, i - 2, j - 2);
-      container.data = _.assign(container.data, [ ...head, ...middle, ...tail]);
+      container.data = _.assign(container.data, [ ...head, ...middle]);
 
     } else {
       moveItemInArray(container.data, i, j);
@@ -100,9 +99,8 @@ export class CalibrationColumnManagerComponent implements OnInit {
   transferItem(prevCont, currCont, i, j) {
     if(currCont.id == 'visible') {
       const head = _.slice(currCont.data, 0,2);
-      const tail = _.slice(currCont.data, currCont.data.length - 1);
 
-      const middle = _.slice(currCont.data, 2, currCont.data.length - 1);
+      const middle = _.slice(currCont.data, 2, currCont.data.length );
 
       console.log(j);
       let newJ = j - 2;
@@ -111,10 +109,7 @@ export class CalibrationColumnManagerComponent implements OnInit {
 
       transferArrayItem(prevCont.data, middle, i, newJ);
 
-      if( newJ < middle.length)
-        currCont.data = _.assign(currCont.data, [ ...head, ...middle, ...tail]);
-      else
-        currCont.data = _.assign(currCont.data, [ ...head, ...tail, ...middle]);
+      currCont.data = _.assign(currCont.data, [ ...head,  ...middle]);
 
     } else {
 

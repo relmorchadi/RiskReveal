@@ -56,7 +56,7 @@ public class ProjectImportRunAndCARStatus {
 
     public RepeatStatus changeProjectImportRunStatus() {
 
-        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 18);
+        StepEntity step = jobManager.createStep(Long.valueOf(taskId), "ChangeProjectImportRunStatus", 18);
         try {
             log.info("Changing CAR and Project import run status");
             if (projectId != null) {
@@ -88,13 +88,14 @@ public class ProjectImportRunAndCARStatus {
 
             TaskEntity task = taskEntityRepository.findById(Long.valueOf(taskId)).orElse(null);
             if (task != null) {
-                task.setStatus(JobStatus.SUCCEEDED.getCode());
+                if (!task.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode()))
+                    task.setStatus(JobStatus.SUCCEEDED.getCode());
                 task.setFinishedDate(new Date());
                 taskEntityRepository.saveAndFlush(task);
                 JobEntity job = jobEntityRepository.findById(task.getJob().getJobId()).orElse(null);
                 if (job != null && job.getTasks().indexOf(task) == job.getTasks().size() - 1) {
                     if (job.getTasks().stream()
-                            .noneMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
+                            .anyMatch(t -> t.getStatus().equalsIgnoreCase(JobStatus.FAILED.getCode())))
                         job.setStatus(JobStatus.FAILED.getCode());
                     else
                         job.setStatus(JobStatus.SUCCEEDED.getCode());
