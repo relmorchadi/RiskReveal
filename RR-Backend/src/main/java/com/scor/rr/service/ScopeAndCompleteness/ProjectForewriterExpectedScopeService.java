@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -25,12 +26,24 @@ public class ProjectForewriterExpectedScopeService {
     @Autowired
     private ProjectForewriterExpectedScopeRepository projectForewriterExpectedScopeRepository;
 
+    @Autowired
+    Environment env;
+
     private ModelMapper modelMapper = new ModelMapper();
 
-    @Value(value = "${application.expectedScope.path}")
+    //@Value(value = "${application.expectedScope.path}")
     private String path;
-    @Value(value = "${application.expectedScope.separator}")
+    //@Value(value = "${application.expectedScope.separator}")
     private String separator;
+
+    public ProjectForewriterExpectedScopeService() {
+        try{
+            this.path= env.getProperty("application.expectedScope.path");
+            this.separator= env.getProperty("application.expectedScope.separator}");
+        }catch(Exception exp){
+            exp.printStackTrace();
+        }
+    }
 
     public List<String> getFileNames() {
         File file = new File(path);
