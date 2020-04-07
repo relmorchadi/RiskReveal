@@ -81,6 +81,7 @@ public class RLPortfolio {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        System.out.println(edmPortfolioBasic.getCreated()+"fffffffff"+this.created);
         this.number = edmPortfolioBasic.getNumber();
         this.description = edmPortfolioBasic.getDescription();
         this.type = edmPortfolioBasic.getType();

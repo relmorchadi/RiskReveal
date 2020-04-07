@@ -4,6 +4,7 @@ package com.scor.rr.domain.riskLink;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.ExpectedFinancialPerspective;
 import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -145,6 +146,9 @@ public class RLAnalysis {
     @Transient
     private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 
+    @Transient
+    private List<ExpectedFinancialPerspective> expectedFinancialPerspectives;
+
     public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
@@ -180,8 +184,10 @@ public class RLAnalysis {
         this.exposureTIV = null;
         this.groupType = rdmAnalysisBasic.getGroupTypeName();
         this.cedant = rdmAnalysisBasic.getCedant();
-        this.lob = rdmAnalysisBasic.getLobName();
+        this.lob = rdmAnalysisBasic.getLobName();        System.out.println("+++++++++  1   "+this.isGroup);
+
         this.isGroup = rdmAnalysisBasic.getGrouping();
+        System.out.println("+++++++++  2   "+this.isGroup);
         this.regionName = rdmAnalysisBasic.getRegionName();
         this.analysisMode = rdmAnalysisBasic.getModeName();
     }

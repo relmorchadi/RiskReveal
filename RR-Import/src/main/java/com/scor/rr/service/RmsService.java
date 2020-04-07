@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -117,26 +118,28 @@ public class RmsService {
 
     /********** Scan Basic / Detailed **********/
 
-
     public List<RLModelDataSource> basicScan(List<DataSource> dataSources, Long projectId) {
         return dataSources.stream().map(dataSource -> {
-
-            RLModelDataSource rlModelDataSource =
-                    rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
-
-            if (rlModelDataSource != null) {
-                rlAnalysisRepository.deleteByRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
-                rlPortfolioRepository.deleteByRlModelDataSourceRlModelDataSourceId(rlModelDataSource.getRlModelDataSourceId());
-            } else {
-                rlModelDataSource = new RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
-                rlModelDataSourcesRepository.save(rlModelDataSource);
-            }
-
             Integer count = null;
-            if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
-                count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
-            } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
-                count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
+
+            RLModelDataSource rlModelDataSource=
+                    rlModelDataSourcesRepository.findByProjectIdAndTypeAndInstanceIdAndRlId(projectId, dataSource.getType(), dataSource.getInstanceId(), dataSource.getRmsId());
+            if (rlModelDataSource != null) {
+                if (rlModelDataSource.getType().equalsIgnoreCase("RDM")){
+                      count=scanAnalysisBasicForRdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
+                }
+                else{
+                      count=scanPortfolioBasicForEdm(dataSource.getInstanceId(),rlModelDataSource,projectId);
+                }
+            } else {
+                 rlModelDataSource=new  RLModelDataSource(dataSource, projectId, dataSource.getInstanceId(), dataSource.getInstanceName());
+                 rlModelDataSourcesRepository.save(rlModelDataSource);
+                if (rlModelDataSource.getType().equalsIgnoreCase("RDM")) {
+                    count = scanAnalysisBasicForRdm(dataSource.getInstanceId(), rlModelDataSource);
+                } else if (rlModelDataSource.getType().equalsIgnoreCase("EDM")) {
+                    count = scanPortfolioBasicForEdm(dataSource.getInstanceId(), rlModelDataSource);
+                }
+
             }
             rlModelDataSourcesRepository.updateCount(rlModelDataSource.getRlModelDataSourceId(), count);
             rlModelDataSource.setCount(count);
@@ -302,6 +305,99 @@ public class RmsService {
         }
         return rdmAnalysisBasics.size();
     }
+    public  int  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+        List<RdmAnalysisBasic> rdmAnalysisBasicList=listRdmAnalysisBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
+        Map<Long,RdmAnalysisBasic> rdmAnalysisBasicMap=rdmAnalysisBasicList.stream()
+                . collect(Collectors.toMap(rdmAnalysisBasic -> rdmAnalysisBasic.getAnalysisId(),rdmAnalysisBasic -> rdmAnalysisBasic));
+
+        List<RLAnalysis> rlAnalysisList=rlAnalysisRepository.findByRdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
+        Map<Long,RLAnalysis> rlAnalysisMap=rlAnalysisList.stream().collect(Collectors.toMap(rlAnalysis -> rlAnalysis.getRlId(),rlAnalysis -> rlAnalysis));
+
+        rlAnalysisMap.forEach((rlId, rlAnalysis) ->{if (rdmAnalysisBasicMap.containsKey(rlId)) {
+            updateRLAnalysis(rlAnalysis, rdmAnalysisBasicMap.get(rlId));
+            rdmAnalysisBasicMap.remove(rlId);
+        }        else {
+            rlAnalysisRepository.deleteByRLAnalysisId(rlId,projectId);
+        }
+        });
+
+        rdmAnalysisBasicMap.forEach((analysisId, rdmAnalysisBasic) -> { RLAnalysis rlAnalysis= new RLAnalysis(rdmAnalysisBasic,rlModelDataSource);
+            rlAnalysisRepository.save(rlAnalysis);
+            RLAnalysisScanStatus rlAnalysisScanStatus = new RLAnalysisScanStatus(rlAnalysis, 0);
+            rlAnalysisScanStatusRepository.save(rlAnalysisScanStatus);
+        });
+        return rdmAnalysisBasicList.size();}
+
+    private void updateRLAnalysis(RLAnalysis rlAnalysis, RdmAnalysisBasic rdmAnalysisBasic) {
+        if(!rlAnalysis.getAnalysisName().equals(rdmAnalysisBasic.getAnalysisName())){             rlAnalysis.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
+        if(!rlAnalysis.getAnalysisDescription().equals(rdmAnalysisBasic.getDescription()))  {     rlAnalysis.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
+        if(!rlAnalysis.getEngineVersion().equals(rdmAnalysisBasic.getEngineVersion())){           rlAnalysis.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
+        if(!rlAnalysis.getAnalysisCurrency().equals(rdmAnalysisBasic.getAnalysisCurrency())){     rlAnalysis.setAnalysisCurrency(rdmAnalysisBasic.getAnalysisCurrency());}
+        if(!rlAnalysis.getAnalysisType().equals(rdmAnalysisBasic.getTypeName())){                 rlAnalysis.setAnalysisType(rdmAnalysisBasic.getTypeName());}
+        if(!rlAnalysis.getRegion().equals(rdmAnalysisBasic.getRegion())){                         rlAnalysis.setRegion(rdmAnalysisBasic.getRegion());}
+        if(!rlAnalysis.getPeril().equals(rdmAnalysisBasic.getPeril())){                           rlAnalysis.setPeril(rdmAnalysisBasic.getPeril());}
+        if(!rlAnalysis.getSubPeril().equals(rdmAnalysisBasic.getSubPeril())){                     rlAnalysis.setSubPeril(rdmAnalysisBasic.getSubPeril());}
+        if(!rlAnalysis.getLossAmplification().equals(rdmAnalysisBasic.getLossAmplification())){   rlAnalysis.setLossAmplification(rdmAnalysisBasic.getLossAmplification());}
+        if(!rlAnalysis.getEngineType().equals(rdmAnalysisBasic.getEngineType())){                 rlAnalysis.setEngineType(rdmAnalysisBasic.getEngineType());}
+        if(!rlAnalysis.getGroupType().equals(rdmAnalysisBasic.getGroupTypeName())){               rlAnalysis.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
+        if(!rlAnalysis.getCedant().equals(rdmAnalysisBasic.getCedant())){                         rlAnalysis.setCedant(rdmAnalysisBasic.getCedant());}
+        if(!rlAnalysis.getLob().equals(rdmAnalysisBasic.getLobName())){                           rlAnalysis.setLob(rdmAnalysisBasic.getLobName());}
+        rlAnalysis.setIsGroup(false);
+        if(!rlAnalysis.getIsGroup().equals(rdmAnalysisBasic.getGrouping())){                      rlAnalysis.setIsGroup(rdmAnalysisBasic.getGrouping());}
+        if(!rlAnalysis.getRegionName().equals(rdmAnalysisBasic.getRegionName())){                 rlAnalysis.setRegionName(rdmAnalysisBasic.getRegionName());}
+        if(!rlAnalysis.getAnalysisMode().equals(rdmAnalysisBasic.getModeName())){                 rlAnalysis.setAnalysisMode(rdmAnalysisBasic.getModeName());}
+        rlAnalysisRepository.save(rlAnalysis);
+    }
+
+
+
+
+        public  int  scanPortfolioBasicForEdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
+        List<EdmPortfolioBasic> edmPortfolioBasicList=listEdmPortfolioBasic(InstanceId,rlModelDataSource.getRlId(), rlModelDataSource.getName());
+        Map<Long,EdmPortfolioBasic> edmPortfolioBasicMap=edmPortfolioBasicList.stream()
+                .collect(Collectors.toMap(edmPortfolioBasic -> edmPortfolioBasic.getPortfolioId(),edmPortfolioBasic -> edmPortfolioBasic));
+
+        List<RLPortfolio> rlPortfolioList=this.rlPortfolioRepository.findByEdmIdAndProjectId(rlModelDataSource.getRlId(),projectId);
+        Map<Long,RLPortfolio> rlPortfolioMap=rlPortfolioList.stream().collect(Collectors.toMap(rLPortfolio -> rLPortfolio.getRlId(),rLPortfolio -> rLPortfolio));
+
+        rlPortfolioMap.forEach((rlId, rLPortfolio) -> {  if (edmPortfolioBasicMap.containsKey(rlId)){
+            updateRLPortfolio(rLPortfolio,edmPortfolioBasicMap.get(rlId));
+            edmPortfolioBasicMap.remove(rlId);
+        }
+        else {
+            rlPortfolioRepository.deleteByRLPortfolioId(rlId,projectId);
+        }
+        });
+
+        edmPortfolioBasicMap.forEach((portfolioId,edmPortfolioBasic) -> {RLPortfolio rlPortfolio= new RLPortfolio(edmPortfolioBasic,rlModelDataSource);
+            rlPortfolioRepository.save(rlPortfolio);
+            RLPortfolioScanStatus rlPortfolioScanStatus = new RLPortfolioScanStatus(rlPortfolio, 0);
+            rlPortfolioScanStatusRepository.save(rlPortfolioScanStatus);
+            rlPortfolio.setRlPortfolioScanStatus(rlPortfolioScanStatus);
+            rlPortfolioRepository.save(rlPortfolio);
+
+        });
+        return  edmPortfolioBasicList.size();}
+
+    public void updateRLPortfolio(RLPortfolio rlPortfolio,EdmPortfolioBasic edmPortfolioBasic){
+         if(!rlPortfolio.getRlId().equals(edmPortfolioBasic.getPortfolioId())){         rlPortfolio.setRlId(edmPortfolioBasic.getPortfolioId());}
+         if(!rlPortfolio.getName().equals(edmPortfolioBasic.getName())){               rlPortfolio.setName(edmPortfolioBasic.getName());}
+         if(!rlPortfolio.getDescription().equals(edmPortfolioBasic.getDescription())){ rlPortfolio.setDescription(edmPortfolioBasic.getDescription());}
+         if(!rlPortfolio.getType().equals(edmPortfolioBasic.getType())){               rlPortfolio.setType(edmPortfolioBasic.getType()); }
+         if(!rlPortfolio.getNumber().equals(edmPortfolioBasic.getNumber())){           rlPortfolio.setNumber(edmPortfolioBasic.getNumber());}
+         if(!rlPortfolio.getPeril().equals(edmPortfolioBasic.getPeril())){             rlPortfolio.setPeril(edmPortfolioBasic.getPeril());}
+         if(!rlPortfolio.getAgSource().equals(edmPortfolioBasic.getAgSource())){       rlPortfolio.setAgSource(edmPortfolioBasic.getAgSource());}
+         if(!rlPortfolio.getAgCedent().equals(edmPortfolioBasic.getAgCedant())){       rlPortfolio.setAgCedent(edmPortfolioBasic.getAgCedant());}
+         if(!rlPortfolio.getAgCurrency().equals(edmPortfolioBasic.getAgCurrency())){   rlPortfolio.setAgCurrency(edmPortfolioBasic.getAgCurrency());}
+         Date createdEdmPortfolioBasic = null;
+        try {
+            createdEdmPortfolioBasic = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(edmPortfolioBasic.getCreated());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        if(!rlPortfolio.getCreated().equals(createdEdmPortfolioBasic)){                 rlPortfolio.setCreated(createdEdmPortfolioBasic);}
+        rlPortfolioRepository.save(rlPortfolio);}
+
 
     public List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
 
@@ -310,6 +406,8 @@ public class RmsService {
 
 
         List<RLAnalysis> allScannedAnalysis = new ArrayList<>();
+
+        List<String> fpCodes = financialPerspectiveRepository.findSelectableCodes();
 
 
         if (rlAnalysisList != null && !rlAnalysisList.isEmpty()) {
@@ -346,11 +444,19 @@ public class RmsService {
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             rlAnalysisRepository.save(rlAnalysis);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
+                            rlAnalysis.setExpectedFinancialPerspectives(
+                                    this.getExpectedFinancialPersp(
+                                            dataSource.getInstanceId(),
+                                            rdmId,
+                                            rdmName,
+                                            Collections.singletonList(rlAnalysis.getRlId()),
+                                            fpCodes
+                                    )
+                            );
                             allScannedAnalysis.add(rlAnalysis);
                         });
             }
         }
-
         return allScannedAnalysis;
     }
 
@@ -947,6 +1053,13 @@ public class RmsService {
                     });
                     rlSourceEpHeaderRepository.save(sourceEpHeader);
                 });
+    }
+
+    public List<ExpectedFinancialPerspective> getExpectedFinancialPersp(String instanceId, Long rdmId, String rdmName, List<Long> analysisIds, List<String> fpCodes){
+        return this.getRdmAllAnalysisSummaryStats(instanceId, rdmId, rdmName, fpCodes, analysisIds)
+                .stream()
+                .map(ExpectedFinancialPerspective::new)
+                .collect(toList());
     }
 
     private String generateEpCurveFieldName(Long returnPeriod, int statisticMetric) throws Exception {

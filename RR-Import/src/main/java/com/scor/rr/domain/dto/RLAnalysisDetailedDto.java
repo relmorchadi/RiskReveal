@@ -35,4 +35,5 @@ public class RLAnalysisDetailedDto {
     private Long proportion = 100L;
     private Double unitMultiplier = 1.0d;
     private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
+    private List<ExpectedFinancialPerspective> expectedFinancialPerspectives;
 }
