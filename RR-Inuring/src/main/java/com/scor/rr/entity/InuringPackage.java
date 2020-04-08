@@ -125,7 +125,7 @@ public class InuringPackage {
         this.lastModifiedOn = lastModifiedOn;
     }
 
-    @Column(name = "Locked", nullable = false)
+    @Column(name = "IsLocked", nullable = false)
     public boolean isLocked() {
         return locked;
     }
@@ -134,7 +134,7 @@ public class InuringPackage {
         this.locked = locked;
     }
 
-    @Column(name = "InuringPackageStatus", nullable = false)
+    @Column(name = "PackageStatus", nullable = false)
     public InuringPackageStatus getInuringPackageStatus() {
         return inuringPackageStatus;
     }
