@@ -93,11 +93,9 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.sortBy = _.get(value, 'sortBy');
       this.accumulationStatus = _.get(value, 'accumulationStatus');
       if (this.accumulationStatus === 'Pricing' ) {
-        this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
-        this.overrideStop();
+        this.dispatch([new LoadScopeCompletenessPricingDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Scope Only') {
-        this.dispatch(new LoadScopeCompletenessDataSuccess());
-        this.overrideStop();
+        this.dispatch([new LoadScopeCompletenessPricingDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Pending') {
         this.dispatch(new LoadScopeCompletenessDataSuccess());
       }
@@ -146,7 +144,6 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   }
 
   dataShown() {
-    console.log(this.accumulationStatus);
     return this.accumulationStatus === 'Pending' ? this.pendingData : this.scopeData;
   }
 
@@ -283,6 +280,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
   overrideRow(row, col) {
     //this.overriddenRows[row] = !this.overriddenRows[row];
     const overrideDone = _.get(this.overriddenRows, row.id + col.columnContext, false);
+    const colIndex = _.findIndex(this.scopeContext, (item: any) => item.id === col.columnContext) + 1;
     if (this.sortBy == 'Minimum Grain / RAP') {
       if (overrideDone) {
         _.forEach(row.targetRaps, item => {
@@ -295,16 +293,18 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRows[row.id + col.columnContext] = false;
       } else {
         _.forEach(row.targetRaps, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const alreadyOverridden = _.get(item, `override.${colIndex}.overridden`, false);
+          if (_.toArray(item.pltsAttached).length === 0 && !alreadyOverridden) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = !this.overriddenChildRows[row.id + item.id + col.columnContext];
             this.overriddenChildRows[item.id + row.id + col.columnContext] = !this.overriddenChildRows[item.id + row.id + col.columnContext];
           }
         });
-        _.forEach(this.scopeData.targetRaps, item => {
+        _.forEach(this.pendingData.targetRaps, item => {
           let selectedAllRp = true;
           _.forEach(item.regionPerils, rp => {
             const overrideChild = _.get(this.overriddenChildRows, item.id + rp.id + col.columnContext, false);
-            if (!overrideChild && _.toArray(rp.pltsAttached).length === 0) {
+            const alreadyOverridden = _.get(rp, `override.${colIndex}.overridden`, false);
+            if (!overrideChild && _.toArray(rp.pltsAttached).length === 0 && !alreadyOverridden) {
               selectedAllRp = false;
             }
           });
@@ -325,16 +325,18 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRows[row.id + col.columnContext] = false;
       } else {
         _.forEach(row.regionPerils, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const alreadyOverridden = _.get(item, `override.${colIndex}.overridden`, false);
+          if (_.toArray(item.pltsAttached).length === 0 && !alreadyOverridden) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = !this.overriddenChildRows[row.id + item.id + col.columnContext];
             this.overriddenChildRows[item.id + row.id + col.columnContext] = !this.overriddenChildRows[item.id + row.id + col.columnContext];
           }
         });
-        _.forEach(this.scopeData.regionPerils, item => {
+        _.forEach(this.pendingData.regionPerils, item => {
           let selectedAllRp = true;
           _.forEach(item.targetRaps, tr => {
             const overrideChild = _.get(this.overriddenChildRows, item.id + tr.id + col.columnContext, false);
-            if (!overrideChild && _.toArray(tr.pltsAttached).length === 0) {
+            const alreadyOverridden = _.get(tr, `override.${colIndex}.overridden`, false);
+            if (!overrideChild && _.toArray(tr.pltsAttached).length === 0 && !alreadyOverridden) {
               selectedAllRp = false;
             }
           });
@@ -350,6 +352,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
   overrideChildMode(rowData, row, col) {
     const overrideDone = _.get(this.overriddenChildRows, rowData.id + row.id + col.columnContext, false);
+    const colIndex = _.findIndex(this.scopeContext, (item: any) => item.id === col.columnContext) + 1;
     if (overrideDone) {
       this.overriddenChildRows[rowData.id + row.id + col.columnContext] = false;
       this.overriddenChildRows[row.id + rowData.id + col.columnContext] = false;
@@ -358,21 +361,23 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       this.overriddenChildRows[rowData.id + row.id + col.columnContext] = !this.overriddenChildRows[rowData.id + row.id + col.columnContext];
       this.overriddenChildRows[row.id + rowData.id + col.columnContext] = !this.overriddenChildRows[row.id + rowData.id + col.columnContext];
-      _.forEach(this.scopeData.regionPerils, item => {
+      _.forEach(this.pendingData.regionPerils, item => {
         let selectedAllRp = true;
         _.forEach(item.targetRaps, tr => {
           const overrideChild = _.get(this.overriddenChildRows, item.id + tr.id + col.columnContext, false);
-          if (!overrideChild && _.toArray(tr.pltsAttached).length === 0) {
+          const alreadyOverridden = _.get(tr, `override.${colIndex}.overridden`, false);
+          if (!overrideChild && _.toArray(tr.pltsAttached).length === 0 && !alreadyOverridden) {
             selectedAllRp = false;
           }
         });
         this.overriddenRows[item.id + col.columnContext] = selectedAllRp;
       });
-      _.forEach(this.scopeData.targetRaps, item => {
+      _.forEach(this.pendingData.targetRaps, item => {
         let selectedAllRp = true;
         _.forEach(item.regionPerils, rp => {
           const overrideChild = _.get(this.overriddenChildRows, item.id + rp.id + col.columnContext, false);
-          if (!overrideChild && _.toArray(rp.pltsAttached).length === 0) {
+          const alreadyOverridden = _.get(rp, `override.${colIndex}.overridden`, false);
+          if (!overrideChild && _.toArray(rp.pltsAttached).length === 0 && !alreadyOverridden) {
             selectedAllRp = false;
           }
         });
@@ -488,20 +493,19 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     }
   }
 
-  checkExpected(rowData, column) {
+  checkExpected(rowData, column, colHeader) {
     let checked = 'not';
     let holder = [];
 
     if (_.includes(rowData.scopeContext, column.columnContext)) {
       if (this.sortBy === 'Minimum Grain / RAP') {
         rowData.targetRaps.forEach(tr => {
+          const override = _.get(tr, `override.${colHeader}.overridden`, false);
           if (tr.attached) {
             holder.push('attached');
-          }
-          if (tr.overridden) {
+          } if (override) {
             holder.push('overridden');
-          }
-          if (!tr.attached && !tr.overridden) {
+          } if (!tr.attached && !override) {
             // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
             // const check = this.listOfPltsData[rowData.id][des.id]
             // if (check != null) {
@@ -517,13 +521,14 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       }
       if (this.sortBy === 'RAP / Minimum Grain') {
         rowData.regionPerils.forEach(rg => {
+          const override = _.get(rg, `override.${colHeader}.overridden`, false);
           if (rg.attached) {
             holder.push('attached');
           }
-          if (rg.overridden) {
+          if (override) {
             holder.push('overridden');
           }
-          if (!rg.attached && !rg.overridden) {
+          if (!rg.attached && !override) {
             /*          if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
                         if (this.listOfPltsData[des.id][rowData.id].length) {
                           holder.push('dispoWs');
@@ -556,6 +561,13 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       return checked;
     } else {
       return null;
+    }
+  }
+
+  checkChildExpected(rowData, column, colHeader) {
+    const override = _.get(rowData, `override.${colHeader}.overridden`, false);
+    if (override) {
+      return "overridden"
     }
   }
 
@@ -613,9 +625,9 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         })
       })
     });
-    this.dispatch(new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}));
-    this.onHide();
-    this.overrideStop();
+    this.dispatch([new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}),
+      new PatchScopeOfCompletenessState({overrideAll: false})]);
+    this.onHide(); this.overrideStop();
   }
 
   overrideInit() {
@@ -626,99 +638,29 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     this.overriddenRows = {};
     this.overriddenChildRows = {};
     this.rowOverrideInit = {};
+    this.overrideUnable.emit(false);
     this.showOverrideButton.emit(false);
   }
 
-  checkInnerExpected(row, column) {
-/*    let checked = 'not';
-
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      this.scopeData.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.targetRaps.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                checked = 'attached';
-              }
-              if (des.overridden) {
-                checked = 'overridden';
-              }
-              if (!des.attached && !des.overridden) {
-                const check = _.get(this.listOfPltsData, `${rowData.id}.${grain.id}`, null);
-                if (check != null) {
-                  if (this.listOfPltsData[rowData.id][grain.id]) {
-                    if (this.listOfPltsData[rowData.id][grain.id].length) {
-                      checked = 'dispoWs';
-                    }
-                  }
-                } else {
-                  checked = 'checked';
-                }
-              }
-            }
-          });
-        }
-      });
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      this.scopeData.targetRaps.forEach(reg => {
-        if (reg.id == rowData.id) {
-          reg.regionPerils.forEach(des => {
-            if (des.id == grain.id) {
-              if (des.attached) {
-                checked = 'attached';
-              }
-              if (des.overridden) {
-                checked = 'overridden';
-              }
-              if (!des.attached && !des.overridden) {
-                const check = _.get(this.listOfPltsData, `${grain.id}.${rowData.id}`, null);
-                if (check != null) {
-                  if (this.listOfPltsData[grain.id][rowData.id]) {
-                    if (this.listOfPltsData[grain.id][rowData.id].length) {
-                      checked = 'dispoWs';
-                    }
-                  }
-                } else {
-                  checked = 'checked';
-                }
-              }
-            }
-          });
-        }
-      });
-    }
-
-    if (rowData.override || grain.override) {
-      if (checked == 'checked' || checked == 'dispoWs') {
-        checked = 'override';
-      }
-    }
-
-    if (this.removeOverride && checked == 'overridden') {
-      checked = 'override';
-    }
-
-    return checked;*/
-  }
-
-  getOverrideCapability(row, scope) {
+  getOverrideCapability(row, scope, colIndex) {
     let overrideCapability = false;
     let overridden = false;
     if (this.sortBy == 'Minimum Grain / RAP') {
       if (scope === 'parent') {
         overridden = true;
         _.forEach(row.targetRaps, item => {
+          const override = _.get(item, `override.${colIndex}.overridden`, false);
           if (_.toArray(item.pltsAttached).length === 0) {
             overrideCapability = true;
-          } if (!item.overridden) {
+          } if (!override) {
             overridden = false;
           }
         });
       } else {
+        const override = _.get(row, `override.${colIndex}.overridden`, false);
         if (_.toArray(row.pltsAttached).length === 0) {
           overrideCapability = true;
-        } if (row.overridden) {
+        } if (override) {
           overridden = true;
         }
       }
@@ -726,21 +668,45 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       if (scope === 'parent') {
         overridden = true;
         _.forEach(row.regionPerils, item => {
+          const override = _.get(item, `override.${colIndex}.overridden`, false);
           if (_.toArray(item.pltsAttached).length === 0) {
             overrideCapability = true
-          } if (!item.overridden) {
+          } if (!override) {
             overridden = false;
           }
         });
       } else {
+        const override = _.get(row, `override.${colIndex}.overridden`, false);
         if (_.toArray(row.pltsAttached).length === 0) {
-          overrideCapability = true
-        } if (row.overridden) {
+          overrideCapability = true;
+        } if (override) {
           overridden = true;
         }
       }
     }
     return overrideCapability && overridden === false;
+  }
+
+  removeOverrideCapability(row, col, scope) {
+    if (scope === 'parent') {
+      let removeOverride = false;
+      if (this.sortBy == 'Minimum Grain / RAP') {
+        _.forEach(row.targetRaps, item => {
+          if (_.get(item, `override.${col}.overridden`, false)) {
+            removeOverride = true;
+          }
+        })
+      } else {
+        _.forEach(row.regionPerils, item => {
+          if (_.get(item, `override.${col}.overridden`, false)) {
+            removeOverride = true;
+          }
+        })
+      }
+      return removeOverride;
+    } else {
+      return _.get(row, `override.${col}.overridden`, false);
+    }
   }
 
   onHide() {

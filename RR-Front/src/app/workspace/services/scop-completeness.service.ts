@@ -8,6 +8,7 @@ import {ActivatedRoute} from '@angular/router';
 import {WorkspaceModel} from '../model';
 import {of} from 'rxjs';
 import {ScopeOfCompletenessApi} from "./api/scopeOfCompleteness.api";
+import {LoadScopePLTsData} from "../store/actions";
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,8 @@ export class ScopeCompletenessService {
                 };
               }
 
+              draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(
+                  draft.content[wsIdentifier].projects, (item, key: any) => ({...item, selected: key === 0}));
             }));
         }),
         catchError(err => {
@@ -103,6 +106,20 @@ export class ScopeCompletenessService {
         );
   }
 
+  listOfPLTsToAttach(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {uwYear, wsId} = state.content[wsIdentifier];
+    const selectedProject = _.find(state.content[wsIdentifier].scopeOfCompleteness.projects, item => item.selected);
+    return  this.scopeApi.getListOfPLTs(0, selectedProject.projectId).pipe(
+        tap(data => {
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].scopeOfCompleteness.plts = _.map(data, item => ({...item, selected: false}));
+          }))
+        })
+    )
+  }
+
   overrideSelection(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
@@ -119,11 +136,10 @@ export class ScopeCompletenessService {
     return this.scopeApi.overrideDone(target).pipe(
         tap((data: any) => {
           const overriddenData = data.overriddenSections;
-          const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.data.regionPerils);
-          const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.data.targetRaps);
+          const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils);
+          const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps);
           _.forEach(overriddenData, overriddenItem => {
             _.forEach(scopeDataRP, item => {
-              console.log(item.id, overriddenItem.minimumGrainRegionPerilCode);
               if (item.id === overriddenItem.minimumGrainRegionPerilCode) {
                 const overriddenRpIndex = _.findIndex(scopeDataRP, (Otr: any) => Otr.id === item.id);
                 _.forEach(item.targetRaps, tr => {
@@ -135,16 +151,24 @@ export class ScopeCompletenessService {
 
                     scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex] = {
                       ...scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex],
-                      overridden: true,
-                      reason: overriddenItem.overrideBasisCode,
-                      reasonNarrative: overriddenItem.overrideBasisNarrative
+                        override: {
+                          ..._.get(scopeDataRP[overriddenRpIndex].targetRaps[overriddenRpTrIndex], 'override', {}),
+                          [overriddenItem.accumulationPackageOverrideSectionId]: {
+                            overridden: true,
+                            reason: overriddenItem.overrideBasisCode,
+                            reasonNarrative: overriddenItem.overrideBasisNarrative
+                        }},
                     };
 
                     scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex] = {
                       ...scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex],
-                      overridden: true,
-                      reason: overriddenItem.overrideBasisCode,
-                      reasonNarrative: overriddenItem.overrideBasisNarrative
+                        override: {
+                            ..._.get(scopeDataTR[overriddenTrIndex].regionPerils[overriddenTrRpIndex], 'override', {}),
+                          [overriddenItem.accumulationPackageOverrideSectionId]: {
+                            overridden: true,
+                            reason: overriddenItem.overrideBasisCode,
+                            reasonNarrative: overriddenItem.overrideBasisNarrative
+                          }},
                     }
 
                   }
@@ -166,6 +190,15 @@ export class ScopeCompletenessService {
           return of();
         })
     )
+  }
+
+  selectProject(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].scopeOfCompleteness.projects = _.map(draft.content[wsIdentifier].scopeOfCompleteness.projects, item => ({...item, selected: item.projectId === payload.projectId}))
+    }));
+    ctx.dispatch(new LoadScopePLTsData());
   }
 
   deleteOverride(ctx: StateContext<WorkspaceModel>, payload) {
