@@ -126,8 +126,26 @@ export class WorkspaceService {
           },
           riskLink: new RiskLink(),
           scopeOfCompletence: {
-            data: {},
-            wsType: null
+            data: {
+              targetRaps: [],
+              regionPerils: [],
+              scopeContext: null
+            },
+            pendingData: {
+              targetRaps: [],
+              regionPerils: [],
+            },
+            overrideAll: false,
+            overrideRow: false,
+            overrideInit: false,
+            overrideCancelAll: false,
+            overrideCancelRow: false,
+            overriddenRows: [],
+            scopeContext: {
+              accumulationStatus: 'Scope Only',
+              filterBy: 'All',
+              sortBy: 'Minimum Grain / RAP',
+            }
           },
           fileBaseImport: {
             folders: null,
@@ -265,9 +283,27 @@ export class WorkspaceService {
               allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
             },
             riskLink: new RiskLink(),
-            scopeOfCompletence: {
-              data: {},
-              wsType: null
+            scopeOfCompleteness: {
+              data: {
+                targetRaps: [],
+                regionPerils: [],
+                scopeContext: null
+              },
+              pendingData: {
+                targetRaps: [],
+                regionPerils: [],
+              },
+              overrideAll: false,
+              overrideRow: false,
+              overrideInit: false,
+              overrideCancelAll: false,
+              overrideCancelRow: false,
+              overriddenRows: [],
+              scopeContext: {
+                accumulationStatus: 'Scope Only',
+                filterBy: 'All',
+                sortBy: 'Minimum Grain / RAP',
+              }
             },
             fileBaseImport: {
               folders: null,
@@ -278,11 +314,12 @@ export class WorkspaceService {
             inuring: defaultInuringState
           }
         }));
-
-       if(selectedTab && (selectedTab.wsIdentifier == tab.workspaceContextCode + '-' + tab.workspaceUwYear)) ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
       }
 
     });
+
+    ctx.dispatch(new Navigate([`workspace/${_.replace(selectedTab.wsIdentifier, '-', '/')}${screenByTab[selectedTab.wsIdentifier] ? '/' + screenByTab[selectedTab.wsIdentifier] : '/projects'}`]));
+
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.currentTab = { ...selectedTab, openedTabs: tabs };
       draft.loading = false;

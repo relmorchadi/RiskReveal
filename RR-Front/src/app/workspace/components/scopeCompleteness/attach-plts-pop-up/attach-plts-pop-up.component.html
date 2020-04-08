@@ -1,0 +1,133 @@
+<p-dialog
+        (onShow)="onShow()"
+        [autoZIndex]="false"
+        [baseZIndex]="1"
+        [closable]="false"
+        [modal]="true"
+        [responsive]="true"
+        [styleClass]="'m-dialog-modal-lg borderless'"
+        [visible]="isVisible"
+
+>
+    <p-header>
+      <div class="header">
+        <div style="display: flex;">
+          <h6>Attach PLTs</h6>
+        </div>
+        <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer"></i>
+      </div>
+    </p-header>
+
+    <div class="content">
+      <div class="left-slider">
+        <nz-tabset class="tabset-left tabs-standard-top">
+          <nz-tab [nzTitle]="path" class="path-content">
+            <ng-template #path>
+              <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
+            </ng-template>
+            <div class="upPartLeftMenu">
+              <span class="wsHeader">
+              <!--[ngStyle]="{'background-color': leftMenuInputs.wsHeaderSelected && !leftMenuInputs.showDeleted ?  '#FDFBDF' : 'white'}" (click)="resetPath()"-->
+                <i class="icon-window-section"></i>
+                <span class="body-info">{{wsIdentifier}}</span>
+              </span>
+              <ul class="title-list">
+                <li *ngFor="let project of projects" (click)="filterByProject(project.projectId)"
+                    class="clickable-item"
+                    [ngClass]="{'active-path': project.selected}">
+                  <i [ngClass]="{ 'icon-assignment_24px': !project.carRequestId  , 'icon-copy': project.carRequestId }"></i>
+                  <span class="body-list"
+                        [nz-tooltip]="project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))">
+                    {{(project.carRequestId ? project.carRequestId + ' ' + project.carRequestStatus : (project.projectName + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y'))}}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </nz-tab>
+
+          <!--        <nz-tab [nzTitle]="tags" *ngIf="leftMenuInputs.isTagsTab">
+                          <ng-template #tags>
+                            <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Tags</span>
+                          </ng-template>
+                          <div class="Tags-content">
+                            <div class="user-tag-section">
+                              <div class="header">
+                                <div>
+                                  <span>User Tags</span>
+                                </div>
+                                <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle">
+                                  <i nz-icon nzType="undo" nzTheme="outline"></i>
+                                </button>
+                              </div>
+                              <div class="rest">
+                                <div *ngFor="let key of leftMenuInputs?.userTags | keys" nz-row class="ml-3 mt-1">
+                            <span
+                                    #tagMenu
+                                    [ngClass]="{'active-tag': leftMenuInputs.userTags[key]?.selected}"
+                                    class="a-chips-input-mini"
+                                    [ngStyle]="{'background-color': leftMenuInputs.userTags[key]?.tagColor}"
+                                    (click)="setFilter('userTag', leftMenuInputs.userTags[key],null)">
+                                      <span class="chips-content">{{leftMenuInputs.userTags[key]?.tagName}}</span>
+                                      <span class="chips-counter">
+                                        {{leftMenuInputs.userTags[key]?.count}}
+                                        <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
+                                      </span>
+                            </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="sys-tag-section">
+                              <div class="header">
+                                <div>
+                                  <span>System Tags</span>
+                                </div>
+                              </div>
+                              <nz-collapse
+                                      [nzAccordion]="false"
+                              >
+                                <ng-container *ngFor="let section of (leftMenuInputs?.systemTagsCount | keys)">
+                                  <ng-container >
+                                    <nz-collapse-panel
+                                            [nzHeader]="section"
+                                    >
+                                      <div *ngFor="let tag of ( leftMenuInputs?.systemTagsCount[section] | keys)"
+                                           style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+                                           class="ml-3 my-1"
+                                      >
+                                    <span
+                                            [ngClass]="{'active-tag': leftMenuInputs?.systemTagsCount[section][tag].selected }"
+                                            class="a-chips-input-filled-textonly"
+                                            [ngStyle]="{
+                                      'background-color': leftMenuInputs?.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
+                                      'cursor': leftMenuInputs?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                                      }"
+                                            (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)">
+                                      <span [ngStyle]="{
+                                      'cursor': leftMenuInputs?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                                      }" class="chips-content">{{tag}}</span>
+                                      <span class="chips-counter">
+                                        {{leftMenuInputs?.systemTagsCount[section][tag].count}}/{{leftMenuInputs?.systemTagsCount[section][tag].max}}
+                                        <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
+                                      </span>
+                                    </span>
+                                      </div>
+                                    </nz-collapse-panel>
+                                  </ng-container>
+                                </ng-container>
+                              </nz-collapse>
+                            </div>
+                          </div>
+                        </nz-tab>-->
+        </nz-tabset>
+
+      </div>
+      <div class="right-slider"></div>
+    </div>
+
+    <p-footer>
+        <div class="footer">
+            <button (click)="onHide()" class="a-button-text">CANCEL</button>
+            <button (click)="dispatchAttachTable()" class="a-buttons-contained">ADD</button>
+        </div>
+    </p-footer>
+</p-dialog>

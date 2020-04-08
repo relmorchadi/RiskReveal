@@ -218,6 +218,7 @@ export class TableComponent implements OnInit {
       this.listOfData.forEach(res => res.selected = false);
       this.lastSelectedIndex = index;
       row.selected = true;
+      this.rowSelect(row);
     }
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
     this.isIndeterminate();

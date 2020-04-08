@@ -7,6 +7,7 @@ import * as _ from 'lodash'
 export class TableSortAndFilterPipe implements PipeTransform {
 
   transform(data: any, args?: any): any {
+
     const sortData = args[0];
     const sortDataKeys =_.keys(sortData);
     const filterData= args[1];

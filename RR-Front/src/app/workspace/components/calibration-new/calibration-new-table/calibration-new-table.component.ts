@@ -301,6 +301,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onColumnResize(event) {
+    console.log(event);
     const {delta, element} = event;
     const isFrozen = element.attributes['aria-details'].value;
     const index = element.attributes['aria-colindex'].value;
@@ -350,6 +351,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   }
 
   onTableSeparatorResize(event) {
+    console.log('oe');
     const {currentWidthValue, originalWidthValue} = event;
     const delta = currentWidthValue - originalWidthValue;
 
