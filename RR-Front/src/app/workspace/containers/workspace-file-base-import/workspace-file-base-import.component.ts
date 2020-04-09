@@ -305,7 +305,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
     this.allCheckedImportedFiles = false;
     this.indeterminateImportedFiles = false;
-  }
+}
 
   nodeUnselect(event) {
     this.nodePath = null;
