@@ -38,3 +38,7 @@ export class SelectScopeProject {
   constructor(public payload?: any) {}
 }
 
+export class AttachPLTsForScope {
+  static readonly type = '[ScopeCompleteness] Attach PLT For Scope';
+  constructor(public payload?: any) {}
+}

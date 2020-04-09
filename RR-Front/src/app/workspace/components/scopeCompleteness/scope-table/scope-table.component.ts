@@ -95,7 +95,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       if (this.accumulationStatus === 'Pricing' ) {
         this.dispatch([new LoadScopeCompletenessPricingDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Scope Only') {
-        this.dispatch([new LoadScopeCompletenessPricingDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
+        this.dispatch([new LoadScopeCompletenessDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Pending') {
         this.dispatch(new LoadScopeCompletenessDataSuccess());
       }

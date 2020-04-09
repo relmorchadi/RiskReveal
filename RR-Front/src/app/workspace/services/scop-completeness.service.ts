@@ -201,6 +201,51 @@ export class ScopeCompletenessService {
     ctx.dispatch(new LoadScopePLTsData());
   }
 
+  attachPLT(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {wsIdentifier} = state.currentTab;
+    const {plts} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      let regionPeril = [...state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils];
+      let targetRaps = [...state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps];
+      regionPeril = _.map(regionPeril, item => ({
+        ...item, targetRaps: _.map(item.targetRaps, itemPR => ({...itemPR, pltsAttached: []}))
+      }));
+
+      targetRaps = _.map(targetRaps, item => ({
+        ...item, regionPerils: _.map(item.regionPerils, itemPR => ({...itemPR, pltsAttached: []}))
+      }));
+
+      console.log(regionPeril);
+
+      _.forEach(plts, plt => {
+        _.forEach(regionPeril, item => {
+          if (item.id === plt.regionPerilCode) {
+            const regionIndex = _.findIndex(regionPeril, rp => rp.id === item.id);
+            _.forEach(item.targetRaps, itemTR => {
+
+              if(itemTR.id === plt.accumulationRapCode) {
+                const regionTargetIndex = _.findIndex(item.targetRaps, (tr: any) => tr.id === itemTR.id);
+                const targetIndex = _.findIndex(targetRaps, tr => tr.id === itemTR.id);
+                const targetRegionIndex = _.findIndex(targetRaps[targetIndex].regionPerils, (rp: any) => rp.id === item.id);
+
+                regionPeril[regionIndex].targetRaps[regionTargetIndex].pltsAttached = [...regionPeril[regionIndex].targetRaps[regionTargetIndex].pltsAttached, plt];
+                targetRaps[targetIndex].regionPerils[targetRegionIndex].pltsAttached = [...targetRaps[targetIndex].regionPerils[targetRegionIndex].pltsAttached, plt];
+
+              }
+            })
+          }
+        })
+      });
+
+      draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+        regionPerils: regionPeril,
+        targetRaps: targetRaps
+      }
+
+    }));
+  }
+
   deleteOverride(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
@@ -229,10 +274,9 @@ export class ScopeCompletenessService {
             if(_.isEqual(child.id, plt.accumulationRapCode)) {
               const targetIndex = _.findIndex(item.targetRaps, (tr: any) => tr.id === child.id);
               const targetConIndex = _.findIndex(newTargetRaps, (rp: any) => rp.id === child.id);
-              console.log(regionIndex, targetIndex, targetConIndex);
               const regionConIndex = _.findIndex(newTargetRaps[targetConIndex].regionPerils,
                   (rp: any) => rp.id === item.id);
-              console.log(targetConIndex, regionConIndex);
+
               newRegionPerils[regionIndex].targetRaps[targetIndex].pltsAttached =
                   [..._.toArray(newRegionPerils[regionIndex].targetRaps[targetIndex].pltsAttached), plt];
               newTargetRaps[targetConIndex].regionPerils[regionConIndex].pltsAttached =

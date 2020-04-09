@@ -1325,6 +1325,11 @@ export class WorkspaceState {
     return this.scopService.deleteOverride(ctx, payload);
   }
 
+  @Action(fromWS.AttachPLTsForScope)
+  attachPLTForScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AttachPLTsForScope) {
+    return this.scopService.attachPLT(ctx, payload);
+  }
+
   @Action(fromWS.SelectScopeProject)
   selectProjectScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectScopeProject) {
     return this.scopService.selectProject(ctx, payload);
