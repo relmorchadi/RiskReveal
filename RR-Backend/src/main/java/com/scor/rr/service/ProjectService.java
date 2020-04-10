@@ -100,7 +100,7 @@ public class ProjectService {
         UserRrEntity user = isFac ? null : ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
         if(!isFac) p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
-        p.setAssignedTo(!isFac ? user.getUserId() : null);
+        p.setAssignedTo(!isFac ? user.getLastName() + ' ' + user.getFirstName(): null);
         return p;
     }
 

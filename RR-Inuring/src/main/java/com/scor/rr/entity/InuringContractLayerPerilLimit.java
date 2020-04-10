@@ -16,7 +16,7 @@ public class InuringContractLayerPerilLimit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "InuringContractParamId", nullable = false)
+    @Column(name = "InuringContractLayerPerilLimitId", nullable = false)
     private long inuringContractLayerPerilLimitId;
 
     @Column(name = "Entity")
