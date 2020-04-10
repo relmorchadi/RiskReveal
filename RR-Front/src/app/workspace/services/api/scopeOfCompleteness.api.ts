@@ -20,6 +20,10 @@ export class ScopeOfCompletenessApi {
         return this.http.get(`${this.api}PricedScopeAndCompleteness/getPricedScope`, { params: {UWYear, WorkspaceName, projectId}});
     }
 
+    getListOfPLTs(accumulationPackageId, projectId) {
+        return this.http.get(`${this.api}AttachPLT/getPLTsForPopUp`, { params: {accumulationPackageId, projectId}});
+    }
+
     attachePLTCreate(data) {
         return this.http.post(`${this.api}AttachPLT/attachPLTs`, data, {responseType: 'text' as 'json'});
     }
