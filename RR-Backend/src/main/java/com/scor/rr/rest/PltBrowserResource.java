@@ -29,7 +29,15 @@ public class PltBrowserResource {
     TagService tagService;
 
     @GetMapping
-    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) { return pltBrowserService.getPLTHeaderView(request); }
+    public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request, @RequestParam String wsId, @RequestParam Integer uwYear) {
+        System.out.println("*************************");
+        System.out.println(wsId);
+        System.out.println(uwYear);
+        System.out.println("*************************");
+        request.setWorkspaceUwYear(uwYear);
+        request.setWorkspaceContextCode(wsId);
+        return pltBrowserService.getPLTHeaderView(request);
+    }
 
     @GetMapping("/grouped")
     public List<GroupedPLTs> getGroupedPLT(PLTManagerViewRequest request) { return pltBrowserService.getPLTManagerGroupedPLTs(request); }

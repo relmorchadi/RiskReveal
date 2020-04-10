@@ -199,6 +199,8 @@ export class WorkspaceState {
   }
 
   static getPltsForPlts(wsIdentifier: string) {
+
+
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.data);
   }
 

@@ -56,6 +56,7 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   filter(key, filterData, value){
+    console.log(key, value);
     if (key == 'projectId') {
 
       this.actionDispatcher.emit({

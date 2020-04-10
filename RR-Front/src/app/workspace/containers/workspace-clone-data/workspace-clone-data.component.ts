@@ -12,6 +12,7 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/api/workspace.api";
+import {$e} from "codelyzer/angular/styles/chars";
 
 interface SourceData {
   plts: any[];
@@ -239,7 +240,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       .pipe(
         ofActionDispatched(SetCurrentTab)
       ).subscribe(({payload}) => {
-        console.log('data clone')
+
       if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
     });
 
@@ -252,11 +253,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.uwy = year;
       let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
       let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
-      console.log({
-        navigationPayload,
-        wsId,
-        year
-      });
+
       if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
         if (_.get(navigationPayload, 'type', null) == 'cloneFrom') {
           this.patchProjectForm('from', {
@@ -366,22 +363,23 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       wsIdentifier: this.workspaceId + '-' + this.uwy
     }));
     this.destroy();
-    console.log("destory clone")
+
   }
 
   setSelectedWs(currentSourceOfItems: string, $event: any) {
+    console.log('ev' , $event)
     if (currentSourceOfItems == 'from') {
       this.patchProjectForm('from', {
-        wsId: $event.workSpaceId,
+        wsId: $event.workspaceContextCode,
         uwYear: $event.uwYear,
-        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workSpaceId
+        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
     if (currentSourceOfItems == 'to') {
       this.patchProjectForm('to', {
         wsId: $event.workSpaceId,
         uwYear: $event.uwYear,
-        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workSpaceId
+        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
   }
@@ -441,7 +439,13 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.patchProjectForm('to', {...this._to.value, plts: $event});
     }
 
+    console.log(this.getFormValueByKey('from').plts);
+    console.log(currentSourceOfItems);
     if (this.getFormValueByKey('from').plts.length > 0) {
+      this.summaryCache['Pre-Inured PLTs'] = {
+        ...this.summaryCache['Pre-Inured PLTs'],
+        value : this.getFormValueByKey('from').plts.length
+      };
       this.cloneConfig = {
         ...this.cloneConfig,
         summary: {...this.summaryCache}
@@ -550,6 +554,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   get _from(): AbstractControl {
+
     return this.projectsForm.get('from');
   }
 

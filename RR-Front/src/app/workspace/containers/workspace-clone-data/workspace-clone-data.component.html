@@ -17,7 +17,7 @@
                 <i [ngClass]="cloneConfig.summary[summaryItem].icon"></i>
               </div>
               <div class="right">
-                <div class="regular1">{{summaryItem}}</div>
+                <div class="regular1">{{summaryItem }}</div>
                 <span class="regular">{{cloneConfig.summary[summaryItem].value}}</span>
               </div>
             </div>
@@ -80,7 +80,7 @@
             </div>
           </ng-container>
           <ng-container *ngIf="!_to.value?.detail">
-            <button (click)="openSearchPopUp('to')" class="a-buttons-contained override" style="margin: 9px">
+f            <button (click)="openSearchPopUp('to')" class="a-buttons-contained override" style="margin: 9px">
               <i class="icon-search_24px"></i>
               Select workspace
             </button>

@@ -57,7 +57,8 @@
   <ng-container *ngIf="!browesing">
     <div style="height:600px;">
 
-      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty"
+                 [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="false" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterData($event.searchValue, $event.searchAddress)"
@@ -65,7 +66,8 @@
                  (onRowSelect)="onRowSelect($event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
-                 [sortData]="{}"
+                 [sortData]="Inputs.sortData"
+                 (sortDataChange)="onSortChange($event)"
                  [loading]="loading">
       </app-table>
 

@@ -85,6 +85,18 @@ public class PltBrowserService {
     public PLTManagerViewResponse getPLTHeaderView(PLTManagerViewRequest request) {
             UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             PLTManagerViewResponse response= new PLTManagerViewResponse();
+            System.out.println(request);
+            System.out.println(this.pltManagerViewRepository.getPLTManagerData(
+                    request.getWorkspaceContextCode(),
+                    request.getWorkspaceUwYear(),
+                    request.getEntity(),
+                    user.getUserCode(),
+                    request.getPageNumber(),
+                    request.getPageSize(),
+                    request.getSelectionList(),
+                    request.getSortSelectedFirst(),
+                    request.getSortSelectedAction()
+            ).size());
 
             response.setPlts(this.pltManagerViewRepository.getPLTManagerData(
                     request.getWorkspaceContextCode(),

@@ -14,6 +14,7 @@ import * as tableStore from './store';
 import {Message} from '../../../message';
 import {TableSortAndFilterPipe} from "../../../pipes/table-sort-and-filter.pipe";
 import {SystemTagFilterPipe} from "../../../pipes/system-tag-filter.pipe";
+import {$e} from "codelyzer/angular/styles/chars";
 
 @Component({
   selector: 'app-plt-main-table',
@@ -57,6 +58,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
   getCurrentPlts(){
@@ -64,6 +66,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   checkAll($event) {
+    console.log($event);
     this.actionDispatcher.emit({
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
@@ -284,6 +287,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
+
     this.actionDispatcher.emit({
       type: tableStore.toggleSelectedPlts,
       payload: {
@@ -295,6 +299,8 @@ export class PltMainTableComponent implements OnInit {
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
+
+
     const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = 'withKey';
@@ -372,6 +378,11 @@ export class PltMainTableComponent implements OnInit {
   }
 
   log($event: FocusEvent) {
-    console.log($event)
+
   }
+
+  ok($ev) {
+
+  }
+
 }

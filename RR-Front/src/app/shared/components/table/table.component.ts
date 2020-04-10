@@ -202,7 +202,8 @@ export class TableComponent implements OnInit {
   }
 
   selectRow(row: any, index: number) {
-    if ((window as any).event.ctrlKey) {
+    console.log(row, index);
+/**    if ((window as any).event.ctrlKey) {
       row.selected = !row.selected;
       this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
@@ -219,7 +220,11 @@ export class TableComponent implements OnInit {
       this.lastSelectedIndex = index;
       row.selected = true;
       this.rowSelect(row);
-    }
+    }*/
+    this.listOfData.forEach(res => res.selected = false);
+    this.lastSelectedIndex = index;
+    row.selected = true;
+    this.rowSelect(row);
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
     this.isIndeterminate();
   }
@@ -315,6 +320,7 @@ export class TableComponent implements OnInit {
   }
 
   filter(key: string, event, colId) {
+
     const value = event.target.value;
     const first = _.get(this.event, 'first', null);
     if (this.virtualScroll && first !== null) {
@@ -342,6 +348,7 @@ export class TableComponent implements OnInit {
     } else {
       this.FilterData =  _.omit(this.FilterData, [key]);
     }
+
     this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
   }
 
@@ -350,6 +357,6 @@ export class TableComponent implements OnInit {
   }
 
   log(dt: HTMLElement) {
-    console.log(dt);
+
   }
 }

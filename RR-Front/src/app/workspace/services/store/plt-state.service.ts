@@ -35,7 +35,9 @@ export class PltStateService {
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
-          ctx.patchState(produce(ctx.getState(), draft => {
+
+/*          ctx.patchState(produce(ctx.getState(), draft => {
+
             const {
               plts,
               deletedPlts,
@@ -50,10 +52,13 @@ export class PltStateService {
               data: _.merge({}, ...plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.data,plt)}))),
               deleted: _.merge({}, ...deletedPlts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.deleted,plt)})))
             };
+
           }));
+  */
+
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
             wsIdentifier: wsIdentifier,
-            userTags: data.tags
+            data: data
           }));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
@@ -73,10 +78,11 @@ export class PltStateService {
       params
     } = payload;
 
+
     return this.wsApi.searchWorkspace(params.workspaceId,params.uwy)
       .pipe(
         mergeMap((ws: any) => {
-          console.log(ws);
+
 
           const {workspaceId, uwy } = params;
           const {workspaceName, programName, cedantName, projects} = ws;
@@ -216,11 +222,13 @@ export class PltStateService {
 
   loadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
-      wsIdentifier
+      wsIdentifier,
+      data
     } = payload;
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = false;
+      draft.content[wsIdentifier].pltManager.data = data;
       draft.content[wsIdentifier].loading = false;
     }));
 
@@ -236,6 +244,7 @@ export class PltStateService {
 
     let inComingData = {};
     _.forEach(plts, (v, k) => {
+
       inComingData[k] = {
         selected: v.type
       };
