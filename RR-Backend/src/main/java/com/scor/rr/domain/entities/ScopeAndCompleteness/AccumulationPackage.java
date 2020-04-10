@@ -1,57 +1,57 @@
-package com.scor.rr.domain.entities.AccumulationPackage;
+package com.scor.rr.domain.entities.ScopeAndCompleteness;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.util.Date;
 
-@Entity
-@Table(name = "AccumulationPackage")
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
+@Table(name="AccumulationPackage")
 public class AccumulationPackage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AccumulationPackageId")
-    private Long accumulationPackageId;
+    @Column(name = "AccumulationPackageId", nullable = false)
+    private long accumulationPackageId;
 
     @Column(name = "Entity")
-    private Integer entity;
+    private int entity;
 
     @Column(name = "WorkspaceId")
-    private Long workspaceId;
+    private long workspaceId;
 
-    @CreatedDate
     @Column(name = "CreatedOn")
     private Date createdOn;
 
     @Column(name = "CreatedBy")
-    private Integer createdBy;
+    private long createdBy;
 
     @Column(name = "LastModifiedOn")
     private Date lastModifiedOn;
 
     @Column(name = "LastModifiedBy")
-    private Integer lastModifiedBy;
+    private long lastModifiedBy;
 
     @Column(name = "PublishedOn")
     private Date publishedOn;
 
     @Column(name = "PublishedBy")
-    private Integer publishedBy;
+    private long publishedBy;
 
     @Column(name = "AccumulationPackageVersion")
-    private Integer accumulationPackageVersion;
+    private int accumulationPackageVersion;
 
-    @Column(name = "AccumulationPackageStatus", length = 15)
+    @Column(name = "AccumulationPackageStatus")
     private String accumulationPackageStatus;
 
     @Column(name = "AccumulationPackageNarrative")
     private String accumulationPackageNarrative;
 
+    public AccumulationPackage() {
+    }
+
+    public AccumulationPackage(long workspaceId) {
+        this.workspaceId = workspaceId;
+    }
 }

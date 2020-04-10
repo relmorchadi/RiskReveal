@@ -162,7 +162,7 @@ export class AnalysisResultComponent implements OnInit, OnChanges {
     }
 
     updateAllChecked(nextValue) {
-        if(nextValue)
+        if(nextValue && !this.indeterminateItems)
             this.store.dispatch(new fromRiskLink.ToggleAnalysisResultSelectionAction({
                 action: 'selectChunk', ids : _.map(this.filteredAnalysis, item => item.rlAnalysisId)
             }));

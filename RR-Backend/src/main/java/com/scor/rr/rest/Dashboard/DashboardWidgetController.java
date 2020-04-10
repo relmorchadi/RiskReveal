@@ -66,9 +66,5 @@ public class DashboardWidgetController {
     }
 
 
-//    @GetMapping("getData")
-//    public WidgetDataResponse  getDataForWidget(@RequestBody WidgetDataRequest request) throws RRException {
-//        return userDashboardWidgetService.getWidgetData(request);
-//    }
 
 }

@@ -12,6 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class FacWorkspaceDTO extends WorkspaceStats{
     private String id;
+    private Integer uwYear;
     private String workspaceName;
     private String cedantCode;
     private String cedantName;
@@ -30,6 +31,7 @@ public class FacWorkspaceDTO extends WorkspaceStats{
     public FacWorkspaceDTO(WorkspaceEntity ws) {
         super();
         this.id = ws.getWorkspaceContextCode();
+        this.uwYear = ws.getWorkspaceUwYear();
         this.workspaceName = ws.getWorkspaceName();
         this.cedantCode = ws.getWorkspaceContextCode();
         this.cedantName = ws.getClientName();

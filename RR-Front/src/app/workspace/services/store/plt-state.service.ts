@@ -76,6 +76,7 @@ export class PltStateService {
     return this.wsApi.searchWorkspace(params.workspaceId,params.uwy)
       .pipe(
         mergeMap((ws: any) => {
+          console.log(ws);
 
           const {workspaceId, uwy } = params;
           const {workspaceName, programName, cedantName, projects} = ws;

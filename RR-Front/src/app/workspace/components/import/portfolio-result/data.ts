@@ -14,7 +14,7 @@ export default {
       {field: 'selected', header: '', width: '25px', type: 'selection', sorting: '', filtered: false, highlight: false, visible: true},
       {field: 'scan', header: '', width: '25px', type: 'scan', sorting: '', filtered: false, highlight: false, visible: true},
       {field: 'status', header: 'Status', width: '40px', type: 'progress', sorting: '', filtered: false, highlight: false, visible: true},
-      {field: 'rlId', header: 'ID', width: '40px', type: 'text', sorting: '', filtered: false, highlight: false, visible: true},
+      {field: 'rlId', header: 'ID', width: '30px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
       {field: 'number', header: 'Number', width: '190px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
       {field: 'name', header: 'Name', width: '190px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
     ]
@@ -35,7 +35,7 @@ export default {
       {field: 'selected', header: '', width: '25px', type: 'selection', sorting: '', filtered: false, highlight: false, visible: true},
       {field: 'scan', header: '', width: '25px', type: 'scan', sorting: '', filtered: false, highlight: false, visible: true},
       {field: 'status', header: 'Status', width: '40px', type: 'progress', sorting: '', filtered: false, highlight: false, visible: true},
-      {field: 'rlId', header: 'ID', width: '40px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
+      {field: 'rlId', header: 'ID', width: '60px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
       {field: 'number', header: 'Number', width: '190px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
       {field: 'name', header: 'Name', width: '190px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
     ]

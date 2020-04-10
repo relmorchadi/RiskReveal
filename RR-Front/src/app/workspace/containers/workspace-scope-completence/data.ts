@@ -1125,7 +1125,7 @@ const treatySections = [
         }]
       }]
   }
-]
+];
 /* tslint:disable */
 const treatySections2 = [
   {

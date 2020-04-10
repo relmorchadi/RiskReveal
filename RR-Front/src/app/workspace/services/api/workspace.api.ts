@@ -20,8 +20,12 @@ export class WsApi {
     return this._http.get(`${backendUrl() + 'user/all'}`);
   }
 
-  getOpenedTabs() {
-    return this._http.get(`${this.api}tabs/`);
+  getOpenedTabs(payload) {
+    return this._http.post(`${this.api}tabs/`, payload);
+  }
+
+  getTabsCount() {
+    return this._http.get(`${this.api}tabs/count`);
   }
 
   closeTab(payload) {
@@ -30,5 +34,13 @@ export class WsApi {
 
   openTab(payload) {
     return this._http.post(`${this.api}tabs/open`, payload)
+  }
+
+  selectTab(payload) {
+    return this._http.post(`${this.api}tabs/select`, payload)
+  }
+
+  orderTabs(payload) {
+    return this._http.post(`${this.api}tabs/order`, payload)
   }
 }

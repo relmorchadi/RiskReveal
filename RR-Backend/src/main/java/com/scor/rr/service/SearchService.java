@@ -289,6 +289,7 @@ public class SearchService {
         TreatyWorkspaceDTO detailsDTO;
         ContractSearchResult firstWs = contracts.get(0);
         detailsDTO = new TreatyWorkspaceDTO(firstWs, "TTY");
+        detailsDTO.setId(workspaceId);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYear(Integer.parseInt(uwy));
@@ -323,7 +324,10 @@ public class SearchService {
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-        if(request.getType().equals(SearchType.TREATY)) {
+        System.out.println("***********************************************");
+        System.out.println(request.getType());
+        System.out.println("***********************************************");
+         if(request.getType().equals(SearchType.TREATY)) {
             return this.treatyContractSearch(request);
         } else if(request.getType().equals(SearchType.FAC)) {
             return this.facContractSearch(request);
@@ -341,6 +345,7 @@ public class SearchService {
         List<Object[]> resultList = resultsQuery.getResultList();
         Object total = countQuery.getSingleResult();
         List<FacContractSearchResult> result = mapFacContract(resultList);
+
         return new PageImpl<>(result, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
     }
 

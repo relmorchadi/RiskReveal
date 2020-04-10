@@ -19,19 +19,26 @@
       <!--<li (click)="routerNavigate('Activity')" class="test-list" nz-menu-item>Activity</li>-->
     </ul>
   </li>
-<!--  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"
+  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right"
       [nzTitle]="isCollapsed ? 'Scope Of Completeness' : ''">
           <span title>
             <i nz-icon><i class="icon-location_searching_24px"></i></i>
             <span>Scope & Completeness</span>
           </span>
-  </li>-->
+  </li>
 
   <li (click)="routerNavigate('PltBrowser')" [nzTitle]="isCollapsed ? 'PLT Manager' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
     <span title>
       <i nz-icon><i class="icon-file-search-alt"></i></i>
       <span class="test-list">PLT Manager</span>
+    </span>
+  </li>
+  <li (click)="routerNavigate('CloneData')" [nzTitle]="isCollapsed ? 'Clone data' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+    <span title>
+      <i nz-icon><i class="icon-database"></i></i>
+      <span class="test-list">Clone Data</span>
     </span>
   </li>
   <li (click)="routerNavigate('Exposures')" [nzTitle]="isCollapsed ? 'Exposure Manager' : ''" nz-menu-item nz-tooltip

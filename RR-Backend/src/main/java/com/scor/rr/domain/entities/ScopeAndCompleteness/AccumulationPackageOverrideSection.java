@@ -1,36 +1,32 @@
-package com.scor.rr.domain.entities.AccumulationPackage;
+package com.scor.rr.domain.entities.ScopeAndCompleteness;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Data
 @Entity
 @Table(name = "AccumulationPackageOverrideSection")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class AccumulationPackageOverrideSection {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "AccumulationPackageOverrideSectionId")
-    private Long accumulationPackageOverrideSectionId;
+    @Column(name = "AccumulationPackageOverrideSectionId", nullable = false)
+    private long accumulationPackageOverrideSectionId;
 
     @Column(name = "Entity")
-    private Integer entity;
+    private int entity;
 
     @Column(name = "AccumulationPackageId")
-    private Long accumulationPackageId;
+    private long accumulationPackageId;
 
     @Column(name = "ContractSectionId")
     private String contractSectionId;
 
-    @Column(name = "MinimumGrainRegionPerilCode", length = 25)
+    @Column(name = "MinimumGrainRegionPerilCode")
     private String minimumGrainRegionPerilCode;
 
-    @Column(name = "AccumulationRAPCode", length = 50)
+    @Column(name = "AccumulationRAPCode")
     private String accumulationRAPCode;
 
     @Column(name = "OverrideBasisCode")
@@ -38,5 +34,4 @@ public class AccumulationPackageOverrideSection {
 
     @Column(name = "OverrideBasisNarrative")
     private String overrideBasisNarrative;
-
 }

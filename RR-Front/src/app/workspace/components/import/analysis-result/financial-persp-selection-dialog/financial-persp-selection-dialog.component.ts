@@ -1,4 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnInit,
+    Output,
+    SimpleChanges
+} from '@angular/core';
 import * as _ from "lodash";
 import {NotificationService} from "../../../../../shared/services";
 import * as fromWs from "../../../../store/actions";
@@ -224,7 +233,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
         },
     ];
 
-    constructor(private _notificationService: NotificationService, private _tableFilter:TableFilterPipe, private _rdmFilter:AnalysisByRdmPipe) {
+    constructor(private _notificationService: NotificationService, private _tableFilter:TableFilterPipe, private _rdmFilter:AnalysisByRdmPipe, private cdr:ChangeDetectorRef) {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -267,7 +276,6 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
             });
             this.updateTreeStateCheckBoxAnalysis();
         } else if (type == 'epc') {
-
             _.forEach(this.changes.epCurves, (item:any, index) => {
                 if(_.includes(this.filteredEpc, item.code) )
                     this.changes.epCurves[index] = {
@@ -277,6 +285,7 @@ export class FinancialPerspSelectionDialogComponent implements OnInit, OnChanges
             });
             this.updateTreeStateCheckBoxEpc();
         }
+        this.cdr.detectChanges();
     }
 
     getSelection(data, type) {
