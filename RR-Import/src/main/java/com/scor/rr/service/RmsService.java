@@ -29,6 +29,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.sql.Types;
@@ -296,9 +297,13 @@ public class RmsService {
 
     private int scanAnalysisBasicForRdm(String instanceId, RLModelDataSource rdm) {
         List<RdmAnalysisBasic> rdmAnalysisBasics = listRdmAnalysisBasic(instanceId, rdm.getRlId(), rdm.getName());
-        for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
+        this.rlAnalysisRepository.saveAll(
+                rdmAnalysisBasics.stream().map(an -> new RLAnalysis(an, rdm, ScanLevelEnum.Basic.getCode())).collect(toList())
+        );
+        /*for (RdmAnalysisBasic rdmAnalysisBasic : rdmAnalysisBasics) {
             RLAnalysis rlAnalysis = this.rlAnalysisRepository.save(
                     new RLAnalysis(rdmAnalysisBasic, rdm, ScanLevelEnum.Basic.getCode()));}
+         */
         return rdmAnalysisBasics.size();
     }
     public  int  scanAnalysisBasicForRdm(String InstanceId, RLModelDataSource rlModelDataSource,Long projectId){
@@ -367,7 +372,6 @@ public class RmsService {
             rlPortfolioRepository.save(rlPortfolio);
         }
     }
-
 
     public List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
 

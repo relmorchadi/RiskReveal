@@ -18,7 +18,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ZZ_RLModelAnalysis")
+@Table(name = "RLModelAnalysis")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RLAnalysis {

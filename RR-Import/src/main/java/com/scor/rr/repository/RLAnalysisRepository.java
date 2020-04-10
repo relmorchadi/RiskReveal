@@ -79,7 +79,8 @@ public interface RLAnalysisRepository extends JpaRepository<RLAnalysis, Long>, J
 
     @Modifying
     @Transactional(transactionManager = "rrTransactionManager")
-    @Query(value = "Exec dbo.usp_DeleteRLModelAnalysisByRLAnalysisId @AnalysisId =:analysisId , @ProjectId =:projectId", nativeQuery = true)
+    //@Query(value = "Exec dbo.usp_DeleteRLModelAnalysisByRLAnalysisId @AnalysisId =:analysisId , @ProjectId =:projectId", nativeQuery = true)
+    @Query("delete from RLAnalysis where rlId=:analysisId and projectId=:projectId")
     void deleteByRLAnalysisId(@Param("analysisId")Long AnalysisId,@Param("projectId")Long projectId);
 
    //moi

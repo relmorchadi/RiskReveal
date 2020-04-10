@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "ZZ_RLPortfolio")
+@Table(name = "RLPortfolio")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -2,6 +2,7 @@ package com.scor.rr.repository;
 
 import com.scor.rr.domain.riskLink.RLPortfolioSelection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,10 @@ public interface RLPortfolioSelectionRepository extends JpaRepository<RLPortfoli
 
     List<RLPortfolioSelection> findByProjectId(Long projectId);
 
-    @Procedure("dbo.uspRiskLinkDeletePortfolioSummary")
-    void deleteByPortfolioIdAndProjectId(@Param("rlPortfolioId") Long rlPortfolioId, @Param("projectId") Long projectId);
+    //@Procedure("dbo.uspRiskLinkDeletePortfolioSummary")
+    @Modifying
+    @Query("delete from RLPortfolioSelection WHERE rlPortfolio.rlPortfolioId in :ids")
+    @Transactional(transactionManager = "rrTransactionManager")
+    void deleteByPortfolioIdIn(@Param("ids") List<Long> ids);
 
 }
