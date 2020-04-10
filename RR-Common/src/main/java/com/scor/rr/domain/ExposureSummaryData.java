@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -25,7 +26,7 @@ public class ExposureSummaryData {
     private Long sourcePortfolioId;
     @Column(name = "ModelPortfolioId")
     private Long modelPortfolioId;
-    @Column(name = "PortfolioType")
+    @Column(name = "SourcePortfolioType")
     private String portfolioType;
     @Column(name = "CountryCode")
     private String countryCode;
@@ -65,9 +66,9 @@ public class ExposureSummaryData {
     private String conformedCurrency;
 
     @Column(name = "TIV")
-    private Double tiv;
+    private BigDecimal tiv;
     @Column(name = "AvgTIV")
-    private Double avgTiv;
+    private BigDecimal avgTiv;
     @Column(name = "LocationCount")
     private Long locationCount;
     @Column(name = "ExposureCurrencyUSDRate")
@@ -79,6 +80,6 @@ public class ExposureSummaryData {
 
 
     @ManyToOne
-    @JoinColumn(name = "GlobalViewSummaryId")
-    private GlobalViewSummary globalViewSummary;
+    @JoinColumn(name = "GlobalExposureViewSummaryId")
+    private GlobalExposureViewSummary globalViewSummary;
 }

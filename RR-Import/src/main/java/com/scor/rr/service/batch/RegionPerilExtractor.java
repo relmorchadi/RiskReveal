@@ -371,7 +371,7 @@ public class RegionPerilExtractor implements RegionPerilExtractorInterface {
                             rlPortfolioSelection.getProportion() != null ? rlPortfolioSelection.getProportion() : 1.0d,
                             rlPortfolioSelection.getUnitMultiplier() != null ? rlPortfolioSelection.getUnitMultiplier() : 1.0d,
                             rlPortfolioSelection.getRlPortfolio().getDescription(),
-                            rlPortfolioSelection.getRlPortfolio().getType(),
+                            true,
                             rlPortfolioSelection.isImportLocationLevel()
                     );
 
