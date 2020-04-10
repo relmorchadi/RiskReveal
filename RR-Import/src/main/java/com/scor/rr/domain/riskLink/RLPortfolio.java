@@ -7,6 +7,7 @@ import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -110,14 +111,14 @@ public class RLPortfolio {
     }
 
     public void updateBasic(EdmPortfolioBasic edmPortfolioBasic){
-             if(!this.name.equals(edmPortfolioBasic.getName())){               this.setName(edmPortfolioBasic.getName());}
-             if(!this.description.equals(edmPortfolioBasic.getDescription())){ this.setDescription(edmPortfolioBasic.getDescription());}
-             if(!this.type.equals(edmPortfolioBasic.getType())){               this.setType(edmPortfolioBasic.getType()); }
-             if(!this.number.equals(edmPortfolioBasic.getNumber())){           this.setNumber(edmPortfolioBasic.getNumber());}
-             if(!this.peril.equals(edmPortfolioBasic.getPeril())){             this.setPeril(edmPortfolioBasic.getPeril());}
-             if(!this.agSource.equals(edmPortfolioBasic.getAgSource())){       this.setAgSource(edmPortfolioBasic.getAgSource());}
-             if(!this.agCedent.equals(edmPortfolioBasic.getAgCedant())){       this.setAgCedent(edmPortfolioBasic.getAgCedant());}
-             if(!this.agCurrency.equals(edmPortfolioBasic.getAgCurrency())){   this.setAgCurrency(edmPortfolioBasic.getAgCurrency());}
+             if(!StringUtils.equals(this.name,edmPortfolioBasic.getName())){               this.setName(edmPortfolioBasic.getName());}
+             if(!StringUtils.equals(this.description,edmPortfolioBasic.getDescription())){ this.setDescription(edmPortfolioBasic.getDescription());}
+             if(!StringUtils.equals(this.type,edmPortfolioBasic.getType())){               this.setType(edmPortfolioBasic.getType()); }
+             if(!StringUtils.equals(this.number,edmPortfolioBasic.getNumber())){           this.setNumber(edmPortfolioBasic.getNumber());}
+             if(!StringUtils.equals(this.peril,edmPortfolioBasic.getPeril())){             this.setPeril(edmPortfolioBasic.getPeril());}
+             if(!StringUtils.equals(this.agSource,edmPortfolioBasic.getAgSource())){       this.setAgSource(edmPortfolioBasic.getAgSource());}
+             if(!StringUtils.equals(this.agCedent,edmPortfolioBasic.getAgCedant())){       this.setAgCedent(edmPortfolioBasic.getAgCedant());}
+             if(!StringUtils.equals(this.agCurrency,edmPortfolioBasic.getAgCurrency())){   this.setAgCurrency(edmPortfolioBasic.getAgCurrency());}
         Date createdEdmPortfolioBasic = null;
             try {
             createdEdmPortfolioBasic = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(edmPortfolioBasic.getCreated());

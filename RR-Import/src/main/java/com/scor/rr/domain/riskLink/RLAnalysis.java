@@ -10,6 +10,7 @@ import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -209,23 +210,23 @@ public class RLAnalysis {
     }
 
     public void updateBasic(RdmAnalysisBasic rdmAnalysisBasic){
-        if(!this.getAnalysisName().equals(rdmAnalysisBasic.getAnalysisName() )){            this.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
-        if(!this.getAnalysisDescription().equals(rdmAnalysisBasic.getDescription()))  {     this.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
-        if(!this.getEngineVersion().equals(rdmAnalysisBasic.getEngineVersion())){           this.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
-        if(!this.getAnalysisCurrency().equals(rdmAnalysisBasic.getAnalysisCurrency())){     this.setAnalysisCurrency(rdmAnalysisBasic.getAnalysisCurrency());}
-        if(!this.getAnalysisType().equals(rdmAnalysisBasic.getTypeName())){                 this.setAnalysisType(rdmAnalysisBasic.getTypeName());}
-        if(!this.getRegion().equals(rdmAnalysisBasic.getRegion())){                         this.setRegion(rdmAnalysisBasic.getRegion());}
-        if(!this.getPeril().equals(rdmAnalysisBasic.getPeril())){                           this.setPeril(rdmAnalysisBasic.getPeril());}
-        if(!this.getSubPeril().equals(rdmAnalysisBasic.getSubPeril())){                     this.setSubPeril(rdmAnalysisBasic.getSubPeril());}
-        if(!this.getLossAmplification().equals(rdmAnalysisBasic.getLossAmplification())){   this.setLossAmplification(rdmAnalysisBasic.getLossAmplification());}
-        if(!this.getEngineType().equals(rdmAnalysisBasic.getEngineType())){                 this.setEngineType(rdmAnalysisBasic.getEngineType());}
-        if(!this.getGroupType().equals(rdmAnalysisBasic.getGroupTypeName())){               this.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
-        if(!this.getCedant().equals(rdmAnalysisBasic.getCedant())){                         this.setCedant(rdmAnalysisBasic.getCedant());}
-        if(!this.getLob().equals(rdmAnalysisBasic.getLobName())){                           this.setLob(rdmAnalysisBasic.getLobName());}
+        if(!StringUtils.equals(this.getAnalysisName(),rdmAnalysisBasic.getAnalysisName() )){            this.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
+        if(!StringUtils.equals(this.getAnalysisDescription(),rdmAnalysisBasic.getDescription()))  {     this.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
+        if(!StringUtils.equals(this.getEngineVersion(),rdmAnalysisBasic.getEngineVersion())){           this.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
+        if(!StringUtils.equals(this.getAnalysisCurrency(),rdmAnalysisBasic.getAnalysisCurrency())){     this.setAnalysisCurrency(rdmAnalysisBasic.getAnalysisCurrency());}
+        if(!StringUtils.equals(this.getAnalysisType(),rdmAnalysisBasic.getTypeName())){                 this.setAnalysisType(rdmAnalysisBasic.getTypeName());}
+        if(!StringUtils.equals(this.getRegion(),rdmAnalysisBasic.getRegion())){                         this.setRegion(rdmAnalysisBasic.getRegion());}
+        if(!StringUtils.equals(this.getPeril(),rdmAnalysisBasic.getPeril())){                           this.setPeril(rdmAnalysisBasic.getPeril());}
+        if(!StringUtils.equals(this.getSubPeril(),rdmAnalysisBasic.getSubPeril())){                     this.setSubPeril(rdmAnalysisBasic.getSubPeril());}
+        if(!StringUtils.equals(this.getLossAmplification(),rdmAnalysisBasic.getLossAmplification())){   this.setLossAmplification(rdmAnalysisBasic.getLossAmplification());}
+        if(!StringUtils.equals(this.getEngineType(),rdmAnalysisBasic.getEngineType())){                 this.setEngineType(rdmAnalysisBasic.getEngineType());}
+        if(!StringUtils.equals(this.getGroupType(),rdmAnalysisBasic.getGroupTypeName())){               this.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
+        if(!StringUtils.equals(this.getCedant(),rdmAnalysisBasic.getCedant())){                         this.setCedant(rdmAnalysisBasic.getCedant());}
+        if(!StringUtils.equals(this.getLob(),rdmAnalysisBasic.getLobName())){                           this.setLob(rdmAnalysisBasic.getLobName());}
         this.setIsGroup(false);
         if(!this.getIsGroup().equals(rdmAnalysisBasic.getGrouping())){                      this.setIsGroup(rdmAnalysisBasic.getGrouping());}
-        if(!this.getRegionName().equals(rdmAnalysisBasic.getRegionName())){                 this.setRegionName(rdmAnalysisBasic.getRegionName());}
-        if(!this.getAnalysisMode().equals(rdmAnalysisBasic.getModeName())){                 this.setAnalysisMode(rdmAnalysisBasic.getModeName());}
+        if(!StringUtils.equals(this.getRegionName(),rdmAnalysisBasic.getRegionName())){                 this.setRegionName(rdmAnalysisBasic.getRegionName());}
+        if(!StringUtils.equals(this.getAnalysisMode(),rdmAnalysisBasic.getModeName())){                 this.setAnalysisMode(rdmAnalysisBasic.getModeName());}
 
    }
 }
