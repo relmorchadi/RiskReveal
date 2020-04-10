@@ -1,15 +1,19 @@
-package com.scor.rr.service.abstraction;
+package com.scor.rr.service.batch.abstraction;
 
 import com.google.gson.Gson;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.JobDto;
+import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.JobType;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.StepEntityRepository;
 import com.scor.rr.repository.TaskEntityRepository;
+import com.scor.rr.service.abstraction.JobManager;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -97,6 +101,8 @@ public abstract class JobManagerAbstraction implements JobManager {
     @Override
     public abstract void submitJob(Long jobId);
 
+    public abstract void submitJob(Job importLossData, JobPriority priority, JobParameters params);
+
     @Override
     public abstract void cancelJob(Long jobId);
 
@@ -105,6 +111,8 @@ public abstract class JobManagerAbstraction implements JobManager {
 
     @Override
     public abstract void cancelTask(Long taskId);
+
+    public abstract void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity);
 
     @Override
     public abstract boolean isJobRunning(Long jobId);

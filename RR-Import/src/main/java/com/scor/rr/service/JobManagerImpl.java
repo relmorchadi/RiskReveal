@@ -13,7 +13,7 @@ import com.scor.rr.domain.model.RRJob;
 import com.scor.rr.repository.JobEntityRepository;
 import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.repository.TaskRepository;
-import com.scor.rr.service.abstraction.JobManagerAbstraction;
+import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.Job;
@@ -23,11 +23,9 @@ import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -55,13 +53,12 @@ public class JobManagerImpl extends JobManagerAbstraction {
     @Autowired
     private JobEntityRepository jobRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Override
     public void submitJob(Long jobId) {
     }
 
+    @Override
     public void submitJob(Job importLossData, JobPriority priority, JobParameters params) {
         executor.execute(new RRJob(importLossData, priority, params, jobLauncher));
     }
@@ -87,6 +84,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
 
     }
 
+    @Override
     public void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity) {
         executor.execute(new RRJob(importLossData, priority, params, jobLauncher, taskEntity, taskRepository, jobRepository));
     }

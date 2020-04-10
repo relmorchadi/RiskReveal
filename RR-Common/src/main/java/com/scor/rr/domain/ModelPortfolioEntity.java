@@ -43,19 +43,19 @@ public class ModelPortfolioEntity {
     private Long dataSourceId;
     @Column(name = "DataSourceName")
     private String dataSourceName;
-    @Column(name = "PortfolioId")
+    @Column(name = "SourcePortfolioId")
     private Long portfolioId;
-    @Column(name = "PortfolioName")
+    @Column(name = "ModelPortfolioName")
     private String portfolioName;
     // TODO: Review
-    @Column(name = "PortfolioType")
+    @Column(name = "ModelPortfolioType")
     private String portfolioType;
     //
     @Column(name = "ExposedLocationPerils")
     private String exposedLocationPerils;
     @Column(name = "Currency")
     private String currency;
-    @Column(name = "Division")
+    @Column(name = "DivisionNumber")
     private Integer division;
     @Column(name = "ExchangeRate")
     private Double exchangeRate;
@@ -63,10 +63,10 @@ public class ModelPortfolioEntity {
     private Double proportion;
     @Column(name = "UnitMultiplier")
     private Double unitMultiplier;
-    @Column(name = "Description")
+    @Column(name = "ModelPortfolioDescription")
     private String description;
     @Column(name = "ExposureLevel")
-    private String exposureLevel;
+    private boolean exposureLevel;
     @Column(name = "ImportLocationLevel")
     private boolean importLocationLevel;
 

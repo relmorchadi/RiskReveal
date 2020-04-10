@@ -10,7 +10,7 @@ import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.JobManagerImpl;
-import com.scor.rr.service.abstraction.JobManagerAbstraction;
+import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -324,7 +324,7 @@ public class BatchExecution {
                             .addString("rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds"))
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.MEDIUM, builder.toJobParameters());
+                    jobManager.submitJob(importLossDataAnalysis, JobPriority.MEDIUM, builder.toJobParameters());
                 }
 
                 for (Long rlPortfolioSelection : rlPortfolioSelections) {
@@ -339,9 +339,9 @@ public class BatchExecution {
                             .addString("taskId", String.valueOf(task.getTaskId()));
 
                     if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters());
+                        jobManager.submitJob(importLossDataPortfolio, JobPriority.MEDIUM, builder.toJobParameters());
                     else
-                        ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters());
+                        jobManager.submitJob(importLossDataPortfolioFac, JobPriority.MEDIUM, builder.toJobParameters());
                 }
             }
         }
@@ -379,14 +379,14 @@ public class BatchExecution {
 
             if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
 
-                ((JobManagerImpl) jobManager).submitJob(importLossDataAnalysis, JobPriority.HIGH, builder.toJobParameters());
+                jobManager.submitJob(importLossDataAnalysis, JobPriority.HIGH, builder.toJobParameters());
 
             } else if (task.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
 
                 if (params.get("marketChannel").equalsIgnoreCase("Treaty"))
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolio, JobPriority.HIGH, builder.toJobParameters());
+                    jobManager.submitJob(importLossDataPortfolio, JobPriority.HIGH, builder.toJobParameters());
                 else
-                    ((JobManagerImpl) jobManager).submitJob(importLossDataPortfolioFac, JobPriority.HIGH, builder.toJobParameters());
+                    jobManager.submitJob(importLossDataPortfolioFac, JobPriority.HIGH, builder.toJobParameters());
             }
         }
     }
