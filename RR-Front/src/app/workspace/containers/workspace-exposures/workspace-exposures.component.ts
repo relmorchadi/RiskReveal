@@ -58,7 +58,8 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             portfolio: null,
             currency: null,
             exposureView: null,
-            financialPerspective: null
+            financialPerspective: null,
+            financialUnits:null
         }
         this.tableConfig = new ExposuresMainTableConfig();
     }
@@ -114,9 +115,10 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         this.selectedHeaderConfig = {
             division: headerConfig.divisions[0],
             portfolio: headerConfig.portfolios[0],
-            currency: headerConfig.currencies[0],
+            currency: headerConfig.divisions[0].currency,
             exposureView: 'tiv',
-            financialPerspective: headerConfig.financialPerspectives[0]
+            financialPerspective: headerConfig.financialPerspectives[0],
+            financialUnits:'Unit'
         }
     }
 
@@ -178,6 +180,16 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeFinancialUnit' : {
+                this.selectedHeaderConfig.financialUnits = $event.payload.header;
+                /*this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId: this.projectId
+                    }
+                );*/
+                break;
+            }
+            case 'changeFinancialPerspecctive' : {
                 this.selectedHeaderConfig.financialPerspective = $event.payload;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {

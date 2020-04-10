@@ -88,7 +88,7 @@
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container>
-                        <td class="ui-resizable-column">
+                        <td class="ui-resizable-column" style="text-align: start; !important;">
                             {{rowData[col.field]}}
                         </td>
                     </ng-container>

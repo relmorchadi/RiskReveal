@@ -146,7 +146,10 @@ export class WorkspaceService {
             overrideInit: false,
             overrideCancelAll: false,
             overrideCancelRow: false,
+            removeOverrideUnable: false,
             overriddenRows: [],
+            projects: [],
+            plts: [],
             scopeContext: {
               accumulationStatus: 'Scope Only',
               filterBy: 'All',
@@ -217,6 +220,7 @@ export class WorkspaceService {
       }
 
       if(!ctx.getState().content[wsIdentifier]) {
+        console.log(workspaces);
        const ws = _.find(workspaces, e => e.id == tab.workspaceContextCode && e.uwYear == tab.workspaceUwYear);
        const {projects} = ws;
 
@@ -293,12 +297,16 @@ export class WorkspaceService {
                 targetRaps: [],
                 regionPerils: [],
               },
+
               overrideAll: false,
               overrideRow: false,
               overrideInit: false,
               overrideCancelAll: false,
               overrideCancelRow: false,
+              removeOverrideUnable: false,
               overriddenRows: [],
+              projects: [],
+              plts: [],
               scopeContext: {
                 accumulationStatus: 'Scope Only',
                 filterBy: 'All',
