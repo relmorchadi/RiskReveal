@@ -35,6 +35,9 @@ public class InuringContractLayerReinstatementDetail {
     @Column(name = "ReinstatementCharge")
     private BigDecimal reinstatementsCharge;
 
+    @Column(name = "ProRataTemporis")
+    private boolean proRataTemporis;
+
     public InuringContractLayerReinstatementDetail() {
     }
 

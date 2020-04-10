@@ -23,9 +23,9 @@ public class ProjectConfigurationForeWriter {
                                           String carType,
                                           String carStatus,
                                           String carName,
-                                          String uwAnalysis,
                                           Date requestCreationDate,
-                                          String requestCreationBy,
+                                          Long requestCreationBy,
+                                          String requestCreationByFw,
                                           String code,
                                           String narrative) {
         this.entity = entity;
@@ -33,11 +33,9 @@ public class ProjectConfigurationForeWriter {
         this.carType = carType;
         this.carStatus = carStatus;
         this.carName = carName;
-        this.uwAnalysis = uwAnalysis;
-        this.lastUpdateDate = requestCreationDate;
-        this.lastUpdateBy = requestCreationBy;
         this.requestCreationDate = requestCreationDate;
-        this.requestCreationBy = requestCreationBy;
+        this.requestedBy = requestCreationBy;
+        this.requestedByFwId = requestCreationByFw;
         this.code = code;
         this.narrative = narrative;
     }
@@ -65,25 +63,18 @@ public class ProjectConfigurationForeWriter {
     @Column(name = "CARName")
     private String carName;
 
-    @Column(name = "UwAnalysis")
-    private String uwAnalysis;
-
     @Column(name = "AssignedTo")
     private Long assignedTo;
-
-    @Column(name = "LastUpdateBy", nullable = false)
-    private String lastUpdateBy;
-
-    @LastModifiedDate
-    @Column(name = "LastUpdateDate", nullable = false)
-    private Date lastUpdateDate;
 
     @CreatedDate
     @Column(name = "RequestCreationDate")
     private Date requestCreationDate;
 
-    @Column(name = "RequestCreationBy")
-    private String requestCreationBy;
+    @Column(name = "RequestedBy")
+    private Long requestedBy;
+
+    @Column(name = "RequestedByFwId")
+    private String requestedByFwId;
 
     @Column(name = "Code", length = 50)
     private String code;

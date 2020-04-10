@@ -16,7 +16,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriterContract {
 
-    public ProjectConfigurationForeWriterContract(Integer entity, Long projectConfigurationForeWriterId, String contractId, String facNumber, Integer uwYear, Integer uwOrder, Integer endorsementNumber, String contractName, String businessType, String client, String subsidiary, String lineOfBusiness, String sector) {
+    public ProjectConfigurationForeWriterContract(Integer entity, Long projectConfigurationForeWriterId, String contractId, String facNumber, Integer uwYear, Integer uwOrder, Integer endorsementNumber, String contractName, String businessType, String client, String subsidiary, String lineOfBusiness, String sector, String uwAnalysis) {
         this.entity = entity;
         this.projectConfigurationForeWriterId = projectConfigurationForeWriterId;
         this.contractId = contractId;
@@ -30,6 +30,7 @@ public class ProjectConfigurationForeWriterContract {
         this.subsidiary = subsidiary;
         this.lineOfBusiness = lineOfBusiness;
         this.sector = sector;
+        this.uwAnalysis = uwAnalysis;
     }
 
     @Id
@@ -64,9 +65,11 @@ public class ProjectConfigurationForeWriterContract {
     @Column(name = "BusinessType", length = 25)
     private String businessType;
 
-    @CreatedDate
     @Column(name = "Client", length = 125)
     private String client;
+
+    @Column(name = "ClientId")
+    private Integer clientId;
 
     @Column(name = "Subsidiary", length = 25)
     private String subsidiary;
@@ -76,6 +79,9 @@ public class ProjectConfigurationForeWriterContract {
 
     @Column(name = "Sector", length = 25)
     private String sector;
+
+    @Column(name = "UWAnalysis", length = 15)
+    private String uwAnalysis;
 
 
     //TODO: implement AuditorAware to persist createDate, CreatedBy, ...

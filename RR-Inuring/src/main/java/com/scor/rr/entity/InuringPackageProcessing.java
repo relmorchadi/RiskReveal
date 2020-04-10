@@ -16,7 +16,7 @@ public class InuringPackageProcessing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "InuringContractParamId", nullable = false)
+    @Column(name = "InuringPackageProcessingId", nullable = false)
     private long inuringPackageProcessingId;
 
     @Column(name = "Entity")
@@ -29,7 +29,7 @@ public class InuringPackageProcessing {
     private Date submittedDate;
 
     @Column(name = "SubmittedBy")
-    private int submittedBy;
+    private long submittedBy;
 
     @Column(name = "StartedDate")
     private Date startedDate;

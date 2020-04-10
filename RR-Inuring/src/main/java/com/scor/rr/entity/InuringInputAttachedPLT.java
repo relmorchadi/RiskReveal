@@ -51,7 +51,7 @@ public class InuringInputAttachedPLT {
         this.inuringInputNodeId = inuringInputNodeId;
     }
 
-    @Column(name = "PltHeaderId", nullable = false)
+    @Column(name = "PLTHeaderId", nullable = false)
     public long getPltHeaderId() {
         return pltHeaderId;
     }
