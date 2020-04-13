@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="ZZ_DashBoardWidget")
+@Table(name="DashBoardWidget")
 public class DashboardWidget {
 
     @Id
@@ -18,7 +18,7 @@ public class DashboardWidget {
     private String widgetName;
 
     @Column(name = "WidgetType")
-    private long widgetType;
+    private String widgetType;
 
     @Column(name = "WidgetDefaultDisplayName")
     private String widgetDefaultDisplayName;
