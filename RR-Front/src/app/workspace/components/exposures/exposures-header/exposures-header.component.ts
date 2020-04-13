@@ -36,6 +36,9 @@ export class ExposuresHeaderComponent implements OnInit, OnDestroy {
     changeFinancialUnit(financialUnit: any) {
         this.actionDispatcher.emit({type: 'changeFinancialUnit', payload: financialUnit});
     }
+    changeFinancialPerspecctive(financialPerspective: any) {
+        this.actionDispatcher.emit({type: 'changeFinancialPerspecctive', payload: financialPerspective});
+    }
 
     changeDivision(division: any) {
         this.actionDispatcher.emit({type: 'changeDivision', payload: division});

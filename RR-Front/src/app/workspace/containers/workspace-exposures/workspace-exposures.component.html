@@ -25,12 +25,13 @@
         </exposures-main-table>
       </div>
     </div>
-    <div class="exposures-right-menu">
-      <exposures-right-menu (actionDispatcher)="rightMenuActionDispatcher($event)"
-                            [rightMenuConfig]="rightMenuConfig$ | async">
 
-      </exposures-right-menu>
-    </div>
 
+  </div>
+  <div class="exposures-right-menu">
+    <exposures-right-menu (actionDispatcher)="rightMenuActionDispatcher($event)"
+                          [rightMenuConfig]="rightMenuConfig$ | async">
+
+    </exposures-right-menu>
   </div>
 </div>
