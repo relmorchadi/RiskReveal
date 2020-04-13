@@ -39,7 +39,7 @@ public class AccumulationPackageAttachedPLTService {
     public AccumulationPackageResponse attachSelectedPlts(AttachPLTRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
         if (!request.getPltList().isEmpty()) {
-            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(), request.getWorkspaceId());
+            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(), request.getWorkspaceId(),request.getProjectId());
             List<AccumulationPackageAttachedPLT> listToSave = new ArrayList<>();
             for (PLTAttachingInfo row : request.getPltList()) {
                 PricedScopeAndCompletenessView plt = pricedScopeAndCompletenessViewRepository.findByPLTHeaderId(row.getPltHeaderId());
@@ -88,7 +88,7 @@ public class AccumulationPackageAttachedPLTService {
         }
     }
 
-    public AccumulationPackage getTheAccumulationPackage(long accumulationPackageId, long workspaceId) throws RRException {
+    public AccumulationPackage getTheAccumulationPackage(long accumulationPackageId, long workspaceId,long projectId) throws RRException {
         if (accumulationPackageId != 0) {
             AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
             if (accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
@@ -96,7 +96,7 @@ public class AccumulationPackageAttachedPLTService {
 
 
         } else {
-            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId));
+            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId,projectId));
         }
     }
 

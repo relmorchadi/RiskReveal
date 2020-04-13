@@ -34,7 +34,7 @@ public class AccumulationPackageOverrideSectionService {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
         WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
 
-        AccumulationPackage accumulationPackage = accumulationPackageAttachedPLTService.getTheAccumulationPackage(request.getAccumulationPackageId(),ws.getWorkspaceId());
+        AccumulationPackage accumulationPackage = accumulationPackageAttachedPLTService.getTheAccumulationPackage(request.getAccumulationPackageId(),ws.getWorkspaceId(),request.getProjectId());
 
         if(!request.getListOfOverrides().isEmpty()){
             List<AccumulationPackageOverrideSection> listToSave = new ArrayList<>();
