@@ -38,10 +38,10 @@ public class AccumulationPackageController {
         return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId);
     }
 
-//    @GetMapping("getDropDownInformation")
-//    public List<DropDownInfo> getDropDownInfo(@RequestParam("ProjectID") long projectId){
-//        return accumulationPackageService.getDropDownDetails(projectId);
-//    }
+    @GetMapping("getDropDownInformation")
+    public List<DropDownInfo> getDropDownInfo(@RequestParam("ProjectID") long projectId){
+        return accumulationPackageService.getDropDownDetails(projectId);
+    }
 
 
 

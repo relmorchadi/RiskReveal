@@ -20,4 +20,5 @@ public interface AccumulationPackageRepository extends JpaRepository<Accumulatio
     List<Map<String,Object>> getExpectedScopeOnly(@Param("facNumber") String facNumber,@Param("uwYear") int uwYear);
 
     AccumulationPackage findByAccumulationPackageId(long id);
+    List<AccumulationPackage> findByProjectId(long projectId);
 }

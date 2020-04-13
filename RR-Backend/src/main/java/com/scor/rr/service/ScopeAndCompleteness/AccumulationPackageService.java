@@ -183,6 +183,22 @@ public class AccumulationPackageService {
 
     }
 
+    public List<DropDownInfo> getDropDownDetails(long projectId){
+
+        List<DropDownInfo> response = new ArrayList<>();
+        List<AccumulationPackage> accumulationPackages = accumulationPackageRepository.findByProjectId(projectId);
+        if(!accumulationPackages.isEmpty()){
+            for(AccumulationPackage accumulationPackage : accumulationPackages){
+                DropDownInfo dropDownInfo = new DropDownInfo();
+                dropDownInfo.setAccumulationPackageId(accumulationPackage.getAccumulationPackageId());
+                dropDownInfo.setAccumulationPackageStatus(accumulationPackage.getAccumulationPackageStatus());
+                response.add(dropDownInfo);
+            }
+
+        }
+        return response;
+    }
+
 
 
 }
