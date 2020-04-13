@@ -46,6 +46,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   rightMenuInputs: rightMenuStore.Input;
 
+  afterColumnsManagement = false;
   workspace: any;
   index: any;
   newProject = false;
@@ -60,40 +61,49 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   globalSearchItem = '';
   private _filter = {};
   keywordFormGroup: FormGroup;
-  columnsTreaty = [
-    {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-    {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: ''},
-    {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_NAME'},
-    {field: 'cedantCode', header: 'Cedant Code', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
-    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
-    {field: 'workspaceName', header: 'Workspace Name', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
-    {field: 'workSpaceId', header: 'Workspace Context', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
-/*    {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true/*, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false},
-    {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true/*, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
-  */];
-   columnsFac = [
-    {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
-    {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'ClientCode'},
-    {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UWYear'},
-    {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceName'},
-    {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceContextCode'},
-    {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
-    {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARequestId'},
-    {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARStatus'},
-    {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'AssignedTo'},
-/*  {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, /*handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false},
-    {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, /*handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false}
-   */  ];
+  columnsTreaty = {
+   visible : [
+     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
+     {field: 'countryName', header: 'Country', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: ''},
+     {field: 'cedantName', header: 'Cedent Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_NAME'},
+     {field: 'cedantCode', header: 'Cedant Code', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
+     {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
+     {field: 'workspaceName', header: 'Workspace Name', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
+     {field: 'workSpaceId', header: 'Workspace Context', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
+     /*    {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true/*, handler: (option) => option.forEach(dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false},
+         {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true/*, handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)), display: false, sorted: false, filtered: false}
+       */],
+    available: []
+  };
+   columnsFac = {
+     visible :        [
+       {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
+       {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'ClientCode'},
+       {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UWYear'},
+       {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceName'},
+       {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'WorkspaceContextCode'},
+       {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
+       {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARequestId'},
+       {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CARStatus'},
+       {field: 'assignedTo', header: 'Assigned User', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'AssignedTo'},
+       /*  {field: 'openInHere', header: '', width: '20px', type: 'icon', class: 'icon-fullscreen_24px', visible: true, /*handler: (option) => option.forEach(dt => this.openWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false},
+           {field: 'openInPopup', header: '', width: '20px', type: 'icon', class: 'icon-open_in_new_24px', visible: true, /*handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workspaceName, dt.uwYear)), display: false, sorted: false, filtered: false}
+          */  ],
+  available: []
+   };
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];
   loading;
   browesing: boolean;
-
+  isManageColumnsVisible = false;
   Inputs: {
     scrollHeight: string,
     contextMenuItems: any,
     filterInput: string;
-    pltColumns: any[];
+    pltColumns: {
+      visible: any[],
+      available: any[]
+    };
     listOfPltsData: [];
     listOfDeletedPltsData: [];
     listOfPltsCache: [];
@@ -159,53 +169,44 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         },
       ],
       filterInput: '',
-      pltColumns: [
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
-        },
-/*        {
-          sortDir: 1, fields: '', header: 'User Tags', sorted: false, filtred: false, resizable: false, width: '24%', icon: null, type: 'tags', active: true
-        },
-  */      {
-          sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '28%', type: 'id', active: true
-        },
-        {
-          sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '100%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'peril', header: 'Peril', sorted: true, filtred: true, resizable: false, width: '22%', icon: null, type: 'field', textAlign: 'center', active: true
-        },
-        {
-          sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '35%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', sorted: true, filtred: true, resizable: true, width: '60%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '70%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', sorted: true, filtred: true, resizable: true, icon: null, type: 'field', active: false
-        },
-        {
-          sortDir: 1, fields: 'deletedAt', forDelete: true, header: 'Deleted On', sorted: true, filtred: true, resizable: true, icon: null, type: 'date', active: false
-        },
-        {
-          sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'rap', header: 'RAP', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
-        }
-/*        ,{
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-note', type: 'icon', active: true, tooltip: "Published for Pricing"
-        },
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-dollar-alt', type: 'icon', active: true, tooltip: "Priced"
-        },
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-focus-add', type: 'icon', active: true, tooltip: "Published for Accumulation"
-        },
-  */    ],
+      pltColumns: {
+        visible: [
+          {
+            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
+          },
+          {
+            sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '28%', type: 'id', active: true
+          },
+          {
+            sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '100%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'peril', header: 'Peril', sorted: true, filtred: true, resizable: false, width: '22%', icon: null, type: 'field', textAlign: 'center', active: true
+          },
+          {
+            sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '35%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', sorted: true, filtred: true, resizable: true, width: '60%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '70%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', sorted: true, filtred: true, resizable: true, icon: null, type: 'field', active: false
+          },
+          {
+            sortDir: 1, fields: 'deletedAt', forDelete: true, header: 'Deleted On', sorted: true, filtred: true, resizable: true, icon: null, type: 'date', active: false
+          },
+          {
+            sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'rap', header: 'RAP', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
+          }
+        ],
+        available: []
+      },
       listOfPltsData: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
@@ -469,9 +470,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   mapColToQuery(col) {
     if (this.marketChannel === 'Treaty') {
-      return _.find(this.columnsTreaty, column => column.field == col).queryParam;
+      return _.find(this.columnsTreaty.visible, column => column.field == col).queryParam;
     } else {
-      return _.find(this.columnsFac, column => column.field == col).queryParam;
+      return _.find(this.columnsFac.visible, column => column.field == col).queryParam;
     }
   }
 
@@ -490,6 +491,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onHide() {
+    if (this.afterColumnsManagement)
+      return;
     this.Inputs= {
       scrollHeight: 'calc( 100vh - 368px )',
       contextMenuItems: [
@@ -500,54 +503,44 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         },
       ],
       filterInput: '',
-      pltColumns: [
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
-        },
-/*        {
-          sortDir: 1, fields: '', header: 'User Tags', sorted: false, filtred: false, resizable: false, width: '24%', icon: null, type: 'tags', active: true
-        },
-  */      {
-          sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '28%', type: 'id', active: true
-        },
-        {
-          sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '100%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'peril', header: 'Peril', sorted: true, filtred: true, resizable: false, width: '22%', icon: null, type: 'field', textAlign: 'center', active: true
-        },
-        {
-          sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '35%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', sorted: true, filtred: true, resizable: true, width: '60%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '70%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', sorted: true, filtred: true, resizable: true, icon: null, type: 'field', active: false
-        },
-        {
-          sortDir: 1, fields: 'deletedAt', forDelete: true, header: 'Deleted On', sorted: true, filtred: true, resizable: true, icon: null, type: 'date', active: false
-        },
-        {
-          sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
-        },
-        {
-          sortDir: 1, fields: 'rap', header: 'RAP', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
-        }
-        /*,
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-note', type: 'icon', active: true, tooltip: "Published for Pricing"
-        },
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-dollar-alt', type: 'icon', active: true, tooltip: "Priced"
-        },
-        {
-          sortDir: 1, fields: '', header: '', sorted: false, filtred: false, width: '25px', icon: 'icon-focus-add', type: 'icon', active: true, tooltip: "Published for Accumulation"
-        },
-*/      ],
+      pltColumns: {
+        visible: [
+          {
+            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
+          },
+          {
+            sortDir: 1, fields: 'pltId', header: 'PLT ID', sorted: true, filtred: true, resizable: true, icon: null, width: '28%', type: 'id', active: true
+          },
+          {
+            sortDir: 1, fields: 'pltName', header: 'PLT Name', sorted: true, filtred: true, resizable: true, width: '100%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'peril', header: 'Peril', sorted: true, filtred: true, resizable: false, width: '22%', icon: null, type: 'field', textAlign: 'center', active: true
+          },
+          {
+            sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', sorted: true, filtred: true, resizable: true, width: '35%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', sorted: true, filtred: true, resizable: true, width: '60%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'grain', header: 'Grain', sorted: true, filtred: true, resizable: true, width: '70%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', sorted: true, filtred: true, resizable: true, icon: null, type: 'field', active: false
+          },
+          {
+            sortDir: 1, fields: 'deletedAt', forDelete: true, header: 'Deleted On', sorted: true, filtred: true, resizable: true, icon: null, type: 'date', active: false
+          },
+          {
+            sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
+          },
+          {
+            sortDir: 1, fields: 'rap', header: 'RAP', sorted: true, filtred: true, resizable: true, width: '25%', icon: null, type: 'field', active: true
+          }
+        ],
+        available: []
+      },
       listOfPltsData: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
@@ -629,6 +622,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   getBrowesingItems(workspace) {
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
+
+    console.log('ok')
 
     if (this.selectionStep == 'project') {
 /*      this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
@@ -771,7 +766,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onShow() {
+    if(this.afterColumnsManagement) {
+      this.afterColumnsManagement = false;
+      return;
+    }
     this.browesing=false;
+    console.log('ook');
     this.keywordFormGroup.get('keyword')
       .valueChanges
       .pipe(debounceTime(400))
@@ -1097,4 +1097,52 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.updateLeftMenuInputs('systemTagsCount', newSysTagsCount);
   }
+  openColumnManager() {
+    console.log('opening columns manager');
+    this.isVisible = false;
+    this.isManageColumnsVisible = true;
+    this.afterColumnsManagement = true;
+  }
+  handleManageColumnsActions(action) {
+    console.log(action);
+    console.log(this.browesing ,this.selectionStep );
+    setTimeout(() => {
+      console.log(this.browesing ,this.selectionStep );
+    }, 1200)
+
+    switch (action.type) {
+
+      case "Manage Frozen Columns":
+        this.isManageColumnsVisible = false;
+        action.payload.visible = [
+          {
+            sortDir: 1, fields: '', header: '', sorted: false, filtred: false, resizable: false, width: '40', icon: null, type: 'checkbox', active: true
+          },
+          ...action.payload.visible,
+        ];
+        if(this.browesing && this.selectionStep == 'plt') {
+          this.setInputs('pltColumns', action.payload);
+          console.log(action.payload);
+          console.log(this.Inputs.pltColumns);
+        }
+        else {
+          if(this.marketChannel === 'FAC') {
+            this.columnsFac = action.payload;
+          } else {
+            this.columnsTreaty = action.payload;
+          }
+        }
+        this.isVisible = true;
+        break;
+
+      case "Close Column Manager":
+        this.isManageColumnsVisible= false;
+        this.isVisible = true;
+        break;
+
+      default:
+
+    }
+  }
+
 }

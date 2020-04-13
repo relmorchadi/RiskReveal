@@ -345,7 +345,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   rowTrackBy = (index, item) => {
-    return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
+    return item[this.tableInputs.dataKey || this.tableInputs.pltColumns.visible[0].field];
   }
 
   filterByFalsely(bool: string) {

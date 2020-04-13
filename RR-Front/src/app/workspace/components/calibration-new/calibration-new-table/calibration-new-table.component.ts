@@ -77,6 +77,7 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   contextMenuItem : any[];
 
+
   constructor(private _baseStore: Store) { }
 
   ngOnInit() {

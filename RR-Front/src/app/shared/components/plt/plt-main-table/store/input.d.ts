@@ -2,7 +2,10 @@ export interface Input {
   dataKey: string;
   contextMenuItems: any;
   filterInput: any;
-  pltColumns: any[];
+  pltColumns: {
+    visible: any[],
+    available: any[]
+  };
   listOfDeletedPltsCache: any[];
   listOfDeletedPltsData: any[];
   listOfPltsCache: any[];

@@ -1,11 +1,18 @@
+<calib-col-manager
+        *ngIf="isManageColumnsVisible"
+        [visibleList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.visible :
+        ( marketChannel == 'FAC' ? columnsFac.visible : columnsTreaty.visible)) | cloneDataColumnManageFilter"
+        [availableList]="((browesing && selectionStep == 'plt') ? Inputs.pltColumns.available :
+        ( marketChannel == 'FAC' ? columnsFac.available : columnsTreaty.available)) "
+        (actionDispatcher)="handleManageColumnsActions($event)">
+</calib-col-manager>
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
           [styleClass]="'m-dialog-modal-lg project-clone-pop-up' + (browesing ? ' borderless' : '')"
           appendTo="body"
           [modal]="true"
           [responsive]="true"
-          [baseZIndex]="1"
-          [autoZIndex]="false"
+          [baseZIndex]="-1"
           [maximizable]="true"
           (onHide)="onHide()"
           (onShow)="onShow()">
@@ -56,8 +63,10 @@
 
   <ng-container *ngIf="!browesing">
     <div style="height:600px;">
-
-      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac : columnsTreaty"
+      <div style="width: 100%; text-align: right">
+        <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
+        </div>
+      <app-table [tableColumn]="marketChannel == 'FAC' ? columnsFac.visible : columnsTreaty.visible"
                  [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="false" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
@@ -95,6 +104,10 @@
           <span>
             PLTs
           </span>
+        </div>
+        <div style="width: 100%; text-align: right">
+          <i (click)="openColumnManager()" style="cursor: pointer;" class="icon-settings_24px" nz-tooltip="Manage Columns"></i>
+
         </div>
         <div class="PLTs-content">
           <app-plt-main-table

@@ -29,7 +29,10 @@ export class CalibrationColumnManagerComponent implements OnInit {
   onManageColumns() {
     this.actionDispatcher.emit({
       type: "Manage Frozen Columns",
-      payload: this._visibleList
+      payload: {
+        'visible': this._visibleList,
+        'available': this._availableList
+      }
     })
   }
 

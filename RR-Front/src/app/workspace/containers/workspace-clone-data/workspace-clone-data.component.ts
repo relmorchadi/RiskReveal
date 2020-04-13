@@ -372,14 +372,14 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.patchProjectForm('from', {
         wsId: $event.workspaceContextCode,
         uwYear: $event.uwYear,
-        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
     if (currentSourceOfItems == 'to') {
       this.patchProjectForm('to', {
         wsId: $event.workSpaceId,
         uwYear: $event.uwYear,
-        detail: $event.cedantName + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
+        detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
   }
