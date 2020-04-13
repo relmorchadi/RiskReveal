@@ -121,13 +121,72 @@
         </nz-tabset>
 
       </div>
-      <div class="right-slider"></div>
+      <div class="right-slider">
+          <div class="flex-end-Checkbox">
+              <label nz-checkbox style="padding-left: 8px;"
+                     [(ngModel)]="showApplicablePlts"
+              >Show Applicable PLTs Only</label>
+          </div>
+          <p-table [value]="filterData()" [columns]="columns" [scrollHeight]="'calc(100% - 100px)'">
+              <ng-template pTemplate="colgroup" let-columns>
+                  <colgroup>
+                      <ng-container  *ngFor="let col of columns">
+                          <col *ngIf="col.visible" [ngStyle]="{'width': col?.width}">
+                      </ng-container>
+                  </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                  <tr>
+                      <ng-container *ngFor="let col of columns">
+                          <th class="header-cnt" >
+                              <ng-container [ngTemplateOutlet]="TableHeader" [ngTemplateOutletContext]="{$implicit: columns, col: col}"></ng-container>
+                          </th>
+                      </ng-container>
+                  </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-rowData let-columns="columns">
+                  <tr>
+                      <ng-container [ngTemplateOutlet]="TableBody" [ngTemplateOutletContext]="{rowData: rowData, columns: columns}"></ng-container>
+                  </tr>
+              </ng-template>
+
+              <ng-template let-col="col" #TableHeader>
+                  <div *ngIf="col.type === 'boolean'">
+                      {{col?.topHeader}}
+                  </div>
+                  <div *ngIf="col.type === 'text'">
+                      {{col?.header}}
+                  </div>
+              </ng-template>
+
+              <ng-template let-rowData="rowData" let-columns="columns" #TableBody>
+                  <ng-container *ngFor="let col of columns; let i = index" >
+                      <th *ngIf="col.type === 'boolean'">
+                          <ng-container *ngIf="col.selection === 'single'">
+                              <label *ngIf="attachable(rowData, col)" [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
+                                     (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
+                          </ng-container>
+                          <ng-container *ngIf="col.selection === 'line'">
+                              <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)"
+                                     (nzCheckedChange)="selectPLTByRow(rowData, $event)" nz-checkbox></label>
+                          </ng-container>
+                      </th>
+                      <th *ngIf="col.type === 'text'">
+                          <div class="ellipsis-text">
+                              {{rowData[col.field]}}
+                          </div>
+                      </th>
+                  </ng-container>
+              </ng-template>
+          </p-table>
+      </div>
     </div>
 
     <p-footer>
         <div class="footer">
             <button (click)="onHide()" class="a-button-text">CANCEL</button>
-            <button (click)="dispatchAttachTable()" class="a-buttons-contained">ADD</button>
+            <button (click)="dispatchAttachTable()" [ngClass]="{'a-buttons-contained': unableAttachment(), 'a-buttons-contained-disabled': !unableAttachment()}" [disabled]="!unableAttachment()">ADD</button>
         </div>
     </p-footer>
 </p-dialog>

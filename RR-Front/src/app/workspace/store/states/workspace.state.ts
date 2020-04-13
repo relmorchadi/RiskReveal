@@ -494,6 +494,18 @@ export class WorkspaceState {
     return {overrideAll: scopeData.overrideAll, overrideRow: scopeData.overrideRow, overrideInit: scopeData.overrideInit,
         overrideCancelAll: scopeData.overrideCancelAll, overrideCancelRow: scopeData.overrideCancelRow};
   }
+
+  @Selector()
+  static getScopePLTs(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.plts;
+  }
+
+  @Selector()
+  static getScopeProjects(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.projects;
+  }
   
   @Selector()
   static getScopeContext(state: WorkspaceModel) {
@@ -1288,6 +1300,11 @@ export class WorkspaceState {
     return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
   }
 
+  @Action(fromWS.LoadScopePLTsData)
+  loadScopePLTs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopePLTsData) {
+    return this.scopService.listOfPLTsToAttach(ctx, payload);
+  }
+
   @Action(fromWS.PublishToPricingFacProject)
   publishToPricingFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PublishToPricingFacProject) {
     return this.scopService.publishToPricing(ctx, payload);
@@ -1306,6 +1323,16 @@ export class WorkspaceState {
   @Action(fromWS.OverrideDeleteAction)
   overrideDelete(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideDeleteAction) {
     return this.scopService.deleteOverride(ctx, payload);
+  }
+
+  @Action(fromWS.AttachPLTsForScope)
+  attachPLTForScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AttachPLTsForScope) {
+    return this.scopService.attachPLT(ctx, payload);
+  }
+
+  @Action(fromWS.SelectScopeProject)
+  selectProjectScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectScopeProject) {
+    return this.scopService.selectProject(ctx, payload);
   }
 
   /***********************************

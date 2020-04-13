@@ -8,6 +8,11 @@ export class LoadScopeCompletenessPricingDataSuccess {
   constructor(public payload?: any) {}
 }
 
+export class LoadScopePLTsData {
+  static readonly type = '[ScopeCompleteness] Load PLTs For Scope';
+  constructor(public payload?: any) {}
+}
+
 export class PublishToPricingFacProject {
   static readonly type = '[ScopeCompleteness] Publish To Pricing Fac Project';
   constructor(public payload?: any) {}
@@ -25,5 +30,15 @@ export class OverrideActiveAction {
 
 export class OverrideDeleteAction {
   static readonly type = '[ScopeCompleteness] Delete Override';
+  constructor(public payload?: any) {}
+}
+
+export class SelectScopeProject {
+  static readonly type = '[ScopeCompleteness] Select Scope Project';
+  constructor(public payload?: any) {}
+}
+
+export class AttachPLTsForScope {
+  static readonly type = '[ScopeCompleteness] Attach PLT For Scope';
   constructor(public payload?: any) {}
 }
