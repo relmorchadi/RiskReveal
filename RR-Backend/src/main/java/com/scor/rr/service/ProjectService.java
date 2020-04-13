@@ -99,7 +99,7 @@ public class ProjectService {
     private ProjectEntity prePersistProject(ProjectEntity p, Long wsId, Boolean isFac) {
         UserRrEntity user = isFac ? null : ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
-        if(!isFac) p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
+        if(!isFac) p.setCreatedBy(user.getLastName() + ' ' + user.getFirstName());
         p.setAssignedTo(!isFac ? user.getLastName() + ' ' + user.getFirstName(): null);
         return p;
     }

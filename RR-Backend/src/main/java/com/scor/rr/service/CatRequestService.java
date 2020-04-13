@@ -68,7 +68,7 @@ public class CatRequestService {
         ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setEntity(1);
         projectEntity.setCreationDate(date);
-        projectEntity.setCreatedBy(data.userFN + " " + data.userLN);
+        projectEntity.setCreatedBy(data.userLN + " " + data.userFN);
         projectEntity.setProjectName(data.uwAnalysisName); //FIXME: check with SHAUN
         projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, clientName, projectEntity);
 
