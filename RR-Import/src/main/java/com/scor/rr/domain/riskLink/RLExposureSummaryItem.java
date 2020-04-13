@@ -1,13 +1,14 @@
 package com.scor.rr.domain.riskLink;
 
-import com.scor.rr.domain.GlobalViewSummary;
+import com.scor.rr.domain.GlobalExposureViewSummary;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "ZZ_SourceExposureSummaryItem")
+@Table(name = "SourceExposureSummaryItem")
 @Data
 public class RLExposureSummaryItem {
 
@@ -17,8 +18,6 @@ public class RLExposureSummaryItem {
     private Long rlExposureSummaryItemId;
     @Column(name = "Entity")
     private Long Entity;
-    @Column(name = "ExposureSummaryId")
-    private Long ExposureSummaryId;
     @Column(name = "ExposureSummaryName")
     private String ExposureSummaryName;
     @Column(name = "EDMId")
@@ -64,7 +63,7 @@ public class RLExposureSummaryItem {
     @Column(name = "LocationCount")
     private Long locationCount;
     @Column(name = "TotalTiv")
-    private Double totalTiv;
+    private BigDecimal totalTiv;
     @Column(name = "ExposureCurrencyUSDRate")
     private Double exposureCurrencyUSDRate;
     @Column(name = "ConformedCurrencyUSDRate")
@@ -73,7 +72,7 @@ public class RLExposureSummaryItem {
     private Date rateDate;
 
     @ManyToOne
-    @JoinColumn(name = "GlobalViewSummaryId")
-    private GlobalViewSummary globalViewSummary;
+    @JoinColumn(name = "GlobalExposureViewSummaryId")
+    private GlobalExposureViewSummary globalViewSummary;
 
 }

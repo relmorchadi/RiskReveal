@@ -15,7 +15,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriterDivision {
 
-    public ProjectConfigurationForeWriterDivision(Integer entity, Long projectConfigurationForeWriterContractId, String divisionNumber, String principalDivision, String lineOfBusiness, String coverageType, String currency) {
+    public ProjectConfigurationForeWriterDivision(Integer entity, Long projectConfigurationForeWriterContractId, String divisionNumber, Boolean principalDivision, String lineOfBusiness, String coverageType, String currency) {
         this.entity = entity;
         this.projectConfigurationForeWriterContractId = projectConfigurationForeWriterContractId;
         this.divisionNumber = divisionNumber;
@@ -39,8 +39,8 @@ public class ProjectConfigurationForeWriterDivision {
     @Column(name = "DivisionNumber", length = 15)
     private String divisionNumber;
 
-    @Column(name = "PrincipalDivision", length = 20)
-    private String principalDivision;
+    @Column(name = "PrincipalDivision")
+    private Boolean principalDivision;
 
     @Column(name = "LineOfBusiness", length = 25)
     private String lineOfBusiness;

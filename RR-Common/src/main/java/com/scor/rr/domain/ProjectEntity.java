@@ -28,8 +28,8 @@ public class ProjectEntity {
     @Column(name = "ProjectImportRunId")
     private Long projectImportRunId;
 
-    @Column(name = "RMSModelDataSourceId")
-    private Integer rmsModelDataSourceId;
+    @Column(name = "RLDataSourceId")
+    private Long rlDataSourceId;
 
     @Column(name = "ProjectName")
     private String projectName;
@@ -56,7 +56,7 @@ public class ProjectEntity {
     private Boolean isMGA;
 
     @Column(name = "AssignedTo")
-    private Long assignedTo;
+    private String assignedTo;
 
     @Column(name = "CreationDate")
     private Date creationDate;

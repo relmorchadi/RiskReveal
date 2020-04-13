@@ -61,10 +61,10 @@ export default {
         field: 'occurrenceBasis',
         header: 'Occurrence Basis',
         width: '100px',
-        type: 'Ob',
+        type: 'text',
         sorting: '',
         filtered: true,
-        highlight: true,
+        highlight: false,
         visible: true,
         edit: false
       },/**

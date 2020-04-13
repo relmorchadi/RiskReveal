@@ -1,5 +1,6 @@
 package com.scor.rr.domain.dto;
 
+import com.scor.rr.domain.FinancialPerspective;
 import com.scor.rr.domain.riskLink.RLImportSelection;
 import com.scor.rr.domain.riskLink.RLImportTargetRAPSelection;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class RLImportSelectionDtoWithAnalysisInfo {
     private List<String> financialPerspectives;
     private Long rdmId;
     private String rdmName;
+    private List<ExpectedFinancialPerspective> expectedFinancialPerspectives;
 
     public RLImportSelectionDtoWithAnalysisInfo(RLImportSelection element) {
         this.rlId = element.getRlAnalysis().getRlId();

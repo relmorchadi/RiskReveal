@@ -63,11 +63,12 @@ public class CatRequestService {
         } else {
             clientName = data.insurNumber.toString();
         }
+        UserRrEntity userRrEntity = userRrRepository.findByWindowsUser(data.userID);
 
         ProjectEntity projectEntity = new ProjectEntity();
         projectEntity.setEntity(1);
         projectEntity.setCreationDate(date);
-        projectEntity.setCreatedBy(data.userFN + " " + data.userLN);
+        projectEntity.setCreatedBy(data.userLN + " " + data.userFN);
         projectEntity.setProjectName(data.uwAnalysisName); //FIXME: check with SHAUN
         projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, clientName, projectEntity);
 
@@ -80,8 +81,8 @@ public class CatRequestService {
                 } else {
                     projectConfigurationForeWriter.get().setCarStatus(CARStatus.CANC);
                 }
-                projectConfigurationForeWriter.get().setLastUpdateDate(date);
-                projectConfigurationForeWriter.get().setLastUpdateBy(data.userFN + " " + data.userLN); // SHOULD BE USER SYSTEM
+//                projectConfigurationForeWriter.get().setLastUpdateDate(date);
+//                projectConfigurationForeWriter.get().setLastUpdateBy(data.userFN + " " + data.userLN); // SHOULD BE USER SYSTEM
                 projectConfigurationForeWriterRepository.save(projectConfigurationForeWriter.get());
             }
         }
@@ -90,10 +91,10 @@ public class CatRequestService {
                 projectEntity.getProjectId(),
                 CARType.FAC.getCode(),
                 CARStatus.NEW,
-                null,
                 data.uwAnalysisName,
                 date,
-                data.userFN + " " + data.userLN, //FIXME: check with SHAUN: data.userFN + " " + data.userLN
+                userRrEntity == null ? null : userRrEntity.getUserId(),
+                data.userID,
                 null,
                 null));
 
@@ -103,7 +104,6 @@ public class CatRequestService {
 
         //FIXME: must define a Counter table to controll CAR ID
         projectConfigurationForeWriter.setCaRequestId("CAR-" + (CAR_ID_OFFSET + projectConfigurationForeWriter.getProjectConfigurationForeWriterId()));
-        UserRrEntity userRrEntity = userRrRepository.findByWindowsUser(data.userID);
         if (userRrEntity != null) {
             projectConfigurationForeWriter.setAssignedTo(userRrEntity.getUserId());
             projectConfigurationForeWriter.setCarStatus(CARStatus.ASGN);
@@ -125,14 +125,15 @@ public class CatRequestService {
                 clientName,
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
                 data.lob,
-                data.sector
+                data.sector,
+                data.uwAnalysisName
                 ));
 
 
         data.divisions.forEach(division -> projectConfigurationForeWriterDivisionRepository.save(new ProjectConfigurationForeWriterDivision(1,
                 projectConfigurationForeWriterContract.getProjectConfigurationForeWriterContractId(),
                 division.divisionNumber.toString(),
-                division.principalDivision.toString(),
+                division.principalDivision,
                 division.lob,
                 division.coverageType,
                 division.currency)));
@@ -186,14 +187,14 @@ public class CatRequestService {
         final String coverageType;
         final String lob;
         final Integer divisionNumber;
-        final Integer principalDivision;
+        final Boolean principalDivision;
 
         public CatRequestDivision(String currency, String coverageType, String lob, Integer divisionNumber, Integer principalDivision) {
             this.currency = currency;
             this.coverageType = coverageType;
             this.lob = lob;
             this.divisionNumber = divisionNumber;
-            this.principalDivision = principalDivision;
+            this.principalDivision = principalDivision > 0;
         }
     }
 }

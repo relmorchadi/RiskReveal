@@ -131,7 +131,6 @@ export class FacWidgetComponent extends BaseContainer implements OnInit {
   }
 
   openFacItem(event) {
-    console.log(event);
     this.store.dispatch(new workspaceActions.OpenWS({
       wsId: event.contractId,
       uwYear: event.uwYear,
