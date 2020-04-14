@@ -8,6 +8,7 @@ import com.scor.rr.domain.requests.ScopeAndCompleteness.OverrideSectionRequest;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.OverrideStructure;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.ScopeAndCompleteness.AccumulationPackageNotFoundException;
+import com.scor.rr.exceptions.ScopeAndCompleteness.WorkspaceNotFoundException;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageOverrideSectionRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageRepository;
 import com.scor.rr.repository.WorkspaceEntityRepository;
@@ -34,6 +35,8 @@ public class AccumulationPackageOverrideSectionService {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
         WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
 
+        if(ws == null ) throw new WorkspaceNotFoundException(request.getWorkspaceName(),request.getUwYear());
+
         AccumulationPackage accumulationPackage = accumulationPackageAttachedPLTService.getTheAccumulationPackage(request.getAccumulationPackageId(),ws.getWorkspaceId(),request.getProjectId());
 
         if(!request.getListOfOverrides().isEmpty()){
@@ -41,7 +44,7 @@ public class AccumulationPackageOverrideSectionService {
             for(OverrideStructure row: request.getListOfOverrides()){
                 AccumulationPackageOverrideSection overrideSection = new AccumulationPackageOverrideSection();
                 overrideSection.setAccumulationPackageId(accumulationPackage.getAccumulationPackageId());
-                overrideSection.setAccumulationPackageOverrideSectionId(row.getContractSectionId());
+                overrideSection.setContractSectionId(row.getContractSectionId());
                 overrideSection.setMinimumGrainRegionPerilCode(row.getMinimumGrainRegionPerilCode());
                 overrideSection.setAccumulationRAPCode(row.getAccumulationRAPCode());
                 overrideSection.setOverrideBasisCode(request.getOverrideBasisCode());
