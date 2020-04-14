@@ -5,7 +5,7 @@ import {Router} from "@angular/router";
 import {WorkspaceState} from "../../../store/states";
 import * as _ from "lodash";
 import {
-  LoadScopeCompletenessDataSuccess,
+  LoadScopeCompletenessData,
   SelectScopeProject, LoadScopePLTsData,
   AttachPLTsForScope
 } from "../../../store/actions";
@@ -100,6 +100,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
         })
       })
     })
+    console.log(this.selectedPLTs, this.selectedForAttachment)
   }
 
   initColumns() {
@@ -116,7 +117,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     if (this.workspaceType === 'fac') {
       if(this.projectType === 'FAC') {
         _.forEach(this.scopeContext, (item, index) => {
-          this.columns = [...this.columns, {field: '', type: 'boolean', width: '80px', visible: true, topHeader: `Division N°${index + 1}`, id: item.id, selection: 'single'}]
+          this.columns = [...this.columns, {field: '', type: 'boolean', width: '80px', visible: true, topHeader: `Division N°${index + 1}`, id: item.id, selection: 'single', index: index + 1}]
         });
       }
     } else {
@@ -148,7 +149,8 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     _.forEach(this.pendingData.regionPerils, item => {
       if(item.id === row.regionPerilCode) {
         _.forEach(item.targetRaps, itemTR => {
-          if (itemTR.id === row.accumulationRapCode) {
+          const override = _.get(itemTR, `override.${col.index}.overridden`, false);
+          if (itemTR.id === row.accumulationRapCode && !override) {
             if (_.includes(itemTR.scopeContext, col.id)) {
               attachable = true;
             }
@@ -160,32 +162,33 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   }
 
   attachableMulti(rowData) {
-    return _.includes(_.map(this.scopeContext, scope => this.attachable(rowData, scope)), true)
+    return _.includes(_.map(this.scopeContext, (scope, index) => this.attachable(rowData, {...scope, index: index + 1})), true)
   }
 
   filterData() {
     return this.showApplicablePlts ? _.filter(this.plts, item => {
-      return _.includes(_.map(this.scopeContext, scope => this.attachable(item, scope)), true);
+      return _.includes(_.map(this.scopeContext, (scope, index) => this.attachable(item, {...scope, index: index + 1})), true);
     }) : this.plts;
   }
 
   selectPLTByDiv(rowData, col, event) {
     this.selectedForAttachment[rowData.pltHeaderId + col.id] = event;
+    const scopeIndex = _.findIndex(this.scopeContext, (item: any) => item.id === col.id) + 1;
     if (event) {
-      this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: col.id}];
+      this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: col.id, scopeIndex: scopeIndex}];
     } else {
-      this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId === rowData.pltHeaderId && item.scope === col.id);
+      this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId !== rowData.pltHeaderId || item.scope !== col.id);
     }
   }
 
   selectPLTByRow(rowData, event) {
-    _.forEach(this.scopeContext, scope => {
-      if (this.attachable(rowData, scope)) {
+    _.forEach(this.scopeContext, (scope, index) => {
+      if (this.attachable(rowData, {...scope, index: index + 1})) {
         this.selectedForAttachment[rowData.pltHeaderId + scope.id] = event;
         if (event) {
-          this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: scope.id}];
+          this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: scope.id, scopeIndex: index + 1}];
         } else {
-          this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId === rowData.pltHeaderId && item.scope === scope.id);
+          this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId !== rowData.pltHeaderId || item.scope !== scope.id);
         }
       }
     });
@@ -193,10 +196,13 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
   checkedRow(rowData) {
     let checked = true;
-    _.forEach(this.scopeContext, scope => {
-      const attachable = _.get(this.selectedForAttachment, `${rowData.pltHeaderId}${scope.id}`, false);
-      if (!attachable) {
-        checked = false;
+    _.forEach(this.scopeContext, (scope, index) => {
+      const possibleToAttach = this.attachable(rowData, {...scope, index: index + 1});
+      if (possibleToAttach) {
+        const attachable = _.get(this.selectedForAttachment, `${rowData.pltHeaderId}${scope.id}`, false);
+        if (!attachable) {
+          checked = false;
+        }
       }
     });
     return checked;
