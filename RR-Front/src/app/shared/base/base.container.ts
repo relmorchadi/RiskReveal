@@ -46,6 +46,7 @@ export abstract class BaseContainer implements OnInit {
                 decimalThousandSeparator,
                 negativeFormat
               };
+              console.log(this.numberConfig);
               this.detectChanges();
             }
         );

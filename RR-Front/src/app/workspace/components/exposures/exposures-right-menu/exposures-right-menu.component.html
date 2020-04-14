@@ -4,6 +4,7 @@
   -->
 
 <div class="right-menu-container"
+     (clickOutside)="closeRightMenu()"
      [ngClass]="{'slideInRight':rightMenuConfig.visibility,'slideInLeft': !rightMenuConfig.visibility}">
     <div class="right-menu-header">
         <div class="right-menu-title">

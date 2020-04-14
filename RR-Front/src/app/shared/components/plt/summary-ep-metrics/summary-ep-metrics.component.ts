@@ -1,7 +1,17 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import {Message} from "../../../message";
 import * as _ from 'lodash';
 import EChartOption = echarts.EChartOption;
+import {GeneralConfigState} from "../../../../core/store/states";
+import {Store} from "@ngxs/store";
 
 @Component({
   selector: 'app-summary-ep-metrics',
@@ -54,10 +64,33 @@ export class SummaryEpMetricsComponent implements OnInit {
   @Input() chartOption: EChartOption;
   @Input() updateOption: EChartOption;
 
-  constructor() { }
+  numberConfig: {
+    numberOfDecimals,
+    decimalSeparator,
+    decimalThousandSeparator,
+    negativeFormat
+  }
+
+  constructor(private store: Store, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+    this.store
+        .select(GeneralConfigState.getNumberFormatConfig)
+        .subscribe(({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat }) => {
+              this.numberConfig = {
+                numberOfDecimals,
+                decimalSeparator,
+                decimalThousandSeparator,
+                negativeFormat
+              };
+              this.detectChanges();
+            }
+        );
+  }
 
+  detectChanges(){
+    if (!this.cdr['destroyed'])
+      this.cdr.detectChanges();
   }
 
   curveTypeSelectChange(curveTypes) {
