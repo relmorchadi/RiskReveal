@@ -346,7 +346,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
         .pipe(
             takeWhile(v => !_.isNil(v)),
-            take(2),
             this.unsubscribeOnDestroy
         ).subscribe( selectedProject => {
           this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
