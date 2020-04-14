@@ -1,7 +1,10 @@
 package com.scor.rr.rest.ScopeOfCompleteness.AccumulationPackage;
 
+import com.scor.rr.domain.Response.ScopeAndCompleteness.AccumulationPackageResponse;
+import com.scor.rr.domain.Response.ScopeAndCompleteness.DropDownInfo;
 import com.scor.rr.domain.Response.ScopeAndCompleteness.ScopeAndCompletenessResponse;
 import com.scor.rr.domain.Response.UserWidgetResponse;
+import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackage;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.ForeWriterExpectedScope;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.ProjectForewriterExpectedScope;
 import com.scor.rr.domain.requests.DashboardWidgetCreationRequest;
@@ -26,6 +29,18 @@ public class AccumulationPackageController {
     @GetMapping("getScopeOnly")
     public List<ScopeAndCompletenessResponse> getScopeOnlyData(@RequestParam("workspaceId") String workspaceId,@RequestParam("uwyear") int uwyear){
         return accumulationPackageService.getScopeOnly(workspaceId,uwyear);
+    }
+
+    @GetMapping("getAccumulationPackage")
+    public AccumulationPackageResponse getAccumulationPackage(@RequestParam("workspaceId") String workspaceId,
+                                                              @RequestParam("uwyear") int uwyear,
+                                                              @RequestParam("AccumulationPackageId") long accumulationPackageId) throws RRException{
+        return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId);
+    }
+
+    @GetMapping("getDropDownInformation")
+    public List<DropDownInfo> getDropDownInfo(@RequestParam("ProjectID") long projectId){
+        return accumulationPackageService.getDropDownDetails(projectId);
     }
 
 

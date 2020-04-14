@@ -81,7 +81,7 @@ public class InuringEdge {
         this.sourceNodeId = sourceNodeId;
     }
 
-    @Column(name = "SourceNodeTyp", nullable = false)
+    @Column(name = "SourceNodeType", nullable = false)
     public InuringNodeType getSourceNodeType() {
         return sourceNodeType;
     }
@@ -117,7 +117,7 @@ public class InuringEdge {
         this.outputPerspective = outputPerspective;
     }
 
-    @Column(name = "FinancialTreatment", nullable = false)
+    @Column(name = "OutputGroupingSign", nullable = false)
     public InuringFinancialTreatment getFinancialTreatment() {
         return financialTreatment;
     }

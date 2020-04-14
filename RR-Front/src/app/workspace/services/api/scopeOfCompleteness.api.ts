@@ -16,8 +16,16 @@ export class ScopeOfCompletenessApi {
         return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId}});
     }
 
+    getDataPending(AccumulationPackageId, uwyear, workspaceId) {
+        return this.http.get(`${this.api}AccumulationPackage/getAccumulationPackage`, { params: {AccumulationPackageId, uwyear, workspaceId}});
+    }
+
     getDataPricing(UWYear, WorkspaceName, projectId) {
         return this.http.get(`${this.api}PricedScopeAndCompleteness/getPricedScope`, { params: {UWYear, WorkspaceName, projectId}});
+    }
+
+    getDataAccumulation(ProjectID) {
+        return this.http.get(`${this.api}AccumulationPackage/getDropDownInformation`, { params: {ProjectID}});
     }
 
     getListOfPLTs(accumulationPackageId, projectId) {
@@ -41,6 +49,6 @@ export class ScopeOfCompletenessApi {
     }
 
     overrideDelete(overriddenSections) {
-        return this.http.delete(`${this.api}OverrideSection/override`, {params: {overriddenSections}, responseType: 'text' as 'json'})
+        return this.http.post(`${this.api}OverrideSection/deleteOverride`,  overriddenSections, {responseType: 'text' as 'json'});
     }
 }

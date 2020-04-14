@@ -1,10 +1,20 @@
-export class LoadScopeCompletenessDataSuccess {
+export class LoadScopeCompletenessData {
   static readonly type = '[ScopeCompleteness] Load Data Success';
   constructor(public payload?: any) {}
 }
 
-export class LoadScopeCompletenessPricingDataSuccess {
+export class LoadScopeCompletenessPricingData {
   static readonly type = '[ScopeCompleteness] Load Data Pricing Success';
+  constructor(public payload?: any) {}
+}
+
+export class LoadScopeCompletenessPendingData {
+  static readonly type = '[ScopeCompleteness] Load Data Pending Success';
+  constructor(public payload?: any) {}
+}
+
+export class LoadScopeCompletenessAccumulationInfo {
+  static readonly type = '[ScopeCompleteness] Load Data Accumulation Info';
   constructor(public payload?: any) {}
 }
 

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "ZZ_InuringFinalAttachedPLT")
+@Table(name = "InuringFinalAttachedPLT")
 public class    InuringFinalAttachedPLT {
 
     @Id

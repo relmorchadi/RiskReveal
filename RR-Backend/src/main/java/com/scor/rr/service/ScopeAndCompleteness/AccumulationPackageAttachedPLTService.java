@@ -2,6 +2,7 @@ package com.scor.rr.service.ScopeAndCompleteness;
 
 import com.scor.rr.domain.PltHeaderEntity;
 import com.scor.rr.domain.Response.ScopeAndCompleteness.*;
+import com.scor.rr.domain.WorkspaceEntity;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackage;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.AccumulationPackageAttachedPLT;
 import com.scor.rr.domain.entities.ScopeAndCompleteness.Views.PricedScopeAndCompletenessView;
@@ -9,11 +10,13 @@ import com.scor.rr.domain.requests.ScopeAndCompleteness.AttachPLTRequest;
 import com.scor.rr.domain.requests.ScopeAndCompleteness.PLTAttachingInfo;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.ScopeAndCompleteness.AccumulationPackageNotFoundException;
+import com.scor.rr.exceptions.ScopeAndCompleteness.WorkspaceNotFoundException;
 import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
 import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageAttachedPLTRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.AccumulationPackageRepository;
 import com.scor.rr.repository.ScopeAndCompleteness.PricedScopeAndCompletenessViewRepository;
+import com.scor.rr.repository.WorkspaceEntityRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,11 +38,18 @@ public class AccumulationPackageAttachedPLTService {
     private PricedScopeAndCompletenessViewRepository pricedScopeAndCompletenessViewRepository;
     @Autowired
     private AccumulationPackageOverrideSectionService accumulationPackageOverrideSectionService;
+    @Autowired
+    private WorkspaceEntityRepository workspaceEntityRepository;
 
     public AccumulationPackageResponse attachSelectedPlts(AttachPLTRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
+        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
+
+        if(ws == null ) throw new WorkspaceNotFoundException(request.getWorkspaceName(),request.getUwYear());
+
         if (!request.getPltList().isEmpty()) {
-            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(), request.getWorkspaceId());
+            AccumulationPackage accumulationPackage = getTheAccumulationPackage(request.getAccumulationPackageId(),ws.getWorkspaceId(),request.getProjectId());
+            accumulationPackageAttachedPLTRepository.deleteByAccumulationPackageId(request.getAccumulationPackageId());
             List<AccumulationPackageAttachedPLT> listToSave = new ArrayList<>();
             for (PLTAttachingInfo row : request.getPltList()) {
                 PricedScopeAndCompletenessView plt = pricedScopeAndCompletenessViewRepository.findByPLTHeaderId(row.getPltHeaderId());
@@ -88,7 +98,7 @@ public class AccumulationPackageAttachedPLTService {
         }
     }
 
-    public AccumulationPackage getTheAccumulationPackage(long accumulationPackageId, long workspaceId) throws RRException {
+    public AccumulationPackage getTheAccumulationPackage(long accumulationPackageId, long workspaceId,long projectId) throws RRException {
         if (accumulationPackageId != 0) {
             AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
             if (accumulationPackage == null) throw new AccumulationPackageNotFoundException(accumulationPackageId);
@@ -96,7 +106,7 @@ public class AccumulationPackageAttachedPLTService {
 
 
         } else {
-            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId));
+            return accumulationPackageRepository.saveAndFlush(new AccumulationPackage(workspaceId,projectId));
         }
     }
 
@@ -108,5 +118,6 @@ public class AccumulationPackageAttachedPLTService {
                 .map(exScope -> mapper.map(exScope, PopUpPLTsResponse.class))
                 .collect(Collectors.toList());
     }
+
 
 }
