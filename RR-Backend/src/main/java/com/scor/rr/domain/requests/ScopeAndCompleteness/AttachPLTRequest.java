@@ -10,7 +10,6 @@ public class AttachPLTRequest {
     private long projectId;
     private String  workspaceName;
     private int uwYear;
-    private long workspaceId;
     private long accumulationPackageId;
     private List<PLTAttachingInfo> pltList;
 }
