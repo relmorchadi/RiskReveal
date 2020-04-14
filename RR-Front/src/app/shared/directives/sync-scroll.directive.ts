@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnDestroy, OnChanges {
 
   @Input() classIdentifier;
+  @Input() expandCount;
 
   listener: any[];
 
@@ -24,7 +25,20 @@ export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnD
   }
 
   ngAfterViewChecked(): void {
+    this.sync()
+  }
 
+  ngAfterViewInit(): void {
+  }
+
+  syncScroll(source, target) {
+    source.addEventListener('scroll', ({srcElement: { scrollTop }}) => {
+      const t = new ElementRef(target);
+      t.nativeElement.scrollTop = scrollTop;
+    });
+  }
+
+  sync() {
     const nodes = this.el.nativeElement.querySelectorAll( `${this.classIdentifier ? '.'+this.classIdentifier : ''} .ui-table-scrollable-body`);
 
     if( nodes.length == 2 ) {
@@ -42,26 +56,18 @@ export class SyncScrollDirective implements AfterViewInit, AfterViewChecked, OnD
       this.syncScroll(node1, node2);
       this.syncScroll(node2, node1);
     }
-
-  }
-
-  ngAfterViewInit(): void {
-  }
-
-  syncScroll(source, target) {
-    source.addEventListener('scroll', ({srcElement: { scrollTop }}) => {
-      const t = new ElementRef(target);
-      t.nativeElement.scrollTop = scrollTop;
-    });
   }
 
   ngOnDestroy(): void {
+    console.log("destr")
     _.forEach(this.listener, node => {
       node.removeEventListener('scroll', () => {});
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    this.sync();
   }
 
 }

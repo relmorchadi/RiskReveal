@@ -169,8 +169,8 @@
                   <td *ngFor="let col of columns" (click)="selectFacDivison(rowData)"
                       [ngClass]="{'selected-item': rowData?.selected}"
                       [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                    <div style=" display: flex;" *ngIf="col.type === 'select'">
-                      <i class="icon-check_24px" *ngIf="rowData.principal"></i>
+                    <div style=" display: flex;justify-content: center;" *ngIf="col.type === 'select'">
+                      <i class="icon-check_24px" *ngIf="rowData.isPrincipalDivision"></i>
                     </div>
                     <div class="text-data"*ngIf="col.type === 'text'">
                       {{rowData[col.field]}}

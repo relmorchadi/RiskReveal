@@ -30,6 +30,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
   @Input() epMetrics: any;
   @Input() adjustments: any;
 
+  @Input() tableWidth: any;
+
   @Input() tableConfig: {
     view: 'adjustments' | 'analysis' | 'epMetrics',
     selectedCurveType: string,
@@ -41,7 +43,8 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
     filterData: any,
     sortData: any,
     isDeltaByAmount: boolean,
-    isExpandAll: boolean
+    isExpandAll: boolean,
+    expandCount: number
   };
 
   @Input() exchangeRates: any;
@@ -90,10 +93,6 @@ export class CalibrationNewTableComponent implements OnInit, AfterViewInit, Afte
 
   ngAfterViewChecked(): void {
 
-  }
-
-  statusFlilerCheckbox(event: any, type: string) {
-    this.selectedStatusFilter = {...this.selectedStatusFilter, [type]: event};
   }
 
   unexpandColumns() {
