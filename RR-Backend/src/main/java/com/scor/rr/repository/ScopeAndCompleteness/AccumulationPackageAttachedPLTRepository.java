@@ -14,6 +14,9 @@ import java.util.Map;
 public interface AccumulationPackageAttachedPLTRepository extends JpaRepository<AccumulationPackageAttachedPLT,Long> {
 
     List<AccumulationPackageAttachedPLT> findByAccumulationPackageId(long id);
+
+    @Transactional
+    @Modifying
     void deleteByAccumulationPackageId(long id);
 
     @Transactional
