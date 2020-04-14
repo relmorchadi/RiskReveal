@@ -1,8 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import {Store} from "@ngxs/store";
-import {GeneralConfigState} from "../../core/store/states";
-import {DecimalPipe} from "@angular/common";
-import {map} from "rxjs/operators";
+import {FormatNumbersService} from "../services/format-numbers.service";
+import * as _ from 'lodash';
 
 @Pipe({
   name: 'rrNumber',
@@ -10,15 +9,10 @@ import {map} from "rxjs/operators";
 })
 export class RrNumberPipe implements PipeTransform {
 
-  constructor(private store: Store, private numberPipe: DecimalPipe) {}
+  constructor(private store: Store, private formatNumber: FormatNumbersService) {}
 
-  transform(number: any, isShort: any): any {
-    return this.store.select(GeneralConfigState.getNumberFormatConfig)
-        .pipe(
-            map(({ numberOfDecimals, decimalSeparator, decimalThousandSeparator, negativeFormat, numberHistory }) => {
-              return this.numberPipe.transform(number, `1.0-${numberOfDecimals}`);
-            })
-        );
+  transform(number: any, config: any = { decimalThousandSeparator: ',', decimalSeparator: '.', numberOfDecimals: 2, negativeFormat: 'simple'}): any {
+    return _.get(this.formatNumber.getNumberConfig(number, config.decimalThousandSeparator, config.decimalSeparator, config.numberOfDecimals, config.negativeFormat), 'newNumber', 0);
   }
 
 }
