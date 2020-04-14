@@ -37,7 +37,7 @@ CREATE TABLE [dbo].[SourceExposureSummaryItem](/***** remove ZZ *****/
 	[ExposureCurrencyUSDRate] numeric(20,8) NULL,/***** change type in code *****/
 	[FinancialPerspective] [varchar](5) NULL,
 	[LocationCount] numeric(20,8) NULL,/***** change type in code *****/
-	[Peril] [varchar](4) NULL,
+	[Peril] [varchar](10) NULL,
 	[PortfolioId] [bigint] NULL,
 	[PortfolioType] [varchar](10) NULL,
 	[FxRateVintageDate] [datetime2](7) NULL,
@@ -52,9 +52,9 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 GO
 
-ALTER TABLE [dbo].[SourceExposureSummaryItem]  WITH CHECK ADD  CONSTRAINT [FKEntity_SourceExposureSummaryItem] FOREIGN KEY([Entity])
+/*ALTER TABLE [dbo].[SourceExposureSummaryItem]  WITH CHECK ADD  CONSTRAINT [FKEntity_SourceExposureSummaryItem] FOREIGN KEY([Entity])
 REFERENCES [dbo].[ENTITY] ([EntityId])
-GO
+GO*/
 
 ALTER TABLE [dbo].[SourceExposureSummaryItem]  WITH CHECK ADD  CONSTRAINT [FKGlobalExposureViewSummaryId_SourceExposureSummaryItem] FOREIGN KEY([GlobalExposureViewSummaryId])
 REFERENCES [dbo].[GlobalExposureViewSummary] ([GlobalExposureViewSummaryId])

@@ -16,7 +16,7 @@ public class ModelPortfolioEntity {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ModelPortfolioId")
     private Long modelPortfolioId;
     @Column(name = "Entity")

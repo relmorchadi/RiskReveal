@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[ExposureSummaryData](
 	[FinancialPerspective] [varchar](5) NULL,
 	[LocationCount] numeric(19,0) NULL, /***** change type in code *****/
 	[Metric] [varchar](10) NULL,
-	[PerilCode] [varchar](4) NULL,
+	[PerilCode] [varchar](10) NULL,
 	[SourcePortfolioId] numeric(19,0) NULL, /***** change type in code *****/
 	[SourcePortfolioType] [varchar](10) NULL, /***** change name in code *****/
 	[RateDate] [datetime2](7) NULL,
@@ -71,7 +71,7 @@ GO
 
 
 
-ALTER TABLE [dbo].[ExposureSummaryData]  WITH CHECK ADD  CONSTRAINT [FKEntity_ExposureSummaryData] FOREIGN KEY([Entity])
+/*ALTER TABLE [dbo].[ExposureSummaryData]  WITH CHECK ADD  CONSTRAINT [FKEntity_ExposureSummaryData] FOREIGN KEY([Entity])
 REFERENCES [dbo].[ENTITY] ([EntityId])
-GO
+GO*/
 

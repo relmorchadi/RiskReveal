@@ -54,10 +54,10 @@ alter table dbo.ModelPortfolio
       references dbo.Project (ProjectId) ON DELETE CASCADE
 go
 
-alter table dbo.ModelPortfolio
+/*alter table dbo.ModelPortfolio
    add constraint FKEntity_Portfolio foreign key (Entity)
       references dbo.Entity (EntityId)
-go
+go*/
 
 alter table dbo.ModelPortfolio
    add constraint FKProjectImportRunId_Portfolio foreign key (ProjectImportRunId)

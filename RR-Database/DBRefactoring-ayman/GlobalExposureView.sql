@@ -37,11 +37,11 @@ GO
 ALTER TABLE [dbo].[GlobalExposureView] CHECK CONSTRAINT [FKProjectId_GlobalExposureView]
 GO
 
-ALTER TABLE [dbo].[GlobalExposureView]  WITH CHECK ADD  CONSTRAINT [FKEntity_GlobalExposureView] FOREIGN KEY([Entity])
+/*ALTER TABLE [dbo].[GlobalExposureView]  WITH CHECK ADD  CONSTRAINT [FKEntity_GlobalExposureView] FOREIGN KEY([Entity])
 REFERENCES [dbo].[ENTITY] ([EntityId])
 GO
 
 ALTER TABLE [dbo].[GlobalExposureView] CHECK CONSTRAINT [FKEntity_GlobalExposureView]
-GO
+GO*/
 
 

@@ -1,6 +1,9 @@
 USE [RiskRevealPOC]
 GO
 
+/****** Object:  Table [dbo].[SourceExposureSummaryItem]    Script Date: 4/8/2020 2:25:29 PM ******/
+DROP TABLE [dbo].[GlobalExposureViewSummary]
+GO
 /****** Object:  Table [dbo].[GlobalViewSummary]    Script Date: 4/8/2020 12:57:19 PM ******/
 SET ANSI_NULLS ON
 GO
@@ -32,9 +35,9 @@ GO
 ALTER TABLE [dbo].[GlobalExposureViewSummary] CHECK CONSTRAINT [FKGlobalExposureViewId_GlobalExposureViewSummary]
 GO
 
-ALTER TABLE [dbo].[GlobalExposureViewSummary]  WITH CHECK ADD  CONSTRAINT [FKEntity_GlobalExposureViewSummary] FOREIGN KEY([Entity])
+/*ALTER TABLE [dbo].[GlobalExposureViewSummary]  WITH CHECK ADD  CONSTRAINT [FKEntity_GlobalExposureViewSummary] FOREIGN KEY([Entity])
 REFERENCES [dbo].[ENTITY] ([EntityId])
-GO
+GO*/
 
 
 
