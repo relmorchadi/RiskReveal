@@ -57,8 +57,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     isDeltaByAmount: boolean
     filterData: any,
     sortData: any,
-    isExpandAll: boolean
+    isExpandAll: boolean,
+    expandCount: number
   };
+
+  tableWidth: number;
+
   constants: {
     financialUnits: string[],
     curveTypes: string[],
@@ -145,8 +149,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       selectedCurrency: null,
       filterData: {},
       sortData: {},
-      isExpandAll: false
+      isExpandAll: false,
+      expandCount: 0
     };
+    this.tableWidth = 0;
     this.exchangeRates= {};
 
     this.columnsConfig = {
@@ -372,6 +378,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       this.columnsConfig= config;
       this.calibrationTableService.updateColumnsConfigCache(config);
+
+      this.tableWidth = _.reduce([...this.columnsConfig.columns, ...this.columnsConfig.frozenColumns], (acc, curr) => curr ? acc + _.toNumber(curr.width) : acc, 0);
+      console.log("table width:", this.tableWidth);
 
       this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
       this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');
@@ -665,16 +674,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   expandColumns() {
     this.tableConfig = {
       ...this.tableConfig,
-      isExpanded: true
+      isExpanded: true,
+      expandCount: ++this.tableConfig.expandCount
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, true);
   }
 
   expandColumnsOff() {
-
     this.tableConfig = {
       ...this.tableConfig,
-      isExpanded: false
+      isExpanded: false,
+      expandCount: ++this.tableConfig.expandCount
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, false);
   }

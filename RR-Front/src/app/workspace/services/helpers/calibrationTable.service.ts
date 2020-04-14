@@ -100,7 +100,6 @@ export class CalibrationTableService {
       const columns = ( isExpanded ? [..._.uniqBy([...head, ...CalibrationTableService.frozenCols, tail], 'field'), ...this.epMetrics] : this.epMetrics );
       const columnsLength = columns ? columns.length : null;
 
-      console.log(columns);
       return ({
         frozenWidth,
         frozenColumns,
@@ -144,7 +143,7 @@ export class CalibrationTableService {
       this.updateColumnsConfig(tmp);
     } catch(e) {
       this.updateColumnsConfig({
-        frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr), 0) + 'px',
+        frozenWidth: _.reduce(CalibrationTableService.frozenCols, (acc, curr) => acc + _.toNumber(curr.width), 0) + 'px',
         frozenColumns: CalibrationTableService.frozenCols,
         columns: this.analysis,
         columnsLength: CalibrationTableService.frozenCols.length

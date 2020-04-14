@@ -1,4 +1,4 @@
-<div style="width: 100%" #dtContainer >
+<div [style.width]="tableWidth" #dtContainer>
    <p-table
           [dataKey]="'pltId'"
           [value]="data | filterGroupedPlts : tableConfig.filterData | sortGroupedPlts : tableConfig.sortData"
@@ -9,12 +9,13 @@
           [frozenWidth]="columnsConfig?.frozenWidth"
           [resizableColumns]="true"
           [scrollable]="true"
-          [scrollHeight]="'calc( 100vh - 466px )'"
+          [scrollHeight]="'calc( 100vh - 480px )'"
           [columnResizeMode]="'expand'"
           (onColResize)="onColumnResize($event)"
           syncScroll
           [class]="'calibration-table'"
           [classIdentifier]="'calibration-table'"
+          [expandCount]="tableConfig.expandCount"
           #dt
   >
 
