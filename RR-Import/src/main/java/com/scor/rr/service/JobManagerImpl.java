@@ -15,7 +15,6 @@ import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.repository.TaskRepository;
 import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -151,7 +150,7 @@ public class JobManagerImpl extends JobManagerAbstraction {
                         t.getSubmittedDate(), t.getStartedDate(), t.getFinishedDate(), 0);
                 tasks.add(task);
             }
-            JobDto jobDto = new JobDto(j.getJobId(), j.getSubmittedByUser(), j.getSubmittedDate(),
+            JobDto jobDto = new JobDto(j.getJobId(), j.getUserId(), j.getSubmittedDate(),
                     j.getPriority(), j.getStatus(), j.getStartedDate(), j.getFinishedDate(), j.getJobTypeCode(), tasks);
             jobs.add(jobDto);
         }

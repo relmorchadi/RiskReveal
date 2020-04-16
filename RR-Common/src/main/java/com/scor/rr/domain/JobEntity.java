@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.scor.rr.domain.enums.JobType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -21,14 +24,10 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "JobId")
     private Long jobId;
-    @Column(name = "SubmittedByUser")
-    private Long submittedByUser;
     @Column(name = "SubmittedDate")
     private Date submittedDate;
     @Column(name = "JobCode")
     private String jobCode;
-    @Column(name = "JobParams")
-    private String jobParams;
     @Column(name = "Priority")
     private Integer priority;
     @Column(name = "Status")
@@ -48,4 +47,8 @@ public class JobEntity {
     @OneToMany(mappedBy = "job", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<TaskEntity> tasks;
+
+    @OneToMany(mappedBy = "jobId", fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<JobParamsEntity> params;
 }

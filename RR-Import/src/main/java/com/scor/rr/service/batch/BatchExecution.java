@@ -1,8 +1,6 @@
 package com.scor.rr.service.batch;
 
 import com.google.common.base.Joiner;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.ImportLossDataParams;
@@ -21,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -157,18 +155,23 @@ public class BatchExecution {
         return true;
     }
 
+    @Transactional(transactionManager = "theTransactionManager")
     public void submitPendingAndRunningTasksToTheQueueAtStartUp() {
         List<JobEntity> jobs = jobEntityRepository.findAllByStatusAndDate();
 
         for (JobEntity job : jobs) {
+            Map<String, String> params = new HashMap<>();
+
+            job.getParams().forEach(e -> {
+                if (!e.getParameterName().equalsIgnoreCase("sourceResultIdsInput") && !e.getParameterName().equalsIgnoreCase("rlPortfolioSelectionIds"))
+                    params.put(e.getParameterName(), e.getParameterValue());
+            });
+
             for (TaskEntity task : job.getTasks().stream()
                     .filter(t -> t.getStatus().equalsIgnoreCase(JobStatus.PENDING.getCode()) || t.getStatus().equalsIgnoreCase(JobStatus.RUNNING.getCode()))
                     .collect(Collectors.toList())) {
-                Gson gson = new Gson();
-                Type paramType = new TypeToken<Map<String, String>>() {
-                }.getType();
-                Map<String, String> params = gson.fromJson(task.getTaskParams(), paramType);
 
+                task.getParams().forEach(e -> params.put(e.getParameterName(), e.getParameterValue()));
                 this.submitJobsAndTasksToQueueAfterShutDown(params, task);
             }
         }
@@ -222,7 +225,8 @@ public class BatchExecution {
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
         String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
         String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ? contractSearchResult.getCedantName() : "";
-        String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "1";
+        String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "";
+        String workspaceName = contractSearchResult != null ? contractSearchResult.getWorkspaceName() : "";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
         String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
@@ -254,6 +258,7 @@ public class BatchExecution {
         map.put("prefix", prefix);
         map.put("clientName", clientName);
         map.put("clientId", clientId);
+        map.put("workspaceName", workspaceName);
         map.put("contractId", workspaceCode); // use code instead of contract Id
         map.put("division", division);
         map.put("uwYear", uwYear);
@@ -287,8 +292,14 @@ public class BatchExecution {
                 Map<String, String> jobParams = new HashMap<>(params);
                 Joiner joiner = Joiner.on("; ").skipNulls();
 
-                jobParams.put("sourceResultIdsInput", joiner.join(";", rlImportSelections));
-                jobParams.put("rlPortfolioSelectionIds", joiner.join(";", rlPortfolioSelections));
+                jobParams.put("sourceResultIdsInput", rlImportSelections.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(";")));
+
+                jobParams.put("rlPortfolioSelectionIds", rlPortfolioSelections.stream()
+                        .map(Object::toString)
+                        .collect(Collectors.joining(";")));
+
                 JobEntity job = jobManager.createJob(jobParams, JobPriority.MEDIUM.getCode(), userId);
 
                 JobParametersBuilder builder = new JobParametersBuilder();
