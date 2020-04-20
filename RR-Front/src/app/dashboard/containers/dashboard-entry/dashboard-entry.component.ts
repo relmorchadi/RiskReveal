@@ -433,6 +433,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       userDashboardId: tab.id,
       visible: tab.visible
     };
+    console.log('dash updated');
     this.updateDashboardAction({dashboardId: tab.id,
       updatedDashboard: _.merge({}, dashboard, newObject)});
     if (option === 'delete') {
@@ -459,7 +460,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   changeDashboardName(name) {
     if (!_.isEmpty(_.trim(name))) {
-      this.updateDash(this.selectedDashboard, {dashboardName: name});
+      _.debounce(() => {
+        this.updateDash(this.selectedDashboard, {dashboardName: name})
+      }, 500);
       this.selectedDashboard.name = name;
     } else {
       this.notificationService.createNotification('Information',

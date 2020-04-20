@@ -28,7 +28,7 @@ export class ScopeCompletenessService {
       if (scope === 'scopeContext') {
         draft.content[wsIdentifier].scopeOfCompleteness.scopeContext = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.scopeContext, payload.mergedData)
       } else {
-        draft.content[wsIdentifier].scopeOfCompleteness = _.merge(draft.content[wsIdentifier].scopeOfCompleteness, payload);
+        draft.content[wsIdentifier].scopeOfCompleteness.override = _.merge(draft.content[wsIdentifier].scopeOfCompleteness.override, payload);
       }
     }))
   }
@@ -112,7 +112,7 @@ export class ScopeCompletenessService {
     const {wsIdentifier} = state.currentTab;
     const {uwYear, wsId} = state.content[wsIdentifier];
     const {accumulationPackageId} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
-    const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data
+    const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data;
     return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId).pipe(
         tap((data: any) => {
           const overriddenData = data.overriddenSections;

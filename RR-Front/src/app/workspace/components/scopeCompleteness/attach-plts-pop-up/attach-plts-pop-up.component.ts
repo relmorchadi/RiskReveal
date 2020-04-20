@@ -23,6 +23,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
   selectedForAttachment: any = {};
   showApplicablePlts = false;
+  selectedProject: any;
   workspaceType: any;
   selectedPLTs: any = [];
   scopeContext;
@@ -73,8 +74,10 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
-    this.currentWs$.pipe().subscribe(value => {
+    this.currentWs$.pipe().subscribe((value: any) => {
       this.currentWs =  value;
+      this.wsIdentifier = value.wsId + '-' + value.uwYear;
+      this.selectedProject = _.find(value.projects, item => item.selected);
       this.workspaceType = _.get(value, 'workspaceType', 'fac');
       this.detectChanges();
     });
@@ -90,6 +93,9 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   }
 
   initAttachedPLTs() {
+    if (this.selectedProject !== undefined) {
+      this.dispatch(new SelectScopeProject({projectId: this.selectedProject.projectId}));
+    }
     this.selectedPLTs = [];
     this.selectedForAttachment = {};
     _.forEach(this.pendingData.regionPerils, item => {
@@ -99,8 +105,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
           this.selectedPLTs = [...this.selectedPLTs, plt];
         })
       })
-    })
-    console.log(this.selectedPLTs, this.selectedForAttachment)
+    });
   }
 
   initColumns() {
