@@ -26,8 +26,6 @@ public class JobEntity {
     private Long jobId;
     @Column(name = "SubmittedDate")
     private Date submittedDate;
-    @Column(name = "JobCode")
-    private String jobCode;
     @Column(name = "Priority")
     private Integer priority;
     @Column(name = "Status")
