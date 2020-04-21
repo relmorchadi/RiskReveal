@@ -17,7 +17,7 @@ public class UserDashboardWidget {
     @Column(name = "UserDashboardId")
     private long userDashboardId;
 
-    @Column(name = "WidgetId")
+    @Column(name = "DashboardWidgetId")
     private long widgetId;
 
     @Column(name = "UserAssignedName")

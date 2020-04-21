@@ -11,7 +11,7 @@ public class DashboardWidget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "WidgetId", nullable = false)
+    @Column(name = "DashboardWidgetId", nullable = false)
     private long widgetId;
 
     @Column(name = "WidgetName")
@@ -20,7 +20,7 @@ public class DashboardWidget {
     @Column(name = "Entity")
     private int entity;
 
-    @Column(name = "WidgetType")
+    @Column(name = "DashboardWidgetType")
     private String widgetType;
 
     @Column(name = "WidgetDefaultDisplayName")
