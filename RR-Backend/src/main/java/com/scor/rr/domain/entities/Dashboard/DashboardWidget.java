@@ -17,6 +17,9 @@ public class DashboardWidget {
     @Column(name = "WidgetName")
     private String widgetName;
 
+    @Column(name = "Entity")
+    private int entity;
+
     @Column(name = "WidgetType")
     private String widgetType;
 
