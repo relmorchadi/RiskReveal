@@ -610,7 +610,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.selectedWorkspace = event;
 
-    console.log(event);
+
     this.updateTableAndTagsInputs('wsId', event.workspaceContextCode);
     this.updateTableAndTagsInputs('uwYear', event.uwYear);
   }
@@ -623,7 +623,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
 
-    console.log('ok')
+
 
     if (this.selectionStep == 'project') {
 /*      this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
@@ -771,7 +771,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       return;
     }
     this.browesing=false;
-    console.log('ook');
+
     this.keywordFormGroup.get('keyword')
       .valueChanges
       .pipe(debounceTime(400))
@@ -949,7 +949,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onSortChange($event: any) {
-    console.log($event);
+
     this.setInputs('sortData', $event);
     this._loadData();
   }
@@ -959,7 +959,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   tableActionDispatcher(action: Message) {
-    console.log(action.type);
+
     switch (action.type) {
       case tableStore.filterData:
         this.updateTable('filterData', action.payload);
@@ -1098,16 +1098,16 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.updateLeftMenuInputs('systemTagsCount', newSysTagsCount);
   }
   openColumnManager() {
-    console.log('opening columns manager');
+
     this.isVisible = false;
     this.isManageColumnsVisible = true;
     this.afterColumnsManagement = true;
   }
   handleManageColumnsActions(action) {
-    console.log(action);
-    console.log(this.browesing ,this.selectionStep );
+
+
     setTimeout(() => {
-      console.log(this.browesing ,this.selectionStep );
+
     }, 1200)
 
     switch (action.type) {
@@ -1122,8 +1122,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         ];
         if(this.browesing && this.selectionStep == 'plt') {
           this.setInputs('pltColumns', action.payload);
-          console.log(action.payload);
-          console.log(this.Inputs.pltColumns);
+
+
         }
         else {
           if(this.marketChannel === 'FAC') {

@@ -137,6 +137,7 @@ public class PltHeaderEntity {
     public PltHeaderEntity(PltHeaderEntity other) {
         this.pltType = other.pltType;
         this.isLocked = other.isLocked;
+        this.perilCode = other.perilCode;
         this.pltSimulationPeriods = other.pltSimulationPeriods;
         this.generatedFromDefaultAdjustment = other.generatedFromDefaultAdjustment;
         this.currencyCode = other.getCurrencyCode();

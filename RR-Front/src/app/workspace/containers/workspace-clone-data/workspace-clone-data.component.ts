@@ -13,6 +13,7 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/api/workspace.api";
 import {$e} from "codelyzer/angular/styles/chars";
+import {CloneDataApi} from "../../services/api/cloneData.api";
 
 interface SourceData {
   plts: any[];
@@ -35,6 +36,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     private prn: PreviousNavigationService,
     private _fb: FormBuilder,
     private wsApi: WsApi,
+    private cloneDataApi: CloneDataApi,
     private actions$: Actions,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
@@ -127,7 +129,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       projectStep: [-1],
       projectName: [''],
       projectDescription: [''],
-      selectedProjectIndex: [-1, Validators.required],
+      selectedProjectId: [-1, Validators.required],
       from: {
         detail: '',
         plts: [],
@@ -159,6 +161,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     ).subscribe(([{projects}]: any) => {
       this.listOfProjects = projects;
       this.detectChanges();
+      console.log(projects);
     });
   }
 
@@ -215,20 +218,21 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       switch (step) {
         case -1:
         case 1:
+          console.log('heeeeere');
           this._projectName.clearValidators();
           this._projectName.reset();
           this._projectDescription.clearValidators();
           this._projectDescription.reset();
           if (step === 1) {
-            this._selectedProjectIndex.setValidators([this.selectedProjectValidator()]);
+            this._selectedProjectId.setValidators([this.selectedProjectValidator()]);
           } else {
-            this._selectedProjectIndex.clearValidators();
+            this._selectedProjectId.clearValidators();
           }
           break;
         case 0:
           this._projectName.setValidators([Validators.required]);
           this._projectDescription.setValidators([Validators.required]);
-          this._selectedProjectIndex.clearValidators();
+          this._selectedProjectId.clearValidators();
           break;
         default:
           console.log("form group");
@@ -367,7 +371,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   setSelectedWs(currentSourceOfItems: string, $event: any) {
-    console.log('ev' , $event)
+
     if (currentSourceOfItems == 'from') {
       this.patchProjectForm('from', {
         wsId: $event.workspaceContextCode,
@@ -382,6 +386,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         detail: $event.client + ' | ' + $event.workspaceName + ' | ' + $event.uwYear + ' | ' + $event.workspaceContextCode
       })
     }
+
   }
 
   summaryCache = {
@@ -439,8 +444,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.patchProjectForm('to', {...this._to.value, plts: $event});
     }
 
-    console.log(this.getFormValueByKey('from').plts);
-    console.log(currentSourceOfItems);
+
+
     if (this.getFormValueByKey('from').plts.length > 0) {
       this.summaryCache['Pre-Inured PLTs'] = {
         ...this.summaryCache['Pre-Inured PLTs'],
@@ -562,8 +567,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     return this.projectsForm.get('to');
   }
 
-  get _selectedProjectIndex(): AbstractControl {
-    return this.projectsForm.get('selectedProjectIndex');
+  get _selectedProjectId(): AbstractControl {
+    return this.projectsForm.get('selectedProjectId');
   }
 
   selectedProjectValidator = (): ValidatorFn => (control: AbstractControl): { [key: string]: any } | null => control.value >= 0 ? null : ({noSelectedProject: {value: control.value}})
@@ -574,12 +579,51 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   clone() {
+    let body = {
+      pltIds: this.getFormValueByKey('from').plts,
+      cloningType: '',
+      newProjectName: '',
+      newProjectDescription: '',
+      existingProjectId: '',
+      targetWorkspaceContextCode: this._to.value.wsId,
+      targetWorkspaceUwYear: this._to.value.uwYear
+    };
+
+
+    console.log (this.projectsForm.value.projectStep);
+    switch (this.projectsForm.value.projectStep) {
+      case -1:
+        body = {
+          ...body,
+          cloningType: 'KEEP_PROJECT_NAME'
+        };
+        break;
+      case 0:
+        body = {
+          ...body,
+          cloningType: 'NEW_PROJECT',
+          newProjectName: this.projectsForm.value.projectName,
+          newProjectDescription: this.projectsForm.value.projectDescription
+        };
+        break;
+      case 1:
+        body = {
+          ...body,
+          cloningType: 'EXISTING_PROJECT',
+          existingProjectId: this.projectsForm.value.selectedProjectId
+        };
+        break;
+    }
+    console.log(body);
+    console.log(this.projectsForm);
+    this.cloneDataApi.cloneData(body).subscribe(r => console.log(r));
+
     if (this._projectStep.value === 0) {
       this._projectName.markAsDirty();
       this._projectDescription.markAsDirty();
     }
     if (this._projectStep.value === 1) {
-      this._selectedProjectIndex.markAsDirty();
+      this._selectedProjectId.markAsDirty();
     }
   }
 
