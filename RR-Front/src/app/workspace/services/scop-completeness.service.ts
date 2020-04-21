@@ -91,7 +91,7 @@ export class ScopeCompletenessService {
             tap((data: any) => {
               ctx.patchState(produce(ctx.getState(), draft => {
                 const {regionPerils, targetRaps, scopeContext} = this._formatData(data.scopeObject);
-                const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId}));
+                const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId, scopeIndex: [item.division]}));
                 let {newRegionPerils, newTargetRaps} = this._attachPLT(listOfPLTs, regionPerils, targetRaps);
                 draft.content[wsIdentifier].scopeOfCompleteness.data = {
                   regionPerils: newRegionPerils,
@@ -118,13 +118,25 @@ export class ScopeCompletenessService {
           const overriddenData = data.overriddenSections;
           const {regionPerils, targetRaps} = this._formatData(data.scopeObject);
           const {scopeDataRP, scopeDataTR} = this._overrideData(overriddenData, regionPerils, targetRaps);
+          let mergedPltList = [];
 
           const attachedPLTs = _.map(data.attachedPLTs, item => {
             const scopeIndex =  _.toNumber(item.contractSectionId);
             return {...item.attachedPLT, scopeIndex: scopeIndex, scope: scopeContext[scopeIndex - 1].id, pltHeaderId: item.attachedPLT.pltheaderId}
           });
 
-          const {newRegionPerils, newTargetRaps} = this._attachPLT(attachedPLTs, scopeDataRP, scopeDataTR);
+          _.forEach(attachedPLTs, plt => {
+            if (_.includes(_.map(attachedPLTs, item => item.pltHeaderId), plt.pltHeaderId)) {
+              mergedPltList = [...mergedPltList, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
+            } else {
+              const pltIndex = _.findIndex(mergedPltList, item => item.pltHeaderId === plt.pltHeaderId);
+              _.merge(mergedPltList, {[pltIndex]: {...mergedPltList[pltIndex], scope: [...mergedPltList[pltIndex].scope, plt.scope],
+                  scopeIndex: [...mergedPltList[pltIndex].scopeIndex, plt.scopeIndex]
+                }})
+            }
+          });
+
+          const {newRegionPerils, newTargetRaps} = this._attachPLT(mergedPltList, scopeDataRP, scopeDataTR);
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
               ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
@@ -293,6 +305,19 @@ export class ScopeCompletenessService {
       uwYear: ws.uwYear,
     };
 
+    let listOFImportedPLTs = [];
+
+    _.forEach(plts, plt => {
+      const alreadyAdded = _.includes(_.map(listOFImportedPLTs, item => item.pltHeaderId), plt.pltHeaderId);
+      if (alreadyAdded) {
+        const pltIndex = _.findIndex(listOFImportedPLTs, item => item.pltHeaderId === plt.pltHeaderId);
+        listOFImportedPLTs = _.merge(listOFImportedPLTs, {[pltIndex]: {...listOFImportedPLTs[pltIndex], scope: [...listOFImportedPLTs[pltIndex].scope, plt.scope],
+          scopeIndex: [...listOFImportedPLTs[pltIndex].scopeIndex, plt.scopeIndex]}})
+      } else {
+        listOFImportedPLTs = [...listOFImportedPLTs, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
+      }
+    });
+
     return this.scopeApi.attachePLTCreate(sendData).pipe(
         tap(data => {
           ctx.patchState(produce(ctx.getState(), draft => {
@@ -306,7 +331,7 @@ export class ScopeCompletenessService {
               ...item, regionPerils: _.map(item.regionPerils, itemPR => ({...itemPR, pltsAttached: []}))
             }));
 
-            _.forEach(plts, plt => {
+            _.forEach(listOFImportedPLTs, plt => {
               _.forEach(regionPeril, item => {
                 if (item.id === plt.regionPerilCode) {
                   const regionIndex = _.findIndex(regionPeril, rp => rp.id === item.id);

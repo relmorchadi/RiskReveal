@@ -101,8 +101,12 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     _.forEach(this.pendingData.regionPerils, item => {
       _.forEach(item.targetRaps, itemTR => {
         _.forEach(_.toArray(itemTR.pltsAttached), plt => {
-          this.selectedForAttachment[plt.pltHeaderId + plt.scope] = true;
-          this.selectedPLTs = [...this.selectedPLTs, plt];
+          _.forEach(plt.scope, pltScope => {
+            const pltScopeIndex = _.findIndex(this.scopeContext, (scope: any) => scope.id === pltScope) + 1;
+            this.selectedForAttachment[plt.pltHeaderId + pltScope] = true;
+            this.selectedPLTs = [...this.selectedPLTs, {...plt, scopeIndex: pltScopeIndex, scope: pltScope}];
+            console.log(this.selectedPLTs);
+          });
         })
       })
     });

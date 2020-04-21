@@ -1,5 +1,5 @@
 <div>
-  <p-table [columns]="columns" [value]="sortBy == 'RAP / Minimum Grain' ? dataShown()?.targetRaps : dataShown()?.regionPerils" scrollHeight="340px"
+  <p-table [columns]="columns" [value]="sortBy == 'RAP / Minimum Grain' ? dataShown()?.targetRaps : dataShown()?.regionPerils" scrollHeight="440px"
            dataKey="id" [expandedRowKeys]="sortBy == 'RAP / Minimum Grain' ? targetCodes : regionCodes" scrollable="true">
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -125,7 +125,7 @@
 
             <ng-container *ngIf="!removeOverrideAccess(rowData, null) || !removeOverrideCapability(rowData, i, 'parent')">
 
-              <div *ngIf="checkExpected(rowData, col, i)  == 'checked'" class="icon-holder">
+              <div *ngIf="checkExpected(rowData, col, i) == 'checked'" class="icon-holder">
                 <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                   <i class="icon-reorder_24px" style="color: lightgray"></i>
                   <i class="icon-plus"></i>
@@ -135,7 +135,7 @@
                 No Qualifying PLTs in Workspace
               </ng-template>
 
-              <div *ngIf="checkExpected(rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
+              <div *ngIf="checkExpected(rowData, col, i) == 'dispoWs'" class="icon-holder" nz-tooltip
                    [nzTitle]="dispoWs">
                 <div class="icon-holder">
                   <i class="icon-reorder_24px"></i>
@@ -153,7 +153,7 @@
                   </span>
                 </div>
               </div>
-              <div *ngIf="checkExpected(rowData, col, i)== 'attached'" class="icon-holder" nz-tooltip
+              <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
                    [nzTitle]="attached">
                 <div class="icon-holder">
                   <ng-container>
@@ -338,6 +338,15 @@
                     Basis: {{row?.override[i]?.reason}}<br/>
                     Narrative: {{row?.override[i]?.reasonNarrative}}
                   </ng-template>
+
+                  <div *ngIf="checkChildExpected(row, col, i) == 'attached'" class="icon-holder">
+                    <div nz-tooltip [nzTitle]="attached">
+                      <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                    </div>
+                  </div>
+                  <ng-template #attached>
+                    Qualifying PLTs Attached
+                  </ng-template>
                 </ng-container>
 
               </ng-container>
@@ -366,7 +375,7 @@
                 </div>
               </th>
               <th *ngIf="col.type === 'contractCol'" class="divided-col">
-                <div class="icon-holder" *ngIf="pltIndex === plt.division">
+                <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
                   <i class="icon-check_circle_24px" style="font-size: 20px;color: #60E7DA;"></i>
                 </div>
               </th>
@@ -443,6 +452,15 @@
                   </ng-template>
                 </ng-container>
 
+                <div *ngIf="checkChildExpected(row, col, i) == 'attached'" class="icon-holder">
+                  <div nz-tooltip [nzTitle]="attached">
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                  </div>
+                </div>
+                <ng-template #attached>
+                  Qualifying PLTs Attached
+                </ng-template>
+
               </ng-container>
             </th>
             <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
@@ -470,7 +488,7 @@
                 </div>
               </th>
               <th *ngIf="col.type === 'contractCol'" class="divided-col">
-                <div class="icon-holder" *ngIf="pltIndex === plt.division">
+                <div class="icon-holder" *ngIf="attachedPLTToDivision(plt, pltIndex)">
                   <i class="icon-check_circle_24px" style="font-size: 20px;color: #60E7DA;"></i>
                 </div>
               </th>

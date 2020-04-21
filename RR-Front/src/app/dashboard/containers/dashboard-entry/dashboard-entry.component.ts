@@ -433,7 +433,7 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
       userDashboardId: tab.id,
       visible: tab.visible
     };
-    console.log('dash updated');
+
     this.updateDashboardAction({dashboardId: tab.id,
       updatedDashboard: _.merge({}, dashboard, newObject)});
     if (option === 'delete') {

@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Select, Store} from "@ngxs/store";
 import {WorkspaceState} from "../../../store/states";
 import {BaseContainer} from "../../../../shared/base";
@@ -505,46 +497,33 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       if (this.sortBy === 'Minimum Grain / RAP') {
         rowData.targetRaps.forEach(tr => {
           const override = _.get(tr, `override.${colHeader}.overridden`, false);
-          if (tr.attached) {
-            holder.push('attached');
-          } if (override) {
+          const attachedPLTs = _.toArray(tr.pltsAttached);
+          const attached = _.filter(attachedPLTs, item => item.division === colHeader);
+          if (override) {
             holder.push('overridden');
-          } if (!tr.attached && !override) {
-            // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
-            // const check = this.listOfPltsData[rowData.id][des.id]
-            // if (check != null) {
-            /*          if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
-                        if (this.listOfPltsData[rowData.id][des.id].length) {
-                          holder.push('dispoWs');
-                        }
-                      } else {*/
+          } else if (attached.length > 0) {
+            holder.push('attached');
+          } else {
             holder.push('checked');
-            // }
           }
         });
       }
       if (this.sortBy === 'RAP / Minimum Grain') {
         rowData.regionPerils.forEach(rg => {
           const override = _.get(rg, `override.${colHeader}.overridden`, false);
-          if (rg.attached) {
-            holder.push('attached');
-          }
+          const attachedPLTs = _.toArray(rg.pltsAttached);
+          const attached = _.filter(attachedPLTs, item => item.division === colHeader);
           if (override) {
             holder.push('overridden');
-          }
-          if (!rg.attached && !override) {
-            /*          if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
-                        if (this.listOfPltsData[des.id][rowData.id].length) {
-                          holder.push('dispoWs');
-                        }
-                      } else {*/
+          } else if (attached.length > 0) {
+            holder.push('attached');
+          } else {
             holder.push('checked');
-            // }
           }
         });
       }
 
-      if (_.includes(holder, 'dispoWs')) {
+      if (_.includes(holder, 'overridden') && _.includes(holder, 'attached')) {
         checked = 'dispoWs';
       } else if (_.includes(holder, 'checked')) {
         checked = 'checked';
@@ -553,15 +532,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       } else if (_.includes(holder, 'overridden')) {
         checked = 'overridden';
       }
-      if (rowData.override) {
-        if (checked == 'checked' || checked == 'dispoWs') {
-          checked = 'override';
-        }
-      }
 
-      /*    if (checked == 'overridden' && this.removeOverride) {
-            checked = 'cancelOverride';
-          }*/
       return checked;
     } else {
       return null;
@@ -570,8 +541,18 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
 
   checkChildExpected(rowData, column, colHeader) {
     const override = _.get(rowData, `override.${colHeader}.overridden`, false);
+    const attached = _.toArray(rowData.pltsAttached);
+    let attachedPLT = false;
+    _.forEach(attached, item => {
+      if (item.division === colHeader) {
+        attachedPLT = true;
+      }
+    });
+
     if (override) {
-      return "overridden"
+      return "overridden";
+    } else if (attachedPLT) {
+      return "attached";
     }
   }
 
@@ -781,6 +762,10 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       return this.removeOverrideAll || (this.removeOverrideRow && this.rowOverrideRemoveInit[rowData.id + row.id]);
     }
+  }
+
+  attachedPLTToDivision(plt, col) {
+    return _.includes(plt.scopeIndex, col);
   }
 
   onHide() {
