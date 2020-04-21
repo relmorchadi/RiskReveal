@@ -161,7 +161,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     ).subscribe(([{projects}]: any) => {
       this.listOfProjects = projects;
       this.detectChanges();
-      console.log(projects);
+
     });
   }
 
@@ -218,7 +218,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       switch (step) {
         case -1:
         case 1:
-          console.log('heeeeere');
+
           this._projectName.clearValidators();
           this._projectName.reset();
           this._projectDescription.clearValidators();
@@ -590,7 +590,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     };
 
 
-    console.log (this.projectsForm.value.projectStep);
+
     switch (this.projectsForm.value.projectStep) {
       case -1:
         body = {
@@ -614,8 +614,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         };
         break;
     }
-    console.log(body);
-    console.log(this.projectsForm);
+
+
     this.cloneDataApi.cloneData(body).subscribe(r => console.log(r));
 
     if (this._projectStep.value === 0) {

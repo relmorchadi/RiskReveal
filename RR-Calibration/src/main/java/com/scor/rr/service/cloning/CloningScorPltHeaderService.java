@@ -139,57 +139,49 @@ public class CloningScorPltHeaderService {
 
         List<PltHeaderEntity> pltsResults = new ArrayList<PltHeaderEntity>();
 
-        //System.out.println("************************* clone request ********************");
-        //System.out.println(request);
         for(Long pltId : request.getPltIds()) {
+            // create new plt header entity
             PltHeaderEntity newPLT = this.cloneScorPltHeader(pltId);
-            PltHeaderEntity plt = this.pltHeaderRepository.findByPltHeaderId(pltId);
+            PltHeaderEntity sourcePlt = this.pltHeaderRepository.findByPltHeaderId(pltId);
 
-            ProjectEntity project = this.projectRepository.findById(newPLT.getProjectId()).get();
+            ProjectEntity sourceProject = this.projectRepository.findById(sourcePlt.getProjectId()).get();
 
-            // get or create target project
+            // get or create target project (depends on clone type)
             newPLT.setProjectId(this.getCloningIntoProject(
                     request.getCloningType(),
                     request.getTargetWorkspaceUwYear(),
                     request.getTargetWorkspaceContextCode(),
-                    project.getProjectName(),
-                    project.getProjectDescription(),
+                    sourceProject.getProjectName(),
+                    sourceProject.getProjectDescription(),
                     request.getExistingProjectId()).getProjectId());
-            // copy model analysis
-            Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(plt.getModelAnalysisId());
+            // clone model analysis
+            Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(sourcePlt.getModelAnalysisId());
             if (modelAnalysisEntity.isPresent()) {
 
                 ModelAnalysisEntity other = new ModelAnalysisEntity(modelAnalysisEntity.get());
                 other.setCreationDate(RRDateUtils.getDateNow());
                 other.setProjectId(newPLT.getProjectId());
                 other = this.modelAnalysisEntityRepository.save(other);
-                System.out.println("++++++++++++++++++++++++++-----------------++++++++++++++++++++++++");
-                System.out.println(other);
                 newPLT.setModelAnalysisId(other.getRrAnalysisId());
 
 
             } else {
                 throw new com.scor.rr.exceptions.RRException(ExceptionCodename.MODEL_ANALYSIS_NOT_FOUND, 1);
             }
+            // @TODO: FIX THIS !!!!!!!!!!!!
             // copy plt files
             try {
 /*                File dstFile = this.copyPltFile(plt, newPLT ,
                         "/scor/data/ihub/v4/Facultative/Contracts/" + request.getTargetWorkspaceContextCode()
                                 + "/" + request.getTargetWorkspaceUwYear() + "/" + project.getProjectName()
                 );
-
-                //System.out.println("file : >>>>>>>" );
-                //System.out.println(dstFile);
-
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());
   */          } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            newPLT.setCloningSourceId(plt.getPltHeaderId());
-            //System.out.println("A new plt: >>>>>>>>>>>>>>>>>>>>>>");
-            //System.out.println(newPLT);
+            newPLT.setCloningSourceId(sourcePlt.getPltHeaderId());
             pltsResults.add(this.pltHeaderRepository.save(newPLT));
         }
         return pltsResults;

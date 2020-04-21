@@ -340,6 +340,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
     this.getPlts().subscribe((data) => {
 
+
       this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
@@ -653,7 +654,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
-//
+
           let ar = data;
           if(ar)
           if(ar.plts)
