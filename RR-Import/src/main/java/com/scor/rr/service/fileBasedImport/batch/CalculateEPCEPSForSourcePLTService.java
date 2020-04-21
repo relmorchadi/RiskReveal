@@ -40,6 +40,10 @@ public class CalculateEPCEPSForSourcePLTService {
 
     @Autowired
     private DefaultReturnPeriodRepository defaultReturnPeriodRepository;
+
+    @Autowired
+    private PltHeaderRepository pltHeaderRepository;
+
 //    @Autowired
 //    private DAOService daoService;
 
@@ -132,6 +136,7 @@ public class CalculateEPCEPSForSourcePLTService {
                 summaryStatisticHeaderEntity.setCurrency(rrLossTable.getCurrency());
                 // todo fill other data
                 summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+                pltHeaderRepository.updateSummaryStatisticHeaderId(pltHeader.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
 
                 log.debug("runCalculationForLosses for ptlHearer id {} - {} simulation periods", pltHeader.getPltHeaderId(), pltHeader.getPltSimulationPeriods());
                 runCalculationForLosses(pltHeader.getPltSimulationPeriods(), bundle.getPltLossDataList(), epRPMap, rpEPMap, summaryStatisticHeaderEntity, metricToEPCurve);

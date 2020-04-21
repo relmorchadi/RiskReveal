@@ -1,9 +1,6 @@
 package com.scor.rr.service;
 
-import com.scor.rr.domain.JobEntity;
-import com.scor.rr.domain.JobExecutionEntity;
-import com.scor.rr.domain.StepEntity;
-import com.scor.rr.domain.TaskEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.JobDto;
 import com.scor.rr.domain.dto.TaskDto;
 import com.scor.rr.domain.enums.JobPriority;
@@ -15,7 +12,6 @@ import com.scor.rr.repository.JobExecutionRepository;
 import com.scor.rr.repository.TaskRepository;
 import com.scor.rr.service.batch.abstraction.JobManagerAbstraction;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -25,8 +21,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
@@ -141,21 +139,60 @@ public class JobManagerImpl extends JobManagerAbstraction {
     // Find Jobs from RR custom schema
     @Override
     public List<JobDto> findRunningJobsForUserRR(Long userId) {
-        List<JobEntity> myJobs = jobRepository.findAllByUserIdAndSubmittedDate(userId);
-        List<JobDto> jobs = new ArrayList<>();
-//        List<JobDto> jobs = myJobs.stream().map(j -> modelMapper.map(j, JobDto.class)).collect(Collectors.toList());
-        for (JobEntity j : myJobs) {
-            List<TaskDto> tasks = new ArrayList<>();
-            for (TaskEntity t : j.getTasks()) {
-                TaskDto task = new TaskDto(t.getTaskId(), t.getJobExecutionId(), t.getStatus(), t.getPriority(),
-                        t.getSubmittedDate(), t.getStartedDate(), t.getFinishedDate(), 0);
-                tasks.add(task);
+
+        List<JobDto> jobDtoList = new ArrayList<>();
+        List<Map<String, Object>> jobs = jobRepository.getJobRunningOrPendingForUser(userId);
+
+        for (Map<String, Object> job : jobs) {
+            JobDto jobDto = new JobDto();
+
+            jobDto.setJobId(((BigInteger) job.get("JobId")).longValue());
+            jobDto.setJobTypeCode("IMPORT");
+            jobDto.setPriority(JobPriority.getStringValue((Integer) job.get("Priority")));
+            jobDto.setStatus((String) job.get("Status"));
+            jobDto.setClientName((String) job.get("clientName"));
+            jobDto.setUwYear(Integer.valueOf((String) job.get("uwYear")));
+            jobDto.setWorkspaceName((String) job.get("workspaceName"));
+            jobDto.setContractCode((String) job.get("contractCode"));
+            jobDto.setProjectId(Long.valueOf((String) job.get("projectId")));
+
+            List<Map<String, Object>> tasks = taskRepository.getTasksByJobId(jobDto.getJobId());
+
+            for (Map<String, Object> task : tasks) {
+                TaskDto taskdto = new TaskDto();
+
+                taskdto.setTaskId(((BigInteger) task.get("TaskId")).longValue());
+                taskdto.setJobExecutionId(((BigInteger) task.get("JobExecutionId")).longValue());
+                taskdto.setPercent((Integer) task.get("Percentage"));
+                taskdto.setTaskType((String) task.get("TaskType"));
+                taskdto.setStatus((String) task.get("Status"));
+
+                if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_ANALYSIS.getCode())) {
+                    if (task.get("AnalysisDivision") != null)
+                        taskdto.setDivision(Integer.valueOf((String) task.get("AnalysisDivision")));
+                    if (task.get("AnalysisProject") != null)
+                        taskdto.setProjectId(Long.valueOf((String) task.get("AnalysisProject")));
+                    taskdto.setName((String) task.get("AnalysisName"));
+                    taskdto.setFinancialPerspective((String) task.get("AnalysisFinancialPerspective"));
+                    taskdto.setTargetRapCode((String) task.get("TargetRapCode"));
+                }
+
+                if (taskdto.getTaskType().equalsIgnoreCase(TaskType.IMPORT_PORTFOLIO.getCode())) {
+                    if (task.get("PortfolioDivision") != null)
+                        taskdto.setDivision(Integer.valueOf((String) task.get("PortfolioDivision")));
+                    if (task.get("PortfolioProject") != null)
+                        taskdto.setProjectId(Long.valueOf((String) task.get("PortfolioProject")));
+                    taskdto.setName((String) task.get("PortfolioNumber"));
+                }
+
+                jobDto.addTask(taskdto);
             }
-            JobDto jobDto = new JobDto(j.getJobId(), j.getSubmittedByUser(), j.getSubmittedDate(),
-                    j.getPriority(), j.getStatus(), j.getStartedDate(), j.getFinishedDate(), j.getJobTypeCode(), tasks);
-            jobs.add(jobDto);
+
+            jobDto.calculatePercentage();
+            jobDtoList.add(jobDto);
         }
-        return jobs;
+
+        return jobDtoList;
     }
 
     @Override
