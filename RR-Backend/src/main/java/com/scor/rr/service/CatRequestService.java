@@ -58,10 +58,13 @@ public class CatRequestService {
 
         Optional<RefInsureds> client = refInsuredsRepository.findById(data.insurNumber.toString());
         String clientName;
+        Integer clientId;
         if(client.isPresent()) {
             clientName = client.get().getInsuredName();
+            clientId = Integer.parseInt(client.get().getInsuredId());
         } else {
             clientName = data.insurNumber.toString();
+            clientId = data.insurNumber;
         }
         UserRrEntity userRrEntity = userRrRepository.findByWindowsUser(data.userID);
 
@@ -123,6 +126,7 @@ public class CatRequestService {
                 data.label,
                 data.businessType.toString(), //FIXME: FK or name ? if name need a ref data for look up
                 clientName,
+                clientId,
                 subsidiaryEntity != null ? subsidiaryEntity.getLabel() : data.subsidiary.toString(),
                 data.lob,
                 data.sector,
