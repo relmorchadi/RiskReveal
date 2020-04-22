@@ -8,4 +8,5 @@ import java.util.List;
 public interface SummaryStatisticHeaderRepository extends JpaRepository<SummaryStatisticHeaderEntity, Long> {
 
     List<SummaryStatisticHeaderEntity> findByLossDataIdAndLossDataType(Long lossDataId, String lossDataType);
+
 }

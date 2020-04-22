@@ -230,21 +230,21 @@ public class BatchExecution {
 
         ModellingSystemInstanceEntity modellingSystemInstance = modellingSystemInstanceRepository.findById(instanceId).orElse(null);
 
-        ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
+        //ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract = null;
 
-        if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
-            projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
-                    .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
-        }
+        //if (workspaceMarketChannel.equalsIgnoreCase("Fac")) {
+        //    projectConfigurationForeWriterContract = projectConfigurationForeWriterContractRepository
+        //            .findByProjectConfigurationForeWriterId(projectConfigurationForeWriter.getProjectConfigurationForeWriterId());
+        //}
         // TODO: Review this
 //        String prefix = myWorkspace.getWorkspaceContextFlag().getValue();
-        String contractId = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getContractId() : contractSearchResult != null ? contractSearchResult.getId() : "";
-        String clientName = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getClient() : contractSearchResult != null ? contractSearchResult.getCedantName() : "";
-        String clientId = contractSearchResult != null ? contractSearchResult.getCedantCode() : "";
+        String contractId = myWorkspace.getContractId();
+        String clientName = myWorkspace.getClientName();
+        String clientId = myWorkspace.getClientId();
         String workspaceName = contractSearchResult != null ? contractSearchResult.getWorkspaceName() : "";
         String carId = projectConfigurationForeWriter != null ? projectConfigurationForeWriter.getCaRequestId() : "carId";
         String reinsuranceType = myWorkspace.getWorkspaceMarketChannel().equals("TTY") ? "T" : myWorkspace.getWorkspaceMarketChannel().equals("FAC") ? "F" : "";
-        String lob = projectConfigurationForeWriterContract != null ? projectConfigurationForeWriterContract.getLineOfBusiness() : "";
+        String lob = myWorkspace.getLob();
         String division = "1"; // fixed for TT
         String periodBasis = "FT"; // fixed for TT
         String sourceVendor = "RMS";

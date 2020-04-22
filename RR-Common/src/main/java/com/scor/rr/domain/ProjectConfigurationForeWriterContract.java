@@ -16,7 +16,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProjectConfigurationForeWriterContract {
 
-    public ProjectConfigurationForeWriterContract(Integer entity, Long projectConfigurationForeWriterId, String contractId, String facNumber, Integer uwYear, Integer uwOrder, Integer endorsementNumber, String contractName, String businessType, String client, String subsidiary, String lineOfBusiness, String sector, String uwAnalysis) {
+    public ProjectConfigurationForeWriterContract(Integer entity, Long projectConfigurationForeWriterId, String contractId, String facNumber, Integer uwYear, Integer uwOrder, Integer endorsementNumber, String contractName, String businessType, String client, Integer clientId, String subsidiary, String lineOfBusiness, String sector, String uwAnalysis) {
         this.entity = entity;
         this.projectConfigurationForeWriterId = projectConfigurationForeWriterId;
         this.contractId = contractId;
@@ -27,6 +27,7 @@ public class ProjectConfigurationForeWriterContract {
         this.contractName = contractName;
         this.businessType = businessType;
         this.client = client;
+        this.clientId = clientId;
         this.subsidiary = subsidiary;
         this.lineOfBusiness = lineOfBusiness;
         this.sector = sector;
