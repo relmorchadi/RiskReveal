@@ -20,9 +20,15 @@ public interface JobManager {
 
     void cancelJob(Long jobId);
 
+    void pauseJob(Long jobId);
+
+    void resumeJob(Long jobId);
+
     void submitTask(Long taskId);
 
     void cancelTask(Long taskId);
+
+    void pauseTask(Long taskId);
 
     boolean isJobRunning(Long jobId);
 

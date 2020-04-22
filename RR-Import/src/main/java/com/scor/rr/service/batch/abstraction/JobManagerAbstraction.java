@@ -114,10 +114,19 @@ public abstract class JobManagerAbstraction implements JobManager {
     public abstract void cancelJob(Long jobId);
 
     @Override
+    public abstract void pauseJob(Long jobId);
+
+    @Override
+    public abstract void resumeJob(Long jobId);
+
+    @Override
     public abstract void submitTask(Long taskId);
 
     @Override
     public abstract void cancelTask(Long taskId);
+
+    @Override
+    public abstract void pauseTask(Long taskId);
 
     public abstract void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity);
 
