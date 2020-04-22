@@ -58,5 +58,8 @@ public class WorkspaceEntity implements Serializable {
         this.workspaceMarketChannel= workspaceMarketChannel;
         this.workspaceName = workspaceName;
         this.clientName = clientName;
+        this.clientId = clientId;
+        this.lob = lob;
+        this.contractId = contractId;
     }
 }
