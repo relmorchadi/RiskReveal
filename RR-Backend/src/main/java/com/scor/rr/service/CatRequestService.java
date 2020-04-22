@@ -73,7 +73,7 @@ public class CatRequestService {
         projectEntity.setCreationDate(date);
         projectEntity.setCreatedBy(data.userLN + " " + data.userFN);
         projectEntity.setProjectName(data.uwAnalysisName); //FIXME: check with SHAUN
-        projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, clientName, projectEntity);
+        projectEntity = projectService.addNewProjectFac(data.facNumber, data.uwYear, clientName, data.facNumber, clientId.toString(), data.lob, data.facNumber,projectEntity);
 
         List<ProjectConfigurationForeWriterContract> projectConfigurationForeWriterContracts = projectConfigurationForeWriterContractRepository.findByContractIdAndUwYear(data.facNumber, data.uwYear);
         for (ProjectConfigurationForeWriterContract projectConfigurationForeWriterContract : projectConfigurationForeWriterContracts) {
