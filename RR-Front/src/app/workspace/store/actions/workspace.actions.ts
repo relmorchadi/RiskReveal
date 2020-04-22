@@ -115,6 +115,27 @@ export class DeleteProjectFails {
   }
 }
 
+export class LoadProjectByWorkspace {
+  static readonly type = '[Workspace] Load project by workspace';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class LoadProjectByWorkspaceSuccess {
+  static readonly type = '[Workspace] Load project by workspace success';
+
+  constructor(public payload: any) {
+  }
+}
+
+export class LoadProjectByWorkspaceFail {
+  static readonly type = '[Workspace] Load project by workspace fail';
+
+  constructor(public payload: any) {
+  }
+}
+
 
 
 

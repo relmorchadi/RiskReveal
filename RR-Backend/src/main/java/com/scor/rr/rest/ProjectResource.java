@@ -3,10 +3,13 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
+import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -34,5 +37,11 @@ public class ProjectResource {
     @GetMapping("stats")
     public ProjectStatistics getProjetStatistics(@RequestParam("projectId") Long projectId) {
         return this.projectService.getProjetStatistics(projectId);
+    }
+
+    @GetMapping()
+    public List<ProjectCardView> getProjectsByWorkspace(@RequestParam("workspaceContextCode") String workspaceContextCode,
+                                                       @RequestParam("workspaceUwYear") Integer workspaceUwYear) {
+        return this.projectService.getAllProjectByWorkspace(workspaceContextCode,workspaceUwYear);
     }
 }

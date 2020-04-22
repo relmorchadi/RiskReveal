@@ -574,6 +574,11 @@ export class WorkspaceState {
     return this.wsService.deleteFacProject(ctx, payload);
   }
 
+  @Action(fromWS.LoadProjectByWorkspace)
+  loadProjectByWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectByWorkspace) {
+    return this.wsService.loadProjectsByWorkspace(ctx, payload);
+  }
+
   /***********************************
    *
    * Contract Actions
@@ -614,6 +619,16 @@ export class WorkspaceState {
   @Action(fromPlt.SaveGlobalTableSelection)
   saveGlobalTableSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.SaveGlobalTableSelection) {
     this.pltStateService.saveGlobalTableSelection(ctx, payload);
+  }
+
+  @Action(fromPlt.commitClone)
+  commitClone(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.commitClone) {
+    return this.pltStateService.commitClone(ctx, payload);
+  }
+
+  @Action(fromPlt.commitCloneSuccess)
+  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.commitCloneSuccess) {
+    return this.pltStateService.commitCloneSuccess(ctx, payload);
   }
 
   @Action(fromPlt.setCloneConfig)

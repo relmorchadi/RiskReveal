@@ -1,12 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentFactoryResolver, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionDispatched, Store} from '@ngxs/store';
+import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {MessageService} from 'primeng/api';
 import {combineLatest, forkJoin} from 'rxjs';
 import * as _ from 'lodash'
 import {WorkspaceState} from '../../store/states';
 import * as fromWS from '../../store'
-import {SetCurrentTab} from '../../store'
+import {LoadWS, SetCurrentTab} from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
@@ -14,6 +14,7 @@ import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "
 import {WsApi} from "../../services/api/workspace.api";
 import {$e} from "codelyzer/angular/styles/chars";
 import {CloneDataApi} from "../../services/api/cloneData.api";
+import {LoadProjectByWorkspace} from "../../store";
 
 interface SourceData {
   plts: any[];
@@ -31,8 +32,11 @@ interface SourceData {
 })
 export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit, StateSubscriber {
 
+  @Select(WorkspaceState.getCurrentTab) currentTab$;
+
   constructor(
     private route$: ActivatedRoute,
+    private store: Store,
     private prn: PreviousNavigationService,
     private _fb: FormBuilder,
     private wsApi: WsApi,
@@ -196,7 +200,10 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   listOfProjects: any[];
 
   ngOnInit() {
-
+    this.currentTab$.subscribe(c => {
+      console.log(c.wsIdentifier)
+      this.store.dispatch(new LoadProjectByWorkspace({wsId: c.wsIdentifier.split('-')[0], uwYear: c.wsIdentifier.split('-')[1]}));
+    });
     this._to.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe((from) => {
       const {
         detail,
@@ -615,8 +622,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         break;
     }
 
-
-    this.cloneDataApi.cloneData(body).subscribe(r => console.log(r));
+    console.log(body);
+    this.dispatch(new fromWS.commitClone(body));
 
     if (this._projectStep.value === 0) {
       this._projectName.markAsDirty();

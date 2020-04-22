@@ -11,14 +11,15 @@ import produce from "immer";
 import {WsApi} from "../api/workspace.api";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../../containers/workspace-calibration/data";
 import {TagsApi} from "../api/tags.api";
-import {loadAllPlts} from "../../store/actions";
+import {loadAllPlts, LoadProjectByWorkspace, LoadWS} from "../../store/actions";
+import {CloneDataApi} from "../api/cloneData.api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltStateService {
 
-  constructor(private pltApi: PltApi,private wsApi: WsApi, private tagApi: TagsApi) {
+  constructor(private pltApi: PltApi,private wsApi: WsApi, private tagApi: TagsApi, private cloneDataApi: CloneDataApi) {
   }
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
@@ -645,5 +646,28 @@ export class PltStateService {
       draft.content[wsIdentifier].pltManager.selectedIds = selectedIds;
       draft.content[wsIdentifier].pltManager.initialized = true;
     }));
+  }
+
+  commitClone(ctx: StateContext<WorkspaceModel>, payload: any) {
+    console.log('commiting...');
+    this.cloneDataApi.cloneData(payload).subscribe(r => {
+      console.log(r)
+      ctx.dispatch(new fromPlt.commitCloneSuccess(payload));
+    });
+
+  }
+
+  commitCloneSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
+    console.log('commit success...');
+    const {
+      targetWorkspaceContextCode,
+      targetWorkspaceUwYear
+    } = payload;
+    const state = ctx.getState();
+    if (state.content[targetWorkspaceContextCode + '-' + targetWorkspaceUwYear]) {
+      console.log('exists');
+      ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
+
+    }
   }
 }

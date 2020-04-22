@@ -94,21 +94,20 @@ public class CloningScorPltHeaderService {
                                                String projectName, String projectDescription, Long existingProjectId)
     throws com.scor.rr.exceptions.RRException{
         System.out.println("[clone data]: creating target project; cloning type : " + cloningType);
+        System.out.println(projectDescription + " " + projectName);
         if (this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceContextCode, workspaceUwYear).isPresent()) {
             WorkspaceEntity workspaceTarget = this.workspaceRepository.findByWorkspaceContextCodeAndWorkspaceUwYear
                     (workspaceContextCode, workspaceUwYear).get();
+
             switch(cloningType) {
                 case "KEEP_PROJECT_NAME":
                     Optional<ProjectEntity> projs = this.projectRepository.findByProjectNameAndWorkspaceId(projectName, workspaceTarget.getWorkspaceId());
                     if (projs.isPresent()) {
-                        //System.out.println("[clone data]: Project name already exists in this target workspace id: " +
-//                               projs.get() );
                         return projs.get();
                     } else {
                         /**
                          *  CREATE PROJECT
                          */
-                        //System.out.println("[clone data]: creating new project");
                         return this.createNewProject(workspaceUwYear,
                                 workspaceContextCode,
                                 projectName,
@@ -147,13 +146,35 @@ public class CloningScorPltHeaderService {
             ProjectEntity sourceProject = this.projectRepository.findById(sourcePlt.getProjectId()).get();
 
             // get or create target project (depends on clone type)
-            newPLT.setProjectId(this.getCloningIntoProject(
-                    request.getCloningType(),
-                    request.getTargetWorkspaceUwYear(),
-                    request.getTargetWorkspaceContextCode(),
-                    sourceProject.getProjectName(),
-                    sourceProject.getProjectDescription(),
-                    request.getExistingProjectId()).getProjectId());
+            switch(request.getCloningType()) {
+                case "KEEP_PROJECT_NAME":
+                    newPLT.setProjectId(this.getCloningIntoProject(
+                            request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            sourceProject.getProjectName(),
+                            sourceProject.getProjectDescription(),
+                            request.getExistingProjectId()).getProjectId());
+                    break;
+                case "NEW_PROJECT":
+                    newPLT.setProjectId(this.getCloningIntoProject(
+                            request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            request.getNewProjectName(),
+                            request.getNewProjectDescription(),
+                            request.getExistingProjectId()).getProjectId());
+                    break;
+                case "EXISTING_PROJECT":
+                    newPLT.setProjectId(this.getCloningIntoProject(
+                            request.getCloningType(),
+                            request.getTargetWorkspaceUwYear(),
+                            request.getTargetWorkspaceContextCode(),
+                            null,
+                            null,
+                            request.getExistingProjectId()).getProjectId());
+                    break;
+            }
             // clone model analysis
             Optional<ModelAnalysisEntity> modelAnalysisEntity = this.modelAnalysisEntityRepository.findById(sourcePlt.getModelAnalysisId());
             if (modelAnalysisEntity.isPresent()) {

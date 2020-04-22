@@ -326,6 +326,31 @@ export class WorkspaceService {
       }))
   }
 
+  loadProjectsByWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectByWorkspace) {
+    const {wsId, uwYear} = payload;
+    const wsIdentifier = wsId + '-' + uwYear;
+    this.projectApi.getProjectsByWorkspace(wsId, uwYear).subscribe(data => {
+      console.log('projects', data);
+      const state = ctx.getState();
+
+
+      ctx.patchState(produce(ctx.getState(), draft => {
+        const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
+        console.log('selected project', selectedProject);
+        console.log('state 1' , state.content[wsIdentifier].projects)
+        draft.content[wsIdentifier].projects = data;
+        console.log('dd',data);
+        console.log('state 2' , state.content[wsIdentifier].projects)
+
+        const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
+        draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
+          prj.selected = prj.projectId === selectedProjectId;
+          return prj;
+        });
+        console.log('state 3' , state.content[wsIdentifier].projects)
+      }))
+    })
+  }
   deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
     const {projectId, wsId, uwYear} = payload;
     const state = ctx.getState();
