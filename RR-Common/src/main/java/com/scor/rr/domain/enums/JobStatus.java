@@ -1,7 +1,7 @@
 package com.scor.rr.domain.enums;
 
 public enum JobStatus {
-    PENDING("PENDING"), RUNNING("RUNNING"), CANCELLED("CANCELLED"), SUCCEEDED("SUCCEEDED"), FAILED("FAILED");
+    PENDING("PENDING"), RUNNING("RUNNING"), CANCELLED("CANCELLED"), SUCCEEDED("SUCCEEDED"), FAILED("FAILED"), PAUSED("PAUSED");
 
     String code;
 
@@ -16,4 +16,4 @@ public enum JobStatus {
     public void setCode(String code) {
         this.code = code;
     }
-    }
+}

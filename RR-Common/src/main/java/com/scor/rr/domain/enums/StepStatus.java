@@ -1,7 +1,7 @@
 package com.scor.rr.domain.enums;
 
 public enum StepStatus {
-    RUNNING("RUNNING"), SUCCEEDED("SUCCEEDED"), FAILED("FAILED"), CANCELLED("CANCELLED");
+    RUNNING("RUNNING"), SUCCEEDED("SUCCEEDED"), FAILED("FAILED"), CANCELLED("CANCELLED"), PAUSED("PAUSED");
 
     String code;
 
