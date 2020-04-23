@@ -98,7 +98,7 @@
 
         <div style="display: flex; flex-direction: column" *ngIf="showCancelOverrideButton()">
           <button [ngClass]="{'a-buttons-contained-disabled-micro': !overriddenCancelRowAccess, 'a-buttons-contained-micro': overriddenCancelRowAccess}"
-                  (click)="removeOverrideBack()" [disabled]="!overriddenCancelRowAccess">Remove Override</button>
+                  [disabled]="!overriddenCancelRowAccess" (click)="removeOverrideStart()">Remove Override</button>
           <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
         </div>
 

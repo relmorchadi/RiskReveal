@@ -14,7 +14,6 @@
   .my-tabs {
     display: flex;
     flex-direction: column;
-    background-color: #FFFFFF;
     width: 100%;
 
     .PLTs-content {
@@ -46,6 +45,10 @@
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
       background-color: #EFEFEF;
+    }
+
+    .ui-table-scrollable-view {
+      background-color: white;
     }
 
     .ui-table-scrollable-view.ui-table-frozen-view {

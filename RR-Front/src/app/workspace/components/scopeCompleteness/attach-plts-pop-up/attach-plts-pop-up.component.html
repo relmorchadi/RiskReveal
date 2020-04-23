@@ -163,14 +163,14 @@
               <ng-template let-rowData="rowData" let-columns="columns" #TableBody>
                   <ng-container *ngFor="let col of columns; let i = index" >
                       <th *ngIf="col.type === 'boolean'">
-                          <ng-container *ngIf="col.selection === 'single'">
+                          <div *ngIf="col.selection === 'single'" class="center-checkbox">
                               <label *ngIf="attachable(rowData, col)" [nzChecked]="selectedForAttachment[rowData.pltHeaderId + col.id]"
                                      (nzCheckedChange)="selectPLTByDiv(rowData, col, $event)" nz-checkbox></label>
-                          </ng-container>
-                          <ng-container *ngIf="col.selection === 'line'">
+                          </div>
+                          <div *ngIf="col.selection === 'line'" class="center-checkbox">
                               <label *ngIf="attachableMulti(rowData)" [nzChecked]="checkedRow(rowData)"
                                      (nzCheckedChange)="selectPLTByRow(rowData, $event)" nz-checkbox></label>
-                          </ng-container>
+                          </div>
                       </th>
                       <th *ngIf="col.type === 'text'">
                           <div class="ellipsis-text">
