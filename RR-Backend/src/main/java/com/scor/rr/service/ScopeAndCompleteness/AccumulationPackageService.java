@@ -169,12 +169,12 @@ public class AccumulationPackageService {
         return returnMap;
     }
 
-    public AccumulationPackageResponse getAccumulationPackageDetails(String workspaceName,int UWYear, long accumulationPackageId) throws RRException{
+    public AccumulationPackageResponse getAccumulationPackageDetails(String workspaceName,int UWYear, long accumulationPackageId,long projectId) throws RRException{
         AccumulationPackage accumulationPackage = accumulationPackageRepository.findByAccumulationPackageId(accumulationPackageId);
         if(accumulationPackage == null ) throw new AccumulationPackageNotFoundException(accumulationPackageId);
 
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        response.setScopeObject(getScopeOnly(workspaceName,UWYear));
+        response.setScopeObject(getScopeOnly(workspaceName,UWYear,projectId));
         response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackageId));
         response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackageId));
 
