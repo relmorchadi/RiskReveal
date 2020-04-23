@@ -94,8 +94,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     {field: 'checkbox', header: '', width: '20px', visible: true, display: true, sorted: true, filtered: false, type: 'checkbox', class: 'icon-check_24px',},
     {field: 'client', header: 'Client', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CLIENT_CODE'},
     {field: 'uwYear', header: 'Uw Year', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'UW_YEAR'},
-    {field: 'workspaceName', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
-    {field: 'workSpaceContextCode', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
+    {field: 'workspaceContextCode', header: 'Contract Code', width: '160px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_CODE'},
+    {field: 'workspaceName', header: 'Contract Name', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CONTRACT_NAME'},
     {field: 'uwAnalysis', header: 'Uw Analysis', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'uwAnalysis'},
     {field: 'carequestId', header: 'CAR ID', width: '70px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'CAR_ID'},
     {field: 'carStatus', header: 'CAR Status', width: '90px', type: 'text', visible: true, display: true, sorted: true, filtered: true, queryParam: 'carStatus'},
@@ -165,6 +165,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
+    console.log(wsId, year);
     if (this.searchMode === 'Treaty') {
       this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'TTY'}));
     } else {
@@ -268,7 +269,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filters,
       keyword
     } = this.filter;
-    console.log(filters);
 
     setTimeout(() => {
       let params = {
