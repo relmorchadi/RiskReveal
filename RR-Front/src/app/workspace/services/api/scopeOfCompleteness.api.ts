@@ -12,12 +12,12 @@ export class ScopeOfCompletenessApi {
     constructor(private  http: HttpClient) {
     }
 
-    getData(uwyear, workspaceId) {
-        return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId}});
+    getData(uwyear, workspaceId, projectId) {
+        return this.http.get(`${this.api}AccumulationPackage/getScopeOnly`, { params: {uwyear, workspaceId, projectId}});
     }
 
-    getDataPending(AccumulationPackageId, uwyear, workspaceId) {
-        return this.http.get(`${this.api}AccumulationPackage/getAccumulationPackage`, { params: {AccumulationPackageId, uwyear, workspaceId}});
+    getDataPending(AccumulationPackageId, uwyear, workspaceId, ProjectId) {
+        return this.http.get(`${this.api}AccumulationPackage/getAccumulationPackage`, { params: {AccumulationPackageId, uwyear, workspaceId, ProjectId}});
     }
 
     getDataPricing(UWYear, WorkspaceName, projectId) {

@@ -697,7 +697,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           _.forEach(row.targetRaps, item => {
             const override = _.get(item, `override.${colIndex}.overridden`, false);
             _.forEach(_.toArray(item.pltsAttached), plt => {
-              if (plt.scopeIndex === colIndex) {
+              if (_.includes(plt.scopeIndex, colIndex)) {
                 overrideCapability = false;
               }
             });
@@ -709,7 +709,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           _.forEach(row.regionPerils, item => {
             const override = _.get(item, `override.${colIndex}.overridden`, false);
             _.forEach(_.toArray(item.pltsAttached), plt => {
-              if (plt.scopeIndex === colIndex) {
+              if (_.includes(plt.scopeIndex, colIndex)) {
                 overrideCapability = false;
               }
             });
@@ -721,7 +721,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       } else {
         overridden = _.get(row, `override.${colIndex}.overridden`, false);
         _.forEach(row.pltsAttached, plt => {
-          if (plt.scopeIndex === colIndex) {
+          if (_.includes(plt.scopeIndex, colIndex)) {
             overrideCapability = false;
           }
         });

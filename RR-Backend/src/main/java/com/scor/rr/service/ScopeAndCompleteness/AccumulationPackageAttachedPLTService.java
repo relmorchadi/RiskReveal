@@ -43,7 +43,7 @@ public class AccumulationPackageAttachedPLTService {
 
     public AccumulationPackageResponse attachSelectedPlts(AttachPLTRequest request) throws RRException {
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceNameAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
+        WorkspaceEntity ws = workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(request.getWorkspaceName(),request.getUwYear());
 
         if(ws == null ) throw new WorkspaceNotFoundException(request.getWorkspaceName(),request.getUwYear());
 

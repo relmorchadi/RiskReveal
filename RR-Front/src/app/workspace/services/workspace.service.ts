@@ -33,7 +33,7 @@ export class WorkspaceService {
             return forkJoin(
                 ..._.map(lookupWorkspaces, tab => this.wsApi.searchWorkspace(tab.workspaceContextCode, tab.workspaceUwYear, type ? type : ''))
             ).pipe(
-                mergeMap(data => of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: _.filter(data, e => e), tabs, carSelected }))))
+                mergeMap(data => of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: data, tabs, carSelected }))))
             )
           } else {
             return of(ctx.dispatch(new fromWS.OpenMultiWS({workspaces: [], tabs, carSelected })))
@@ -223,9 +223,9 @@ export class WorkspaceService {
           wsIdentifier
         };
       }
-      const ws = _.find(workspaces, e => e.id == tab.workspaceContextCode && e.uwYear == tab.workspaceUwYear);
 
-      if(!ctx.getState().content[wsIdentifier] && ws) {
+      if(!ctx.getState().content[wsIdentifier]) {
+       const ws = _.find(workspaces, e => e.id == tab.workspaceContextCode && e.uwYear == tab.workspaceUwYear);
        const {projects} = ws;
 
        ctx.patchState(produce(ctx.getState(), draft => {
@@ -298,6 +298,8 @@ export class WorkspaceService {
                 scopeContext: null
               },
               pendingData: {
+                accumulationPackageId: 0,
+                accumulationPackageStatus: "",
                 targetRaps: [],
                 regionPerils: [],
               },

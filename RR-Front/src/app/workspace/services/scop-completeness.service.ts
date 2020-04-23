@@ -53,9 +53,11 @@ export class ScopeCompletenessService {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
     const {uwYear, wsId} = state.content[wsIdentifier];
-    return this.scopeApi.getData(uwYear, wsId)
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getData(uwYear, wsId, projectId)
       .pipe(
           tap((data: any[]) => {
+            console.log(data);
             ctx.patchState(produce(ctx.getState(), draft => {
               const {regionPerils, targetRaps, scopeContext} = this._formatData(data);
               draft.content[wsIdentifier].scopeOfCompleteness.data = {
@@ -113,7 +115,8 @@ export class ScopeCompletenessService {
     const {uwYear, wsId} = state.content[wsIdentifier];
     const {accumulationPackageId} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
     const {scopeContext} = state.content[wsIdentifier].scopeOfCompleteness.data;
-    return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId).pipe(
+    const {projectId} =  _.find(state.content[wsIdentifier].projects, prj => prj.selected);
+    return this.scopeApi.getDataPending(accumulationPackageId, uwYear, wsId, projectId).pipe(
         tap((data: any) => {
           const overriddenData = data.overriddenSections;
           const {regionPerils, targetRaps} = this._formatData(data.scopeObject);
@@ -126,13 +129,13 @@ export class ScopeCompletenessService {
           });
 
           _.forEach(attachedPLTs, plt => {
-            if (_.includes(_.map(attachedPLTs, item => item.pltHeaderId), plt.pltHeaderId)) {
-              mergedPltList = [...mergedPltList, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
-            } else {
+            if (_.includes(_.map(mergedPltList, item => item.pltHeaderId), plt.pltHeaderId)) {
               const pltIndex = _.findIndex(mergedPltList, item => item.pltHeaderId === plt.pltHeaderId);
               _.merge(mergedPltList, {[pltIndex]: {...mergedPltList[pltIndex], scope: [...mergedPltList[pltIndex].scope, plt.scope],
                   scopeIndex: [...mergedPltList[pltIndex].scopeIndex, plt.scopeIndex]
-                }})
+                }});
+            } else {
+              mergedPltList = [...mergedPltList, {...plt, scope: [plt.scope], scopeIndex: [plt.scopeIndex]}];
             }
           });
 
@@ -202,7 +205,7 @@ export class ScopeCompletenessService {
       uwYear: ws.uwYear,
       workspaceId: ws.wsId,
       projectId: _.find(ws.projects, item => item.selected).projectId,
-      workspaceName: ws.workspaceName
+      workspaceName: ws.wsId
     };
     return this.scopeApi.overrideDone(target).pipe(
         tap((data: any) => {
@@ -294,14 +297,14 @@ export class ScopeCompletenessService {
   attachPLT(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
-    const {plts} = payload;
+    const plts = _.uniqWith(payload.plts, _.isEqual);
     const ws = state.content[wsIdentifier];
 
     const sendData = {
       accumulationPackageId: ws.scopeOfCompleteness.pendingData.accumulationPackageId,
       pltList: _.map(plts, item => ({contractSectionId: item.scopeIndex, pltHeaderId: item.pltHeaderId})),
       projectId: _.find(ws.projects, item => item.selected).projectId,
-      workspaceName: ws.workspaceName,
+      workspaceName: ws.wsId,
       uwYear: ws.uwYear,
     };
 
@@ -414,7 +417,7 @@ export class ScopeCompletenessService {
       _.forEach(item.regionPerils, rp => {
         const id = _.findIndex(regionPerils, dt => dt.id === rp.id);
         if (id === -1) {
-          const newTr = _.map(rp.targetRaps, trRp => ({...trRp, scopeContext: [item.id]}));
+          const newTr = _.map(_.uniqWith(rp.targetRaps, _.isEqual), trRp => ({...trRp, scopeContext: [item.id]}));
           regionPerils = [...regionPerils, {...rp, scopeContext: [item.id], targetRaps: newTr}];
         } else {
           regionPerils = _.merge(regionPerils, {[id]: {scopeContext: [...regionPerils[id].scopeContext, item.id]}});
@@ -426,8 +429,8 @@ export class ScopeCompletenessService {
               regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
                       scopeContext: [...regionPerils[id].targetRaps[targetId].scopeContext, item.id]
                     }})}});
-              _.forEach(rp.targetRaps[targetId].pltsAttached, plt => {
-                const pltID = _.findIndex(regionPerils[id].targetRaps[targetId].pltsAttached, (plts: any) => plts.id === plt.id);
+              _.forEach(tr.pltsAttached, plt => {
+                const pltID = _.findIndex(regionPerils[id].targetRaps[targetId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
                 if (pltID === -1) {
                   regionPerils = _.merge(regionPerils, {[id]: {targetRaps: _.merge(regionPerils[id].targetRaps, {[targetId]: {
                           pltsAttached: [...regionPerils[id].targetRaps[targetId].pltsAttached, plt]
@@ -442,7 +445,7 @@ export class ScopeCompletenessService {
       _.forEach(item.targetRaps, tr => {
         const id = _.findIndex(targetRaps, dt => dt.id === tr.id);
         if (id === -1) {
-          const newRp = _.map(tr.regionPerils, trRp => ({...trRp, scopeContext: [item.id]}));
+          const newRp = _.map(_.uniqWith(tr.regionPerils, _.isEqual), trRp => ({...trRp, scopeContext: [item.id]}));
           targetRaps = [...targetRaps, {...tr, scopeContext: [item.id], regionPerils: newRp}];
         } else {
           targetRaps = _.merge(targetRaps, {[id]: {scopeContext: [...targetRaps[id].scopeContext, item.id]}});
@@ -454,8 +457,8 @@ export class ScopeCompletenessService {
               targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
                       scopeContext: [...targetRaps[id].regionPerils[regionId].scopeContext, item.id]
                     }})}});
-              _.forEach(tr.regionPerils[regionId].pltsAttached, plt => {
-                const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.id === plt.id);
+              _.forEach(rp.pltsAttached, plt => {
+                const pltID = _.findIndex(targetRaps[id].regionPerils[regionId].pltsAttached, (plts: any) => plts.pltHeaderId === plt.pltHeaderId);
                 if (pltID === -1) {
                   targetRaps = _.merge(targetRaps, {[id]: {regionPerils: _.merge(targetRaps[id].regionPerils, {[regionId]: {
                           pltsAttached: [...targetRaps[id].regionPerils[regionId].pltsAttached, plt]
