@@ -20,4 +20,9 @@ public interface AccumulationPackageRepository extends JpaRepository<Accumulatio
     List<Map<String,Object>> getExpectedScopeOnly(@Param("facNumber") String facNumber,@Param("uwYear") int uwYear);
 
     AccumulationPackage findByAccumulationPackageId(long id);
+
+    @Transactional
+    @Modifying
+    @Query(value = "exec [dbo].[usp_ExpectedScopeGetScopeOnlyByWorkspaceAndProjectId] @facNumber=:facNumber,@ProjectId=:ProjectId,@uwYear=:uwYear", nativeQuery = true)
+    List<Map<String,Object>> getPLTsForPricing(@Param("facNumber") String facNumber,@Param("uwYear") int uwYear,@Param("ProjectId") long projectId);
 }

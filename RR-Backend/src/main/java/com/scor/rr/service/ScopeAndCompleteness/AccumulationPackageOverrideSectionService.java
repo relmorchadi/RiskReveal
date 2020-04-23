@@ -50,7 +50,7 @@ public class AccumulationPackageOverrideSectionService {
             }
             accumulationPackageOverrideSectionRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(),request.getUwYear(),request.getProjectId()));
             response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
         }

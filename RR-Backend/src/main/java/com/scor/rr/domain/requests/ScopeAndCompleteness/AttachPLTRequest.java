@@ -12,4 +12,5 @@ public class AttachPLTRequest {
     private long workspaceId;
     private long accumulationPackageId;
     private List<PLTAttachingInfo> pltList;
+    private long projectId;
 }
