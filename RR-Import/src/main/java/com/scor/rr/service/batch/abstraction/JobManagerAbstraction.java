@@ -1,25 +1,23 @@
-package com.scor.rr.service.abstraction;
+package com.scor.rr.service.batch.abstraction;
 
-import com.google.gson.Gson;
 import com.scor.rr.configuration.security.UserPrincipal;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.JobDto;
+import com.scor.rr.domain.enums.JobPriority;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.JobType;
 import com.scor.rr.domain.enums.StepStatus;
-import com.scor.rr.repository.JobEntityRepository;
-import com.scor.rr.repository.StepEntityRepository;
-import com.scor.rr.repository.TaskEntityRepository;
+import com.scor.rr.repository.*;
+import com.scor.rr.service.abstraction.JobManager;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public abstract class JobManagerAbstraction implements JobManager {
@@ -34,41 +32,54 @@ public abstract class JobManagerAbstraction implements JobManager {
     @Autowired
     private StepEntityRepository stepEntityRepository;
 
+    @Autowired
+    private JobParamsRepository jobParamsRepository;
+
+    @Autowired
+    private TaskParamsRepository taskParamsRepository;
+
     @Override
     public JobEntity createJob(Map<String, String> params, Integer priority, Long userId) {
 
-        Gson gson = new Gson();
-        String parameters = gson.toJson(params);
-
         JobEntity job = new JobEntity();
-        job.setJobParams(parameters);
         job.setJobTypeCode(JobType.IMPORT);
         job.setJobTypeDesc("Batch Import Job");
         job.setSubmittedDate(new Timestamp((new Date()).getTime()));
         job.setStatus(JobStatus.PENDING.getCode());
         job.setPriority(priority);
-        job.setSubmittedByUser(userId);
         if (SecurityContextHolder.getContext().getAuthentication() != null)
             job.setUserId(((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser().getUserId());
 
-        return jobEntityRepository.saveAndFlush(job);
+        jobEntityRepository.saveAndFlush(job);
+
+        List<JobParamsEntity> jobParams = new ArrayList<>();
+        for (Map.Entry param : params.entrySet())
+            jobParams.add(new JobParamsEntity(null, 1L, job, (String) param.getKey(), (String) param.getValue()));
+
+        jobParamsRepository.saveAll(jobParams);
+
+        return job;
     }
 
     @Override
     public TaskEntity createTask(Map<String, String> params, JobEntity job, Integer priority, TaskType taskType) {
 
-        Gson gson = new Gson();
-        String parameters = gson.toJson(params);
-
         TaskEntity task = new TaskEntity();
         task.setJob(job);
-        task.setTaskParams(parameters);
         task.setPriority(priority);
         task.setStatus(JobStatus.PENDING.getCode());
         task.setSubmittedDate(new Timestamp((new Date()).getTime()));
         task.setTaskType(taskType.getCode());
 
-        return taskEntityRepository.saveAndFlush(task);
+        taskEntityRepository.saveAndFlush(task);
+
+        if (!params.get("sourceResultIdsInput").equalsIgnoreCase(""))
+            taskParamsRepository.save(new TaskParamsEntity(null, 1L, task, "sourceResultIdsInput", params.get("sourceResultIdsInput")));
+
+        if (!params.get("rlPortfolioSelectionIds").equalsIgnoreCase(""))
+            taskParamsRepository.save(new TaskParamsEntity(null, 1L, task, "rlPortfolioSelectionIds", params.get("rlPortfolioSelectionIds")));
+
+        return task;
     }
 
     @Override
@@ -97,14 +108,27 @@ public abstract class JobManagerAbstraction implements JobManager {
     @Override
     public abstract void submitJob(Long jobId);
 
+    public abstract void submitJob(Job importLossData, JobPriority priority, JobParameters params);
+
     @Override
     public abstract void cancelJob(Long jobId);
+
+    @Override
+    public abstract void pauseJob(Long jobId);
+
+    @Override
+    public abstract void resumeJob(Long jobId);
 
     @Override
     public abstract void submitTask(Long taskId);
 
     @Override
     public abstract void cancelTask(Long taskId);
+
+    @Override
+    public abstract void pauseTask(Long taskId);
+
+    public abstract void submitTask(Job importLossData, JobPriority priority, JobParameters params, TaskEntity taskEntity);
 
     @Override
     public abstract boolean isJobRunning(Long jobId);

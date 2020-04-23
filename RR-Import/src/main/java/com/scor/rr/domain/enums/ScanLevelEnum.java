@@ -5,7 +5,7 @@ import lombok.Getter;
 
 // @TODO
 public enum ScanLevelEnum {
-    Detailed(1), Basic(0);
+    Basic(0),Detailed(1) ;
 
     @Getter
     private int code;
@@ -23,5 +23,9 @@ public enum ScanLevelEnum {
             default:
                 return null;
         }
+    }
+
+    public int getCode() {
+        return code;
     }
 }

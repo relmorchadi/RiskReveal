@@ -71,10 +71,31 @@ public class ImportResource {
         }
     }
 
+    @GetMapping("/resume-job")
+    public ResponseEntity<?> resume(@RequestParam Long jobId) {
+        try {
+            batchExecution.resumeJobAfterPausing(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/running-jobs")
     public ResponseEntity<?> getRunningJobs(@RequestParam Long userId) {
         try {
             return new ResponseEntity<>(jobManager.findRunningJobsForUserRR(userId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pause-job")
+    public ResponseEntity<?> pauseJob(@RequestParam Long jobId) {
+        try {
+            jobManager.pauseJob(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);

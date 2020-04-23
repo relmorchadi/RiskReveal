@@ -31,13 +31,13 @@ public class AccumulationPackageService {
     private AccumulationPackageOverrideSectionService accumulationPackageOverrideSectionService;
 
 
-    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear) {
+    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear, long projectId) {
 
         List<ScopeAndCompletenessResponse> response = new ArrayList<>();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setFieldMatchingEnabled(true);
 
-        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getExpectedScopeOnly(workspaceName, uwYear)
+        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getPLTsForPricing(workspaceName, uwYear, projectId)
                 .stream()
                 .map(exScope -> mapper.map(exScope, ExpectedScopeDBResponse.class))
                 .collect(Collectors.toList());
@@ -80,7 +80,7 @@ public class AccumulationPackageService {
                             List<InsideObject> insideList = new ArrayList<>();
                             for (ExpectedScopeDBResponse row : value) {
                                 InsideObject object = new InsideObject();
-                                object.setId(row.getMinimumGrainRegionPerilCode());
+                                object.setId(row.getExpectedRegionPerilCode());
                                 //object.setDescription(row.getAccumulationRapDesc());
                                 insideList.add(object);
                             }
@@ -140,14 +140,14 @@ public class AccumulationPackageService {
     public Map<String, List<ExpectedScopeDBResponse>> groupByMinimumGrain(List<ExpectedScopeDBResponse> requeteResponse) {
         Map<String, List<ExpectedScopeDBResponse>> returnMap = new TreeMap<>();
         for (ExpectedScopeDBResponse row : requeteResponse) {
-            List<ExpectedScopeDBResponse> workList = returnMap.get(row.getMinimumGrainRegionPerilCode());
+            List<ExpectedScopeDBResponse> workList = returnMap.get(row.getExpectedRegionPerilCode());
             if (workList == null) {
                 List<ExpectedScopeDBResponse> newList = new ArrayList<>();
                 newList.add(row);
-                returnMap.put(row.getMinimumGrainRegionPerilCode(), newList);
+                returnMap.put(row.getExpectedRegionPerilCode(), newList);
             } else {
                 workList.add(row);
-                returnMap.put(row.getMinimumGrainRegionPerilCode(), workList);
+                returnMap.put(row.getExpectedRegionPerilCode(), workList);
             }
         }
         return returnMap;

@@ -4,10 +4,13 @@ package com.scor.rr.domain.riskLink;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.scor.rr.domain.RdmAnalysisBasic;
+import com.scor.rr.domain.dto.ExpectedFinancialPerspective;
 import com.scor.rr.domain.dto.RLAnalysisToTargetRAPDto;
+import com.scor.rr.domain.enums.ScanLevelEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.binary.StringUtils;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,7 +18,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ZZ_RLModelAnalysis")
+@Table(name = "RLModelAnalysis")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RLAnalysis {
@@ -126,9 +129,15 @@ public class RLAnalysis {
     @Column(name = "Grouping")
     private String isGrouping;
 
-//    @OneToOne(mappedBy = "rlAnalysis")
-//    @JsonBackReference
-//    private RLAnalysisScanStatus rlAnalysisScanStatus;
+    @Column(name = "ScanLevel")
+    private ScanLevelEnum scanLevel;
+    @Column(name = "ScanStatus")
+    private Integer scanStatus;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "LastScan")
+    private Date lastScan;
+
+
 
     @OneToMany(mappedBy = "rlAnalysis", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
@@ -145,7 +154,10 @@ public class RLAnalysis {
     @Transient
     private List<RLAnalysisToTargetRAPDto> referenceTargetRaps;
 
-    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm) {
+    @Transient
+    private List<ExpectedFinancialPerspective> expectedFinancialPerspectives;
+
+    public RLAnalysis(RdmAnalysisBasic rdmAnalysisBasic, RLModelDataSource rdm, int scanStatus) {
         this.entity = 1;
         this.rlModelDataSourceId = rdm.getRlModelDataSourceId();
         this.projectId = rdm.getProjectId();
@@ -181,8 +193,40 @@ public class RLAnalysis {
         this.groupType = rdmAnalysisBasic.getGroupTypeName();
         this.cedant = rdmAnalysisBasic.getCedant();
         this.lob = rdmAnalysisBasic.getLobName();
-        this.isGroup = rdmAnalysisBasic.getGrouping();
         this.regionName = rdmAnalysisBasic.getRegionName();
         this.analysisMode = rdmAnalysisBasic.getModeName();
+        this.scanStatus = scanStatus;
+        this.scanLevel = ScanLevelEnum.get(scanStatus);
+        this.lastScan = new Date();
     }
+
+    public Boolean compare(RdmAnalysisBasic rdmAnalysisBasic){
+        return rdmAnalysisBasic.getAnalysisName() != this.analysisName || rdmAnalysisBasic.getDescription() != this.description  || rdmAnalysisBasic.getEngineVersion()!=this.engineVersion
+                ||rdmAnalysisBasic.getAnalysisCurrency() != this.analysisCurrency || rdmAnalysisBasic.getTypeName() != this.analysisType || rdmAnalysisBasic.getRegion() != this.region
+                ||rdmAnalysisBasic.getSubPeril() != this.subPeril  || rdmAnalysisBasic.getLossAmplification() != this.lossAmplification || rdmAnalysisBasic.getEngineType()!= this.engineType
+                ||rdmAnalysisBasic.getGroupTypeName() != this.groupType || rdmAnalysisBasic.getCedant() != this.cedant || rdmAnalysisBasic.getLobName() != this.lob
+                || rdmAnalysisBasic.getGrouping() != this.getIsGroup() || rdmAnalysisBasic.getRegionName() != this.regionName || rdmAnalysisBasic.getModeName() != this.analysisMode;
+
+    }
+
+    public void updateBasic(RdmAnalysisBasic rdmAnalysisBasic){
+        if(!StringUtils.equals(this.getAnalysisName(),rdmAnalysisBasic.getAnalysisName() )){            this.setAnalysisName(rdmAnalysisBasic.getAnalysisName());}
+        if(!StringUtils.equals(this.getAnalysisDescription(),rdmAnalysisBasic.getDescription()))  {     this.setAnalysisDescription(rdmAnalysisBasic.getDescription());}
+        if(!StringUtils.equals(this.getEngineVersion(),rdmAnalysisBasic.getEngineVersion())){           this.setEngineVersion(rdmAnalysisBasic.getEngineVersion());}
+        if(!StringUtils.equals(this.getAnalysisCurrency(),rdmAnalysisBasic.getAnalysisCurrency())){     this.setAnalysisCurrency(rdmAnalysisBasic.getAnalysisCurrency());}
+        if(!StringUtils.equals(this.getAnalysisType(),rdmAnalysisBasic.getTypeName())){                 this.setAnalysisType(rdmAnalysisBasic.getTypeName());}
+        if(!StringUtils.equals(this.getRegion(),rdmAnalysisBasic.getRegion())){                         this.setRegion(rdmAnalysisBasic.getRegion());}
+        if(!StringUtils.equals(this.getPeril(),rdmAnalysisBasic.getPeril())){                           this.setPeril(rdmAnalysisBasic.getPeril());}
+        if(!StringUtils.equals(this.getSubPeril(),rdmAnalysisBasic.getSubPeril())){                     this.setSubPeril(rdmAnalysisBasic.getSubPeril());}
+        if(!StringUtils.equals(this.getLossAmplification(),rdmAnalysisBasic.getLossAmplification())){   this.setLossAmplification(rdmAnalysisBasic.getLossAmplification());}
+        if(!StringUtils.equals(this.getEngineType(),rdmAnalysisBasic.getEngineType())){                 this.setEngineType(rdmAnalysisBasic.getEngineType());}
+        if(!StringUtils.equals(this.getGroupType(),rdmAnalysisBasic.getGroupTypeName())){               this.setGroupType(rdmAnalysisBasic.getGroupTypeName());}
+        if(!StringUtils.equals(this.getCedant(),rdmAnalysisBasic.getCedant())){                         this.setCedant(rdmAnalysisBasic.getCedant());}
+        if(!StringUtils.equals(this.getLob(),rdmAnalysisBasic.getLobName())){                           this.setLob(rdmAnalysisBasic.getLobName());}
+        this.setIsGroup(false);
+        if(!this.getIsGroup().equals(rdmAnalysisBasic.getGrouping())){                      this.setIsGroup(rdmAnalysisBasic.getGrouping());}
+        if(!StringUtils.equals(this.getRegionName(),rdmAnalysisBasic.getRegionName())){                 this.setRegionName(rdmAnalysisBasic.getRegionName());}
+        if(!StringUtils.equals(this.getAnalysisMode(),rdmAnalysisBasic.getModeName())){                 this.setAnalysisMode(rdmAnalysisBasic.getModeName());}
+
+   }
 }

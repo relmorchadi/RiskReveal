@@ -81,7 +81,7 @@ public class ExchangeRateExtractor {
                     log.debug("Error in extracting RMS Exchange Rates");
                     exList = new ArrayList<>();
                 }
-                rmsExchangeRates.put(entry.getKey()/*instanceId*/, exList);
+                rmsExchangeRates.put(entry.getKey(), exList);
 
             }
 

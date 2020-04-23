@@ -6,19 +6,22 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name="ZZ_DashBoardWidget")
+@Table(name="DashBoardWidget")
 public class DashboardWidget {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "WidgetId", nullable = false)
+    @Column(name = "DashboardWidgetId", nullable = false)
     private long widgetId;
 
     @Column(name = "WidgetName")
     private String widgetName;
 
-    @Column(name = "WidgetType")
-    private long widgetType;
+    @Column(name = "Entity")
+    private int entity;
+
+    @Column(name = "DashboardWidgetType")
+    private String widgetType;
 
     @Column(name = "WidgetDefaultDisplayName")
     private String widgetDefaultDisplayName;

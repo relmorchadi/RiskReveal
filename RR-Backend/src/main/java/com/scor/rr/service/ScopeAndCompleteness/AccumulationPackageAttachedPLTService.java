@@ -62,7 +62,7 @@ public class AccumulationPackageAttachedPLTService {
             }
             accumulationPackageAttachedPLTRepository.saveAll(listToSave);
 
-            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(), request.getUwYear()));
+            response.setScopeObject(accumulationPackageService.getScopeOnly(request.getWorkspaceName(), request.getUwYear(),request.getProjectId()));
             response.setAttachedPLTs(getAttachedPLTs(accumulationPackage.getAccumulationPackageId()));
             response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackage.getAccumulationPackageId()));
 

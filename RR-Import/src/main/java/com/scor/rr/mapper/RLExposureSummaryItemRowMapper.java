@@ -1,6 +1,6 @@
 package com.scor.rr.mapper;
 
-import com.scor.rr.domain.GlobalViewSummary;
+import com.scor.rr.domain.GlobalExposureViewSummary;
 import com.scor.rr.domain.riskLink.RLExposureSummaryItem;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,9 +10,9 @@ import java.sql.SQLException;
 import java.util.Date;
 
 public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSummaryItem> {
-    private GlobalViewSummary globalViewSummary;
+    private GlobalExposureViewSummary globalViewSummary;
 
-    public RLExposureSummaryItemRowMapper(GlobalViewSummary globalViewSummaryId) {
+    public RLExposureSummaryItemRowMapper(GlobalExposureViewSummary globalViewSummaryId) {
         this.globalViewSummary = globalViewSummaryId;
     }
 
@@ -44,7 +44,7 @@ public class RLExposureSummaryItemRowMapper implements RowMapper<RLExposureSumma
         tmp.setDimensionSort4(rs.getInt("DimensionSort4"));
         //
         tmp.setLocationCount(rs.getLong("LocCount"));
-        tmp.setTotalTiv(rs.getDouble("TotalTIV"));
+        tmp.setTotalTiv(rs.getBigDecimal("TotalTIV"));
         //
         tmp.setExposureCurrency(rs.getString("Expo_Ccy"));
         tmp.setExposureCurrencyUSDRate(rs.getDouble("Expo_Ccy_Roe_USD"));

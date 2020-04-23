@@ -31,4 +31,5 @@ public class RdmAnalysisBasic {
     private String analysisCurrency;
     private String statusDescription;
 
+
 }
