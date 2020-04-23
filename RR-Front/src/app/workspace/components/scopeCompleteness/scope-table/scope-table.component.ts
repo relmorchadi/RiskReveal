@@ -498,7 +498,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         rowData.targetRaps.forEach(tr => {
           const override = _.get(tr, `override.${colHeader}.overridden`, false);
           const attachedPLTs = _.toArray(tr.pltsAttached);
-          const attached = _.filter(attachedPLTs, item => item.division === colHeader);
+          const attached = _.filter(attachedPLTs, item => _.includes(item.scopeIndex, colHeader));
           if (override) {
             holder.push('overridden');
           } else if (attached.length > 0) {
@@ -512,7 +512,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         rowData.regionPerils.forEach(rg => {
           const override = _.get(rg, `override.${colHeader}.overridden`, false);
           const attachedPLTs = _.toArray(rg.pltsAttached);
-          const attached = _.filter(attachedPLTs, item => item.division === colHeader);
+          const attached = _.filter(attachedPLTs, item => _.includes(item.scopeIndex, colHeader));
           if (override) {
             holder.push('overridden');
           } else if (attached.length > 0) {
@@ -544,7 +544,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     const attached = _.toArray(rowData.pltsAttached);
     let attachedPLT = false;
     _.forEach(attached, item => {
-      if (item.division === colHeader) {
+      if (_.includes(item.scopeIndex, colHeader)) {
         attachedPLT = true;
       }
     });
