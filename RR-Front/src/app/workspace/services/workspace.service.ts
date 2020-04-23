@@ -138,6 +138,8 @@ export class WorkspaceService {
               scopeContext: null
             },
             pendingData: {
+              accumulationPackageId: 0,
+              accumulationPackageStatus: "",
               targetRaps: [],
               regionPerils: [],
             },
@@ -146,7 +148,11 @@ export class WorkspaceService {
             overrideInit: false,
             overrideCancelAll: false,
             overrideCancelRow: false,
+            overrideCancelStart: false,
+            removeOverrideUnable: false,
             overriddenRows: [],
+            projects: [],
+            plts: [],
             scopeContext: {
               accumulationStatus: 'Scope Only',
               filterBy: 'All',
@@ -298,7 +304,11 @@ export class WorkspaceService {
               overrideInit: false,
               overrideCancelAll: false,
               overrideCancelRow: false,
+              overrideCancelStart: false,
+              removeOverrideUnable: false,
               overriddenRows: [],
+              projects: [],
+              plts: [],
               scopeContext: {
                 accumulationStatus: 'Scope Only',
                 filterBy: 'All',

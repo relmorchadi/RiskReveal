@@ -13,8 +13,9 @@ import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import * as _ from "lodash";
 import {
-  LoadScopeCompletenessDataSuccess,
-  LoadScopeCompletenessPricingDataSuccess, OverrideActiveAction,
+  LoadScopeCompletenessAccumulationInfo,
+  LoadScopeCompletenessData, LoadScopeCompletenessPendingData,
+  LoadScopeCompletenessPricingData, OverrideActiveAction, OverrideDeleteAction,
   PatchScopeOfCompletenessState
 } from "../../../store/actions";
 import {catchError} from "rxjs/operators";
@@ -93,11 +94,11 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.sortBy = _.get(value, 'sortBy');
       this.accumulationStatus = _.get(value, 'accumulationStatus');
       if (this.accumulationStatus === 'Pricing' ) {
-        this.dispatch([new LoadScopeCompletenessPricingDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
+        this.dispatch([new LoadScopeCompletenessPricingData(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Scope Only') {
-        this.dispatch([new LoadScopeCompletenessDataSuccess(), new PatchScopeOfCompletenessState({overrideAll: false})]);
+        this.dispatch([new LoadScopeCompletenessData(), new PatchScopeOfCompletenessState({overrideAll: false})]);
       } else if (this.accumulationStatus === 'Pending') {
-        this.dispatch(new LoadScopeCompletenessDataSuccess());
+        this.dispatch(new LoadScopeCompletenessAccumulationInfo());
       }
       this.detectChanges();
     });
@@ -106,8 +107,10 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.selectedProject = value;
       this.projectType = _.get(value, 'projectType', 'FAC');
       if (this.accumulationStatus === 'Pricing' ) {
-        this.dispatch(new LoadScopeCompletenessPricingDataSuccess());
+        this.dispatch(new LoadScopeCompletenessPricingData());
         this.overrideStop();
+      } else if (this.accumulationStatus === 'Pending') {
+        this.dispatch(new LoadScopeCompletenessAccumulationInfo());
       }
       this.detectChanges();
     });
@@ -138,6 +141,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       this.overrideRows = value.overrideRows;
       this.removeOverrideAll = value.overrideCancelAll;
       this.removeOverrideRow = value.overrideCancelRow;
+      value.overrideCancelStart ? this.removeOverrideStart() : null;
       this.overrideAll || this.overrideRows ? this.overrideInit() : this.overrideStop();
       this.detectChanges();
     });
@@ -628,6 +632,26 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     this.dispatch([new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}),
       new PatchScopeOfCompletenessState({overrideAll: false})]);
     this.onHide(); this.overrideStop();
+  }
+
+  removeOverrideStart() {
+    let selectedForOverride = [];
+    _.forEach(this.pendingData.regionPerils, item => {
+      _.forEach(item.targetRaps, tr => {
+        _.forEach(this.scopeContext, (scope, key) => {
+          const targetRegion = item.id + tr.id + scope.id;
+          if (this.overriddenChildRemovedRows[targetRegion]) {
+            selectedForOverride = [...selectedForOverride, {
+              accumulationRAPCode: tr.id,
+              contractSectionId: key + 1,
+              minimumGrainRegionPerilCode: item.id
+            }];
+          }
+        })
+      })
+    });
+    this.dispatch([new OverrideDeleteAction({listOfRemovedItems: selectedForOverride}),
+      new PatchScopeOfCompletenessState({overrideCancelAll: false, overrideCancelRow: false, removeOverrideUnable: false, overrideCancelStart: false})]);
   }
 
   overrideInit() {

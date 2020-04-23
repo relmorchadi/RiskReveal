@@ -17,6 +17,7 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
 
     @Input('rightMenuConfig') rightMenuConfig: ExposuresRightMenuConfig;
     @Output('actionDispatcher') actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
+    private first = true;
 
 
     constructor() {
@@ -31,8 +32,15 @@ export class ExposuresRightMenuComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
 
     }
+    
 
     closeRightMenu() {
-        this.actionDispatcher.emit({type:'closeRightMenu'});
+        if (this.first) {
+            this.first = false;
+        }else {
+            this.actionDispatcher.emit({type:'closeRightMenu'});
+            this.first = true;
+        }
+
     }
 }
