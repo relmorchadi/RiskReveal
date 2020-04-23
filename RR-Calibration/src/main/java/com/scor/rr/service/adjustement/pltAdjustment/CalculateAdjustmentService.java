@@ -88,9 +88,9 @@ public class CalculateAdjustmentService {
             File f = new File(plt.getLossDataFilePath(), summaryStatFilename);
             BinFile file = writeELTSummaryStatistics(analysisSummaryStats, f);
             SummaryStatisticHeaderEntity summaryStatisticHeaderEntity = null;
-            List<SummaryStatisticHeaderEntity> summaryStatisticHeaders = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltId, "PLT");
-            if (summaryStatisticHeaders != null && !summaryStatisticHeaders.isEmpty()) {
-                summaryStatisticHeaderEntity = summaryStatisticHeaders.get(0);
+            // List<SummaryStatisticHeaderEntity> summaryStatisticHeaders =
+            if (plt.getSummaryStatisticHeaderId() != null) {
+                summaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findById(plt.getSummaryStatisticHeaderId()).get();
                 summaryStatisticHeaderEntity.setPurePremium(averageAnnualLoss);
                 summaryStatisticHeaderEntity.setCov(cov);
                 summaryStatisticHeaderEntity.setStandardDeviation(standardDeviation);
@@ -99,17 +99,18 @@ public class CalculateAdjustmentService {
             } else {
                 summaryStatisticHeaderEntity =
                         new SummaryStatisticHeaderEntity(1L, modelAnalysisOptional.get().getFinancialPerspective(), cov, standardDeviation,
-                                averageAnnualLoss, StatisticsType.PLT.getCode(), plt.getPltHeaderId(), summaryStatFilename, file.getPath());
+                                averageAnnualLoss, StatisticsType.PLT.getCode(), null, summaryStatFilename, file.getPath());
                 summaryStatisticHeaderEntity.setFinancialPerspective("FP"); // todo right ?
                 summaryStatisticHeaderEntity.setCurrency(plt.getCurrencyCode());
                 summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+                pltHeaderRepository.updateSummaryStatisticHeaderId(plt.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
             }
 
             // summaryStatisticsDetail
             EPMetric aepMetric = getAEPMetric(pltLossData);
             EPMetric oepMetric = getOEPMetric(pltLossData);
-            EPMetric aepTvarMetric = StatisticAdjustment.AEPTVaRMetrics(getAEPMetric(pltLossData).getEpMetricPoints());
-            EPMetric oepTvarMetric = StatisticAdjustment.OEPTVaRMetrics(getOEPMetric(pltLossData).getEpMetricPoints());
+            EPMetric aepTvarMetric = StatisticAdjustment.AEPTVaRMetrics(aepMetric.getEpMetricPoints());
+            EPMetric oepTvarMetric = StatisticAdjustment.OEPTVaRMetrics(oepMetric.getEpMetricPoints());
 
             SummaryStatisticsDetail aepSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, aepMetric, "AEP", summaryStatisticHeaderEntity);
             SummaryStatisticsDetail oepSummaryStatisticsDetail = getSummaryStatisticsDetail(pltId, oepMetric, "OEP", summaryStatisticHeaderEntity);
@@ -153,7 +154,9 @@ public class CalculateAdjustmentService {
 
         summaryStatisticHeaderEntity.setFinancialPerspective("FP"); // todo right ?
         summaryStatisticHeaderEntity.setCurrency(pltHeader.getCurrencyCode());
-        return summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+        summaryStatisticHeaderEntity= summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+        pltHeaderRepository.updateSummaryStatisticHeaderId(pltHeader.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
+        return summaryStatisticHeaderEntity;
     }
 
     private BinFile writeELTSummaryStatistics(AnalysisSummaryStats summaryStatistics, File file) {

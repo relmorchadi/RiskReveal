@@ -12,4 +12,5 @@ public class AttachPLTRequest {
     private int uwYear;
     private long accumulationPackageId;
     private List<PLTAttachingInfo> pltList;
+    private long projectId;
 }

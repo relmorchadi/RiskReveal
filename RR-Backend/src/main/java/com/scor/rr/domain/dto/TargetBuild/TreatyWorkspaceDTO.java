@@ -53,8 +53,12 @@ public class TreatyWorkspaceDTO extends WorkspaceStats {
     }
 
     public void setTreatySections(List<ContractSearchResult> items) {
-        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
-        ).distinct().collect(Collectors.toList());
+        /** @TODO To be reviewed by Driss
+        if(items != null) {
+            this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
+            ).distinct().collect(Collectors.toList());
+        }
+         */
     }
 
     public void setYear(int year) {

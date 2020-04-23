@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +17,6 @@ public class ExposureManagerRefDto {
     private List<CARDivisionDto> divisions;
     private List<String> portfolios;
     private List<String> summariesDefinitions;
+
+    private Map<Integer, Map<String, String>> portfoliosAndCurrenciesByDivision;
 }

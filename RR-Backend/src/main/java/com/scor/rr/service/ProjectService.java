@@ -68,17 +68,21 @@ public class ProjectService {
     private MarketChannelRepository marketChannelRepository;
 
     //FIXME: need to group into one function later
-    public ProjectEntity addNewProjectFac(String facNum, Integer uwy, String clientName, ProjectEntity p) {
-        return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(facNum, uwy)
+    public ProjectEntity addNewProjectFac(String workspaceContextCode, Integer uwy, String workspaceName, String clientName,String clientId, String lob, String contractId, ProjectEntity p) {
+        return workspaceEntityRepository.findByWorkspaceContextCodeAndWorkspaceUwYear(workspaceContextCode, uwy)
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId(), true)))
                 .orElseGet(() -> {
                             WorkspaceEntity newWs = workspaceEntityRepository.save(
                                     new WorkspaceEntity(
-                                            facNum,
+                                            workspaceContextCode,
                                             uwy,
                                             "FAC",
-                                            facNum, //FIXME: workspace name and client name - check with Shaun
-                                            clientName));
+                                            workspaceName, //FIXME: workspace name and client name - check with Shaun
+                                            clientName,
+                                            clientId,
+                                            lob,
+                                            contractId
+                                    ));
                             return projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), true));
                         }
                 );
@@ -89,8 +93,18 @@ public class ProjectService {
                 .map(ws -> projectEntityRepository.save(this.prePersistProject(p, ws.getWorkspaceId(), false)))
                 .orElseGet(() ->
                         contractSearchResultRepository.findTop1ByWorkSpaceIdAndUwYearOrderByWorkSpaceIdAscUwYearAsc(wsId, uwy)
-                                .map(targetContract -> workspaceEntityRepository.save(new WorkspaceEntity(targetContract.getWorkSpaceId(),targetContract.getUwYear(), "TTY",
-                                        targetContract.getWorkspaceName(),targetContract.getCedantName())))
+                                .map(targetContract -> workspaceEntityRepository.save(
+                                        new WorkspaceEntity(
+                                                targetContract.getWorkSpaceId(),
+                                                targetContract.getUwYear(),
+                                                "TTY",
+                                                targetContract.getWorkspaceName(),
+                                                targetContract.getCedantName(),
+                                                targetContract.getCedantCode(),
+                                                targetContract.getLoBid(),
+                                                targetContract.getId()
+                                        )
+                                ))
                                 .map(newWs -> projectEntityRepository.save(this.prePersistProject(p, newWs.getWorkspaceId(), false)))
                                 .orElseThrow(() -> new RuntimeException("No available Workspace with ID : " + wsId + "-" + uwy))
                 );
@@ -99,8 +113,8 @@ public class ProjectService {
     private ProjectEntity prePersistProject(ProjectEntity p, Long wsId, Boolean isFac) {
         UserRrEntity user = isFac ? null : ( (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         p.initProject(wsId);
-        if(!isFac) p.setCreatedBy(user.getFirstName() + " " + user.getLastName());
-        p.setAssignedTo(!isFac ? user.getUserId() : null);
+        if(!isFac) p.setCreatedBy(user.getLastName() + ' ' + user.getFirstName());
+        p.setAssignedTo(!isFac ? user.getLastName() + ' ' + user.getFirstName(): null);
         return p;
     }
 

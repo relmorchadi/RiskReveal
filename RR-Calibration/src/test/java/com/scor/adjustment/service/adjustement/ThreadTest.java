@@ -1,6 +1,6 @@
 package com.scor.adjustment.service.adjustement;
 
-import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.CalibrationApplication;
 import com.scor.rr.domain.AdjustmentNode;
 import com.scor.rr.domain.AdjustmentThread;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {RiskRevealApplication.class})
+@ContextConfiguration(classes = {CalibrationApplication.class})
 @SpringBootTest
 @Transactional
 @PropertySource({"classpath:application.properties"})

@@ -59,6 +59,20 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
         exposureManagerRefDto.setSummariesDefinitions(exposureViewDefinitionRepository.findExposureViewDefinitionsAliases());
         exposureManagerRefDto.setPortfolios(modelPortfolioRepository.findPortfolioNamesByProjectId(projectId));
 
+        List<Map<String, Object>> portfolioAndCurrencyByDivision = modelPortfolioRepository.findPortfolioNamesAndCurrencyAndDivisionByProjectId(projectId);
+        List<Integer> divisions = modelPortfolioRepository.getDivisionsInProject(projectId);
+        Map<Integer, Map<String, String>> portfoliosAndCurrenciesByDivision = new HashMap<>();
+
+        for (Integer division : divisions) {
+            Map<String, String> portfolioCurrency = new HashMap<>();
+            portfolioAndCurrencyByDivision.stream().filter(e -> e.get("DivisionNumber").equals(division))
+                    .forEach(fe -> {
+                        portfolioCurrency.put((String) fe.get("ModelPortfolioName"), (String) fe.get("Currency"));
+                        portfoliosAndCurrenciesByDivision.put(division, portfolioCurrency);
+                    });
+        }
+
+        exposureManagerRefDto.setPortfoliosAndCurrenciesByDivision(portfoliosAndCurrenciesByDivision);
         return exposureManagerRefDto;
     }
 
