@@ -21,6 +21,9 @@ public interface AccumulationPackageRepository extends JpaRepository<Accumulatio
 
     AccumulationPackage findByAccumulationPackageId(long id);
 
+    List<AccumulationPackage> findByProjectId(long projectId);
+
+
     @Transactional
     @Modifying
     @Query(value = "exec [dbo].[usp_ExpectedScopeGetScopeOnlyByWorkspaceAndProjectId] @facNumber=:facNumber,@ProjectId=:ProjectId,@uwYear=:uwYear", nativeQuery = true)

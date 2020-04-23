@@ -14,5 +14,4 @@ public class OverrideSectionRequest {
     private String OverrideBasisCode;
     private String OverrideBasisNarrative;
     private List<OverrideStructure> listOfOverrides;
-    private long projectId;
 }

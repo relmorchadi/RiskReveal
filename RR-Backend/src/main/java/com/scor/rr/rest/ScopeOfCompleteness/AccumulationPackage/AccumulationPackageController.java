@@ -34,8 +34,9 @@ public class AccumulationPackageController {
     @GetMapping("getAccumulationPackage")
     public AccumulationPackageResponse getAccumulationPackage(@RequestParam("workspaceId") String workspaceId,
                                                               @RequestParam("uwyear") int uwyear,
-                                                              @RequestParam("AccumulationPackageId") long accumulationPackageId) throws RRException{
-        return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId);
+                                                              @RequestParam("AccumulationPackageId") long accumulationPackageId,
+                                                              @RequestParam("ProjectId") long projectId) throws RRException{
+        return accumulationPackageService.getAccumulationPackageDetails(workspaceId,uwyear,accumulationPackageId,projectId);
     }
 
     @GetMapping("getDropDownInformation")
