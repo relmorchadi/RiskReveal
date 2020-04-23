@@ -192,13 +192,14 @@ public class CloningScorPltHeaderService {
             // @TODO: FIX THIS !!!!!!!!!!!!
             // copy plt files
             try {
-/*                File dstFile = this.copyPltFile(plt, newPLT ,
+                File dstFile = this.copyPltFile(sourcePlt, newPLT ,
                         "/scor/data/ihub/v4/Facultative/Contracts/" + request.getTargetWorkspaceContextCode()
-                                + "/" + request.getTargetWorkspaceUwYear() + "/" + project.getProjectName()
+                                + "/" + request.getTargetWorkspaceUwYear() + "/" +
+                        this.projectRepository.findById(newPLT.getProjectId()).get().getProjectName()
                 );
                 newPLT.setLossDataFilePath(dstFile.getParent());
                 newPLT.setLossDataFileName(dstFile.getName());
-  */          } catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

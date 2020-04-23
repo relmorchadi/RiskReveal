@@ -649,24 +649,25 @@ export class PltStateService {
   }
 
   commitClone(ctx: StateContext<WorkspaceModel>, payload: any) {
-    console.log('commiting...');
-    this.cloneDataApi.cloneData(payload).subscribe(r => {
-      console.log(r)
-      ctx.dispatch(new fromPlt.commitCloneSuccess(payload));
-    });
+
+    return this.cloneDataApi.cloneData(payload).pipe(
+        mergeMap((r => {
+
+      return ctx.dispatch(new fromPlt.commitCloneSuccess(payload));
+    })));
 
   }
 
   commitCloneSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
-    console.log('commit success...');
+
     const {
       targetWorkspaceContextCode,
       targetWorkspaceUwYear
     } = payload;
     const state = ctx.getState();
     if (state.content[targetWorkspaceContextCode + '-' + targetWorkspaceUwYear]) {
-      console.log('exists');
-      ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
+
+      return ctx.dispatch(new LoadProjectByWorkspace({wsId: targetWorkspaceContextCode, uwYear: targetWorkspaceUwYear}));
 
     }
   }

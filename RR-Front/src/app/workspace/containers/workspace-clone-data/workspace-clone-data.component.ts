@@ -201,7 +201,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   ngOnInit() {
     this.currentTab$.subscribe(c => {
-      console.log(c.wsIdentifier)
+
       this.store.dispatch(new LoadProjectByWorkspace({wsId: c.wsIdentifier.split('-')[0], uwYear: c.wsIdentifier.split('-')[1]}));
     });
     this._to.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe((from) => {
@@ -622,7 +622,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         break;
     }
 
-    console.log(body);
+
     this.dispatch(new fromWS.commitClone(body));
 
     if (this._projectStep.value === 0) {

@@ -297,7 +297,7 @@ export class WorkspaceService {
 
     return this.projectApi.createProject({...project}, wsId, uwYear)
       .pipe(map(prj => {
-          console.log(prj);
+
         ctx.patchState(produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, item => ({...item, selected: false}));
           prj ? draft.content[wsIdentifier].projects.unshift({...prj, selected: true, projectType: 'TREATY'}) : null
@@ -321,7 +321,7 @@ export class WorkspaceService {
         }) : null;
       }))
     ), catchError(err => {
-        console.log('an error has occurred: ', err);
+
         return EMPTY;
       }))
   }
@@ -330,24 +330,21 @@ export class WorkspaceService {
     const {wsId, uwYear} = payload;
     const wsIdentifier = wsId + '-' + uwYear;
     this.projectApi.getProjectsByWorkspace(wsId, uwYear).subscribe(data => {
-      console.log('projects', data);
       const state = ctx.getState();
+      let projects = data as Array<any>;
+
+      const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
+
+      const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
+
+      projects.map(prj=> {
+        prj.selected = prj.projectId === selectedProjectId;
+        return prj;
+      });
 
 
-      ctx.patchState(produce(ctx.getState(), draft => {
-        const selectedProject = state.content[wsIdentifier].projects.filter( item => item.selected);
-        console.log('selected project', selectedProject);
-        console.log('state 1' , state.content[wsIdentifier].projects)
+      return ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].projects = data;
-        console.log('dd',data);
-        console.log('state 2' , state.content[wsIdentifier].projects)
-
-        const selectedProjectId = selectedProject.length > 0 ? selectedProject[0].projectId : 0;
-        draft.content[wsIdentifier].projects = _.map(draft.content[wsIdentifier].projects, (prj, index: any) => {
-          prj.selected = prj.projectId === selectedProjectId;
-          return prj;
-        });
-        console.log('state 3' , state.content[wsIdentifier].projects)
       }))
     })
   }
