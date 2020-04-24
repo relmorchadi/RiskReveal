@@ -51,7 +51,7 @@ export class AuthState implements NgxsOnInit {
                 }));
                 window.localStorage.setItem('token', data.jwtToken);
                 this.store.dispatch([new LoadShortCuts(),
-                    new LoadRecentSearch(),
+                    new LoadRecentSearch({searchTarget: 'Fac'}),
                     new LoadSavedSearch(),
                     new LoadMostUsedSavedSearch(),
                     new GetAllUsers(),

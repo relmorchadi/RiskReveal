@@ -310,7 +310,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
             // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
 
 
-            this.dispatch(new LoadRecentSearch());
+            this.dispatch(new LoadRecentSearch({searchTarget: _.toUpper(this.searchMode)}));
             if(this.fromSavedSearch) {
               this.dispatch(new LoadMostUsedSavedSearch());
               this.fromSavedSearch = false;
