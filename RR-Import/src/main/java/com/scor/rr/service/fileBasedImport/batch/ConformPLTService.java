@@ -236,6 +236,7 @@ public class ConformPLTService {
 
         // only one - one : orig - conf SummaryStatisticHeaderEntity
         LossDataHeaderEntity lossDataHeaderEntity = lossDataHeaderEntityRepository.findByModelAnalysisId(bundle.getRrAnalysis().getRrAnalysisId());
+        // To check if it's valid
         SummaryStatisticHeaderEntity origSummaryStatisticHeaderEntity = summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(lossDataHeaderEntity.getLossDataHeaderId(), "PLT").get(0);
         SummaryStatisticHeaderEntity confSummaryStatisticHeaderEntity = new SummaryStatisticHeaderEntity();
         confSummaryStatisticHeaderEntity.setCov(origSummaryStatisticHeaderEntity.getCov());

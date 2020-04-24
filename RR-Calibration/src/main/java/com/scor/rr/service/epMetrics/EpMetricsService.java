@@ -7,6 +7,7 @@ import com.scor.rr.domain.dto.SaveOrDeleteListOfRPsRequest;
 import com.scor.rr.domain.dto.ValidateEpMetricResponse;
 import com.scor.rr.domain.enums.CurveType;
 import com.scor.rr.repository.DefaultReturnPeriodRepository;
+import com.scor.rr.repository.PltHeaderRepository;
 import com.scor.rr.repository.SummaryStatisticHeaderRepository;
 import com.scor.rr.repository.UserRPRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class EpMetricsService {
 
     @Autowired
     SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
+
+    @Autowired
+    PltHeaderRepository pltHeaderRepository;
 
     public ResponseEntity<?> validateEpMetric(Integer rp) {
         return ResponseEntity.ok(
@@ -171,7 +175,7 @@ public class EpMetricsService {
 
     public ResponseEntity<?> getSinglePLTSummaryStats(Long pltHeaderId) {
         try {
-            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.findByLossDataIdAndLossDataType(pltHeaderId, "PLT"));
+            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.getOne(pltHeaderRepository.getOne(pltHeaderId).getSummaryStatisticHeaderId()));
         } catch(Exception e) {
             throw new RuntimeException(e.getMessage());
         }

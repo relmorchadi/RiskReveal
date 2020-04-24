@@ -23,6 +23,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
   selectedForAttachment: any = {};
   showApplicablePlts = false;
+  selectedProject: any;
   workspaceType: any;
   selectedPLTs: any = [];
   scopeContext;
@@ -73,8 +74,10 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
-    this.currentWs$.pipe().subscribe(value => {
+    this.currentWs$.pipe().subscribe((value: any) => {
       this.currentWs =  value;
+      this.wsIdentifier = value.wsId + '-' + value.uwYear;
+      this.selectedProject = _.find(value.projects, item => item.selected);
       this.workspaceType = _.get(value, 'workspaceType', 'fac');
       this.detectChanges();
     });
@@ -90,17 +93,23 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   }
 
   initAttachedPLTs() {
+    if (this.selectedProject !== undefined) {
+      this.dispatch(new SelectScopeProject({projectId: this.selectedProject.projectId}));
+    }
     this.selectedPLTs = [];
     this.selectedForAttachment = {};
     _.forEach(this.pendingData.regionPerils, item => {
       _.forEach(item.targetRaps, itemTR => {
         _.forEach(_.toArray(itemTR.pltsAttached), plt => {
-          this.selectedForAttachment[plt.pltHeaderId + plt.scope] = true;
-          this.selectedPLTs = [...this.selectedPLTs, plt];
+          _.forEach(plt.scope, pltScope => {
+            const pltScopeIndex = _.findIndex(this.scopeContext, (scope: any) => scope.id === pltScope) + 1;
+            this.selectedForAttachment[plt.pltHeaderId + pltScope] = true;
+            this.selectedPLTs = [...this.selectedPLTs, {...plt, scopeIndex: pltScopeIndex, scope: pltScope}];
+            console.log(this.selectedPLTs);
+          });
         })
       })
-    })
-    console.log(this.selectedPLTs, this.selectedForAttachment)
+    });
   }
 
   initColumns() {

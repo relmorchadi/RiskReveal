@@ -212,14 +212,35 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   updateDashboardAction(payload) {
     const {dashboardId, updatedDashboard} = payload;
     const dashIndex = _.findIndex(this.dashboards, (item: any) => item.id === dashboardId);
-    this.dashboards = _.merge(this.dashboards,  {[dashIndex]: {
-       visible: updatedDashboard.visible,
-       searchMode: updatedDashboard.searchMode,
-       name: updatedDashboard.dashboardName
-    }});
+    const newDashName = _.get(updatedDashboard, 'dashboardName', this.dashboards[dashIndex].dashboardName);
+    const dashboard = {
+      dashBoardSequence: this.dashboards[dashIndex].dashBoardSequence,
+      dashboardName: this.dashboards[dashIndex].dashboardName,
+      searchMode: this.dashboards[dashIndex].searchMode,
+      userId: this.dashboards[dashIndex].userId,
+      userDashboardId: this.dashboards[dashIndex].id,
+      visible: this.dashboards[dashIndex].visible
+    };
+
+    if(this.dashboards[dashIndex].dashboardName  !== newDashName) {
+      this.dashboards = _.map(this.dashboards, item => {
+        return item.id === dashboardId ? _.merge({}, item, {
+          name: updatedDashboard.dashboardName,
+          dashboardName: updatedDashboard.dashboardName
+        }) : item;
+      })
+    } else {
+      this.dashboards = _.merge(this.dashboards,  {[dashIndex]: {
+          visible: updatedDashboard.visible,
+          searchMode: updatedDashboard.searchMode
+        }});
+    }
+
     this.selectedDashboard = _.find(this.dashboards, item => item.id === dashboardId);
     this.dispatch(new fromHD.ChangeSelectedDashboard({selectedDashboard: _.cloneDeep(this.selectedDashboard), tabIndex: dashboardId}));
-    this.dashboardAPI.updateDashboard(dashboardId, updatedDashboard).subscribe(data => {},
+    this.dashboardAPI.updateDashboard(dashboardId, _.merge(dashboard ,updatedDashboard)).subscribe(data => {
+      console.log(data);
+        },
         catchError(err => {
           return of();
         })
@@ -418,23 +439,14 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
   }
 
   visibilityCheck(event) {
-      console.log(event);
       event ? this.closePrevent = true : setTimeout(() => {
           this.closePrevent = false; this.emptyField();
       }, 100);
   }
 
   updateDash(tab, newObject, option = null): void {
-    const dashboard = {
-      dashBoardSequence: tab.dashBoardSequence,
-      dashboardName: tab.dashboardName,
-      searchMode: tab.searchMode,
-      userId: tab.userId,
-      userDashboardId: tab.id,
-      visible: tab.visible
-    };
     this.updateDashboardAction({dashboardId: tab.id,
-      updatedDashboard: _.merge({}, dashboard, newObject)});
+      updatedDashboard: newObject});
     if (option === 'delete') {
       const visibleDash: any = _.filter(this.dashboards, item => item.visible && item.userDashboardId !== tab.id);
       visibleDash.length === 0 ? this.dashboardChange(this.dashboards[0].userDashboardId) :
@@ -459,7 +471,9 @@ export class DashboardEntryComponent extends BaseContainer implements OnInit {
 
   changeDashboardName(name) {
     if (!_.isEmpty(_.trim(name))) {
-      this.updateDash(this.selectedDashboard, {dashboardName: name});
+      _.debounce(() => {
+        this.updateDash(this.selectedDashboard, {dashboardName: name})
+      }, 300);
       this.selectedDashboard.name = name;
     } else {
       this.notificationService.createNotification('Information',

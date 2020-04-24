@@ -490,11 +490,7 @@ export class WorkspaceState {
   @Selector()
   static getOverrideStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    const scopeData = state.content[wsIdentifier].scopeOfCompleteness;
-    return {overrideAll: scopeData.overrideAll, overrideRow: scopeData.overrideRow, overrideInit: scopeData.overrideInit,
-      overrideCancelAll: scopeData.overrideCancelAll, overrideCancelRow: scopeData.overrideCancelRow,
-      removeOverrideUnable: scopeData.removeOverrideUnable,  overrideCancelStart: scopeData.overrideCancelStart,
-    };
+    return state.content[wsIdentifier].scopeOfCompleteness.override;
   }
 
   @Selector()
