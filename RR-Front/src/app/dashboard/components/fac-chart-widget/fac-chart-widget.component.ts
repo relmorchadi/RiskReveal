@@ -290,7 +290,7 @@ export class FacChartWidgetComponent implements OnInit {
     let pricedData = [];
     _.forEach(this.analystList,
         item => newData = [...newData, _.filter(this.filteredData, fac =>
-            fac.assignedAnalyst == item && fac.carStatus === 'New').length]);
+            fac.assignedAnalyst == item && fac.carStatus === 'NEW').length]);
     _.forEach(this.analystList,
         item => inProgressData = [...inProgressData, _.filter(this.filteredData, fac =>
             fac.assignedAnalyst == item && fac.carStatus === 'In Progress').length]);
