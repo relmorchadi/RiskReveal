@@ -22,7 +22,7 @@ export class UserMenuItemComponent implements OnInit {
   defaultImport;
   isVisible = false;
   isOkLoading = false;
-  searchTarget = 'treaty';
+  searchTarget = 'TREATY';
 
   constructor( private _searchService: SearchService, private route: ActivatedRoute, private router: Router) {}
 

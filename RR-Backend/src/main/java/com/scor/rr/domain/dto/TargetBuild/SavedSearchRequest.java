@@ -11,5 +11,4 @@ public class SavedSearchRequest {
     SearchType searchType;
     List<SearchItem> items;
     String label;
-    Integer userId;
 }
