@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static java.util.stream.Collectors.toMap;
+
 
 /**
  * @author Ayman IKAR
@@ -52,7 +54,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
     public ExposureManagerRefDto getRefForExposureManager(Long projectId) {
         ExposureManagerRefDto exposureManagerRefDto = new ExposureManagerRefDto();
 
-        exposureManagerRefDto.setCurrencies(currencyRepository.findAllCurrencies());
+        exposureManagerRefDto.setCurrencies(Arrays.asList("USD","CAD","GBP","EUR","SGD"));
         exposureManagerRefDto.setFinancialPerspectives(financialPerspectiveRepository.findSelectableCodes());
         ProjectConfigurationForeWriter pcfw = projectConfigurationForeWriterRepository.findByProjectId(projectId);
         exposureManagerRefDto.setDivisions(divisionService.getDivisions(pcfw != null ? pcfw.getCaRequestId() : null));
@@ -101,6 +103,14 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
             exposureManagerData.setRegionPerils(map);
 
             exposureManagerDto.setFrozenRow(exposureManagerData);
+            map = map
+                    .entrySet()
+                    .stream()
+                    .sorted(this.valueComparator().reversed())
+                    .collect(
+                            toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2,
+                                    LinkedHashMap::new));
+            exposureManagerDto.setColumns(new ArrayList<>(map.keySet()));
         }
 
         if (values != null && !values.isEmpty()) {
@@ -116,8 +126,9 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                 map.remove("CountryCode");
                 map.remove("Admin1Code");
 
-                if (exposureManagerDto.getColumns() == null)
+                if (exposureManagerDto.getColumns() == null) {
                     exposureManagerDto.setColumns(new ArrayList<>(map.keySet()));
+                }
 
                 map.values().removeAll(Collections.singleton(null));
                 exposureManagerData.setRegionPerils(map);
@@ -128,5 +139,9 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
             exposureManagerDto.setData(data);
         }
         return exposureManagerDto;
+    }
+
+    private Comparator<Map.Entry> valueComparator() {
+        return Comparator.comparing(e -> ((BigDecimal) e.getValue()));
     }
 }
