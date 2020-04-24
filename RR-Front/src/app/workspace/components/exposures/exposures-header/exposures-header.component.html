@@ -60,7 +60,7 @@
                 </div>
                 <ul nz-menu>
                     <li *ngFor="let financialPerspectives of headerConfig?.financialPerspectives" nz-menu-item
-                        (click)="changeFinancialUnit(financialPerspectives)">
+                        (click)="changeFinancialPerspecctive(financialPerspectives)">
                         {{financialPerspectives}}
                     </li>
                 </ul>
@@ -80,7 +80,7 @@
                     </div>
                 </div>
                 <ul nz-menu>
-                    <li *ngFor="let financialUnits of headerConfig?.financialUnits" nz-menu-item>
+                    <li *ngFor="let financialUnits of headerConfig?.financialUnits" (click)="changeFinancialUnit(financialUnits)" nz-menu-item>
                         {{financialUnits.header}}
                     </li>
                 </ul>

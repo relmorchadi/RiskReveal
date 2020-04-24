@@ -17,6 +17,10 @@ public interface AccumulationPackageAttachedPLTRepository extends JpaRepository<
 
     @Transactional
     @Modifying
+    void deleteByAccumulationPackageId(long id);
+
+    @Transactional
+    @Modifying
     @Query(value = "exec [dbo].[ExpectedScope_Get_PLTs_For_PopUp] @accumulationPackageId=:accumulationPackageId,@projectId=:projectId", nativeQuery = true)
     List<Map<String,Object>> getPLTsData(@Param("accumulationPackageId") long accumulationPackageId,@Param("projectId") long projectId);
 }

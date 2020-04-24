@@ -97,8 +97,8 @@
         </div>
 
         <div style="display: flex; flex-direction: column" *ngIf="showCancelOverrideButton()">
-          <button class="a-buttons-contained-disabled-micro" *ngIf="!checkSelectionToCancelOverride()">Remove Override</button>
-          <button class="a-buttons-contained-micro" *ngIf="checkSelectionToCancelOverride()" (click)="removeOverrideBack()">Remove Override</button>
+          <button [ngClass]="{'a-buttons-contained-disabled-micro': !overriddenCancelRowAccess, 'a-buttons-contained-micro': overriddenCancelRowAccess}"
+                  [disabled]="!overriddenCancelRowAccess" (click)="removeOverrideStart()">Remove Override</button>
           <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
         </div>
 
@@ -135,7 +135,7 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item *ngIf="accumulationStatus === 'Pending'" (click)="overrideAll()">Override</li>
-              <li nz-menu-item *ngIf="accumulationStatus === 'Pending'"  (click)="RemoveOverrideAll()">Remove Override</li>
+              <li nz-menu-item *ngIf="accumulationStatus === 'Pending'" (click)="RemoveOverrideAll()">Remove Override</li>
               <li nz-menu-item>Generate Synthetic</li>
               <li nz-menu-item>Export Data</li>
               <li nz-menu-item>Manage Columns</li>
@@ -146,6 +146,7 @@
       </div>
       <div class="table-wrap">
         <app-scope-table (overrideUnable)="unableOverride($event)"
+                         (overrideRemoveUnable)="unableCancelOverride($event)"
                          (showOverrideButton)="rowOverrideShowButton($event)"
                          (closeModal)="closeModal($event)"
                          [showOverrideModal]="showOverrideModal"

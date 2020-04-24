@@ -24,7 +24,7 @@ public class OverrideSectionController {
 
     }
 
-    @DeleteMapping("deleteOverride")
+    @PostMapping("deleteOverride")
     public ResponseEntity<?> removeOverride(@RequestBody List<AccumulationPackageOverrideSection> overriddenSections){
         accumulationPackageOverrideSectionService.deleteOverride(overriddenSections);
         return ResponseEntity.ok("Deleted Successfully");

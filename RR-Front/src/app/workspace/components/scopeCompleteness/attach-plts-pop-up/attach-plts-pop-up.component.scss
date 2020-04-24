@@ -1,4 +1,21 @@
 :host ::ng-deep {
+  .ui-dialog-content {
+    height: 80vh !important;
+
+    .content {
+      height: 100%;
+    }
+
+    nz-tabset.tabset-left.tabs-standard-top.ant-tabs.ant-tabs-top.ant-tabs-line {
+      height:100%;
+    }
+
+    .ant-tabs-content.ant-tabs-top-content.ant-tabs-content-animated.ng-star-inserted {
+      height: calc(100% - 50px);
+      overflow: hidden;
+    }
+  }
+
   .tabset-left {
     background: #fff;
     margin-right: 5px;
@@ -231,4 +248,21 @@
 
 .left-slider {
   border: 1px solid rgba(0,0,0,0.3);
+  height: 100%;
+}
+
+.right-slider {
+  margin-left: 8px;
+
+  .flex-end-Checkbox {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.center-checkbox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }

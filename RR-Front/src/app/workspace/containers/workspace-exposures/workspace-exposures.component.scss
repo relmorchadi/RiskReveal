@@ -11,12 +11,11 @@
   background-color: #fff;
 }
 .a-app-wrapper {
-  display: -webkit-box;
+
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
   background-color: #F4F6FC;
   width: 100%;
+  min-height: calc(100vh - 226px);
   height: calc(100vh - 226px);
 }
 .exposures-header{

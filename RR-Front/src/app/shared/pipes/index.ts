@@ -48,8 +48,8 @@ export const PIPES = [
     ExchangeRatePipe,
     RrNumberPipe,
     HasStatusPipe,
-  TableFilterPipe,
-  GetIdentifiersPipe
+      TableFilterPipe,
+      GetIdentifiersPipe
 ];
 
 export * from './trim-secondary-format.pipe';

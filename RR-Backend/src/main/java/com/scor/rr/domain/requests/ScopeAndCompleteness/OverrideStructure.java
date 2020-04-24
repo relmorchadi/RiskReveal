@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class OverrideStructure {
 
-    private int ContractSectionId;
+    private String ContractSectionId;
     private String MinimumGrainRegionPerilCode;
     private String AccumulationRAPCode;
 
