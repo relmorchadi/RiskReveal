@@ -1,6 +1,7 @@
 package com.scor.rr.service.epMetrics;
 
 import com.scor.rr.configuration.security.UserPrincipal;
+import com.scor.rr.domain.SummaryStatisticHeaderEntity;
 import com.scor.rr.domain.UserRPEntity;
 import com.scor.rr.domain.UserRrEntity;
 import com.scor.rr.domain.dto.SaveOrDeleteListOfRPsRequest;
@@ -173,11 +174,8 @@ public class EpMetricsService {
         }
     }
 
-    public ResponseEntity<?> getSinglePLTSummaryStats(Long pltHeaderId) {
-        try {
-            return ResponseEntity.ok(this.summaryStatisticHeaderRepository.getOne(pltHeaderRepository.getOne(pltHeaderId).getSummaryStatisticHeaderId()));
-        } catch(Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public Optional<SummaryStatisticHeaderEntity> getSinglePLTSummaryStats(Long pltHeaderId) {
+        Long summaryStatId= pltHeaderRepository.getSummaryStatHeaderIdById(pltHeaderId);
+        return this.summaryStatisticHeaderRepository.findById(summaryStatId);
     }
 }
