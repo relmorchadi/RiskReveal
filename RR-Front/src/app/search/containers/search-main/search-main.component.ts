@@ -228,7 +228,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       } else {
         tags.push({
           ...item,
-          key: this._badgeService.transformToMapping(item.key),
+          key: item.key,
           value: this._badgeService.clearString(this._badgeService.parseAsterisk(item.value))
         })
       }
@@ -239,7 +239,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     return {
       filters: _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
         ...item,
-        field: item.key,
+        field: this._badgeService.transformToMapping(item.key),
         operator: item.operator || 'LIKE'
       })),
       keyword
@@ -284,6 +284,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       this.searchSub$ = this._searchService.expertModeSearch(params)
           .pipe(this.unsubscribeOnDestroy)
           .subscribe((data: any) => {
+            console.log(data.content);
             this.contracts = _.map(data.content, item => ({...item, selected: false}));
             this.loading = false;
             this.secondaryLoading = false;
@@ -310,7 +311,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
             // if (totalElements == 1 && !filter) this.openWorkspace(data.content[0].workSpaceId, data.content[0].uwYear);
 
 
-            this.dispatch(new LoadRecentSearch({searchTarget: _.toUpper(this.searchMode)}));
+            this.dispatch(new LoadRecentSearch({searchTarget: this.searchMode}));
             if(this.fromSavedSearch) {
               this.dispatch(new LoadMostUsedSavedSearch());
               this.fromSavedSearch = false;

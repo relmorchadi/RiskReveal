@@ -389,7 +389,7 @@ public class SearchService {
         SavedSearch savedSearch = new SavedSearch();
         savedSearch.setLabel(request.getLabel());
         savedSearch.setUserId(user.getUserId());
-        savedSearch.setType(request.getSearchType().toString());
+        savedSearch.setType(request.getSearchType().getSearchType());
         this.savedSearchRepository.saveAndFlush(savedSearch);
         List<SavedSearchItem> savedSearchItems = request.getItems().stream().map(item -> new SavedSearchItem(item, savedSearch.getSavedSearchId())).collect(toList());
         savedSearch.setItems(this.savedSearchItemRepository.saveAll(savedSearchItems));
@@ -440,7 +440,7 @@ public class SearchService {
         keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
 
         if(!keyword.equals("") || request.getFilter().size() > 0) {
-            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), request.getType().toString());
+            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), request.getType().getSearchType());
             int recentSearchesLength = recentSearches.size();
 
             if( recentSearchesLength == 7 ) {
@@ -449,13 +449,14 @@ public class SearchService {
             }
             RecentSearch newSearch = new RecentSearch();
             newSearch.setUserId(user.getUserId());
+            newSearch.setType(request.getType().getSearchType());
             recentSearchRepository.save(newSearch);
 
             List<RecentSearchItem> items= new ArrayList<>();
 
             if(!keyword.equals("")) {
                 RecentSearchItem newSearchItem = new RecentSearchItem();
-                newSearchItem.setKeyword("global search");
+                newSearchItem.setKey("global search");
                 newSearchItem.setOperator("LIKE");
                 newSearchItem.setValue(keyword);
                 newSearchItem.setRecentSearchId(newSearch.getRecentSearchId());
@@ -466,7 +467,7 @@ public class SearchService {
                     .forEach( expertModeFilter -> {
                         if(!expertModeFilter.getValue().equals("")) {
                             RecentSearchItem newSearchItem = new RecentSearchItem();
-                            newSearchItem.setKeyword(expertModeFilter.getField());
+                            newSearchItem.setKey(expertModeFilter.getKey());
                             newSearchItem.setOperator(expertModeFilter.getOperator().value);
                             newSearchItem.setValue(expertModeFilter.getValue().replace("%", "").trim());
                             newSearchItem.setRecentSearchId(newSearch.getRecentSearchId());

@@ -18,7 +18,7 @@ public abstract class SearchItem {
     private Long id;
 
     @Column(name = "Keyword")
-    private String keyword;
+    private String key;
 
     @Column(name = "Value")
     private String value;
@@ -28,7 +28,7 @@ public abstract class SearchItem {
 
     protected SearchItem(SearchItem searchItem){
         this.id= searchItem.getId();
-        this.keyword= searchItem.getKeyword();
+        this.key= searchItem.getKey();
         this.value= searchItem.getValue();
         this.operator= searchItem.getOperator();
     }
