@@ -100,12 +100,13 @@ export class RiskApi {
         }
     }
 
-    runDetailedScan(instanceId, projectId, rlAnalysisList, rlPortfolioList) {
+    runDetailedScan(instanceId, projectId, rlAnalysisList, rlPortfolioList, selectedFP) {
         return this.http.post(`${this.IMPORT_URL}import/config/detailed-scan`, {
             instanceId,
             projectId,
             rlAnalysisList,
-            rlPortfolioList
+            rlPortfolioList,
+            selectedFP
         });
     }
 

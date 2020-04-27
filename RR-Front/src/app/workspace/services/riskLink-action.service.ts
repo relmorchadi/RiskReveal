@@ -986,8 +986,8 @@ export class RiskLinkStateService {
     }
 
     runDetailedScan(ctx: StateContext<WorkspaceModel>, payload) {
-        const {projectId, analysis, portfolios, instanceId} = payload;
-        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios)
+        const {projectId, analysis, portfolios, instanceId, fp} = payload;
+        return this.riskApi.runDetailedScan(instanceId, projectId, analysis, portfolios, fp)
             .pipe(
                 mergeMap(({analysis, portfolios}: any) => {
                     ctx.patchState(produce(ctx.getState(), draft => {
