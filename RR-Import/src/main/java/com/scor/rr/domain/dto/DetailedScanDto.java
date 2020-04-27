@@ -15,4 +15,5 @@ public class DetailedScanDto {
     private List<PortfolioHeader> rlPortfolioList;
     private Long projectId;
     private String instanceId;
+    private String selectedFP;
 }

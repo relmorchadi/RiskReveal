@@ -48,8 +48,6 @@ public class RmsService {
     @Autowired
     private RLModelDataSourceRepository rlModelDataSourcesRepository;
 
-
-
     @Autowired
     private RLAnalysisRepository rlAnalysisRepository;
 
@@ -58,8 +56,6 @@ public class RmsService {
 
     @Autowired
     private RLImportSelectionRepository rlImportSelectionRepository;
-
-
 
     @Autowired
     private RLPortfolioSelectionRepository rlPortfolioSelectionRepository;
@@ -154,15 +150,15 @@ public class RmsService {
                 projectId
         ).get(0);
     }
-
+/**
     public DetailedScanResult detailedScan(DetailedScanDto detailedScanDto) {
         return new DetailedScanResult(
-                scanAnalysisDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
+                scanAnalysisDetail(detailedScanDto.getRlAnalysisList(), detailedScanDto.getProjectId()).stream()
                         .map(analysis -> modelMapper.map(analysis, RLAnalysisDetailedDto.class))
                         .collect(Collectors.toList()),
                 scanPortfolioDetail(detailedScanDto.getInstanceId(), detailedScanDto.getRlPortfolioList(), detailedScanDto.getProjectId()));
     }
-
+*/
     public DetailedScanResult paralleledDetailedScan(DetailedScanDto detailedScanDto) {
 
         List<Future<List<RLAnalysis>>> analysisFutures = new ArrayList<>();
@@ -179,6 +175,7 @@ public class RmsService {
             analysisDetailedScanRunnableTask.setCountDownLatch(countDownLatch);
             analysisDetailedScanRunnableTask.setInstanceId(detailedScanDto.getInstanceId());
             analysisDetailedScanRunnableTask.setProjectId(detailedScanDto.getProjectId());
+            analysisDetailedScanRunnableTask.setSelectedFp(detailedScanDto.getSelectedFP());
             analysisDetailedScanRunnableTask.setHeaders(Collections.singletonList(analysisHeader));
             analysisFutures.add(executorService.submit(analysisDetailedScanRunnableTask));
         });
@@ -373,7 +370,7 @@ public class RmsService {
         }
     }
 
-    public List<RLAnalysis> scanAnalysisDetail(String instanceId, List<AnalysisHeader> rlAnalysisList, Long projectId) {
+    public List<RLAnalysis> scanAnalysisDetail(List<AnalysisHeader> rlAnalysisList, Long projectId, String fp) {
 
         Map<MultiKey, List<Long>> analysisByRdms = new HashMap<>();
         Map<Long, RLAnalysis> cache = new HashMap<>();
@@ -416,8 +413,7 @@ public class RmsService {
                             this.updateRLAnalysis(rlAnalysis, rdmAnalysis);
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
-                            rlAnalysis.setScanLevel(ScanLevelEnum.Detailed);//updating
-                            rlAnalysisRepository.save(rlAnalysis);
+                            rlAnalysis.setScanLevel(ScanLevelEnum.Detailed);
                             rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
                             rlAnalysis.setExpectedFinancialPerspectives(
                                     this.getExpectedFinancialPersp(
@@ -428,6 +424,12 @@ public class RmsService {
                                             fpCodes
                                     )
                             );
+                            rlAnalysis.getExpectedFinancialPerspectives().stream().filter(item -> item.getFpCode().equals(fp))
+                                    .findFirst()
+                                    .ifPresent(expectedFinancialPerspective -> {
+                                        rlAnalysis.setDefaultOccurrenceBasis(expectedFinancialPerspective.getOccurrenceBasis());
+                                    });
+                            rlAnalysisRepository.save(rlAnalysis);
                             allScannedAnalysis.add(rlAnalysis);
                         });
             }
