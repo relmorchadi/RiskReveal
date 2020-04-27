@@ -42,7 +42,7 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
     // this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
-  collapse(isOutside) {
+  collapse(isOutside = false) {
     event.stopPropagation();
     event.preventDefault();
     this.toggleCollapseEmitter.emit(isOutside || !this.isCollapsed);
