@@ -61,8 +61,8 @@ export class ScopeCompletenessService {
             ctx.patchState(produce(ctx.getState(), draft => {
               const {regionPerils, targetRaps, scopeContext} = this._formatData(data);
               draft.content[wsIdentifier].scopeOfCompleteness.data = {
-                regionPerils: regionPerils,
-                targetRaps: targetRaps,
+                regionPerils: _.orderBy(regionPerils, ['id']),
+                targetRaps: _.orderBy(targetRaps, ['id']),
                 scopeContext: scopeContext
               };
               if(draft.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils.length === 0) {
@@ -96,8 +96,8 @@ export class ScopeCompletenessService {
                 const listOfPLTs = _.map(data.listOfImportedPLTs, item => ({...item, pltHeaderId: item.pltheaderId, scopeIndex: [item.division]}));
                 let {newRegionPerils, newTargetRaps} = this._attachPLT(listOfPLTs, regionPerils, targetRaps);
                 draft.content[wsIdentifier].scopeOfCompleteness.data = {
-                  regionPerils: newRegionPerils,
-                  targetRaps: newTargetRaps,
+                  regionPerils: _.orderBy(newRegionPerils, ['id']),
+                  targetRaps: _.orderBy(newTargetRaps, ['id']),
                   scopeContext: scopeContext
                 };
               }));
@@ -143,8 +143,8 @@ export class ScopeCompletenessService {
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
               ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
-              targetRaps: newTargetRaps,
-              regionPerils: newRegionPerils,
+              targetRaps: _.orderBy(newTargetRaps, ['id']),
+              regionPerils: _.orderBy(newRegionPerils, ['id']),
               overriddenSections: data.overriddenSections
             }
           }))
