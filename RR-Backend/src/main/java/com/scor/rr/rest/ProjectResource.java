@@ -4,6 +4,7 @@ import com.scor.almf.ws.cat_analysis_service.CreateCatAnalysisRequest;
 import com.scor.rr.domain.ProjectEntity;
 import com.scor.rr.domain.dto.TargetBuild.ProjectEditRequest;
 import com.scor.rr.domain.dto.TargetBuild.ProjectStatistics;
+import com.scor.rr.domain.entities.Project.ProjectCardView;
 import com.scor.rr.service.ProjectService;
 import com.scor.rr.ws.impl.CatAnalysisWebServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProjectResource {
     CatAnalysisWebServiceImpl catAnalysisWebService;
 
     @PostMapping()
-    public ProjectEntity addNewProject(@RequestParam String wsId, @RequestParam Integer uwy, @RequestBody ProjectEntity projectEntity) {
+    public ProjectCardView addNewProject(@RequestParam String wsId, @RequestParam Integer uwy, @RequestBody ProjectEntity projectEntity) {
         return projectService.addNewProject(wsId, uwy, projectEntity);
     }
 

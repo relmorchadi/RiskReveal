@@ -428,9 +428,13 @@ export class WorkspaceService {
     }));
   }
 
-  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsLeftMenu) {
+  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, { payload }: fromWS.ToggleWsLeftMenu) {
+    const {
+      wsId,
+      isCollapsed
+    } = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].leftNavbarCollapsed = !draft.content[wsId].leftNavbarCollapsed;
+      draft.content[wsId].leftNavbarCollapsed = isCollapsed;
     }));
   }
 

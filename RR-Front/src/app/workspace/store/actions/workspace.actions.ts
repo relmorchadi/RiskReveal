@@ -50,7 +50,7 @@ export class ToggleWsDetails {
 
 export class ToggleWsLeftMenu {
   static readonly type = '[Workspace] Toggle workspace left menu';
-  constructor(public wsId: string) {}
+  constructor(public payload?: any) {}
 }
 
 export class UpdateWsRouting {
