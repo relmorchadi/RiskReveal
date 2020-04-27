@@ -16,7 +16,7 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   isCollapsed;
 
   @Output('toggleCollapse')
-  toggleCollapseEmitter: EventEmitter<void>;
+  toggleCollapseEmitter: EventEmitter<boolean>;
 
   @Output('navigate')
   navigationEmitter: EventEmitter<{ route: string }>;
@@ -42,10 +42,10 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
     // this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
-  collapse($event) {
-    $event.stopPropagation();
-    $event.preventDefault();
-    this.toggleCollapseEmitter.emit();
+  collapse(isOutside) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.toggleCollapseEmitter.emit(isOutside || !this.isCollapsed);
   }
 
   routerNavigate(route) {
