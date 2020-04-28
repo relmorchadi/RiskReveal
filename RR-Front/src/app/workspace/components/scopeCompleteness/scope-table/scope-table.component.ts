@@ -280,7 +280,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     if (this.sortBy == 'Minimum Grain / RAP') {
       if (overrideDone) {
         _.forEach(row.targetRaps, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = false;
             this.overriddenRows[item.id + col.columnContext] = false;
             this.overriddenChildRows[item.id + row.id + col.columnContext] = false;
@@ -290,7 +291,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       } else {
         _.forEach(row.targetRaps, item => {
           const alreadyOverridden = _.get(item, `override.${colIndex}.overridden`, false);
-          if (_.toArray(item.pltsAttached).length === 0 && !alreadyOverridden) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0 && !alreadyOverridden) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = !this.overriddenChildRows[row.id + item.id + col.columnContext];
             this.overriddenChildRows[item.id + row.id + col.columnContext] = !this.overriddenChildRows[item.id + row.id + col.columnContext];
           }
@@ -300,7 +302,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           _.forEach(item.regionPerils, rp => {
             const overrideChild = _.get(this.overriddenChildRows, item.id + rp.id + col.columnContext, false);
             const alreadyOverridden = _.get(rp, `override.${colIndex}.overridden`, false);
-            if (!overrideChild && _.toArray(rp.pltsAttached).length === 0 && !alreadyOverridden) {
+            const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+            if (!overrideChild && listPltAttached === 0 && !alreadyOverridden) {
               selectedAllRp = false;
             }
           });
@@ -312,7 +315,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       if (overrideDone) {
         _.forEach(row.regionPerils, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = false;
             this.overriddenRows[item.id + col.columnContext] = false;
             this.overriddenChildRows[item.id + row.id + col.columnContext] = false;
@@ -322,7 +326,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       } else {
         _.forEach(row.regionPerils, item => {
           const alreadyOverridden = _.get(item, `override.${colIndex}.overridden`, false);
-          if (_.toArray(item.pltsAttached).length === 0 && !alreadyOverridden) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0 && !alreadyOverridden) {
             this.overriddenChildRows[row.id + item.id + col.columnContext] = !this.overriddenChildRows[row.id + item.id + col.columnContext];
             this.overriddenChildRows[item.id + row.id + col.columnContext] = !this.overriddenChildRows[item.id + row.id + col.columnContext];
           }
@@ -332,7 +337,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           _.forEach(item.targetRaps, tr => {
             const overrideChild = _.get(this.overriddenChildRows, item.id + tr.id + col.columnContext, false);
             const alreadyOverridden = _.get(tr, `override.${colIndex}.overridden`, false);
-            if (!overrideChild && _.toArray(tr.pltsAttached).length === 0 && !alreadyOverridden) {
+            const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+            if (!overrideChild && listPltAttached === 0 && !alreadyOverridden) {
               selectedAllRp = false;
             }
           });
@@ -362,7 +368,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         _.forEach(item.targetRaps, tr => {
           const overrideChild = _.get(this.overriddenChildRows, item.id + tr.id + col.columnContext, false);
           const alreadyOverridden = _.get(tr, `override.${colIndex}.overridden`, false);
-          if (!overrideChild && _.toArray(tr.pltsAttached).length === 0 && !alreadyOverridden) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (!overrideChild && listPltAttached === 0 && !alreadyOverridden) {
             selectedAllRp = false;
           }
         });
@@ -373,7 +380,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         _.forEach(item.regionPerils, rp => {
           const overrideChild = _.get(this.overriddenChildRows, item.id + rp.id + col.columnContext, false);
           const alreadyOverridden = _.get(rp, `override.${colIndex}.overridden`, false);
-          if (!overrideChild && _.toArray(rp.pltsAttached).length === 0 && !alreadyOverridden) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (!overrideChild && listPltAttached === 0 && !alreadyOverridden) {
             selectedAllRp = false;
           }
         });
@@ -391,7 +399,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     if (this.sortBy == 'Minimum Grain / RAP') {
       if (overrideDone) {
         _.forEach(row.targetRaps, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRemovedRows[row.id + item.id + col.columnContext] = false;
             this.overriddenRemovedRows[item.id + col.columnContext] = false;
             this.overriddenChildRemovedRows[item.id + row.id + col.columnContext] = false;
@@ -400,7 +409,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRemovedRows[row.id + col.columnContext] = false;
       } else {
         _.forEach(row.targetRaps, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRemovedRows[row.id + item.id + col.columnContext] = !this.overriddenChildRemovedRows[row.id + item.id + col.columnContext];
             this.overriddenChildRemovedRows[item.id + row.id + col.columnContext] = !this.overriddenChildRemovedRows[item.id + row.id + col.columnContext];
           }
@@ -409,7 +419,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           let selectedAllRp = true;
           _.forEach(item.regionPerils, rp => {
             const overrideChild = _.get(this.overriddenChildRemovedRows, item.id + rp.id + col.columnContext, false);
-            if (!overrideChild && _.toArray(rp.pltsAttached).length === 0) {
+            const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+            if (!overrideChild && listPltAttached=== 0) {
               selectedAllRp = false;
             }
           });
@@ -421,7 +432,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       if (overrideDone) {
         _.forEach(row.regionPerils, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRemovedRows[row.id + item.id + col.columnContext] = false;
             this.overriddenRemovedRows[item.id + col.columnContext] = false;
             this.overriddenChildRemovedRows[item.id + row.id + col.columnContext] = false;
@@ -430,7 +442,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRemovedRows[row.id + col.columnContext] = false;
       } else {
         _.forEach(row.regionPerils, item => {
-          if (_.toArray(item.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (listPltAttached === 0) {
             this.overriddenChildRemovedRows[row.id + item.id + col.columnContext] = !this.overriddenChildRemovedRows[row.id + item.id + col.columnContext];
             this.overriddenChildRemovedRows[item.id + row.id + col.columnContext] = !this.overriddenChildRemovedRows[item.id + row.id + col.columnContext];
           }
@@ -439,7 +452,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
           let selectedAllRp = true;
           _.forEach(item.targetRaps, tr => {
             const overrideChild = _.get(this.overriddenChildRemovedRows, item.id + tr.id + col.columnContext, false);
-            if (!overrideChild && _.toArray(tr.pltsAttached).length === 0) {
+            const listPltAttached = _.filter(_.toArray(item.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+            if (!overrideChild && listPltAttached === 0) {
               selectedAllRp = false;
             }
           });
@@ -448,7 +462,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         this.overriddenRemovedRows[row.id + col.columnContext] = !this.overriddenRemovedRows[row + col.columnContext];
       }
     }
-
+    console.log(this.overriddenChildRemovedRows);
     const childValues = _.values(this.overriddenChildRemovedRows);
     this.overrideRemoveUnable.emit(_.includes(childValues, true));
   }
@@ -467,7 +481,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         let selectedAllRp = true;
         _.forEach(item.targetRaps, tr => {
           const overrideChild = _.get(this.overriddenChildRemovedRows, item.id + tr.id + col.columnContext, false);
-          if (!overrideChild && _.toArray(tr.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(tr.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (!overrideChild && listPltAttached === 0) {
             selectedAllRp = false;
           }
         });
@@ -477,16 +492,18 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
         let selectedAllRp = true;
         _.forEach(item.regionPerils, rp => {
           const overrideChild = _.get(this.overriddenChildRemovedRows, item.id + rp.id + col.columnContext, false);
-          if (!overrideChild && _.toArray(rp.pltsAttached).length === 0) {
+          const listPltAttached = _.filter(_.toArray(rp.pltsAttached), plt => _.includes(plt.scope, col.columnContext)).length;
+          if (!overrideChild && listPltAttached === 0) {
             selectedAllRp = false;
           }
         });
         this.overriddenRemovedRows[item.id + col.columnContext] = selectedAllRp;
       });
-
-      const childValues = _.values(this.overriddenChildRemovedRows);
-      this.overrideRemoveUnable.emit(_.includes(childValues, true));
     }
+
+    console.log(this.overriddenChildRemovedRows);
+    const childValues = _.values(this.overriddenChildRemovedRows);
+    this.overrideRemoveUnable.emit(_.includes(childValues, true));
   }
 
   checkExpected(rowData, column, colHeader) {
@@ -622,7 +639,8 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       _.forEach(item.targetRaps, tr => {
         _.forEach(this.scopeContext, (scope, key) => {
           const targetRegion = item.id + tr.id + scope.id;
-          if (this.overriddenChildRemovedRows[targetRegion]) {
+          const overrideRemove = _.get(this.overriddenChildRemovedRows, `${targetRegion}`, false)
+          if (overrideRemove) {
             selectedForOverride = [...selectedForOverride, {
               accumulationRAPCode: tr.id,
               contractSectionId: key + 1,

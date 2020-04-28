@@ -219,7 +219,8 @@ export class ScopeCompletenessService {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
               regionPerils: scopeDataRP,
               targetRaps: scopeDataTR,
-              overriddenSections: data.overriddenSections
+              overriddenSections: [..._.get(draft.content[wsIdentifier].scopeOfCompleteness.pendingData, 'overriddenSections',[]),
+                ...data.overriddenSections]
             }
           }))
 
@@ -234,7 +235,6 @@ export class ScopeCompletenessService {
   removeOverrideSelection(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {wsIdentifier} = state.currentTab;
-    const ws = state.content[wsIdentifier];
     const scopeDataRP = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils);
     const scopeDataTR = _.cloneDeep(state.content[wsIdentifier].scopeOfCompleteness.pendingData.targetRaps);
     const {overriddenSections} = state.content[wsIdentifier].scopeOfCompleteness.pendingData;
@@ -281,8 +281,6 @@ export class ScopeCompletenessService {
         }
       }))
     }));
-
-
   }
 
   selectProject(ctx: StateContext<WorkspaceModel>, payload) {
