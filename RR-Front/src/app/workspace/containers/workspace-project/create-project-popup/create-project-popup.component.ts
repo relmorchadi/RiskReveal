@@ -134,9 +134,7 @@ export class CreateProjectPopupComponent extends BaseContainer implements OnInit
   patchNewProject() {
     this.editCreateBLock = false;
     this.newProject && this.newProjectForm.patchValue(this.newProject);
-    console.log(this.currentUser, this.projectForm, this.newProject);
     if (this.editOption) {
-      this.projectForm.assignedTo = _.toInteger(this.projectForm.assignedTo);
       this.projectFormInit = {...this.projectForm};
     }
   }

@@ -54,9 +54,7 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this.projects$.pipe().subscribe(data => {
       if(this.projects !== data) {
-        this.dispatch(new LoadScopePLTsData());
         this.projects = data;
-        //console.log('data', data);
       }
       this.detectChanges();
     });
@@ -73,7 +71,6 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
 
     this.pendingData$.pipe().subscribe(value => {
       this.pendingData =  value;
-      this.initAttachedPLTs();
       this.detectChanges();
     });
 

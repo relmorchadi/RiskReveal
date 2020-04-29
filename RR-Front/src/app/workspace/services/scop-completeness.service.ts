@@ -65,10 +65,12 @@ export class ScopeCompletenessService {
                 targetRaps: _.orderBy(targetRaps, ['id']),
                 scopeContext: scopeContext
               };
+
               if(draft.content[wsIdentifier].scopeOfCompleteness.pendingData.regionPerils.length === 0) {
                 draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+                  ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
                   regionPerils: regionPerils,
-                  targetRaps: targetRaps
+                  targetRaps: targetRaps,
                 };
               }
 
@@ -217,6 +219,7 @@ export class ScopeCompletenessService {
 
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
               regionPerils: scopeDataRP,
               targetRaps: scopeDataTR,
               overriddenSections: [..._.get(draft.content[wsIdentifier].scopeOfCompleteness.pendingData, 'overriddenSections',[]),
@@ -276,6 +279,7 @@ export class ScopeCompletenessService {
 
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+          ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
           regionPerils: scopeDataRP,
           targetRaps: scopeDataTR
         }
@@ -353,6 +357,7 @@ export class ScopeCompletenessService {
             });
 
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
+              ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
               regionPerils: regionPeril,
               targetRaps: targetRaps
             }

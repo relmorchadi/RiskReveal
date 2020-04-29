@@ -646,7 +646,8 @@ export class PltRightMenuComponent extends BaseContainer implements OnInit, OnDe
               this.unsubscribeOnDestroy
           )
           .subscribe(losses => {
-            this.epMetricsLosses[pltHeaderId]= _.get(losses, '0');
+            console.log(losses);
+            this.epMetricsLosses[pltHeaderId]= losses;
             this.detectChanges();
           })
 

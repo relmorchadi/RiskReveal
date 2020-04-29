@@ -587,7 +587,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                         instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                         projectId: p.projectId,
                         analysis,
-                        portfolios
+                        portfolios,
+                        fp: this.state.financialValidator.financialPerspectiveELT.selected.code
                     })]);
             });
     }
