@@ -27,10 +27,10 @@ public class ProjectForewriterExpectedScopeService {
 
     private ModelMapper modelMapper = new ModelMapper();
 
-    @Value(value = "${application.expectedScope.path}")
-    private String path;
-    @Value(value = "${application.expectedScope.separator}")
-    private String separator;
+    //@Value(value = "${application.expectedScope.path}")
+    private String path="";
+    //@Value(value = "${application.expectedScope.separator}")
+    private String separator="/";
 
     public List<String> getFileNames() {
         File file = new File(path);
