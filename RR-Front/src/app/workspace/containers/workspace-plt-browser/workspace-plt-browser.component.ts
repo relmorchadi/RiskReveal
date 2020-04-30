@@ -263,8 +263,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   rightMenuActionDispatcher(action: Message) {
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        this.updateMenuKey('visible', false);
-        this.updateMenuKey('pltHeaderId', null);
+        this.closeDrawer(false);
         break;
 
       case rightMenuStore.setSelectedTabByIndex:
@@ -274,6 +273,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       default:
         console.log('default right menu action');
     }
+  }
+
+  closeDrawer(outside){
+    console.log("hey hey hye")
+    this.updateMenuKey('visible', false);
+    this.updateMenuKey('pltHeaderId', null);
   }
 
   setRightMenuSelectedTab(tab) {
