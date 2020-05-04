@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BaseContainer} from "../../../shared/base";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {Actions, ofActionCompleted, ofActionSuccessful, Store} from "@ngxs/store";
@@ -12,7 +12,6 @@ import {Message} from "../../../shared/message";
 import {CalibrationAPI} from "../../services/api/calibration.api";
 import {combineLatest, Subscription} from "rxjs";
 import {ExcelService} from "../../../shared/services/excel.service";
-import produce from "immer";
 import {ColumnsFormatterService} from "../../../shared/services/columnsFormatter.service";
 import {FilterGroupedPltsPipe} from "../../pipes/filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "../../pipes/sort-grouped-plts.pipe";
@@ -27,6 +26,8 @@ import {GetMetricPipe} from "../../pipes/get-metric.pipe";
   styleUrls: ['./workspace-calibration-new.component.scss']
 })
 export class WorkspaceCalibrationNewComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
+
+  @ViewChild('dtContainer') dtContainer;
 
   wsIdentifier: string;
   wsId: string;
@@ -130,7 +131,6 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     private financialUnitPipe: FinancialUnitPipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    console.log('INIT CALIB')
 
     this.initialized = false;
 
