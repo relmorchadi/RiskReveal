@@ -26,8 +26,34 @@ import {ExposuresLeftMenuComponent} from "./exposures/exposures-left-menu/exposu
 import {ExposuresRightMenuComponent} from "./exposures/exposures-right-menu/exposures-right-menu.component";
 import {DatasourceListComponent} from "./import/datasource-list/datasource-list.component";
 import {CalibrationColumnManagerComponent} from "./calibration-new/column-manager/column-manager.component";
+import {TagsComponent} from "./calibration/tags/tags.component";
+import {LastAdjustmentMatrixComponent} from "./calibration/last-adjustment-matrix/last-adjustment-matrix.component";
+import {AdjustmentPopUpComponent} from "./calibration/adjustment-pop-up/adjustment-pop-up.component";
+import {AddRemovePopUpComponent} from "./calibration/add-remove-pop-up/add-remove-pop-up.component";
+import {PopUpPltTableComponent} from "./calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
+import {CalibrationMainTableComponent} from "./calibration/calibration-main-table/calibration-main-table.component";
+import {InuringCanvasTabComponent} from "./inuring/inuring-canvas-tab/inuring-canvas-tab.component";
+import {EditContractPopUpComponent} from "./inuring/edit-contract-pop-up/edit-contract-pop-up.component";
+import {EditEdgePopUpComponent} from "./inuring/edit-edge-pop-up/edit-edge-pop-up.component";
+import {AddRemovePopUpNewComponent} from "./calibration-new/add-remove-pop-up-new/add-remove-pop-up-new.component";
+import {PopUpPltTableNewComponent} from "./calibration-new/pop-up-plt-table-new/pop-up-plt-table-new.component";
+import {AttachPltsPopUpComponent} from "./scopeCompleteness/attach-plts-pop-up/attach-plts-pop-up.component";
 
 export const COMPONENTS = [
+    TagsComponent,
+    LastAdjustmentMatrixComponent,
+    AdjustmentPopUpComponent,
+    AddRemovePopUpComponent,
+    PopUpPltTableComponent,
+    CalibrationMainTableComponent,
+    InuringCanvasTabComponent,
+    AttachPltPopUpComponent,
+    EditContractPopUpComponent,
+    EditEdgePopUpComponent,
+    ReturnPeriodPopUpComponent,
+    AddRemovePopUpNewComponent,
+    PopUpPltTableNewComponent,
+    AttachPltsPopUpComponent,
     LeftMenuComponent,
     ProjectsListComponent,
     PinComponent,

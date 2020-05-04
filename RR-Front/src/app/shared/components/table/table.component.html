@@ -127,6 +127,7 @@
          [lazy]="true" [showLoader]="false" [lazyLoadOnInit]="fromSearch"
          [(contextMenuSelection)]="contextSelectedItem"
          [contextMenu]="getContextMenu()" class="table-ngPrime"
+         (onColResize)="resize($event)"
          [selectionMode]="selectionMode"
          (onRowSelect)="rowSelect($event)"
          (onRowUnselect)="rowUnselect($event)"

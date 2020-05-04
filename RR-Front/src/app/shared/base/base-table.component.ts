@@ -153,7 +153,6 @@ export class BaseTable extends BaseContainer implements TableInterface , OnInit,
   }
 
   onCheckBox(id: number, index: number, $event: MouseEvent) {
-    console.log("checkbox")
     this._handler.onRowSelect(id, index, $event, true);
   }
 

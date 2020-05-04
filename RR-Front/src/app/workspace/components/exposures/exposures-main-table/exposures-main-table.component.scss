@@ -128,4 +128,12 @@
   .eye-icon:hover {
     color: #52b8e4;
   }
+  .filtered-column {
+    border: 1px solid #52b8e4 !important;
+  }
+}
+::ng-deep .ui-table-unfrozen-view {
+  td, th {
+    text-align: start !important;
+  }
 }

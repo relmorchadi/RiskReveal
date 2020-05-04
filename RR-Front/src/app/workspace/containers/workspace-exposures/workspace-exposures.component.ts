@@ -27,13 +27,14 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     wsIdentifier;
     workspaceInfo: any;
     tableConfig$: Observable<ExposuresMainTableConfig>;
-    tableConfig:ExposuresMainTableConfig;
-    tableColumnsConfig$:Observable<any>;
+    tableConfig: ExposuresMainTableConfig;
+    tableColumnsConfig$: Observable<any>;
     rightMenuConfig$: Observable<ExposuresRightMenuConfig>;
     headerConfig$: Observable<ExposuresHeaderConfig>;
-    sortConfig:any;
-    selectedHeaderConfig:any;
-    projectId:any;
+    sortConfig: any;
+    selectedHeaderConfig: any;
+    projectId: any;
+    regionPerilFilter:string;
 
     constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
                 private exposuresTableService: ExposuresTableService,
@@ -42,14 +43,23 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
         super(_baseRouter, _baseCdr, _baseStore);
         this.tableConfig$ = new BehaviorSubject<ExposuresMainTableConfig>(new ExposuresMainTableConfig());
         this.rightMenuConfig$ = new BehaviorSubject<ExposuresRightMenuConfig>(new ExposuresRightMenuConfig());
-        this.headerConfig$ = of<ExposuresHeaderConfig>( {exposureViews:[], financialPerspectives:[], currencies:[], divisions:[], portfolios:[], summariesDefinitions:[]});
+        this.headerConfig$ = of<ExposuresHeaderConfig>({
+            exposureViews: [],
+            financialPerspectives: [],
+            currencies: [],
+            divisions: [],
+            portfolios: [],
+            summariesDefinitions: [],
+            financialUnits:[]
+        });
         this.sortConfig = {};
         this.selectedHeaderConfig = {
-            division:null,
-            portfolio:null,
-            currency:null,
-            exposureView:null,
-            financialPerspective:null
+            division: null,
+            portfolio: null,
+            currency: null,
+            exposureView: null,
+            financialPerspective: null,
+            financialUnits:null
         }
         this.tableConfig = new ExposuresMainTableConfig();
     }
@@ -60,16 +70,16 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.projectId = project.projectId;
                 this.headerConfig$ = this.exposuresHeaderService.loadHeaderConfig(this.projectId);
                 this.headerConfig$.subscribe(headerConfig => {
-                        if (headerConfig)
-                            this.initSelectedHeaderConfig(headerConfig);
-                    },()=> {
-                    },() => {
-                        this.tableConfig$ = this.exposuresTableService.loadTableConfig({
-                            ...this.selectedHeaderConfig,
-                            projectId:this.projectId
-                        });
-                        this.detectChanges();
-                    })
+                    if (headerConfig)
+                        this.initSelectedHeaderConfig(headerConfig);
+                }, () => {
+                }, () => {
+                    this.tableConfig$ = this.exposuresTableService.loadTableConfig({
+                        ...this.selectedHeaderConfig,
+                        projectId: this.projectId
+                    });
+                    this.detectChanges();
+                })
             }
         });
         /*this.tableConfig$.pipe(first()).subscribe(tableConfig => {
@@ -101,15 +111,16 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     }
 
     initSelectedHeaderConfig(headerConfig) {
-        console.log(headerConfig);
         this.selectedHeaderConfig = {
-            division:headerConfig.divisions[0],
-            portfolio:headerConfig.portfolios[0],
-            currency:headerConfig.currencies[0],
-            exposureView:'tiv',
-            financialPerspective:headerConfig.financialPerspectives[0]
+            division: headerConfig.divisions[0],
+            portfolio: headerConfig.portfolios[0],
+            currency: headerConfig.divisions[0].currency,
+            exposureView: 'TIV',
+            financialPerspective: 'GU',
+            financialUnits:'Unit'
         }
     }
+
     sortTableColumn() {
 
     }
@@ -117,15 +128,30 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     mainTableActionDispatcher($event: any) {
         switch ($event.type) {
             case 'sortTableColumn': {
-                this.sortConfig[$event.payload.field] = $event.payload.order;
+                this.regionPerilFilter = $event.payload;
+                this.tableConfig$ = this.exposuresTableService.sortTableColumn({
+                    ...this.selectedHeaderConfig,
+                    regionPerilFilter: this.regionPerilFilter,
+                    projectId:this.projectId
+                });
                 break;
             }
             case 'filterRowRegionPeril': {
-                this.tableColumnsConfig$ = this.exposuresTableService.filterRowRegionPeril($event.payload);
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig({
+                    ...this.selectedHeaderConfig,
+                    regionPerilFilter: this.regionPerilFilter,
+                    projectId: this.projectId
+                }).pipe(map((tableConfig: any) =>
+                   this.exposuresTableService.filterRowRegionPeril(tableConfig, $event.payload)
+                ));
                 break;
             }
             case 'removeFilter': {
-                this.tableColumnsConfig$ = this.exposuresTableService.loadTableColumnsConfig();
+                this.tableConfig$ = this.exposuresTableService.loadTableConfig({
+                    ...this.selectedHeaderConfig,
+                    regionPerilFilter: this.regionPerilFilter,
+                    projectId: this.projectId
+                });
                 break;
             }
         }
@@ -146,20 +172,30 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.selectedHeaderConfig.currency = $event.payload;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
-                                    ...this.selectedHeaderConfig,
-                                    projectId:this.projectId
-                                }
-                    );
+                        ...this.selectedHeaderConfig,
+                        projectId: this.projectId
+                    }
+                );
                 break;
             }
             case 'changeFinancialUnit' : {
-                this.selectedHeaderConfig.financialPerspective = $event.payload;
+                this.selectedHeaderConfig.financialUnits = $event.payload.header;
+                /*this.tableConfig$ = this.exposuresTableService.loadTableConfig(
+                    {
+                        ...this.selectedHeaderConfig,
+                        projectId: this.projectId
+                    }
+                );*/
+                break;
+            }
+            case 'changeFinancialPerspecctive' : {
+               /* this.selectedHeaderConfig.financialPerspective = $event.payload;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
-                        projectId:this.projectId
+                        projectId: this.projectId
                     }
-                );
+                );*/
                 break;
             }
             case 'changeDivision' : {
@@ -167,7 +203,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
-                        projectId:this.projectId
+                        projectId: this.projectId
                     }
                 );
                 break;
@@ -177,14 +213,14 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
-                        projectId:this.projectId
+                        projectId: this.projectId
                     }
                 );
                 break;
             }
             case 'changeView' : {
                 this.selectedHeaderConfig.exposureView = $event.payload.header;
-                this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
+                // this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
                 break;
             }
             case 'openPortfolioDetails': {
@@ -192,7 +228,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'openDivisionDetails' : {
-                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division');
+                this.rightMenuConfig$ = this.exposuresRightMenuService.constructRightMenuConfig('division',this.selectedHeaderConfig.division);
                 break;
             }
             case 'exportExposuresTable' : {

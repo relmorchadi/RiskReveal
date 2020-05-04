@@ -65,6 +65,11 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getOpenedTabs(state: WorkspaceModel) {
+    return state.currentTab.openedTabs;
+  }
+
+  @Selector()
   static getWorkspaceStatus(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].workspaceType;
@@ -83,7 +88,7 @@ export class WorkspaceState {
   }
 
   static getWorkspaceCurrency(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].currency);
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => _.find(state.content[wsIdentifier].projects, pr => pr.selected));
   }
 
   static getWorkspaceEffectiveDate(wsIdentifier: string) {
@@ -475,12 +480,37 @@ export class WorkspaceState {
   @Selector()
   static getScopeCompletenessData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
-    return state.content[wsIdentifier].scopeOfCompletence;
+    return state.content[wsIdentifier].scopeOfCompleteness.data;
   }
 
-  static getPltsForScopeCompleteness(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'));
+  @Selector()
+  static getScopeCompletenessPendingData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompleteness.pendingData;
+  }
+
+  @Selector()
+  static getOverrideStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompleteness.override;
+  }
+
+  @Selector()
+  static getScopePLTs(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.plts;
+  }
+
+  @Selector()
+  static getScopeProjects(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.projects;
+  }
+  
+  @Selector()
+  static getScopeContext(state: WorkspaceModel) {
+    const {wsIdentifier} = state.currentTab;
+    return state.content[wsIdentifier].scopeOfCompleteness.scopeContext;
   }
 
   /***********************************
@@ -552,6 +582,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleProjectSelection)
   toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection) {
     return this.wsService.toggleProjectSelection(ctx, payload);
+  }
+
+  @Action(fromWS.SelectProject)
+  selectProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.SelectProject) {
+    return this.wsService.selectProject(ctx, payload);
   }
 
   @Action(fromWS.AddNewProject)
@@ -1265,18 +1300,34 @@ export class WorkspaceState {
     return this.riskLinkFacade.initDataSourcesSelection(ctx);
   }
 
-
-
-
-
   /***********************************
    *
    * Scope And Completeness Actions
    *
    ***********************************/
-  @Action(fromWS.LoadScopeCompletenessDataSuccess)
-  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+  @Action(fromWS.LoadScopeCompletenessData)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessData) {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessPricingData)
+  loadScopeCompletenessPricingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPricingData) {
+    return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessPendingData)
+  loadScopeCompletenessPendingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPendingData) {
+    return this.scopService.loadScopeCompletenessDataPending(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessAccumulationInfo)
+  loadScopeCompletenessAccumulationInfo(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessAccumulationInfo) {
+    return this.scopService.loadAccumulationPackageInfo(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopePLTsData)
+  loadScopePLTs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopePLTsData) {
+    return this.scopService.listOfPLTsToAttach(ctx, payload);
   }
 
   @Action(fromWS.PublishToPricingFacProject)
@@ -1284,6 +1335,30 @@ export class WorkspaceState {
     return this.scopService.publishToPricing(ctx, payload);
   }
 
+  @Action(fromWS.PatchScopeOfCompletenessState)
+  PatchScopeOfCompletenessState(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.PatchScopeOfCompletenessState) {
+    return this.scopService.patchScopeState(ctx, payload);
+  }
+
+  @Action(fromWS.OverrideActiveAction)
+  overrideActiveAction(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideActiveAction) {
+    return this.scopService.overrideSelection(ctx, payload);
+  }
+
+  @Action(fromWS.OverrideDeleteAction)
+  overrideDelete(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideDeleteAction) {
+    return this.scopService.removeOverrideSelection(ctx, payload);
+  }
+
+  @Action(fromWS.AttachPLTsForScope)
+  attachPLTForScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AttachPLTsForScope) {
+    return this.scopService.attachPLT(ctx, payload);
+  }
+
+  @Action(fromWS.SelectScopeProject)
+  selectProjectScope(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectScopeProject) {
+    return this.scopService.selectProject(ctx, payload);
+  }
 
   /***********************************
    *

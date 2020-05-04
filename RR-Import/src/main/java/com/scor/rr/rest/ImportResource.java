@@ -50,7 +50,7 @@ public class ImportResource {
         List<Long> analysisIds = rmsService.saveAnalysisImportSelection(config.getAnalysisConfig());
         List<Long> portfolioIds = rmsService.savePortfolioImportSelection(config.getPortfolioConfig());
         ImportLossDataParams params = new ImportLossDataParams(config, analysisIds, portfolioIds);
-        return new ResponseEntity<>(batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()),  Long.valueOf(params.getUserId())), HttpStatus.OK);
+        return new ResponseEntity<>(batchExecution.queueImportLossData(params.getInstanceId(), Long.valueOf(params.getProjectId()), Long.valueOf(params.getUserId())), HttpStatus.OK);
     }
 
     @GetMapping("/is-job-running")
@@ -58,16 +58,44 @@ public class ImportResource {
         return new ResponseEntity<>(jobManager.isJobRunning(jobId), HttpStatus.OK);
     }
 
-    @GetMapping("/cancel-job")
-    public ResponseEntity<?> cancelJob(@RequestParam Long jobId) {
-        jobManager.cancelJob(jobId);
-        return new ResponseEntity<>("Operation done", HttpStatus.OK);
+    @GetMapping("/cancel-job-or-task")
+    public ResponseEntity<?> cancel(@RequestParam Long id, @RequestParam String type) {
+        try {
+            if (type.equalsIgnoreCase("task"))
+                jobManager.cancelTask(id);
+            else if (type.equalsIgnoreCase("job"))
+                jobManager.cancelJob(id);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/resume-job")
+    public ResponseEntity<?> resume(@RequestParam Long jobId) {
+        try {
+            batchExecution.resumeJobAfterPausing(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity<>("Operation Failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/running-jobs")
     public ResponseEntity<?> getRunningJobs(@RequestParam Long userId) {
         try {
-            return new ResponseEntity<>(jobManager.findRunningJobsForUser(String.valueOf(userId)), HttpStatus.OK);
+            return new ResponseEntity<>(jobManager.findRunningJobsForUserRR(userId), HttpStatus.OK);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pause-job")
+    public ResponseEntity<?> pauseJob(@RequestParam Long jobId) {
+        try {
+            jobManager.pauseJob(jobId);
+            return new ResponseEntity<>("Operation done", HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
             return new ResponseEntity<>("Operation failed", HttpStatus.INTERNAL_SERVER_ERROR);

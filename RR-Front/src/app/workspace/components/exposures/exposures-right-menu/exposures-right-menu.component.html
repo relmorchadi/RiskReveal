@@ -3,13 +3,15 @@
   ~ Author : Reda El Morchadi
   -->
 
-<div class="right-menu-container" [ngClass]="{'slideInRight':rightMenuConfig.visibility,'slideInLeft': !rightMenuConfig.visibility}">
+<div class="right-menu-container"
+     (clickOutside)="closeRightMenu()"
+     [ngClass]="{'slideInRight':rightMenuConfig.visibility,'slideInLeft': !rightMenuConfig.visibility}">
     <div class="right-menu-header">
         <div class="right-menu-title">
-            <span class="title" style="margin-right: 16px">
-                 {{rightMenuConfig.content}}
-            </span>
-
+            <hr>
+            <div class="title">
+                 {{rightMenuConfig.type}} Details
+            </div>
         </div>
         <div class="right-menu-close">
             <i class="icon-arrow_forward_ios_24px close-button" (click)="closeRightMenu()"></i>
@@ -18,6 +20,45 @@
     </div>
     <div class="right-menu-content">
 
+        <div *ngIf="rightMenuConfig.type == 'division'" class="division-title">
+              <span>
+                Division N° {{rightMenuConfig.content?.divisionNumber}}
+              </span>
+              <div class="division-sub-title">
+                    <span>[{{rightMenuConfig.content?.caRequestId}}]</span>
+              </div>
+        </div>
+        <div class="division-content">
+            <table>
+                <tbody>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">CAR Request ID</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.caRequestId}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">CAR Status</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.carStatus}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">UW Year</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.uwYear}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Currency</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.currency}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Coverage</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.coverage}}</td>
+                </tr>
+                <tr>
+                    <td style="min-width: 150px;padding: 5px 16px;">Lob</td>
+                    <td style="font-weight: bold;">{{rightMenuConfig.content?.lob}}</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="right-menu-footer">
 

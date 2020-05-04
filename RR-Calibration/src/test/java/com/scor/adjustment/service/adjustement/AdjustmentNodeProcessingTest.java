@@ -1,6 +1,6 @@
 package com.scor.adjustment.service.adjustement;
 
-import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.CalibrationApplication;
 import com.scor.rr.domain.ReturnPeriodBandingAdjustmentParameter;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {RiskRevealApplication.class})
+@ContextConfiguration(classes = {CalibrationApplication.class})
 @SpringBootTest
 @Transactional
 @PropertySource({"classpath:application.properties"})

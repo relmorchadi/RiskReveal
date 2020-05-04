@@ -587,7 +587,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                         instanceId: this.state.financialValidator.rmsInstance.selected.instanceId,
                         projectId: p.projectId,
                         analysis,
-                        portfolios
+                        portfolios,
+                        fp: this.state.financialValidator.financialPerspectiveELT.selected.code
                     })]);
             });
     }
@@ -705,11 +706,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     sortPortfolio({field, order}) {
+        if(field == 'imported')
+            return;
         this.sortParams.portfolio = {[field]: order};
         this.getRiskLinkPortfolio();
     }
 
     sortAnalysis({field, order}) {
+        if(field == 'imported')
+            return;
         this.sortParams.analysis = {[field]: order};
         this.getRiskLinkAnalysis();
     }
@@ -750,7 +755,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
         if (scope === 'analysis') {
             this.allCheckedAnalysis = nextValue;
-            if (nextValue) {
+            if (nextValue && !this.indeterminateAnalysis) {
                 this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
                     action: 'selectChunk',
                     data: _.map(this.state.analysis.data, a => a.rlAnalysisId)
@@ -763,7 +768,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }
         } else if (scope === 'portfolio') {
             this.allCheckedPortolfios = nextValue;
-            if (nextValue) {
+            if (nextValue && !this.indeterminatePortfolio ) {
                 this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                     action: 'selectChunk',
                     data: _.map(this.state.portfolios.data, p => p.rlPortfolioId)

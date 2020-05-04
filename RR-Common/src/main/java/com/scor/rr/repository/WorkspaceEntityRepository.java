@@ -17,6 +17,7 @@ public interface WorkspaceEntityRepository extends JpaRepository<WorkspaceEntity
 
     Optional<WorkspaceEntity> findByWorkspaceContextCodeAndWorkspaceUwYear(String workspaceContextCode, Integer workspaceUwYear);
 
+    WorkspaceEntity findByWorkspaceContextCodeAndWorkspaceUwYear(String workspaceName,int UWYear);
     WorkspaceEntity findByWorkspaceId(long Id);
 
     @Query("select distinct w.workspaceUwYear from WorkspaceEntity w where w.workspaceContextCode= :wsId order by w.workspaceUwYear asc")

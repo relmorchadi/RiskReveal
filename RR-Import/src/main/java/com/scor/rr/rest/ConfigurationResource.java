@@ -240,9 +240,9 @@ public class ConfigurationResource {
     }
 
     @DeleteMapping(value = "delete-analysis-summary")
-    public ResponseEntity<?> deleteAnalysisSummary(@RequestParam List<Long> rlAnalysisId, @RequestParam Long projectId) {
+    public ResponseEntity<?> deleteAnalysisSummary(@RequestParam List<Long> rlAnalysisId) {
         try {
-            configurationService.deleteAnalysisSummary(rlAnalysisId,projectId);
+            configurationService.deleteAnalysisSummary(rlAnalysisId);
             return new ResponseEntity<>("Operation succeeded", HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -251,9 +251,9 @@ public class ConfigurationResource {
     }
 
     @DeleteMapping(value = "delete-portfolio-summary")
-    public ResponseEntity<?> deletePortfolioSummary(@RequestParam List<Long> rlPortfolioId, @RequestParam Long projectId) {
+    public ResponseEntity<?> deletePortfolioSummary(@RequestParam List<Long> rlPortfolioId) {
         try {
-            configurationService.deletePortfolioSummary(rlPortfolioId, projectId);
+            configurationService.deletePortfolioSummary(rlPortfolioId);
             return new ResponseEntity<>("Operation succeeded", HttpStatus.OK);
         } catch (Exception ex) {
             ex.printStackTrace();

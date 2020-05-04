@@ -43,13 +43,16 @@ import { CalibrationSortAndFilterPipe } from './pipes/calibration-sort-and-filte
 import { FrozenColumnsFilterPipe } from './pipes/frozen-columns-filter.pipe';
 import {FilterGroupedPltsPipe} from "./pipes/filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "./pipes/sort-grouped-plts.pipe";
-import { CloneDataColumnManageFilterPipe } from './pipes/clone-data-column-manage-filter.pipe';
+import {GetDeltaPipe} from "./pipes/get-delta.pipe";
+import {FinancialUnitPipe} from "./pipes/financial-unit.pipe";
+import {ExchangeRatePipe} from "../shared/pipes/exchange-rate.pipe";
+import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-plts-pop-up/attach-plts-pop-up.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent, ParseIdPipe, ReturnPeriodPopUpComponent, AddRemovePopUpNewComponent, PopUpPltTableNewComponent, CalibrationSortAndFilterPipe, CloneDataColumnManageFilterPipe
+    ...PIPES, ...DIRECTIVES,
 
   ],
   imports: [
@@ -79,7 +82,7 @@ import { CloneDataColumnManageFilterPipe } from './pipes/clone-data-column-manag
     RouterModule
   ],
   providers: [
-    ...SERVICE, GetMetricPipe, CalibrationSortAndFilterPipe, ConfirmationService, FilterGroupedPltsPipe, SortGroupedPltsPipe, FrozenColumnsFilterPipe, ...PIPES
+    ...SERVICE,...PIPES,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

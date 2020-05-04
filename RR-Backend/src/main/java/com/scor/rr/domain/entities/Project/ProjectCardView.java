@@ -100,6 +100,8 @@ public class ProjectCardView {
 
     private Date lastUpdatedOn;
 
+    private String currency;
+
     @Transient
     private List<String> divisions;
 }

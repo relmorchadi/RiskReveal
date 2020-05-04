@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +20,6 @@ public class TaskEntity {
     private Long jobExecutionId;
     private JobEntity job;
     private String taskType;
-    private String taskParams;
     private String status;
     private Integer priority;
     private Date submittedDate;
@@ -26,14 +27,26 @@ public class TaskEntity {
     private Date finishedDate;
 
     private List<StepEntity> steps;
+    private List<TaskParamsEntity> params;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER)
+    @JsonManagedReference
     public List<StepEntity> getSteps() {
         return steps;
     }
 
     public void setSteps(List<StepEntity> steps) {
         this.steps = steps;
+    }
+
+    @OneToMany(mappedBy = "taskId", fetch = FetchType.LAZY)
+    @JsonBackReference
+    public List<TaskParamsEntity> getParams() {
+        return params;
+    }
+
+    public void setParams(List<TaskParamsEntity> params) {
+        this.params = params;
     }
 
     @Id
@@ -47,8 +60,9 @@ public class TaskEntity {
         this.taskId = taskId;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "jobId")
+    @JsonBackReference
     public JobEntity getJob() {
         return job;
     }
@@ -74,16 +88,6 @@ public class TaskEntity {
 
     public void setTaskType(String taskType) {
         this.taskType = taskType;
-    }
-
-    @Basic
-    @Column(name = "taskParams", nullable = true, length = 255)
-    public String getTaskParams() {
-        return taskParams;
-    }
-
-    public void setTaskParams(String taskParams) {
-        this.taskParams = taskParams;
     }
 
     @Basic
@@ -144,7 +148,6 @@ public class TaskEntity {
         return taskId == that.taskId &&
                 Objects.equals(job, that.job) &&
                 Objects.equals(taskType, that.taskType) &&
-                Objects.equals(taskParams, that.taskParams) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(startedDate, that.startedDate) &&
                 Objects.equals(finishedDate, that.finishedDate);
@@ -152,6 +155,6 @@ public class TaskEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(taskId, job, taskType, taskParams, status, startedDate, finishedDate);
+        return Objects.hash(taskId, job, taskType, status, startedDate, finishedDate);
     }
 }

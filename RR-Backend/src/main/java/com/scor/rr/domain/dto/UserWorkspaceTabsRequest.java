@@ -9,5 +9,6 @@ public class UserWorkspaceTabsRequest {
     private Integer workspaceUwYear;
     private String workspaceContextCode;
     private String screen;
+    private Integer tabOrder;
 
 }

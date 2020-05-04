@@ -1,9 +1,14 @@
 package com.scor.rr.service.batch.reader;
 
 import com.scor.rr.configuration.RmsInstanceCache;
+import com.scor.rr.domain.StepEntity;
+import com.scor.rr.domain.TaskEntity;
 import com.scor.rr.domain.dto.CARDivisionDto;
+import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.mapper.RLLocItemRowMapper;
+import com.scor.rr.repository.TaskRepository;
 import com.scor.rr.service.abstraction.ConfigurationService;
+import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.processor.rows.RLLocRow;
 import com.scor.rr.service.state.TransformationPackage;
 import com.scor.rr.util.EmbeddedQueries;
@@ -14,7 +19,9 @@ import org.springframework.batch.item.database.ExtendedConnectionDataSourceProxy
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.support.ListPreparedStatementSetter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @StepScope
+@Service
 public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
     private static final Logger log = LoggerFactory.getLogger(RLLocCursorItemReader.class);
 
@@ -35,6 +43,16 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    @Qualifier("jobManagerImpl")
+    private JobManager jobManager;
+
+    @Autowired
+    private TaskRepository taskRepository;
+
+    @Value("#{jobParameters['taskId']}")
+    private String taskId;
 
     @Value("#{jobParameters['instanceId']}")
     private String instanceId;
@@ -51,6 +69,7 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
     @Value("${rms.ds.dbname}")
     private String database;
 
+    private StepEntity step;
 
     private List<String> parameters;
 
@@ -61,7 +80,10 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("nothing to see...");
+        TaskEntity task = taskRepository.findById(Long.valueOf(taskId)).orElse(null);
+        if (task != null && task.getSteps().stream().noneMatch(s -> s.getStepName().equalsIgnoreCase("ExtractACC"))) {
+            step = jobManager.createStep(Long.valueOf(taskId), "ExtractLOC", 16);
+        }
     }
 
     @PostConstruct
@@ -85,29 +107,34 @@ public class RLLocCursorItemReader extends JdbcCursorItemReader<RLLocRow> {
 
         if (!transformationPackage.getModelPortfolios().isEmpty()) {
 
-            String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
-            String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)", "_R");
+            try {
+                String edm = transformationPackage.getModelPortfolios().get(0).getDataSourceName();
+                String rdm = transformationPackage.getModelPortfolios().get(0).getDataSourceName().replaceAll("(_E$)", "_R");
 
-            setSql(getSql().replace("@database", database));
+                setSql(getSql().replace("@database", database));
 
-            Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
+                Integer division = transformationPackage.getModelPortfolios().get(0).getDivision();
 
-            ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
-            List<Object> queryParameters = new LinkedList<>();
+                ListPreparedStatementSetter pss = new ListPreparedStatementSetter();
+                List<Object> queryParameters = new LinkedList<>();
 
-            queryParameters.add(edm);
-            queryParameters.add(rdm);
-            queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
-            queryParameters.add(
-                    configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
-                            .map(CARDivisionDto::getCurrency)
-                            .findFirst().orElse("USD"));
+                queryParameters.add(edm);
+                queryParameters.add(rdm);
+                queryParameters.add(transformationPackage.getModelPortfolios().get(0).getPortfolioName());
+                queryParameters.add(
+                        configurationService.getDivisions(carId).stream().filter(div -> div.getDivisionNumber().equals(division))
+                                .map(CARDivisionDto::getCurrency)
+                                .findFirst().orElse("USD"));
 
-            pss.setParameters(queryParameters);
-            setPreparedStatementSetter(pss);
+                pss.setParameters(queryParameters);
+                setPreparedStatementSetter(pss);
 
-            super.openCursor(con);
-
+                super.openCursor(con);
+            } catch (Exception ex) {
+                jobManager.onTaskError(Long.valueOf(taskId));
+                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
+                ex.printStackTrace();
+            }
         }
     }
 }

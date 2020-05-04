@@ -8,10 +8,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 public interface JobEntityRepository extends JpaRepository<JobEntity, Long> {
 
     @Query(value = "UPDATE JobEntity job SET job.status=:status WHERE job.jobId=:jobId")
     @Modifying
     @Transactional(transactionManager = "theTransactionManager")
     void updateStatus(@Param("jobId") Long jobId, @Param("status") JobStatus status);
+
+    @Query("FROM JobEntity WHERE userId=:userId AND (status='RUNNING' OR status='PENDING' OR status='FAILED')")
+    List<JobEntity> findAllByUserIdAndSubmittedDate(@Param("userId") Long userId);
+
+    @Query(value = "SELECT * FROM dbo.Job t WHERE DATEDIFF(DAY, CAST (t.submittedDate as DATE), GETDATE()) < 1 AND STATUS='PENDING' OR STATUS='RUNNING'", nativeQuery = true)
+    List<JobEntity> findAllByStatusAndDate();
+
+    @Query(value = "EXEC dbo.usp_GetActiveJobForUser @userId=:userId", nativeQuery = true)
+    List<Map<String, Object>> getJobRunningOrPendingForUser(@Param("userId") Long userId);
 }

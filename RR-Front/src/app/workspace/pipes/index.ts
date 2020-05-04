@@ -20,8 +20,12 @@ import {SortGroupedPltsPipe} from "./sort-grouped-plts.pipe";
 import {IsEventAdjustmentPipe} from "./is-event-adjustment.pipe";
 import {GetEventAdjustmentParamsPipe} from "./get-event-adjustment-params.pipe";
 import {FrozenColumnsFilterPipe} from "./frozen-columns-filter.pipe";
+import {CloneDataColumnManageFilterPipe} from "./clone-data-column-manage-filter.pipe";
+import {CalibrationSortAndFilterPipe} from "./calibration-sort-and-filter.pipe";
 
 export const PIPES = [
+  CalibrationSortAndFilterPipe,
+  CloneDataColumnManageFilterPipe,
   FilterByBadgePipe,
   FrozenColumnsFilterPipe,
   FilterByUserTagPipe,

@@ -1,6 +1,7 @@
 import {Directive, ElementRef, Input, OnChanges, Renderer2, SimpleChanges} from '@angular/core';
 import {DecimalPipe} from "@angular/common";
 import * as _ from 'lodash';
+import {FormatNumbersService} from "../services/format-numbers.service";
 
 @Directive({
   selector: '[appRrNumber]'
@@ -16,7 +17,7 @@ export class RrNumberDirective implements OnChanges {
     negativeFormat: string;
   };
 
-  constructor(private el: ElementRef, private renderer: Renderer2, private numberPipe: DecimalPipe) {}
+  constructor(private el: ElementRef, private renderer: Renderer2, private formatNumber: FormatNumbersService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.renderer.setProperty(
@@ -31,59 +32,9 @@ export class RrNumberDirective implements OnChanges {
     const {
       color,
       newNumber
-    } = this.getNumberConfig(this.number, this.config.decimalThousandSeparator, this.config.decimalSeparator, this.config.negativeFormat);
+    } = this.formatNumber.getNumberConfig(this.number, this.config.decimalThousandSeparator, this.config.decimalSeparator,this.config.numberOfDecimals, this.config.negativeFormat);
 
     return `<span class="text-ellipsis" style="color:${color}">${newNumber}</span>`
-  }
-
-  getNumberConfig(originalNumber,  decimalThousandSeparator, decimalSeparator, negativeFormat) {
-    switch (negativeFormat) {
-      case 'simple':
-        return this.simple(originalNumber,decimalThousandSeparator, decimalSeparator);
-      case 'redHue':
-        return this.redHue(originalNumber, decimalThousandSeparator, decimalSeparator);
-      case 'simpleRHue':
-        return this.simpleRHue(originalNumber, decimalThousandSeparator, decimalSeparator);
-      case 'roundBrackets':
-        return this.roundBrackets(originalNumber,decimalThousandSeparator, decimalSeparator);
-      default:
-        return {
-          color: 'black',
-          newNumber: ''
-        }
-    }
-  }
-
-  simple(originalNumber, decimalThousandSeparator, decimalSeparator) {
-    let transformedNumber = this.numberPipe.transform(originalNumber, `1.0-${this.config.numberOfDecimals || 0}`);
-    const decimalParts = _.split(transformedNumber, '.');
-    const decimal = decimalParts[0];
-    const decimalFraction = decimalParts[1];
-    return ({ color: 'black' , newNumber: _.replace(decimal,/(,)/g, decimalThousandSeparator ) + (decimalFraction ? (decimalSeparator + decimalFraction) : '') })
-  }
-
-  redHue(originalNumber, decimalThousandSeparator, decimalSeparator) {
-    let transformedNumber = this.numberPipe.transform(Math.abs(originalNumber), `1.0-${this.config.numberOfDecimals || 0}`);
-    const decimalParts = _.split(transformedNumber, '.');
-    const decimal = decimalParts[0];
-    const decimalFraction = decimalParts[1];
-    return ({ color: originalNumber > 0 ? 'black' : 'red', newNumber: _.replace(decimal,/(,)/g, decimalThousandSeparator ) + (decimalFraction ? (decimalSeparator + decimalFraction) : '') })
-  }
-
-  simpleRHue(originalNumber, decimalThousandSeparator, decimalSeparator) {
-    let transformedNumber = this.numberPipe.transform(originalNumber, `1.0-${this.config.numberOfDecimals || 0}`);
-    const decimalParts = _.split(transformedNumber, '.');
-    const decimal = decimalParts[0];
-    const decimalFraction = decimalParts[1];
-    return ({ color: originalNumber > 0 ? 'black' : 'red', newNumber: _.replace(decimal,/(,)/g, decimalThousandSeparator ) + (decimalFraction ? (decimalSeparator + decimalFraction) : '') })
-  }
-
-  roundBrackets(originalNumber, decimalThousandSeparator, decimalSeparator) {
-    let transformedNumber = this.numberPipe.transform(Math.abs(originalNumber), `1.0-${this.config.numberOfDecimals || 0}`);
-    const decimalParts = _.split(transformedNumber, '.');
-    const decimal = decimalParts[0];
-    const decimalFraction = decimalParts[1];
-    return ({ color: 'black' , newNumber: '(' + _.replace(decimal,/(,)/g, decimalThousandSeparator ) + (decimalFraction ? (decimalSeparator + decimalFraction) : '') + ')' });
   }
 
 }

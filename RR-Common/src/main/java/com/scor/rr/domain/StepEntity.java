@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -12,7 +14,6 @@ public class StepEntity {
     private TaskEntity task;
     private String stepCode;
     private Integer stepOrder;
-    private String stepParams;
     private String status;
     private Timestamp submittedDate;
     private Timestamp startedDate;
@@ -31,6 +32,7 @@ public class StepEntity {
 
     @ManyToOne
     @JoinColumn(name = "taskId")
+    @JsonBackReference
     public TaskEntity getTask() {
         return task;
     }
@@ -57,16 +59,6 @@ public class StepEntity {
 
     public void setStepOrder(Integer stepOrder) {
         this.stepOrder = stepOrder;
-    }
-
-    @Basic
-    @Column(name = "stepParams", nullable = true, length = 255)
-    public String getStepParams() {
-        return stepParams;
-    }
-
-    public void setStepParams(String stepParams) {
-        this.stepParams = stepParams;
     }
 
     @Basic
@@ -118,7 +110,6 @@ public class StepEntity {
                 Objects.equals(task, that.task) &&
                 Objects.equals(stepCode, that.stepCode) &&
                 Objects.equals(stepOrder, that.stepOrder) &&
-                Objects.equals(stepParams, that.stepParams) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(startedDate, that.startedDate) &&
                 Objects.equals(finishedDate, that.finishedDate);
@@ -126,6 +117,6 @@ public class StepEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(stepId, task, stepCode, stepOrder, stepParams, status, startedDate, finishedDate);
+        return Objects.hash(stepId, task, stepCode, stepOrder, status, startedDate, finishedDate);
     }
 }

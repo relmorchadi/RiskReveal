@@ -1,0 +1,279 @@
+:host ::ng-deep {
+  .ui-dialog-content {
+    height: 80vh !important;
+
+    .content {
+      height: 100%;
+    }
+
+    nz-tabset.tabset-left.tabs-standard-top.ant-tabs.ant-tabs-top.ant-tabs-line {
+      height:100%;
+    }
+
+    .ant-tabs-content.ant-tabs-top-content.ant-tabs-content-animated.ng-star-inserted {
+      height: calc(100% - 50px);
+      overflow: hidden;
+    }
+  }
+
+  .tabset-left {
+    background: #fff;
+    margin-right: 5px;
+
+    .ant-tabs-tabpane {
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+      position: relative;
+    }
+
+    .title-list {
+      letter-spacing: 0.2px;
+      line-height: 27px;
+      list-style: none;
+      padding-left: 20px;
+      padding-right: 7px;
+      font-weight: bold;
+      overflow: auto;
+      li {
+        display: flex;
+        align-items: center;
+        margin: 0 0 3px 0;
+      }
+
+      .icon-assignment_24px {
+        font-size: 16px;
+      }
+
+      .body-list {
+        font-size: 11px;
+      }
+
+      .icon-window-section {
+        color: #fff;
+        background-color: #0700cf;
+        padding: 2px 3px 2px 2px;
+      }
+
+      .icon-assignment_24px {
+        background-color: #fdc228;
+      }
+
+      .icon-assignment_24px, .icon-copy {
+        color: #fff;
+        padding: 2px 3px 2px 2px;
+        margin-right: 7px;
+      }
+
+      .icon-copy {
+        background-color: #14617A;
+      }
+
+      .icon-sitemap {
+        color: #fff;
+        background-color: #b683ff;
+        padding: 2px 3px 2px 2px;
+      }
+    }
+
+    .wsHeader {
+      font-size: 15px;
+      margin-bottom: 4px;
+      margin-left: 8px;
+      display: flex;
+      align-items: center;
+    }
+    span {
+      i {
+        background-color: #0700e4;
+        padding: 3px;
+        color: white;
+        vertical-align: middle;
+      }
+    }
+
+    .active-path {
+      background-color: #FDFBDF;
+      margin-top: 1px;
+      margin-bottom: 1px;
+    }
+
+    .upPartLeftMenu {
+      height: 100%;
+      display: flex;
+      flex-flow: column;
+    }
+
+    .plt-trash {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      background-color: white;
+      .cnt {
+        cursor: pointer;
+      }
+    }
+
+
+    .ant-tabs-ink-bar {
+      position: absolute;
+      top: 1px;
+      background-color: #0700CF;
+    }
+
+    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+      background: #fff !important;
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      width: content-box;
+      font-size: 20.54px;
+      font-weight: 300;
+      letter-spacing: 0.25px;
+      margin-bottom: 17px;
+      padding-top: 22px;
+    }
+
+    ::ng-deep {
+      .ant-collapse {
+        border: none;
+      }
+      .ant-collapse-content > .ant-collapse-content-box {
+        max-width: 190px;
+        padding: 0;
+      }
+      .ant-collapse-content {
+        border:none;
+      }
+      .ant-collapse > .ant-collapse-item {
+        border-bottom: none;
+      }
+      .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+        background-color: white;
+      }
+      .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+        font-size: 10px;
+        top: 44%;
+      }
+    }
+  }
+
+  .Tags-content {
+    display: flex;
+    flex-flow: column;
+    overflow: auto;
+    min-width: 212px;
+  }
+
+  .user-tag-section, .sys-tag-section {
+    margin-top: 1px;
+    display: flex;
+    flex-flow: column;
+  }
+
+  .header{
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 16px;
+    flex: 0 1 auto;
+
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      *{
+        margin: 3px;
+      }
+    }
+
+    button {
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+
+  .rest {
+    flex: 1 1 auto;
+    padding: 5px 0;
+  }
+
+  nz-collapse{
+    max-height: 100%;
+  }
+  .tag-section {
+    ul {
+      max-width: 190px;
+      padding: 0;
+    }
+  }
+
+  .tab-content-cnt{
+    overflow: visible;
+  }
+  .ant-tabs-nav-container-scrolling {
+    padding: 0!important;
+  }
+  .ant-tabs-tab-prev, .ant-tabs-tab-next {
+    display: none;
+  }
+}
+
+.cdk-global-scrollblock {
+  overflow-y: hidden;
+}
+
+.msg-err {
+  font-size: 11px;
+  color: var(--danger);
+  position: absolute;
+  bottom: -16px;
+}
+
+.body-info {
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.body-list {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.left-slider {
+  border: 1px solid rgba(0,0,0,0.3);
+  margin-top: 1px;
+  height: 100%;
+}
+
+.right-slider {
+  border: 1px solid rgba(0,0,0,0.3);
+  padding-top: 10px;
+  margin-top: 1px;
+  margin-left: 8px;
+  height: 100%;
+  overflow: hidden;
+
+  p-table{
+    margin: 5px;
+    display: flex;
+  }
+
+  .flex-end-Checkbox {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.center-checkbox {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}

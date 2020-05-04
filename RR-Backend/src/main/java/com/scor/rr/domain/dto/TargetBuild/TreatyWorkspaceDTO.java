@@ -15,6 +15,7 @@ import static java.util.Optional.ofNullable;
 public class TreatyWorkspaceDTO extends WorkspaceStats {
 
     private String id;
+    private Integer uwYear;
     private String workspaceName;
     private String cedantCode;
     private String cedantName;
@@ -36,6 +37,7 @@ public class TreatyWorkspaceDTO extends WorkspaceStats {
     public TreatyWorkspaceDTO(ContractSearchResult contract, String marketChannel) {
         super();
         this.id = contract.getId();
+        this.uwYear = contract.getUwYear();
         this.workspaceName = contract.getWorkspaceName();
         this.cedantCode = contract.getCedantCode();
         this.cedantName = contract.getCedantName();
@@ -51,8 +53,12 @@ public class TreatyWorkspaceDTO extends WorkspaceStats {
     }
 
     public void setTreatySections(List<ContractSearchResult> items) {
-        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
-        ).distinct().collect(Collectors.toList());
+        /** @TODO To be reviewed by Driss
+        if(items != null) {
+            this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())))
+            ).distinct().collect(Collectors.toList());
+        }
+         */
     }
 
     public void setYear(int year) {

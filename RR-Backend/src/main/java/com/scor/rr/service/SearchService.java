@@ -96,13 +96,9 @@ public class SearchService {
     SearchQuery searchQuery;
 
     @Autowired
-    FacSearchRepository facSearchRepository;
+    SavedSearchRepository savedSearchRepository;
     @Autowired
-    FacSearchItemRepository facSearchItemRepository;
-    @Autowired
-    TreatySearchRepository treatySearchRepository;
-    @Autowired
-    TreatySearchItemRepository treatySearchItemRepository;
+    SavedSearchItemRepository savedSearchItemRepository;
 
     @Autowired
     RecentWorkspaceRepository recentWorkspaceRepository;
@@ -289,6 +285,7 @@ public class SearchService {
         TreatyWorkspaceDTO detailsDTO;
         ContractSearchResult firstWs = contracts.get(0);
         detailsDTO = new TreatyWorkspaceDTO(firstWs, "TTY");
+        detailsDTO.setId(workspaceId);
         detailsDTO.setProjects(projects);
         detailsDTO.setTreatySections(contracts);
         detailsDTO.setYear(Integer.parseInt(uwy));
@@ -323,9 +320,6 @@ public class SearchService {
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-        System.out.println("***********************************************");
-        System.out.println(request.getType());
-        System.out.println("***********************************************");
          if(request.getType().equals(SearchType.TREATY)) {
             return this.treatyContractSearch(request);
         } else if(request.getType().equals(SearchType.FAC)) {
@@ -337,6 +331,9 @@ public class SearchService {
     }
 
     Page<?> facContractSearch(ExpertModeFilterRequest request) {
+        this.increaseSavedSearchCount(request);
+        this.saveRecentExpertModeSearch(request);
+
         String resultsQueryString = facSearchQuery.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = facSearchQuery.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
@@ -350,7 +347,6 @@ public class SearchService {
         List<Object[]> resultList = resultsQuery.getResultList();
         Object total = countQuery.getSingleResult();
         List<FacContractSearchResult> result = mapFacContract(resultList);
-
         return new PageImpl<>(result, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
     }
 
@@ -361,64 +357,8 @@ public class SearchService {
     }
 
     Page<?> treatyContractSearch(ExpertModeFilterRequest request) {
-        if (request.getFromSavedSearch() != null) {
-            if (!request.getFilter().isEmpty()) {
-                Long treatySearchId = request.getFilter().get(0).getSearchId();
-
-                if (treatySearchId != null) {
-                    Optional<TreatySearch> treatySearchOpt = this.treatySearchRepository.findById(treatySearchId);
-
-                    if (treatySearchOpt.isPresent()) {
-                        TreatySearch treatySearch = treatySearchOpt.get();
-
-                        treatySearch.setCount(treatySearch.getCount() + 1);
-
-                        this.treatySearchRepository.saveAndFlush(treatySearch);
-                    }
-                }
-            }
-        }
-        String keyword;
-        keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
-
-        if(!keyword.equals("") || request.getFilter().size() > 0) {
-            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdOrderBySearchDateDesc(1);
-            int recentSearchesLength = recentSearches.size();
-
-            if( recentSearchesLength == 7 ) {
-                RecentSearch SearchItem = recentSearches.get(recentSearchesLength - 1);
-                recentSearchRepository.delete(SearchItem);
-            }
-
-            RecentSearch newSearch = new RecentSearch();
-            newSearch.setUserId(1);
-            recentSearchRepository.save(newSearch);
-
-            List<RecentSearchItem> items= new ArrayList<>();
-
-            if(!keyword.equals("")) {
-                RecentSearchItem newSearchItem = new RecentSearchItem();
-                newSearchItem.setKey("global search");
-                newSearchItem.setOperator("LIKE");
-                newSearchItem.setValue(keyword);
-                newSearchItem.setRecentSearchId(newSearch.getId());
-                items.add(newSearchItem);
-            }
-
-            request.getFilter()
-                    .forEach( expertModeFilter -> {
-                        if(!expertModeFilter.getValue().equals("")) {
-                            RecentSearchItem newSearchItem = new RecentSearchItem();
-                            newSearchItem.setKey(expertModeFilter.getField());
-                            newSearchItem.setOperator(expertModeFilter.getOperator().value);
-                            newSearchItem.setValue(expertModeFilter.getValue().replace("%", "").trim());
-                            newSearchItem.setRecentSearchId(newSearch.getId());
-                            items.add(newSearchItem);
-                        }
-                    });
-
-            recentSearchItemRepository.saveAll(items);
-        }
+        this.increaseSavedSearchCount(request);
+        this.saveRecentExpertModeSearch(request);
 
         String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getSort(), request.getKeyword(), request.getOffset(), request.getSize());
         String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
@@ -428,7 +368,6 @@ public class SearchService {
         Object total = countQuery.getSingleResult();
         List<ContractSearchResult> contractSearchResult = map(resultList);
         return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
-
     }
 
     public SearchCountResult treatySearchCount(TreatyTableNames table, String keyword, int size) {
@@ -450,95 +389,100 @@ public class SearchService {
         ).collect(Collectors.toList());
     }
 
-    public Object saveSearch(SavedSearchRequest request) {
-        /** @TODO: Make it user Specific **/
+    public SavedSearch saveSearch(SavedSearchRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
-        if (request.getSearchType().equals(SearchType.FAC)) {
-            return this.saveFacSearch(request.getItems());
-        } else if (request.getSearchType().equals(SearchType.TREATY)) {
-            return this.saveTreatySearch(request.getItems(), request.getUserId(), request.getLabel());
-        } else {
-            throw new RuntimeException("Unsupported Search Type" + request.getSearchType());
-        }
-    }
-
-    private TreatySearch saveTreatySearch(List<SearchItem> items, Integer userId, String label) {
-        if (!items.isEmpty()) {
-            if (userId != null) {
-                TreatySearch treatySearch = new TreatySearch();
-                treatySearch.setLabel(label);
-                treatySearch.setUserId(userId);
-                this.treatySearchRepository.saveAndFlush(treatySearch);
-                List<TreatySearchItem> treatySearchItems = items.stream().map(item -> new TreatySearchItem(item, treatySearch.getId())).collect(toList());
-                treatySearch.setItems(this.treatySearchItemRepository.saveAll(treatySearchItems));
-                return treatySearch;
-            } else throw new RuntimeException("No userID was Provided");
-        }
-        return null;
-    }
-
-    private FacSearch saveFacSearch(List<SearchItem> items) {
-        //TODO
-        FacSearch facSearch = this.facSearchRepository.save(new FacSearch());
-        List<FacSearchItem> facSearchItems = items.stream().map(item -> new FacSearchItem(item, facSearch.getId())).collect(toList());
-        facSearch.setItems(this.facSearchItemRepository.saveAll(facSearchItems));
-        return facSearch;
+        SavedSearch savedSearch = new SavedSearch();
+        savedSearch.setLabel(request.getLabel());
+        savedSearch.setUserId(user.getUserId());
+        savedSearch.setType(request.getSearchType().getSearchType());
+        this.savedSearchRepository.saveAndFlush(savedSearch);
+        List<SavedSearchItem> savedSearchItems = request.getItems().stream().map(item -> new SavedSearchItem(item, savedSearch.getSavedSearchId())).collect(toList());
+        savedSearch.setItems(this.savedSearchItemRepository.saveAll(savedSearchItems));
+        return savedSearch;
     }
 
 
-    public List<?> getSavedSearches(SearchType searchType, Integer userId) {
-        if (userId != null) {
-            if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
-            else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findAllByUserIdOrderBySavedDateDesc(userId);
-            else {
-                throw new RuntimeException("Unsupported Search Type" + searchType);
+    public List<?> getSavedSearches(SearchType searchType) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return this.savedSearchRepository.findAllByUserIdAndTypeOrderBySavedDateDesc(user.getUserId(), searchType.toString());
+    }
+
+    public List<?> getMostUsedSavedSearch(SearchType searchType) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return this.savedSearchRepository.findTop5ByUserIdAndTypeOrderByCountDescSavedDateDesc(user.getUserId(), searchType.toString());
+    }
+
+    public List<RecentSearch> getRecentSearch(SearchType type) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        return recentSearchRepository.findTop5ByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), type.toString());
+    }
+
+    public void deleteSavedSearch(Long id) {
+        this.savedSearchRepository.deleteById(id);
+    }
+
+    private void increaseSavedSearchCount(ExpertModeFilterRequest request) {
+        if(request.getFromSavedSearch() != null && request.getFromSavedSearch()) {
+            Long savedSearchId = request.getFilter().get(0).getSearchId();
+
+            if (savedSearchId != null) {
+                Optional<SavedSearch> treatySearchOpt = this.savedSearchRepository.findById(savedSearchId);
+
+                if (treatySearchOpt.isPresent()) {
+                    SavedSearch savedSearch = treatySearchOpt.get();
+
+                    savedSearch.setCount(savedSearch.getCount() + 1);
+
+                    this.savedSearchRepository.saveAndFlush(savedSearch);
+                }
             }
-        } else throw new RuntimeException("No userID was Provided");
-
-    }
-
-    public List<?> getMostUsedSavedSearch(SearchType searchType, Integer userId) {
-        if (userId != null) {
-            if (searchType.equals(SearchType.FAC))
-                return facSearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
-            else if (searchType.equals(SearchType.TREATY))
-                return treatySearchRepository.findTop5ByUserIdOrderByCountDescSavedDateDesc(userId);
-            else {
-                throw new RuntimeException("Unsupported Search Type" + searchType);
-            }
-        } else throw new RuntimeException("No userID was Provided");
-    }
-
-    public List<RecentSearch> getRecentSearch(Integer userId) {
-        return recentSearchRepository.findTop5ByUserIdOrderBySearchDateDesc(userId);
-    }
-
-    public void deleteSavedSearch(SearchType searchType, Long id) {
-        if (searchType.equals(SearchType.FAC)) {
-            this.deleteFacSearch(id);
-        } else if (searchType.equals(SearchType.TREATY)) {
-            this.deleteTreatySearch(id);
-        } else {
-            throw new RuntimeException("Unsupported Search Type" + searchType);
         }
     }
 
-    private void deleteFacSearch(Long id) {
-        if (!facSearchRepository.existsById(id))
-            throw new RuntimeException("No available Fac Saved Search with ID " + id);
+    private void saveRecentExpertModeSearch(ExpertModeFilterRequest request) {
+        UserRrEntity user = ((UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        String keyword;
+        keyword = Optional.of(request.getKeyword()).orElse("").replace("%", "").trim();
 
-        facSearchItemRepository.deleteByFacSearchId(id);
-        facSearchRepository.deleteById(id);
+        if(!keyword.equals("") || request.getFilter().size() > 0) {
+            List<RecentSearch> recentSearches = recentSearchRepository.findByUserIdAndTypeOrderBySearchDateDesc(user.getUserId(), request.getType().getSearchType());
+            int recentSearchesLength = recentSearches.size();
+
+            if( recentSearchesLength == 7 ) {
+                RecentSearch SearchItem = recentSearches.get(recentSearchesLength - 1);
+                recentSearchRepository.delete(SearchItem);
+            }
+            RecentSearch newSearch = new RecentSearch();
+            newSearch.setUserId(user.getUserId());
+            newSearch.setType(request.getType().getSearchType());
+            recentSearchRepository.save(newSearch);
+
+            List<RecentSearchItem> items= new ArrayList<>();
+
+            if(!keyword.equals("")) {
+                RecentSearchItem newSearchItem = new RecentSearchItem();
+                newSearchItem.setKey("global search");
+                newSearchItem.setOperator("LIKE");
+                newSearchItem.setValue(keyword);
+                newSearchItem.setRecentSearchId(newSearch.getRecentSearchId());
+                items.add(newSearchItem);
+            }
+
+            request.getFilter()
+                    .forEach( expertModeFilter -> {
+                        if(!expertModeFilter.getValue().equals("")) {
+                            RecentSearchItem newSearchItem = new RecentSearchItem();
+                            newSearchItem.setKey(expertModeFilter.getKey());
+                            newSearchItem.setOperator(expertModeFilter.getOperator().value);
+                            newSearchItem.setValue(expertModeFilter.getValue().replace("%", "").trim());
+                            newSearchItem.setRecentSearchId(newSearch.getRecentSearchId());
+                            items.add(newSearchItem);
+                        }
+                    });
+
+            recentSearchItemRepository.saveAll(items);
+        }
     }
-
-    private void deleteTreatySearch(Long id) {
-        if (!treatySearchRepository.existsById(id))
-            throw new RuntimeException("No available TreatyView Saved Search with ID " + id);
-        treatySearchItemRepository.deleteByTreatySearchId(id);
-        treatySearchRepository.deleteById(id);
-    }
-
 
 }

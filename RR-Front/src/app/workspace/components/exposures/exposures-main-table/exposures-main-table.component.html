@@ -4,6 +4,7 @@
              [frozenValue]="tableConfig.frozenRow" [value]="tableConfig.data"
              [scrollable]="true"
              syncScroll
+             [resizableColumns]="true"
              [customSort]="true"
              (sortFunction)="onSort($event)"
              scrollHeight="calc( 100vh - 435px )" frozenWidth="520px">
@@ -17,12 +18,9 @@
             <tr>
                 <ng-container *ngFor="let col of columns">
                     <th [colSpan]="col.field == 'country' ? 2 : 1"
+                        pResizableColumn
                         [pSortableColumn]="col.field">
                         <span>{{col.header}}</span>
-                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
-                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
-                                       'icon-direction':sortConfig[col.field] == 0}">
-                        </i>
                     </th>
                 </ng-container>
             </tr>
@@ -30,12 +28,10 @@
         <ng-template pTemplate="header" let-columns>
             <tr>
                 <ng-container *ngFor="let col of columns">
-                    <th [pSortableColumn]="col.field">
+                    <th [pSortableColumn]="col.field"
+                        pResizableColumn
+                        [ngClass]="{'filtered-column':filteredColumn == col.field}">
                         <span>{{col.header}}</span>
-                        <i [ngClass]="{'icon-keyboard_arrow_up_24px':sortConfig[col.field] == 1,
-                                       'icon-keyboard_arrow_down_24px':sortConfig[col.field] == -1,
-                                       'icon-direction':sortConfig[col.field] == 0}">
-                        </i>
                     </th>
                 </ng-container>
             </tr>
@@ -56,7 +52,8 @@
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container *ngIf="col.field == 'country'">
-                        <td [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.data.length - 1 &&
+                        <td class="ui-resizable-column"
+                            [ngClass]="{'grouped-metric-first' : rowIndex < tableConfig.data.length - 1 &&
                                          rowData['country'] == tableConfig.data[rowIndex + 1]['country'],
                                         'grouped-metric-next':rowIndex > 0 && rowIndex < tableConfig.data.length - 1 &&
                                          rowData['country'] == tableConfig.data[rowIndex - 1]['country'] &&
@@ -78,7 +75,7 @@
                         </td>
                     </ng-container>
                     <ng-container *ngIf="col.field != 'country'">
-                        <td>
+                        <td class="ui-resizable-column">
                             {{rowData[col.field]}}
                         </td>
                     </ng-container>
@@ -91,7 +88,7 @@
                 [ngClass]="{'row-hover':hoveredRow == rowIndex}">
                 <ng-container *ngFor="let col of columns">
                     <ng-container>
-                        <td>
+                        <td class="ui-resizable-column" style="text-align: start; !important;">
                             {{rowData[col.field]}}
                         </td>
                     </ng-container>

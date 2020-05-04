@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ExceptionCodename {
     /*
-        This section is delegated to WorkSpace Exceptions
-    * */
-    WORKSPACE_NOT_FOUND("WORKSPACE NOT FOUND"),
-    /*
         This section is delegated to Projetc Exceptions
     * */
 
@@ -44,8 +40,15 @@ public enum ExceptionCodename {
     PLT_FILE_WRITE_ERROR("Error while writing to file"),
 
 
+    /*  This section is for the expected Scope */
+    EXPECTED_SCOPE_FILE_NOT_FOUND_EXCEPTION("Expected scope file not found"),
+    EXPECTED_SCOPE_FILE_EXTENSION_NOT_SUPPORTED_EXCEPTION("Expected scope file extension not supported"),
+    EXPECTED_SCOPE_FILE_CORRUPTED_EXCEPTION("Expected scope file is corrupted"),
+    ACCUMULATION_PACKAGE_NOT_FOUND("Accumulation Package not found"),
+    WORKSPACE_NOT_FOUND("workspace not found!"),
 
-    /* this section is for DashboardExceptions*/
+
+    /* This section is for DashboardExceptions*/
 
     USER_NOT_FOUND_EXCEPTION("User not found"),
     COLUMN_NOT_FOUND("Column not found"),

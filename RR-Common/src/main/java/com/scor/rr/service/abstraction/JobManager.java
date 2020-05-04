@@ -1,6 +1,7 @@
 package com.scor.rr.service.abstraction;
 
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.JobDto;
 import com.scor.rr.domain.enums.JobStatus;
 import com.scor.rr.domain.enums.StepStatus;
 
@@ -19,13 +20,21 @@ public interface JobManager {
 
     void cancelJob(Long jobId);
 
+    void pauseJob(Long jobId);
+
+    void resumeJob(Long jobId);
+
     void submitTask(Long taskId);
 
     void cancelTask(Long taskId);
 
+    void pauseTask(Long taskId);
+
     boolean isJobRunning(Long jobId);
 
     List<JobExecutionEntity> findRunningJobsForUser(String userId);
+
+    List<JobDto> findRunningJobsForUserRR(Long userId);
 
     void onTaskError(Long taskId);
 

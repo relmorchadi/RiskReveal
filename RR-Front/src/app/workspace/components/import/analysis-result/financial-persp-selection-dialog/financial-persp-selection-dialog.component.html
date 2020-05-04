@@ -71,8 +71,8 @@
               <tr>
                 <th *ngFor="let col of columns" pResizableColumn>
                   <ng-container *ngIf="col.type === 'select'">
-                    <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
-                           (ngModelChange)="updateAllChecked($event,'analysis')"
+                    <label style="margin-top:20px" nz-checkbox [(ngModel)]="allCheckedAnalysis"
+                           (nzCheckedChange)="updateAllChecked($event,'analysis')"
                            [nzIndeterminate]="indeterminateAnalysis"></label>
                                                 <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
                   </ng-container>
@@ -95,17 +95,17 @@
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                 <th *ngFor="let col of columns" class="ui-resizable-column"
-                    [ngClass]="{'selected-item': changes.analysis[rowData.rlAnalysisId].selected}">
+                    [ngClass]="{'selected-item': changes?.analysis[rowData.rlAnalysisId]?.selected}">
                   <div *ngIf="col.type === 'select'">
                     <label nz-checkbox (ngModelChange)="checkAnalysisRow(rowData.rlAnalysisId)"
-                           [ngModel]="changes.analysis[rowData.rlAnalysisId].selected"></label>
+                           [ngModel]="changes?.analysis[rowData.rlAnalysisId]?.selected"></label>
                   </div>
                   <div class="text-data" (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" *ngIf="col.type === 'iconIndicator'">
                     <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
                   </div>
                   <div class="text-data" (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" *ngIf="col.type === 'tags'"
                        style="display: flex">
-                    <span class="tags-secondary" *ngFor="let item of changes.analysis[rowData.rlAnalysisId].financialPerspectives">{{item}}<i
+                    <span class="tags-secondary" *ngFor="let item of changes?.analysis[rowData.rlAnalysisId]?.financialPerspectives">{{item}}<i
                       (click)="removeFP(rowData.rlAnalysisId, item)" class="icon-close_24px"></i></span>
                   </div>
                   <div (click)="toggleAnalysisSelection(rowData.rlAnalysisId)" class="text-data"
@@ -156,8 +156,8 @@
                 <tr>
                   <th *ngFor="let col of columns" pResizableColumn>
                     <ng-container *ngIf="col.type === 'select'">
-                      <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedEpc"
-                             (ngModelChange)="updateAllChecked($event, 'epc')"
+                      <label style="margin-top:20px" nz-checkbox [(ngModel)]="allCheckedEpc"
+                             (nzCheckedChange)="updateAllChecked($event, 'epc')"
                              [nzIndeterminate]="indeterminateEpc"></label>
                                                   <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
                     </ng-container>

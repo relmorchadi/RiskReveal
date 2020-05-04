@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "ZZ_RLImportSelection")
+@Table(name = "RLImportSelection")
 @AllArgsConstructor
 @NoArgsConstructor
 public class RLImportSelection {

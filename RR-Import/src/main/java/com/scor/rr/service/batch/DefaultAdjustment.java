@@ -11,10 +11,7 @@ import com.scor.rr.domain.enums.PLTPublishStatus;
 import com.scor.rr.domain.enums.StatisticsType;
 import com.scor.rr.domain.enums.StepStatus;
 import com.scor.rr.domain.enums.XLTOT;
-import com.scor.rr.repository.EPCurveHeaderEntityRepository;
-import com.scor.rr.repository.ModelAnalysisEntityRepository;
-import com.scor.rr.repository.RegionPerilRepository;
-import com.scor.rr.repository.SummaryStatisticHeaderRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.service.abstraction.JobManager;
 import com.scor.rr.service.batch.writer.AbstractWriter;
 import com.scor.rr.service.batch.writer.EpCurveWriter;
@@ -59,6 +56,9 @@ public class DefaultAdjustment extends AbstractWriter {
 
     @Autowired
     private SummaryStatisticHeaderRepository summaryStatisticHeaderRepository;
+
+    @Autowired
+    private PltHeaderRepository pltHeaderRepository;
 
     @Autowired
     @Qualifier("jobManagerImpl")
@@ -137,6 +137,8 @@ public class DefaultAdjustment extends AbstractWriter {
                                 //this.getAndWriteStatsForPlt(pltBundle.getHeader(), restTemplate, false, null);
                             } else {
                                 log.error("An error has occurred {}", response.getStatusCodeValue());
+                                jobManager.onTaskError(Long.valueOf(taskId));
+                                jobManager.logStep(step.getStepId(), StepStatus.FAILED);
                             }
                             this.calculateSummaryStat(pltBundle.getHeader(), restTemplate);
                         }
@@ -157,7 +159,7 @@ public class DefaultAdjustment extends AbstractWriter {
             jobManager.onTaskError(Long.valueOf(taskId));
             jobManager.logStep(step.getStepId(), StepStatus.FAILED);
             ex.printStackTrace();
-            return RepeatStatus.valueOf("FAILED");
+            return RepeatStatus.FINISHED;
         }
     }
 
@@ -318,9 +320,11 @@ public class DefaultAdjustment extends AbstractWriter {
 
         SummaryStatisticHeaderEntity summaryStatisticHeaderEntity =
                 new SummaryStatisticHeaderEntity(1L, modelAnalysis.getFinancialPerspective(), cov, stdDev,
-                        averageAnnualLoss, StatisticsType.PLT.getCode(), pltHeader.getPltHeaderId(), summaryStatFilename, file.getPath());
+                        averageAnnualLoss, StatisticsType.PLT.getCode(), null, summaryStatFilename, file.getPath());
 
         summaryStatisticHeaderRepository.save(summaryStatisticHeaderEntity);
+        pltHeaderRepository.updateSummaryStatisticHeaderId(pltHeader.getPltHeaderId(), summaryStatisticHeaderEntity.getSummaryStatisticHeaderId());
+
     }
 
     private ResponseEntity<EPMetric> getEpStats(String url, HttpEntity request, String fullFilePath, RestTemplate restTemplate) {

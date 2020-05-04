@@ -21,7 +21,11 @@ public class EpMetrics {
     public ResponseEntity<?> getSinglePLTEpMetrics(@RequestParam Long pltHeaderId, @RequestParam CurveType curveType, @RequestParam String screen) { return this.epMetricsService.getSinglePLTEpMetrics( pltHeaderId, curveType, screen);}
 
     @GetMapping("singlePLTSummaryStats")
-    public ResponseEntity<?> getSinglePLTSummaryStats(@RequestParam Long pltHeaderId) { return this.epMetricsService.getSinglePLTSummaryStats(pltHeaderId);}
+    public ResponseEntity<?> getSinglePLTSummaryStats(@RequestParam Long pltHeaderId) {
+        return this.epMetricsService.getSinglePLTSummaryStats(pltHeaderId)
+                .map(summaryStatisticHeaderEntity -> ResponseEntity.ok(summaryStatisticHeaderEntity))
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @GetMapping("single")
     public ResponseEntity<?> getSingleEpMetric(@RequestParam String workspaceContextCode, @RequestParam Integer uwYear, @RequestParam CurveType curveType, @RequestParam Integer rp) { return this.epMetricsService.getSingleEpMetric(workspaceContextCode, uwYear, curveType, rp);}

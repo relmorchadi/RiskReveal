@@ -17,6 +17,9 @@ import {ColumnsFormatterService} from "../../../shared/services/columnsFormatter
 import {FilterGroupedPltsPipe} from "../../pipes/filter-grouped-plts.pipe";
 import {SortGroupedPltsPipe} from "../../pipes/sort-grouped-plts.pipe";
 import {ExchangeRatePipe} from "../../../shared/pipes/exchange-rate.pipe";
+import {GetDeltaPipe} from "../../pipes/get-delta.pipe";
+import {FinancialUnitPipe} from "../../pipes/financial-unit.pipe";
+import {GetMetricPipe} from "../../pipes/get-metric.pipe";
 
 @Component({
   selector: 'app-workspace-calibration-new',
@@ -31,6 +34,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   workspaceType: string;
   workspaceCurrency: string;
   workspaceEffectiveDate: Date;
+  initialized: boolean;
 
   data: any[];
   epMetrics: any;
@@ -48,12 +52,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     selectedCurrency: string,
     isExpanded: boolean,
     expandedRowKeys: any,
+    expandedRowKeysCache: any,
     isGrouped: boolean,
     isDeltaByAmount: boolean
     filterData: any,
     sortData: any,
-    isExpandAll: boolean
+    isExpandAll: boolean,
+    expandCount: number
   };
+
+  tableWidth: number;
+
   constants: {
     financialUnits: string[],
     curveTypes: string[],
@@ -115,26 +124,35 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     private formatter: ColumnsFormatterService,
     private filterGroupedPlts: FilterGroupedPltsPipe,
     private sortGroupedPlts: SortGroupedPltsPipe,
-    private exchangeRatePipe: ExchangeRatePipe
+    private exchangeRatePipe: ExchangeRatePipe,
+    private deltaPipe: GetDeltaPipe,
+    private metricPipe: GetMetricPipe,
+    private financialUnitPipe: FinancialUnitPipe
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    console.log('INIT CALIB')
+
+    this.initialized = false;
 
     this.data = [];
     this.adjustmentTypes= [];
     this.basis= [];
     this.tableConfig = {
-      view: 'epMetrics',
+      view: "adjustments",
       selectedCurveType: "OEP",
       isGrouped: true,
       isExpanded: false,
       isDeltaByAmount: false,
       expandedRowKeys: {},
+      expandedRowKeysCache: {},
       selectedFinancialUnit: "Unit",
       selectedCurrency: null,
       filterData: {},
       sortData: {},
-      isExpandAll: false
+      isExpandAll: false,
+      expandCount: 0
     };
+    this.tableWidth = 0;
     this.exchangeRates= {};
 
     this.columnsConfig = {
@@ -236,7 +254,8 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
   iniRouting(wsIdentifier, wsId, uwYear, workspaceType) {
 
-    if( !this.wsId && wsId && !this.uwYear && uwYear ) {
+    if( !this.wsId && wsId && !this.uwYear && uwYear && !this.initialized) {
+      this.initialized= true;
       //INIT
       this.calibrationTableService.setWorkspaceType(workspaceType);
       this.calibrationTableService.init();
@@ -333,13 +352,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
         .pipe(
             takeWhile(v => !_.isNil(v)),
-            take(2),
             this.unsubscribeOnDestroy
-        ).subscribe( currency => {
-          this.workspaceCurrency = currency;
+        ).subscribe( selectedProject => {
+          this.workspaceCurrency = selectedProject ? selectedProject.currency : null;
           this.tableConfig = {
               ...this.tableConfig,
-            selectedCurrency: currency
+            selectedCurrency: selectedProject ? selectedProject.currency : null
           };
           this.detectChanges();
     });
@@ -360,6 +378,9 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
 
       this.columnsConfig= config;
       this.calibrationTableService.updateColumnsConfigCache(config);
+
+      this.tableWidth = _.reduce([...this.columnsConfig.columns, ...this.columnsConfig.frozenColumns], (acc, curr) => curr ? acc + _.toNumber(curr.width) : acc, 0);
+      console.log("table width:", this.tableWidth);
 
       this.visibleFrozenColumns= _.slice(config.frozenColumns, 1);
       this.availableFrozenColumns= _.differenceBy(CalibrationTableService.frozenColsExpanded, config.frozenColumns, 'field');
@@ -420,12 +441,12 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     this.tableConfig = {
       ...this.tableConfig,
       isGrouped: !this.tableConfig.isGrouped,
-      expandedRowKeys: this.tableConfig.isGrouped ? {} : this.tableConfig.expandedRowKeys
-    };
+      expandedRowKeys: this.tableConfig.isGrouped ? {} : this.tableConfig.expandedRowKeysCache,
+      expandedRowKeysCache: this.tableConfig.expandedRowKeys
+    }
   }
 
   handleTableActions(action: Message) {
-
     switch (action.type) {
 
       case "Open Column Manager":
@@ -517,7 +538,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-
+        console.log(action);
     }
   }
 
@@ -528,7 +549,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         this.selectedAdjustment = null;
         break;
       default:
-
+        console.log(action);
     }
   }
 
@@ -556,7 +577,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-
+        console.log(action);
     }
   }
 
@@ -625,7 +646,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       ...this.columnsConfig,
       ...res
     };
-    console.log(tmp);
+
     this.calibrationTableService.updateColumnsConfig(tmp);
 
   }
@@ -635,7 +656,11 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
     const frozenColumns= _.merge(columnsConfig.frozenColumns, {[index]: {
       width: _.toNumber(columnsConfig.frozenColumns[index].width) + delta + ''
     }});
-    const frozenWidth= _.reduce(frozenColumns, (acc, curr) => acc + _.toNumber(curr.width), 0) + "px";
+    const statusCols = frozenColumns.filter(c => c.field == 'status' );
+
+    console.log(frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1));
+    const frozenWidth= _.reduce(frozenColumns.slice(0, frozenColumns.indexOf(statusCols[0]) + 1),
+        (acc, curr) => acc + _.toNumber(curr.width), 0) + "px";
 
     columnsConfig = {
       ...columnsConfig,
@@ -649,16 +674,17 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   expandColumns() {
     this.tableConfig = {
       ...this.tableConfig,
-      isExpanded: true
+      isExpanded: true,
+      expandCount: ++this.tableConfig.expandCount
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, true);
   }
 
   expandColumnsOff() {
-
     this.tableConfig = {
       ...this.tableConfig,
-      isExpanded: false
+      isExpanded: false,
+      expandCount: ++this.tableConfig.expandCount
     };
     this.calibrationTableService.getColumns(this.tableConfig.view, false);
   }
@@ -798,21 +824,31 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
   }
 
   collapseAllPlts() {
-    this.tableConfig= {
-      ...this.tableConfig,
-      expandedRowKeys: {},
-      isExpandAll: false
-    };
+    if(this.tableConfig.isGrouped) {
+      this.tableConfig= {
+        ...this.tableConfig,
+        expandedRowKeys: {},
+        isExpandAll: false,
+      };
+    } else {
+      this.tableConfig.expandedRowKeysCache = {};
+    }
   }
 
   expandAllPlts() {
-    _.forEach(this.data, (pure)=> {
-      this.tableConfig.expandedRowKeys[pure.pltId] = true;
-    });
-    this.tableConfig= {
-      ...this.tableConfig,
-      isExpandAll: true
-    };
+    if(this.tableConfig.isGrouped) {
+      _.forEach(this.data, (pure)=> {
+        this.tableConfig.expandedRowKeys[pure.pltId] = true;
+      });
+      this.tableConfig= {
+        ...this.tableConfig,
+        isExpandAll: true
+      };
+    } else {
+      _.forEach(this.data, (pure)=> {
+        this.tableConfig.expandedRowKeysCache[pure.pltId] = true;
+      });
+    }
   }
 
   private filterTable(filter: any) {
@@ -849,19 +885,25 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
             this.tableConfig.sortData
         ), pure => {
           let pureMetrics = {};
-          _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId], 'pltId'), (v,k) => {
-            pureMetrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, pure.currencyCode, this.tableConfig.selectedCurrency);
+          _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][pure.pltId], ['pltId', 'curveType']), (v,k) => {
+            pureMetrics[k] = this.getNumber(k, pure.pltId, pure.currencyCode);
           })
           item = {..._.omit(pure, 'threads'), ...pureMetrics};
           exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item))
 
           _.forEach(pure.threads, thread => {
             let metrics = {};
-            _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId], 'pltId'), (v,k) => {
-              metrics[k] = this.exchangeRatePipe.transform(v, this.exchangeRates, thread.currencyCode, this.tableConfig.selectedCurrency);
-            })
+            //Delta
+            let deltaMetric = {};
+            _.forEach(_.omit(this.epMetrics[this.tableConfig.selectedCurveType][thread.pltId], ['pltId', 'curveType']), (v,k) => {
+              metrics[k] = this.getNumber(k, thread.pltId, thread.currencyCode);
+              deltaMetric[k] = this.deltaPipe.transform(this.epMetrics, thread.pltId, pure.pltId, k, this.tableConfig.selectedCurveType, this.tableConfig.isDeltaByAmount)+ (this.tableConfig.isDeltaByAmount ? '' : '%');
+            });
             item = {..._.omit(thread, 'threads'), ...metrics};
             exportedList.push(this.transformItem(columnsHeader, columnsField,columnsType, item));
+            exportedList.push(
+                this.tableConfig.isDeltaByAmount ? this.transformItem(columnsHeader, columnsField,columnsType, deltaMetric) : deltaMetric
+            );
           })
 
     });
@@ -876,10 +918,15 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
                 headerOptions: _.values(_.filter(_.map([...this.columnsConfig.frozenColumns, ...this.columnsConfig.columns], e => e.header), e => e))
               },
               {
-                sheetData: _.map(this.tableConfig.filterData, (v,k) => ({
-                  Filter: v,
-                  Column: k == 'projectId' ? 'Project ID' : columnsHeader[_.findIndex(columnsField, e => e == k)]
-                })),
+                sheetData: [
+                  { Column: 'Metric', Filter: this.tableConfig.selectedCurveType },
+                  { Column: 'Financial Unit', Filter: this.tableConfig.selectedFinancialUnit },
+                  { Column: 'Currency', Filter: this.tableConfig.selectedCurrency },
+                    ..._.map(this.tableConfig.filterData, (v,k) => ({
+                      Filter: v,
+                      Column: k == 'projectId' ? 'Project ID' : columnsHeader[_.findIndex(columnsField, e => e == k)]
+                    }))
+                ],
                 sheetName: "Filters",
                 headerOptions: ["Column", "Filter"]
               }
@@ -896,6 +943,23 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       newItem[columnsHeader[i]] =  this.formatter.format(item[field], columnsType[i])
     });
     return newItem;
+  }
+
+  getNumber(n, threadId, currency) {
+    return this.exchangeRatePipe.transform(
+        this.financialUnitPipe.transform(
+            this.metricPipe.transform(
+                this.epMetrics,
+                this.tableConfig.selectedCurveType,
+                threadId,
+                n
+            ),
+            this.tableConfig.selectedFinancialUnit
+        ),
+        this.exchangeRates,
+        currency,
+        this.tableConfig.selectedCurrency
+    )
   }
 
   deltaChange(newDelta) {
@@ -956,7 +1020,7 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
         break;
 
       default:
-
+        console.log(action);
     }
   }
 

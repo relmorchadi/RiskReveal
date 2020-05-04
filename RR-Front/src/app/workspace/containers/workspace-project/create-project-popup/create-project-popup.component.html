@@ -88,7 +88,7 @@
     <div class="a-form-input-wrapper">
       <label class="label-input">Assigned To</label>
       <nz-select class="a-dropdown-label" nzShowSearch [(ngModel)]="projectForm.assignedTo">
-        <nz-option *ngFor="let user of users" [nzLabel]="user?.firstName + ' ' + user?.lastName" [nzValue]="user?.userId"></nz-option>
+        <nz-option *ngFor="let user of users" [nzLabel]="user?.firstName + ' ' + user?.lastName" [nzValue]="user?.lastName + ' ' + user?.firstName"></nz-option>
       </nz-select>
     </div>
 

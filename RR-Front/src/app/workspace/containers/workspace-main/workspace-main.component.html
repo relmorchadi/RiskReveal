@@ -1,11 +1,10 @@
 <div class="card-container">
   <nz-tabset
-    *ngIf="!loading"
-    [nzSelectedIndex]="selectedTabIndex"
+    [nzSelectedIndex]="currentTab?.index"
     [nzTabPosition]="'top'"
     [nzType]="'card'"
     class="tabs-main-component">
-    <ng-container *ngFor="let wsIdentifier of data | keys; let k= index;">
+    <ng-container *ngFor="let wsIdentifier of data | getIdentifiers : currentTab?.openedTabs;let k= index;">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
@@ -21,7 +20,7 @@
         ></ng-container>
       </ng-template>
 
-      <nz-tab (nzSelect)="selectWorkspace(wsIdentifier,k)" [nzTitle]="titleTemplate">
+      <nz-tab [nzTitle]="titleTemplate">
         <ng-template nz-tab>
         <div nz-row>
           <div nz-col nzSpan="24">
@@ -47,7 +46,7 @@
                         [ngClass]="{'fac-title': data[wsIdentifier]?.workspaceType === 'fac'}">
                       {{data[wsIdentifier]?.cedantName}}
                       <i (click)="toggleFavorite(wsIdentifier, data[wsIdentifier])"
-                         *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon" class="icon-star_border_24px"></i>
+                         *ngIf="!data[wsIdentifier]?.isFavorite; else favoriteIcon" class="icon-star_border_24px"></i>
                       <ng-template #favoriteIcon>
                         <i (click)="toggleFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_24px"></i>
                       </ng-template>
@@ -239,6 +238,7 @@
           <div [nzSpan]="24" nz-col>
             <div style="display: flex">
               <workspace-router (action)="dispatch($event)"
+                                *ngIf="data[wsIdentifier]"
                                 [state]="{wsIdentifier: wsIdentifier , data: data[wsIdentifier]}"></workspace-router>
               <!-- <app-left-menu [isCollapsed]="data[wsIdentifier]?.leftNavbarCollapsed" (navigate)="leftMenuNavigation($event, data[wsIdentifier])" (toggleCollapse)="toggleLeftMenu(wsIdentifier)" ></app-left-menu>-->
               <!-- <router-outlet></router-outlet> -->
@@ -261,8 +261,8 @@
   let-years='years'
   #tabTitle>
   <div class="tab-title-container pl-3">
-    <ng-container *ngIf="!loading">
-      <div class="tab-title">
+    <ng-container  *ngIf="!loading">
+      <div (click)="selectWorkspace(wsIdentifier,index)" class="tab-title">
         <span class="tab-title-main">{{title}}</span>
         <span class="tab-title-sub" [nz-tooltip]="name" nzPlacement="bottom">{{name}}</span>
       </div>

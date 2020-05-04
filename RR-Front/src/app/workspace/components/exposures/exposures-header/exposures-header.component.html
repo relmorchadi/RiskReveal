@@ -4,7 +4,7 @@
            Exposure Manager
           </span>
         <div  *ngIf="headerConfig" class="body-wrap-dropDowns">
-            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
                 <div class="dropdown-wrap" [style.width]="'135px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Global Exposure View</span>
@@ -24,9 +24,9 @@
             </nz-dropdown>
         </div>
         <div  *ngIf="headerConfig" class="body-wrap-dropDowns">
-            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}"
+            <nz-dropdown [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
                          style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+                <div class="dropdown-wrap" [style.width]="'80px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Currency</span>
                         <span class="dropdown-item-selected">
@@ -46,10 +46,11 @@
             </nz-dropdown>
         </div>
         <div  *ngIf="headerConfig" class="body-wrap-dropDowns">
-            <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
+            <nz-dropdown [nzTrigger]="'click'"  [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
+                         style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'130px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
-                        <span class="dropdown-title">Financial Unit</span>
+                        <span class="dropdown-title">Financial Perspective</span>
                         <span class="dropdown-item-selected">
                             {{selectedHeaderConfig.financialPerspective ?  selectedHeaderConfig.financialPerspective :"choose"}}
                         </span>
@@ -60,43 +61,37 @@
                 </div>
                 <ul nz-menu>
                     <li *ngFor="let financialPerspectives of headerConfig?.financialPerspectives" nz-menu-item
-                        (click)="changeFinancialUnit(financialPerspectives)">
+                        (click)="changeFinancialPerspecctive(financialPerspectives)">
                         {{financialPerspectives}}
                     </li>
                 </ul>
             </nz-dropdown>
         </div>
-        <div *ngIf="headerConfig else spinner"  class="body-wrap-dropDowns">
-            <nz-dropdown *ngIf="headerConfig.divisions.length > 0"
-                         [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}"
-                         style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+        <div  *ngIf="headerConfig" class="body-wrap-dropDowns">
+            <nz-dropdown [nzTrigger]="'click'"  [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}" style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'108px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
-                        <span class="dropdown-title">Division</span>
+                        <span class="dropdown-title">Financial Units</span>
                         <span class="dropdown-item-selected">
-                        {{selectedHeaderConfig.division ? "Division N°" + selectedHeaderConfig.division.divisionNumber :"choose"}}
-                      </span>
+                            {{selectedHeaderConfig.financialUnits ?  selectedHeaderConfig.financialUnits :"choose"}}
+                        </span>
                     </div>
                     <div class="dropdown-icon">
                         <i nz-icon type="down"></i>
                     </div>
                 </div>
                 <ul nz-menu>
-                    <li *ngFor="let division of headerConfig?.divisions" nz-menu-item
-                        (click)="changeDivision(division)">
-                        Division N°{{division.divisionNumber}}
+                    <li *ngFor="let financialUnits of headerConfig?.financialUnits" (click)="changeFinancialUnit(financialUnits)" nz-menu-item>
+                        {{financialUnits.header}}
                     </li>
                 </ul>
             </nz-dropdown>
         </div>
-        <div  *ngIf="headerConfig && headerConfig.divisions.length > 0" class="view-details">
-            <i class="icon-info_24px info-icon" (click)="openDivisionDetails()"></i>
-        </div>
         <div *ngIf="headerConfig"  class="body-wrap-dropDowns">
             <nz-dropdown  *ngIf="headerConfig.portfolios.length > 0"
-                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '200px','overflow': 'auto'}"
+                          [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
                           style="margin-left: 10px;margin-top: 15px;">
-                <div class="dropdown-wrap" [style.width]="'114px'" nz-dropdown>
+                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
                     <div class="dropdown-wrap-title">
                         <span class="dropdown-title">Portfolio</span>
                         <span class="dropdown-item-selected">
@@ -118,12 +113,40 @@
         <div *ngIf="headerConfig &&  headerConfig.portfolios.length > 0" class="view-details">
             <i class="icon-info_24px info-icon"  (click)="openPortfolioDetails()"></i>
         </div>
+        <div *ngIf="headerConfig else spinner"  class="body-wrap-dropDowns">
+            <nz-dropdown *ngIf="headerConfig.divisions.length > 0"
+                         [nzTrigger]="'click'" [nzOverlayStyle]="{ 'max-height': '136px','overflow': 'auto'}"
+                         style="margin-left: 10px;margin-top: 15px;">
+                <div class="dropdown-wrap" [style.width]="'95px'" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                        <span class="dropdown-title">Division</span>
+                        <span class="dropdown-item-selected">
+                        {{selectedHeaderConfig.division ? "Division N°" + selectedHeaderConfig.division.divisionNumber :"choose"}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                    </div>
+                </div>
+                <ul nz-menu>
+                    <li *ngFor="let division of headerConfig?.divisions" nz-menu-item
+                        (click)="changeDivision(division)">
+                        Division N°{{division.divisionNumber}}
+                    </li>
+                </ul>
+            </nz-dropdown>
+        </div>
+        <div  *ngIf="headerConfig && headerConfig.divisions.length > 0" class="view-details">
+            <i class="icon-info_24px info-icon" (click)="openDivisionDetails()"></i>
+        </div>
         <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" class="top-right-menu-dropdown">
             <a style="max-height: 28px;display: flex;" nz-dropdown>
                 <i class="icon-settings_24px" style="font-size: 25px"></i>
             </a>
             <ul nz-menu style="font-size: 12px">
                 <li nz-menu-item (click)="exportExposuresTable()">Export</li>
+                <li nz-menu-item (click)="downloadIhubFiles()">Download i-hub files</li>
+                <li nz-menu-item (click)="downloadYoyReport()">Download YoY Comparision report</li>
             </ul>
         </nz-dropdown>
     </div>

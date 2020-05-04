@@ -10,7 +10,7 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {WorkspaceState} from '../../store';
+import {SelectProject, WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from '../../../shared/message';
@@ -199,7 +199,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   setSelectedProjects($event) {
-    this.updateLeftMenuInputs('projects', $event);
+    this.dispatch(new SelectProject({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      projectId: $event
+    }))
+    //this.updateLeftMenuInputs('projects', $event);
   }
 
   close(e: NzMenuItemDirective): void {
@@ -259,8 +263,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   rightMenuActionDispatcher(action: Message) {
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        this.updateMenuKey('visible', false);
-        this.updateMenuKey('pltHeaderId', null);
+        this.closeDrawer(false);
         break;
 
       case rightMenuStore.setSelectedTabByIndex:
@@ -270,6 +273,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       default:
         console.log('default right menu action');
     }
+  }
+
+  closeDrawer(outside){
+    console.log("hey hey hye")
+    this.updateMenuKey('visible', false);
+    this.updateMenuKey('pltHeaderId', null);
   }
 
   setRightMenuSelectedTab(tab) {

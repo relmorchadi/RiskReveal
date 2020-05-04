@@ -9,6 +9,6 @@ public class ProjectEditRequest {
     private Long projectId;
     private String projectName;
     private String projectDescription;
-    private Long assignedTo;
+    private String assignedTo;
     private Date dueDate;
 }

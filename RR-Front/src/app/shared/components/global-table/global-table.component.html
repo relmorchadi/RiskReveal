@@ -36,7 +36,6 @@
     >
       <div *ngIf="columns.length > 0" [style.width]="totalColumnWidth + 'px'">
         <p-table
-                [styleClass]=" data.length > 0 ? '': 'activate-header-scroll'"
                 dataKey="pltId" [value]="data" [columns]="columns"
                 [loading]="loading$ | async"
                 [contextMenu]="cm" [(contextMenuSelection)]="selectedItem"
@@ -99,6 +98,15 @@
                   <ng-container *ngSwitchCase="'id'" [ngTemplateOutlet]="id" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
                   <ng-container *ngSwitchDefault [ngTemplateOutlet]="text" [ngTemplateOutletContext]="{$implicit: row[col.columnName]}"></ng-container>
                 </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+              <td [attr.colspan]="columns.length">
+                <div style="display: flex">
+                  <nz-empty [ngStyle]="{ 'position': 'relative', 'right': 'calc( -'+ cte.offsetWidth/2+'px )'}"></nz-empty>
+                </div>
               </td>
             </tr>
           </ng-template>

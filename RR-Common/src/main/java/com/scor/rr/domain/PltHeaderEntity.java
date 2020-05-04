@@ -129,6 +129,9 @@ public class PltHeaderEntity {
     @Column(name = "CreatedBy")
     private Long createdBy;
 
+    @Column(name = "SummaryStatisticHeaderId")
+    private Long summaryStatisticHeaderId;
+
     public PltHeaderEntity(Long pltHeaderId, String deletedBy) {
         this.pltHeaderId = pltHeaderId;
         this.deletedBy = deletedBy;
@@ -160,6 +163,7 @@ public class PltHeaderEntity {
         this.targetRAPId = other.getTargetRAPId();
         this.regionPerilId = other.regionPerilId;
         this.projectId = other.projectId;
+        this.perilCode= other.perilCode;
 //        this.adjustmentBasisByFkPreviousBasisId = other.adjustmentBasisByFkPreviousBasisId;
 //        this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
         this.entity = other.entity;
