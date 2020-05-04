@@ -3,7 +3,6 @@ import {Store} from "@ngxs/store";
 import {GeneralConfigState} from "../../core/store/states";
 import * as _ from "lodash";
 import {DecimalPipe} from "@angular/common";
-import {RRDatePipe} from "../pipes";
 import * as moment from 'moment';
 
 @Injectable()
@@ -54,6 +53,8 @@ export class ColumnsFormatterService {
   }
 
   formatNumber(n) {
+    return _.toNumber(n);
+
     if(!_.floor(n)) return '0';
     switch (this.numberConfig.negativeFormat) {
       case 'simple':

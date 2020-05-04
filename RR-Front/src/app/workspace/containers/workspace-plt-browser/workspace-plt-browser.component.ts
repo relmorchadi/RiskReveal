@@ -276,7 +276,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   closeDrawer(outside){
-    console.log("hey hey hye")
     this.updateMenuKey('visible', false);
     this.updateMenuKey('pltHeaderId', null);
   }

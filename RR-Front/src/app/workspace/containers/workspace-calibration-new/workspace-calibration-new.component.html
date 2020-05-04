@@ -3,7 +3,7 @@
     <div class="a-app-header">
       <h4>Calibration</h4>
     </div>
-    <div class="my-tabs tab-set-right table-design table-design-sp" #cnt>
+    <div class="my-tabs tab-set-right table-design table-design-sp" (resized)="detectChanges()" #dtContainer>
       <app-calibration-new-table
               [wsIdentifier]="wsIdentifier"
               [data]="data"
@@ -15,7 +15,7 @@
               [status]="status"
               [selectedStatusFilter]="selectedStatusFilter"
               [exchangeRates]="exchangeRates"
-              [tableWidth]=" cnt.offsetWidth < tableWidth ? '100%' : (tableConfig.view == 'adjustments' ? '100%' : tableWidth + 'px')"
+              [tableWidth]="dtContainer.offsetWidth + 'px'"
               (actionDispatcher)="handleTableActions($event)"
       ></app-calibration-new-table>
     </div>
