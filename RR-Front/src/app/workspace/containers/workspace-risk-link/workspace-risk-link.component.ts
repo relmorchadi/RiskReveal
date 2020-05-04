@@ -957,7 +957,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
     private _nonUniqDivisionPerAnalysis(analysis): boolean {
         let data = {};
-        for (let a of analysis) {
+        console.log('This is analysis config', analysis);
+        for (let a of _.values(analysis) ) {
             if (data[a.rpCode])
                 data[a.rpCode].push(...a.divisions);
             else
@@ -965,6 +966,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             if (_.size(data[a.rpCode]) > 1)
                 return true;
         }
+        console.log('This is the Groupping', data);
         return false;
     }
 
