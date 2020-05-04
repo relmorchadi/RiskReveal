@@ -177,7 +177,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.destroy();
   }
 
-  protected detectChanges() {
+  detectChanges() {
     super.detectChanges();
   }
 

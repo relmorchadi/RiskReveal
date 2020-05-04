@@ -348,6 +348,10 @@ export class WorkspaceCalibrationNewComponent extends BaseContainer implements O
       })
   }
 
+  detectChanges(){
+    super.detectChanges();
+  }
+
   subscribeToWorkspaceCurrencyAndEffectiveDate(wsIdentifier: string) {
     this.select(WorkspaceState.getWorkspaceCurrency(wsIdentifier))
         .pipe(
