@@ -706,14 +706,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
 
     sortPortfolio({field, order}) {
-        if(field == 'imported')
+        if (field == 'imported')
             return;
         this.sortParams.portfolio = {[field]: order};
         this.getRiskLinkPortfolio();
     }
 
     sortAnalysis({field, order}) {
-        if(field == 'imported')
+        if (field == 'imported')
             return;
         this.sortParams.analysis = {[field]: order};
         this.getRiskLinkAnalysis();
@@ -751,7 +751,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         return finalFilter;
     }
 
-    updateAllChecked(scope,nextValue) {
+    updateAllChecked(scope, nextValue) {
         const selectedInChunk = 0; // _.filter(this.filterData(this.getTableData()), item => item.selected).length;
         if (scope === 'analysis') {
             this.allCheckedAnalysis = nextValue;
@@ -768,7 +768,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
             }
         } else if (scope === 'portfolio') {
             this.allCheckedPortolfios = nextValue;
-            if (nextValue && !this.indeterminatePortfolio ) {
+            if (nextValue && !this.indeterminatePortfolio) {
                 this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
                     action: 'selectChunk',
                     data: _.map(this.state.portfolios.data, p => p.rlPortfolioId)
@@ -887,7 +887,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         }))
     }
 
-    saveConfiguration(type: string) {
+    saveConfiguration(type?: string) {
         const projectId = this.selectedProject.projectId;
         if (type == 'ANALYSIS') {
             this.analysisSummary$
@@ -908,6 +908,24 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
                     }))
                 });
         } else {
+            forkJoin([
+                this.analysisSummary$,
+                this.portfolioSummary$
+            ].map(item => item.pipe(take(1))))
+                .pipe(this.unsubscribeOnDestroy)
+                .subscribe(([analysisConfig, portfolioConfig]) => {
+                    console.log('This is the config', analysisConfig, portfolioConfig);
+                    if(! _.isEmpty(analysisConfig))
+                        this.dispatch(new fromWs.SaveImportConfigurationAction({
+                            type: 'ANALYSIS',
+                            analysisConfig: this.transformAnalysisResultForImport(analysisConfig, projectId, this.analysisConfigFields)
+                        }));
+                    if(! _.isEmpty(portfolioConfig))
+                        this.dispatch(new fromWs.SaveImportConfigurationAction({
+                            type: 'PORTFOLIO',
+                            portfolioConfig: this.transformPortfolioResultForImport(portfolioConfig, projectId, this.portfolioConfigFields)
+                        }))
+                });
             console.error('Unknown configuration type :', type);
         }
     }
