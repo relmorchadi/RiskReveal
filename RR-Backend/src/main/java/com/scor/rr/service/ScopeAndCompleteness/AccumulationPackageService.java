@@ -31,13 +31,13 @@ public class AccumulationPackageService {
     private AccumulationPackageOverrideSectionService accumulationPackageOverrideSectionService;
 
 
-    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear, long projectId) {
+    public List<ScopeAndCompletenessResponse> getScopeOnly(String workspaceName, int uwYear, long projectId,long accumulationPackageId) {
 
         List<ScopeAndCompletenessResponse> response = new ArrayList<>();
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setFieldMatchingEnabled(true);
 
-        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getPLTsForPricing(workspaceName, uwYear, projectId)
+        List<ExpectedScopeDBResponse> expectedScope = accumulationPackageRepository.getPLTsForPricing(workspaceName, uwYear, projectId,accumulationPackageId)
                 .stream()
                 .map(exScope -> mapper.map(exScope, ExpectedScopeDBResponse.class))
                 .collect(Collectors.toList());
@@ -65,6 +65,7 @@ public class AccumulationPackageService {
                         InsideObject object = new InsideObject();
                         object.setId(row.getAccumulationRapCode());
                         object.setDescription(row.getAccumulationRapDesc());
+                        object.setExpected(row.isExpected());
                         insideList.add(object);
                     }
                     regionPeril.setTargetRaps(insideList);
@@ -81,6 +82,7 @@ public class AccumulationPackageService {
                             for (ExpectedScopeDBResponse row : value) {
                                 InsideObject object = new InsideObject();
                                 object.setId(row.getExpectedRegionPerilCode());
+                                object.setExpected(row.isExpected());
                                 //object.setDescription(row.getAccumulationRapDesc());
                                 insideList.add(object);
                             }
@@ -174,7 +176,7 @@ public class AccumulationPackageService {
         if(accumulationPackage == null ) throw new AccumulationPackageNotFoundException(accumulationPackageId);
 
         AccumulationPackageResponse response = new AccumulationPackageResponse();
-        response.setScopeObject(getScopeOnly(workspaceName,UWYear,projectId));
+        response.setScopeObject(getScopeOnly(workspaceName,UWYear,projectId,accumulationPackageId));
         response.setAttachedPLTs(accumulationPackageAttachedPLTService.getAttachedPLTs(accumulationPackageId));
         response.setOverriddenSections(accumulationPackageOverrideSectionService.getOverriddenSections(accumulationPackageId));
 

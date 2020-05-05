@@ -28,7 +28,7 @@ public class AccumulationPackageController {
 
     @GetMapping("getScopeOnly")
     public List<ScopeAndCompletenessResponse> getScopeOnlyData(@RequestParam("workspaceId") String workspaceId,@RequestParam("uwyear") int uwyear,@RequestParam("projectId") long projectId){
-        return accumulationPackageService.getScopeOnly(workspaceId,uwyear,projectId);
+        return accumulationPackageService.getScopeOnly(workspaceId,uwyear,projectId,-1);
     }
 
     @GetMapping("getAccumulationPackage")
