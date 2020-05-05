@@ -414,22 +414,21 @@ public class RmsService {
                             String systemRegionPeril = this.resolveSystemRegionPeril(rlAnalysis);
                             rlAnalysis.setSystemRegionPeril(systemRegionPeril != null ? systemRegionPeril : rlAnalysis.getRpCode());
                             rlAnalysis.setScanLevel(ScanLevelEnum.Detailed);
-                            rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
-                            rlAnalysis.setExpectedFinancialPerspectives(
-                                    this.getExpectedFinancialPersp(
-                                            dataSource.getInstanceId(),
-                                            rdmId,
-                                            rdmName,
-                                            Collections.singletonList(rlAnalysis.getRlId()),
-                                            fpCodes
-                                    )
+                            List<ExpectedFinancialPerspective> expectedFinancialPerspectives= this.getExpectedFinancialPersp(
+                                    dataSource.getInstanceId(),
+                                    rdmId,
+                                    rdmName,
+                                    Collections.singletonList(rlAnalysis.getRlId()),
+                                    fpCodes
                             );
-                            rlAnalysis.getExpectedFinancialPerspectives().stream().filter(item -> item.getFpCode().equals(fp))
+                            expectedFinancialPerspectives.stream().filter(item -> item.getFpCode().equals(fp))
                                     .findFirst()
                                     .ifPresent(expectedFinancialPerspective -> {
                                         rlAnalysis.setDefaultOccurrenceBasis(expectedFinancialPerspective.getOccurrenceBasis());
                                     });
                             rlAnalysisRepository.save(rlAnalysis);
+                            rlAnalysis.setReferenceTargetRaps(configurationService.getTargetRapByAnalysisId(rlAnalysis.getRlAnalysisId()));
+                            rlAnalysis.setExpectedFinancialPerspectives(expectedFinancialPerspectives);
                             allScannedAnalysis.add(rlAnalysis);
                         });
             }
