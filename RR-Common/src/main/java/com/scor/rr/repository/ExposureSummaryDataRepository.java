@@ -18,9 +18,10 @@ public interface ExposureSummaryDataRepository extends JpaRepository<ExposureSum
             "@fp=:fp," +
             "@pageNumber=:pageNumber," +
             "@pageSize=:pageSize," +
+            "@paginate=:paginate," +
             "@RegionPerilCodeFilter=:regionPerilCodeFilter", nativeQuery = true)
     List<Map<String, Object>> getExposureData(Long projectId, String portfolioName, String summaryType, Integer division,
-                                              String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter);
+                                              String currency, String fp, Integer pageNumber, Integer pageSize, String regionPerilCodeFilter, Boolean paginate);
 
     @Query(value = "EXEC dbo.usp_ExposureManagerTotalRow " +
             "@projectId=:projectId," +
