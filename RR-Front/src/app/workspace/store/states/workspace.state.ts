@@ -492,7 +492,9 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     const scopeData = state.content[wsIdentifier].scopeOfCompleteness;
     return {overrideAll: scopeData.overrideAll, overrideRow: scopeData.overrideRow, overrideInit: scopeData.overrideInit,
-        overrideCancelAll: scopeData.overrideCancelAll, overrideCancelRow: scopeData.overrideCancelRow};
+      overrideCancelAll: scopeData.overrideCancelAll, overrideCancelRow: scopeData.overrideCancelRow,
+      removeOverrideUnable: scopeData.removeOverrideUnable,  overrideCancelStart: scopeData.overrideCancelStart,
+    };
   }
 
   @Selector()
@@ -1290,14 +1292,24 @@ export class WorkspaceState {
    * Scope And Completeness Actions
    *
    ***********************************/
-  @Action(fromWS.LoadScopeCompletenessDataSuccess)
-  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+  @Action(fromWS.LoadScopeCompletenessData)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessData) {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
   }
 
-  @Action(fromWS.LoadScopeCompletenessPricingDataSuccess)
-  loadScopeCompletenessPricingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPricingDataSuccess) {
+  @Action(fromWS.LoadScopeCompletenessPricingData)
+  loadScopeCompletenessPricingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPricingData) {
     return this.scopService.loadScopeCompletenessDataPricing(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessPendingData)
+  loadScopeCompletenessPendingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessPendingData) {
+    return this.scopService.loadScopeCompletenessDataPending(ctx, payload);
+  }
+
+  @Action(fromWS.LoadScopeCompletenessAccumulationInfo)
+  loadScopeCompletenessAccumulationInfo(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessAccumulationInfo) {
+    return this.scopService.loadAccumulationPackageInfo(ctx, payload);
   }
 
   @Action(fromWS.LoadScopePLTsData)
@@ -1322,7 +1334,7 @@ export class WorkspaceState {
 
   @Action(fromWS.OverrideDeleteAction)
   overrideDelete(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OverrideDeleteAction) {
-    return this.scopService.deleteOverride(ctx, payload);
+    return this.scopService.removeOverrideSelection(ctx, payload);
   }
 
   @Action(fromWS.AttachPLTsForScope)

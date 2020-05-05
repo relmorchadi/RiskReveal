@@ -29,7 +29,7 @@ public class DivisionServiceImpl implements DivisionService {
             carDivisionDto.setContractId((String) division.get("contractId"));
             carDivisionDto.setCurrency((String) division.get("currency"));
             carDivisionDto.setDivisionNumber(Integer.valueOf((String) division.get("divisionNumber")));
-            carDivisionDto.setIsPrincipalDivision(Boolean.parseBoolean(String.valueOf(division.get("IsPrincipalDivision"))));
+            carDivisionDto.setIsPrincipalDivision(String.valueOf(division.get("IsPrincipalDivision")).equals("1"));
             carDivisionDto.setProjectId(((BigInteger) division.get("projectId")).longValue());
             carDivisionDto.setUwYear((Integer) division.get("uwYear"));
             carDivisionDto.setWorkspaceId(((BigInteger) division.get("workspaceId")).longValue());

@@ -21,6 +21,9 @@ public class AccumulationPackage {
     @Column(name = "WorkspaceId")
     private long workspaceId;
 
+    @Column(name = "ProjectId")
+    private long projectId;
+
     @Column(name = "CreatedOn")
     private Date createdOn;
 
@@ -51,7 +54,8 @@ public class AccumulationPackage {
     public AccumulationPackage() {
     }
 
-    public AccumulationPackage(long workspaceId) {
+    public AccumulationPackage(long workspaceId,long projectId) {
         this.workspaceId = workspaceId;
+        this.projectId = projectId;
     }
 }

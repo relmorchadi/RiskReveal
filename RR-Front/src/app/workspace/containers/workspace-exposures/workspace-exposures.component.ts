@@ -111,13 +111,12 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
     }
 
     initSelectedHeaderConfig(headerConfig) {
-        console.log(headerConfig);
         this.selectedHeaderConfig = {
             division: headerConfig.divisions[0],
             portfolio: headerConfig.portfolios[0],
             currency: headerConfig.divisions[0].currency,
-            exposureView: 'tiv',
-            financialPerspective: headerConfig.financialPerspectives[0],
+            exposureView: 'TIV',
+            financialPerspective: 'GU',
             financialUnits:'Unit'
         }
     }
@@ -190,13 +189,13 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'changeFinancialPerspecctive' : {
-                this.selectedHeaderConfig.financialPerspective = $event.payload;
+               /* this.selectedHeaderConfig.financialPerspective = $event.payload;
                 this.tableConfig$ = this.exposuresTableService.loadTableConfig(
                     {
                         ...this.selectedHeaderConfig,
                         projectId: this.projectId
                     }
-                );
+                );*/
                 break;
             }
             case 'changeDivision' : {
@@ -221,7 +220,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
             }
             case 'changeView' : {
                 this.selectedHeaderConfig.exposureView = $event.payload.header;
-                this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
+                // this.tableConfig$ = this.exposuresHeaderService.changeView($event.payload);
                 break;
             }
             case 'openPortfolioDetails': {
