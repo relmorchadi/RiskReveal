@@ -26,23 +26,54 @@
           </div>
         </div>
         <div style="width: 77%">
-        <span class="body-1 menu-left-header" style="width: 100%">
+          <div style="display: flex; justify-content: space-between;">
+        <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
+          Text Files Available
+        </span>
+            <div class="menu-icon-wrap" style="font-size: 22px; padding: 12px 20px 0;">
+              <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseSearchFiles" [nzPlacement]="'topRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-settings_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item (click)="resetSort()">Reset Sort</li>
+                  <li nz-menu-item (click)="resetFilter()">Reset Filters</li>
+                  <li nz-menu-item (click)="resetSortFilter()">Reset Sort/Filters</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item (click)="toggleColumnsManager('pltImported')">Manage Columns</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item>Unselect All</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+            <!--          <div class="body-wrapper-header-right">
+                        &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
+                        <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
+                           class="icon-keyboard_arrow_up_24px"></i>
+                        <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
+                           class="icon-keyboard_arrow_down_24px"></i>
+                      </div>-->
+          </div>
+        <!--<span class="body-1 menu-left-header" style="width: 100%">
           <ng-container *ngIf="!collapseSearchFiles">Text Files Available</ng-container>
+
+
+
           <div class="body-wrapper-header-right" style="flex: 1">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+                            <button *ngIf="collapsehead"  nz-button> ADVANCED</button>
             <i *ngIf="!collapseSearchFiles" (click)="collapseSearchFiles = true"
                class="icon-keyboard_arrow_up_24px"></i>
             <i *ngIf="collapseSearchFiles" (click)="collapseSearchFiles = false"
                class="icon-keyboard_arrow_down_24px"></i>
         </div>
-        </span>
+        </span>-->
           <!--          <div class="tab-search-input search-document-wrap" *ngIf="!collapseSearchFiles">
                       <i class="icon-search_24px"></i>
                       <input class="input-search"/>
                     </div>-->
           <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
-                     [resizableColumns]="true" [value]="selectedData">
+                     [resizableColumns]="true" [value]="selectedData  | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)">
               <ng-template let-columns pTemplate="colgroup">
                 <colgroup>
                   <ng-container *ngFor="let col of columns">
@@ -53,28 +84,43 @@
               <ng-template let-columns pTemplate="header">
                 <tr>
                   <ng-container *ngFor="let col of columns">
+
                     <th *ngIf="col.visible" pResizableColumn>
-                      <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
-                      <div *ngIf="col.filtered" style="white-space: nowrap;">
+                      <div *ngIf="!col.filtered" style="white-space: nowrap;">
                         {{col.header}}
+                      </div>
+                      <div *ngIf="col.filtered" style="white-space: nowrap;">
+
+                        <div>
+                        {{col?.header}}
+                        <ng-container *ngIf="!col?.sorted" [ngSwitch]="sortData[col?.field]">
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                        </ng-container>
+                      </div>
+
                         <div class="search-bar-table">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                           <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
-                                 type="text">
+                                 type="text" [ngModel]="filterTable">
                         </div>
+
                       </div>
                       <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
                         <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedFiles" (ngModelChange)="updateAllChecked('ImportedFiles')"
                                [nzIndeterminate]="indeterminateImportedFiles"></label>
                       </div>
                     </th>
+
                   </ng-container>
+
                 </tr>
               </ng-template>
               <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
                 <tr [ngClass]="{'active_contract_item': rowData?.selected}">
                   <ng-container *ngFor="let col of columns">
-                    <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                    <td *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
                       <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
                         <label (ngModelChange)="checkRow($event, i, 'files')" [ngModel]="rowData.selected"
                                nz-checkbox></label>
@@ -82,7 +128,7 @@
                       <div *ngIf="col.type === 'text'" (click)="selectToImport(!rowData.selected, i)" class="text-data">
                         {{rowData[col.field]}}
                       </div>
-                    </th>
+                    </td>
                   </ng-container>
                 </tr>
               </ng-template>
@@ -126,9 +172,9 @@
                 <i class="icon-settings_24px"></i>
               </a>
               <ul nz-menu style="font-size: 12px">
-                <li nz-menu-item>Reset Sort</li>
-                <li nz-menu-item>Reset Filters</li>
-                <li nz-menu-item>Reset Sort/Filters</li>
+                <li nz-menu-item (click)="resetSort()">Reset Sort</li>
+                <li nz-menu-item (click)="resetFilter()">Reset Filters</li>
+                <li nz-menu-item (click)="resetSortFilter()">Reset Sort/Filters</li>
                 <li nz-menu-divider></li>
                 <li nz-menu-item (click)="toggleColumnsManager('pltToImport')">Manage Columns</li>
                 <li nz-menu-divider></li>
@@ -150,7 +196,7 @@
           <p-table #iTable [columns]="pltColumns" [scrollable]="true" [scrollHeight]="getHeight()"
                    [(contextMenuSelection)]="contextSelectedItem" [dataKey]="'FileName'" [rowTrackBy]="rowTrackBy"
                    [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
-                   [value]="fileBase?.selectedFiles" frozenWidth="485px">
+                   [value]="fileBase?.selectedFiles | tableSortAndFilter : [sortData,filterData]" onsort="onSort($event)" frozenWidth="485px">
             <ng-template let-columns pTemplate="colgroup">
               <colgroup>
                 <ng-container *ngFor="let col of columns">
@@ -160,21 +206,36 @@
             </ng-template>
             <ng-template let-columns pTemplate="header">
               <tr>
+
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible" pResizableColumn>
+
                     <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+
                     <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
-                      {{col.header}}
+
+                      <div>
+                        {{col?.header}}
+                        <ng-container *ngIf="!col?.sorted" [ngSwitch]="sortData[col?.field]">
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col?.field])" style="font-size: 1.4em;"></i>
+                        </ng-container>
+                      </div>
+
                       <div class="search-bar-table">
                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                         <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
-                               type="text">
+                               type="text" [ngModel]="filterTable">
                       </div>
+
                     </div>
+
                     <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
                       <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedPlts" (ngModelChange)="updateAllChecked('ImportedPlts')"
                              [nzIndeterminate]="indeterminateImportedPlts"></label>
                     </div>
+
                   </th>
                 </ng-container>
               </tr>
@@ -372,7 +433,7 @@
   <p-header>
     <div class="header">
       <h6>Columns Manager</h6>
-      <i style="cursor: pointer" (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px"></i>
+      <i style="cursor: pointer" (click)="toggleColumnsManager('pltImported')" class="icon-close_24px"></i>
     </div>
   </p-header>
 
@@ -403,7 +464,7 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="toggleColumnsManager(targetConfig)" class="a-button-text-cancel">cancel</button>
+      <button (click)="toggleColumnsManager('pltImported')" class="a-button-text-cancel">cancel</button>
       <button class="a-buttons-contained" (click)="saveColumns()">Save</button>
     </div>
   </p-footer>

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit, Output, Input, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {BaseContainer} from '../../../shared/base';
@@ -11,6 +11,10 @@ import {DataTables} from './data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as _ from 'lodash';
 import {WorkspaceState} from '../../store/states';
+import {template} from "@angular/core/src/render3";
+import {Table} from "primeng/table";
+import {Message} from "../../../shared/message";
+
 
 @Component({
   selector: 'app-workspace-file-base-import',
@@ -18,6 +22,7 @@ import {WorkspaceState} from '../../store/states';
   styleUrls: ['./workspace-file-base-import.component.scss']
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
+
   collapseImportedFiles = false;
   collapseSearchFiles = false;
   collapseImportedPLTs = false;
@@ -46,6 +51,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   importedFiles: any;
 
   nodePath;
+  nodeTemp;
+
   peril = [
     {color: '#E70010', content: 'EQ'},
     {color: '#008694', content: 'FL'},
@@ -69,8 +76,13 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   indexImportFiles = null;
   indexImportPlts = null;
 
-  @Select(WorkspaceState.getFileBasedData) fileBase$;
-  fileBase: any;
+    @ViewChild('iTable') table: Table;
+    filterTable=[];
+    sortData=[];
+    filterData = {};
+
+    @Select(WorkspaceState.getFileBasedData) fileBase$;
+    fileBase: any;
 
   @Select(WorkspaceState.getFileBaseSelectedFiles) selectedData$;
   selectedData;
@@ -301,11 +313,25 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   }
 
   nodeSelect(event) {
-    this.nodePath = '/' + event.node.label;
-    this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
-    this.allCheckedImportedFiles = false;
-    this.indeterminateImportedFiles = false;
-}
+      this.nodePath = '/' + event.node.label;
+      this.nodeTemp = event.node;
+      while (this.nodeTemp.parent) {
+          this.nodePath = '/' + this.nodeTemp.parent.label + this.nodePath;
+          this.nodeTemp = this.nodeTemp.parent;
+      }
+      this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
+      this.selectedData$.subscribe(value => {
+          this.selectedData =  this.textFilesData;
+          this.detectChanges();
+      });
+      this.fileBase$.subscribe(value => {
+          this.fileBase.files = this.textFilesData;
+          this.detectChanges();
+      });
+      this.allCheckedImportedFiles = false;
+      this.indeterminateImportedFiles = false;
+      console.log("HHH",this.fileBase);
+  }
 
   nodeUnselect(event) {
     this.nodePath = null;
@@ -353,5 +379,37 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   protected detectChanges() {
     super.detectChanges();
   }
+
+
+    onSort($event: any) {
+        const {} = $event;
+        console.log('test');
+    }
+
+    sortChange(field: any, sortCol: any) {
+        if (!sortCol) {
+            this.sortData = ({...this.sortData, [field]: 'asc'});
+        } else if (sortCol === 'asc') {
+            this.sortData = ({...this.sortData, [field]: 'desc'});
+        } else if (sortCol === 'desc') {
+            this.sortData = ({...this.sortData, [field]: null});
+        }
+   }
+
+    resetSort() {
+         this.sortData=[];
+        //this.table.reset();
+    }
+
+    resetFilter() {
+        this.filterTable =[];
+        this.table.reset();
+    }
+
+    resetSortFilter(){
+        this.sortData=[];
+        this.filterTable =[];
+        this.table.reset();
+    }
 
 }

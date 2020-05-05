@@ -1351,6 +1351,11 @@ export class WorkspaceState {
     return this.fileBasedFacade.loadFilesList(ctx, payload);
   }
 
+    @Action(fromWS.LoadFileContentAction)
+    LoadFileContent(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+        return this.fileBasedFacade.readFileContent(ctx, payload);
+    }
+
   @Action(fromWS.RemoveFileFromImportAction)
   removeFileFromImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFileFromImportAction) {
     this.fileBasedFacade.removeFileFromImport(ctx, payload);
