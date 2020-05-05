@@ -132,7 +132,8 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
                 exposureManagerData.setCountry((String) entry.get("CountryCode"));
                 exposureManagerData.setAdmin1((String) entry.get("Admin1Code"));
                 exposureManagerData.setExpectedTiv((BigDecimal) entry.get("expectedTIV"));
-                exposureManagerData.setTivDiff(exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()));
+                exposureManagerData.setTivDiff(exposureManagerData.getExpectedTiv() != null ?
+                        exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()) : null);
 
                 Map<String, Object> map = new HashMap<>(entry);
                 map.remove("Unmapped");
@@ -280,7 +281,7 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
                 dataCell = firstDataRow.createCell(columnCount++);
                 dataCell.setCellValue("Expected");
-                fixedValues.put(index++, "Expected");
+                fixedValues.put(index++, "expectedTIV");
 
 
                 for (String fieldName : totalRow.keySet()) {
