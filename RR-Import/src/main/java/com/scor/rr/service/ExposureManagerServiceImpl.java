@@ -107,7 +107,8 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
             exposureManagerData.setCountry("TOTAL");
             exposureManagerData.setTotalTiv((BigDecimal) totalRow.get("Unmapped"));
             exposureManagerData.setExpectedTiv((BigDecimal) totalRow.get("expectedTIV"));
-            exposureManagerData.setTivDiff(exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()));
+            exposureManagerData.setTivDiff(exposureManagerData.getExpectedTiv() != null ?
+                    exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()) : null);
             Map<String, Object> map = new HashMap<>(totalRow);
             map.remove("Unmapped");
             map.values().removeAll(Collections.singleton(null));

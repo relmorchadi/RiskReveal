@@ -13,7 +13,7 @@ import {ExposuresHeaderConfig} from "../../../model/exposures-header-config.mode
 })
 export class ExposuresHeaderComponent implements OnInit, OnDestroy {
 
-    @Input("headerConfig") headerConfig: ExposuresHeaderConfig;
+    @Input("headerConfig") headerConfig: any;
     @Output("actionDispatcher") actionDispatcher: EventEmitter<any> = new EventEmitter<any>();
     @Input("selectedHeaderConfig") selectedHeaderConfig: any;
 
