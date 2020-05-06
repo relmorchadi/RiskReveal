@@ -220,6 +220,7 @@ export class ScopeCompletenessService {
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].scopeOfCompleteness.pendingData = {
               ...draft.content[wsIdentifier].scopeOfCompleteness.pendingData,
+              accumulationPackageId: _.get(data, 'overriddenSections.0.accumulationPackageId', 0),
               regionPerils: scopeDataRP,
               targetRaps: scopeDataTR,
               overriddenSections: [..._.get(draft.content[wsIdentifier].scopeOfCompleteness.pendingData, 'overriddenSections',[]),

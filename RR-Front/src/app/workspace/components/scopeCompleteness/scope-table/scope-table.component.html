@@ -111,59 +111,60 @@
 
           </ng-container>
 
-          <ng-container *ngIf="!overrideAll && !(rowOverrideInit[rowData.id] && overrideRows)">
-            <ng-container *ngIf="removeOverrideAccess(rowData, null) && removeOverrideCapability(rowData, i, 'parent')">
-              <div class="icon-holder">
-                <div class="checkbox-override-wrap icon-holder">
-                  <i (click)="overrideRemoveRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
-                     [ngClass]="{'checkedBoxTab': !overriddenRemovedRows[rowData.id + col.columnContext]}"></i>
-                </div>
+          <ng-container *ngIf="removeOverrideAccess(rowData, null) && removeOverrideCapability(rowData, i, 'parent')">
+
+            <div class="icon-holder">
+              <div class="checkbox-override-wrap icon-holder">
+                <i (click)="overrideRemoveRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
+                   [ngClass]="{'checkedBoxTab': !overriddenRemovedRows[rowData.id + col.columnContext]}"></i>
               </div>
-            </ng-container>
+            </div>
 
-            <ng-container *ngIf="!removeOverrideAccess(rowData, null) || !removeOverrideCapability(rowData, i, 'parent')">
+          </ng-container>
 
-              <div *ngIf="checkExpected(rowData, col, i) == 'checked'" class="icon-holder">
-                <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
+          <ng-container *ngIf="visibleIcons(rowData, null, 'parent', i)">
+
+            <div *ngIf="checkExpected(rowData, col, i) == 'checked'" class="icon-holder">
+              <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
                   <i class="icon-reorder_24px" style="color: lightgray"></i>
                   <i class="icon-plus"></i>
-                </div>
               </div>
-              <ng-template #checked>
-                No Qualifying PLTs in Workspace
-              </ng-template>
+            </div>
+            <ng-template #checked>
+              No Qualifying PLTs in Workspace
+            </ng-template>
 
-              <div *ngIf="checkExpected(rowData, col, i) == 'dispoWs'" class="icon-holder" nz-tooltip
-                   [nzTitle]="dispoWs">
-                <div class="icon-holder">
-                  <i class="icon-reorder_24px"></i>
-                  <i class="icon-plus"></i>
-                </div>
+            <div *ngIf="checkExpected(rowData, col, i) == 'dispoWs'" class="icon-holder" nz-tooltip
+                 [nzTitle]="dispoWs">
+              <div class="icon-holder">
+                <i class="icon-reorder_24px"></i>
+                <i class="icon-plus"></i>
               </div>
-              <ng-template #dispoWs>
-                One or more Qualifying PLTs in Workspace
-              </ng-template>
+            </div>
+            <ng-template #dispoWs>
+              One or more Qualifying PLTs in Workspace
+            </ng-template>
 
-              <div *ngIf="checkExpected(rowData, col, i) == 'overridden'" class="icon-holder">
-                <div class="icon-holder">
-                  <span>
-                    <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-                  </span>
-                </div>
+            <div *ngIf="checkExpected(rowData, col, i) == 'overridden'" class="icon-holder">
+              <div class="icon-holder">
+                <span>
+                  <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                </span>
               </div>
-              <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
-                   [nzTitle]="attached">
-                <div class="icon-holder">
-                  <ng-container>
-                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
-                  </ng-container>
-                </div>
+            </div>
+            <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
+                 [nzTitle]="attached">
+              <div class="icon-holder">
+                <ng-container>
+                  <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                </ng-container>
               </div>
-              <ng-template #attached>
-                Qualifying PLTs Attached
-              </ng-template>
-            </ng-container>
+            </div>
+            <ng-template #attached>
+              Qualifying PLTs Attached
+            </ng-template>
           </ng-container>
+
         </th>
         <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
       </ng-container>
@@ -210,57 +211,56 @@
             </div>
 
           </ng-container>
-          <ng-container *ngIf="!overrideAll && !(rowOverrideInit[rowData.id] && overrideRows)">
-            <ng-container *ngIf="!removeOverrideAccess(rowData, null) || !removeOverrideCapability(rowData, i, 'parent')">
-              <div *ngIf="checkExpected(rowData, col, i)  == 'checked'" class="icon-holder">
-                <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
-                  <i class="icon-reorder_24px" style="color: lightgray"></i>
-                  <i class="icon-plus"></i>
-                </div>
-              </div>
-              <ng-template #checked>
-                No Qualifying PLTs in Workspace
-              </ng-template>
 
-              <div *ngIf="checkExpected(rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
-                   [nzTitle]="dispoWs">
-                <div class="icon-holder">
-                  <i class="icon-reorder_24px"></i>
-                  <i class="icon-plus"></i>
-                </div>
+          <ng-container *ngIf="removeOverrideAccess(rowData, null) && removeOverrideCapability(rowData, i, 'parent')">
+            <div class="icon-holder">
+              <div class="checkbox-override-wrap icon-holder">
+                <i (click)="overrideRemoveRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
+                   [ngClass]="{'checkedBoxTab': !overriddenRemovedRows[rowData.id + col.columnContext]}"></i>
               </div>
-              <ng-template #dispoWs>
-                One or more Qualifying PLTs in Workspace
-              </ng-template>
+            </div>
+          </ng-container>
 
-              <div *ngIf="checkExpected(rowData, col, i) == 'overridden'" class="icon-holder">
-                <div class="icon-holder">
-              <span>
-                <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-              </span>
-                </div>
-              </div>
-              <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
-                   [nzTitle]="attached">
-                <div class="icon-holder">
-                  <ng-container>
-                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
-                  </ng-container>
-                </div>
-              </div>
-              <ng-template #attached>
-                Qualifying PLTs Attached
-              </ng-template>
-            </ng-container>
+          <ng-container *ngIf="visibleIcons(rowData, null,'parent', i)">
 
-            <ng-container *ngIf="removeOverrideAccess(rowData, null) && removeOverrideCapability(rowData, i, 'parent')">
+            <div *ngIf="checkExpected(rowData, col, i)  == 'checked'" class="icon-holder">
+              <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
+                <i class="icon-reorder_24px" style="color: lightgray"></i>
+                <i class="icon-plus"></i>
+              </div>
+            </div>
+            <ng-template #checked>
+              No Qualifying PLTs in Workspace
+            </ng-template>
+
+            <div *ngIf="checkExpected(rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
+                 [nzTitle]="dispoWs">
               <div class="icon-holder">
-                <div class="checkbox-override-wrap icon-holder">
-                  <i (click)="overrideRemoveRow(rowData, col)" class="icon-check_24px unCheckedBoxTab"
-                     [ngClass]="{'checkedBoxTab': !overriddenRemovedRows[rowData.id + col.columnContext]}"></i>
-                </div>
+                <i class="icon-reorder_24px"></i>
+                <i class="icon-plus"></i>
               </div>
-            </ng-container>
+            </div>
+            <ng-template #dispoWs>
+              One or more Qualifying PLTs in Workspace
+            </ng-template>
+
+            <div *ngIf="checkExpected(rowData, col, i) == 'overridden'" class="icon-holder">
+              <div class="icon-holder"><span><i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i></span>
+              </div>
+            </div>
+
+            <div *ngIf="checkExpected(rowData, col, i) == 'attached'" class="icon-holder" nz-tooltip
+                 [nzTitle]="attached">
+              <div class="icon-holder">
+                <ng-container>
+                  <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                </ng-container>
+              </div>
+            </div>
+            <ng-template #attached>
+              Qualifying PLTs Attached
+            </ng-template>
+
 
           </ng-container>
         </th>
@@ -309,62 +309,61 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!overrideAll && !(rowOverrideInit[rowData.id + row.id] && overrideRows)">
-                <ng-container *ngIf="removeOverrideAccess(rowData, row) && removeOverrideCapability(row, i, 'child')">
-                  <div class="icon-holder">
-                    <div class="checkbox-override-wrap icon-holder">
-                      <i (click)="overrideChildRemoveMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
-                         [ngClass]="{'checkedBoxTab': !overriddenChildRemovedRows[rowData.id + row.id + col.columnContext]}"></i>
-                    </div>
+
+              <ng-container *ngIf="removeOverrideAccess(rowData, row) && removeOverrideCapability(row, i, 'child')">
+                <div class="icon-holder">
+                  <div class="checkbox-override-wrap icon-holder">
+                    <i (click)="overrideChildRemoveMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': !overriddenChildRemovedRows[rowData.id + row.id + col.columnContext]}"></i>
                   </div>
-                </ng-container>
-
-                <ng-container *ngIf="!removeOverrideAccess(rowData, row)">
-                  <div *ngIf="checkChildExpected(row, rowData, col, i) === 'overridden'" class="icon-holder">
-                    <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
-                      <span>
-                        <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-                      </span>
-                    </div>
-                  </div>
-                  <ng-template #overridden>
-                    Basis: {{row?.override[i]?.reason}}<br/>
-                    Narrative: {{row?.override[i]?.reasonNarrative}}
-                  </ng-template>
-
-                  <div *ngIf="checkChildExpected(row, rowData, col, i) == 'attached'" class="icon-holder">
-                    <div nz-tooltip [nzTitle]="attached">
-                      <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
-                    </div>
-                  </div>
-                  <ng-template #attached>
-                    Qualifying PLTs Attached
-                  </ng-template>
-
-
-                  <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
-                       [nzTitle]="dispoWs">
-                    <div class="icon-holder">
-                      <i class="icon-reorder_24px"></i>
-                      <i class="icon-plus"></i>
-                    </div>
-                  </div>
-                  <ng-template #dispoWs>
-                    One or more Qualifying PLTs in Workspace
-                  </ng-template>
-
-                  <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'checked'" class="icon-holder">
-                    <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
-                      <i class="icon-reorder_24px" style="color: lightgray"></i>
-                      <i class="icon-plus"></i>
-                    </div>
-                  </div>
-                  <ng-template #checked>
-                    No Qualifying PLTs in Workspace
-                  </ng-template>
-                </ng-container>
-
+                </div>
               </ng-container>
+
+              <ng-container *ngIf="visibleIcons(rowData, row,'child', i)">
+
+                <div *ngIf="checkChildExpected(row, rowData, col, i) === 'overridden'" class="icon-holder">
+                  <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
+                    <span>
+                      <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                    </span>
+                  </div>
+                </div>
+                <ng-template #overridden>
+                  Basis: {{row?.override[i]?.reason}}<br/>
+                  Narrative: {{row?.override[i]?.reasonNarrative}}
+                </ng-template>
+
+                <div *ngIf="checkChildExpected(row, rowData, col, i) == 'attached'" class="icon-holder">
+                  <div nz-tooltip [nzTitle]="attached">
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                  </div>
+                </div>
+                <ng-template #attached>
+                  Qualifying PLTs Attached
+                </ng-template>
+
+                <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'dispoWs'" class="icon-holder" nz-tooltip
+                     [nzTitle]="dispoWs">
+                  <div class="icon-holder">
+                    <i class="icon-reorder_24px"></i>
+                    <i class="icon-plus"></i>
+                  </div>
+                </div>
+                <ng-template #dispoWs>
+                  One or more Qualifying PLTs in Workspace
+                </ng-template>
+
+                <div *ngIf="checkChildExpected(row, rowData, col, i)  == 'checked'" class="icon-holder">
+                  <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
+                    <i class="icon-reorder_24px" style="color: lightgray"></i>
+                    <i class="icon-plus"></i>
+                  </div>
+                </div>
+                <ng-template #checked>
+                  No Qualifying PLTs in Workspace
+                </ng-template>
+              </ng-container>
+
             </th>
             <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
           </ng-container>
@@ -442,30 +441,29 @@
                 </div>
 
               </ng-container>
-              <ng-container *ngIf="!overrideAll && !(rowOverrideInit[rowData.id + row.id] && overrideRows)">
 
-                <ng-container *ngIf="removeOverrideAccess(rowData, row) && removeOverrideCapability(row, i, 'child')">
-                  <div class="icon-holder">
-                    <div class="checkbox-override-wrap icon-holder">
-                      <i (click)="overrideChildRemoveMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
-                         [ngClass]="{'checkedBoxTab': !overriddenChildRemovedRows[rowData.id + row.id + col.columnContext]}"></i>
-                    </div>
+              <ng-container *ngIf="removeOverrideAccess(rowData, row) && removeOverrideCapability(row, i, 'child')">
+                <div class="icon-holder">
+                  <div class="checkbox-override-wrap icon-holder">
+                    <i (click)="overrideChildRemoveMode(rowData, row, col)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': !overriddenChildRemovedRows[rowData.id + row.id + col.columnContext]}"></i>
                   </div>
-                </ng-container>
+                </div>
+              </ng-container>
 
-                <ng-container *ngIf="!removeOverrideAccess(rowData, row)">
-                  <div *ngIf="checkChildExpected(row, rowData, col, i) === 'overridden'" class="icon-holder">
-                    <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
-                      <span>
-                        <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
-                      </span>
-                    </div>
+              <ng-container *ngIf="visibleIcons(rowData, row,'child', i)">
+
+                <div *ngIf="checkChildExpected(row, rowData, col, i) === 'overridden'" class="icon-holder">
+                  <div class="icon-holder" nz-tooltip [nzTitle]="overridden">
+                    <span>
+                      <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                    </span>
                   </div>
-                  <ng-template #overridden>
-                    Basis: {{row?.override[i]?.reason}}<br/>
-                    Narrative: {{row?.override[i]?.reasonNarrative}}
-                  </ng-template>
-                </ng-container>
+                </div>
+                <ng-template #overridden>
+                  Basis: {{row?.override[i]?.reason}}<br/>
+                  Narrative: {{row?.override[i]?.reasonNarrative}}
+                </ng-template>
 
                 <div *ngIf="checkChildExpected(row, rowData, col, i) == 'attached'" class="icon-holder">
                   <div nz-tooltip [nzTitle]="attached">
@@ -496,7 +494,6 @@
                 <ng-template #checked>
                   No Qualifying PLTs in Workspace
                 </ng-template>
-
               </ng-container>
             </th>
             <th *ngIf="col.type === 'commentary'" class="divided-col"></th>
