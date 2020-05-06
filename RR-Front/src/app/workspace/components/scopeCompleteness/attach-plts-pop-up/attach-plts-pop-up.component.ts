@@ -28,8 +28,10 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
   selectedPLTs: any = [];
   scopeContext;
   wsIdentifier;
+  filteredData = {};
   projectType: any;
   workspace;
+  sortData = {};
   columns = [];
 
   @Select(WorkspaceState.getScopeProjects) projects$;
@@ -203,6 +205,17 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     });
   }
 
+  selectPLTByRowNC(rowData, event) {
+    _.forEach(this.scopeContext, (scope, index) => {
+      this.selectedForAttachment[rowData.pltHeaderId + scope.id] = event;
+      if (event) {
+        this.selectedPLTs = [...this.selectedPLTs, {...rowData, scope: scope.id, scopeIndex: index + 1}];
+      } else {
+        this.selectedPLTs = _.filter(this.selectedPLTs, item => item.pltHeaderId !== rowData.pltHeaderId || item.scope !== scope.id);
+      }
+    });
+  }
+
   checkedRow(rowData) {
     let checked = true;
     _.forEach(this.scopeContext, (scope, index) => {
@@ -217,8 +230,38 @@ export class AttachPltsPopUpComponent extends BaseContainer implements OnInit {
     return checked;
   }
 
+  checkedRowNC(rowData) {
+    let checked = true;
+    _.forEach(this.scopeContext, (scope, index) => {
+      const attachable = _.get(this.selectedForAttachment, `${rowData.pltHeaderId}${scope.id}`, false);
+      if (!attachable) {
+        checked = false;
+      }
+    });
+    return checked;
+  }
+
   unableAttachment() {
     return _.includes(_.values(this.selectedForAttachment), true);
+  }
+
+  sortChange(field: any, sortCol: any) {
+    if (!sortCol) {
+      this.sortData = _.merge({}, this.sortData, {[field]: 'asc'});
+    } else if (sortCol === 'asc') {
+      this.sortData =_.merge({}, this.sortData, {[field]: 'desc'});
+    } else if (sortCol === 'desc') {
+      this.sortData = _.omit(this.sortData, `${field}`);
+    }
+  }
+
+  filterChange(field: any, filterValue: any) {
+    if (_.isEmpty(_.trim(filterValue))) {
+      this.filteredData =_.omit( this.filteredData, `${field}`);
+    } else {
+      this.filteredData = _.merge({}, this.filteredData, {[field]: filterValue});
+      console.log(this.filteredData);
+    }
   }
 
   toDate(date) {
