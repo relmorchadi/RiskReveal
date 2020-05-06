@@ -617,7 +617,7 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
       })
     });
     this.dispatch([new OverrideActiveAction({listOfOverrides: selectedForOverride, overrideBasisCode: this.overrideReason, overrideBasisNarrative: this.overrideNarrative}),
-      new PatchScopeOfCompletenessState({overrideAll: false})]);
+      new PatchScopeOfCompletenessState({overrideAll: false, overrideRow: false})]);
     this.onHide(); this.overrideStop();
   }
 
@@ -793,8 +793,12 @@ export class ScopeTableComponent extends BaseContainer implements OnInit {
     } else {
       return false
     }
+  }
 
-
+  visibleIcons(rowData, row, scope, i) {
+    const overrideActive = this.overrideAll || (this.rowOverrideInit[rowData.id] && this.overrideRows);
+    const removeOverrideActive = this.removeOverrideAccess(rowData, row);
+    return !overrideActive && !removeOverrideActive;
   }
 
   onHide() {
