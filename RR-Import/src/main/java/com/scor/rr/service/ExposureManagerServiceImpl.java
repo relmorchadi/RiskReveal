@@ -95,18 +95,18 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
         List<Map<String, Object>> values = exposureSummaryDataRepository.getExposureData(params.getProjectId(),
                 params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(),
-                params.getPage(), params.getPageSize(), params.getRegionPerilFilter(), true);
+                params.getPage(), params.getPageSize(), params.getRegionPerilFilter(), true, params.getType());
 
         if (params.getRequestTotalRow()) {
             Map<String, Object> totalRow = exposureSummaryDataRepository.getTotalRowExposureData(params.getProjectId(),
-                    params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective());
+                    params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(), params.getType());
 
             ExposureManagerData exposureManagerData = new ExposureManagerData();
 
             exposureManagerData.setAdmin1("TOTAL");
             exposureManagerData.setCountry("TOTAL");
-            exposureManagerData.setTotalTiv((BigDecimal) totalRow.get("Unmapped"));
             exposureManagerData.setExpectedTiv((BigDecimal) totalRow.get("expectedTIV"));
+            exposureManagerData.setTotalTiv((BigDecimal) totalRow.get("Unmapped"));
             exposureManagerData.setTivDiff(exposureManagerData.getExpectedTiv() != null ?
                     exposureManagerData.getExpectedTiv().subtract(exposureManagerData.getTotalTiv()) : null);
             Map<String, Object> map = new HashMap<>(totalRow);
@@ -167,10 +167,10 @@ public class ExposureManagerServiceImpl implements ExposureManagerService {
 
         List<Map<String, Object>> values = exposureSummaryDataRepository.getExposureData(params.getProjectId(),
                 params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(),
-                params.getPage(), params.getPageSize(), params.getRegionPerilFilter(), false);
+                params.getPage(), params.getPageSize(), params.getRegionPerilFilter(), false, params.getType());
 
         Map<String, Object> totalRow = exposureSummaryDataRepository.getTotalRowExposureData(params.getProjectId(),
-                params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective());
+                params.getPortfolioName(), params.getSummaryType(), params.getDivision(), params.getCurrency(), params.getFinancialPerspective(), params.getType());
 
         totalRow = totalRow
                 .entrySet()
