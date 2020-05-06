@@ -237,6 +237,7 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 break;
             }
             case 'exportExposuresTable' : {
+                console.log('here');
                 this.exposuresTableService.exportTable({
                     ...this.selectedHeaderConfig,
                     projectId: this.projectId
