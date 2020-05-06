@@ -53,7 +53,7 @@ export const FAKEDATA = {
 export const HEADERCONFIG = {
     currencies:[{header:'USD',value:'USD'},{header:'EUR',value:'EUR'}],
     divisions:[/*{header:'Division 1',value:'division1'},{header:'Division 2',value:'division2'}*/],
-    exposureViews:[{header:'TIV',value:'tiv'},{header:'Avg TIV',value:'AvgTiv'},{header:'#Risk',value:'risk'},{header:'%',value:'percentage'}],
+    exposureViews:[{header:'TIV',value:'TIV'},{header:'Avg TIV',value:'avgTIV'},{header:'#Risk',value:'locationCount'},{header:'%',value:'percentage'}],
     financialUnits:[{header:'Unit',value:'unit'},{header:'Thousands',value:'thousands'},{header:'Millions',value:'millions'},{header:'Billions',value:'billions'}],
     portfolios : [{header:'Portfolio 1',value:'portfolio1'},{header:'Portfolio 2',value:'portfolio2'}],
     view:''
