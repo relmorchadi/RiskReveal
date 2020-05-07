@@ -77,7 +77,8 @@ import { AttachPltsPopUpComponent } from './components/scopeCompleteness/attach-
     jsPlumbToolkitModule,
     jsPlumbToolkitDragDropModule,
     ResizableModule,
-    ContextMenuModule
+    ContextMenuModule,
+
   ],
   exports: [
     RouterModule
