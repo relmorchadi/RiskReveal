@@ -82,7 +82,6 @@ export class ExposuresApi {
 
     exportTable(headerConfig) {
         console.log(headerConfig);
-        return this._http.post(this.URL + 'exposure-manager-export-data',headerConfig, { responseType: 'blob' });
-
+        return this._http.post(this.URL + 'exposure-manager-export-data',headerConfig, { observe: 'response',responseType: 'blob' });
     }
 }

@@ -27,6 +27,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTION")
                 .allowedOrigins("*");
+
     }
 
     @Bean
@@ -38,7 +39,8 @@ public class WebConfig implements WebMvcConfigurer {
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type",
                 "X-Requested-With", "Pragma", "X-XSS-Protection", "X-Frame-Options", "X-Content-Type-Options", "Vary",
                 "Transfer-Encoding", "Server", "Expires", "Date", "Access-Control-Allow-Headers",
-                "Access-Control-Allow-Credentials"));
+                "Access-Control-Allow-Credentials","Access-Control-Expose-Headers", "Content-Disposition"));
+        configuration.setExposedHeaders(Collections.singletonList("Content-Disposition"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

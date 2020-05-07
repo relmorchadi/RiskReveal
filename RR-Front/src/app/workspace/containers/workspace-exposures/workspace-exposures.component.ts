@@ -248,14 +248,19 @@ export class WorkspaceExposuresComponent extends BaseContainer implements OnInit
                 }).subscribe(
                     (response: any) => {
                         let contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                        let blob = new Blob([response._body], {type: contentType});
-                        // saveAs(blob, "Export.xlsx");
-
+                        let blob = new Blob([response.body], {type: contentType});
+                        let fileName = response.headers.get('Content-Disposition')
+                            .split(';')[1].trim().split('=')[1];
+                        let url = window.URL.createObjectURL(blob);
+                        let anchor = document.createElement("a");
+                        anchor.download = fileName;
+                        anchor.href = url;
+                        anchor.click();
                     },
                     (err) => {
 
                     }
-                )
+                );
                 break;
             }
         }
